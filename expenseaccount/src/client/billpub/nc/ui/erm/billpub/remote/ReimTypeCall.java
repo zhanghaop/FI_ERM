@@ -30,8 +30,8 @@ public class ReimTypeCall extends AbstractCall implements IRemoteCallItem {
 
 	@SuppressWarnings("unchecked")
 	public void handleResult(Map<String, Object> datas) throws BusinessException {
-		Collection<SuperVO> reimTypeMap=(Collection<SuperVO>)datas.get(callvo.getCode());
-		((ErmBillBillForm) panel).setReimtypeMap(VOUtils.changeCollectionToMap(reimTypeMap));
+//		Collection<SuperVO> reimTypeMap=(Collection<SuperVO>)datas.get(callvo.getCode());
+//		((ErmBillBillForm) panel).setReimtypeMap(VOUtils.changeCollectionToMap(reimTypeMap));
 	}
 
 }

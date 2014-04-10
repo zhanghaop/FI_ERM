@@ -42,11 +42,6 @@ public class BXMaFYControlVOExt implements IFYControl,Serializable {
 	}
 
 	@Override
-	public boolean isSSControlAble() {
-		return bxheadvo.isSSControlAble();
-	}
-
-	@Override
 	public String getPk_item() {
 		return bxheadvo.getPk_item();
 	}

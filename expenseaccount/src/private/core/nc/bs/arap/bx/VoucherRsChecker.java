@@ -266,7 +266,8 @@ public class VoucherRsChecker implements IRSChecker {
 		FipRelationInfoVO vo = new FipRelationInfoVO();
 		vo.setPk_group(headerVO.getPk_group());
 		vo.setPk_org(headerVO.getPk_payorg());
-		vo.setRelationID(headerVO.getPk());
+		//vo.setRelationID(headerVO.getPk());
+		vo.setRelationID(headerVO.getPk()+"_"+headerVO.getVouchertag());
 		vo.setPk_billtype(headerVO.getDjlxbm());
 		return vo;
 	}

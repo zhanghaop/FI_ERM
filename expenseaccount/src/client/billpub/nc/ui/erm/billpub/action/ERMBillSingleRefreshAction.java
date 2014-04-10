@@ -28,6 +28,12 @@ public class ERMBillSingleRefreshAction extends RefreshSingleAction {
 		if (obj != null) {
 			if (obj instanceof JKBXVO) {
 				JKBXHeaderVO parentvo = ((JKBXVO) obj).getParentVO();
+				
+				if (((ErmBillBillManageModel) getModel()).getDjCondVO()!=null) {
+					((ErmBillBillManageModel) getModel()).getDjCondVO().setIsjs(true);
+	            }
+				((ErmBillBillManageModel) getModel()).getDjCondVO();
+				
 				if (parentvo != null) {
 					List<JKBXVO> ncobjs = NCLocator.getInstance().lookup(IBXBillPrivate.class)
 							.queryVOsByPrimaryKeysForNewNode(new String[] { parentvo.getPrimaryKey() },

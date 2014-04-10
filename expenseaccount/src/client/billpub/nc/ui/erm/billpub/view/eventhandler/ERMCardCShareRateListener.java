@@ -43,6 +43,10 @@ public class ERMCardCShareRateListener implements IBillModelDecimalListener2{
 
 	public int getDecimalFromSource(int row, Object value) {
 		int hlPrecision = 8;
+		
+		if (model.isImporting()) {// 导入时不需要计算精度
+			return hlPrecision;
+		}
 		String pk_org = (String)value;
 		
 		String pk_currtype = billCardPanel.getHeadItem(JKBXHeaderVO.BZBM).getValueObject().toString();

@@ -36,12 +36,14 @@ import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.fipub.report.PubCommonReportMethod;
 import nc.vo.fipub.summary.SummaryVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
+import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
@@ -616,7 +618,12 @@ public class BXUiUtil {
 			resetCardBodyDecimalDigit(panel, groupByDecimalDigit, BXConstans.CSHARE_PAGE, new String[]{CShareDetailVO.GROUPBBJE});
 			// 重设表体分摊页签全局本币精度
 			resetCardBodyDecimalDigit(panel, globalByDecimalDigit, BXConstans.CSHARE_PAGE,  new String[]{CShareDetailVO.GLOBALBBJE});
-
+			
+			// 设置表体核销明细金额精度
+			resetCardBodyDecimalDigit(panel, ybDecimalDigit, BXConstans.AccruedVerify_PAGE, new String[]{AccruedVerifyVO.VERIFY_AMOUNT});
+			resetCardBodyDecimalDigit(panel, orgBbDecimalDigit, BXConstans.AccruedVerify_PAGE, new String[]{AccruedVerifyVO.ORG_VERIFY_AMOUNT});
+			resetCardBodyDecimalDigit(panel, groupByDecimalDigit, BXConstans.AccruedVerify_PAGE, new String[]{AccruedVerifyVO.GROUP_VERIFY_AMOUNT});
+			resetCardBodyDecimalDigit(panel, globalByDecimalDigit, BXConstans.AccruedVerify_PAGE,  new String[]{AccruedVerifyVO.GLOBAL_VERIFY_AMOUNT});
 			
 			
 			// // 设置原币金额精度（deleted at 2012-3-13）
@@ -640,7 +647,8 @@ public class BXUiUtil {
 		// 设置原币精度
 		if (item.getKey().equals(BXBusItemVO.AMOUNT) || (item.getIDColName() != null && item.getIDColName().equals(BXBusItemVO.AMOUNT))
 				|| item.getKey().equals(BXBusItemVO.YBJE) || item.getKey().equals(BXBusItemVO.HKYBJE) || item.getKey().equals(BXBusItemVO.ZFYBJE)
-				|| item.getKey().equals(BXBusItemVO.CJKYBJE)|| item.getKey().equals(CShareDetailVO.ASSUME_AMOUNT)||item.getKey().equals(BxcontrastVO.FYYBJE)) {
+				|| item.getKey().equals(BXBusItemVO.CJKYBJE)|| item.getKey().equals(CShareDetailVO.ASSUME_AMOUNT)||item.getKey().equals(BxcontrastVO.FYYBJE)
+				|| item.getKey().equals(AccruedVerifyVO.VERIFY_AMOUNT)) {
 			String bzbm = zbvo.getParentVO().getBzbm();
 			if (bzbm != null) {
 				int precision = 2;
@@ -655,7 +663,7 @@ public class BXUiUtil {
 
 		// 设置组织本币精度
 		else if (item.getKey().equals(BXBusItemVO.BBJE) || item.getKey().equals(BXBusItemVO.CJKBBJE) || item.getKey().equals(BXBusItemVO.HKBBJE)
-				|| item.getKey().equals(BXBusItemVO.ZFBBJE)) {
+				|| item.getKey().equals(BXBusItemVO.ZFBBJE) || item.getKey().equals(AccruedVerifyVO.ORG_VERIFY_AMOUNT)) {
 			int bbkeCurrencyPrecision = 0;
 			try {
 				bbkeCurrencyPrecision = Currency.getCurrDigit(Currency.getOrgLocalCurrPK(zbvo.getParentVO().getPk_org()));
@@ -666,7 +674,7 @@ public class BXUiUtil {
 		}
 		// 设置集团本币精度
 		else if (item.getKey().equals(BXBusItemVO.GROUPBBJE) || item.getKey().equals(BXBusItemVO.GROUPCJKBBJE) || item.getKey().equals(BXBusItemVO.GROUPHKBBJE)
-				|| item.getKey().equals(BXBusItemVO.GROUPZFBBJE)) {
+				|| item.getKey().equals(BXBusItemVO.GROUPZFBBJE) || item.getKey().equals(AccruedVerifyVO.GROUP_VERIFY_AMOUNT)) {
 			int GroupbbkeCurrencyPrecision = 0;
 			try {
 				GroupbbkeCurrencyPrecision = Currency.getCurrDigit(Currency.getGroupCurrpk(zbvo.getParentVO().getPk_group()));
@@ -677,7 +685,7 @@ public class BXUiUtil {
 		}
 		// 设置全局本币精度
 		else if (item.getKey().equals(BXBusItemVO.GLOBALBBJE) || item.getKey().equals(BXBusItemVO.GLOBALCJKBBJE) || item.getKey().equals(BXBusItemVO.GLOBALHKBBJE)
-				|| item.getKey().equals(BXBusItemVO.GLOBALZFBBJE)) {
+				|| item.getKey().equals(BXBusItemVO.GLOBALZFBBJE) || item.getKey().equals(AccruedVerifyVO.GLOBAL_VERIFY_AMOUNT)) {
 			int GroupbbkeCurrencyPrecision = 0;
 			try {
 				GroupbbkeCurrencyPrecision = Currency.getCurrDigit(Currency.getGlobalCurrPk(null));
@@ -701,7 +709,7 @@ public class BXUiUtil {
 	 * @param bodyJeKeys
 	 *            表体金额key集合
 	 */
-	private static void resetCardDecimalDigit(BillCardPanel panel, int decimalDigits, String[] headJeKeys, String[] bodyJeKeys) {
+	public static void resetCardDecimalDigit(BillCardPanel panel, int decimalDigits, String[] headJeKeys, String[] bodyJeKeys) {
 
 		// 表头精度
 		if (headJeKeys != null && headJeKeys.length > 0) {
@@ -737,7 +745,27 @@ public class BXUiUtil {
 			}
 		}
 	}
-
+	
+	
+	/**
+	 * 判断是否有业务行
+	 * @return
+	 */
+	public static boolean isExistBusiPage(BillCardPanel panel) {
+		boolean flag = false;
+		BillTabVO[] billTabVOs = panel.getBillData().getBillTabVOs(IBillItem.BODY);
+		for (BillTabVO billTabVO : billTabVOs) {
+			String metaDataPath = billTabVO.getMetadatapath();
+			if (metaDataPath != null && BXConstans.ER_BUSITEM.equals(metaDataPath)) {
+				if(panel.getBodyPanel(billTabVO.getTabcode()).isShowing()){
+				flag = true;
+				break;
+				}
+			}
+		}
+		return flag;
+	}
+	
 	/**
 	 * 设置卡片面板中表体中具体字段精度
 	 * 
@@ -1125,7 +1153,7 @@ public class BXUiUtil {
 				.getBodyValueVOs(BxcontrastVO.class.getName());
 
 		if (bxcontrastVO != null && bxcontrastVO.length > 0) {
-			ContrastAction.doContrastToUI(billCardPanel, billForm.getHelper().getJKBXVO(billForm),
+			ContrastAction.doContrastToUI(billCardPanel, billForm.getJKBXVO(),
 					Arrays.asList(bxcontrastVO), billForm);
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import nc.bs.erm.annotation.ErmBusinessDef;
 import nc.bs.erm.costshare.IErmCostShareConst;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.itf.tb.control.IFormulaFuncName;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -27,7 +28,10 @@ public class CSErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		this.ntbParam = ntbParam;
 		
 		List<String> sqlList = new ArrayList<String>();
-		sqlList.add(getSqlCs(false));
+		// 非调整单情况
+		sqlList.add(getSqlCs(false,false));
+		// 调整单情况
+		sqlList.add(getSqlCs(false,true));
 		return sqlList;
 	}
 
@@ -36,18 +40,29 @@ public class CSErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		//设置预算参数
 		this.ntbParam = ntbParam;
 		List<String> sqlList = new ArrayList<String>();
-		sqlList.add(getSqlCs(true));
+		// 非调整单情况
+		sqlList.add(getSqlCs(true,false));
+		// 调整单情况
+		sqlList.add(getSqlCs(true,true));
 		return sqlList;
 	}
 	
-	private String getSqlCs(boolean isDetail) throws Exception {
+	private String getSqlCs(boolean isDetail,boolean isAdjust) throws Exception {
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select " + getSelectFields(isDetail));
 		sql.append(" from " + getFromSql());
-		sql.append(" where 1=1 " + getWhereSql());
+		sql.append(" where 1=1 " + getWhereSql(isAdjust));
 		sql.append(" and cs.isexpamt ='N' ");
 		// 单据状态
 		sql.append(getBillStatus());
+		// 调整单过滤条件
+		sql.append(" and ");
+		if(!isAdjust){
+			sql.append(" not ");
+		}
+		sql.append("exists (select 1 from er_djlx djlx where cs.djlxbm=djlx.djlxbm and cs.pk_group = djlx.pk_group" +
+				" and  djlx.bxtype = "+ErmDjlxConst.BXTYPE_ADJUST+ ")");
+		
 		return sql.toString();
 	}
 
@@ -109,4 +124,13 @@ public class CSErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		return from;
 	}
 
+	@Override
+	protected String getDateTypeField(NtbParamVO ntbvo, boolean isAdjust) {
+		if(isAdjust){
+			// 调整单情况，按照分摊明细行的预算占用日期进行重新取数
+			return "csd.ysdate";
+		}else{
+			return super.getDateTypeField(ntbvo, isAdjust);
+		}
+	}
 }

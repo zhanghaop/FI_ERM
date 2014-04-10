@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
+
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model">
+			<ref bean="billModel" />
+		</property>
+		<property name="saveaction">
+			<ref bean="saveAction" />
+		</property>
+		<property name="cancelaction">
+			<ref bean="cancleAction" />
+		</property>
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+	<!-- 模板容器，负责对模板的统一装载 -->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer"
+		init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>20112RSS</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化-->
+	<bean id="modelDataManager" class="nc.ui.er.reimrule.model.ReimModelDataManager">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="orgPanel" ref="orgPanel" />
+	</bean>
+	
+	<!-- 控制维度模型 -->
+	<bean id="billModel" class="nc.ui.uif2.model.BatchBillTableModel">
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<property name="inMultiSelectmode" value="true" />
+	</bean>
+	
+	<bean id="dimTable" class="nc.ui.er.reimrule.view.DimensTable"
+		init-method="initUI">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0078"></property>
+				<property name="defaultValue" value="维度设置"></property>
+			</bean>
+		</property>
+		<property name="nodekey" value="20112RSS" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="model" ref="billModel" />
+		<property name="voClassName" value="nc.vo.er.reimrule.ReimRuleDimVO" />
+		<property name="orgPanel" ref="orgPanel" />
+		<property name="actions">
+			<list>
+				<ref bean="addlineAction"/>
+				<ref bean="dellineAction"/>
+				
+				<ref bean="nullAction" />
+				<ref bean="firstlineAction" />
+				<ref bean="prelineAction" />
+				<ref bean="nextlineAction" />
+				<ref bean="lastlineAction" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 功能注册的所有Action -->
+	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	
+	<bean id="editAction" class="nc.ui.er.reimrule.action.ConfigAction">
+		<property name="model" ref="billModel" />
+		<property name="edit" value="true" />
+	</bean>
+	
+	
+	<!-- 修改界面按钮 -->
+	
+	<bean id="saveAction" class="nc.ui.er.reimrule.action.SaveAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	
+	<bean id="cancleAction" class="nc.ui.er.reimrule.action.CancelAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	
+	<bean id="copyaction" class="nc.ui.er.reimrule.action.CopyAction">
+		<property name="model" ref="billModel"></property>
+		<property name="editor" ref="dimTable" />
+	</bean>
+	
+	<bean id="addlineAction" class="nc.ui.uif2.actions.batch.BatchAddLineAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="voClassName" value="nc.vo.er.reimrule.ReimRuleDimVO" />
+	</bean>
+	<bean id="dellineAction" class="nc.ui.er.reimrule.action.BatchDelRuleAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	
+	<bean id="firstlineAction" class="nc.ui.er.reimrule.action.LineOperateAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="move" value="top" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	<bean id="prelineAction" class="nc.ui.er.reimrule.action.LineOperateAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="move" value="up" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	<bean id="nextlineAction" class="nc.ui.er.reimrule.action.LineOperateAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="move" value="down" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	<bean id="lastlineAction" class="nc.ui.er.reimrule.action.LineOperateAction">
+		<property name="model" ref="billModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="move" value="bottom" />
+		<property name="editor" ref="dimTable" />
+	</bean>
+	
+	<!-- 组织面板 -->
+	<bean id="orgPanel" class="nc.ui.bd.pub.BDOrgPanel" init-method="initUI">
+		<property name="labelName">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0076"></property>
+				<property name="defaultValue" value="业务单元"></property>
+			</bean>
+		</property>
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="model" ref="billModel" />
+	</bean>
+	
+	<!-- 总装 -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+				<property name="tabs">
+					<list>
+						<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+							<property name="name" value="报销标准维度" />
+							<property name="component" ref="dimTable" />
+						</bean>
+					</list>
+				</property>
+			</bean>	
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveAction" />
+				<ref bean="copyaction" />
+				<ref bean="nullAction" />
+				<ref bean="cancleAction" />
+			</list>
+		</property>
+		<property name="model" ref="billModel"/>
+	</bean>
+</beans>

@@ -21,6 +21,21 @@ public interface IErmBsCommonService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public Map<String, String> getPermissonOrgMapCall(String pk_user,
-			String nodeCode, String pk_group) throws BusinessException;
+	public Map<String, String> getPermissonOrgMapCall(String pk_user, String nodeCode, String pk_group)
+			throws BusinessException;
+
+	/**
+	 * 查询用户已审批、待审批单据
+	 * 
+	 * @param pk_user
+	 *            用户pk，为空时，按当前登录用户进行查询
+	 * @param tradeTypes
+	 *            交易类型数组，为空时，则进行
+	 * @param isApproved
+	 *            true 表示已审批， false 表示待我审批
+	 * @return 单据pk数组
+	 * @throws BusinessException
+	 */
+	public String[] queryApprovedWFBillPksByCondition(String pk_user, String[] tradeTypes, boolean isApproved)
+			throws BusinessException;
 }

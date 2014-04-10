@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import nc.bs.erm.util.action.ErmActionConst;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.print.IDataSource;
 import nc.ui.pub.print.PrintEntry;
 import nc.ui.uif2.NCAction;
@@ -38,7 +39,7 @@ public class PrintListAction extends NCAction {
 				this.model.getContext().getEntranceUI());
 		PrintEntry entry = new PrintEntry(frame);
 		String pkUser = getModel().getContext().getPk_loginUser();
-		entry.setTemplateID("@@@@", getModel().getContext().getNodeCode(), pkUser, null,"list");
+		entry.setTemplateID(ErUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null,"list");
 		entry.selectTemplate();
 		entry.setDataSource(getMetidataSource());
 		entry.preview();

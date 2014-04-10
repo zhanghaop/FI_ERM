@@ -41,12 +41,15 @@ public class CardBodyAmountDigitListener implements IBillModelDecimalListener2 {
 	private String[] targetKeys;
 	private String rateType;
 	private BillCardPanel cardPanel;
+	
+	private BillModel model;
 
 	public CardBodyAmountDigitListener(BillModel billmodel,BillCardPanel cardPanel, String[] targetKeys,
 			String rateType) {
 		this.targetKeys = targetKeys;
 		this.rateType = rateType;
 		this.cardPanel = cardPanel;
+		this.model = billmodel;
 		billmodel.addDecimalListener(this);
 	}
 	
@@ -59,7 +62,10 @@ public class CardBodyAmountDigitListener implements IBillModelDecimalListener2 {
 
 	@Override
 	public int getDecimalFromSource(int row, Object okValue) {
-		int digit = 2;
+		int digit = 8;
+		if (model.isImporting()) {//导入时不需要计算精度
+			return digit;
+		}
 		try {
 			if (RATE_TYPE_YB.equals(rateType)) {
 				return Currency.getCurrDigit(getHeadItemStrValue(MatterAppVO.PK_CURRTYPE));

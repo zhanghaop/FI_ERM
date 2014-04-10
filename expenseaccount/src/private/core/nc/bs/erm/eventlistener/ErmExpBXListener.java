@@ -15,6 +15,7 @@ import nc.pubitf.erm.expenseaccount.IErmExpenseaccountManageService;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountQueryService;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountWriteoffService;
 import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.pub.BusinessException;
@@ -40,12 +41,15 @@ public class ErmExpBXListener implements IBusinessListener {
 		}
 		if (ErmEventType.TYPE_INSERT_AFTER.equalsIgnoreCase(eventType)) {
 			for (int i = 0; i < vos.length; i++) {
-				ExpenseAccountVO[] expaccvo = ErmBillCostConver.getExpAccVO(vos[i]);
+				JKBXVO vo = vos[i];
+				ExpenseAccountVO[] expaccvo = ErmBillCostConver.getExpAccVO(vo);
 				//插入汇总明细账
 				NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
 				insertVOs(expaccvo);
-				if(vos[i].getParentVO().getIsexpamt()==UFBoolean.TRUE){
-					if(vos[i].getParentVO().getIscostshare()==UFBoolean.TRUE){
+				// 设置待摊或者核销预提情况，保存后直接进行冲销
+				if(vo.getParentVO().getIsexpamt()==UFBoolean.TRUE
+						||(vo.getAccruedVerifyVO() != null &&vo.getAccruedVerifyVO().length >0)){
+					if(vo.getParentVO().getIscostshare()==UFBoolean.TRUE){
 						//不用冲销，因为费用结转会冲销
 						continue;
 					}
@@ -57,7 +61,8 @@ public class ErmExpBXListener implements IBusinessListener {
 		} else if (ErmEventType.TYPE_UPDATE_AFTER.equalsIgnoreCase(eventType)) {
 			String[] srcIDS = new String[vos.length];
 			for (int i = 0; i < vos.length; i++) {
-				srcIDS[i] = vos[i].getParentVO().getPrimaryKey();
+				JKBXVO vo = vos[i];
+				srcIDS[i] = vo.getParentVO().getPrimaryKey();
 				//查询出旧的VO
 				ExpenseAccountVO[] oldaccountVOs = NCLocator.getInstance().
 				lookup(IErmExpenseaccountQueryService.class).queryBySrcID(srcIDS);
@@ -69,8 +74,10 @@ public class ErmExpBXListener implements IBusinessListener {
 					NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
 					updateVOs(expaccvo,oldaccountVOs);
 				}
-				if(vos[i].getParentVO().getIsexpamt()==UFBoolean.TRUE){
-					if(vos[i].getParentVO().getIscostshare()==UFBoolean.TRUE){
+				// 设置待摊或者核销预提情况，保存后直接进行冲销
+				if(vo.getParentVO().getIsexpamt()==UFBoolean.TRUE
+						||(vo.getAccruedVerifyVO() != null &&vo.getAccruedVerifyVO().length >0)){
+					if(vo.getParentVO().getIscostshare()==UFBoolean.TRUE){
 						//不用冲销，因为费用结转会冲销
 						continue;
 					}

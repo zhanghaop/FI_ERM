@@ -39,8 +39,9 @@ public class BillInputModelDataManager extends ERMModelDataManager
                 getListView().showMeUp();
             }
             
-            if(pks != null){
-				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQuerySuccessInfo(pks.length), getModel().getContext());
+			int count = getPaginationModel().getCurrentDataDescriptor().getCount();
+            if(count != 0){
+				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQuerySuccessInfo(count), getModel().getContext());
 			}else{
 				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQueryNullInfo(), getModel().getContext());
 			}

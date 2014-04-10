@@ -15,12 +15,18 @@ import nc.vo.pub.lang.UFDouble;
  */
 @Business(business = ErmBusinessDef.TBB_CTROL, subBusiness = "", description = "费用预算控制VO接口，预算控制VO需实现的接口" /*-=notranslate=-*/, type = BusinessType.CORE)
 public interface IFYControl {
-
+	
+	/**
+	 * 是否受预算控制
+	 * @return
+	 */
 	public boolean isYSControlAble();
-
+	
+	/**
+	 * 是否受借款控制
+	 * @return
+	 */
 	public boolean isJKControlAble();
-
-	public boolean isSSControlAble();
 
 	/**
 	 * @return 费用申请单主键
@@ -28,7 +34,7 @@ public interface IFYControl {
 	public String getPk_item();
 
 	/**
-	 * @return 事项审批Vo的属性值
+	 * @return 获取Vo的属性值
 	 */
 	public Object getItemValue(String key);
 
@@ -45,12 +51,12 @@ public interface IFYControl {
 	public UFDouble[] getPreItemJe();
 
 	/**
-	 * @return 事项审批项币种
+	 * @return 币种
 	 */
 	public String getBzbm();
 
 	/**
-	 * @return 事项审批项汇率 UFdouble[glbbbhl,groupbbhl,bb_hl]
+	 * @return 汇率 UFdouble[glbbbhl,groupbbhl,bb_hl]
 	 */
 	public UFDouble[] getItemHl();
 
@@ -143,7 +149,11 @@ public interface IFYControl {
 	 * 返回对应的录入人
 	 */
 	public String getOperator();
-
+	
+	/**
+	 * 主组织
+	 * @return
+	 */
 	public String getPk_org();
 
 	/**

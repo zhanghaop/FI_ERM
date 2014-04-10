@@ -446,4 +446,6 @@ public interface IBXBillPrivate {
 	 * @author: wangyhh@ufida.com.cn
 	 */
 	public UFDate queryOrgStartDate(String pk_org) throws BusinessException, InvalidAccperiodExcetion;
+	
+	public List<JKBXVO> effectToFip(List<JKBXVO> jkbxvo) throws BusinessException;
 }

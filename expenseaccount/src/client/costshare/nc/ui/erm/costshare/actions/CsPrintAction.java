@@ -2,9 +2,6 @@ package nc.ui.erm.costshare.actions;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import nc.ui.pub.print.IDataSource;
 import nc.ui.pub.print.PrintEntry;
 import nc.ui.uif2.UIState;
@@ -30,18 +27,15 @@ public class CsPrintAction extends nc.ui.uif2.actions.PrintAction {
 	}
 	
 	private IDataSource dataSource;
+
 	private void printInfo() {
-		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class,
-				this.model.getContext().getEntranceUI());
-		
+		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI(), getDataSource());
 		AggCostShareVO vo = (AggCostShareVO) getModel().getSelectedData();
 		String pk_tradetypecode = (String) vo.getParentVO().getAttributeValue(CostShareVO.PK_TRADETYPE);
-		
-		PrintEntry entry = new PrintEntry(frame);
 		String pkUser = getModel().getContext().getPk_loginUser();
-		entry.setTemplateID(getModel().getContext().getPk_group(), getModel().getContext().getNodeCode(), pkUser, null,pk_tradetypecode);
+		entry.setTemplateID(getModel().getContext().getPk_group(), getModel().getContext().getNodeCode(), pkUser, null,
+				pk_tradetypecode);
 		entry.selectTemplate();
-		entry.setDataSource(getDataSource());
 		entry.preview();
 
 	}

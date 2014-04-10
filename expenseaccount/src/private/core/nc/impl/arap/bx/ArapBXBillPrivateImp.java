@@ -35,6 +35,7 @@ import nc.jdbc.framework.processor.ArrayListProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.accperiod.AccountCalendar;
+import nc.pubitf.cmp.settlement.ICmpSettlementPubQueryService;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.rbac.IFunctionPermissionPubService;
 import nc.pubitf.rbac.IRolePubService;
@@ -42,8 +43,12 @@ import nc.pubitf.rbac.IUserPubService;
 import nc.pubitf.resa.costcenter.ICostCenterPubService;
 import nc.pubitf.uapbd.IPsndocPubService;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.arap.bx.util.CurrencyControlBO;
 import nc.vo.bd.psn.PsndocVO;
+import nc.vo.cmp.settlement.SettlementAggVO;
+import nc.vo.cmp.settlement.SettlementHeadVO;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.BXVO;
@@ -63,11 +68,13 @@ import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.indauthorize.IndAuthorizeVO;
 import nc.vo.er.reimrule.ReimRuleVO;
 import nc.vo.er.util.StringUtils;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.fi.pub.SqlUtils;
+import nc.vo.fipub.utils.ArrayUtil;
 import nc.vo.fipub.utils.VOUtil;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.org.DeptVO;
@@ -229,6 +236,27 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
                }
             }
 		}
+		
+		//只将未结算的单据过滤出来:没有安装结算信息时，不做任何处理
+		if (djCondVO != null && !djCondVO.isIsjs()) {
+			SettlementAggVO[] bills =null;
+			boolean iscmpused = BXUtil.isProductInstalled(list.get(0)
+					.getParentVO().getPk_group(), BXConstans.TM_CMP_FUNCODE);
+			if (!iscmpused) {
+				
+			} else {
+				for (int i = 0 ; i<list.size() ;i++) {
+					String pk_jkbx = list.get(i).getParentVO().getPk_jkbx();
+					bills = NCLocator.getInstance().lookup(
+							ICmpSettlementPubQueryService.class)
+							.queryBillsBySourceBillID(new String[] { pk_jkbx });
+					if(bills != null && bills[0] != null && 
+							((SettlementHeadVO)bills[0].getParentVO()).getSettlestatus()!=0){
+						list.remove(i);
+					}
+				}
+			}
+		}
 		try {
 			if (djCondVO != null && djCondVO.getVoucherFlags()!=null && djCondVO.getVoucherFlags().length!=0) {
 				//根据凭证状态过滤
@@ -322,6 +350,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		Collection<BxcontrastVO> contrasts = bxZbBO.queryContrasts(headArray,
 				headers.get(0).getDjdl());// 冲销
 		Collection<CShareDetailVO> cShares = bxZbBO.queryCSharesVOS(headArray);// 分摊明细
+		Collection<AccruedVerifyVO> accvvos = bxZbBO.queryAccruedVerifyVOS(headArray);// 核销预提明细
 
 		Map<String, List<CircularlyAccessibleValueObject>> bxItemMap = VOUtils
 				.changeArrayToMapList(bxItems,
@@ -334,6 +363,9 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		Map<String, List<SuperVO>> cShareMap = VOUtils
 				.changeCollectionToMapList(cShares,
 						new String[] { CShareDetailVO.SRC_ID });
+		Map<String, List<SuperVO>> accvMap = VOUtils
+		.changeCollectionToMapList(accvvos,
+				new String[] { AccruedVerifyVO.PK_BXD});
 
 		// 根据币种处理VO精度
 		CurrencyControlBO currencyControlBO = new CurrencyControlBO();
@@ -348,10 +380,13 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 
 			List<SuperVO> contrastVoList = contrastMap.get(pk);
 			List<SuperVO> cShareList = cShareMap.get(pk);// 分摊明细
+			List<SuperVO> accvList = accvMap.get(pk);// 核销 预提明细
 			bxvo.setContrastVO(contrastVoList == null ? null : contrastVoList
 					.toArray(new BxcontrastVO[] {}));
 			bxvo.setcShareDetailVo(cShareList == null ? null : cShareList
 					.toArray(new CShareDetailVO[] {}));
+			bxvo.setAccruedVerifyVO(accvList == null ? null : accvList
+					.toArray(new AccruedVerifyVO[] {}));
 			bxvo.setChildrenFetched(true);
 
 			currencyControlBO.dealBXVOdigit(bxvo);// 精度处理
@@ -418,18 +453,35 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	}
 	
 	@Override
-	public String[] queryPKsByWhereForBillManageNode(String sql,String pk_group,String loginUser) throws BusinessException {
-		//单据管理sql，追加审批权限控制，只允许查询到当前用户是审批人的单据
-		String workflowSql = " PK_GROUP= '" + pk_group + 
-							"' AND (APPROVER= '" + loginUser + "'OR (PK_JKBX IN(SELECT BILLID FROM PUB_WORKFLOWNOTE WF WHERE WF.CHECKMAN='" + loginUser + "' AND ISNULL(WF.DR,0)   = 0 AND WF.ACTIONTYPE <> 'MAKEBILL')))";
-		if(sql == null){
-			sql = workflowSql;
-		}else{
-			sql += " and " + workflowSql;
-			sql +=" order by djrq desc, djbh desc ";
+	public String[] queryPKsByWhereForBillManageNode(String sql, String pk_group, String loginUser)
+			throws BusinessException {
+		StringBuffer billMakerSql = new StringBuffer();
+		String billMaker = NCLocator.getInstance().lookup(IUserPubService.class).queryPsndocByUserid(loginUser);
+
+		billMakerSql.append(" (");
+		billMakerSql.append(JKBXHeaderVO.CREATOR + "='" + loginUser + "'");
+		billMakerSql.append(" or ");
+		billMakerSql.append(JKBXHeaderVO.JKBXR + "='" + billMaker + "')");
+
+		// 单据管理sql，追加审批权限控制，只允许查询到当前用户是审批人的单据
+		StringBuffer workflowSql = new StringBuffer(" PK_GROUP= '" + pk_group + "' ");
+
+		workflowSql.append(" and (approver= '" + loginUser + "'");
+		workflowSql.append(" or (pk_jkbx in(select billid from pub_workflownote wf where wf.checkman='" + loginUser
+				+ "' and isnull(wf.dr,0)   = 0 and wf.actiontype <> 'MAKEBILL')) ");
+		workflowSql.append(" or (pk_jkbx not in (select billid from pub_workflownote wf where wf.checkman='"
+				+ loginUser + "' and isnull(wf.dr,0)   = 0 and wf.actiontype <> 'MAKEBILL')");
+		workflowSql.append(" and " + billMakerSql.toString() + " and spzt = 3 )");
+		workflowSql.append(" )");
+
+		if (sql == null) {
+			sql = workflowSql.toString();
+		} else {
+			sql += " and " + workflowSql.toString();
+			sql += " order by djrq desc, djbh desc ";
 		}
-		 
-		String[] result = queryPKsByWhereSql(sql,null);
+
+		String[] result = queryPKsByWhereSql(sql, null);
 		return result;
 	}
 	
@@ -727,6 +779,10 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		Collection<CShareDetailVO> cShares = bxZbBO
 				.queryCSharesVOS(new JKBXHeaderVO[] { bxvo.getParentVO() });// 分摊明细
 		bxvo.setcShareDetailVo(cShares.toArray(new CShareDetailVO[] {}));
+		
+		// 核销预提明细
+		Collection<AccruedVerifyVO> vaccrueds = bxZbBO.queryAccruedVerifyVOS(bxvo.getParentVO());
+		bxvo.setAccruedVerifyVO(vaccrueds.toArray(new AccruedVerifyVO[] {}));
 
 		return bxvo;
 	}
@@ -1446,8 +1502,57 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	@Override
 	public List<JKBXVO> queryJKBXByWhereSql(String sql, boolean islazy)
 			throws BusinessException {
-		String whereSQL = sql+" and djlxbm <>'2647' and ybje>0 "+" and pk_jkbx not in (select src_id from er_costshare) order by djrq desc";
-		 return (List<JKBXVO>) MDPersistenceService.lookupPersistenceQueryService().
-			queryBillOfVOByCond(BXVO.class, whereSQL , false);
+		String whereSQL = sql + " and djlxbm <>'2647' and ybje>0 "
+				+ " and pk_jkbx not in (select src_id from er_costshare) "
+				+ " order by djrq desc";
+		List<JKBXVO> vos = (List<JKBXVO>) MDPersistenceService
+				.lookupPersistenceQueryService().queryBillOfVOByCond(
+						BXVO.class, whereSQL, false);
+		// 过滤不可结转的报销单
+		List<JKBXVO> result = new ArrayList<JKBXVO>();
+		for (JKBXVO jkbxvo : vos) {
+			if (!ArrayUtil.isArrayIsNull(jkbxvo.getAccruedVerifyVO())) {
+				// 存在核销预提明细的报销单，不可结转
+				continue;
+			}
+			result.add(jkbxvo);
+		}
+		return result;
+	}
+	
+	/**
+	 * 对于生效的单据，生成月末凭证
+	 * 对于末生效的单据，生成暂估凭证
+	 * 对于生效且有暂估的单据，生成暂估月末凭证
+	 */
+	public List<JKBXVO> effectToFip(List<JKBXVO> jkbxvo) throws BusinessException{
+		List<JKBXHeaderVO> header = new ArrayList <JKBXHeaderVO>();
+		//版本和ts校验
+		new BXZbBO().compareTs(jkbxvo.toArray(new JKBXVO[]{}));
+		
+		for (JKBXVO vo : jkbxvo) {
+			if(BXStatusConst.SXBZ_VALID==vo.getParentVO().getSxbz()){
+				if(vo.getParentVO().getVouchertag()!= null 
+						&& (BXStatusConst.ZGDeal==vo.getParentVO().getVouchertag()
+						|| BXStatusConst.ZGMEFlag==vo.getParentVO().getVouchertag())){
+					vo.getParentVO().setVouchertag(BXStatusConst.ZGMEFlag);//生效的单据有暂估或月末暂估,月末暂估凭证
+				}
+				if(vo.getParentVO().getVouchertag()==null || BXStatusConst.MEDeal==vo.getParentVO().getVouchertag()){
+					vo.getParentVO().setVouchertag(BXStatusConst.MEDeal);//生效的单据没有暂估，月末凭证
+				}
+			}else{
+				vo.getParentVO().setVouchertag(BXStatusConst.ZGDeal);//未生效的单据是暂估凭证
+			}
+			header.add(vo.getParentVO());
+		}
+		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.VOUCHERTAG});
+		//根据表头补表体信息:传会计平台时表体必须有值
+		List<JKBXVO> vos = retriveItems(header);
+		
+		new BXZbBO().effectToFip(vos, BXZbBO.MESSAGE_UNSETTLE);//先删除凭证
+		
+		new BXZbBO().effectToFip(vos, BXZbBO.MESSAGE_SETTLE);//在生成凭证
+		
+		return vos;
 	}
 }

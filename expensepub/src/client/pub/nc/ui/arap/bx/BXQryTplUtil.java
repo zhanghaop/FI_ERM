@@ -7,10 +7,12 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Log;
 import nc.bs.logging.Logger;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.ui.bd.ref.AbstractRefModel;
+import nc.ui.bd.ref.RefInitializeCondition;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.querytemplate.CriteriaChangedEvent;
 import nc.ui.querytemplate.ICriteriaEditor;
@@ -21,6 +23,7 @@ import nc.ui.querytemplate.filtereditor.IFilterEditor;
 import nc.ui.querytemplate.simpleeditor.SimpleEditor;
 import nc.ui.querytemplate.value.IFieldValue;
 import nc.ui.querytemplate.value.IFieldValueElement;
+import nc.ui.querytemplate.value.RefValueObject;
 import nc.ui.querytemplate.valueeditor.DefaultFieldValueEditor;
 import nc.ui.querytemplate.valueeditor.IFieldValueEditor;
 import nc.ui.querytemplate.valueeditor.IFieldValueElementEditor;
@@ -106,23 +109,36 @@ class RefModelSetDefaultOrgProcessor extends RefModelProcessor{
 		AbstractRefModel model = refPane.getRefModel();
 		if(model == null)
 			return;
-		if (StringUtil.isEmpty(pk_org)) {
-		    if (refPane.getRefModel() instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel) {
-	            refPane.setMultiCorpRef(false);
-		    } else {
-	            refPane.setMultiCorpRef(true);
-		    }
-	        refPane.setMultiOrgSelected(true);
-            refPane.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
-	        if (filterPKs != null) {
-                refPane.setMultiRefFilterPKs(filterPKs);
-	        }
-		} else {
+		if (refPane.getRefModel() instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel ||
+                refPane.getRefModel() instanceof nc.ui.org.ref.BusinessUnitDefaultRefModel ||
+                refPane.getRefModel() instanceof nc.ui.org.ref.AdminOrgDefaultRefModel) {
             refPane.setMultiCorpRef(false);
-		    model.setPk_org(this.pk_org);
+        } else {
+            refPane.setMultiCorpRef(true);
+        }
+        refPane.setMultiOrgSelected(true);
+        refPane.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
+        if (filterPKs != null) {
+            filterPKs = ErUtil.insertHeadOneOrg(pk_org, filterPKs);
+            refPane.setMultiRefFilterPKs(filterPKs);
+        }
+		if (StringUtils.isNotBlank(pk_org)) {
+            model.setPk_org(this.pk_org);
+            if (refPane.isMultiCorpRef()) {
+                RefInitializeCondition[] conditions = refPane.getRefUIConfig().getRefFilterInitconds();
+                if (conditions != null) {
+                    for (RefInitializeCondition condition : conditions) {
+                        condition.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
+                        if (filterPKs != null && filterPKs.length > 0) {
+                            condition.setDefaultPk(filterPKs[0]);
+                        }
+                    }
+                }
+            }
 		}
 	}
 }
+
 
 /**
  * 成本中心设置财务组织参照设置处理
@@ -163,7 +179,7 @@ class CostCenterSetFiOrgRefMOdelProcesser extends RefModelProcessor {
 }
 
 public class BXQryTplUtil {
-	
+    
 	/**
 	 * 返回查询条件值
 	 * @param filter
@@ -198,12 +214,22 @@ public class BXQryTplUtil {
 	public static void orgCriteriaChanged(CriteriaChangedEvent evt,List<String> orgRelKeyList){
 		try{
 		    String pk_org = null;
-			if (null != BXQryTplUtil.getFieldValuesFromCriteriaChangedEvent(evt)
-					&& BXQryTplUtil.getFieldValuesFromCriteriaChangedEvent(evt).length > 0) {
-			    pk_org = BXQryTplUtil.getFieldValuesFromCriteriaChangedEvent(evt)[0];
+		    String[] val = BXQryTplUtil.getFieldValuesFromCriteriaChangedEvent(evt);
+			if (null != val && val.length > 0) {
+			    pk_org = val[0];
 			}
+			UIRefPane refPanel = BXQryTplUtil.getRefPaneByFieldCode(evt, evt.getFieldCode());
+            AbstractRefModel refModel = refPanel.getRefModel();
+			Object[] objs = refModel.getValues(refModel.getPkFieldCode(), refModel.getData());
+            String[] objStr = null;
+            if (objs != null && objs.length > 0) {
+                objStr = new String[objs.length];
+                for (int nPos = 0; nPos <objs.length; nPos++) {
+                    objStr[nPos] = (String)objs[nPos];
+                }                
+            }
             for (String key : orgRelKeyList) {
-                BXQryTplUtil.setOrgForField(evt.getCriteriaEditor(), key, pk_org);
+                BXQryTplUtil.setOrgForField(evt.getCriteriaEditor(), key, pk_org, objStr);
                 if(!BX_PK_RESACOSTCENTER.equals(key)){
                     continue;
                 }
@@ -239,10 +265,22 @@ public class BXQryTplUtil {
             if (orgValues != null && orgValues.length > 0) {
                 pk_org = orgValues[0];
             }
+            
+            UIRefPane refPanel = BXQryTplUtil.getRefPaneByFieldCode(evt, evt.getFieldCode());
+            AbstractRefModel refModel = refPanel.getRefModel();
+            Object[] objs = refModel.getValues(refModel.getPkFieldCode(), refModel.getData());
+            String[] objStr = null;
+            if (objs != null && objs.length > 0) {
+                objStr = new String[objs.length];
+                for (int nPos = 0; nPos <objs.length; nPos++) {
+                    objStr[nPos] = (String)objs[nPos];
+                }                
+            }
+            
             try {
                 BXQryTplUtil.setOrgForField(
                         evt.getCriteriaEditor(),
-                        evt.getFieldCode(), pk_org);
+                        evt.getFieldCode(), pk_org, objStr);
                 // 如果编辑字段为成本中心,则设置成本中心的所属财务组织为费用承担单位
                 if (BX_PK_RESACOSTCENTER.equals(evt.getFieldCode())
                         && (BX_FYDWBM.equals(vOrgField) || "zb.fydwbm".equals(vOrgField) 
@@ -456,8 +494,8 @@ public class BXQryTplUtil {
 		}
 		String[] fieldValues = new String[fieldValueElement.size()];
 		for (int i = 0; i < fieldValues.length; i++) {
-			fieldValues[i] = fieldValueElement.get(i) != null ? fieldValueElement
-					.get(i).getSqlString()
+			fieldValues[i] = fieldValueElement.get(i) != null ? ((RefValueObject)fieldValueElement
+					.get(i).getValueObject()).getPk()
 					: null;
 		}
 		return fieldValues;

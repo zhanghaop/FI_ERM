@@ -7,6 +7,8 @@ import java.util.Vector;
 
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.erm.util.ErUiUtil;
+import nc.ui.vorg.ref.AdminOrgVersionDefaultRefModel;
+import nc.ui.vorg.ref.BusinessUnitVersionDefaultRefModel;
 import nc.ui.vorg.ref.DeptVersionDefaultRefModel;
 import nc.ui.vorg.ref.FinanceOrgVersionDefaultRefTreeModel;
 import nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel;
@@ -14,9 +16,11 @@ import nc.vo.jcom.lang.StringUtil;
 import nc.vo.org.LiabilityCenterVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.vorg.AdminOrgVersionVO;
 import nc.vo.vorg.DeptVersionVO;
 import nc.vo.vorg.FinanceOrgVersionVO;
 import nc.vo.vorg.LiabilityCenterVersionVO;
+import nc.vo.vorg.OrgVersionVO;
 
 public class MultiVersionUtils {
 	/**
@@ -59,6 +63,16 @@ public class MultiVersionUtils {
 			model.matchPkData(vid);
 			Object value = model.getValue(LiabilityCenterVersionVO.PK_LIABILITYCENTER);
 			return (String) value;
+		} else if (versionModel instanceof BusinessUnitVersionDefaultRefModel) {//业务单元多版本
+			BusinessUnitVersionDefaultRefModel model = (BusinessUnitVersionDefaultRefModel) versionModel;
+			model.matchPkData(vid);
+			Object value = model.getValue(OrgVersionVO.PK_ORG);
+			return (String) value;
+		} else if(versionModel instanceof AdminOrgVersionDefaultRefModel){//行政组织多版本
+			AdminOrgVersionDefaultRefModel model = (AdminOrgVersionDefaultRefModel) versionModel;
+			model.matchPkData(vid);
+			Object value = model.getValue(AdminOrgVersionVO.PK_ADMINORG);
+			return (String) value;
 		}
 		return null;
 	}
@@ -91,11 +105,18 @@ public class MultiVersionUtils {
 			LiabilityCenterVersionDefaultRefModel model = (LiabilityCenterVersionDefaultRefModel) versionModel;
 			model.setVstartdate(vstartdate);
 			return getRefModelMatchMap(model, LiabilityCenterVO.PK_LIABILITYCENTER, oids, FinanceOrgVersionVO.PK_VID);
-
 		} else if (versionModel instanceof DeptVersionDefaultRefModel) {
 			DeptVersionDefaultRefModel model = (DeptVersionDefaultRefModel) versionModel;
 			model.setVstartdate(vstartdate);
 			return getRefModelMatchMap(model, DeptVersionVO.PK_DEPT, oids, FinanceOrgVersionVO.PK_VID);
+		} else if (versionModel instanceof BusinessUnitVersionDefaultRefModel) {// 业务单元多版本
+			BusinessUnitVersionDefaultRefModel model = (BusinessUnitVersionDefaultRefModel) versionModel;
+			model.setVstartdate(vstartdate);
+			return getRefModelMatchMap(model, OrgVersionVO.PK_ORG, oids, OrgVersionVO.PK_VID);
+		} else if (versionModel instanceof AdminOrgVersionDefaultRefModel) {// 行政组织多版本
+			AdminOrgVersionDefaultRefModel model = (AdminOrgVersionDefaultRefModel) versionModel;
+			model.setVstartdate(vstartdate);
+			return getRefModelMatchMap(model, AdminOrgVersionVO.PK_ADMINORG, oids, AdminOrgVersionVO.PK_VID);
 		}
 		return new HashMap<String, String>();
 	}

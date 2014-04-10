@@ -22,6 +22,7 @@ import nc.vo.pub.VOStatus;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.trade.pub.IBillStatus;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -371,6 +372,11 @@ public class MatterAppVOChecker {
 			if (head.getBilldate().compareTo(head.getApprovetime().getDate()) > 0) {
 				throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
 						"0201212-0098")/* @res "单据审核日期不得早于单据日期!" */);
+			}
+			
+			if (head.getApprstatus() == IBillStatus.FREE) {
+				throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("201212_0",
+						"单据未提交，不能进行审批!", "0201212-0104"));
 			}
 
 			VOStatusChecker.checkApproveStatus(head);

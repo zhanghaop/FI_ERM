@@ -4,7 +4,6 @@ import java.awt.Dimension;
 
 import nc.ui.bd.pub.BDOrgPanel;
 import nc.ui.bd.ref.AbstractRefModel;
-import nc.ui.org.ref.FinanceOrgDefaultRefTreeModel;
 import nc.ui.pub.beans.UIRefPane;
 import nc.vo.uif2.LoginContext;
 
@@ -18,7 +17,7 @@ public class ErmFinOrgPanel extends BDOrgPanel{
 			refPane = new UIRefPane();
             refPane.setPreferredSize(new Dimension(200, 20));
             LoginContext context = getModel().getContext();
-			AbstractRefModel refModel = new FinanceOrgDefaultRefTreeModel(); 
+			AbstractRefModel refModel = new nc.ui.org.ref.BusinessUnitDefaultRefModel(); 
 			refModel.setPk_group(context.getPk_group());
 			refModel.setFilterPks(context.getPkorgs());
             refPane.setRefModel(refModel);

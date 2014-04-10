@@ -12,6 +12,18 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="importableEditor"	class="nc.ui.erm.matterapp.importable.MaImportablePanel" >
+		<constructor-arg value ="费用申请单" >
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="manageAppModel" />
+		</constructor-arg>
+		<constructor-arg value ="nc/ui/erm/matterapp/config/matterappmn.xml" >
+		</constructor-arg>
+		<property name="appModel" ref="manageAppModel"></property>
+		<property name="uiEditor" ref="billFormEditor"></property>
+	</bean>
 
 	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
 		<constructor-arg>
@@ -37,6 +49,8 @@
 				<ref bean="documentaction" />
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction" />
 				<ref bean="printListGroupAction" />
 			</list>
@@ -68,6 +82,8 @@
 				<ref bean="documentaction" />
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction" />
 				<ref bean="printCardGroupAction" />
 			</list>

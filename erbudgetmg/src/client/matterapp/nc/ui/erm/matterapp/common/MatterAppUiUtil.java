@@ -3,7 +3,6 @@ package nc.ui.erm.matterapp.common;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.fi.pub.Currency;
-import nc.pubitf.para.SysInitQuery;
 import nc.ui.erm.matterapp.listener.CardBodyAmountDigitListener;
 import nc.ui.erm.matterapp.listener.CardBodyRateDecimalListener;
 import nc.ui.erm.matterapp.listener.ListBodyAmountDigitListener;
@@ -19,7 +18,6 @@ import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.DefaultCurrTypeBizDecimalListener;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.AbstractAppModel;
-import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
@@ -106,12 +104,14 @@ public class MatterAppUiUtil {
 
 					// 表体汇率
 					new CardBodyRateDecimalListener(cardPanel.getBillModel(tables[i]), MtAppDetailVO.ASSUME_ORG,
-							new String[] { MtAppDetailVO.ORG_CURRINFO }, CardBodyRateDecimalListener.RATE_TYPE_LOCAL);
+							new String[] { MtAppDetailVO.ORG_CURRINFO }, CardBodyRateDecimalListener.RATE_TYPE_LOCAL,
+							cardPanel);
 					new CardBodyRateDecimalListener(cardPanel.getBillModel(tables[i]), MtAppDetailVO.ASSUME_ORG,
-							new String[] { MtAppDetailVO.GROUP_CURRINFO }, CardBodyRateDecimalListener.RATE_TYPE_GROUP);
+							new String[] { MtAppDetailVO.GROUP_CURRINFO }, CardBodyRateDecimalListener.RATE_TYPE_GROUP,
+							cardPanel);
 					new CardBodyRateDecimalListener(cardPanel.getBillModel(tables[i]), MtAppDetailVO.ASSUME_ORG,
 							new String[] { MtAppDetailVO.GLOBAL_CURRINFO },
-							CardBodyRateDecimalListener.RATE_TYPE_GLOBAL);
+							CardBodyRateDecimalListener.RATE_TYPE_GLOBAL, cardPanel);
 
 				}
 			} catch (Exception e) {
@@ -272,105 +272,16 @@ public class MatterAppUiUtil {
 		return result;
 	}
 
-	public static boolean getGroupRateEnableStatus(String pk_org, String pk_currtype) {
-		if (pk_org == null || pk_currtype == null) {
-			return false;
-		}
-
-		try {
-			final String orgLocalCurrPK = Currency.getOrgLocalCurrPK(pk_org);
-			final String groupCurrpk = Currency.getGroupCurrpk(ErUiUtil.getPK_group());
-
-			// 集团汇率能否编辑
-			final String groupMod = SysInitQuery.getParaString(ErUiUtil.getPK_group(), "NC001");
-			if (BXConstans.GROUP_DISABLE.equals(groupMod)) {
-				// 不启用，则不可编辑
-				return false;
-			} else {
-				// 集团本币是否基于原币计算
-				boolean isGroupByCurrtype = BXConstans.BaseOriginal.equals(groupMod);
-				if (isGroupByCurrtype) {
-					// 原币和集团本币相同
-					if (groupCurrpk.equals(pk_currtype)) {
-						return false;
-					} else {
-						return true;
-					}
-				} else {
-					if (orgLocalCurrPK.equals(groupCurrpk)) {
-						return false;
-					} else {
-						return true;
-					}
-				}
-			}
-		} catch (BusinessException e) {
-			ExceptionHandler.consume(e);
-		}
-
-		return false;
+	public static boolean getOrgRateEnableStatus(String pk_org, String pk_currtype) {
+		return ErUiUtil.getOrgRateEnableStatus(pk_org, pk_currtype);
 	}
 
-	public static boolean getOrgRateEnableStatus(String pk_org, String pk_currtype) {
-		if (pk_org == null || pk_currtype == null) {
-			return false;
-		}
-
-		try {
-			String orgLocalCurrPK = Currency.getOrgLocalCurrPK(pk_org);
-
-			if (orgLocalCurrPK.equals(pk_currtype)) {
-				return false;
-			} else {
-				return true;
-			}
-		} catch (BusinessException e) {
-			ExceptionHandler.consume(e);
-		}
-
-		return false;
+	public static boolean getGroupRateEnableStatus(String pk_org, String pk_currtype) {
+		return ErUiUtil.getGroupRateEnableStatus(pk_org, pk_currtype);
 	}
 
 	public static boolean getGlobalRateEnableStatus(String pk_org, String pk_currtype) {
-		if (pk_org == null || pk_currtype == null) {
-			return false;
-		}
-
-		try {
-			boolean result = false;
-
-			final String orgLocalCurrPK = Currency.getOrgLocalCurrPK(pk_org);
-			final String globalCurrPk = Currency.getGlobalCurrPk(null);
-			// 全局汇率能否编辑
-			final String globalMod = SysInitQuery.getParaString("GLOBLE00000000000000", "NC002");
-			if (BXConstans.GLOBAL_DISABLE.equals(globalMod)) {
-				// 不启用，则不可编辑
-				result = false;
-			} else {
-				// 全局本币是否基于原币计算
-				boolean isGlobalByCurrtype = BXConstans.BaseOriginal.equals(globalMod);
-				if (isGlobalByCurrtype) {
-					// 全局本币和原币相同
-					if (globalCurrPk.equals(pk_currtype)) {
-						result = false;
-					} else {
-						result = true;
-					}
-				} else {
-					if (orgLocalCurrPK.equals(globalCurrPk)) {
-						result = false;
-					} else {
-						result = true;
-					}
-				}
-			}
-
-			return result;
-		} catch (BusinessException e) {
-			ExceptionHandler.consume(e);
-		}
-
-		return false;
+		return ErUiUtil.getGlobalRateEnableStatus(pk_org, pk_currtype);
 	}
 
 	public static void crossCheck(String itemKey, BillForm editor, String headOrBody) throws BusinessException {
@@ -403,13 +314,14 @@ public class MatterAppUiUtil {
 			rowAmount = rowAmount == null ? UFDouble.ZERO_DBL : rowAmount;
 
 			if (rowAmount.compareTo(UFDouble.ZERO_DBL) == 0) {
-//				cardPanel.getBillModel().setValueAt(UFDouble.ZERO_DBL, row, MtAppDetailVO.SHARE_RATIO);
+				// cardPanel.getBillModel().setValueAt(UFDouble.ZERO_DBL, row,
+				// MtAppDetailVO.SHARE_RATIO);
 				setBodyValue(cardPanel.getBillModel(), UFDouble.ZERO_DBL, row, MtAppDetailVO.SHARE_RATIO);
 			} else {
 				UFDouble shareRatio = (ori_amount.compareTo(UFDouble.ZERO_DBL) == 0 ? UFDouble.ZERO_DBL : rowAmount
 						.div(ori_amount)).multiply(uf100);
 				shareRatio = shareRatio.setScale(2, UFDouble.ROUND_HALF_UP);
-				
+
 				setBodyValue(cardPanel.getBillModel(), shareRatio, row, MtAppDetailVO.SHARE_RATIO);
 
 				differ_ratio = differ_ratio.sub(shareRatio);
@@ -421,8 +333,9 @@ public class MatterAppUiUtil {
 			if (differ_ratio.compareTo(UFDouble.ZERO_DBL) > 0) {
 				UFDouble lastrow_ratio = (UFDouble) cardPanel.getBillModel().getValueObjectAt(lastRow,
 						MtAppDetailVO.SHARE_RATIO);
-				
-				setBodyValue(cardPanel.getBillModel(), differ_ratio.add(lastrow_ratio), lastRow, MtAppDetailVO.SHARE_RATIO);
+
+				setBodyValue(cardPanel.getBillModel(), differ_ratio.add(lastrow_ratio), lastRow,
+						MtAppDetailVO.SHARE_RATIO);
 			} else {// 合计值大于100时，差额为负数
 				for (int row = lastRow; row > 0; row--) {
 					UFDouble oriAmount = (UFDouble) cardPanel.getBillModel().getValueObjectAt(row,
@@ -430,7 +343,7 @@ public class MatterAppUiUtil {
 					if (oriAmount == null || oriAmount.compareTo(UFDouble.ZERO_DBL) == 0) {
 						continue;
 					}
-					
+
 					UFDouble lastrow_ratio = (UFDouble) cardPanel.getBillModel().getValueObjectAt(row,
 							MtAppDetailVO.SHARE_RATIO);
 					if (lastrow_ratio.compareTo(differ_ratio.abs()) >= 0) {
@@ -445,7 +358,7 @@ public class MatterAppUiUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param model
@@ -453,9 +366,9 @@ public class MatterAppUiUtil {
 	 * @param row
 	 * @param key
 	 */
-	private static void setBodyValue(BillModel model ,Object value, int row, String key ){
-		if(model != null){
-			if(model.getRowState(row) == BillModel.NORMAL){
+	private static void setBodyValue(BillModel model, Object value, int row, String key) {
+		if (model != null) {
+			if (model.getRowState(row) == BillModel.NORMAL) {
 				model.setRowState(row, BillModel.MODIFICATION);
 			}
 			model.setValueAt(value, row, key);
@@ -471,25 +384,25 @@ public class MatterAppUiUtil {
 		BillModel billModel = cardPanel.getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL);
 
 		BillItem maxAmountHeadItem = cardPanel.getHeadItem(MatterAppVO.MAX_AMOUNT);
-		if (maxAmountHeadItem == null) {//表头最大金额
+		if (maxAmountHeadItem == null) {// 表头最大金额
 			return;
 		}
 
-		UFDouble maxAmount = (UFDouble) maxAmountHeadItem.getValueObject();//最大金额不为0
+		UFDouble maxAmount = (UFDouble) maxAmountHeadItem.getValueObject();// 最大金额不为0
 		if (maxAmount == null || maxAmount.compareTo(UFDouble.ZERO_DBL) == 0) {
 			return;
 		}
 
 		UFDouble sumMaxAmount = UFDouble.ZERO_DBL;
 		int rowCount = billModel.getRowCount();
-		for (int row = 0; row < rowCount; row++) {//计算表体最大总金额合计
+		for (int row = 0; row < rowCount; row++) {// 计算表体最大总金额合计
 			UFDouble rowMaxAmount = (UFDouble) billModel.getValueAt(row, MtAppDetailVO.MAX_AMOUNT);
 			if (rowMaxAmount != null && rowMaxAmount.compareTo(UFDouble.ZERO_DBL) != 0) {
 				sumMaxAmount = sumMaxAmount.add(rowMaxAmount);
 			}
 		}
 
-		if (maxAmount.compareTo(sumMaxAmount) != 0) {//不一致时，进行补尾差
+		if (maxAmount.compareTo(sumMaxAmount) != 0) {// 不一致时，进行补尾差
 			UFDouble diffAmount = maxAmount.sub(sumMaxAmount);// 差额
 
 			for (int row = rowCount - 1; row >= 0; row--) {

@@ -110,7 +110,10 @@ public class UnAuditAction extends NCAsynAction {
 		MessageVO result = null;
 		try {
 			if (!checkDataPermission(appVO)) {//权限校验
-				throw new BusinessException(IShowMsgConstant.getDataPermissionInfo());
+				result = new MessageVO(appVO, ActionUtils.UNAUDIT);
+				result.setSuccess(false);
+				result.setErrorMessage(IShowMsgConstant.getDataPermissionInfo());
+				return result;
 			}
 			
 			Object returnObj = (MessageVO[]) PfUtilClient.runAction(getBillForm().getParent(), "UNAPPROVE", appVO
@@ -158,12 +161,9 @@ public class UnAuditAction extends NCAsynAction {
 
 		if (!approveStatus.equals(IBillStatus.CHECKGOING) && !approveStatus.equals(IBillStatus.CHECKPASS) && !approveStatus.equals(IBillStatus.NOPASS)) {
 			msgVO.setSuccess(false);
-			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0008")/*
-																													 * @
-																													 * res
-																													 * "该单据当前状态不能进行审核！"
-																													 */);
+			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("201212_0", "单据当前状态不能进行反审批！", "0201212-0103"));
 		}
+		
 		return msgVO;
 	}
 

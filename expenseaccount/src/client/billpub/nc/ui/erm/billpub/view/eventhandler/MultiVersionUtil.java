@@ -16,6 +16,8 @@ import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.IBillItem;
+import nc.ui.vorg.ref.AdminOrgVersionDefaultRefModel;
+import nc.ui.vorg.ref.BusinessUnitVersionDefaultRefModel;
 import nc.ui.vorg.ref.DeptVersionDefaultRefModel;
 import nc.ui.vorg.ref.FinanceOrgVersionDefaultRefTreeModel;
 import nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel;
@@ -26,9 +28,11 @@ import nc.vo.org.LiabilityCenterVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.vorg.AdminOrgVersionVO;
 import nc.vo.vorg.DeptVersionVO;
 import nc.vo.vorg.FinanceOrgVersionVO;
 import nc.vo.vorg.LiabilityCenterVersionVO;
+import nc.vo.vorg.OrgVersionVO;
 
 public class MultiVersionUtil {
 	/**
@@ -51,6 +55,7 @@ public class MultiVersionUtil {
 			}
 		}
 		String pk_vid = getBillHeadFinanceOrgVersion(field, pk_value, date, cardPanel, editor);
+		
 		BillItem headItem = cardPanel.getHeadItem(field);
 		if (headItem != null) {
 			headItem.setValue(pk_vid);
@@ -231,19 +236,26 @@ public class MultiVersionUtil {
 	 */
 	public static Map<String, String> getFinanceOrgVersion(AbstractRefModel versionModel, String[] oids,
 			UFDate vstartdate) {
-		if (versionModel instanceof FinanceOrgVersionDefaultRefTreeModel) {
+		if (versionModel instanceof FinanceOrgVersionDefaultRefTreeModel) {// 财务组织多版本
 			FinanceOrgVersionDefaultRefTreeModel model = (FinanceOrgVersionDefaultRefTreeModel) versionModel;
-			
+
 			model.setVstartdate(vstartdate);
-			return getRefModelMatchMap(model, FinanceOrgVersionVO.PK_FINANCEORG, oids,
-					FinanceOrgVersionVO.PK_VID);
+			return getRefModelMatchMap(model, FinanceOrgVersionVO.PK_FINANCEORG, oids, FinanceOrgVersionVO.PK_VID);
+		} else if (versionModel instanceof BusinessUnitVersionDefaultRefModel) {// 业务单元多版本
+			BusinessUnitVersionDefaultRefModel model = (BusinessUnitVersionDefaultRefModel) versionModel;
+			model.setVstartdate(vstartdate);
+			return getRefModelMatchMap(model, OrgVersionVO.PK_ORG, oids, OrgVersionVO.PK_VID);
+
 		} else if (versionModel instanceof LiabilityCenterVersionDefaultRefModel) {// 利润中心多版本
 			LiabilityCenterVersionDefaultRefModel model = (LiabilityCenterVersionDefaultRefModel) versionModel;
 			model.setVstartdate(vstartdate);
-			return getRefModelMatchMap(model, LiabilityCenterVO.PK_LIABILITYCENTER, oids,
-					FinanceOrgVersionVO.PK_VID);
+			return getRefModelMatchMap(model, LiabilityCenterVO.PK_LIABILITYCENTER, oids, LiabilityCenterVO.PK_VID);
 
-		} else if (versionModel instanceof DeptVersionDefaultRefModel) {
+		} else if (versionModel instanceof AdminOrgVersionDefaultRefModel) {// 行政组织多版本
+			AdminOrgVersionDefaultRefModel model = (AdminOrgVersionDefaultRefModel) versionModel;
+			model.setVstartdate(vstartdate);
+			return getRefModelMatchMap(model, AdminOrgVersionVO.PK_ADMINORG, oids, AdminOrgVersionVO.PK_VID);
+		} else if (versionModel instanceof DeptVersionDefaultRefModel) {// 部门多版本
 			DeptVersionDefaultRefModel model = (DeptVersionDefaultRefModel) versionModel;
 			model.setVstartdate(vstartdate);
 			return getRefModelMatchMap(model, DeptVersionVO.PK_DEPT, oids, FinanceOrgVersionVO.PK_VID);
@@ -261,16 +273,26 @@ public class MultiVersionUtil {
 	 * @return
 	 */
 	public static String getBillFinanceOrg(AbstractRefModel versionModel, String vid) {
-		if (versionModel instanceof FinanceOrgVersionDefaultRefTreeModel) {
+		if (versionModel instanceof FinanceOrgVersionDefaultRefTreeModel) {//财务组织多版本
 			FinanceOrgVersionDefaultRefTreeModel model = (FinanceOrgVersionDefaultRefTreeModel) versionModel;
 			model.matchPkData(vid);
 			Object value = model.getValue(FinanceOrgVersionVO.PK_FINANCEORG);
 			return (String) value;
-		} else if (versionModel instanceof nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel) {
+		} else if (versionModel instanceof nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel) {//利润中心多版本
 			nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel model = (nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel) versionModel;
 			model.matchPkData(vid);
 			Object value = model
 					.getValue(LiabilityCenterVersionVO.PK_LIABILITYCENTER);
+			return (String) value;
+		} else if (versionModel instanceof BusinessUnitVersionDefaultRefModel) {//业务单元多版本
+			BusinessUnitVersionDefaultRefModel model = (BusinessUnitVersionDefaultRefModel) versionModel;
+			model.matchPkData(vid);
+			Object value = model.getValue(OrgVersionVO.PK_ORG);
+			return (String) value;
+		} else if(versionModel instanceof AdminOrgVersionDefaultRefModel){//行政组织多版本
+			AdminOrgVersionDefaultRefModel model = (AdminOrgVersionDefaultRefModel) versionModel;
+			model.matchPkData(vid);
+			Object value = model.getValue(AdminOrgVersionVO.PK_ADMINORG);
 			return (String) value;
 		}
 		return null;

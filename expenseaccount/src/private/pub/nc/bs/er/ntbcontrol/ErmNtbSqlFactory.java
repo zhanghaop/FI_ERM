@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nc.bs.erm.annotation.ErmBusinessDef;
+import nc.bs.erm.common.ErmBillConst;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.expamortize.ExpAmoritizeConst;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
@@ -47,6 +48,7 @@ public class ErmNtbSqlFactory {
 		strategyMap.put(IErmCostShareConst.COSTSHARE_BILLTYPE, new CSErmNtbSqlStrategy());// 结转
 		strategyMap.put(ErmMatterAppConst.MatterApp_BILLTYPE, new MAErmNtbSqlStrategy());// 申请
 		strategyMap.put(ExpAmoritizeConst.Expamoritize_BILLTYPE, new ATErmNtbSqlStrategy());// 摊销
+		strategyMap.put(ErmBillConst.AccruedBill_Billtype, new ACErmNtbSqlStrategy());// 摊销
 	}
 
 	public static ErmNtbSqlFactory getInstance(NtbParamVO param) {// 单例模式
@@ -75,6 +77,9 @@ public class ErmNtbSqlFactory {
 			if (typeSet.contains(ExpAmoritizeConst.Expamoritize_BILLTYPE)) {// 摊销信息
 				sqlList.addAll(strategyMap.get(ExpAmoritizeConst.Expamoritize_BILLTYPE).getSqls(getNtbParam()));
 			}
+			if (typeSet.contains(ErmBillConst.AccruedBill_Billtype)) {// 预提单
+				sqlList.addAll(strategyMap.get(ErmBillConst.AccruedBill_Billtype).getSqls(getNtbParam()));
+			}
 		} catch (Exception e) {
 			ExceptionHandler.handleException(e);
 		}
@@ -100,6 +105,9 @@ public class ErmNtbSqlFactory {
 			}
 			if (typeSet.contains(ExpAmoritizeConst.Expamoritize_BILLTYPE)) {// 摊销信息
 				sqlList.addAll(strategyMap.get(ExpAmoritizeConst.Expamoritize_BILLTYPE).getDetailSqls(getNtbParam()));
+			}
+			if (typeSet.contains(ErmBillConst.AccruedBill_Billtype)) {// 预提单
+				sqlList.addAll(strategyMap.get(ErmBillConst.AccruedBill_Billtype).getDetailSqls(getNtbParam()));
 			}
 		} catch (Exception e) {
 			ExceptionHandler.handleException(e);

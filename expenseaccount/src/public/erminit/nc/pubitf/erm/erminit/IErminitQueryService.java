@@ -2,6 +2,7 @@ package nc.pubitf.erm.erminit;
 
 import java.util.List;
 
+import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.erm.erminit.ErminitVO;
 import nc.vo.org.CloseAccBookVO;
 import nc.vo.pub.BusinessException;
@@ -40,5 +41,11 @@ public interface IErminitQueryService {
 	 * @throws BusinessException
 	 */
 	public String[] queryStatusByOrgs(String[] pk_org)throws BusinessException;
+	
+	/**
+	 * 获得冲销明细
+	 */
+	
+	public List<BxcontrastVO> getBxcontrastVO(String jkdpk)throws BusinessException;
 	
 }

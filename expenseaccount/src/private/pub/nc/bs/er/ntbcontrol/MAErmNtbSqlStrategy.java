@@ -295,8 +295,7 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			if (actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY) != null) {
 				obj = actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY);
 				if (obj != null && obj.type == NtbType.PREVIOUS && obj.dic == NtbDic.INC) {
-					sql.append("ma." + MatterAppVO.BILLSTATUS + " in (" + ErmMatterAppConst.BILLSTATUS_SAVED + ","
-							+ ErmMatterAppConst.BILLSTATUS_COMMITED + ")");
+					sql.append("ma." + MatterAppVO.BILLSTATUS + " in (" + ErmMatterAppConst.BILLSTATUS_SAVED  + ")");
 				}
 			}
 			if (actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY) != null) {

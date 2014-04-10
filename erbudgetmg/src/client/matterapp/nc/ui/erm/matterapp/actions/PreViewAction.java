@@ -2,9 +2,6 @@ package nc.ui.erm.matterapp.actions;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.matterapp.common.MatterAppUiUtil;
@@ -59,22 +56,19 @@ public class PreViewAction extends NCAction {
 			nodeKey = getNodeKey();
 		}
 
-		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.getModel().getContext()
-				.getEntranceUI());
-		PrintEntry entry = new PrintEntry(frame);
+		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI(), getDataSource());
 		String pkUser = getModel().getContext().getPk_loginUser();
 		entry.setTemplateID(MatterAppUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, nodeKey);
 		entry.selectTemplate();
-		entry.setDataSource(getDataSource());
 		entry.preview();
 	}
 	
 	public String getNodeKey() {
 		String nodeCode = getModel().getContext().getNodeCode();
-		if (!ErmMatterAppConst.MAPP_NODECODE_MN.equals(nodeCode)) {
-			return null;
-		} else {
+		if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(nodeCode) || ErmMatterAppConst.MAPP_NODECODE_QY.equals(nodeCode)) {
 			return ((MAppModel) getModel()).getDjlxbm();
+		} else {
+			return null;
 		}
 	}
 

@@ -14,9 +14,11 @@ import nc.bs.dao.BaseDAO;
 import nc.bs.er.djlx.DjLXDMO;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
+import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.cmp.busi.ISettleNotifyPayTypeBusiBillService;
 import nc.itf.cmp.settlement.ISettlement;
 import nc.itf.er.pub.IArapBillTypePublic;
+import nc.itf.uap.busibean.SysinitAccessor;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.cmp.BusiInfo;
@@ -65,6 +67,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	}
 
 	// 委托付款
+	@Override
 	public void execStatuesChange(BusiInfo busiInfo, CMPExecStatus status) throws BusinessException {
 
 		// 更新报销单据支付状态
@@ -78,14 +81,17 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	}
 
 	// 承兑汇票退票,不处理
+	@Override
 	public List<ReturnBillRetDetail> processReturnBill(ReturnBill4BusiVO bill4BusiVO) throws BusinessException {
 		return null;
 	}
 
 	// 红冲,不处理
+	@Override
 	public void setoffRed(NetPayExecInfo payInfo, Map<String, SettlementBodyVO[]> value) throws BusinessException {
 	}
-
+	
+	@Override
 	public void billStateChange(BusiInfo busiInfo, BusiStateTrans trans) throws BusinessException {
 
 		// 审核->签字
@@ -101,7 +107,8 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		}
 
 	}
-
+	
+	@Override
 	public void effectStateChange(BusiInfo busiInfo, BusiStateTrans trans) throws BusinessException {
 		if (jkbxVO == null || !jkbxVO.getParentVO().getPrimaryKey().equals(busiInfo.getPk_bill())) {
 			jkbxVO = getBxVO(busiInfo, trans);
@@ -115,9 +122,33 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		else if (BusiStatus.EffectNever.equals(trans.getTo())) {
 			flag = BXZbBO.MESSAGE_UNSETTLE;
 		}
-
-		// 发送会计平台
-		bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
+		String param = SysinitAccessor.getInstance().getParaString(jkbxVO.getParentVO().getPk_org(), "CMP37");
+		if(param.equals(BXStatusConst.VounterCondition_QZ)){
+			if(BXZbBO.MESSAGE_SETTLE.equals(flag) && 
+					(jkbxVO.getParentVO().getVouchertag()==null 
+							||jkbxVO.getParentVO().getVouchertag()==BXStatusConst.SXFlag )){
+				jkbxVO.getParentVO().setVouchertag(BXStatusConst.SXFlag);
+				bo.updateHeader(jkbxVO.getParentVO(), new String[]{JKBXHeaderVO.VOUCHERTAG});
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
+			}
+		}
+		//取消签字与凭证环节没有关系
+		if(BXZbBO.MESSAGE_UNSETTLE.equals(flag)){
+			if(jkbxVO.getParentVO().getVouchertag()!= null && 
+					jkbxVO.getParentVO().getVouchertag() == BXStatusConst.MEDeal){
+				//凭证环节是月末凭证时，将单据的凭证都删除（暂估凭证，月末凭证）
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag); // 删除月末凭证
+				
+				//删除暂估凭证：
+				jkbxVO.getParentVO().setVouchertag(BXStatusConst.ZGDeal);
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
+				
+			}else{
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
+			}
+			jkbxVO.getParentVO().setVouchertag(null);
+			bo.updateHeader(jkbxVO.getParentVO(), new String[]{JKBXHeaderVO.VOUCHERTAG});
+		}
 	}
 
 	private JKBXHeaderVO getBxHeaderVO(BusiInfo busiInfo) throws BusinessException {
@@ -196,20 +227,24 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 
 		return bxvo;
 	}
-
+	
+	@Override
 	public boolean checkCancelEffect(BusiInfo info) throws BusinessException {
 		return true;
 	}
-
+	
+	@Override
 	public boolean checkCancelSign(BusiInfo info) throws BusinessException {
 		return true;
 	}
-
+	
+	@Override
 	public void coerceDelete(BusiInfo busiInfo) throws BusinessException {
 		JKBXHeaderVO head = getBxHeaderVO(busiInfo);
 		bo.delete(new JKBXVO[] { VOFactory.createVO(head) });
 	}
-
+	
+	@Override
 	public AggregatedValueObject getBillVO(BusiInfo info) throws BusinessException {
 		return getBxVO(info);
 	}
@@ -321,6 +356,10 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	 */
 	public void invokeCmp(JKBXVO param, UFDate date, BusiStatus busiStatus) throws BusinessException {
 		JKBXHeaderVO head = param.getParentVO();
+		if(head.isAdjustBxd()){
+			// 报销类型为费用调整的单据，不进行支付结算
+			return ;
+		}
 		if (SettleUtil.hasSettleInfo(head, head.getDjdl())) {
 			ISettlement settle =  NCLocator.getInstance().lookup(ISettlement.class);
 			DjLXVO djlxvo = NCLocator.getInstance().lookup(IArapBillTypePublic.class).getDjlxvoByDjlxbm(param.getParentVO().getDjlxbm(), param.getParentVO()
@@ -359,20 +398,65 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		if (idList == null || idList.size() == 0)
 			return;
 		List<JKBXHeaderVO> voList = new ArrayList<JKBXHeaderVO>();
+		
+		String flag = !isOpp ? BXZbBO.MESSAGE_SETTLE : BXZbBO.MESSAGE_UNSETTLE;
+		String param = null;
 		for (String id : idList) {
 			List<JKBXHeaderVO> name = new BXZbBO().queryHeadersByPrimaryKeys(new String[] { id }, BXConstans.BX_DJDL);
 			if (name == null || name.size() == 0) {
 				name = new BXZbBO().queryHeadersByPrimaryKeys(new String[] { id }, BXConstans.JK_DJDL);
 			}
+			
 			JKBXHeaderVO head = name.get(0);
+			param = SysinitAccessor.getInstance().getParaString(head.getPk_org(), "CMP37");
 			head.setPk_jkbx(id);
 			head.setPayflag(isOpp ? CMPExecStatus.UNPayed.getStatus() : CMPExecStatus.PayFinish.getStatus());
 			head.setPaydate(isOpp ? null : operateDate);
 			head.setPayman(isOpp ? null : operator);
 			voList.add(head);
 		}
+		
+		//根据表头查询整个聚合VO
+		List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(IBXBillPrivate.class).retriveItems(voList);
+		if(BXStatusConst.VounterCondition_ZF.equals(param)){
+			// 发送会计平台
+			if(!isOpp){
+					if(jkbxvo.get(0).getParentVO().getVouchertag()==null){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZFFlag);
+					}else if(BXStatusConst.MEDeal==jkbxvo.get(0).getParentVO().getVouchertag()){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.MEZFFlag);
+					}else if(BXStatusConst.ZGDeal==jkbxvo.get(0).getParentVO().getVouchertag()){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZGZFFlag);
+					}else if(BXStatusConst.ZGMEFlag==jkbxvo.get(0).getParentVO().getVouchertag()){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZGMEZFFlag);
+					}
+					//正向
+					if(jkbxvo.get(0).getParentVO().getVouchertag()==null || 
+							(jkbxvo.get(0).getParentVO().getVouchertag()!=null 
+							&& jkbxvo.get(0).getParentVO().getVouchertag()!=BXStatusConst.SXFlag) ){
+						bo.effectToFip(jkbxvo, flag);
+					}
+				
+			}else{
+					//反向
+					if(jkbxvo.get(0).getParentVO().getVouchertag()==null || 
+						(jkbxvo.get(0).getParentVO().getVouchertag()!=null 
+						&& jkbxvo.get(0).getParentVO().getVouchertag()!=BXStatusConst.SXFlag) ){
+						bo.effectToFip(jkbxvo, flag);
+					}
+					if(jkbxvo.get(0).getParentVO().getVouchertag()==BXStatusConst.ZFFlag){
+						jkbxvo.get(0).getParentVO().setVouchertag(null);
+					}else if(jkbxvo.get(0).getParentVO().getVouchertag()==BXStatusConst.MEZFFlag ){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.MEDeal);
+					} else if(BXStatusConst.ZGZFFlag==jkbxvo.get(0).getParentVO().getVouchertag()){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZGDeal);
+					} else if(BXStatusConst.ZGMEZFFlag==jkbxvo.get(0).getParentVO().getVouchertag()){
+						jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZGMEFlag);
+					}
+			}
+		}
 		new BaseDAO().updateVOArray(voList.toArray(new JKBXHeaderVO[] {}), new String[] { JKBXHeaderVO.PAYFLAG,
-				JKBXHeaderVO.PAYDATE, JKBXHeaderVO.PAYMAN });
+				JKBXHeaderVO.PAYDATE, JKBXHeaderVO.PAYMAN,JKBXHeaderVO.VOUCHERTAG });
 	}
 
 	public List<SettlementBodyVO> autoBX(List<SettlementBodyVO> bodyList) throws BusinessException {
@@ -395,11 +479,13 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 
 		return null;
 	}
-
+	
+	@Override
 	public boolean isAutoFillEbankInfo(String arg0, String arg1, String arg2) throws BusinessException {
 		return false;
 	}
-
+	
+	@Override
 	public void writeBackInnerStatus(boolean isTransfer, SettlementAggVO... aggVOs) throws BusinessException {
 
 	}

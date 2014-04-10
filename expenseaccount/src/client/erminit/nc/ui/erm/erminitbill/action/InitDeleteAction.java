@@ -10,6 +10,7 @@ import nc.itf.arap.pub.IBXBillPublic;
 import nc.pubitf.erm.erminit.IErminitQueryService;
 import nc.ui.uif2.actions.DeleteAction;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.pub.BusinessException;
@@ -62,10 +63,30 @@ public class InitDeleteAction extends DeleteAction {
 																										 */;
 			isSuccess = false;
 		}
-
-		if (handleVOList.size() > 0) {
+		//ehp2 期初冲借款不能删除
+		List<JKBXVO> handle_NoContrast = new ArrayList<JKBXVO>();
+		
+		for (JKBXVO jkbxvo : handleVOList) {
+			List<BxcontrastVO> contrast= NCLocator.getInstance().lookup(IErminitQueryService.class).getBxcontrastVO(jkbxvo.getParentVO().getPk_jkbx());
+			if(contrast!=null && contrast.size()!=0){
+				msgStr += nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0055")/*
+				 * @
+				 * res
+				 * "单据号:"
+				 */+ "[" + jkbxvo.getParentVO().djbh + "]"+ ": "+nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0163")/*
+					 * @
+					 * res
+					 * " 借款单已进行了冲销操作，不能删除\n"
+					 */;
+				isSuccess = false;
+			}else{
+				handle_NoContrast.add(jkbxvo);
+			}
+		}
+		
+		if (handle_NoContrast.size() > 0) {
 			MessageVO[] returnMsg = NCLocator.getInstance().lookup(IBXBillPublic.class)
-					.deleteBills(handleVOList.toArray(new JKBXVO[0]));
+					.deleteBills(handle_NoContrast.toArray(new JKBXVO[0]));
 			for (MessageVO msgVO : returnMsg) {
 				if (msgVO.isSuccess()) {
 					billModel.directlyDelete(msgVO.getSuccessVO());

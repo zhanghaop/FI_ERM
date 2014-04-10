@@ -29,7 +29,7 @@ public class ExpenseTypeCall extends AbstractCall implements IRemoteCallItem {
 
 	@SuppressWarnings("unchecked")
 	public void handleResult(Map<String, Object> datas) throws BusinessException {
-		Collection<SuperVO> expenseType=(Collection<SuperVO>)datas.get(callvo.getCode());
-		(((ErmBillBillForm) panel)).setExpenseMap(VOUtils.changeCollectionToMap(expenseType));
+//		Collection<SuperVO> expenseType=(Collection<SuperVO>)datas.get(callvo.getCode());
+//		(((ErmBillBillForm) panel)).setExpenseMap(VOUtils.changeCollectionToMap(expenseType));
 	}
 }

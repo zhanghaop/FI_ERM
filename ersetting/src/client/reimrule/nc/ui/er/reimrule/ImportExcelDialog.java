@@ -25,7 +25,6 @@ import javax.swing.ButtonGroup;
 
 import nc.bs.framework.common.NCLocator;
 import nc.itf.bd.currtype.ICurrtypeQuery;
-import nc.itf.bd.psn.psndoc.IPsndocQueryService;
 import nc.itf.erm.prv.IArapCommonPrivate;
 import nc.itf.org.IDeptQryService;
 import nc.ui.erm.util.ErUiUtil;
@@ -38,11 +37,11 @@ import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIRadioButton;
 import nc.ui.pub.beans.UITextField;
+import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
 import nc.vo.bd.currtype.CurrtypeVO;
-import nc.vo.bd.psn.PsndocVO;
 import nc.vo.er.expensetype.ExpenseTypeVO;
-import nc.vo.er.reimrule.ReimRuleVO;
+import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.er.reimtype.ReimTypeHeaderVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.logging.Debug;
@@ -122,18 +121,18 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 	private static Map<Integer,String> colsMap=new HashMap<Integer,String>();
 
 
-	private final ReimRuleUI ruleUI ;
+	private final BillCardPanel panel ;
 
-	ArrayList<ReimRuleVO> reimrules;
+	ArrayList<ReimRulerVO> reimrules;
 
 	Sheet sheet = null;
 	/**
 	 * This method initializes
 	 *
 	 */
-	public ImportExcelDialog(Container c,ReimRuleUI ruleui) {
+	public ImportExcelDialog(Container c,BillCardPanel panel) {
 		super(c);
-		this.ruleUI = ruleui;
+		this.panel = panel;
 		initialize();
 	}
 
@@ -476,59 +475,34 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 	 * @param
 	 * @return
 	 */
-	public ReimRuleVO[] importFromExcel() {
+	public ReimRulerVO[] importFromExcel() {
 
 		if(sheet == null)
 		sheet = wb.getSheet(String.valueOf(getUIComboBox().getSelectdItemValue()));
 		int rowNum = sheet.getLastRowNum();
 		//判断EXCEL表头标题是否满足规定的格式
 		Row row = sheet.getRow(0);
-		BillItem[] headShowItems = ruleUI.getBillCardPanel().getBodyShowItems();
-		ArrayList<String> list = new ArrayList<String>(headShowItems.length);
+		BillItem[] headShowItems = panel.getBodyShowItems();
 		for(int j= 0 ; j < row.getLastCellNum();j++){
-//			colsMap.put(j, headShowItems[j].getName());
-			String reimruleKey = headShowItems[j].getKey();
-			if(reimruleKey.contains("def")){
-				 if(reimruleKey.contains("_name")){
-					 String defKey = reimruleKey.substring(0, reimruleKey.indexOf("_"));
-					 list.add(j, headShowItems[j].getName().toString() +  "@" + defKey);
-					 colsMap.put(j, headShowItems[j].getName().toString() +  "@" + defKey);
-				 }else{
-					 list.add(j, headShowItems[j].getName().toString() + "@" + reimruleKey);
-					 colsMap.put(j, headShowItems[j].getName().toString() + "@" + reimruleKey);
-				 }
-			} else {
-				list.add(j, headShowItems[j].getName().toString());
-			    colsMap.put(j, headShowItems[j].getName().toString());
-			}
-		}
-
-		for (int j = 0; j < row.getLastCellNum(); j++) {
 			Cell cell = row.getCell((short) j);
-			try {
-				if(cell != null && !cell.toString().equals(list.get(j))){
-					MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000469")/*@res "EXCEL标题格式不满足要求:"*/+cell.toString());
-					return null;
-				}else if(cell == null){
-					MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000470",null,new String[]{String.valueOf(j+1)})/*@res "EXCEL在i列以后不应有数据:"*/);
-					return null;
-				}
-			} catch (RuntimeException e) {
-				ExceptionHandler.consume(e);
-				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000472")/*@res "EXCEL数据格式异常:"*/);
+			if(cell == null){
+				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000470",null,new String[]{String.valueOf(j+1)})/*@res "EXCEL在i列以后不应有数据:"*/);
 				return null;
 			}
+			for(BillItem item:headShowItems){
+				if(cell.toString().equals(item.getName().toString()))
+					colsMap.put(j, item.getName().toString());
+			}
 		}
 
-		reimrules = new ArrayList<ReimRuleVO>(rowNum);
-
+		reimrules = new ArrayList<ReimRulerVO>(rowNum);
 		for(int i=1;i<=rowNum;i++){
 			row = sheet.getRow(i);
 			if(row == null){
 				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000473")/*@res "警告"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000474")/*@res "数据在："*/+(i+1)+nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000475")/*@res "行为空，跳过"*/);
 				continue;
 			}
-			ReimRuleVO reimrule = new ReimRuleVO();
+			ReimRulerVO reimrule = new ReimRulerVO();
 			for(int j=0;j<row.getLastCellNum();j++){
 				Cell cell = row.getCell((short) j);
 
@@ -536,6 +510,8 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 				try {
 					Object cellValue = null;
 					cellValue = parseValue(cell,cellValue);
+					if(colsMap.get(j)==null)
+						continue;
 					if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPTcommon-000156")/*@res "费用类型"*/)){
 						Collection<SuperVO> expenseType = NCLocator.getInstance().lookup(IArapCommonPrivate.class).getVOs(ExpenseTypeVO.class, "", false);
 						if(expenseType!=null){
@@ -543,10 +519,13 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 							while (itExpense.hasNext()) {
 								ExpenseTypeVO voexpense = (ExpenseTypeVO) itExpense.next();
 								if (getRBUseName().isSelected()) {
-									if (voexpense.getName().equals(cellValue))
+									if (voexpense.getName().equals(cellValue)){
+										reimrule.setPk_expensetype_name(cellValue.toString());
 										reimrule.setPk_expensetype(voexpense.getPk_expensetype());
+									}
 
 								} else if (voexpense.getCode().equals(cellValue)) {
+									reimrule.setPk_expensetype_name(cellValue.toString());
 									reimrule.setPk_expensetype(voexpense.getPk_expensetype());
 								}
 							}
@@ -560,11 +539,14 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 								while(itReimtype.hasNext()){
 									ReimTypeHeaderVO voReimtype = (ReimTypeHeaderVO) itReimtype.next();
 									if(getRBUseName().isSelected()){
-										if(voReimtype.getName().equals(cellValue))
+										if(voReimtype.getName().equals(cellValue)){
 											reimrule.setPk_reimtype(voReimtype.getPk_reimtype());
+											reimrule.setPk_reimtype_name(cellValue.toString());
+										}
 
 									} else if(voReimtype.getCode().equals(cellValue)){
 											reimrule.setPk_reimtype(voReimtype.getPk_reimtype());
+											reimrule.setPk_reimtype_name(cellValue.toString());
 									}
 								}
 						}else reimrule.setPk_reimtype("");
@@ -580,32 +562,23 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 							if(bookvo!=null && bookvo.length>0 )
 							{
 								if(getRBUseName().isSelected()){
-									if(bookvo[0].getName().equals(department))
+									if(bookvo[0].getName().equals(department)){
 										reimrule.setPk_deptid(bookvo[0].getPk_dept());
+										reimrule.setPk_deptid_name(department);
+									}
 									else
 										reimrule.setPk_deptid("");
-								} else if(bookvo[0].getName().equals(cellValue.toString()))
+								} else if(bookvo[0].getName().equals(cellValue.toString())){
 										reimrule.setPk_deptid(bookvo[0].getPk_dept());
+										reimrule.setPk_deptid_name(department);
+								}
 							} else reimrule.setPk_deptid("");
 						} else reimrule.setPk_deptid("");
 
-					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000477")/*@res "姓名"*/)){
-
-						String strpsn = cell.toString();
-						if (strpsn.contains("."))
-							strpsn = strpsn.substring(0,strpsn.lastIndexOf("."));
-						PsndocVO[] namevo = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocVOsByCondition("name ='" + cellValue.toString() +"'");
-					
-						if(namevo!= null){
-							if(getRBUseName().isSelected()){
-								if(namevo[0].getName().equals(cellValue.toString()))
-									reimrule.setPk_psn(namevo[0].getPk_psndoc());
-								else reimrule.setPk_psn("");
-							} else if(namevo[0].getCode().equals(cellValue.toString()))
-								   reimrule.setPk_psn(namevo[0].getPk_psndoc());
-						} else
-							reimrule.setPk_psn("");
-
+					} else if(colsMap.get(j).equals("职位")){
+						String memo = cell.toString();
+						reimrule.setPk_position(memo);
+						reimrule.setPk_position_name(memo);
 					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000046")/*@res "币种"*/)){
 						String strCurrtype = cellValue.toString().trim();
 						if(!"".equals(strCurrtype)&& strCurrtype!=null){
@@ -627,6 +600,7 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 									for(CurrtypeVO vo:currtypevoByName){
 										if(vo.getCode().equals(strCurrtype)){
 											reimrule.setPk_currtype(vo.getPk_currtype());
+											reimrule.setPk_currtype_name(strCurrtype);
 										}
 									}
 								}
@@ -638,11 +612,15 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 						if(!cell.toString().equals("")){
 							UFDouble amount = new UFDouble(Double.parseDouble(cell.toString()));
 							reimrule.setAmount(amount);
-						} else
+							reimrule.setAmount_name(amount.toString());
+						} else{
 							reimrule.setAmount(UFDouble.ZERO_DBL);
+							reimrule.setAmount_name(UFDouble.ZERO_DBL.toString());
+						}
 					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPTcommon-000199")/*@res "备注"*/)){
 						String memo = cell.toString();
 						reimrule.setMemo(memo);
+						reimrule.setMemo_name(memo);
 					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000479")/*@res "优先级"*/)){
 						String priority = cell.toString();
 						if (priority.contains("."))
@@ -669,7 +647,7 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 			}
 			reimrules.add(reimrule);
 		}
-		return reimrules.toArray(new ReimRuleVO[reimrules.size()]);
+		return reimrules.toArray(new ReimRulerVO[reimrules.size()]);
 	}
 
 	private Object parseValue(Cell cell, Object reimtype) {

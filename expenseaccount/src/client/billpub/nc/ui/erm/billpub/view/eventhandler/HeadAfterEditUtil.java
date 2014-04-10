@@ -242,7 +242,6 @@ public class HeadAfterEditUtil {
 	 */
 	protected BillItem[] getItemsById(String item) {
 		if (item.equals(JKBXHeaderVO.SZXMID) || item.equals(JKBXHeaderVO.JOBID)
-				|| item.equals(JKBXHeaderVO.JKBXR)
 				|| item.equals(JKBXHeaderVO.CASHPROJ)
 				|| item.equals(JKBXHeaderVO.PROJECTTASK)
 				|| item.equals(JKBXHeaderVO.PK_CHECKELE)

@@ -122,6 +122,7 @@
 	</bean>
 
 	<bean id="saveAndCommitAction" class="nc.ui.erm.matterapp.actions.SaveAndCommitAction">
+		<property name="model" ref="manageAppModel" />
 		<property name="saveAction" ref="saveAction" />
 		<property name="commitAction" ref="commitAction" />
 		<property name="exceptionHandler" ref="exceptionHandler" />
@@ -183,7 +184,7 @@
 
 	<bean id="auditAction" class="nc.ui.erm.matterapp.actions.AuditAction">
 		<property name="model" ref="manageAppModel" />
-		<property name="billForm" ref="billFormEditor" />
+		<property name="editor" ref="billFormEditor" />
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="resourceCode" value="matterapp" />
 		<property name="operateCode" value="Approve" />
@@ -271,11 +272,40 @@
 		<property name="exceptionHandler" ref="exceptionHandler" />
 	</bean>
 
-
 	<bean id="documentaction" class="nc.ui.erm.action.DocumentAction">
 		<property name="editor" ref="billFormEditor" />
 		<property name="listView" ref="listView" />
 		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<!-- 导入导出按钮 -->
+	<bean id="importAction" class="nc.ui.uif2.excelimport.ImportAction" autowire="byName">
+		<property name="model" ref="manageAppModel" />
+		<property name="importableEditor" ref="importableEditor" />
+	</bean>
+	
+	<bean id="exportAction" class="nc.ui.uif2.excelimport.ExportAction" autowire="byName">
+		<property name="importableEditor" ref="importableEditor" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="importexportActionGroup" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="ImportExportMenu" />
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0101"></property>
+				<property name="defaultValue" value="导入导出"></property>
+			</bean>
+		</property>
+		
+		<property name="actions">
+			<list>
+				<ref bean="importAction" />
+				<ref bean="nullAction" />
+				<ref bean="exportAction" />
+			</list>
+		</property>
 	</bean>
 
 	<!-- 联查 按钮组 -->

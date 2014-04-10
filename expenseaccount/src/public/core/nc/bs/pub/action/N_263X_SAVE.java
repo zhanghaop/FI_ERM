@@ -29,11 +29,11 @@ public class N_263X_SAVE extends AbstractCompiler2 {
 			// 方法说明:null
 			// ##################################################
 			// ####该组件为单动作工作流处理开始...不能进行修改####
-			setParameter("billVO", new JKVO[]{vo});
+			setParameter("billVO", vo);
 			
 			Object obj = null;
 			
-			obj = runClass("nc.bs.arap.bx.BXZbBO", "save", "&billVO:nc.vo.ep.bx.JKBXVO[]", pfparametervo, m_keyHas);
+			obj = runClass("nc.bs.arap.bx.BXZbBO", "commitVO", "&billVO:nc.vo.ep.bx.JKBXVO", pfparametervo, m_keyHas);
 			
 //			if (obj != null)
 //				m_methodReturnHas.put("saveBill", obj);

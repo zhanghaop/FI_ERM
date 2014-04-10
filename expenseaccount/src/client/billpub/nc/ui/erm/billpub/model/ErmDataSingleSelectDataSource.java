@@ -14,6 +14,7 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.Traffictool;
+import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.BusinessException;
 
 public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSource implements IExDataSource {
@@ -50,9 +51,44 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
 		}
 		//处理精度
 		Map<String, String[]> fieldsMap = new HashMap<String, String[]>();
-		fieldsMap.put(ERMPrintDigitUtil.ErmPrintDigitConst.FIELD_MONEY,new String[] {JKBXHeaderVO.TOTAL,
-				JKBXHeaderVO.YBJE,JKBXHeaderVO.HKYBJE,BXBusItemVO.AMOUNT,BxcontrastVO.YBJE,
-				BxcontrastVO.CJKYBJE});
+		//原币的处理
+		fieldsMap.put(ERMPrintDigitUtil.ErmPrintDigitConst.FIELD_MONEY,
+				new String[] { 
+						JKBXHeaderVO.TOTAL, JKBXHeaderVO.YBJE,
+						JKBXHeaderVO.HKYBJE, JKBXHeaderVO.CJKYBJE,JKBXHeaderVO.ZFYBJE, 
+						BXBusItemVO.AMOUNT,BXBusItemVO.YBJE, BXBusItemVO.CJKYBJE,BXBusItemVO.ZFYBJE, BXBusItemVO.HKYBJE,
+						BxcontrastVO.YBJE,BxcontrastVO.HKYBJE,BxcontrastVO.CJKYBJE, BxcontrastVO.FYYBJE,
+						CShareDetailVO.ASSUME_AMOUNT });
+		//组织本币的处理
+		fieldsMap.put(ERMPrintDigitUtil.ErmPrintDigitConst.FIELD_LOCAL,
+				new String[] { 
+						JKBXHeaderVO.BBJE,JKBXHeaderVO.HKBBJE, 
+						JKBXHeaderVO.CJKBBJE,JKBXHeaderVO.ZFBBJE,
+						BXBusItemVO.BBJE, BXBusItemVO.CJKBBJE,
+						BXBusItemVO.ZFBBJE, BXBusItemVO.HKBBJE,
+						BxcontrastVO.BBJE,BxcontrastVO.CJKBBJE,
+						CShareDetailVO.BBJE });
+		
+		//集团本币的处理
+		fieldsMap.put(ERMPrintDigitUtil.ErmPrintDigitConst.FIELD_GROUP,
+				new String[] { 
+						JKBXHeaderVO.GROUPBBJE,JKBXHeaderVO.GROUPHKBBJE, 
+						JKBXHeaderVO.GROUPCJKBBJE,JKBXHeaderVO.GROUPZFBBJE,
+						BXBusItemVO.GROUPBBJE, BXBusItemVO.GROUPCJKBBJE,
+						BXBusItemVO.GROUPZFBBJE, BXBusItemVO.GROUPHKBBJE,
+						BxcontrastVO.GROUPBBJE,BxcontrastVO.GROUPCJKBBJE, BxcontrastVO.GROUPFYBBJE,
+						CShareDetailVO.GROUPBBJE });
+		
+		//全局本币的处理
+		fieldsMap.put(ERMPrintDigitUtil.ErmPrintDigitConst.FIELD_GLOBAL,
+				new String[] { 
+						JKBXHeaderVO.GLOBALBBJE,JKBXHeaderVO.GLOBALHKBBJE, 
+						JKBXHeaderVO.GLOBALCJKBBJE,JKBXHeaderVO.GLOBALZFBBJE,
+						BXBusItemVO.GLOBALBBJE, BXBusItemVO.GLOBALCJKBBJE,
+						BXBusItemVO.GLOBALZFBBJE, BXBusItemVO.GLOBALHKBBJE,
+						BxcontrastVO.GLOBALBBJE,BxcontrastVO.GLOBALCJKBBJE, BxcontrastVO.GLOBALFYBBJE,
+						CShareDetailVO.GLOBALBBJE });
+		
 		Object[] newobj =new Object[0];
 		try {
 			newobj= ERMPrintDigitUtil.getDatas(new JKBXVO[]{jkbxvo}, fieldsMap, IBillFieldGet.PK_ORG, JKBXHeaderVO.BZBM);

@@ -195,7 +195,7 @@ public abstract class CommonList extends UIPanel implements ValueChangedListener
 
 		//增加财务组织下拉框,如果个性化中心设置默认的财务组织，需要带出对应的财务组织
         if(!isGroup()){
-    		add(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000006")/*@res "财务组织"*/, getSplitPaneTop());
+    		add(getOrgPanelName(), getSplitPaneTop());
     		getSplitPaneTop().setTopComponent(getUIPanelOrg());
 
     		getSplitPaneTop().setBottomComponent(getListPanel());
@@ -210,6 +210,10 @@ public abstract class CommonList extends UIPanel implements ValueChangedListener
         }else{
     		add(getListPanel(), getListPanel().getName());
         }
+	}
+	
+	protected String getOrgPanelName() {
+		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000006")/*@res "财务组织"*/;
 	}
 
 	protected abstract boolean isGroup();
@@ -261,7 +265,7 @@ public abstract class CommonList extends UIPanel implements ValueChangedListener
 			FlowLayout flowLayout1 = new FlowLayout();
 			flowLayout1.setAlignment(FlowLayout.LEFT);
 			jLabel6 = new UILabel();
-			jLabel6.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UCMD1-000006")/* @res "财务组织" */);
+			jLabel6.setText(getOrgPanelName());
 			jPanelOrg = new UIPanel();
 			jPanelOrg.setLayout(flowLayout1);
 			jPanelOrg.setName("jPanelOrg");

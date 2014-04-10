@@ -12,6 +12,18 @@
 		<property name="listView" ref="listView"/>
 	</bean>
 	
+	<bean id="importableEditor"	class="nc.ui.erm.billpub.importui.BillImportablePanel" >
+		<constructor-arg value ="借款单" >
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="manageAppModel" />
+		</constructor-arg>
+		<constructor-arg value ="nc/ui/erm/billinput/billinput_jkconfig.xml" >
+		</constructor-arg>
+		<property name="appModel" ref="manageAppModel"></property>
+		<property name="uiEditor" ref="editor"></property>
+	</bean>
+	
 	<!-- 列表视图 -->
 	<bean id="listView" class="nc.ui.erm.billpub.view.ErmBillBillListView"
 		init-method="initUI">
@@ -104,6 +116,7 @@
 				<ref bean="queryAction" />
 				<ref bean="cardRefreshAction" />
 				<ref bean="nullAction" />
+				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
 				<ref bean="assistantAction"/>
@@ -111,6 +124,8 @@
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="mergePfAction"/>
+				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction"/>
 				<ref bean="printActionGroup"/>
 			</list>
@@ -118,6 +133,7 @@
 		<property name="editActions">
 			<list>
 				<ref bean="saveaction" />
+				<ref bean="saveAndCommitAction" />
 				<ref bean="tempsaveaction" />
 				<ref bean="nullAction" />
 				<ref bean="cancelaction" />
@@ -141,6 +157,7 @@
 				<ref bean="queryAction" />
 				<ref bean="listRefreshAction" />
 				<ref bean="nullAction" />
+				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
 				<ref bean="assistantAction"/>
@@ -148,6 +165,8 @@
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="mergePfAction"/>
+				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction"/>
 				<ref bean="listprintGroup"/>
 			</list>

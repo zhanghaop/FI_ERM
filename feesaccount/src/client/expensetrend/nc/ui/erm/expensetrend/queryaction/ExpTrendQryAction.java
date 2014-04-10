@@ -209,6 +209,7 @@ public class ExpTrendQryAction extends ErmDefaultQryAction implements ISubscribe
 //                .getTableListFromWhereSQL().getWhere();
 //        condition.setWhereSql(whereSql);
         condition.setLocalCurrencyType((String) ((UIComboBox) normalCondCompMap.get(LOCAL_CURRENCY_TYPE_COMB)).getSelectdItemValue());
+        condition.getUserObject().put("isPkorgSameAssumeOrg", Boolean.TRUE);
         return condition;
     }
     
@@ -251,7 +252,8 @@ public class ExpTrendQryAction extends ErmDefaultQryAction implements ISubscribe
             final IContext context) {
         if (event.getEventtype() == CriteriaChangedEvent.FILTEREDITOR_INITIALIZED) {
             String fieldCode = event.getFieldCode();
-            String pk_org = ErUiUtil.getBXDefaultOrgUnit();
+//            String pk_org = ErUiUtil.getBXDefaultOrgUnit();
+            String pk_org = ErUiUtil.getReportDefaultOrgUnit();
             LoginContext mContext = (LoginContext) context
                 .getAttribute(FreeReportFucletContextKey.PRIVATE_CONTEXT);
             String[] orgArray = parseDataPowerOrgs(new String[]{pk_org}, mContext, event.getFieldCode());
@@ -355,13 +357,16 @@ public class ExpTrendQryAction extends ErmDefaultQryAction implements ISubscribe
                 AbstractRefModel refModel = ref.getRefModel();
                 
                 if (refModel instanceof nc.ui.bd.ref.busi.UserDefaultRefModel ||
-                        refModel instanceof nc.ui.bd.ref.model.PsndocDefaultRefModel) {
+                        refModel instanceof nc.ui.bd.ref.model.PsndocDefaultRefModel ||
+                        refModel instanceof nc.ui.org.ref.DeptDefaultRefModel) {
 //                    LoginContext contextLogin = (LoginContext)context.getAttribute("key_private_context");
                     ref.setMultiCorpRef(true);
                     ref.setMultiOrgSelected(true);
                     ref.setMultiRefFilterPKs(orgArray);
                     refModel.setPk_org(pk_org);
-                    
+                    if (refModel instanceof nc.ui.org.ref.DeptDefaultRefModel) {
+                        orgArray = insertHeadOneOrg(pk_org, orgArray);
+                    }
 //                    String[] orgArray = parseDataPowerOrgs(new String[]{pk_org}, contextLogin, event.getFieldCode());
                     configDataPowerRef(ref, orgArray);
                 } else if (refModel instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel) {
@@ -388,6 +393,7 @@ public class ExpTrendQryAction extends ErmDefaultQryAction implements ISubscribe
                 UIRefPane refPane = (UIRefPane) ERMQueryActionHelper
                         .getFiltComponentForValueChanged(event, "pk_org", false);
                 filterOrg(event, refPane.getRefPK());
+                setFydwFilter(event);
             } else if ("bx_jkbxr".equals(fieldCode)) {
                 LoginContext contextLogin = (LoginContext)context.getAttribute("key_private_context");
                 String[] orgArray = parseDataPowerOrgs(null, contextLogin, fieldCode);
@@ -754,14 +760,27 @@ public class ExpTrendQryAction extends ErmDefaultQryAction implements ISubscribe
 		UIRefPane fydw = (UIRefPane)ERMQueryActionHelper.getFiltComponentForValueChanged(fydwevent, ExpenseBalVO.ASSUME_ORG, false);
 		String[] headItems = new String[]{ExpenseBalVO.PK_RESACOSTCENTER, ExpenseBalVO.ASSUME_DEPT, ExpenseBalVO.PK_IOBSCLASS};
 		if(fydw == null){
-			return;
+		    fydw = (UIRefPane)ERMQueryActionHelper.getFiltComponentForValueChanged(fydwevent, ExpenseBalVO.PK_ORG, false);
 		}
 		String fywd = fydw.getRefPK();
-		
+
+        String[] orgArray = null;
+        Object[] objArray = fydw.getRefModel().getValues(fydw.getRefModel().getPkFieldCode(), fydw.getRefModel().getVecData());
+        if (objArray != null && objArray.length > 0) {
+            orgArray = new String[objArray.length];
+            for (int nPos = 0; nPos < orgArray.length; nPos++) {
+                orgArray[nPos] = (String)objArray[nPos];
+            }
+        }
+        orgArray = insertHeadOneOrg(fywd, orgArray);
+        
 		for (int i = 0; i < headItems.length; i++) {
 			UIRefPane ref = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(fydwevent, headItems[i],false);
 			if(ref != null && ref.getRefModel() != null){
 				ref.getRefModel().setPk_org(fywd);
+	            if (headItems[i].equals(ExpenseBalVO.ASSUME_DEPT)) {
+	                configDataPowerRef(ref, orgArray);
+	            }
 			}
 		}
 	}

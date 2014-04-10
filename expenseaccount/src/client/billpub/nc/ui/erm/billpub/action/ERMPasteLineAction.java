@@ -47,6 +47,9 @@ public class ERMPasteLineAction extends PasteLineAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		BillCardPanel billCardPanel = getCardpanel().getBillCardPanel();
+		// 防止界面上，最后编辑的内容不生效
+		billCardPanel.stopEditing();
+		
 		BillScrollPane bsp = billCardPanel.getBodyPanel();
 
 		int rownum = bsp.getTable().getSelectedRow();

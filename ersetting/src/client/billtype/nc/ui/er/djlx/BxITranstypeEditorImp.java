@@ -2,11 +2,14 @@ package nc.ui.er.djlx;
 
 import java.awt.Component;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.er.prv.IArapBillTypePrivate;
 import nc.ui.dbcache.DBCacheFacade;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.ButtonObject;
+import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.transtype.EditorContext;
 import nc.ui.pub.transtype.ITranstypeEditor;
 import nc.vo.arap.bx.util.BXConstans;
@@ -14,6 +17,7 @@ import nc.vo.er.djlx.BillTypeVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.billtype.BilltypeVO;
+import nc.vo.pub.lang.UFBoolean;
 
 public class BxITranstypeEditorImp implements ITranstypeEditor {
 	private DjlxCardPanel template = null;
@@ -64,15 +68,33 @@ public class BxITranstypeEditorImp implements ITranstypeEditor {
 		}
 		
 		if(context.getTranstype() != null){
+			// 处理特殊项目显示情况
+			// 借款报销是否必须申请控制
 			if(BXConstans.BILLTYPECODE_RETURNBILL.equals(context.getTranstype().getPk_billtypecode())){
 				getcardpanel().getBillCardPanelDj().getHeadItem("is_mactrl").setShow(false);
-				getcardpanel().getBillCardPanelDj().setBillData(getcardpanel().getBillCardPanelDj().getBillData());
 			}else{
 				getcardpanel().getBillCardPanelDj().getHeadItem("is_mactrl").setShow(true);
-				getcardpanel().getBillCardPanelDj().setBillData(getcardpanel().getBillCardPanelDj().getBillData());
 				
 			}
 		}
+		// 报销单交易类型显示配置报销类型
+		BillItem bxtypeItem = getcardpanel().getBillCardPanelDj().getHeadItem(DjLXVO.BXTYPE);
+		if(BXConstans.BX_DJDL.equals(getDjdl())){
+			bxtypeItem.setShow(true);
+			bxtypeItem.setNull(true);
+			if(TYPE_NEW == context.getEventtype()){
+				// 只有新增时，可选择报销类型，且默认普通报销
+				bxtypeItem.setEdit(true);
+				bxtypeItem.setValue(Integer.valueOf(ErmDjlxConst.BXTYPE_BX));
+			}else{
+				bxtypeItem.setEdit(false);
+			}
+		}else{
+			bxtypeItem.setShow(false);
+			bxtypeItem.setNull(false);				
+		}
+		
+		getcardpanel().getBillCardPanelDj().setBillData(getcardpanel().getBillCardPanelDj().getBillData());
 		
 		DBCacheFacade.refreshTable(DjLXVO.getDefaultTableName());
 	}
@@ -153,6 +175,12 @@ public class BxITranstypeEditorImp implements ITranstypeEditor {
 			// head.setPk_group("@@@@");
 			head.setPk_group(pk_group);
 			head.setFcbz(transtype.getIsLock());
+		}
+		if(ErmDjlxCache.getInstance().isNeedBxtype(head, ErmDjlxConst.BXTYPE_ADJUST)){
+			// 费用调整类型报销单，删除不必要的标志位设置
+			head.setIsqr(UFBoolean.FALSE);// 是否签字确认
+			head.setIscontrast(UFBoolean.FALSE);// 是否提示冲借款
+			head.setIs_mactrl(UFBoolean.FALSE);// 是否必须申请
 		}
 		return vo;
 	}

@@ -7,7 +7,6 @@ import java.util.List;
 import nc.bs.erm.matterapp.check.VOStatusChecker;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
-import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.pf.PfUtilClient;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.NCAction;
@@ -16,21 +15,17 @@ import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXStatusConst;
-import nc.vo.er.exception.BugetAlarmBusinessException;
-import nc.vo.er.util.StringUtils;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
-import nc.vo.pub.BusinessException;
-import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.trade.pub.IBillStatus;
 
 /**
- * 提交
+ * 申请单提交
  * 
  * @author chenshuaia
  * 
@@ -115,39 +110,10 @@ public class CommitAction extends NCAction {
 					result = new MessageVO(vos[0], ActionUtils.COMMIT);
 				} else if (obj instanceof MessageVO[]) {// 提交并审批的情况会出现
 					MessageVO[] messages = (MessageVO[]) obj;
-					MatterAppVO parentVO = (MatterAppVO) messages[0].getSuccessVO().getParentVO();
-					if (!StringUtils.isNullWithTrim(parentVO.getWarningmsg())) {
-						MessageDialog.showWarningDlg(getModel().getContext().getEntranceUI(),
-								nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0000")/*
-																												 * @
-																												 * res
-																												 * "提示"
-																												 */,
-								parentVO.getWarningmsg());
-						parentVO.setWarningmsg(null);
-					}
 					result = messages[0];
 				}
 			}
 
-		} catch (BugetAlarmBusinessException ex) {
-			if (MessageDialog.showYesNoDlg(getModel().getContext().getEntranceUI(), nc.vo.ml.NCLangRes4VoTransl
-					.getNCLangRes().getStrByID("2011", "UPP2011-000049")/*
-																		 * @ res
-																		 * "提示"
-																		 */, ex.getMessage()
-					+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000341")/*
-																									 * @
-																									 * res
-																									 * " 是否继续审核？"
-																									 */) == MessageDialog.ID_YES) {
-				appVO.getParentVO().setHasntbcheck(UFBoolean.TRUE); // 不检查
-				result = commitSingle(appVO);
-			} else {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000405")
-				/* @res "预算申请失败" */, ex);
-			}
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
 			String errMsg = e.getMessage();

@@ -166,7 +166,8 @@ public class ErmTrantypeRefModel extends AbstractRefModel {
             try {
                 String billtypeWhere = SqlUtils.getInStr("parentbilltype", djlxArr);
                 if (djlx.indexOf("264X") >= 0) {
-                    billtypeWhere += " and pk_billtypecode <> '2647' ";
+                    billtypeWhere += " and pk_billtypecode <> '2647' and " + 
+                    "pk_billtypecode in (select DJLXBM from er_djlx where (bxtype is null or bxtype != 2) and pk_group = '" + getPk_group() + "')";
                 }
                 if ("261X".equals(djlx)) {
                     billtypeWhere = billtypeWhere + " and pk_billtypecode in (select DJLXBM from er_djlx where djdl = 'ma' and matype = 1 and pk_group = '" + getPk_group() + "')";

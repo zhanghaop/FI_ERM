@@ -42,6 +42,16 @@ public class MatterAppQueryCondition implements java.io.Serializable{
 	 * 集团
 	 */
 	private String pk_group;
+	
+	/**
+	 * 待审批
+	 */
+	boolean user_approving = false;
+	
+	/**
+	 * 已审批
+	 */
+	boolean user_approved = false;
 
 	public String getWhereSql() {
 		return whereSql;
@@ -97,5 +107,21 @@ public class MatterAppQueryCondition implements java.io.Serializable{
 
 	public void setPk_group(String pk_group) {
 		this.pk_group = pk_group;
+	}
+
+	public boolean isUser_approving() {
+		return user_approving;
+	}
+
+	public void setUser_approving(boolean user_approving) {
+		this.user_approving = user_approving;
+	}
+
+	public boolean isUser_approved() {
+		return user_approved;
+	}
+
+	public void setUser_approved(boolean user_approved) {
+		this.user_approved = user_approved;
 	}
 }

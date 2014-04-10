@@ -203,9 +203,20 @@
                     <pk_reimtype></pk_reimtype>
                     <pk_busitem>
                     </pk_busitem>
-                     <!-- 表头增加 产品线和品牌 -->
+                    <!-- 631表体增加 产品线和品牌 -->
            			 <pk_proline></pk_proline>
            			 <pk_brand></pk_brand>
+           			 <!-- ehp2表体增加报销人单位，报销人部门，报销人 ，收款对象，收款人，个人银行帐户，供应商，客户，客商银行帐户，散户-->
+           			 <dwbm></dwbm>
+           			 <deptid></deptid>
+           			 <jkbxr></jkbxr>
+           			 <custaccount></custaccount>
+           			 <freecust></freecust>
+           			 <paytarget></paytarget>
+           			 <receiver></receiver>
+           			 <skyhzh></skyhzh>
+           			 <hbbm></hbbm>
+           			 <customer></customer>
                     <pk_jkbx>
                     </pk_jkbx>
                     <defitem50>

@@ -2,10 +2,11 @@ package nc.ui.erm.billpub.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -13,13 +14,19 @@ import javax.swing.JComponent;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.erm.common.ErmBillConst;
+import nc.bs.erm.common.ErmConst;
 import nc.bs.erm.util.ErAccperiodUtil;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.bs.pf.pub.PfDataCache;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.funcnode.ui.AbstractFunclet;
+import nc.funcnode.ui.FuncletInitData;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IErmBillUIPublic;
+import nc.itf.er.reimtype.IReimTypeService;
 import nc.itf.fi.pub.Currency;
 import nc.itf.fi.pub.SysInit;
 import nc.md.data.access.DASFacade;
@@ -37,10 +44,8 @@ import nc.ui.erm.billpub.view.eventhandler.InitBillCardBeforeEditListener;
 import nc.ui.erm.billpub.view.eventhandler.InitBodyEventHandle;
 import nc.ui.erm.billpub.view.eventhandler.InitEventHandle;
 import nc.ui.erm.billpub.view.eventhandler.MultiVersionUtil;
-import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
 import nc.ui.erm.costshare.ui.CSDetailCardAmontDecimalListener;
 import nc.ui.erm.util.ErUiUtil;
-import nc.ui.erm.util.TransTypeUtil;
 import nc.ui.erm.view.ERMBillForm;
 import nc.ui.erm.view.ERMOrgPane;
 import nc.ui.erm.view.ERMUserdefitemContainerPreparator;
@@ -57,7 +62,8 @@ import nc.ui.pub.bill.IBillItem;
 import nc.ui.pub.bill.IGetBillRelationItemValue;
 import nc.ui.pub.bill.MetaDataGetBillRelationItemValue;
 import nc.ui.pub.bill.itemeditors.StringBillItemEditor;
-import nc.ui.uap.sf.SFClientUtil;
+import nc.ui.pub.linkoperate.ILinkType;
+import nc.ui.uap.sf.SFClientUtil2;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.NCAction;
@@ -72,21 +78,23 @@ import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.arap.bx.util.BodyEditVO;
 import nc.vo.arap.bx.util.BxUIControlUtil;
+import nc.vo.arap.bx.util.ControlBodyEditVO;
 import nc.vo.bd.period2.AccperiodmonthVO;
 import nc.vo.cmp.BusiInfo;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.BXVO;
 import nc.vo.ep.bx.BusiTypeVO;
+import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.er.expensetype.ExpenseTypeVO;
 import nc.vo.er.link.LinkQuery;
-import nc.vo.er.reimrule.ReimRuleVO;
-import nc.vo.erm.costshare.AggCostShareVO;
+import nc.vo.er.reimrule.ReimRuleDimVO;
+import nc.vo.er.reimrule.ReimRulerVO;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.matterapp.MatterAppConvResVO;
 import nc.vo.erm.util.VOUtils;
@@ -95,7 +103,6 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
-import nc.vo.pub.ValidationException;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.billtype.BilltypeVO;
@@ -103,9 +110,9 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.pub.IBillStatus;
+import nc.vo.uif2.LoginContext;
 
 import org.apache.commons.lang.ArrayUtils;
-
 /**
  * 费用卡片
  */
@@ -118,14 +125,24 @@ public class ErmBillBillForm extends ERMBillForm {
 	/**
 	 * 单据缓存
 	 */
-	private Map<String, List<SuperVO>> reimRuleDataMap = new HashMap<String, List<SuperVO>>(); // 报销规则缓存数据
-	private Map<String, Map<String, List<SuperVO>>> reimRuleDataCacheMap = new HashMap<String, Map<String, List<SuperVO>>>(); // 报销规则缓存数据缓存
-	private Map<String, SuperVO> expenseMap = new HashMap<String, SuperVO>(); // 费用类型缓存数据
-	private Map<String, SuperVO> reimtypeMap = new HashMap<String, SuperVO>(); // 费用类型缓存数据
+	// 报销规则缓存数据，<单据类型，报销标准>
+//	private Map<String, List<SuperVO>> reimRuleDataMap = new HashMap<String, List<SuperVO>>();
+	// 报销维度缓存数据，<单据类型，报销标准维度>
+//	private Map<String, List<SuperVO>> reimDimMap = new HashMap<String, List<SuperVO>>(); 
+	// 报销规则组织级数据缓存，<组织，标准>
+	private Map<String, Map<String, List<SuperVO>>> reimRuleDataCacheMap = new HashMap<String, Map<String, List<SuperVO>>>();
+	private Map<String, Map<String, List<SuperVO>>> reimDimDataCacheMap = new HashMap<String, Map<String, List<SuperVO>>>(); 
+	/**
+	 * 报销标准需要控制的项,存（item、值），aftereditor中用
+	 */
+	private List<ControlBodyEditVO> controlRule = new ArrayList<ControlBodyEditVO>();
+	private Set<Integer> rows = new HashSet<Integer>();
+	
 	private List<String> panelEditableKeyList;
 	private Map<String,List<String>> orgRefFieldsMap = new HashMap<String, List<String>>();
 	private ErmBillBillFormHelper helper = new ErmBillBillFormHelper(this);
 	private boolean isContrast = false; // 是否进行了冲借款操作
+	private boolean isVerifyAccrued = false; // 是否进行了核销预提操作
 	
 	//模板缓存
 	private Map<String,BillData> containerCacheMap = new HashMap<String, BillData>();
@@ -151,8 +168,6 @@ public class ErmBillBillForm extends ERMBillForm {
 	public void initUI() {
 		super.initUI();
 		
-		// 初始化分摊页签的一些数据
-		initCsharePage();
 		//显示合计行
 		showTatalLine();
 		
@@ -168,15 +183,6 @@ public class ErmBillBillForm extends ERMBillForm {
 		dealPkitemGetRelationValue();
 
 		containerCacheMap.put(getNodekey(), getBillCardPanel().getBillData());
-		
-		//设置当前功能节点的交易类型
-		String nodeCode = getModel().getContext().getNodeCode();
-		if(!nodeCode.equals(BXConstans.BXLR_QCCODE)&& !nodeCode.equals(BXConstans.BXMNG_NODECODE)&& !nodeCode.equals(BXConstans.BXBILL_QUERY) &&
-		        !nodeCode.equals(BXConstans.BXINIT_NODECODE_G) && !nodeCode.equals(BXConstans.BXINIT_NODECODE_U)){
-		    String transtype = TransTypeUtil.getTranstype(getModel());
-		    ((ErmBillBillManageModel)getModel()).setCurrentBillTypeCode(transtype);
-		    ((ErmBillBillManageModel)getModel()).setSelectBillTypeCode(transtype);
-		}
 		
 		((ErmBillBillAppModelService) ((BillManageModel) getModel()).getService()).setEditor(this);
 		
@@ -227,14 +233,21 @@ public class ErmBillBillForm extends ERMBillForm {
 	protected void setBodyTabActive(String tabcode) {
 		Map<String, List<Action>> bodyActionMap = getBodyActionMap();
 		List<Action> actions = bodyActionMap.get(tabcode);
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
 		if (actions == null) {
-			if(BXConstans.JK_DJDL.equals(((ErmBillBillManageModel)getModel()).getCurrentDjLXVO().getDjdl()))
+			if(BXConstans.JK_DJDL.equals(currentDjLXVO.getDjdl()))
 			{
 				actions = bodyActionMap.get(BXConstans.BUS_PAGE_JK);
-			}else if(BXConstans.BX_DJDL.equals(((ErmBillBillManageModel)getModel()).getCurrentDjLXVO().getDjdl())){
+			}else if(BXConstans.BX_DJDL.equals(currentDjLXVO.getDjdl())){
 				actions = bodyActionMap.get(BXConstans.BUS_PAGE);
 			}
 		}
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO, ErmDjlxConst.BXTYPE_ADJUST);
+		if(isAdjust&&!BXConstans.CSHARE_PAGE.equals(tabcode)){
+			// 调整单情况，只有分摊页签可行操作
+			actions = bodyActionMap.get(BXConstans.CONST_PAGE);
+		}
+		
 		billCardPanel.addTabAction(IBillItem.BODY, actions);
 		
 		//冲销页签不可以编辑
@@ -258,6 +271,42 @@ public class ErmBillBillForm extends ERMBillForm {
 			pk_item.setDataType(IBillItem.STRING);
 			pk_item.setItemEditor(new StringBillItemEditor(pk_item));
 		}
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO,ErmDjlxConst.BXTYPE_ADJUST);
+
+		if(isAdjust){
+			// EHP2费用调整单情况，设置分摊必须勾选、待摊不可勾选、且不可编辑
+			BillItem ybje = data.getHeadItem(JKBXHeaderVO.YBJE);
+			if(ybje !=null){
+				// 调整单情况，表头财务核报金额不可编辑
+				ybje.setEdit(false);
+			}
+			BillItem total = data.getHeadItem(JKBXHeaderVO.TOTAL);
+			if(total !=null){
+				// 调整单情况，表头合计金额不可编辑
+				total.setEdit(false);
+			}
+			BillItem iscostshare = data.getHeadItem(JKBXHeaderVO.ISCOSTSHARE);
+			if(iscostshare !=null){
+				iscostshare.setEdit(false);
+			}
+			BillItem isexpamt = data.getHeadItem(JKBXHeaderVO.ISEXPAMT);
+			if(isexpamt !=null){
+				isexpamt.setEdit(false);
+			}
+			BillItem start_period = data.getHeadItem(JKBXHeaderVO.START_PERIOD);
+			if(start_period != null){
+				start_period.setEdit(false);
+			}
+			BillItem totol_period = data.getHeadItem(JKBXHeaderVO.TOTAL_PERIOD);
+			if(totol_period != null){
+				totol_period.setEdit(false);
+			}
+			BillItem share_ratio = data.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.SHARE_RATIO);
+			if(share_ratio != null){
+				share_ratio.setEdit(false);
+			}
+		}
 	}
 	
 	/**
@@ -269,7 +318,12 @@ public class ErmBillBillForm extends ERMBillForm {
 		public void hyperlink(BillItemHyperlinkEvent event) {
 			String pk =getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject().toString();
 			LinkQuery linkQuery = new LinkQuery(ErmBillConst.MatterApp_DJDL, new String[] { pk });
-			SFClientUtil.openLinkedQueryDialog(BXConstans.MTAMN_NODE, getBillCardPanel(), linkQuery);
+//			SFClientUtil.openLinkedQueryDialog(, , linkQuery);
+			FuncletInitData initData = new FuncletInitData();
+			initData.setInitData(linkQuery);
+			initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+			SFClientUtil2.openFuncNodeDialog(getBillCardPanel(), BXConstans.MTAMN_NODE, initData, null, false,
+					false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
 		}
 	}
 	
@@ -283,7 +337,7 @@ public class ErmBillBillForm extends ERMBillForm {
 				String newBillType = ((JKBXVO)selectedData).getParentVO().getDjlxbm();
 				String nodeCode =getModel().getContext().getNodeCode();
                 if (nodeCode.equals(BXConstans.BXLR_QCCODE) || nodeCode.equals(BXConstans.BXMNG_NODECODE) || nodeCode.equals(BXConstans.BXBILL_QUERY) || nodeCode.equals(BXConstans.BXINIT_NODECODE_G)
-                        || nodeCode.equals(BXConstans.BXINIT_NODECODE_U))
+                        || nodeCode.equals(BXConstans.BXINIT_NODECODE_U)  || nodeCode.equals(BXConstans.MONTHEND_DEAL))
                 {
                     changeTemplate(newBillType, nodekey);
                 }
@@ -465,13 +519,11 @@ public class ErmBillBillForm extends ERMBillForm {
 				}
 				// 拉单的单据修改时，费用承担单位不可修改
 				if(!jkbxvo.getParentVO().getDjlxbm().equals(BXConstans.BILLTYPECODE_RETURNBILL) && isFromMtapp(jkbxvo)){
-//					setNotEditFieldFromMtapp(jkbxvo);
 					getAddFromMtAppEditorUtil().resetBillItemOnEdit();
 					
 				}
 			} catch (BusinessException e) {
 				getExeceptionHandler().handlerExeption(e);
-				//ExceptionHandler.handleExceptionRuntime(e);
 			}
 		}
 		
@@ -481,90 +533,7 @@ public class ErmBillBillForm extends ERMBillForm {
 		
 	}
 	
-//	private void setNotEditFieldFromMtapp(JKBXVO bxvo) throws BusinessException {
-//		String[] bodytablecodes = getBillCardPanel().getBillData().getBodyTableCodes();
-//		String ctrltablecode = bodytablecodes[0];
-//		BXBusItemVO[] bxBusItemVOS = bxvo.getBxBusItemVOS();
-//		if(bxBusItemVOS==null){
-//			return;
-//		}
-//		String ma_tradeType = bxBusItemVOS[0].getSrcbilltype();
-//		
-//		// VO对照
-//		IMatterAppCtrlService ctrlService = NCLocator.getInstance().lookup(IMatterAppCtrlService.class);
-//		List<String> mtCtrlBusiFieldList = ctrlService.getMtCtrlBusiFieldList(bxvo.getParentVO().getDjlxbm(),
-//				ma_tradeType, bxvo.getParentVO().getFydwbm());
-//
-//		// 拉单过来的字段都不可编辑,并且特殊字段，表头表体都不可编辑
-//		List<String> specialField = AddFromMtAppEditorUtil.getSpecialField();
-//		for (int i = 0; i < bxBusItemVOS.length; i++) {
-//			if (mtCtrlBusiFieldList != null && mtCtrlBusiFieldList.size() > 0) {
-//				for (String fieldcode : mtCtrlBusiFieldList) {
-//					if (fieldcode.indexOf('.') != -1) {
-//						String[] keys = StringUtil.split(fieldcode, ".");
-//						ctrltablecode = keys[0].equals(BXConstans.COSTSHAREDETAIL)?BXConstans.CSHARE_PAGE:bodytablecodes[0];
-//						BillItem item = getBillCardPanel().getBodyItem(ctrltablecode,keys[1]);
-//						if (item != null) {
-//							getBillCardPanel().getBillModel(bodytablecodes[0]).setCellEditable(i, keys[1], false);
-//							// 特殊：控制的表体的利润中心字段，则多版本字段也不可编辑
-//							if(keys[1].equals(BXBusItemVO.PK_PCORG) || keys[1].equals(BXBusItemVO.PK_PCORG_V)){
-//								getBillCardPanel().getBillModel(ctrltablecode).setCellEditable(i, BXBusItemVO.PK_PCORG, false);
-//								getBillCardPanel().getBillModel(ctrltablecode).setCellEditable(i, BXBusItemVO.PK_PCORG_V, false);
-//							}
-//						}
-//						// 如果是特殊字段，则表头也要设置为不可编辑
-//						if (specialField.contains(keys[1])) {
-//							BillItem specialItem = getBillCardPanel().getHeadItem(keys[1]);
-//							if (specialItem != null) {
-//								specialItem.setEnabled(false);
-//							}
-//							BillItem specialItem_v = null;
-//							if (JKBXHeaderVO.getOrgMultiVersionFieldMap().containsKey(keys[1])) {
-//								specialItem_v = getBillCardPanel().getHeadItem(JKBXHeaderVO.getOrgVFieldByField(keys[1]));
-//							}
-//							if (specialItem_v != null) {
-//								specialItem_v.setEnabled(false);
-//							}
-//						}
-//					}else {
-//						// 表头字段注意多版本
-//						String fieldcode_v = null;
-//						if (JKBXHeaderVO.getOrgMultiVersionFieldMap().containsKey(fieldcode)) {
-//							fieldcode_v = JKBXHeaderVO.getOrgVFieldByField(fieldcode);
-//						}
-//						BillItem item = getBillCardPanel().getHeadItem(fieldcode);
-//						BillItem item_v = getBillCardPanel().getHeadItem(fieldcode_v);
-//						if (item != null) {
-//							item.setEnabled(false);
-//						}
-//						if (item_v != null) {
-//							item_v.setEnabled(false);
-//						}
-//						// 如果是特殊字段，则表体也要设置为不可编辑
-//						if (specialField.contains(fieldcode)) {
-//							BillItem bodyitem = getBillCardPanel().getBodyItem(ctrltablecode,fieldcode);
-//							if (bodyitem != null) {
-//								bodyitem.setEnabled(false);
-//							}
-//							if (fieldcode_v != null) {
-//								BillItem bodyitem_v = getBillCardPanel().getBodyItem(ctrltablecode,fieldcode_v);
-//								if (bodyitem_v != null) {
-//									bodyitem_v.setEnabled(false);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//			
-//			// 申请单分摊的情况，报销单拉单后，不允许取消分摊，分摊标志位置灰
-//			if (bxvo.getParentVO().getIsmashare() != null && bxvo.getParentVO().getIsmashare().booleanValue()) {
-//				if (getBillCardPanel().getHeadItem(JKBXHeaderVO.ISCOSTSHARE) != null) {
-//					getBillCardPanel().getHeadItem(JKBXHeaderVO.ISCOSTSHARE).setEnabled(false);
-//				}
-//			}
-//		}
-//	}
+
 	/**
 	 * 判断是否是拉单过来的单据
 	 * @param jkbxvo
@@ -871,9 +840,22 @@ public class ErmBillBillForm extends ERMBillForm {
 	}
 	
 	private String[] checkpermissionOrgs() throws BusinessException {
-		String[] permissionOrgs = getModel().getContext().getPkorgs();
+		LoginContext context = getModel().getContext();
+		JComponent comp = context.getEntranceUI();
+		
+		String[] permissionOrgs = null;
+		if(comp instanceof AbstractFunclet){
+			if (((AbstractFunclet)comp).getFuncletContext() == null){//导入导出
+				permissionOrgs = ErUiUtil.getPermissionOrgs(context.getNodeCode());
+			}
+			else{
+				permissionOrgs = context.getPkorgs();
+				
+			}
+		}
+		
 		//在新增设置默认值前,就要判断（用户没有分配功能节点的权限)
-		if (!BXConstans.BXINIT_NODECODE_G.equals(getModel().getContext()
+		if (!BXConstans.BXINIT_NODECODE_G.equals(context
 				.getNodeCode())) {
 			// 组织没有权限，直接清空
 			if (permissionOrgs == null || permissionOrgs.length == 0) {
@@ -991,27 +973,30 @@ public class ErmBillBillForm extends ERMBillForm {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
 		if (selectedData != null && selectedData.getChildrenVO() != null && selectedData.getChildrenVO().length == 0) {
 			try {
-				List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(
-						IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
-						new String[]{selectedData.getParentVO().getPrimaryKey()},selectedData.getParentVO().getDjdl(),selectedData.getParentVO().isInit(),((ErmBillBillManageModel)getModel()).getDjCondVO());
-				if (jkbxvo != null) {
-					selectedData = jkbxvo.get(0);
-					if (selectedData.getChildrenVO() != null && selectedData.getChildrenVO().length == 0) {
-						selectedData.setChildrenVO(null);
-					}
-
-					//更新model数据
-					((ErmBillBillManageModel) getModel()).directlyUpdateWithoutFireEvent(selectedData);
+				boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(selectedData.getParentVO().getPk_group(), selectedData.getParentVO().getDjlxbm(),ErmDjlxConst.BXTYPE_ADJUST);
+				if(isAdjust && selectedData.getcShareDetailVo()!=null && selectedData.getcShareDetailVo().length!=0){
+					
 				}else{
-					ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0065")/*@res "数据已经被其他用户删除，请刷新界面"*/,getModel().getContext());
-					((ErmBillBillManageModel)getModel()).directlyDelete(selectedData);
+					List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(
+							IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
+									new String[]{selectedData.getParentVO().getPrimaryKey()},selectedData.getParentVO().getDjdl(),selectedData.getParentVO().isInit(),((ErmBillBillManageModel)getModel()).getDjCondVO());
+					if (jkbxvo != null) {
+						selectedData = jkbxvo.get(0);
+						if (selectedData.getChildrenVO() != null && selectedData.getChildrenVO().length == 0) {
+							selectedData.setChildrenVO(null);
+						}
+						
+						//更新model数据
+						((ErmBillBillManageModel) getModel()).directlyUpdateWithoutFireEvent(selectedData);
+					}else{
+						ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0065")/*@res "数据已经被其他用户删除，请刷新界面"*/,getModel().getContext());
+						((ErmBillBillManageModel)getModel()).directlyDelete(selectedData);
+					}
 				}
-
 			} catch (Exception e) {
 				getExeceptionHandler().handlerExeption(e);
 			}
 		}
-		
 		if(selectedData != null){//提高效率
 			setValue(selectedData);
 		}else{
@@ -1049,7 +1034,6 @@ public class ErmBillBillForm extends ERMBillForm {
 				
 				((ErmBillBillManageModel)getModel()).setCurrentBillTypeCode(((JKBXVO)object).getParentVO().getDjlxbm());
 				
-				setCostPageShow(object);
 				//处理核算要素
 				UIRefPane refPane = (UIRefPane) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_CHECKELE).getComponent();
 				String pk_pcorg = (String) getHeadValue(JKBXHeaderVO.PK_PCORG);
@@ -1115,21 +1099,6 @@ public class ErmBillBillForm extends ERMBillForm {
 				if (billModel.getRowState(i) != BillModel.UNSTATE) {
 					billModel.setRowState(i, rowState);
 				}
-			}
-		}
-	}
-	
-	/**
-	 * 设置单据界面的分摊页签是否显示
-	 * @param object
-	 */
-	private void setCostPageShow(Object object) {
-		if (((ErmBillBillManageModel) getModel()).getCurrentDjLXVO().getDjdl()
-				.equals(BXConstans.BX_DJDL) && !((ErmBillBillManageModel) getModel()).getCurrentBillTypeCode().equals(BXConstans.BILLTYPECODE_RETURNBILL)) {
-			if (((JKBXVO)object).getParentVO().getIscostshare() == UFBoolean.TRUE) {
-				ErmForCShareUiUtil.setCostPageShow(this.getBillCardPanel(), true);
-			}else{
-				ErmForCShareUiUtil.setCostPageShow(this.getBillCardPanel(), false);
 			}
 		}
 	}
@@ -1216,39 +1185,22 @@ public class ErmBillBillForm extends ERMBillForm {
 		}
 	}
 	
-	/**
-	 * 初始化分摊页签中的字段
-	 * 
-	 * @throws BusinessException
-	 * @throws ValidationException
-	 */
-	private void initCsharePage() {
-		BillModel model = this.getBillCardPanel().getBillModel(BXConstans.CSHARE_PAGE);
-		if (model != null) {
-			String[] names = AggCostShareVO.getBodyMultiSelectedItems();
-			
-			for(String name : names){
-				BillItem item = model.getItemByKey(name);
-				if(item != null && item.getComponent() instanceof UIRefPane){
-					((UIRefPane) item.getComponent()).setMultiSelectedEnabled(true);
-				}
-			}
-		}
-	}
-
 	// 在表体中无行时，自动添加一行,还款单不允许增行,冲销页签不允许增行
 	private void addLine() {
 		JKBXVO jkbxvo = (JKBXVO) getValue();
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel) getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO,ErmDjlxConst.BXTYPE_ADJUST);
 		if (!((ErmBillBillManageModel) getModel()).getCurrentBillTypeCode().equals(BXConstans.BILLTYPECODE_RETURNBILL)
+				&& !isAdjust
 				&& !getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CONST_PAGE)
 				&& !getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CSHARE_PAGE)
 				&& !getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CONST_PAGE_JK)
 				&& (jkbxvo.getChildrenVO() == null || jkbxvo.getChildrenVO().length == 0) && getResVO() == null) {
 			List<Action> actionList = new ArrayList<Action>();
 
-			if (BXConstans.JK_DJDL.equals(((ErmBillBillManageModel) getModel()).getCurrentDjLXVO().getDjdl())) {
+			if (BXConstans.JK_DJDL.equals(currentDjLXVO.getDjdl())) {
 				actionList = getBodyActionMap().get(BXConstans.BUS_PAGE_JK);
-			} else if (BXConstans.BX_DJDL.equals(((ErmBillBillManageModel) getModel()).getCurrentDjLXVO().getDjdl())) {
+			} else if (BXConstans.BX_DJDL.equals(currentDjLXVO.getDjdl())) {
 				actionList = getBodyActionMap().get(BXConstans.BUS_PAGE);
 			}
 			if (actionList.size() != 0) {
@@ -1287,10 +1239,6 @@ public class ErmBillBillForm extends ERMBillForm {
 				setPanelEditableKeyList(keyList);
 			}
 		}
-//		else{//转移到编辑前处理
-//			// 过滤借款报销人
-//			getEventHandle().getHeadFieldHandle().initJkbxr();
-//		}
 	}
 
 	private void setBodyDefaultValue() {
@@ -1356,18 +1304,77 @@ public class ErmBillBillForm extends ERMBillForm {
 		fillBillItemValue(value);
 		return value;
 	}
+	
+	
+	   /**
+     * 取到卡片界面中，表头和表体所有的数据
+     * 注：getValue()只能取到变化的表体
+     * wangled
+     */
+	public JKBXVO getJKBXVO() {
+		JKBXVO value = (JKBXVO) getValue();
+		JKBXVO bxvo = (JKBXVO) value.clone();
+		bxvo.setChildrenVO(null);
+		bxvo.setContrastVO(null);
+		bxvo.setcShareDetailVo(null);
+		bxvo.setAccruedVerifyVO(null);
+
+		BillTabVO[] billTabVOs = getBillCardPanel().getBillData().getBillTabVOs(IBillItem.BODY);
+		for (BillTabVO billTabVO : billTabVOs) {
+			String metaDataPath = billTabVO.getMetadatapath();
+			if (BXConstans.ER_BUSITEM.equals(metaDataPath) || BXConstans.JK_BUSITEM.equals(metaDataPath)
+					|| metaDataPath == null) {
+				// 报销业务行多页签
+				BXBusItemVO[] bodyValueVOs = (BXBusItemVO[]) getBillCardPanel()
+						.getBillModel(billTabVO.getTabcode()).getBodyValueVOs(BXBusItemVO.class.getName());
+				if (!ArrayUtils.isEmpty(bodyValueVOs)) {
+					for (BXBusItemVO bxBusItemVO : bodyValueVOs) {
+						bxBusItemVO.setTablecode(billTabVO.getTabcode());
+					}
+				}
+
+				BXBusItemVO[] childrenVO = bxvo.getChildrenVO();
+				if (!ArrayUtils.isEmpty(childrenVO)) {
+					bxvo.setChildrenVO((BXBusItemVO[]) ArrayUtils.addAll(childrenVO, bodyValueVOs));
+				} else {
+					bxvo.setChildrenVO(bodyValueVOs);
+				}
+			} else if (BXConstans.CONST_PAGE.equals(metaDataPath)) {
+				// 冲销页签
+				BxcontrastVO[] bodyValueVOs = (BxcontrastVO[]) getBillCardPanel()
+						.getBillModel(billTabVO.getTabcode()).getBodyValueVOs(BxcontrastVO.class.getName());
+				bxvo.setContrastVO(bodyValueVOs);
+
+			} else if (BXConstans.CS_Metadatapath.equals(metaDataPath)) {
+				// 分摊页签
+				CShareDetailVO[] bodyValueVOs = (CShareDetailVO[]) getBillCardPanel()
+						.getBillModel(billTabVO.getTabcode()).getBodyValueVOs(CShareDetailVO.class.getName());
+				bxvo.setcShareDetailVo(bodyValueVOs);
+			} else if (BXConstans.AccruedVerify_Metadatapath.equals(metaDataPath)) {
+				// 核销预提明细页签
+				AccruedVerifyVO[] bodyValueVOs = (AccruedVerifyVO[]) getBillCardPanel()
+						.getBillModel(billTabVO.getTabcode()).getBodyValueVOs(AccruedVerifyVO.class.getName());
+				bxvo.setAccruedVerifyVO(bodyValueVOs);
+			}
+		}
+		helper.prepareForNullJe(bxvo);
+		return bxvo;
+	}
+	
 
 	public void fillBillItemValue(JKBXVO value) {
 		// 设置是否常用单据/期初单据
+		JKBXHeaderVO parentVO = value.getParentVO();
 		if (((ErmBillBillManageModel) getModel()).iscydj()) {
-			value.getParentVO().setInit(true);
+			parentVO.setInit(true);
 		}
 		if (((ErmBillBillManageModel) getModel()).isInit()) {
-			value.getParentVO().setQcbz(UFBoolean.TRUE);
+			parentVO.setQcbz(UFBoolean.TRUE);
 		}
 
 		helper.prepareForNullJe(value);
 		helper.prepareContrast(value);
+		helper.prepareBxVerifyAccrued(value);
 
 		clearCopyBodyRowPk(value);
 
@@ -1380,6 +1387,16 @@ public class ErmBillBillForm extends ERMBillForm {
 			}
 		} catch (Exception e) {
 			getExeceptionHandler().handlerExeption(e);
+		}
+		
+		// 费用调整单默认值处理
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO,ErmDjlxConst.BXTYPE_ADJUST);
+		if(isAdjust){
+			parentVO.setIscostshare(UFBoolean.TRUE);
+			parentVO.setIsexpamt(UFBoolean.FALSE);
+			parentVO.setStart_period(null);
+			parentVO.setTotal_period(null);
 		}
 	}
 
@@ -1473,14 +1490,23 @@ public class ErmBillBillForm extends ERMBillForm {
 		if (vo == null) {
 			return;
 		}
-		Map<String, SuperVO> expenseType = getExpenseMap();// 费用类型
-		Map<String, SuperVO> reimtypeMap = getReimtypeMap();// 报销类型
-		// 表头报销规则
-		String reimrule = BxUIControlUtil.doHeadReimAction(vo,
-				getReimRuleDataMap(), expenseType, reimtypeMap);
+		
+		// 表头报销规则，组织级+集团级
+		StringBuffer reim = new StringBuffer("");
+		List<String> reimrule = BxUIControlUtil.doHeadReimAction(vo,
+				getReimRuleDataMap(), getReimDimDataMap());
+		List<String> reimrule1 = BxUIControlUtil.doHeadReimAction(vo,
+						reimRuleDataCacheMap.get(ReimRulerVO.PKORG), reimDimDataCacheMap.get(ReimRulerVO.PKORG));
+		for(String str:reimrule1){
+			if(!reimrule.contains(str))
+				reimrule.add(str);
+		}
+		for(String str:reimrule){
+			reim.append(str+"\t");
+		}
 		if (getBillCardPanel().getHeadItem(BXConstans.REIMRULE) != null) {
 			getBillCardPanel().setHeadItem(BXConstans.REIMRULE,
-					reimrule.toString());
+					reim.toString());
 		}
 		doBodyReimAction();
 	}
@@ -1488,57 +1514,42 @@ public class ErmBillBillForm extends ERMBillForm {
 	/**
 	 * 表体报销规则
 	 */
-	protected void doBodyReimAction() {
+	public void doBodyReimAction() {
 
 		JKBXVO bxvo = null;
 		bxvo = (JKBXVO) getValue();
 
-		HashMap<String, String> bodyReimRuleMap = getBodyReimRuleMap();
-		List<BodyEditVO> result = BxUIControlUtil.doBodyReimAction(bxvo,
-				getReimRuleDataMap(), bodyReimRuleMap);
-		for (BodyEditVO vo : result) {
-			getBillCardPanel().setBodyValueAt(vo.getValue(), vo.getRow(),
-					vo.getItemkey(), vo.getTablecode());
-		}
-	}
-
-	/**
-	 * 获取表体报销标准Map(tablecode@itemkey,费用类型pk)
-	 *
-	 * @return
-	 */
-	public HashMap<String, String> getBodyReimRuleMap() {
-		HashMap<String, String> hashMap = new HashMap<String, String>();
+		//如果没有表体字段，则直接返回
 		if (getBillCardPanel().getBillData().getBillTempletVO() == null
 				|| getBillCardPanel().getBillData().getBillTempletVO()
 						.getChildrenVO() == null) {
-			return hashMap;
+			return;
 		}
-
-		BillTempletBodyVO[] abilltempletbodyvo = (BillTempletBodyVO[]) getBillCardPanel()
+		//取表体所有页签的所有item
+		BillTempletBodyVO[] billtempletbodyvos = (BillTempletBodyVO[]) getBillCardPanel()
 				.getBillData().getBillTempletVO().getChildrenVO();
-
-		int i = 0;
-		for (int j = abilltempletbodyvo.length; i < j; i++) {
-			BillTempletBodyVO bodyvo = abilltempletbodyvo[i];
-			String userdefine1 = bodyvo.getUserdefine1();
-			if (userdefine1 != null && userdefine1.startsWith("getReimvalue")) {
-				String expenseName = userdefine1.substring(userdefine1
-						.indexOf("(") + 1, userdefine1.indexOf(")"));
-				Collection<SuperVO> values = getExpenseMap().values();
-				for (SuperVO vo : values) {
-					// 存在该费用类型，则将<tablecode@itemkey,费用类型pk>放入Map中
-					if (("\"" + vo.getAttributeValue(ExpenseTypeVO.CODE) + "\"")
-							.equals(expenseName)) {
-						userdefine1 = vo.getPrimaryKey();
-						hashMap.put(bodyvo.getTable_code()
-								+ ReimRuleVO.REMRULE_SPLITER
-								+ bodyvo.getItemkey(), userdefine1);
-					}
+		
+		//得到最终标准值,先走组织级标准，再走集团级标准
+		List<BodyEditVO> result = BxUIControlUtil.doBodyReimAction(bxvo,
+				getReimRuleDataMap(), billtempletbodyvos,getReimDimDataMap());
+		List<BodyEditVO> result1 = BxUIControlUtil.doBodyReimAction(bxvo,
+				reimRuleDataCacheMap.get(ReimRulerVO.PKORG),  billtempletbodyvos,reimDimDataCacheMap.get(ReimRulerVO.PKORG));
+		result.addAll(result1);
+		List<String> editstring = new ArrayList<String>();
+		controlRule.clear();
+		for (BodyEditVO vo : result) {
+			//ControlBodyEditVO表示控制项
+			if(vo instanceof ControlBodyEditVO){
+				if(!editstring.contains(vo.toString())){
+					editstring.add(vo.toString());
+					controlRule.add((ControlBodyEditVO)vo);
 				}
 			}
+			else{
+				getBillCardPanel().setBodyValueAt(vo.getValue(), vo.getRow(),
+						vo.getItemkey(), vo.getTablecode());
+			}
 		}
-		return hashMap;
 	}
 
 	protected Object getHeadValue(String key) {
@@ -1612,38 +1623,11 @@ public class ErmBillBillForm extends ERMBillForm {
 		return bodyEventHandle;
 	}
 
-	public Map<String, SuperVO> getExpenseMap() {
-		return expenseMap;
-	}
-
-	public void setExpenseMap(Map<String, SuperVO> expenseMap) {
-		this.expenseMap = expenseMap;
-	}
-
-	public Map<String, SuperVO> getReimtypeMap() {
-		return reimtypeMap;
-	}
-
-	public void setReimtypeMap(Map<String, SuperVO> reimtypeMap) {
-		this.reimtypeMap = reimtypeMap;
-	}
-
-	public void setReimRuleDataMap(Map<String, List<SuperVO>> reimRuleDataMap) {
-		this.reimRuleDataMap = reimRuleDataMap;
-	}
-	
-	public void setReimRuleDataMap(String pk_org, Map<String, List<SuperVO>> reimRuleDataMap) {
-		setReimRuleDataMap(reimRuleDataMap);
-		reimRuleDataCacheMap.put(pk_org, reimRuleDataMap);
-	}
-	
-	public Map<String, Map<String, List<SuperVO>>> getReimRuleDataCacheMap() {
-		return reimRuleDataCacheMap;
-	}
-
-	public Map<String, List<SuperVO>> getReimRuleDataMap() {
+	// 根据集团级参数“报销标准适用规则”,来取组织
+	public String getPkOrg(){
+		//获取组织
 		String pk_org = null;
-		try {// 根据集团级参数“报销标准适用规则”,来取组织
+		try {
 			String PARAM_ER8 = SysInit.getParaString(BXUiUtil.getPK_group(), BXParamConstant.PARAM_ER_REIMRULE);
 			if (PARAM_ER8 != null) {
 				if (PARAM_ER8.equals(BXParamConstant.ER_ER_REIMRULE_PK_ORG)) {
@@ -1657,26 +1641,145 @@ public class ErmBillBillForm extends ERMBillForm {
 		} catch (BusinessException e1) {
 			ExceptionHandler.consume(e1);
 		}
-
-		if (pk_org != null) {
-			if (reimRuleDataCacheMap.get(pk_org) == null) {
-				List<ReimRuleVO> vos;
-				try {
-					vos = NCLocator.getInstance().lookup(nc.itf.arap.prv.IBXBillPrivate.class)
-							.queryReimRule(null, pk_org);
-					setReimRuleDataMap(pk_org, VOUtils.changeCollectionToMapList(vos, "pk_billtype"));
-				} catch (BusinessException e) {
-					ExceptionHandler.consume(e);
-				}
-				reimRuleDataCacheMap.put(pk_org, reimRuleDataMap);
-			} else {
-				return reimRuleDataCacheMap.get(pk_org);
-			}
-		}
-
-		return reimRuleDataMap;
+		return pk_org;
+	}
+	
+	public Map<String, Map<String, List<SuperVO>>> getReimRuleDataCacheMap() {
+		return reimRuleDataCacheMap;
 	}
 
+	//获取当前组织级标准
+	public Map<String, List<SuperVO>> getReimRuleDataMap() {
+		String pk_org = getPkOrg();
+		//如果集团级标准为空则需要首次获取集团级和组织级标准
+		if (reimRuleDataCacheMap.get(ReimRulerVO.PKORG) == null) {
+			List<ReimRulerVO> vos;
+			List<ReimRuleDimVO> vodims;
+			try {
+				if (pk_org != null) {
+					vos = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryGroupOrgReimRuler(null, getModel().getContext().getPk_group(),pk_org);
+					vodims = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryGroupOrgReimDim(null, getModel().getContext().getPk_group(),pk_org);
+					List<SuperVO> vos1 = new ArrayList<SuperVO>();
+					List<SuperVO> vos2 = new ArrayList<SuperVO>();
+					if(vos!=null){
+						for(ReimRulerVO vo:vos){
+							if(vo.getPk_org().equals(ReimRulerVO.PKORG))
+								vos1.add(vo);
+							else
+								vos2.add(vo);
+						}
+					}
+					reimRuleDataCacheMap.put(ReimRulerVO.PKORG, VOUtils.changeCollectionToMapList(vos1, "pk_billtype"));
+					reimRuleDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vos2, "pk_billtype"));
+					vos1.clear();
+					vos2.clear();
+					if(vodims!=null){
+						for(ReimRuleDimVO vo:vodims){
+							if(vo.getPk_org().equals(ReimRulerVO.PKORG))
+								vos1.add(vo);
+							else
+								vos2.add(vo);
+						}
+					}
+					reimDimDataCacheMap.put(ReimRulerVO.PKORG, VOUtils.changeCollectionToMapList(vos1, "pk_billtype"));
+					reimDimDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vos2, "pk_billtype"));
+				}
+			} catch (BusinessException e) {
+				ExceptionHandler.consume(e);
+			}
+		}
+		else{
+			//如果集团级标准不为空说明已经取到了，直接取组织就可以了
+			if (pk_org != null) {
+				if (reimRuleDataCacheMap.get(pk_org) == null) {
+					List<ReimRulerVO> vos;
+					List<ReimRuleDimVO> vodims;
+					try {
+						vos = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryReimRuler(null, getModel().getContext().getPk_group(),pk_org);
+						vodims = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryReimDim(null, getModel().getContext().getPk_group(),pk_org);
+						reimRuleDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vos, "pk_billtype"));
+						reimDimDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vodims, "pk_billtype"));
+					} catch (BusinessException e) {
+						ExceptionHandler.consume(e);
+					}
+				} else {
+					return reimRuleDataCacheMap.get(pk_org);
+				}
+			}
+		}
+		return reimRuleDataCacheMap.get(pk_org);
+	}
+	
+	//获取当前组织级标准维度
+	public Map<String, List<SuperVO>> getReimDimDataMap() {
+		String pk_org = getPkOrg();
+		//如果集团级标准为空则需要首次获取集团级和组织级标准
+		if (reimDimDataCacheMap.get(ReimRulerVO.PKORG) == null) {
+			List<ReimRulerVO> vos;
+			List<ReimRuleDimVO> vodims;
+			try {
+				if (pk_org != null) {
+					vos = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryGroupOrgReimRuler(null, getModel().getContext().getPk_group(),pk_org);
+					vodims = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryGroupOrgReimDim(null, getModel().getContext().getPk_group(),pk_org);
+					List<SuperVO> vos1 = new ArrayList<SuperVO>();
+					List<SuperVO> vos2 = new ArrayList<SuperVO>();
+					if(vos!=null){
+						for(ReimRulerVO vo:vos){
+							if(vo.getPk_org().equals(ReimRulerVO.PKORG))
+								vos1.add(vo);
+							else
+								vos2.add(vo);
+						}
+					}
+					reimRuleDataCacheMap.put(ReimRulerVO.PKORG, VOUtils.changeCollectionToMapList(vos1, "pk_billtype"));
+					reimRuleDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vos2, "pk_billtype"));
+					vos1.clear();
+					vos2.clear();
+					if(vodims!=null){
+						for(ReimRuleDimVO vo:vodims){
+							if(vo.getPk_org().equals(ReimRulerVO.PKORG))
+								vos1.add(vo);
+							else
+								vos2.add(vo);
+						}
+					}
+					reimDimDataCacheMap.put(ReimRulerVO.PKORG, VOUtils.changeCollectionToMapList(vos1, "pk_billtype"));
+					reimDimDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vos2, "pk_billtype"));
+				}
+			} catch (BusinessException e) {
+				ExceptionHandler.consume(e);
+			}
+		}
+		else{
+			//如果集团级标准不为空说明已经取到了，直接取组织就可以了
+			if (pk_org != null) {
+				if (reimDimDataCacheMap.get(pk_org) == null) {
+					List<ReimRulerVO> vos;
+					List<ReimRuleDimVO> vodims;
+					try {
+						vos = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryReimRuler(null, getModel().getContext().getPk_group(),pk_org);
+						vodims = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryReimDim(null, getModel().getContext().getPk_group(),pk_org);
+						reimDimDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vos, "pk_billtype"));
+						reimDimDataCacheMap.put(pk_org, VOUtils.changeCollectionToMapList(vodims, "pk_billtype"));
+					} catch (BusinessException e) {
+						ExceptionHandler.consume(e);
+					}
+				} else {
+					return reimDimDataCacheMap.get(pk_org);
+				}
+			}
+		}
+		return reimDimDataCacheMap.get(pk_org);
+	}
+	
 	public List<String> getPanelEditableKeyList() {
 		return panelEditableKeyList;
 	}
@@ -1824,6 +1927,22 @@ public class ErmBillBillForm extends ERMBillForm {
 
 	public void setExeceptionHandler(DefaultExceptionHanler execeptionHandler) {
 		this.execeptionHandler = execeptionHandler;
+	}
+
+	public List<ControlBodyEditVO> getControlRule() {
+		return controlRule;
+	}
+
+	public Set<Integer> getRows() {
+		return rows;
+	}
+
+	public boolean isVerifyAccrued() {
+		return isVerifyAccrued;
+	}
+
+	public void setVerifyAccrued(boolean isVerifyAccrued) {
+		this.isVerifyAccrued = isVerifyAccrued;
 	}
 	
 	

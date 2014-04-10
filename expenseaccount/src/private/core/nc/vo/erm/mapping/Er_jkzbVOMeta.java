@@ -166,7 +166,8 @@ public class Er_jkzbVOMeta extends ArapBaseMappingMeta {
 				"center_dept",/*归口管理部门*/
 				"srcbilltype",/*来源单据交易类型*/
 				"srctype",/*来源单据类型*/
-				"ismashare"/*是否拉分摊申请单标志*/
+				"ismashare",/*是否拉分摊申请单标志*/
+				"vouchertag"/*凭证标志*/
 				};
 		
 		
@@ -314,7 +315,8 @@ public class Er_jkzbVOMeta extends ArapBaseMappingMeta {
 		TYPE_STRING,/*归口管理部门*/
 		TYPE_STRING,/*来源单据交易类型*/
 		TYPE_STRING,/*来源单据类型*/
-		TYPE_BOOLEAN/*是否拉分摊申请单标志*/
+		TYPE_BOOLEAN,/*是否拉分摊申请单标志*/
+		TYPE_INT/*凭证标志 */
 		});// 数据类型
 	}
 }

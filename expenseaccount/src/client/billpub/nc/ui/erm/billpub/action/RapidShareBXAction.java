@@ -1,14 +1,19 @@
 package nc.ui.erm.billpub.action;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.ui.erm.action.RapidShareAbstractAction;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
 import nc.ui.pub.bill.BillData;
+import nc.ui.pub.bill.BillModel;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.djlx.DjLXVO;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
@@ -25,6 +30,17 @@ public class RapidShareBXAction extends RapidShareAbstractAction {
     @Override
     protected void initDataBefore() throws ValidationException {
         ((BillForm) getEditor()).getBillCardPanel().stopEditing();
+        
+        // 已经核销预提情况，不可快速分摊
+		BillModel billModel = getEditor().getBillCardPanel().getBillModel(BXConstans.AccruedVerify_PAGE);
+		AccruedVerifyVO[] vos = null;
+		if(billModel !=null){
+			vos = (AccruedVerifyVO[]) billModel.getBodyValueVOs(AccruedVerifyVO.class.getName());
+		}
+		if(vos != null && vos.length > 0){
+			throw new ValidationException("报销单已经核销预提，不可快速分摊");
+		}
+        
         BillData data = ((BillForm) getEditor()).getBillCardPanel().getBillData();
         data.dataNotNullValidate();
         headervo =  ((JKBXVO)getEditor().getValue()).getParentVO();
@@ -36,10 +52,15 @@ public class RapidShareBXAction extends RapidShareAbstractAction {
     protected boolean isActionEnable()
     {
         
-        if (BXConstans.JK_DJDL.equals(((ErmBillBillManageModel)getModel()).getCurrentDjLXVO().getDjdl()))
+        DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		if (BXConstans.JK_DJDL.equals(currentDjLXVO.getDjdl()))
         {
             return false;
         }
+		if(ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO, ErmDjlxConst.BXTYPE_ADJUST)){
+			// 调整单情况，不可快速分摊
+			return false;
+		}
         return true;
     }
 

@@ -14,6 +14,7 @@ public class ERMDjCondVO implements java.io.Serializable {
 	
     public Integer[] VoucherFlags = null;
     public boolean isLinkPz=false;
+    public boolean isjs = true;// «∑ÒΩ·À„
 
 	public Integer[] getVoucherFlags() {
 		return VoucherFlags;
@@ -30,8 +31,12 @@ public class ERMDjCondVO implements java.io.Serializable {
 	public void setLinkPz(boolean isLinkPz) {
 		this.isLinkPz = isLinkPz;
 	}
-	
-	
-	
 
+	public boolean isIsjs() {
+		return isjs;
+	}
+
+	public void setIsjs(boolean isjs) {
+		this.isjs = isjs;
+	}
 }

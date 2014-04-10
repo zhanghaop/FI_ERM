@@ -6,6 +6,8 @@ import java.util.List;
 
 import nc.bs.erm.util.ErBudgetUtil;
 import nc.bs.erm.util.ErUtil;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.tb.control.IAccessableBusiVO;
@@ -23,9 +25,8 @@ import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.costshare.CostShareYsControlVO;
+import nc.vo.erm.costshare.ext.CostShareYsControlVOExt;
 import nc.vo.erm.verifynew.BusinessShowException;
-import nc.vo.fibill.outer.FiBillAccessableBusiVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
@@ -73,8 +74,11 @@ public class LinkBudgetAction extends NCAction {
 		String actionCode = getActionCode((CostShareVO) selectvo.getParentVO());
 
 		if (actionCode == null) {
-			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-					"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+			actionCode = BXConstans.ERM_NTB_SAVE_KEY;
+			((CostShareVO) selectvo.getParentVO()).setBillstatus(BXStatusConst.DJZT_Saved);
+			// throw new
+			// BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
+			// "0201212-0015")/* @res "没有符合条件的预算数据!" */);
 		}
 
 		// 调用预算接口查询控制策略。如果返回值为空表示无控制策略，不控制。最后一个参数为false，这样就不会查找下游策略
@@ -83,31 +87,37 @@ public class LinkBudgetAction extends NCAction {
 
 		List<FiBillAccessableBusiVOProxy> voProxys = new ArrayList<FiBillAccessableBusiVOProxy>();
 		if (ruleVos != null && ruleVos.length > 0) {
-//			IFYControl[] item = ErBudgetUtil.getCostControlVOByCSVO(new AggCostShareVO[] { selectvo }, getModel()
-//					.getContext().getPk_loginUser());
 			List<IFYControl> item = null;
 			CostShareVO headvo = (CostShareVO) selectvo.getParentVO();
 			CircularlyAccessibleValueObject[] dtailvos = selectvo.getChildrenVO();
-			if(dtailvos != null){
+			if (dtailvos != null) {
+				boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(headvo.getPk_group(), headvo.getDjlxbm(),
+						ErmDjlxConst.BXTYPE_ADJUST);
+
 				item = new ArrayList<IFYControl>();
 				for (int j = 0; j < dtailvos.length; j++) {
 					// 转换生成controlvo
-					CostShareYsControlVO cscontrolvo = new CostShareYsControlVO(headvo, (CShareDetailVO) dtailvos[j]);
+					CShareDetailVO detailvo = (CShareDetailVO) dtailvos[j];
+					CostShareYsControlVOExt cscontrolvo = new CostShareYsControlVOExt(headvo, detailvo);
+					if (isAdjust) {
+						// 调整单情况，需要根据分摊明细行的预算占用日期进行预算控制
+						cscontrolvo.setYsDate(detailvo.getYsdate());
+					}
 					item.add(cscontrolvo);
 				}
 			}
 
 			if (item != null) {
-				YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(item.toArray(new IFYControl[]{}), true, ruleVos);
+				YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(item.toArray(new IFYControl[] {}), true, ruleVos);
 				for (YsControlVO vo : controlVos) {
-					voProxys.add(getFiBillAccessableBusiVOProxy(vo, vo.getParentBillType()));
+					voProxys.add(new FiBillAccessableBusiVOProxy(vo));
 				}
 			}
 		}
-		
-		if(voProxys.size() == 0){
+
+		if (voProxys.size() == 0) {
 			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-			"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+					"0201212-0015")/* @res "没有符合条件的预算数据!" */);
 		}
 
 		try {
@@ -127,11 +137,6 @@ public class LinkBudgetAction extends NCAction {
 		} catch (Exception e) {
 			throw ExceptionHandler.handleException(this.getClass(), e);
 		}
-	}
-
-	private FiBillAccessableBusiVOProxy getFiBillAccessableBusiVOProxy(FiBillAccessableBusiVO vo, String parentBillType) {
-		FiBillAccessableBusiVOProxy voProxy = new FiBillAccessableBusiVOProxy(vo);
-		return voProxy;
 	}
 
 	protected boolean isActionEnable() {
@@ -163,9 +168,9 @@ public class LinkBudgetAction extends NCAction {
 	private String getActionCode(CostShareVO vo) {
 		int billStatus = vo.getBillstatus();
 		switch (billStatus) {
-			case BXStatusConst.DJZT_Saved://保存
+			case BXStatusConst.DJZT_Saved:// 保存
 				return BXConstans.ERM_NTB_SAVE_KEY;
-			case BXStatusConst.DJZT_Sign://确认
+			case BXStatusConst.DJZT_Sign:// 确认
 				return BXConstans.ERM_NTB_APPROVE_KEY;
 			default:
 				return null;

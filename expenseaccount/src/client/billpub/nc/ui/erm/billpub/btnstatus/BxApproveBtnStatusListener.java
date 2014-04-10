@@ -107,26 +107,27 @@ public class BxApproveBtnStatusListener
      * @param vo
      * @return
      */
-    private boolean isApproveBtnEnable(JKBXVO vo) {
-    	if(vo == null ){
-    		return false;
-    	}
-    	//审批不通过， 审核按钮不可用
-        if(vo.getParentVO().getSpzt()!=null && vo.getParentVO().getSpzt()==IPfRetCheckInfo.NOPASS){
-            return false;
-        }
-        // 单据已经审核通过了，审核按钮不可用
-        if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved  || 
-        		vo.getParentVO().getDjzt() == BXStatusConst.DJZT_TempSaved ) {
-        	return false;
-        }
-        
-        if(vo.getParentVO().getSpzt()!=null&&vo.getParentVO().getSpzt()==IPfRetCheckInfo.GOINGON){
-            return true;
-        }
-        
-        return true;
-    }
+	private boolean isApproveBtnEnable(JKBXVO vo) {
+		if (vo == null) {
+			return false;
+		}
+		// 审批不通过， 审核按钮不可用
+		if (vo.getParentVO().getSpzt() != null && vo.getParentVO().getSpzt() == IPfRetCheckInfo.NOPASS) {
+			return false;
+		}
+		// 单据已经审核通过了，审核按钮不可用
+		if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved
+				|| vo.getParentVO().getDjzt() == BXStatusConst.DJZT_TempSaved) {
+			return false;
+		}
+
+		if (vo.getParentVO().getSpzt() != null && (vo.getParentVO().getSpzt() == IPfRetCheckInfo.GOINGON
+				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.COMMIT)) {
+			return true;
+		}
+
+		return false;
+	}
     /**
      * 反审核按钮是否可用
      * 

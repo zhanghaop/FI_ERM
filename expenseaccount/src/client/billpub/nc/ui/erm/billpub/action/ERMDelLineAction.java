@@ -2,6 +2,8 @@ package nc.ui.erm.billpub.action;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
@@ -16,6 +18,7 @@ import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
@@ -27,6 +30,9 @@ public class ERMDelLineAction extends DelLineAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
+		// 防止界面上，最后编辑的内容不生效
+		getBillCardPanel().stopEditing();
+		
 		boolean isNeedAvg = ErmForCShareUiUtil.isNeedBalanceJe(getBillCardPanel());
 
 		if (getBillCardPanel().getBillModel().getRowCount() != 0) {
@@ -46,8 +52,14 @@ public class ERMDelLineAction extends DelLineAction {
 
 			if (getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CSHARE_PAGE)) {
 				BillItem ismashare = getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE);
+				
+				DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+				boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO,ErmDjlxConst.BXTYPE_ADJUST);
+					
 				// 拉分摊申请单后，分摊标志位不允许取消
-				if (getBillCardPanel().getBillModel().getRowCount() == 0 && (ismashare == null || !(Boolean)ismashare.getValueObject())) {
+				if (getBillCardPanel().getBillModel().getRowCount() == 0 
+						&& (ismashare == null || !(Boolean)ismashare.getValueObject())
+						&& !isAdjust) {
 					JKBXVO jkbxvo = (JKBXVO) getCardpanel().getValue();
 					if(isCancelCostshareEnable(jkbxvo)){
 						
@@ -70,7 +82,8 @@ public class ERMDelLineAction extends DelLineAction {
 					if (isNeedAvg) {
 						ErmForCShareUiUtil.reComputeAllJeByAvg(getBillCardPanel());
 						for (int i = 0; i < getBillCardPanel().getRowCount(); i++) {
-							ErmForCShareUiUtil.setRateAndAmount(i, this.getBillCardPanel());
+							//ErmForCShareUiUtil.setRateAndAmount(i, this.getBillCardPanel());
+							ErmForCShareUiUtil.setRateAndAmountNEW(i, this.getBillCardPanel(),"DEL_");
 						}
 					}
 				}
@@ -116,10 +129,12 @@ public class ERMDelLineAction extends DelLineAction {
 	}
 
 	private boolean validateAddRow() throws BusinessException {
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO,ErmDjlxConst.BXTYPE_ADJUST);
 		// 分摊页签，报销金额不能为0
 		if (getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CSHARE_PAGE)) {
 			UFDouble totalAmount = (UFDouble) getBillCardPanel().getHeadItem(JKBXHeaderVO.YBJE).getValueObject();
-			if (!ErmForCShareUtil.isUFDoubleGreaterThanZero(totalAmount)
+			if (!isAdjust&&!ErmForCShareUtil.isUFDoubleGreaterThanZero(totalAmount)
 					&& !BXConstans.BXINIT_NODECODE_G.equals(getNodeCode())
 					&& !BXConstans.BXINIT_NODECODE_U.equals(getNodeCode())) {
 				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",

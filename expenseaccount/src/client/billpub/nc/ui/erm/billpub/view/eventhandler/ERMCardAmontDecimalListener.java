@@ -39,13 +39,15 @@ public class ERMCardAmontDecimalListener implements IBillModelDecimalListener2{
 	private String[] targetKeys;
 	private String rateType;
 	private BillCardPanel cardPanel;
-
+	private BillModel billmodel;
+	
 	public ERMCardAmontDecimalListener(BillModel billmodel,BillCardPanel cardPanel, String[] targetKeys,
 			String rateType) {
 		this.targetKeys = targetKeys;
 		this.rateType = rateType;
 		this.cardPanel = cardPanel;
-		billmodel.addDecimalListener(this);
+		this.billmodel = billmodel;
+		this.billmodel.addDecimalListener(this);
 	}
 	
 	/**
@@ -57,7 +59,10 @@ public class ERMCardAmontDecimalListener implements IBillModelDecimalListener2{
 
 	@Override
 	public int getDecimalFromSource(int row, Object okValue) {
-		int digit = 2;
+		int digit = 8;
+		if (billmodel.isImporting()) {// 导入时不需要计算精度
+			return digit;
+		}
 		try {
 			if (RATE_TYPE_YB.equals(rateType)) {
 				return Currency.getCurrDigit(getHeadItemStrValue(CostShareVO.BZBM));

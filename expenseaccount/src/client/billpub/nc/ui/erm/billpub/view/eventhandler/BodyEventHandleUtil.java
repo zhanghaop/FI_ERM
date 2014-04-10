@@ -2,7 +2,6 @@ package nc.ui.erm.billpub.view.eventhandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -20,8 +19,6 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BodyEditVO;
-import nc.vo.arap.bx.util.BxUIControlUtil;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -53,39 +50,45 @@ public class BodyEventHandleUtil {
 	 *            表体行号
 	 * @author zhangxiao1
 	 */
-	public void modifyFinValues(String key, int row) {
+	public void modifyFinValues(String key, int row,BillEditEvent e) {
 		BillCardPanel panel = getBillCardPanel();
+		String currpage = null;
+		if(e!=null){
+			currpage = e.getTableCode();
+		}else{
+			currpage = panel.getCurrentBodyTableCode();
+		}
 		
-		UFDouble ybje = getAmountValue(row, panel, BXBusItemVO.YBJE);
-		UFDouble cjkybje = getAmountValue(row, panel, BXBusItemVO.CJKYBJE);
-		UFDouble zfybje = getAmountValue(row, panel, BXBusItemVO.ZFYBJE);
-		UFDouble hkybje = getAmountValue(row, panel, BXBusItemVO.HKYBJE);
+		UFDouble ybje = getAmountValue(row, panel, BXBusItemVO.YBJE,currpage);
+		UFDouble cjkybje = getAmountValue(row, panel, BXBusItemVO.CJKYBJE,currpage);
+		UFDouble zfybje = getAmountValue(row, panel, BXBusItemVO.ZFYBJE,currpage);
+		UFDouble hkybje = getAmountValue(row, panel, BXBusItemVO.HKYBJE,currpage);
 
 		// 如果原币金额或冲借款金额发生变化
 		if (key.equals(BXBusItemVO.YBJE) || key.equals(BXBusItemVO.CJKYBJE)) {
 			// 如果原币金额大于冲借款金额
 			if (ybje.getDouble() > cjkybje.getDouble()) {
-				panel.setBodyValueAt(ybje.sub(cjkybje), row,BXBusItemVO.ZFYBJE);// 支付金额=原币金额-冲借款金额
-				panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.HKYBJE);
-				panel.setBodyValueAt(cjkybje, row, BXBusItemVO.CJKYBJE);
+				panel.setBodyValueAt(ybje.sub(cjkybje), row,BXBusItemVO.ZFYBJE,currpage);// 支付金额=原币金额-冲借款金额
+				panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.HKYBJE,currpage);
+				panel.setBodyValueAt(cjkybje, row, BXBusItemVO.CJKYBJE,currpage);
 			} else {
-				panel.setBodyValueAt(cjkybje.sub(ybje), row,BXBusItemVO.HKYBJE);// 还款金额=冲借款金额-原币金额
-				panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.ZFYBJE);
-				panel.setBodyValueAt(cjkybje, row, BXBusItemVO.CJKYBJE);
+				panel.setBodyValueAt(cjkybje.sub(ybje), row,BXBusItemVO.HKYBJE,currpage);// 还款金额=冲借款金额-原币金额
+				panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.ZFYBJE,currpage);
+				panel.setBodyValueAt(cjkybje, row, BXBusItemVO.CJKYBJE,currpage);
 			}
 		} else if (key.equals(BXBusItemVO.ZFYBJE)) {// 如果是支付金额发生变化
 			if (zfybje.toDouble() > ybje.toDouble()) {// 支付金额不能大于原币金额，否则将支付金额的值置为原币金额的值
 				zfybje = ybje;
-				panel.setBodyValueAt(zfybje, row, BXBusItemVO.ZFYBJE);
+				panel.setBodyValueAt(zfybje, row, BXBusItemVO.ZFYBJE,currpage);
 			}
-			panel.setBodyValueAt(ybje.sub(zfybje), row, BXBusItemVO.CJKYBJE);// 冲借款金额=原币金额-支付金额
-			panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.HKYBJE);
+			panel.setBodyValueAt(ybje.sub(zfybje), row, BXBusItemVO.CJKYBJE,currpage);// 冲借款金额=原币金额-支付金额
+			panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.HKYBJE,currpage);
 		} else if (key.equals(BXBusItemVO.HKYBJE)) {// 如果是还款金额发生变化
-			panel.setBodyValueAt(ybje.add(hkybje), row, BXBusItemVO.CJKYBJE);// 冲借款金额=原币金额+还款金额
-			panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.ZFYBJE);
+			panel.setBodyValueAt(ybje.add(hkybje), row, BXBusItemVO.CJKYBJE,currpage);// 冲借款金额=原币金额+还款金额
+			panel.setBodyValueAt(UFDouble.ZERO_DBL, row, BXBusItemVO.ZFYBJE,currpage);
 		}
 		
-		panel.setBodyValueAt(ybje, row, BXBusItemVO.YBYE);// 原币余额=原币金额
+		panel.setBodyValueAt(ybje, row, BXBusItemVO.YBYE,currpage);// 原币余额=原币金额
 
 		String bzbm = null;
 		if (getHeadValue(JKBXHeaderVO.BZBM) != null) {
@@ -93,7 +96,7 @@ public class BodyEventHandleUtil {
 		}
 		// 财务组织不为空时，再去根据原币计算本币，否则本币不计算。
 		if (getHeadValue(JKBXHeaderVO.PK_ORG) != null) {
-			transFinYbjeToBbje(row, bzbm);
+			transFinYbjeToBbje(row, bzbm,currpage);
 		}
 	}
 
@@ -106,8 +109,8 @@ public class BodyEventHandleUtil {
 	 * @return
 	 * @author: wangyhh@ufida.com.cn
 	 */
-	private UFDouble getAmountValue(int row, BillCardPanel panel, String itemKey) {
-		Object bodyValue = panel.getBodyValueAt(row, itemKey);
+	private UFDouble getAmountValue(int row, BillCardPanel panel, String itemKey,String currpage) {
+		Object bodyValue = panel.getBillModel(currpage).getValueAt(row, itemKey);
 		return bodyValue == null ? UFDouble.ZERO_DBL: (UFDouble) bodyValue;
 	}
 
@@ -120,13 +123,13 @@ public class BodyEventHandleUtil {
 	 *            币种编码
 	 * @author zhangxiao1
 	 */
-	protected void transFinYbjeToBbje(int row, String bzbm) {
+	protected void transFinYbjeToBbje(int row, String bzbm,String currpage) {
 		BillCardPanel panel = getBillCardPanel();
 		
-		UFDouble ybje = (UFDouble) panel.getBillModel().getValueAt(row,BXBusItemVO.YBJE);
-		UFDouble cjkybje = (UFDouble) panel.getBillModel().getValueAt(row, BXBusItemVO.CJKYBJE);
-		UFDouble hkybje = (UFDouble) panel.getBillModel().getValueAt(row, BXBusItemVO.HKYBJE);
-		UFDouble zfybje = (UFDouble) panel.getBillModel().getValueAt(row, BXBusItemVO.ZFYBJE);
+		UFDouble ybje = (UFDouble) panel.getBillModel(currpage).getValueAt(row,BXBusItemVO.YBJE);
+		UFDouble cjkybje = (UFDouble) panel.getBillModel(currpage).getValueAt(row, BXBusItemVO.CJKYBJE);
+		UFDouble hkybje = (UFDouble) panel.getBillModel(currpage).getValueAt(row, BXBusItemVO.HKYBJE);
+		UFDouble zfybje = (UFDouble) panel.getBillModel(currpage).getValueAt(row, BXBusItemVO.ZFYBJE);
 		UFDouble hl = null;
 		UFDouble globalhl = null;
 		UFDouble grouphl = null;
@@ -143,20 +146,20 @@ public class BodyEventHandleUtil {
 			UFDouble[] bbje = Currency.computeYFB(getPk_org(),
 					Currency.Change_YBCurr, bzbm, ybje, null, null, null, hl,
 					BXUiUtil.getSysdate());
-			panel.getBillModel().setValueAt(bbje[2], row,JKBXHeaderVO.BBJE);
-			panel.getBillModel().setValueAt(bbje[2], row,JKBXHeaderVO.BBYE);
+			panel.getBillModel(currpage).setValueAt(bbje[2], row,JKBXHeaderVO.BBJE);
+			panel.getBillModel(currpage).setValueAt(bbje[2], row,JKBXHeaderVO.BBYE);
 			
 			bbje = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr,
 					bzbm, cjkybje, null, null, null, hl, BXUiUtil.getSysdate());
-			panel.getBillModel().setValueAt(bbje[2], row,JKBXHeaderVO.CJKBBJE);
+			panel.getBillModel(currpage).setValueAt(bbje[2], row,JKBXHeaderVO.CJKBBJE);
 			
 			bbje = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr,
 					bzbm, hkybje, null, null, null, hl, BXUiUtil.getSysdate());
-			panel.getBillModel().setValueAt(bbje[2], row,JKBXHeaderVO.HKBBJE);
+			panel.getBillModel(currpage).setValueAt(bbje[2], row,JKBXHeaderVO.HKBBJE);
 			bbje = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr,
 					
 					bzbm, zfybje, null, null, null, hl, BXUiUtil.getSysdate());
-			panel.getBillModel().setValueAt(bbje[2], row,JKBXHeaderVO.ZFBBJE);
+			panel.getBillModel(currpage).setValueAt(bbje[2], row,JKBXHeaderVO.ZFBBJE);
 
 			/**
 			 * 计算全局集团本位币
@@ -171,10 +174,10 @@ public class BodyEventHandleUtil {
 							.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel().getHeadItem(
 							JKBXHeaderVO.PK_GROUP).getValueObject().toString(),
 					globalhl, grouphl);
-			panel.getBillModel().setValueAt(money[0], row,JKBXHeaderVO.GROUPBBJE);
-			panel.getBillModel().setValueAt(money[1], row,JKBXHeaderVO.GLOBALBBJE);
-			panel.getBillModel().setValueAt(money[0], row,JKBXHeaderVO.GROUPBBYE);
-			panel.getBillModel().setValueAt(money[1], row,JKBXHeaderVO.GLOBALBBYE);
+			panel.getBillModel(currpage).setValueAt(money[0], row,JKBXHeaderVO.GROUPBBJE);
+			panel.getBillModel(currpage).setValueAt(money[1], row,JKBXHeaderVO.GLOBALBBJE);
+			panel.getBillModel(currpage).setValueAt(money[0], row,JKBXHeaderVO.GROUPBBYE);
+			panel.getBillModel(currpage).setValueAt(money[1], row,JKBXHeaderVO.GLOBALBBYE);
 			
 			// 需要将集团支付本币和全局支付本币设置到界面上
 			je = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr, bzbm, zfybje, null, null, null, hl,
@@ -183,8 +186,8 @@ public class BodyEventHandleUtil {
 					getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel()
 							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
 
-			panel.getBillModel().setValueAt(money[0], row, JKBXHeaderVO.GROUPZFBBJE);
-			panel.getBillModel().setValueAt(money[1], row, JKBXHeaderVO.GLOBALZFBBJE);
+			panel.getBillModel(currpage).setValueAt(money[0], row, JKBXHeaderVO.GROUPZFBBJE);
+			panel.getBillModel(currpage).setValueAt(money[1], row, JKBXHeaderVO.GLOBALZFBBJE);
 			// 需要将集团冲借款本币和全局冲借款本币设置到界面上
 			je = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr, bzbm, cjkybje, null, null, null, hl,
 					BXUiUtil.getSysdate());
@@ -192,8 +195,8 @@ public class BodyEventHandleUtil {
 					getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel()
 							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
 
-			panel.getBillModel().setValueAt(money[0], row, JKBXHeaderVO.GROUPCJKBBJE);
-			panel.getBillModel().setValueAt(money[1], row, JKBXHeaderVO.GLOBALCJKBBJE);
+			panel.getBillModel(currpage).setValueAt(money[0], row, JKBXHeaderVO.GROUPCJKBBJE);
+			panel.getBillModel(currpage).setValueAt(money[1], row, JKBXHeaderVO.GLOBALCJKBBJE);
 			// 需要将集团还款本币和全局还款本币设置到界面上
 			je = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr, bzbm, hkybje, null, null, null, hl,
 					BXUiUtil.getSysdate());
@@ -201,8 +204,8 @@ public class BodyEventHandleUtil {
 					getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel()
 							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
 
-			panel.getBillModel().setValueAt(money[0], row, JKBXHeaderVO.GROUPHKBBJE);
-			panel.getBillModel().setValueAt(money[1], row, JKBXHeaderVO.GLOBALHKBBJE);
+			panel.getBillModel(currpage).setValueAt(money[0], row, JKBXHeaderVO.GROUPHKBBJE);
+			panel.getBillModel(currpage).setValueAt(money[1], row, JKBXHeaderVO.GLOBALHKBBJE);
 		} catch (BusinessException e) {
 			ExceptionHandler.handleExceptionRuntime(e);
 		}
@@ -231,7 +234,7 @@ public class BodyEventHandleUtil {
 			BxcontrastVO[] bxcontrastVO = (BxcontrastVO[]) billModel.getBodyValueVOs(BxcontrastVO.class.getName());
 
 			if (bxcontrastVO != null && bxcontrastVO.length > 0) {
-				ContrastAction.doContrastToUI(getBillCardPanel(), ((JKBXVO) editor.getHelper().getJKBXVO(editor)),
+				ContrastAction.doContrastToUI(getBillCardPanel(), ((JKBXVO) editor.getJKBXVO()),
 						Arrays.asList(bxcontrastVO), editor);
 			}
 		}
@@ -239,16 +242,10 @@ public class BodyEventHandleUtil {
 	
 	/**
 	 * 表体报销规则
+	 * TODO:shiwenli来处理
 	 */
 	public void doBodyReimAction() {
-		JKBXVO bxvo = (JKBXVO) editor.getHelper().getJKBXVO(editor);
-		HashMap<String, String> bodyReimRuleMap = editor.getBodyReimRuleMap();
-		List<BodyEditVO> result = BxUIControlUtil.doBodyReimAction(bxvo, editor
-				.getReimRuleDataMap(), bodyReimRuleMap);
-		for (BodyEditVO vo : result) {
-			getBillCardPanel().setBodyValueAt(vo.getValue(), vo.getRow(),
-					vo.getItemkey(), vo.getTablecode());
-		}
+		editor.doBodyReimAction();
 	}
 	
 	
@@ -521,8 +518,8 @@ public class BodyEventHandleUtil {
 	 * @param key 字段key
 	 * @return
 	 */
-	public String getBodyItemStrValue(int row, String key) {
-		Object obj = getBillCardPanel().getBillModel().getValueObjectAt(row, key);
+	public String getBodyItemStrValue(int row, String key,String currpage) {
+		Object obj = getBillCardPanel().getBillModel(currpage).getValueObjectAt(row, key);
 
 		if (obj == null) {
 			return null;

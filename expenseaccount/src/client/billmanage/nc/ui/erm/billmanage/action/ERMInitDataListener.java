@@ -2,6 +2,7 @@ package nc.ui.erm.billmanage.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.Action;
 
@@ -65,8 +66,20 @@ public class ERMInitDataListener extends DefaultFuncNodeInitDataListener {
 		boolean bMultiRow = false;
 		String[] pk_jkbx = null;
 		if (data.getInitData() instanceof ILinkQueryDataPlural) {
-			// 总账联查单据,费用结转，待摊摊销（联查单据）
-			pk_jkbx = ((ILinkQueryDataPlural) data.getInitData()).getBillIDs();
+			//单据生成联查来源单据,费用结转，待摊摊销（联查单据）
+			String[] tmp_pk_jkbx = ((ILinkQueryDataPlural) data.getInitData()).getBillIDs();
+			pk_jkbx = new String[tmp_pk_jkbx.length];
+			for(int i=0 ; i<tmp_pk_jkbx.length ;i++){
+				if(tmp_pk_jkbx[i]!=null && tmp_pk_jkbx[i].indexOf("_")>0){
+					StringTokenizer st = new StringTokenizer(tmp_pk_jkbx[i],"_");
+					while (st.hasMoreTokens()) {
+						pk_jkbx[i] = st.nextToken();
+						break;
+					}
+				}else{
+					pk_jkbx[i] = tmp_pk_jkbx[i];
+				}
+			}
 			if (pk_jkbx != null && pk_jkbx.length > 1) {
 				bMultiRow = true;
 			}
@@ -86,7 +99,7 @@ public class ERMInitDataListener extends DefaultFuncNodeInitDataListener {
 				djCondVO = ermBillBillManageModel.getDjCondVO();
 			}
 			List<JKBXVO> vos = ((IBXBillPrivate) NCLocator.getInstance().lookup(IBXBillPrivate.class.getName()))
-					.queryHeadVOsByPrimaryKeys(pk_jkbx, null, false, djCondVO);
+					.queryVOsByPrimaryKeysForNewNode(pk_jkbx, null, false, djCondVO);
 			card.getModel().initModel(vos.toArray());
 			if (bMultiRow) {
 				listView.showMeUp();

@@ -37,4 +37,13 @@ public class ErmConst {
 	 * 费用申请类型：报销费用
 	 */
 	public static final int MATTERAPP_BILLTYPE_BX = 1;
+	
+	public static final String QUERY_CONDITION_APPROVING = "user_approving";
+	
+	public static final String QUERY_CONDITION_APPROVED = "user_approved";
+	
+	/**
+	 * 联查业务活动
+	 */
+	public static final String BUSIACTIVE_LINKQUERY = "LinkQuery";
 }

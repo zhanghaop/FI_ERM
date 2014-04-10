@@ -233,4 +233,19 @@ public class ErUtil {
 		return NCLocator.getInstance().lookup(IBXBillPrivate.class).getAgentWhereString(pk_psn, rolersql, billtype,
 				pk_user, billDate, pk_org);
 	}
+
+    public static String[] insertHeadOneOrg(String pkOrg, Object[] pkOrgs) {
+        String[] pksOrg = null;
+        if (pkOrgs != null) {
+            pksOrg = new String[pkOrgs.length + 1];
+            pksOrg[0] = pkOrg;
+            for (int nPos = 0; nPos < pkOrgs.length; nPos++) {
+                pksOrg[nPos + 1] = (String)pkOrgs[nPos];
+            }
+        } else {
+            pksOrg = new String[] { pkOrg };
+        }
+        return pksOrg;
+    }
+
 }

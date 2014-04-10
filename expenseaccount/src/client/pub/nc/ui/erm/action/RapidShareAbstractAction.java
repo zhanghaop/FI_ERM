@@ -254,7 +254,7 @@ public abstract class RapidShareAbstractAction extends NCAction {
 				if (item.getComponent() instanceof UIRefPane) {
 					UIRefPane refPane = (UIRefPane) item.getComponent();
 					AbstractRefModel refModel = refPane.getRefModel();
-					if (refModel != null && !(refModel instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel)) {
+					if (refModel != null && !(refModel instanceof nc.ui.org.ref.OrgBaseTreeDefaultRefModel)) {
 						String pkOrg = (String) updatevos[i].getAttributeValue("assume_org");
 						if (StringUtil.isEmpty(pkOrg)) {
 							pkOrg = (String) getHeadValue("assume_org");

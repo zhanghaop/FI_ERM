@@ -54,6 +54,14 @@ public class AddFromMtAppEditorUtil {
 			getEditor().getBillCardPanel().getBodyTabbedPane().setSelectedIndex(index);
 			// 联动表体其他金额字段
 			modifyOtherJeOfBody();
+			
+			//对于报销单：拉单时将表头的收款对象带到表体
+			if(BXConstans.BX_DJDL.equals(jkbxvo.getParentVO().getDjdl())){
+				Integer paytarget = (Integer) getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.PAYTARGET).getValueObject();
+				for(int i = 0 ; i< jkbxvo.getChildrenVO().length ;i++){
+					getEditor().getBillCardPanel().setBodyValueAt(paytarget, i, JKBXHeaderVO.PAYTARGET);
+				}
+			}
 		}
 	}
 	
@@ -99,7 +107,7 @@ public class AddFromMtAppEditorUtil {
 		for (int i = 0; i < busitemVOs.length; i++) {
 			Object amount =getEditor().getBillCardPanel().getBodyValueAt(i, BXBusItemVO.AMOUNT);
 			getEditor().getBillCardPanel().setBodyValueAt(amount, i, BXBusItemVO.YBJE);
-			new BodyEventHandleUtil(((ErmBillBillForm)getEditor())).modifyFinValues(BXBusItemVO.YBJE, i);
+			new BodyEventHandleUtil(((ErmBillBillForm)getEditor())).modifyFinValues(BXBusItemVO.YBJE, i,null);
 		}
 		
 		if(bodyTableCodes != null){

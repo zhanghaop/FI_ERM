@@ -121,6 +121,13 @@ public class TempSaveAction extends SaveAction {
 			jkbxVO.getParentVO().setApprover(null);
 			jkbxVO.getParentVO().setShrq(null);
 		}
+
+		//表体中有超过标准值的行
+		if(getInitEditor().getRows().size()>0){
+			int result = MessageDialog.showYesNoDlg(getInitEditor(), null, "该单据所填金额超过标准允许的最大金额，是否确认暂存？");
+			if (result != UIDialog.ID_YES) 
+				return;
+		}
 		// ErVOUtils.clearContrastInfo(jkbxVO);
 		jkbxVO.getParentVO().setDjzt(BXStatusConst.DJZT_TempSaved);
 		jkbxVO.getParentVO().setSxbz(BXStatusConst.SXBZ_NO);

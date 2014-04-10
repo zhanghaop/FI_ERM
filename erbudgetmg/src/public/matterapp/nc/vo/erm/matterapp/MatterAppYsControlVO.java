@@ -42,11 +42,6 @@ public class MatterAppYsControlVO implements IFYControl,Serializable {
 	}
 
 	@Override
-	public boolean isSSControlAble() {
-		return false;
-	}
-
-	@Override
 	public String getPk_item() {
 		return null;
 	}

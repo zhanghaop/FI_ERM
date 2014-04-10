@@ -110,4 +110,13 @@ public interface IExpAmortizeinfoQuery {
 	 * @throws BusinessException
 	 */
 	public ExpamtDetailVO[] queryAllDetailVOs(String pk_expamtinfo) throws BusinessException;
+	
+	/**
+	 * 根据摊销表头信息，补充摊销信息
+	 * @param vo
+	 * @param currentAccMonth
+	 * @return
+	 * @throws BusinessException
+	 */
+	public AggExpamtinfoVO fillUpAggExpamtinfo(ExpamtinfoVO vo, String currentAccMonth) throws BusinessException;
 }

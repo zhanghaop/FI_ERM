@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
@@ -19,6 +20,7 @@ import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.components.pagination.IPaginationQueryService;
 import nc.ui.uif2.components.pagination.PaginationModel;
 import nc.ui.uif2.model.ModelDataDescriptor;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
@@ -45,6 +47,10 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
 			djlxbm.add((String)iterator.next()) ;
 			
 		}
+		if(BXConstans.MONTHEND_DEAL.equals(getModel().getContext().getNodeCode()))
+		{
+			djlxbm.remove(ErmDjlxConst.BXTYPE_ADJUST_BASE_TRADETYPE);
+		}
 		String inStr1;
 		try {
 			inStr1 = SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbm.toArray(new String[0]),false);
@@ -61,8 +67,9 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
                 getListView().showMeUp();
             }
 			
-			if(pks != null){
-				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQuerySuccessInfo(pks.length), getModel().getContext());
+			int count = getPaginationModel().getCurrentDataDescriptor().getCount();
+			if(count != 0){
+				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQuerySuccessInfo(count), getModel().getContext());
 			}else{
 				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQueryNullInfo(), getModel().getContext());
 			}

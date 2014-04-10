@@ -4,12 +4,15 @@ import java.awt.Container;
 
 import javax.swing.Action;
 
+import nc.bs.erm.common.ErmConst;
 import nc.bs.pf.pub.PfDataCache;
 import nc.funcnode.ui.AbstractFunclet;
+import nc.funcnode.ui.FuncletInitData;
 import nc.pub.smart.data.IRowData;
 import nc.pub.smart.tracedata.ITraceDataOperator;
 import nc.pub.smart.tracedata.TraceDataParam;
-import nc.ui.uap.sf.SFClientUtil;
+import nc.ui.pub.linkoperate.ILinkType;
+import nc.ui.uap.sf.SFClientUtil2;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.link.LinkQuery;
 import nc.vo.erm.matterapp.MtAppDetailVO;
@@ -74,9 +77,13 @@ public class MatterappLinkQuerybillOperator implements ITraceDataOperator{
 		}
 		
 		// 联查具体单据
-		SFClientUtil.openLinkedQueryDialog(nodecode, container, new LinkQuery(
-				pkbills));
+//		SFClientUtil.openLinkedQueryDialog(nodecode, container, new LinkQuery(
+//				pkbills));
 		
+		FuncletInitData initData = new FuncletInitData();
+		initData.setInitData(new LinkQuery(pkbills));
+		initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+		SFClientUtil2.openFuncNodeDialog(container, nodecode, initData, null, false,
+				false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
 	}
-
 }

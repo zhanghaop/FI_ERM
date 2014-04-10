@@ -9,6 +9,7 @@ import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.uif2.DefaultExceptionHanler;
+import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.editor.IEditor;
@@ -34,9 +35,8 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 
 	public void doAction(ActionEvent e) throws Exception {
 		AggMatterAppVO aggVo = (AggMatterAppVO)getModel().getSelectedData();
-		MatterAppVO parentVo = aggVo.getParentVO();
 		
-		checkUpdate(parentVo);
+		checkUpdate(aggVo);
 		
 		super.doAction(e);
 		
@@ -47,7 +47,12 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 		}
 	}
 
-	private void checkUpdate(MatterAppVO parentVo) throws BusinessException {
+	private void checkUpdate(AggMatterAppVO aggVo) throws BusinessException {
+		if (!checkDataPermission()) {//权限校验
+			throw new ValidationException(IShowMsgConstant.getDataPermissionInfo());
+		}
+		
+		MatterAppVO parentVo = aggVo.getParentVO();
 		Integer spzt = parentVo.getApprstatus();
 		if (spzt != null && ((spzt.equals(IPfRetCheckInfo.GOINGON)) || (spzt.equals(IPfRetCheckInfo.COMMIT)))) {
 			String userId = ErUiUtil.getPk_user();

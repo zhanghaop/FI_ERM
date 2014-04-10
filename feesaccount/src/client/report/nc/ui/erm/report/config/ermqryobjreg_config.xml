@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
+
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model">
+			<ref bean="batchBillTableModel" />
+		</property>
+		<property name="saveaction">
+			<ref bean="saveAction" />
+		</property>
+		<property name="cancelaction">
+			<ref bean="cancelAction" />
+		</property>
+	</bean>
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 模板容器，负责对模板的统一装载 -->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer"
+		init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>20111ERQ</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="treeCreateStrategy" class="nc.ui.erm.report.model.ErmQryObjTreeCreateStrategy"/>
+	<bean id="treeModel" class="nc.ui.erm.report.model.ErmReportTypeHierachicalDataAppModel">
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<property name="treeCreateStrategy" ref="treeCreateStrategy" />
+		<!-- <property name="service" ref="treeService" /> -->
+	</bean>
+	
+	<bean id="batchModelService" class="nc.ui.erm.report.model.QryObjRegBatchAppModelService" />
+	
+	<bean id="batchBillTableModel" class="nc.ui.erm.report.model.ErmBatchBillTableModel">
+		<property name="context" ref="context"></property>
+		<property name="service" ref="batchModelService"></property>
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory"></property>
+	</bean>
+	
+	<bean id="qryregMediator" class="nc.ui.erm.report.model.QryObjRegMediator">
+		<property name="hierachicalDataAppModel" ref="treeModel"></property>
+		<property name="batchBillTableModel" ref="batchBillTableModel"></property>
+		<property name="treePanel" ref="treePanel"></property>
+	</bean>
+	
+	<bean id="modelDataManager" class="nc.ui.erm.report.model.ErmQryObjRegDataManager">
+		<property name="model" ref="batchBillTableModel"></property>
+		<property name="treeModel" ref="treeModel"></property>
+	</bean>
+	
+	<bean id="listView" class="nc.ui.erm.report.comp.QryObjRegBatchBillTable" init-method="initUI">
+		<property name="model" ref="batchBillTableModel"></property>
+	</bean>
+	
+	<bean id="treeCellRenderer" class="nc.ui.erm.report.comp.ErmQryObjTypeTreeCellRenderer"/>
+	<!-- 树面板 -->
+	<bean id="treePanel" class="nc.ui.uif2.components.TreePanel"
+		init-method="init">
+		<property name="model" ref="treeModel"></property>
+		<property name="treeCellRenderer" ref="treeCellRenderer"></property>
+	</bean>
+	
+	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction"/>
+	<bean id="addAction" class="nc.ui.erm.report.action.ErmBatchAddLineAction">
+		<property name="model" ref="batchBillTableModel" />
+		<property name="voClassName" value="nc.vo.fipub.report.QueryObjVO" />
+	</bean>
+	<bean id="editAction" class="nc.ui.uif2.actions.batch.BatchEditAction">
+		<property name="model" ref="batchBillTableModel" />
+	</bean>
+	<bean id="saveAction" class="nc.ui.uif2.actions.batch.BatchSaveAction">
+		<property name="model" ref="batchBillTableModel" />
+		<property name="editor" ref="listView" />
+		<property name="validationService" ref="validationService" />
+	</bean>
+	<bean id="validationService" class="nc.ui.erm.report.validator.ErmQryObjBatchValidationService">
+		<property name="billTable" ref="listView" />
+	</bean>
+	<bean id="cancelAction" class="nc.ui.uif2.actions.batch.BatchCancelAction">
+		<property name="model" ref="batchBillTableModel" />
+		<property name="editor" ref="listView" />
+	</bean>
+	<bean id="refreshAction" class="nc.ui.pubapp.uif2app.actions.batch.BatchRefreshAction">
+		<property name="model" ref="batchBillTableModel" />
+		<property name="modelManager" ref="modelDataManager" />
+	</bean>
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+				<property name="left">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="name" value="左树" />
+						<property name="component" ref="treePanel" />
+					</bean>
+				</property>
+				<property name="right">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="name" value="右卡" />
+						<property name="component" ref="listView" />
+					</bean>
+				</property>
+				<property name="dividerLocation" value="180f"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="editAction" />
+				<ref bean="separatorAction" />
+				<ref bean="refreshAction" />
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="separatorAction" />
+				<ref bean="saveAction" />
+				<ref bean="separatorAction" />
+				<ref bean="cancelAction" />
+			</list>
+		</property>
+		<property name="model" ref="batchBillTableModel"></property>
+	</bean>
+	
+</beans>

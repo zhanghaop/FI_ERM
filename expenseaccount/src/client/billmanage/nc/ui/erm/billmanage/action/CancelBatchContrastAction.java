@@ -26,6 +26,7 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.util.StringUtils;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
@@ -122,6 +123,39 @@ public class CancelBatchContrastAction extends NCAction {
                 continue;
             }
 
+            //如果存在拉单的单据，不可以批量冲借款
+            if(!StringUtils.isEmpty(bxvo.getParentVO().getPk_item())){
+            	msgs.append(nc.vo.ml.NCLangRes4VoTransl
+            			.getNCLangRes().getStrByID("2011", "UPP2011-000904")/** @res* "拉申请单的报销单，不可以取消批量冲借款"*/
+            			+ ":"+ parentVO.getDjbh() + "\n");
+            	continue;
+            }
+            //费用调整类型的单据，不可以批量冲借款
+            if(parentVO.isAdjustBxd()){
+            	msgs.append(nc.vo.ml.NCLangRes4VoTransl
+            			.getNCLangRes().getStrByID("2011", "UPP2011-000951")/** @res* "报销类型为费用调整的报销单，不可以取消批量冲借款"*/
+            			+ ":"+ parentVO.getDjbh() + "\n");
+            	continue;
+            	
+            }
+            
+            // 报销单已核销预提，不可以批量冲借款
+            AccruedVerifyVO[] accruedVerifyVO = bxvo.getAccruedVerifyVO();
+            if(accruedVerifyVO != null && accruedVerifyVO.length > 0){
+            	msgs.append("报销单已经核销预提，不可以取消批量冲借款" + ":"+ parentVO.getDjbh() + "\n");
+            	continue;
+            	
+            }
+          //单据状态校验
+            String msg = ActionUtils.checkBillStatus(parentVO.getDjzt(),
+              	ActionUtils.CONTRAST, new int[] {}, new int[] {
+              	BXStatusConst.DJZT_TempSaved,
+              	BXStatusConst.DJZT_Sign });
+              if (msg != null && msg.trim().length() != 0) {
+                  msgs.append(msg + ":" + parentVO.getDjbh() + "\n");
+                  continue;
+              }
+            
             if (!isCancel && parentVO.getDjrq().after(BXUiUtil.getBusiDate())) {
                 msgs.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
                         .getStrByID("2011", "UPP2011-000407")/*
@@ -130,13 +164,6 @@ public class CancelBatchContrastAction extends NCAction {
                          */+ ":"+ parentVO.getDjbh() + "\n");
                 continue;
             }
-    		//如果存在拉单的单据，不可以批量冲借款
-    	   if(!StringUtils.isEmpty(bxvo.getParentVO().getPk_item())){
-    	    		 msgs.append(nc.vo.ml.NCLangRes4VoTransl
-    						.getNCLangRes().getStrByID("2011", "UPP2011-000904")/** @res* "拉申请单的报销单，不可以取消批量冲借款"*/
-    						+ ":"+ parentVO.getDjbh() + "\n");
-    	    	continue;
-    	   }
     	   
     	   //其他业务校验
     	   String otherCheckMsg = otherCheck(bxvo);
@@ -144,15 +171,6 @@ public class CancelBatchContrastAction extends NCAction {
     		   msgs.append( otherCheckMsg + ":" + parentVO.getDjbh() + "\n");
     		   continue;
     	   }
-    	   
-    	 //单据状态校验
-          String msg = ActionUtils.checkBillStatus(parentVO.getDjzt(),
-            	ActionUtils.CONTRAST, new int[] {}, new int[] {
-            	BXStatusConst.DJZT_TempSaved,
-            	BXStatusConst.DJZT_Sign });
-            if (msg != null && msg.trim().length() != 0) {
-                msgs.append(msg + ":" + parentVO.getDjbh() + "\n");
-            }
             
 		}
 		if (!StringUtils.isNullWithTrim(msgs.toString())) {

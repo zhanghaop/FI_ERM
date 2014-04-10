@@ -99,7 +99,8 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 	@Override
 	public void initUI() {
 		String initDjlxbm = null;
-		if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(getContext().getNodeCode())) {
+		if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(getContext().getNodeCode()) 
+				|| ErmMatterAppConst.MAPP_NODECODE_QY.equals(getContext().getNodeCode())) {
 			DjLXVO[] djlxvos = ((MAppModel) this.getModel()).getAllDJLXVOs();
 			if (djlxvos != null && djlxvos.length > 0) {
 				for (DjLXVO vo : djlxvos) {
@@ -165,7 +166,7 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 	}
 
 	@Override
-	protected void setBillData(BillTempletVO template) {
+	public void setBillData(BillTempletVO template) {
 		// 查询整理扩展页签信息
 		dealExtendTab();
 		
@@ -425,6 +426,10 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		//切换模板后，重新加载表体的多选项
 		initMatterAppPage();
 	}
+	
+	public void setBillDataTemplate(BillTempletVO template){
+		this.setBillData(template);
+	}
 
 	private BillTempletVO getTemplate(String strDjlxbm) {
 		BillTempletVO template;
@@ -455,7 +460,8 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 			// 管理节点设置交易类型,
 			AggMatterAppVO aggVo = (AggMatterAppVO) this.getModel().getSelectedData();
 
-			if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(this.getContext().getNodeCode())) {
+			if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(this.getContext().getNodeCode())
+					|| ErmMatterAppConst.MAPP_NODECODE_QY.equals(this.getContext().getNodeCode())) {
 				if (this.getModel().getUiState() != UIState.ADD) {
 //					return;
 					String voDjlxbm = null;
@@ -535,8 +541,10 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		String pk_org = (String) getHeadItemStrValue(MatterAppVO.PK_ORG);
 		MAppModel maModel = (MAppModel) getModel();
 		UFDate billDate = (UFDate) getBillCardPanel().getHeadItem(MatterAppVO.BILLDATE).getValueObject();
-
-		if (maModel.getTradeTypeVo(maModel.getDjlxbm()).getMatype() == ErmConst.MATTERAPP_BILLTYPE_BX) {
+		
+		//申请单类型
+		Integer matype = maModel.getTradeTypeVo(maModel.getDjlxbm()).getMatype();
+		if (matype == null || matype == ErmConst.MATTERAPP_BILLTYPE_BX) {
 
 			try {
 				ErUiUtil.initSqdlr(this, getBillCardPanel().getHeadItem(MatterAppVO.BILLMAKER), maModel.getDjlxbm(),
@@ -658,18 +666,18 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		if (!StringUtil.isEmpty(pk_psndoc)) {
 			String pk_dept = (String) instance.getClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + pk_group);
 			pk_org = (String) instance.getClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + pk_group);
-			List<String> list = Arrays.asList(this.getModel().getContext().getPkorgs());
-			if (list.contains(pk_org)) {
-//				this.setHeadValue(MatterAppVO.PK_ORG, pk_org);
+			this.setHeadValue(MatterAppVO.APPLY_ORG, pk_org);//申请单位设置值
+			this.setHeadValue(MatterAppVO.APPLY_DEPT, pk_dept);
+			this.setHeadValue(MatterAppVO.BILLMAKER, pk_psndoc);
+
+			List<String> list = Arrays.asList(getFuncPermissionPkorgs());
+			if (list.contains(pk_org)) {//财务组织设置默认值
 				getBillCardPanel().getHeadItem(MatterAppVO.PK_ORG).setValue(pk_org);
 				this.setHeadOrgMultiVersion(MatterAppVO.PK_ORG_V, pk_org);
-				this.setHeadValue(MatterAppVO.BILLMAKER, pk_psndoc);
-				this.setHeadValue(MatterAppVO.APPLY_DEPT, pk_dept);
 				this.setHeadValue(MatterAppVO.ASSUME_DEPT, pk_dept);
 			} else {
 				pk_org = ErUiUtil.getDefaultOrgUnit();
 				if (pk_org != null) {
-//					this.setHeadValue(MatterAppVO.PK_ORG, pk_org);
 					getBillCardPanel().getHeadItem(MatterAppVO.PK_ORG).setValue(pk_org);
 					this.setHeadOrgMultiVersion(MatterAppVO.PK_ORG_V, pk_org);
 				}
@@ -677,7 +685,6 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		} else {
 			pk_org = ErUiUtil.getDefaultOrgUnit();
 			if (pk_org != null) {
-//				this.setHeadValue(MatterAppVO.PK_ORG, pk_org);
 				getBillCardPanel().getHeadItem(MatterAppVO.PK_ORG).setValue(pk_org);
 				this.setHeadOrgMultiVersion(MatterAppVO.PK_ORG_V, pk_org);
 			}

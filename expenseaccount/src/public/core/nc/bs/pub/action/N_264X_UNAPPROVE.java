@@ -15,6 +15,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.change.PublicHeadVO;
 import nc.vo.pub.compiler.PfParameterVO;
+import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PFBusinessException;
 
 /**
@@ -51,7 +52,6 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 			List<MessageVO> fMsgs=new ArrayList<MessageVO>();
 			
 			BXVO bxvo = (BXVO) vo.m_preValueVo;
-			Integer spzt = bxvo.getParentVO().getSpzt();
 			
 //begin--added by chendya 报销单反审核数据权限校验			
 			//是否期初单据
@@ -69,11 +69,15 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 			}
 //--end			
 			boolean bflag = procUnApproveFlow(vo);
+			int spStatus = bxvo.getParentVO().getSpzt();
 			
-			if (bflag && spzt != 0) {
+			if (bflag && spStatus != IBillStatus.NOPASS) {
+				if(vo.m_workFlow == null){
+					bxvo.getParentVO().setSpzt(IBillStatus.COMMIT);
+				}
 				auditVOs.add(bxvo);
 			}else{
-				fMsgs.add(new MessageVO(bxvo, ActionUtils.UNAUDIT));
+				fMsgs.add(new MessageVO(bxvo,ActionUtils.UNAUDIT));
 			}
 			
 			setParameter("billVO", auditVOs.toArray(new BXVO[] {}));

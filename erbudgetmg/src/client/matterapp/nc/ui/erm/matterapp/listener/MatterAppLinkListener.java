@@ -76,10 +76,6 @@ public class MatterAppLinkListener extends DefaultFuncNodeInitDataListener {
 	@Override
 	protected void doOther(int type) {
 		if (ILinkType.LINK_TYPE_QUERY == type) {
-			//联查时，走LinkQuery的业务活动来进行配置，按钮包含 linkquery业务活动中的按钮和没有业务活动的按钮
-			String[] busiActiveCodes = getModel().getContext().getFuncInfo().getBusiActiveCodes();
-			getModel().getContext().getFuncInfo().setBusiActiveCodes(new String[]{"LinkQuery"});
-			
 			ILinkQueryData querydata = (ILinkQueryData)data.getInitData();
 			if (querydata == null)
 				return;
@@ -91,16 +87,12 @@ public class MatterAppLinkListener extends DefaultFuncNodeInitDataListener {
 				ExceptionHandler.consume(e);
 			}
 			
-//			initActions(listViewActions.getActions(), getLinkQueryShowActions(), true);
-//			initActions(editorActions.getActions(), getLinkQueryShowActions(), true);
 			editorActions.handleEvent(new AppEvent(AppEventConst.UISTATE_CHANGED));
 			listViewActions.handleEvent(new AppEvent(AppEventConst.UISTATE_CHANGED));
 			
 			if(billIDs != null && billIDs.length == 1){
 				getEditor().showMeUp();
 			}
-			
-			getModel().getContext().getFuncInfo().setBusiActiveCodes(busiActiveCodes);
 		}
 	}
 	protected String[] getBillIDs(ILinkQueryData querydata) {

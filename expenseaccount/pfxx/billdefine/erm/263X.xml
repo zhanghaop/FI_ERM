@@ -232,7 +232,7 @@
             <nullallowed>yes</nullallowed>
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
-            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <basdoc>8587f166-2bfd-4960-b394-6eae677a0bbf</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <translatorParams>pk_group</translatorParams>
             <checkTranslatedPK>no</checkTranslatedPK>
@@ -245,7 +245,7 @@
             <nullallowed>yes</nullallowed>
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
-            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <basdoc>a0ec952c-e4e5-416a-b3e0-d402725f76be</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <translatorParams>pk_group</translatorParams>
             <checkTranslatedPK>no</checkTranslatedPK>

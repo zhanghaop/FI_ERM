@@ -15,6 +15,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.change.PublicHeadVO;
 import nc.vo.pub.compiler.PfParameterVO;
+import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PFBusinessException;
 
 /**
@@ -70,10 +71,13 @@ public class N_263X_UNAPPROVE extends AbstractCompiler2 {
 				}
 			}
 //--end				
-			
 			boolean bflag = procUnApproveFlow(vo);
+			int spStatus = bxvo.getParentVO().getSpzt();
 			
-			if (bflag) {
+			if (bflag && spStatus != IBillStatus.NOPASS) {
+				if(vo.m_workFlow == null){
+					bxvo.getParentVO().setSpzt(IBillStatus.COMMIT);
+				}
 				auditVOs.add(bxvo);
 			}else{
 				fMsgs.add(new MessageVO(bxvo,ActionUtils.UNAUDIT));

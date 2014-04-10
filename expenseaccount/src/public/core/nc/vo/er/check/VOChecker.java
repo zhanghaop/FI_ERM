@@ -9,8 +9,11 @@ import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
+import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.erm.util.ErUtil;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.pub.IBxUIControl;
@@ -24,6 +27,7 @@ import nc.jdbc.framework.PersistenceManager;
 import nc.jdbc.framework.exception.DbException;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pubitf.accperiod.AccountCalendar;
+import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.erminit.IErminitQueryService;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.pubitf.org.IOrgUnitPubService;
@@ -45,10 +49,12 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ContrastBusinessException;
-import nc.vo.er.exception.ContrastBusinessException.ContrastBusinessExceptionType;
 import nc.vo.er.exception.CrossControlMsgException;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.er.exception.ContrastBusinessException.ContrastBusinessExceptionType;
 import nc.vo.er.util.UFDoubleTool;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
+import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
@@ -60,7 +66,7 @@ import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
-import nc.vo.pub.pf.IPfRetCheckInfo;
+import nc.vo.trade.pub.IBillStatus;
 import nc.vo.util.BDVersionValidationUtil;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -95,19 +101,20 @@ public class VOChecker {
 	 * @author chendya
 	 */
 	private void chkIsMustContrast(JKBXVO bxvo) throws BusinessException {
-
-		if (BXConstans.BX_DJDL.equals(bxvo.getParentVO().getDjdl()) && bxvo.getParentVO().getDjzt() != null
-				&& bxvo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Saved) {
-			if (bxvo.getParentVO().getYbje() != null && bxvo.getParentVO().getYbje().doubleValue() >= 0) {
+		JKBXHeaderVO headVo = bxvo.getParentVO();
+		
+		if (BXConstans.BX_DJDL.equals(headVo.getDjdl()) && headVo.getDjzt() != null
+				&& headVo.getDjzt().intValue() == BXStatusConst.DJZT_Saved) {
+			if (headVo.getYbje() != null && headVo.getYbje().doubleValue() >= 0) {
 				// added by chendya 单据已有冲借款金额，则不再提示
-				if (bxvo.getParentVO().getCjkybje() != null && bxvo.getParentVO().getCjkybje().compareTo(new UFDouble(0.00)) != 0) {
+				if (headVo.getCjkybje() != null && headVo.getCjkybje().compareTo(new UFDouble(0.00)) != 0) {
 					return;
 				}
 				
 				// 报销单是否必须冲借款参数
 				boolean paramIsMustContrast = false;
 				try {
-					paramIsMustContrast = SysInit.getParaBoolean(bxvo.getParentVO().getPk_org(),
+					paramIsMustContrast = SysInit.getParaBoolean(headVo.getPk_org(),
 							BXParamConstant.PARAM_IS_FORCE_CONTRAST).booleanValue();
 				} catch (java.lang.Throwable e) {
 					ExceptionHandler.consume(e);
@@ -116,7 +123,7 @@ public class VOChecker {
 				if (paramIsMustContrast) {
 					// 本人是否有借款单
 					final boolean hasJKD = NCLocator.getInstance().lookup(IBxUIControl.class)
-							.getJKD(bxvo, bxvo.getParentVO().getDjrq(), null).size() > 0;
+							.getJKD(bxvo, headVo.getDjrq(), null).size() > 0;
 					if (hasJKD) {
 						throw new ContrastBusinessException(ContrastBusinessExceptionType.FORCE,
 								nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011V57-000002")/*
@@ -240,7 +247,8 @@ public class VOChecker {
 	 */
 	public void checkkSaveBackground(JKBXVO vo) throws BusinessException {
 
-		if (!vo.getParentVO().isInit()) {
+		JKBXHeaderVO headVO = vo.getParentVO();
+		if (!headVO.isInit()) {
 			
 			// 先补充拉单信息
 //			fillMtapp(vo);
@@ -254,21 +262,21 @@ public class VOChecker {
             checkBillLineAmountFromMtapp(vo);
             // 申请人与借款报销人是否必须一致
             checkIsSamePerson(vo);
-            // 拉分摊申请单，分摊页签必须有值
-            checkCostSharePageNotNull(vo);
             //冲借款加锁
             addContrastLock(vo);
             //冲借款版本校验
             checkContrastJkTs(vo);
 
 			// 暂存不校验
-			if (BXStatusConst.DJZT_TempSaved != vo.getParentVO().getDjzt()) {
+			if (BXStatusConst.DJZT_TempSaved != headVO.getDjzt()) {
 
-				if (vo.getParentVO().getQcbz() != null && vo.getParentVO().getQcbz().booleanValue()) {
+				if (headVO.getQcbz() != null && headVO.getQcbz().booleanValue()) {
 
 					// 校验期初是否关闭
-					checkQCClose(vo.getParentVO().getPk_org());
+					checkQCClose(headVO.getPk_org());
 				}
+				// 拉分摊申请单，分摊页签必须有值
+	            checkCostSharePageNotNull(vo);
 				
 				// 外部交换校验金额
 				checkHeadItemJe(vo);
@@ -280,38 +288,91 @@ public class VOChecker {
 				checkAuditMan(vo);
 
 				// 校验单据
-				checkBillDate(vo.getParentVO());
+				checkBillDate(headVO);
 
 				// 校验汇率不能为0
-				checkCurrencyRate(vo.getParentVO());
+				checkCurrencyRate(headVO);
 
+				// 报销类型为费用调整的单据，不处理结算、冲借款、核销预提等业务
+				if(!headVO.isAdjustBxd()){
+					// 是否必须冲借款校验
+					chkIsMustContrast(vo);
+				}
 				// 检查银行账号对应的币种和单据上的币种是否一致
 				chkBankAccountCurrency(vo);
-
+				
 				// 检查个人银行账户和客商银行账户不能同时有值
 				checkBankAccount(vo);
 				
-				// 是否必须冲借款校验
-				chkIsMustContrast(vo);
-
 				// 校验供应商冻结标志
 				chkCustomerPayFreezeFlag(vo);
-
+				
 				// 收款人和供应商不能同时有值
 				checkToPublicPay(vo);
-
+				
 				// v6.1新增 检查单位银行帐号和现金帐户不能同时有值
-				chkCashaccountAndFkyhzh(vo.getParentVO());
+				chkCashaccountAndFkyhzh(headVO);
+				
+				// 报销核销预提单时，报销金额必须等于总核销预提金额
+				checkAccruedVerify(vo);
+				
+				//校验收款对象相关信息:对与还款单和调整单不做处理
+				checkBillPaytargetInfo(vo);
 			}
 
 			// 后台赋初始值
 			prepareBackGround(vo);
 
 			// 设置业务流程
-			getBusitype(vo.getParentVO());
+			getBusitype(headVO);
 		}
 	}
 	
+	/**
+	 * 反审时校验
+	 * @param vo
+	 */
+	public void checkUnAudit(JKBXVO vo) throws BusinessException {
+		AccruedVerifyVO[] verifyvos = vo.getAccruedVerifyVO();
+		List<String> accruedBillPks = new ArrayList<String>();
+		if (verifyvos != null && verifyvos.length > 0) {
+			for (AccruedVerifyVO verifyvo : verifyvos) {
+				accruedBillPks.add(verifyvo.getPk_accrued_bill());
+			}
+		}
+		if (accruedBillPks.size() > 0) {
+			AggAccruedBillVO[] aggvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class).queryBillByPks(
+					accruedBillPks.toArray(new String[accruedBillPks.size()]), true);
+			if (aggvos != null && aggvos.length > 0) {
+				for (AggAccruedBillVO aggvo : aggvos) {
+					if (aggvo.getParentVO().getRedflag() != null && aggvo.getParentVO().getRedflag() == ErmAccruedBillConst.REDFLAG_REDED) {
+						throw new BusinessException("核销的预提单" + aggvo.getParentVO().getBillno() + "已红冲，不能反审");
+					}
+				}
+			}
+		}
+
+	}
+	
+	/**
+	 * 报销核销预提单时，报销金额必须等于总核销预提金额
+	 * 
+	 * @param bxvo
+	 * @throws BusinessException 
+	 */
+	private void checkAccruedVerify(JKBXVO bxvo) throws BusinessException {
+		AccruedVerifyVO[] accruedVerifyVOs = bxvo.getAccruedVerifyVO();
+		if(accruedVerifyVOs != null && accruedVerifyVOs.length > 0){
+			UFDouble total_amount = UFDouble.ZERO_DBL;
+			for (int i = 0; i < accruedVerifyVOs.length; i++) {
+				total_amount = UFDoubleTool.sum(total_amount, accruedVerifyVOs[i].getVerify_amount());
+			}
+			if (total_amount.compareTo(bxvo.getParentVO().getYbje()) != 0) {
+				throw new BusinessException("报销单核销预提时，报销金额必须等于总核销金额");
+			}
+		}
+		
+	}
 	private void checkCostSharePageNotNull(JKBXVO vo) throws BusinessException {
 		if (BXConstans.BX_DJDL.equals(vo.getParentVO().getDjdl()) && vo.getParentVO().getIsmashare() != null
 				&& vo.getParentVO().getIsmashare().booleanValue()) {
@@ -320,6 +381,16 @@ public class VOChecker {
 						"02011002-0183")/*
 										 * @res "该报销单参照分摊的申请单生成，分摊明细页签不允许为空"
 										 */);
+			}
+		}
+		JKBXHeaderVO headVo = vo.getParentVO();
+		if(headVo.isAdjustBxd()){
+			// 报销类型为费用调整的单据，分摊明细页签不允许为空
+			if (vo.getcShareDetailVo() == null || vo.getcShareDetailVo().length == 0) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+				"02011002-0191")/*
+								 * @res "该报销单为费用调整类型，分摊明细页签不允许为空"
+								 */);
 			}
 		}
 	}
@@ -660,7 +731,7 @@ public class VOChecker {
 			// 校验表头合法性
 			checkValidHeader(parentVO);
 			// 校验表体合法性
-			checkValidChildrenVO(childrenVO);
+			checkValidChildrenVO(bxvo);
 			// 校验分摊明细信息
 			checkCShareDetail(bxvo);
 			// 校验个人银行账户币种与单据币种,和资金账户使用权与单据币种是否相同
@@ -673,8 +744,65 @@ public class VOChecker {
 			checkValidFinItemVO(bxvo);
 			// 校验待摊信息
 			checkExpamortizeinfo(bxvo);
+			
 		} else {
 			checkRepeatCShareDetailRow(bxvo);
+		}
+	}
+	
+	
+	/**
+	 * 校验收款对象相关信息:对与还款单和调整单不做处理
+	 * @param bxvo
+	 */
+	private void checkBillPaytargetInfo(JKBXVO bxvo) throws BusinessException {
+		// 费用调整单不控制合计金额为0、负数
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(bxvo.getParentVO().getPk_group(),bxvo.getParentVO().getDjlxbm(), ErmDjlxConst.BXTYPE_ADJUST);
+		
+		JKBXHeaderVO parentVO = bxvo.getParentVO();
+		BXBusItemVO[] childrenVO = bxvo.getBxBusItemVOS();
+		if(BXConstans.BX_DJDL.equals(parentVO.getDjdl()) 
+				&& !BXConstans.BILLTYPECODE_RETURNBILL.equals(parentVO.getDjlxbm())
+				&& !isAdjust){
+			if(parentVO.getPaytarget().compareTo(0)==0){//收款对象是员工，收款人不能为空
+				if(parentVO.getReceiver()== null){
+					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0185")/* @res "收款对象是员工，收款人不能为空！" */);
+				}
+			}else if(parentVO.getPaytarget().compareTo(1)==0){//收款对象是供应商，供应商不能为空
+				if(parentVO.getHbbm()== null){
+					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0186")/* @res "收款对象是供应商，供应商不能为空！" */);
+				}
+			}else if(parentVO.getPaytarget().compareTo(2)==0){//收款对象是客户，客户不能为空
+				if(parentVO.getCustomer()== null){
+					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0187")/* @res "收款对象是客户，客户不能为空！" */);
+				}
+			}
+			for (BXBusItemVO bxBusItemVO : childrenVO) {
+				if(bxBusItemVO.getPaytarget().compareTo(0)==0){//收款对象是员工，收款人不能为空
+					if(bxBusItemVO.getReceiver()== null){
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0188")/* @res "收款对象是员工，收款人不能为空！" */);
+					}
+				}else if(bxBusItemVO.getPaytarget().compareTo(1)==0){//收款对象是供应商，供应商不能为空
+					if(bxBusItemVO.getHbbm()== null){
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0189")/* @res "收款对象是供应商，供应商不能为空！" */);
+					}
+				}else if(bxBusItemVO.getPaytarget().compareTo(2)==0){//收款对象是客户，客户不能为空
+					if(bxBusItemVO.getCustomer()== null){
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0190")/* @res "收款对象是客户，客户不能为空！" */);
+					}
+				}else if(bxBusItemVO.getPaytarget().compareTo(3)==0){
+					if(bxBusItemVO.getDefitem38()== null || bxBusItemVO.getDefitem37()== null || bxBusItemVO.getDefitem36()==null){
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0193")/* @res "收款对象是外部人员，收款户名、收款银行账号、收款开户银行不能为空！" */);
+					}
+				}
+			}
 		}
 	}
 
@@ -752,10 +880,11 @@ public class VOChecker {
 	}
 
 	private void checkCShareDetail(JKBXVO bxvo) throws ValidationException {
+		boolean isAdjust = bxvo.getParentVO().isAdjustBxd();
 		CShareDetailVO[] cShareVos = bxvo.getcShareDetailVo();
 
 		if (bxvo.getParentVO().getIscostshare().equals(UFBoolean.TRUE)) {
-			if (bxvo.getParentVO().getYbje().compareTo(UFDouble.ZERO_DBL) < 0) {
+			if (!isAdjust&&bxvo.getParentVO().getYbje().compareTo(UFDouble.ZERO_DBL) < 0) {
 				throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0007")/*
 																																 * @res
 																																 * "报销金额为负数,不能进行分摊！"
@@ -785,12 +914,12 @@ public class VOChecker {
 				UFDouble shareAmount = ErmForCShareUtil.formatUFDouble(cShareVos[i].getAssume_amount(), -99);
 				UFDouble shareRatio = ErmForCShareUtil.formatUFDouble(cShareVos[i].getShare_ratio(), -99);
 
-				if (!ErmForCShareUtil.isUFDoubleGreaterThanZero(shareAmount)) {
+				if (!isAdjust&&!ErmForCShareUtil.isUFDoubleGreaterThanZero(shareAmount)) {
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
 							"0201107-0112")/* @res "分摊信息不能包括金额小于等于0的行！" */);
 				}
 
-				if (!ErmForCShareUtil.isUFDoubleGreaterThanZero(shareRatio)) {
+				if (!isAdjust&&!ErmForCShareUtil.isUFDoubleGreaterThanZero(shareRatio)) {
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
 							"0201107-0113")/* @res "分摊信息不能包括比例小于等于0的行！" */);
 				}
@@ -802,7 +931,8 @@ public class VOChecker {
 
 				for (int j = 0; j < attributeNames.length; j++) {
 					if (getNotRepeatFields().contains(attributeNames[j])
-							|| attributeNames[j].startsWith(BXConstans.BODY_USERDEF_PREFIX)) {
+							|| attributeNames[j].startsWith(BXConstans.BODY_USERDEF_PREFIX)
+							|| (isAdjust&&CShareDetailVO.YSDATE.equals(attributeNames[j]))) {
 						controlKey.append(cShareVos[i].getAttributeValue(attributeNames[j]));
 					} else {
 						continue;
@@ -925,29 +1055,32 @@ public class VOChecker {
 	}
 
 	private void checkToPublicPay(JKBXVO bxvo) throws BusinessException {
-		String receiver = bxvo.getParentVO().getReceiver();
-		String supplier = bxvo.getParentVO().getHbbm();
-		String customer = bxvo.getParentVO().getCustomer();
-		UFBoolean iscusupplier = bxvo.getParentVO().getIscusupplier();//对公支付
-		
-		if (supplier != null && customer != null) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-					"02011002-0174")/*
-									 * @res "供应商、客户只能录入一个！"
-									 */);
-		}
-		if ((iscusupplier.equals(UFBoolean.FALSE) && receiver == null)
-				|| (iscusupplier.equals(UFBoolean.TRUE) && supplier == null && customer == null)) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-					"02011002-0173")/*
-									 * @res "对方信息不能为空"
-									 */);
-		}
-		if (receiver == null && supplier == null && customer == null) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-					"02011002-0138")/*
-									 * @res "收款人、供应商、客户必须输入一个！"
-									 */);
+		if(BXConstans.JK_DJDL.equals(bxvo.getParentVO().getDjdl()) || 
+				BXConstans.BILLTYPECODE_RETURNBILL.equals(bxvo.getParentVO().getDjlxbm())){
+			String receiver = bxvo.getParentVO().getReceiver();
+			String supplier = bxvo.getParentVO().getHbbm();
+			String customer = bxvo.getParentVO().getCustomer();
+			UFBoolean iscusupplier = bxvo.getParentVO().getIscusupplier();//对公支付
+			
+			if (supplier != null && customer != null) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+				"02011002-0174")/*
+				 * @res "供应商、客户只能录入一个！"
+				 */);
+			}
+			if ((iscusupplier.equals(UFBoolean.FALSE) && receiver == null)
+					|| (iscusupplier.equals(UFBoolean.TRUE) && supplier == null && customer == null)) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+				"02011002-0173")/*
+				 * @res "对方信息不能为空"
+				 */);
+			}
+			if (receiver == null && supplier == null && customer == null) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+				"02011002-0138")/*
+				 * @res "收款人、供应商、客户必须输入一个！"
+				 */);
+			}
 		}
 		
 	}
@@ -1099,9 +1232,6 @@ public class VOChecker {
 			if (busItemVOs[0].getCashproj() != null) {
 				bxvo.getParentVO().setCashproj(busItemVOs[0].getCashproj());
 			}
-			if (busItemVOs[0].getJkbxr() != null) {
-				bxvo.getParentVO().setJkbxr(busItemVOs[0].getJkbxr());
-			}
 
 			if (busItemVOs[0].getPk_pcorg() != null) {
 				bxvo.getParentVO().setPk_pcorg(busItemVOs[0].getPk_pcorg());
@@ -1211,11 +1341,15 @@ public class VOChecker {
 
 		// 设置其他默认值
 		parentVO.setDr(Integer.valueOf(0));
-		if(parentVO.getSpzt() == null || parentVO.getSpzt() != IPfRetCheckInfo.GOINGON){
-			parentVO.setSpzt(IPfRetCheckInfo.NOSTATE);
+		if(parentVO.getSpzt() == null || (parentVO.getSpzt() != IBillStatus.CHECKGOING
+				&& parentVO.getSpzt() != IBillStatus.COMMIT)){
+			parentVO.setSpzt(IBillStatus.FREE);
 		}
 		parentVO.setQzzt(BXStatusConst.STATUS_NOTVALID);
-		parentVO.setPayflag(BXStatusConst.PAYFLAG_None);
+		if(!parentVO.isAdjustBxd()){
+			// 费用调整单不设置支付状态
+			parentVO.setPayflag(BXStatusConst.PAYFLAG_None);
+		}
 
 		if (parentVO.getDjdl() == null || parentVO.getDjzt() == null)
 			return;
@@ -1274,13 +1408,15 @@ public class VOChecker {
 					parentVO.setZpxe(null);
 				}
 			} else {
-				if (parentVO.getYbje() == null && parentVO.getYbje().doubleValue() < 0)
+				// 费用调整单可录入负数、0数据，报销单可以为负数
+				if (parentVO.getYbje() == null ||
+						(!parentVO.isAdjustBxd()&& !BXConstans.BILLTYPECODE_RETURNBILL.equals(parentVO.getDjlxbm()) 
+								&& parentVO.getYbje().doubleValue()==0))
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000315")/*
 																																 * @res
 																																 * "报销金额必须录入!"
 																																 */);
 			}
-
 			// 补齐未冲借款的报销单支付金额.
 			UFDouble cjkybje = UFDouble.ZERO_DBL;
 			UFDouble cjkbbje = UFDouble.ZERO_DBL;
@@ -1345,7 +1481,10 @@ public class VOChecker {
 
 	public static void adjuestCjkje(JKBXHeaderVO parentVO, UFDouble cjkybje, UFDouble cjkbbje, UFDouble groupcjkbbje,
 			UFDouble globalcjkbbje) {
-
+		if(parentVO.isAdjustBxd()){
+			// 费用调整单不计算支付金额、冲借款金额、还款金额
+			return ;
+		}
 		UFDouble zero = new UFDouble(0);
 
 		if (parentVO.getDjdl().equals(BXConstans.BX_DJDL)) {
@@ -1565,12 +1704,14 @@ public class VOChecker {
 	 * @param childrenVO
 	 * @throws ValidationException
 	 */
-	private void checkValidChildrenVO(BXBusItemVO[] childrenVO) throws ValidationException {
+	private void checkValidChildrenVO(JKBXVO jkbxvo) throws ValidationException {
+		BXBusItemVO[] childrenVO = jkbxvo.getChildrenVO();
 		childrenVO = removeNullItem(childrenVO);
 
 		if ((childrenVO == null || childrenVO.length == 0)) {
-			throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0",
-					"02011v61013-0089")/* @res "请增加财务信息!" */);
+//			throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0",
+//					"02011v61013-0089")/* @res "请增加财务信息!" */);
+			return;
 		}
 
 		for (BXBusItemVO child : childrenVO) {
@@ -1578,6 +1719,24 @@ public class VOChecker {
 			if (child.getTablecode() == null) {
 				throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 						"02011002-0144")/* @res "表体页签信息不能为空!" */);
+			}
+		}
+		
+		if (!BXConstans.BILLTYPECODE_RETURNBILL.equals(jkbxvo.getParentVO().getDjlxbm())) {
+			for(BXBusItemVO child : childrenVO){
+				//报销单允许录入负数行，但不可以为0
+				if(BXConstans.BX_DJDL.equals(jkbxvo.getParentVO().getDjdl())){
+					if(child.getYbje().compareTo(UFDouble.ZERO_DBL)!=0 && child.getBbje().compareTo(UFDouble.ZERO_DBL)==0){
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0176")/* @res "报销单表体页签的本币金额不可以等于0!" */);
+					}
+				}else{
+					//借款单金额都要大于0
+					if(child.getBbje().compareTo(UFDouble.ZERO_DBL)<=0){
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0175")/* @res "借款单表体页签的本币金额都要大于0!" */);
+					}
+				}
 			}
 		}
 	}
@@ -1661,15 +1820,17 @@ public class VOChecker {
 													 */);
 					}
 				}
-				if (bxvo.getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
-					if (child.getYbje().compareTo(UFDouble.ZERO_DBL) == 0 && child.getCjkybje().compareTo(UFDouble.ZERO_DBL) == 0) {
-						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0",
-								"02011v61013-0090")/*
-													 * @res
-													 * "报销单财务信息不能包括金额小于等于0的行！"
-													 */);
-					}
-				}
+				//ehp2版本：业务行金额可以等于0
+//				if (bxvo.getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
+//					if (child.getybje().compareTo(UFDouble.ZERO_DBL) == 0
+//							&& child.getCjkybje().compareTo(UFDouble.ZERO_DBL) == 0) {
+//						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0",
+//								"02011v61013-0090")/*
+//													 * @res
+//													 * "报销单业务信息不能包括金额等于0的行!！"
+//													 */);
+//					}
+//				}
 //				if (bxvo.getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
 //
 //				}

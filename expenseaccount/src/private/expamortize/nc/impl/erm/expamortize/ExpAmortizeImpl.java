@@ -80,19 +80,21 @@ public class ExpAmortizeImpl implements IExpAmortize {
 			currYearMonth = ErAccperiodUtil.getAccperiodmonthByAccMonth(pk_org,
 					currYearMonth).getYearmth();
 		}
+		
+		//处理本期摊销金额
+		checkCurrAmount(vo);
 
 		IExpAmortizeinfoQuery qryService = NCLocator.getInstance().lookup(
 				IExpAmortizeinfoQuery.class);
 		
-		// 查询待摊信息，保证信息完整
-		AggExpamtinfoVO aggvo = qryService.queryByPk(vo.getPrimaryKey(),
-				currYearMonth);
+		// 查询待摊信息，保证信息完整,补充信息
+		AggExpamtinfoVO aggvo = qryService.fillUpAggExpamtinfo(vo, currYearMonth);
 		
 		// 修改加锁
 		ErLockUtil.lockAggVOByPk("ERM_expamortize", aggvo);
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(vo);
-
+		
 		// vo校验
 		ExpamtVoChecker checker = new ExpamtVoChecker();
 		boolean flag=checker.checkAmortize(aggvo, currYearMonth);
@@ -119,8 +121,10 @@ public class ExpAmortizeImpl implements IExpAmortize {
 			
 			result = new MessageVO(aggExpamt, ActionUtils.EXPAMORTIZE);
 			result.setShowField(ExpamtinfoVO.BX_BILLNO);
+			
 			return result;
 		}
+		
 		beforeAmortize(aggvo);
 		// 事前控制
 		fireBeforeAmortizeEvent(aggvo);
@@ -150,6 +154,18 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		result = new MessageVO(aggExpamtInfo, ActionUtils.EXPAMORTIZE);
 		result.setShowField(ExpamtinfoVO.BX_BILLNO);
 		return result;
+	}
+	
+	// 校验本期摊销金额
+	private void checkCurrAmount(ExpamtinfoVO newVo) throws BusinessException {
+		UFDouble currAmount = newVo.getCurr_amount() == null ? UFDouble.ZERO_DBL : newVo.getCurr_amount();
+		if (currAmount.compareTo(UFDouble.ZERO_DBL) <= 0 || currAmount.compareTo(newVo.getRes_amount()) > 0) {
+			throw new BusinessException("本期摊销金额应大于0,小于剩余摊销金额!");
+		}
+		
+		if (currAmount.compareTo(newVo.getRes_amount()) == 0 && newVo.getRes_period() > 1 ) {
+			throw new BusinessException("剩余摊销期大于一期,不能将余额全部摊销!");
+		}
 	}
 
 	/**

@@ -9,7 +9,6 @@ import java.util.List;
 
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.fipub.report.IReportQueryCond;
-import nc.ui.arap.bx.remote.PsnVoCall;
 import nc.ui.erm.pub.ErmAbstractReportBaseDlg;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.fipub.comp.ReportUiUtil;
@@ -69,13 +68,13 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 	protected List<Component> getComponentList() throws BusinessException {
 		List<Component> normalCondCompList = super.getNormalCondCompList();
 		if (normalCondCompList.size() > 0) {
-			
 			return normalCondCompList;
 		}
 
-        final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
-        String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
-        String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+//        final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
+//        String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
+//        String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+        String pk_org = ErUiUtil.getReportDefaultOrgUnit();
         
 		// 获取当前业务日期
 		String currBusiDate = WorkbenchEnvironment.getInstance().getBusiDate().toStdString();

@@ -241,7 +241,7 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		vochecker.checkCommit(vos);
 
 		// 设置提交相关状态
-		setAggMatterAppVOAttribute(vos, MatterAppVO.BILLSTATUS, Integer.valueOf(ErmMatterAppConst.BILLSTATUS_COMMITED),
+		setAggMatterAppVOAttribute(vos, MatterAppVO.BILLSTATUS, Integer.valueOf(ErmMatterAppConst.BILLSTATUS_SAVED),
 				true);
 		setAggMatterAppVOAttribute(vos, MatterAppVO.APPRSTATUS, Integer.valueOf(IBillStatus.COMMIT), false);
 
@@ -370,7 +370,7 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 				ErmMatterAppConst.EFFECTSTATUS_NO, true);
 
 		setAggMatterAppVOAttribute(new AggMatterAppVO[] { vo }, MatterAppVO.BILLSTATUS,
-				ErmMatterAppConst.BILLSTATUS_COMMITED, true);
+				ErmMatterAppConst.BILLSTATUS_SAVED, true);
 
 		// 清空审核人、审核日期
 //		parentvo.setApprover(null);

@@ -11,7 +11,6 @@ import nc.funcnode.ui.FuncletInitData;
 import nc.funcnode.ui.FuncletWindowLauncher;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.ui.pub.linkoperate.ILinkType;
-import nc.ui.pub.msg.PfLinkData;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
@@ -19,6 +18,7 @@ import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JsConstrasVO;
+import nc.vo.er.link.LinkQuery;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.pub.BusinessException;
 import nc.vo.sm.funcreg.FuncRegisterVO;
@@ -88,10 +88,11 @@ public class LinkJsdAction extends NCAction {
 																														 */);
 		}
 
-		PfLinkData link = new PfLinkData();
+		LinkQuery link = new LinkQuery();
 		link.setUserObject(oidsys);
 		if (oidsys[0] != null) {
-			link.setBillID(oidsys[0]);
+//			link.setBillID(oidsys[0]);
+			link.setBillIDs(oidsys);
 		}
 
 		// 联查应收单
@@ -109,10 +110,11 @@ public class LinkJsdAction extends NCAction {
 		// 联查应付单
 		initData = new FuncletInitData();
 		FuncRegisterVO registerVO1 = WorkbenchEnvironment.getInstance().getFuncRegisterVO(BXConstans.FI_AP_MNGFUNCODE);
-		link = new PfLinkData();
+		link = new LinkQuery();
 		link.setUserObject(oidsyf);
 		if (oidsyf[0] != null) {
-			link.setBillID(oidsyf[0]);
+			link.setBillIDs(oidsyf);
+//			link.setBillID(oidsyf[0]);
 		}
 		initData.setInitType(ILinkType.LINK_TYPE_QUERY);
 		initData.setInitData(link);

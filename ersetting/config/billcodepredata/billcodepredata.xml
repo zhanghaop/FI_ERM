@@ -175,4 +175,48 @@
       </elem>
     </elems>
   </billcoderulevo>
+  <billcoderulevo>
+    <basevo>
+      <pk__billcodebase>1001Z31000000001G96Y</pk__billcodebase>
+      <nbcrcode>262X</nbcrcode>
+      <rulecode>262X</rulecode>
+      <rulename>主预提单</rulename>
+      <codemode>after</codemode>
+      <iseditable>N</iseditable>
+      <isautofill>Y</isautofill>
+      <pk__group>0001Z310000000000NX9</pk__group>
+      <format>yyyyMMdd</format>
+      <codescope>g</codescope>
+      <isdefault>Y</isdefault>
+      <isused>Y</isused>
+    </basevo>
+    <elems>
+      <elem>
+        <elemtype>0</elemtype>
+        <elemvalue>262X</elemvalue>
+        <elemlenth>4</elemlenth>
+        <isrefer>0</isrefer>
+        <eorder>0</eorder>
+        <pk__billcodeelem>1001Z31000000001G96Z</pk__billcodeelem>
+        <pk__billcodebase>1001Z31000000001G96Y</pk__billcodebase>
+      </elem>
+      <elem>
+        <elemtype>2</elemtype>
+        <elemvalue>billdate</elemvalue>
+        <elemlenth>8</elemlenth>
+        <isrefer>0</isrefer>
+        <eorder>1</eorder>
+        <pk__billcodeelem>1001Z31000000001G970</pk__billcodeelem>
+        <pk__billcodebase>1001Z31000000001G96Y</pk__billcodebase>
+      </elem>
+      <elem>
+        <elemtype>3</elemtype>
+        <elemlenth>4</elemlenth>
+        <isrefer>0</isrefer>
+        <eorder>2</eorder>
+        <pk__billcodeelem>1001Z31000000001G971</pk__billcodeelem>
+        <pk__billcodebase>1001Z31000000001G96Y</pk__billcodebase>
+      </elem>
+    </elems>
+  </billcoderulevo>
 </list>

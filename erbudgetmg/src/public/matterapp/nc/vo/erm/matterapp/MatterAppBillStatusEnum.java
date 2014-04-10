@@ -25,11 +25,6 @@ public class MatterAppBillStatusEnum extends MDEnum {
 	public static final MatterAppBillStatusEnum SAVED = MDEnum.valueOf(MatterAppBillStatusEnum.class, 1);
 
 	/**
-	 * 已提交
-	 */
-	public static final MatterAppBillStatusEnum COMMITED = MDEnum.valueOf(MatterAppBillStatusEnum.class, 2);
-
-	/**
 	 * 已审批
 	 */
 	public static final MatterAppBillStatusEnum APPROVED = MDEnum.valueOf(MatterAppBillStatusEnum.class, 3);

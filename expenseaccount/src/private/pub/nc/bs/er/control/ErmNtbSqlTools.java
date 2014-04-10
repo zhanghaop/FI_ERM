@@ -334,8 +334,7 @@ public class ErmNtbSqlTools extends SqlCreatorTools {
 			if (map.get(BXConstans.ERM_NTB_SAVE_KEY) != null) {
 				obj = map.get(BXConstans.ERM_NTB_SAVE_KEY);
 				if (obj != null && obj.type == NtbType.PREVIOUS && obj.dic == NtbDic.INC) {
-					sql = "ma." + MatterAppVO.BILLSTATUS + " in (" + ErmMatterAppConst.BILLSTATUS_SAVED + ","
-							+ ErmMatterAppConst.BILLSTATUS_COMMITED + ") ";
+					sql = "ma." + MatterAppVO.BILLSTATUS + " in (" + ErmMatterAppConst.BILLSTATUS_SAVED + ") ";
 				}
 			}
 			if (map.get(BXConstans.ERM_NTB_APPROVE_KEY) != null) {

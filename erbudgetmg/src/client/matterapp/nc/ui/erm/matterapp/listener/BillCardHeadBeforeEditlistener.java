@@ -17,6 +17,11 @@ import nc.vo.org.DeptVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
 
+/**
+ * 
+ * @author chenshuaia
+ *
+ */
 public class BillCardHeadBeforeEditlistener implements BillCardBeforeEditListener{
 	private static final long serialVersionUID = 1L;
 	
@@ -31,26 +36,6 @@ public class BillCardHeadBeforeEditlistener implements BillCardBeforeEditListene
 		BillItem item = (BillItem) evt.getSource();
 		String key = item.getKey();
 		
-		/*if(MatterAppVO.PK_ORG.equals(key)){
-			//保存后不允许修改借款报销单位
-			UFDate date = (UFDate) billForm.getBillCardPanel().getHeadItem(MatterAppVO.BILLDATE).getValueObject();
-			if (date == null) {
-				// 单据日期为空，取业务日期
-				date = BXUiUtil.getBusiDate();
-			}
-			UIRefPane refPane = billForm.getHeadItemUIRefPane(key);
-			
-			//仅主组织字段根据功能权限过滤
-			String refPK = refPane.getRefPK();
-			String[] pk_orgs = BXUiUtil.getPermissionOrgs(billForm.getContext().getNodeCode());
-			refPane.getRefModel().setFilterPks(pk_orgs);
-			List<String> list = Arrays.asList(pk_orgs);
-			if(list.contains(refPK)){
-				refPane.setPK(refPK);
-			}else{
-				refPane.setPK(null);
-			}
-		}else */
 		if(MatterAppVO.APPLY_DEPT.equals(key)){//申请部门按申请单位过滤
 			beforeEditDept(item);
 		}else if(MatterAppVO.ASSUME_DEPT.equals(key)){//费用承担部门按申请单位过滤
@@ -75,21 +60,22 @@ public class BillCardHeadBeforeEditlistener implements BillCardBeforeEditListene
 	
 	// 用申请单位过滤部门
 	private void beforeEditDept(BillItem item){
-		String pk_org = billForm.getHeadItemStrValue(MatterAppVO.PK_ORG);
-		((UIRefPane) item.getComponent()).setPk_org(pk_org);
+		String apply_org = billForm.getHeadItemStrValue(MatterAppVO.APPLY_ORG);
+		((UIRefPane) item.getComponent()).setPk_org(apply_org);
 	}
 	
 	// 过滤申请人
 	private void beforeEditBillMaker(BillItem item) {
-		String pk_org = billForm.getHeadItemStrValue(MatterAppVO.PK_ORG);
+		String apply_org = billForm.getHeadItemStrValue(MatterAppVO.APPLY_ORG);
 		UFDate billDate = (UFDate) billForm.getBillCardPanel().getHeadItem(MatterAppVO.BILLDATE).getValueObject();
 
 		try {
-			if (getModel().getTradeTypeVo(getModel().getDjlxbm()).getMatype() == ErmConst.MATTERAPP_BILLTYPE_BX) {
-				ErUiUtil.initSqdlr(billForm, item, getModel().getDjlxbm(), pk_org, billDate);
+			Integer matype = getModel().getTradeTypeVo(getModel().getDjlxbm()).getMatype();
+			if (matype == null || matype == ErmConst.MATTERAPP_BILLTYPE_BX) {
+				ErUiUtil.initSqdlr(billForm, item, getModel().getDjlxbm(), apply_org, billDate);
 			} else {
 				AbstractRefTreeModel model = (AbstractRefTreeModel) ((UIRefPane) item.getComponent()).getRefModel();
-				model.setPk_org(pk_org);
+				model.setPk_org(apply_org);
 				String applyDept = billForm.getHeadItemStrValue(MatterAppVO.APPLY_DEPT);
 
 				if (applyDept != null) {

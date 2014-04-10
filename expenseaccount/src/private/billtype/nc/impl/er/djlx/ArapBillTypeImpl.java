@@ -45,6 +45,7 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.djlx.BillTypeVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fi.pub.SqlUtils;
@@ -321,7 +322,6 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 	private void deleteDjlxVO(DjLXVO vo) throws BusinessException,
 			DAOException {
 		if (isRefered(vo)) {
-
 			String djlxjc = vo.getDjlxjc();
 			/* @res "单据{0}被引用,不能删除。" */
 			throw new nc.vo.pub.BusinessException(nc.bs.ml.NCLangResOnserver
@@ -359,6 +359,12 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 			}
 		}else if(ErmBillConst.CostShare_DJDL.equals(djdl)){
 			String checkSql = "select count(1) from "+CostShareVO.getDefaultTableName()+" where "+CostShareVO.PK_TRADETYPE+" = '"+vo.getDjlxbm()+"'";
+			int column = (Integer) dao.executeQuery(checkSql, new ColumnProcessor());
+			if(column > 0){
+				return true;
+			}
+		}else if(ErmBillConst.AccruedBill_DJDL.equals(djdl)){
+			String checkSql = "select count(1) from "+AccruedVO.getDefaultTableName()+" where "+AccruedVO.PK_TRADETYPE+" = '"+vo.getDjlxbm()+"'";
 			int column = (Integer) dao.executeQuery(checkSql, new ColumnProcessor());
 			if(column > 0){
 				return true;
@@ -414,7 +420,7 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 			String strDestID = djlx.getDjlxbm();
 			String djdl = djlx.getDjdl();
 			int index = childID.indexOf(djdl);
-			String strSourceID = parentID.elementAt(index).toString();
+			String strSourceID = parentID.elementAt(index).toString();			
 			String djmc = djlx.getDjlxjc();
 			// FIXME
 			BilltypeVO srcBillTypeVo = PfDataCache.getBillTypeInfo(strSourceID);
@@ -441,12 +447,12 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 	 * 借款交易类型相关的节点编号
 	 */
 	static final String[] jkFuncs = new String[]{BXConstans.BXLR_QCCODE,BXConstans.BXMNG_NODECODE,
-		BXConstans.BXINIT_NODECODE_U,BXConstans.BXINIT_NODECODE_G,BXConstans.BXBILL_QUERY};
+		BXConstans.BXINIT_NODECODE_U,BXConstans.BXINIT_NODECODE_G,BXConstans.BXBILL_QUERY,BXConstans.MONTHEND_DEAL};
 	/**
 	 * 报销交易类型相关的节点编号
 	 */
 	static final String[] bxFuncs = new String[]{BXConstans.BXMNG_NODECODE,
-		BXConstans.BXINIT_NODECODE_U,BXConstans.BXINIT_NODECODE_G,BXConstans.BXBILL_QUERY};
+		BXConstans.BXINIT_NODECODE_U,BXConstans.BXINIT_NODECODE_G,BXConstans.BXBILL_QUERY,BXConstans.MONTHEND_DEAL};
 
 	@SuppressWarnings("unchecked")
 	private void copybill(String strDestID, String strSourceID,String pk_group)
@@ -600,16 +606,28 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 		@SuppressWarnings("unchecked")
 		List<SystemplateBaseVO> sysbasevos = (List<SystemplateBaseVO>) baseDAO
 				.retrieveByClause(SystemplateBaseVO.class, sql);
+		
+		List<String> funCodeList = new ArrayList<String>();
+		funCodeList.add(sysbasevos.get(0).getFunnode());
+		if (djlx.getDjlxbm().startsWith("261")) {
+			funCodeList.add(ErmBillConst.MatterApp_QY_FUNCODE);
+		} else if (djlx.getDjlxbm().startsWith("262")) {
+			funCodeList.add(ErmBillConst.ACC_NODECODE_QRY);
+		}
+		
 		// copy基础默认模板
 		List<SystemplateVO> systemplateVOs = new ArrayList<SystemplateVO>();
 		for (SystemplateBaseVO vo : sysbasevos) {
-			SystemplateVO systemplateVO = vo.toSystemplateVO();
-			systemplateVO.setPk_corp(djlx.getPk_group());// 设置集团pk
-			systemplateVO.setTemplateflag(UFBoolean.TRUE);// 非集团的系统默认模板
-			systemplateVO.setSysflag(1);
-			systemplateVO.setPrimaryKey(null);
-			systemplateVO.setNodekey(djlx.getDjlxbm());
-			systemplateVOs.add(systemplateVO);
+			for(String funCode : funCodeList){
+				SystemplateVO systemplateVO = vo.toSystemplateVO();
+				systemplateVO.setPk_corp(djlx.getPk_group());// 设置集团pk
+				systemplateVO.setTemplateflag(UFBoolean.TRUE);// 非集团的系统默认模板
+				systemplateVO.setSysflag(1);
+				systemplateVO.setPrimaryKey(null);
+				systemplateVO.setNodekey(djlx.getDjlxbm());
+				systemplateVO.setFunnode(funCode);
+				systemplateVOs.add(systemplateVO);
+			}
 		}
 		if(!systemplateVOs.isEmpty()){
 			baseDAO.insertVOList(systemplateVOs);
@@ -622,32 +640,47 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 		// 删除er_djlx
 		deleteDjlxVO(djlx);
 		
+		List<String> funCodeList = new ArrayList<String>();
+		
 		// 删除分配的模板
-		String funnode = ErmBillConst.MatterApp_FUNCODE;
 		if(ErmBillConst.CostShare_DJDL.equals(djlx.getDjdl())){
-			funnode = ErmBillConst.CostShare_FUNCODE;
+			funCodeList.add(ErmBillConst.CostShare_FUNCODE);
+		}else if(ErmBillConst.AccruedBill_DJDL.equals(djlx.getDjdl())){
+			funCodeList.add(ErmBillConst.ACC_NODECODE_MN);
+			funCodeList.add(ErmBillConst.ACC_NODECODE_QRY);
+		}else if(ErmBillConst.MatterApp_DJDL.equals(djlx.getDjdl())){
+			funCodeList.add(ErmBillConst.MatterApp_FUNCODE);
+			funCodeList.add(ErmBillConst.MatterApp_QY_FUNCODE);
 		}
 		
-		String sql = "funnode = '"+funnode+"' and pk_corp='"+djlx.getPk_group()+"' and nodekey='"+djlx.getDjlxbm()+"'";
+		String sql = SqlUtils.getInStr("funnode", funCodeList, false) + " and pk_corp='" + djlx.getPk_group()
+				+ "' and nodekey='" + djlx.getDjlxbm() + "'";
+		
 		baseDAO.deleteByClause(SystemplateVO.class, sql);
 	}
-
+	
+	
+	/**
+	 * 从管理节点copy基础节点的模板分配信息
+	 * @param djdl
+	 * @param tradetype
+	 * @return
+	 */
 	private String getSysbaseQrysql(String djdl, String tradetype) {
 		String sql = null;
 		if (ErmBillConst.MatterApp_DJDL.equals(djdl)) {
 			// 费用申请单
-			sql = " funnode='"
-					+ ErmBillConst.MatterApp_FUNCODE
-					+ "' and nodekey='"
-					+ (StringUtil.isEmpty(tradetype) ? ErmBillConst.MatterApp_base_tradeType
-							: tradetype) + "'";
+			sql = " funnode='" + ErmBillConst.MatterApp_FUNCODE + "' and nodekey='"
+					+ (StringUtil.isEmpty(tradetype) ? ErmBillConst.MatterApp_base_tradeType : tradetype) + "'";
 		} else if (ErmBillConst.CostShare_DJDL.equals(djdl)) {
 			// 费用结转单
-			sql = " funnode='" + ErmBillConst.CostShare_FUNCODE
-					+ "' and nodekey='" + (StringUtil.isEmpty(tradetype) ? ErmBillConst.CostShare_base_tradeType:tradetype)
-					+ "'";
-		} 
+			sql = " funnode='" + ErmBillConst.CostShare_FUNCODE + "' and nodekey='"
+					+ (StringUtil.isEmpty(tradetype) ? ErmBillConst.CostShare_base_tradeType : tradetype) + "'";
+		} else if (ErmBillConst.AccruedBill_DJDL.equals(djdl)) {
+			// 费用预提
+			sql = " funnode='" + ErmBillConst.ACC_NODECODE_MN + "' and nodekey='"
+					+ (StringUtil.isEmpty(tradetype) ? ErmBillConst.AccruedBill_Tradetype_Travel : tradetype) + "'";
+		}
 		return sql;
 	}
-
 }

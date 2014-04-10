@@ -15,6 +15,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.trade.pub.IExAggVO;
 
 import org.apache.commons.lang.StringUtils;
 /**
@@ -340,7 +341,19 @@ public class ERMPrintDigitUtil {
 			String pk_currtype, String currFiledName) throws NumberFormatException,
 			IllegalArgumentException, IllegalAccessException, BusinessException {
 		Integer maxDigit = 0;
-		if (datas[0] instanceof AggregatedValueObject) {
+		if (datas[0] instanceof IExAggVO) {
+			// 处理多子表情况
+			for (int i = 0; i < datas.length; i++) {
+				IExAggVO aggVo = (IExAggVO) datas[i];
+				maxDigit = Math.max(maxDigit, formatVOOnCurrFields(aggVo.getParentVO(), fields, pk_currtype, currFiledName, maxDigit));
+				if(aggVo.getAllChildrenVO() == null || aggVo.getAllChildrenVO().length == 0) {
+					continue;
+				}
+				for (Object bodyvo : aggVo.getAllChildrenVO()) {
+					maxDigit = Math.max(maxDigit, formatVOOnCurrFields(bodyvo, fields, pk_currtype, currFiledName, maxDigit));
+				}
+			}
+		} else if (datas[0] instanceof AggregatedValueObject) {
 			for (int i = 0; i < datas.length; i++) {
 				AggregatedValueObject aggVo = (AggregatedValueObject) datas[i];
 				maxDigit = Math.max(maxDigit, formatVOOnCurrFields(aggVo.getParentVO(), fields, pk_currtype, currFiledName, maxDigit));

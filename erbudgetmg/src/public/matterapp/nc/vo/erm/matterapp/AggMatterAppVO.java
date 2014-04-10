@@ -59,6 +59,13 @@ public class AggMatterAppVO extends HYBillVO implements Cloneable, IExAggVO , IB
 	private static List<String> bodyAssumeOrgBodyIterms;
 	
 	private static List<String> notRepeatFields;
+	
+	public static String[] excelInputHeadItems = new String[] { MatterAppVO.PK_TRADETYPE, MatterAppVO.BILLDATE,
+			MatterAppVO.PK_ORG, MatterAppVO.PK_CURRTYPE, MatterAppVO.ORIG_AMOUNT, MatterAppVO.APPLY_ORG,
+			MatterAppVO.APPLY_ORG, MatterAppVO.APPLY_DEPT, MatterAppVO.BILLNO };
+
+	public static String[] excelInputBodyItems = new String[] { MtAppDetailVO.ASSUME_ORG,
+			MtAppDetailVO.ASSUME_DEPT, MtAppDetailVO.ORIG_AMOUNT };
 
 	static {
 
@@ -98,8 +105,8 @@ public class AggMatterAppVO extends HYBillVO implements Cloneable, IExAggVO , IB
 				MtAppDetailVO.GLOBAL_REST_AMOUNT, MtAppDetailVO.GLOBAL_PRE_AMOUNT };
 
 		applyOrgHeadIterms = new ArrayList<String>();
-		applyOrgHeadIterms.add(MatterAppVO.APPLY_DEPT);
-		applyOrgHeadIterms.add(MatterAppVO.BILLMAKER);
+//		applyOrgHeadIterms.add(MatterAppVO.APPLY_DEPT);
+//		applyOrgHeadIterms.add(MatterAppVO.BILLMAKER);
 		applyOrgHeadIterms.add(MatterAppVO.REASON);
 		applyOrgHeadIterms.add(MatterAppVO.PK_CUSTOMER);
 		applyOrgHeadIterms.add(MatterAppVO.ASSUME_DEPT);

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+
+	<public>
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.pubitf.erm.accruedexpense.IErmAccruedBillManage</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillManageImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.pubitf.erm.accruedexpense.IErmAccruedBillCommit</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillCommitImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.pubitf.erm.accruedexpense.IErmAccruedBillApprove</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillApproveImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillQueryImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.itf.erm.accruedexpense.IErmAccruedBillQueryPrivate</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillQueryImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.pubitf.erm.accruedexpense.IErmAccruedBillVerifyService</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillVerifyServiceImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true" supportAlias="true"
+			tx="CMT">
+			<interface>nc.pubitf.erm.accruedexpense.IErmAccruedBillYsControlService</interface>
+			<implementation>nc.impl.erm.accruedexpense.ErmAccruedBillYsControlServiceImpl</implementation>
+		</component>
+	</public>
+
+</module>
+

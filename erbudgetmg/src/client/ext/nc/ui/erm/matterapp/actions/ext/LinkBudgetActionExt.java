@@ -187,8 +187,6 @@ public class LinkBudgetActionExt extends NCAction {
 		switch (billStatus) {
 			case ErmMatterAppConst.BILLSTATUS_SAVED:
 				return BXConstans.ERM_NTB_SAVE_KEY;
-			case ErmMatterAppConst.BILLSTATUS_COMMITED:
-				return BXConstans.ERM_NTB_SAVE_KEY;
 			case ErmMatterAppConst.BILLSTATUS_APPROVED:
 				return BXConstans.ERM_NTB_APPROVE_KEY;
 			default:

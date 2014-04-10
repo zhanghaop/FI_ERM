@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<import resource="classpath:/nc/ui/pubapp/plugin/pubapp_plugin_conifg.xml" />
+
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext" />
+
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 管理应用模型 -->
+	<bean id="manageAppModel" class="nc.ui.erm.accruedexpense.model.AccManageAppModel">
+		<property name="service" ref="modelService" />
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.accruedexpense.model.AccModelDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="listView" ref="listView" />
+		<property name="pageModel" ref="paginationModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<!-- 应用服务类，负责进行模型操作的处理 -->
+	<bean id="modelService" class="nc.ui.erm.accruedexpense.model.AccManageModelService" />
+
+	<!-- 界面按钮 -->
+	<bean id="toftpanelActionContributors" class="nc.ui.uif2.actions.ActionContributors">
+		<property name="contributors">
+			<list>
+				<ref bean="listViewActions" />
+				<ref bean="editorActions" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 查询面板 -->
+	<bean id="queryAreaShell" class="nc.ui.uif2.actions.QueryAreaShell"
+		init-method="initUI">
+		<property name="queryAreaCreator" ref="queryAction" />
+	</bean>
+
+	<bean id="SaveValidateService" class="nc.ui.erm.accruedexpense.model.AccSaveValidateService">
+		<property name="editor" ref="billFormEditor" />
+		<property name="model" ref="manageAppModel" />
+
+	</bean>
+
+	<bean id="addAction" class="nc.ui.erm.accruedexpense.actions.AccAddAction">
+		<property name="addLineAction" ref="addLineAction" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="editAction" class="nc.ui.erm.accruedexpense.actions.AccEditAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="resourceCode" value="accruedbill" />
+		<property name="operateCode" value="Edit" />
+		<property name="editor" ref="billFormEditor" />
+	</bean>
+	<bean id="saveAction" class="nc.ui.erm.accruedexpense.actions.AccSaveAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="validationService" ref="SaveValidateService" />
+	</bean>
+	<bean id="saveAndCommitAction" class="nc.ui.erm.accruedexpense.actions.AccSaveAndCommitAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="saveAction" ref="saveAction" />
+		<property name="commitAction" ref="commitAction" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="tempSaveAction" class="nc.ui.erm.accruedexpense.actions.AccTempSaveAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="cancelAction" class="nc.ui.uif2.actions.CancelAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="deleteAction" class="nc.ui.erm.accruedexpense.actions.AccDelAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="resourceCode" value="accruedbill" />
+		<property name="operateCode" value="Delete" />
+	</bean>
+
+	<bean id="copyAction" class="nc.ui.erm.accruedexpense.actions.AccCopyAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="billForm" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="queryAction" class="nc.ui.erm.accruedexpense.actions.AccQueryAction">
+		<property name="queryEventListener" ref="queryEventListener" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="refreshAction" class="nc.ui.uif2.actions.RefreshAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="refreshSingleAction" class="nc.ui.erm.accruedexpense.actions.AccRefreshSingleAction">
+		<property name="billForm" ref="billFormEditor" />
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="documentaction" class="nc.ui.erm.action.DocumentAction">
+		<property name="editor" ref="billFormEditor" />
+		<property name="listView" ref="listView" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<bean id="tradeTypeAction" class="nc.ui.erm.accruedexpense.actions.AccTradeTypeAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="commitAction" class="nc.ui.erm.accruedexpense.actions.AccCommitAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="recallAction" class="nc.ui.erm.accruedexpense.actions.AccRecallAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="redbackAction" class="nc.ui.erm.accruedexpense.actions.AccRedbackAction">
+		<property name="model" ref="manageAppModel"/>
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="auditAction" class="nc.ui.erm.accruedexpense.actions.AccAuditAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="editor" ref="billFormEditor"></property>
+		<property name="resourceCode" value="accruedbill" />
+		<property name="operateCode" value="Approve" />
+	</bean>
+
+	<bean id="unAuditAction" class="nc.ui.erm.accruedexpense.actions.AccUnAuditAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="billForm" ref="billFormEditor" />
+		<property name="resourceCode" value="accruedbill" />
+		<property name="operateCode" value="UnApprove" />
+	</bean>
+	<bean id="linkApproveAction"
+		class="nc.ui.erm.accruedexpense.actions.AccLinkApproveResultAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<!-- 打印 -->
+	<bean id="printAction" class="nc.ui.erm.accruedexpense.actions.AccPrintAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="singleDataSource" />
+	</bean>
+	<!-- 预览 -->
+	<bean id="previewAction" class="nc.ui.erm.accruedexpense.actions.AccPreViewAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="singleDataSource" />
+	</bean>
+
+	<!-- 正式打印 -->
+	<bean id="printOfficalAction" class="nc.ui.erm.accruedexpense.actions.AccPrintOfficalAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="singleDataSource" />
+	</bean>
+	<!-- 取消正式打印 -->
+	<bean id="printOfficialCancelAction"
+		class="nc.ui.erm.accruedexpense.actions.AccPrintOfficalCancelAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<!-- 打印列表 -->
+	<bean id="printListAction" class="nc.ui.erm.accruedexpense.actions.AccPrintListAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="multiDataSource" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<!-- 打印输出 -->
+	<bean id="printOutputAction" class="nc.ui.erm.accruedexpense.actions.AccPrintOutputAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<!--联查预算-->
+	<bean id="linkBudgetAction" class="nc.ui.erm.accruedexpense.actions.AccLinkBudgetAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<!--联查单据-->
+	<bean id="linkBillAction" class="nc.ui.pubapp.uif2app.actions.LinkQueryAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="billType" value="262X" />
+	</bean>
+	<!-- 联查报销单 -->
+	<bean id="linkBxBillAction" class="nc.ui.erm.accruedexpense.actions.AccLinkBxBillAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<!--联查凭证-->
+	<bean id="linkVoucherAction" class="nc.ui.erm.accruedexpense.actions.AccLinkVoucherAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	<!-- 行操作 -->
+	<bean id="addLineAction" class="nc.ui.erm.accruedexpense.actions.AccAddLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="insertLineAction" class="nc.ui.erm.accruedexpense.actions.AccInsertLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="deleteLineAction" class="nc.ui.erm.accruedexpense.actions.AccDelLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="copyLineAction" class="nc.ui.erm.accruedexpense.actions.AccCopyLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="pasteLineAction" class="nc.ui.erm.accruedexpense.actions.AccPasteLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="pasteLineToTailAction"
+		class="nc.ui.erm.accruedexpense.actions.AccPasteLineToTailAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="displayaction" class="nc.ui.erm.action.util.ErmBodyZoomAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="billForm" ref="billFormEditor" />
+	</bean>
+	<bean id="actionsBarSeparator" class="nc.ui.pub.beans.ActionsBar$ActionsBarSeparator" />
+
+	<bean id="singleDataSource"
+		class="nc.ui.erm.accruedexpense.actions.AccruedPrintMetaDataSingleDataSource">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="multiDataSource"
+		class="nc.ui.erm.accruedexpense.actions.AccruedPrintMetaDataMultDataSource">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<!-- 导入导出按钮 -->
+	<bean id="importAction" class="nc.ui.uif2.excelimport.ImportAction"
+		autowire="byName">
+		<property name="importableEditor" ref="importableEditor" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="exportAction" class="nc.ui.uif2.excelimport.ExportAction"
+		autowire="byName">
+		<property name="importableEditor" ref="importableEditor" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="importexportActionGroup" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="ImportExportMenu" />
+		<property name="name" value="导入导出" />
+		<property name="actions">
+			<list>
+				<ref bean="importAction" />
+				<ref bean="nullAction" />
+				<ref bean="exportAction" />
+			</list>
+		</property>
+	</bean>
+	<!-- 联查 按钮组 -->
+	<bean id="linkGroupAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0070"></property>
+				<property name="defaultValue" value="联查"></property>
+			</bean>
+		</property>
+		<property name="code" value="link" />
+		<property name="actions">
+			<list>
+				<ref bean="linkBudgetAction" />
+				<ref bean="linkVoucherAction" />
+				<ref bean="linkBillAction" />
+				<ref bean="linkBxBillAction" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 打印操作 按钮组 -->
+	<bean id="printCardGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0071"></property>
+				<property name="defaultValue" value="打印"></property>
+			</bean>
+		</property>
+		<property name="code" value="printCard" />
+		<property name="actions">
+			<list>
+				<ref bean="printAction" />
+				<ref bean="previewAction" />
+				<ref bean="printOutputAction" />
+				<ref bean="nullAction" />
+				<ref bean="printOfficalAction" />
+				<ref bean="printOfficialCancelAction" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="printListGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0071"></property>
+				<property name="defaultValue" value="打印"></property>
+			</bean>
+		</property>
+		<property name="code" value="printCard" />
+		<property name="actions">
+			<list>
+				<ref bean="printAction" />
+				<ref bean="previewAction" />
+				<ref bean="printOutputAction" />
+				<ref bean="nullAction" />
+				<ref bean="printOfficalAction" />
+				<ref bean="printOfficialCancelAction" />
+				<ref bean="nullAction" />
+				<ref bean="printListAction" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 提交 按钮组 -->
+	<bean id="commitGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0073"></property>
+				<property name="defaultValue" value="提交"></property>
+			</bean>
+		</property>
+		<property name="code" value="commitmenu" />
+		<property name="actions">
+			<list>
+				<ref bean="commitAction" />
+				<ref bean="recallAction" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 审核 按钮组 -->
+	<bean id="auditGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0074"></property>
+				<property name="defaultValue" value="审批"></property>
+			</bean>
+		</property>
+		<property name="code" value="auditmenu" />
+		<property name="actions">
+			<list>
+				<ref bean="auditAction" />
+				<ref bean="unAuditAction" />
+				<ref bean="nullAction" />
+				<ref bean="linkApproveAction" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="queryEventListener"
+		class="nc.ui.erm.accruedexpense.listener.AccQueryCriteriaChangedListener">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model" ref="manageAppModel" />
+		<property name="saveaction" ref="saveAction" />
+		<property name="cancelaction" ref="cancelAction" />
+	</bean>
+
+	<bean id="InitDataListener" class="nc.ui.erm.accruedexpense.listener.AccBillLinkListener">
+		<property name="pageModel" ref="paginationModel" />
+		<property name="listViewActions" ref="listViewActions" />
+		<property name="editorActions" ref="editorActions" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="model" ref="manageAppModel" />
+		<property name="datamanager" ref="modelDataManager" />
+		<property name="queryAction" ref="queryAction" />
+	</bean>
+
+	<!-- 分页 -->
+	<bean id="paginationModel" class="nc.ui.uif2.components.pagination.PaginationModel"
+		init-method="init">
+		<property name="maxPageSize" value='5000'></property>
+		<property name="paginationQueryService" ref="modelService"></property>
+	</bean>
+
+	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar"
+		init-method="registeCallbak">
+		<property name="paginationModel" ref="paginationModel" />
+		<property name="context" ref="context" />
+	</bean>
+
+	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 超链接监听器 -->
+	<bean id="linklistener" class="nc.ui.erm.view.ERMHyperLinkListener">
+		<property name="model" ref="manageAppModel"></property>
+	</bean>
+
+	<!--
+		界面元素 ###########################################################
+	-->
+	<bean id="cardInfoPnl" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="actions">
+			<list>
+				<!-- 浏览按钮 卡片界面共享信息按钮 -->
+				<bean id="accessoryShowAction" class="nc.ui.erm.accruedexpense.actions.AccAccessoryAction">
+					<property name="model" ref="manageAppModel" />
+				</bean>
+				<ref bean="actionsBarSeparator" />
+
+				<bean id="firstLineAction" class="nc.ui.uif2.actions.FirstLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<bean id="preLineAction" class="nc.ui.uif2.actions.PreLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<bean id="nextLineAction" class="nc.ui.uif2.actions.NextLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<bean id="lastLineAction" class="nc.ui.uif2.actions.LastLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+
+				<ref bean="actionsBarSeparator" />
+
+				<bean class="nc.ui.erm.action.util.ErmHeadZoomAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="billForm" ref="billFormEditor" />
+				</bean>
+			</list>
+		</property>
+		<property name="titleAction">
+			<bean id="returnaction" class="nc.ui.uif2.actions.ShowMeUpAction">
+				<property name="goComponent" ref="listView" />
+				<property name="model" ref="manageAppModel" />
+			</bean>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 自定义项处理,container用于减少流量 -->
+	<bean id="userdefitemContainer" class="nc.ui.uif2.userdefitem.UserDefItemContainer">
+		<property name="context" ref="context" />
+		<property name="params">
+			<list>
+				<bean class="nc.ui.uif2.userdefitem.QueryParam">
+					<property name="mdfullname" value="erm.accrued" />
+				</bean>
+				<bean class="nc.ui.uif2.userdefitem.QueryParam">
+					<property name="mdfullname" value="erm.accrued_detail" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="userdefitemListPreparator" class="nc.ui.pubapp.uif2app.view.CompositeBillListDataPrepare">
+		<property name="billListDataPrepares">
+			<list>
+				<bean class="nc.ui.uif2.editor.UserdefitemContainerListPreparator">
+					<property name="container" ref="userdefitemContainer" />
+					<property name="params">
+						<list>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.accrued" />
+								<property name="pos" value="0" />
+								<property name="prefix" value="defitem" />
+							</bean>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.accrued_detail" />
+								<property name="pos" value="1" />
+								<property name="prefix" value="defitem" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="userdefitemCardPreparator" class="nc.ui.pubapp.uif2app.view.CompositeBillDataPrepare">
+		<property name="billDataPrepares">
+			<list>
+				<bean class="nc.ui.uif2.editor.UserdefitemContainerPreparator">
+					<property name="container" ref="userdefitemContainer" />
+					<property name="params">
+						<list>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.accrued" />
+								<property name="pos" value="0" />
+								<property name="prefix" value="defitem" />
+							</bean>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.accrued_detail" />
+								<property name="pos" value="1" />
+								<property name="prefix" value="defitem" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 事件处理 -->
+	<!-- 编辑事件 -->
+	<bean id="billCardBodyAfterEditlistener"
+		class="nc.ui.erm.accruedexpense.listener.AccBillCardBodyAfterEditListener">
+		<property name="billForm" ref="billFormEditor" />
+	</bean>
+	<bean id="billCardBodyBeforeEditlistener"
+		class="nc.ui.erm.accruedexpense.listener.AccBillCardBodyBeforeEditListener">
+		<property name="billForm" ref="billFormEditor" />
+	</bean>
+	<bean id="billCardHeadAfterEditlistener"
+		class="nc.ui.erm.accruedexpense.listener.AccBillCardHeadAfterEditListener">
+		<property name="model" ref="manageAppModel" />
+		<property name="billForm" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="billCardHeadBeforeEditlistener"
+		class="nc.ui.erm.accruedexpense.listener.AccBillCardHeadBeforeEditListener">
+		<property name="billForm" ref="billFormEditor" />
+	</bean>
+</beans>
+

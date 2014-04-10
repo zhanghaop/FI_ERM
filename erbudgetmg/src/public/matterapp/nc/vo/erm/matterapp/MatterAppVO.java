@@ -105,6 +105,7 @@ public class MatterAppVO extends SuperVO {
 	private java.lang.String defitem2;
 	private java.lang.String defitem1;
 	private java.lang.String djdl = "ma";
+	@SuppressWarnings("unused")
 	private java.lang.String auditman;
 	private java.lang.String pk_org_v;
 	private java.lang.String pk_supplier;
@@ -117,8 +118,10 @@ public class MatterAppVO extends SuperVO {
 	private nc.vo.pub.lang.UFDateTime ts;
 
 	public UFBoolean iscostshare = UFBoolean.FALSE;// 分摊标志
-
 	private UFBoolean isignoreatpcheck = UFBoolean.FALSE;// 可用量是否跳过检查（营销费用）
+	
+	//add 65 ehp2 2014-1-9
+	private String apply_org;//申请单位
 
 	public static final String ISCOSTSHARE = "iscostshare";
 	public static final String PK_MTAPP_BILL = "pk_mtapp_bill";
@@ -211,7 +214,8 @@ public class MatterAppVO extends SuperVO {
 	public static final String MAX_AMOUNT = "max_amount";
 	
 	public static final String ISIGNOREATPCHECK = "isignoreatpcheck";
-
+	
+	public static final String APPLY_ORG = "apply_org";
 	/**
 	 * 属性pk_mtapp_bill的Getter方法.属性名：主键 创建日期:
 	 * 
@@ -2003,5 +2007,13 @@ public class MatterAppVO extends SuperVO {
 
 	public void setIsignoreatpcheck(UFBoolean isignoreatpcheck) {
 		this.isignoreatpcheck = isignoreatpcheck;
+	}
+
+	public String getApply_org() {
+		return apply_org;
+	}
+
+	public void setApply_org(String apply_org) {
+		this.apply_org = apply_org;
 	}
 }

@@ -109,7 +109,7 @@ public class ERMOrgPane extends UIPanel implements AppEventListener  {
 			m_refPane = new UIRefPane();
 			m_refPane.setPreferredSize(new Dimension(200, 20));
             m_refPane.setRefNodeName("财务组织版本"/* -=notranslate=- */);
-            m_refPane.getRefModel().setDisabledDataShow(true);
+            m_refPane.getRefModel().setDisabledDataShow(false);
 			m_refPane.setButtonFireEvent(true);
 		}
 		return m_refPane;

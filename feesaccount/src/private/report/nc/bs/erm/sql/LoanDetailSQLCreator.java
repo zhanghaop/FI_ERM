@@ -50,10 +50,6 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
 
 	private final List<ComputeTotal> allQryobjList = new ArrayList<ComputeTotal>();
 
-    protected boolean isQueryByDetail(String fieldCode) {
-        return isDetailField(fieldCode);
-    }
-
 	@Override
 	public String[] getArrangeSqls() throws SQLException, BusinessException {
 		List<String> sqlList = new ArrayList<String>();
@@ -89,7 +85,6 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
 					qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex()).append(", ").append(
 					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
 					IPubReportConstants.QRY_OBJ_PREFIX).append(i);
-
 		}
 
 		sqlBuffer.append(", v.pk_currtype"); 
@@ -145,7 +140,7 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
 		sqlList.add(getPeriodOriginalSql()); // 借款期初
 		sqlList.add(getLoanDetail()); // 借款明细帐
 		sqlList.add(getContrastDetail()); // 还款明细
-
+		
 		return sqlList;
 	}
 
@@ -604,6 +599,9 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
                 int nPos = field.indexOf("fb."); 
                 if (nPos >= 0) {
                     String fbField = field.replaceAll("fb.", cxAlias + ".");
+                    if (!isContrastField(fbField)) {
+                        continue;
+                    }
                     String zbField = field.replaceAll("fb.", jkzbAlias + ".");
                     sql.append(zbField).append(" = ");
                     sql.append(fbField);

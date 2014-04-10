@@ -380,7 +380,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
         } else if (IErmReportConstants.BILL_STATUS_COMMIT.equals(queryVO
                 .getBillState())) {
             sqlBuffer.append(" >= ").append(
-                    ErmMatterAppConst.BILLSTATUS_COMMITED);
+                    ErmMatterAppConst.BILLSTATUS_SAVED);
         } else if (IPubReportConstants.BILL_STATUS_CONFIRM.equals(queryVO
                 .getBillState())) {
             sqlBuffer.append(" >= ").append(

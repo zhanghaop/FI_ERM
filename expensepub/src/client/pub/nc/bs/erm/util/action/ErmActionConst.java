@@ -8,6 +8,18 @@ import nc.vo.ml.NCLangRes4VoTransl;
  *
  */
 public abstract class ErmActionConst {
+	 /** AddAction beanName字符串 */
+    public static final String ADD_ACTION_BEAN_NAME = "addAction";
+    /** SaveAction beanName字符串 */
+    public static final String SAVE_ACTION_BEAN_NAME = "saveAction";
+    /** CancelAction beanName字符串 */
+    public static final String CANCEL_ACTION_BEAN_NAME = "cancelAction";
+    /** 界面使用的AppModel beanName字符串 */
+    public static final String APPMODEL_BEAN_NAME = "manageAppModel";
+    /** 卡片编辑器 beanName */
+    public static final String BILLCARD_EDITOR_BEAN_NAME = "billFormEditor";
+    
+    
 	public static final String BILLTYE  = "BillType";//交易类型
 	public static String getBillTypeName() {
 		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0000")/*@res "交易类型"*/;
@@ -122,5 +134,20 @@ public abstract class ErmActionConst {
 	public static final String CONTRAST  = "Contrast";//冲借款
 	public static String getContrastBame() {
 		return NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UPTcommon-000360")/*@res "冲借款"*/;
+	}
+	
+	public static final String VerifyAccruedBill  = "VerifyAccruedBill";//核销预提
+	public static String getVerifyAccruedBillBame() {
+		return NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0041")/*@res "核销预提"*/;
+	}
+	
+	public static final String Redback  = "Redback";//红冲
+	public static String getRedbackName() {
+		return NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0042")/*@res "红冲"*/;
+	}
+	
+	public static final String LinkAcc  = "LinkAcc";//联查预提单
+	public static String getLinkAccName() {
+		return NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0043")/*@res "联查预提单"*/;
 	}
 }

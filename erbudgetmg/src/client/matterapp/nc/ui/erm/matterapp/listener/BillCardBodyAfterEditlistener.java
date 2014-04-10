@@ -49,8 +49,7 @@ public class BillCardBodyAfterEditlistener implements BillEditListener {
 		
 		if(bodyItem==null)
 			return;
-		
-		
+		String key = bodyItem.getKey();
 		if(ErmMatterAppConst.MatterApp_MDCODE_DETAIL.endsWith(eve.getTableCode())){
 			// 多选后自动进行复制行实现
 			int[] changRow = null;
@@ -86,7 +85,7 @@ public class BillCardBodyAfterEditlistener implements BillEditListener {
 						.getOldValue());
 			}
 			
-			if (bodyItem.getKey().equals(MtAppDetailVO.ORIG_AMOUNT) || isAmoutField(bodyItem)) {// 金额变化
+			if (key.equals(MtAppDetailVO.ORIG_AMOUNT) || isAmoutField(bodyItem)) {// 金额变化
 				try {
 					MatterAppUiUtil.setHeadAmountByBodyAmounts(billForm.getBillCardPanel());//表体金额相加结果放入表头
 					// 计算本币等联动金额
@@ -96,7 +95,7 @@ public class BillCardBodyAfterEditlistener implements BillEditListener {
 					ExceptionHandler.consume(e);
 				}
 				// 计算比例
-			} else if (bodyItem.getKey().equals(MtAppDetailVO.SHARE_RATIO)) {
+			} else if (key.equals(MtAppDetailVO.SHARE_RATIO)) {
 				// 比例后重新计算金额
 				ErmForMatterAppUtil.resetJeByRatio(eve.getRow(), billForm.getBillCardPanel(), false);
 				try {
@@ -105,9 +104,27 @@ public class BillCardBodyAfterEditlistener implements BillEditListener {
 				} catch (BusinessException e) {
 					ExceptionHandler.consume(e);
 				}
-			} else if(bodyItem.getKey().equals(MtAppDetailVO.ORG_CURRINFO)
-					|| bodyItem.getKey().equals(MtAppDetailVO.GROUP_CURRINFO)
-					|| bodyItem.getKey().equals(MtAppDetailVO.GLOBAL_CURRINFO)){
+			} else if(key.equals(MtAppDetailVO.ORG_CURRINFO)
+					|| key.equals(MtAppDetailVO.GROUP_CURRINFO)
+					|| key.equals(MtAppDetailVO.GLOBAL_CURRINFO)){
+				// 按表体费用承担单位过滤
+				String assume_org = billForm.getBodyItemStrValue(eve.getRow(), MtAppDetailVO.ASSUME_ORG);
+				String pk_currtype = billForm.getHeadItemStrValue(MatterAppVO.PK_CURRTYPE);
+				
+				boolean isEnable = false;
+				if(assume_org != null){
+					if(MatterAppVO.ORG_CURRINFO.equals(key)){
+						isEnable = MatterAppUiUtil.getOrgRateEnableStatus(assume_org, pk_currtype);
+					}else if(MatterAppVO.GROUP_CURRINFO.equals(key)){
+						isEnable = MatterAppUiUtil.getGroupRateEnableStatus(assume_org, pk_currtype);
+					}else if(MatterAppVO.GLOBAL_CURRINFO.equals(key)){
+						isEnable = MatterAppUiUtil.getGlobalRateEnableStatus(assume_org, pk_currtype);
+					}
+				}
+				
+				if(!isEnable){//不可编辑进入，可能是导入造成
+					billForm.setBodyValue(eve.getOldValue(), eve.getRow(), key);
+				}
 				billForm.resetCardBodyAmount(eve.getRow());
 			}
 		}

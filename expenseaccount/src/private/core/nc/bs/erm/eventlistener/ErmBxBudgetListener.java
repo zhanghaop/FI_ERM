@@ -13,6 +13,7 @@ import nc.itf.pim.budget.pub.IbudgetExe4ExpenseBill;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BXUtil;
+import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.er.exception.ExceptionHandler;
@@ -50,8 +51,13 @@ public class ErmBxBudgetListener implements IBusinessListener {
 		
 		for (int i = 0; i < vos.length; i ++) {
 			JKBXVO vo = (JKBXVO) vos[i].clone();
-			if (vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_TempSaved) {
+			JKBXHeaderVO headVo = vo.getParentVO();
+			if (headVo.getDjzt().intValue() == BXStatusConst.DJZT_TempSaved) {
 				continue;
+			}
+			if(headVo.isAdjustBxd()){
+				// 报销类型为费用调整的单据，不处理项目预算
+				continue ;
 			}
 			
 			vo.setContrastVO(null);

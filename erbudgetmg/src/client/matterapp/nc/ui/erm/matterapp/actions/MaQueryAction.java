@@ -20,8 +20,15 @@ public class MaQueryAction extends QueryAction {
 	protected IQueryConditionDLG getQueryCoinditionDLG() {
 		IQueryConditionDLG queryConditionDLG = super.getQueryCoinditionDLG();
 		if (isFirstCall) {
-			queryConditionDLG
-					.registerCriteriaEditorListener(getQueryEventListener());
+			queryConditionDLG.registerCriteriaEditorListener(getQueryEventListener());
+//			if(getModel().getContext().getNodeCode().equals(ErmMatterAppConst.MAPP_NODECODE_QY)){//平台提供的参数、方法均没有用
+//				queryConditionDLG.registerDataPowerEnableJudger(new IDataPowerEnableJudger() {
+//					@Override
+//					public boolean isDataPowerEnabled(FilterMeta fm, boolean deafaultValue) {
+//						return false;
+//					}
+//				});
+//			}
 			isFirstCall = false;
 		}
 

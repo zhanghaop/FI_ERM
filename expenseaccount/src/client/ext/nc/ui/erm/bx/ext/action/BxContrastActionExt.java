@@ -28,7 +28,7 @@ public class BxContrastActionExt extends ContrastAction {
 	
 	@Override
 	protected boolean isActionEnable() {
-		JKBXVO vo= ((ErmBillBillForm)getEditor()).getHelper().getJKBXVO(getEditor());
+		JKBXVO vo= ((ErmBillBillForm)getEditor()).getJKBXVO();
 		return super.isActionEnable()&& vo != null && !ErmConstExt.Distributor_BX_Tradetype.equals(vo.getParentVO().getDjlxbm());
 	}
 	

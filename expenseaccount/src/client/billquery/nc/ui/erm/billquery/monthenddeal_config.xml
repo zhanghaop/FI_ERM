@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+ 	<import resource="classpath:/nc/ui/erm/billquery/billquery_config.xml" />
+ 	
+ 	
+ 	<bean id="dealvoucheraction" class="nc.ui.erm.billquery.action.DealVoucherAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="editor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="queryAction" />
+				<ref bean="cardRefreshAction" />
+				<ref bean="nullAction"/>
+				<ref bean="dealvoucheraction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="linkGroupAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="printActionGroup"/>
+				
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="queryAction" />
+				<ref bean="listRefreshAction" />
+				<ref bean="nullAction"/>
+				<ref bean="dealvoucheraction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="linkGroupAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="listprintGroup"/>
+			</list>
+		</property>
+	</bean>
+ 
+</beans>

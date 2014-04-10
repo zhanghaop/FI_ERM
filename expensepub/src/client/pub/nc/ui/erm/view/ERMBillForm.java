@@ -109,7 +109,7 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		ermmodel.fireExtEvent(e);
 	}
 
-	protected void setBillData(BillTempletVO template) {
+	public void setBillData(BillTempletVO template) {
 		
 		processTemplateVO(template);
 		BillData billdata = new BillData(template, getBillStatus());
@@ -237,7 +237,15 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		}
 		return isHidden;
 	}
-
+	
+	/**
+	 * 获取功能权限组织
+	 * @return
+	 */
+	protected String[] getFuncPermissionPkorgs() {
+		return this.getModel().getContext().getFuncInfo().getFuncPermissionPkorgs();
+	}
+	
 	@Override
 	public boolean isComponentVisible() {
 		return this.tabbedPaneAwareComponent.isComponentVisible();

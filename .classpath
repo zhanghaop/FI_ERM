@@ -30,6 +30,9 @@
 	<classpathentry kind="src" path="erbudgetmg/src/public/matterapp"/>
 	<classpathentry kind="src" path="erbudgetmg/src/private/matterapp"/>
 	<classpathentry kind="src" path="erbudgetmg/src/client/matterapp"/>
+	<classpathentry kind="src" path="erbudgetmg/src/public/accruedexpense"/>
+	<classpathentry kind="src" path="erbudgetmg/src/private/accruedexpense"/>
+	<classpathentry kind="src" path="erbudgetmg/src/client/accruedexpense"/>
 	<classpathentry kind="src" path="erbudgetmg/src/public/mactrlschema"/>
 	<classpathentry kind="src" path="erbudgetmg/src/private/mactrlschema"/>
 	<classpathentry kind="src" path="erbudgetmg/src/client/mactrlschema"/>
@@ -78,6 +81,7 @@
 	<classpathentry kind="src" path="expenseaccount/src/private/ext"/>
 	<classpathentry kind="src" path="expenseaccount/src/client/ext"/>
 	<classpathentry kind="src" path="expensepub/src/test"/>
+	<classpathentry kind="src" output="out/resources" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Ant_Library"/>
 	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Product_Common_Library"/>

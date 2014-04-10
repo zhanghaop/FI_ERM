@@ -88,8 +88,14 @@
 		<property name="nodekey" value="201106EXPMG"></property>
 		<property name="south" ref="paginationBar" />
 		<property name="north" ref="listInfoPanel" />
+		<property name="billListHeadBeforeEditlistener" ref="billListHeadBeforeEditlistener" />
 	</bean>
 	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="billListHeadBeforeEditlistener"
+		class="nc.ui.erm.expamortize.listener.ExpamortizeBillBeforeEditListener">
 		<property name="model" ref="manageAppModel" />
 	</bean>
 
@@ -114,6 +120,7 @@
 	</bean>
 
 	<bean id="amtAction" class="nc.ui.erm.expamortize.action.AmtAction">
+		<property name="listView" ref="listView" />
 		<property name="exceptionHandler" ref="execeptionHandler" />
 		<property name="model" ref="manageAppModel" />
 	</bean>

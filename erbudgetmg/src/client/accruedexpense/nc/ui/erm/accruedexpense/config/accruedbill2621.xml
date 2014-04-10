@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<import resource="accruedbillbase.xml" />
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer"
+		init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>2621</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="editAction" />
+				<ref bean="deleteAction" />
+				<ref bean="copyAction" />
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="refreshAction" />
+				<ref bean="nullAction" />
+				<ref bean="commitGroupAction" />
+				<ref bean="auditGroupAction" />
+				<ref bean="documentaction" />
+				<ref bean="nullAction" />
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
+				<ref bean="nullAction" />
+				<ref bean="printListGroupAction" />
+
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="billFormEditor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="editAction" />
+				<ref bean="deleteAction" />
+				<ref bean="copyAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="refreshSingleAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="commitGroupAction" />
+				<ref bean="auditGroupAction" />
+				<ref bean="documentaction" />
+				<ref bean="nullAction" />
+				<ref bean="redbackAction" />
+				<ref bean="nullAction" />
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
+				<ref bean="nullAction" />
+				<ref bean="printCardGroupAction" />
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveAction" />
+				<ref bean="saveAndCommitAction" />
+				<ref bean="tempSaveAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="cancelAction" />
+				<ref bean="nullAction" />
+				<ref bean="documentaction" />
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="importableEditor"	class="nc.ui.erm.accruedexpense.importable.AccImportablePanel" >
+		<constructor-arg value ="预提单" >
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="manageAppModel" />
+		</constructor-arg>
+		<constructor-arg value ="nc/ui/erm/accruedexpense/config/accruedbill2621.xml" >
+		</constructor-arg>
+		<property name="appModel" ref="manageAppModel"></property>
+		<property name="uiEditor" ref="billFormEditor"></property>
+	</bean>
+
+	<!-- 界面元素 ###########################################################-->
+	<!-- 列表视图 -->
+	<bean id="listView" class="nc.ui.erm.accruedexpense.view.AccMNListView"
+		init-method="initUI">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="multiSelectionEnable">
+			<value>true</value>
+		</property>
+		<property name="nodekey" value="2621" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="userdefitemListPreparator" ref="userdefitemListPreparator" />
+		<property name="linklistener" ref="linklistener" />
+		<property name="north" ref="listInfoPanel" />
+		<property name="paginationBar" ref="paginationBar" />
+	</bean>
+
+	<!--卡控件-->
+	<bean id="billFormEditor" class="nc.ui.erm.accruedexpense.view.AccMNBillForm"
+		init-method="initUI">
+		<property name="context" ref="context" />
+		<property name="model" ref="manageAppModel" />
+		<property name="nodekey" value="2621" />
+		<property name="showTotalLine" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
+		<property name="saveAction" ref="saveAction" />
+		<property name="cancelAction" ref="cancelAction" />
+		<property name="closingListener" ref="ClosingListener" />
+		<property name="billCardBodyAfterEditlistener" ref="billCardBodyAfterEditlistener" />
+		<property name="billCardBodyBeforeEditlistener" ref="billCardBodyBeforeEditlistener" />
+		<property name="billCardHeadAfterEditlistener" ref="billCardHeadAfterEditlistener" />
+		<property name="billCardHeadBeforeEditlistener" ref="billCardHeadBeforeEditlistener" />
+		<property name="bodyActionMap">
+			<map>
+				<entry key="accrued_detail">
+					<list>
+						<ref bean="addLineAction" />
+						<ref bean="deleteLineAction" />
+						<ref bean="insertLineAction" />
+						<ref bean="copyLineAction" />
+						<ref bean="pasteLineAction" />
+						<ref bean="pasteLineToTailAction" />
+						<ref bean="actionsBarSeparator" />
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+				<property name="tabs">
+					<list>
+						<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+							<property name="name" value="列表" />
+							<property name="left">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="queryAreaShell" />
+								</bean>
+							</property>
+							<property name="right">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="listView" />
+								</bean>
+							</property>
+							<property name="dividerLocation">
+								<value>0.2f</value>
+							</property>
+						</bean>
+						<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+							<property name="showMode" value="NoDivider" />
+							<property name="name" value="卡片" />
+							<property name="up">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="cardInfoPnl" />
+								</bean>
+							</property>
+							<property name="down">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="billFormEditor" />
+								</bean>
+							</property>
+							<property name="dividerLocation" value="30f" />
+						</bean>
+					</list>
+				</property>
+				<property name="showMode" value="CardLayout" />
+			</bean>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+</beans>

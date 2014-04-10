@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2014-01-09 14:19:10" creator="" description="" displayName="accruedoperate" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="accruedoperate" namespace="erm" ownModule="erm" preLoad="false" resModuleName="accruedoperate" resid="" version="5" versionType="0">
+    <celllist>
+        <busiActivity componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:20:30" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="预提单维护活动" fullClassName="nc.voerm.accruedoperate.AccruedBill_mgActivity" height="100" help="" id="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_mgActivity" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="179" x="56" y="137">
+            <refBusiOperationlist>
+                <refbusioperation id="e809cf45-9e3f-4ed7-9c4d-a1b8e8db55d8" industry="0" isAuthorization="true" isSource="false" ownerElementID="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" realBusiOpid="318db344-681f-49ea-a9ef-1fd879bc77b6" versiontype="0"/>
+                <refbusioperation id="79da8f7b-176b-4206-9c20-0dbe619d36c7" industry="0" isAuthorization="true" isSource="false" ownerElementID="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" realBusiOpid="82bbe3fc-8177-429a-bb07-7360a1203bf0" versiontype="0"/>
+                <refbusioperation id="561a5001-f8f0-4805-853e-1735c40e6b7a" industry="0" isAuthorization="true" isSource="false" ownerElementID="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" realBusiOpid="36107e64-2312-459e-b89f-8a4193ed3548" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:22:44" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="新增" fullClassName="nc.voerm.accruedoperate.AccruedBill_insert" height="100" help="" id="318db344-681f-49ea-a9ef-1fd879bc77b6" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_insert" needlog="false" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="308" y="1">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:22:53" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="删除" fullClassName="nc.voerm.accruedoperate.AccruedBill_detele" height="100" help="" id="82bbe3fc-8177-429a-bb07-7360a1203bf0" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_detele" needlog="true" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="348" y="105">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:22:55" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="修改" fullClassName="nc.voerm.accruedoperate.AccruedBill_update" height="100" help="" id="36107e64-2312-459e-b89f-8a4193ed3548" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_update" needlog="true" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="317" y="216">
+            <refoperationlist/>
+        </busioperation>
+        <busiActivity componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:29:06" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="预提单审批活动" fullClassName="nc.voerm.accruedoperate.AccruedBill_approveActivity" height="100" help="" id="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_approveActivity" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="69" y="335">
+            <refBusiOperationlist>
+                <refbusioperation id="b21d1ca8-e252-4338-a370-e640f2df82e9" industry="0" isAuthorization="true" isSource="false" ownerElementID="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" realBusiOpid="d57a1d73-83ab-42ff-8b2e-290f2435f987" versiontype="0"/>
+                <refbusioperation id="40724aa5-6549-42d5-a39f-fe4bd60cda38" industry="0" isAuthorization="true" isSource="false" ownerElementID="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" realBusiOpid="f5c282e8-cd8d-4860-aab4-af56eef2df05" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:30:04" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="审批" fullClassName="nc.voerm.accruedoperate.AccruedBill_approve" height="100" help="" id="d57a1d73-83ab-42ff-8b2e-290f2435f987" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_approve" needlog="false" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="197" y="293">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:30:07" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="取消审批" fullClassName="nc.voerm.accruedoperate.AccruedBill_unapprove" height="100" help="" id="f5c282e8-cd8d-4860-aab4-af56eef2df05" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_unapprove" needlog="false" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="309" y="398">
+            <refoperationlist/>
+        </busioperation>
+        <busiActivity componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:32:53" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="预提单提交活动" fullClassName="nc.voerm.accruedoperate.AccruedBill_commitActivity" height="100" help="" id="d789927d-c69b-4bf8-964a-ef018f39ecf7" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_commitActivity" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="62" y="497">
+            <refBusiOperationlist>
+                <refbusioperation id="0f920a50-fdf5-446f-a0bc-eac1fbf720e3" industry="0" isAuthorization="true" isSource="false" ownerElementID="d789927d-c69b-4bf8-964a-ef018f39ecf7" realBusiOpid="7ce92bde-0d9e-42dd-96cd-57c1999df9f5" versiontype="0"/>
+                <refbusioperation id="2f0972c2-b37d-4690-a27a-98f5143cc73f" industry="0" isAuthorization="true" isSource="false" ownerElementID="d789927d-c69b-4bf8-964a-ef018f39ecf7" realBusiOpid="ad03341d-98da-4e7e-a3ea-d4ce55bf385b" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:33:36" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="提交" fullClassName="nc.voerm.accruedoperate.AccruedBill_commit" height="100" help="" id="7ce92bde-0d9e-42dd-96cd-57c1999df9f5" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_commit" needlog="false" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="209" y="471">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:33:40" creator="" dataType="61a2bcdb-e040-44d7-949a-54aa632591f5" dbtype="" description="" displayName="收回" fullClassName="nc.voerm.accruedoperate.AccruedBill_recall" height="100" help="" id="ad03341d-98da-4e7e-a3ea-d4ce55bf385b" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="AccruedBill_recall" needlog="false" resid="" typeDisplayName="预提单" typeName="accrued" version="" versionType="0" visibility="public" width="80" x="301" y="576">
+            <refoperationlist/>
+        </busioperation>
+        <opinterface componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:36:14" creator="" description="" displayName="预提单维护" fullClassName="nc.pubitf.erm.accruedexpense.IErmAccruedBillManage" height="100" help="" id="e7b6e63a-c372-451e-806b-edea10aa7c0b" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="IErmAccruedBillManage" remote="true" resid="" singleton="true" transprop="CMT" version="" versionType="0" visibility="public" width="80" x="525" y="39">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="新增" forBusinessEntity="N" help="" id="792c433c-41b3-41dc-8db1-4f693ec30644" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insert" opItfID="e7b6e63a-c372-451e-806b-edea10aa7c0b" ownerElementID="e7b6e63a-c372-451e-806b-edea10aa7c0b" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="删除" forBusinessEntity="N" help="" id="4e10220e-c7dc-40d2-9fe7-7ee2bc28387e" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="delete" opItfID="e7b6e63a-c372-451e-806b-edea10aa7c0b" ownerElementID="e7b6e63a-c372-451e-806b-edea10aa7c0b" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="修改" forBusinessEntity="N" help="" id="4f910d0d-e761-4e63-9f81-047e08913c7b" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="update" opItfID="e7b6e63a-c372-451e-806b-edea10aa7c0b" ownerElementID="e7b6e63a-c372-451e-806b-edea10aa7c0b" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:37:44" creator="" description="" displayName="预提单审批" fullClassName="nc.itf.erm.IErmAccruedBillApprove" height="100" help="" id="3a56be16-ae52-4d60-af23-6550b089d4ef" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="IErmAccruedBillApprove" remote="true" resid="" singleton="true" transprop="CMT" version="" versionType="0" visibility="public" width="80" x="429" y="287">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="审批" forBusinessEntity="N" help="" id="38d0ee44-8426-4c91-9cee-4bcb8ecbbec2" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="approve" opItfID="3a56be16-ae52-4d60-af23-6550b089d4ef" ownerElementID="3a56be16-ae52-4d60-af23-6550b089d4ef" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="取消审批" forBusinessEntity="N" help="" id="60a035da-3dc5-431b-aef9-a2473a7f329d" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="unapprove" opItfID="3a56be16-ae52-4d60-af23-6550b089d4ef" ownerElementID="3a56be16-ae52-4d60-af23-6550b089d4ef" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:38:26" creator="" description="" displayName="预提单提交" fullClassName="nc.itf.erm.IErmAccruedBillCommit" height="100" help="" id="b1ab1277-56a3-4372-a76f-485d83e15204" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-10 13:57:46" name="IErmAccruedBillCommit" remote="true" resid="" singleton="true" transprop="CMT" version="" versionType="0" visibility="public" width="80" x="436" y="509">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="提交" forBusinessEntity="N" help="" id="d082fb70-cb4a-408c-9f81-f4b02a9d20aa" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="commit" opItfID="b1ab1277-56a3-4372-a76f-485d83e15204" ownerElementID="b1ab1277-56a3-4372-a76f-485d83e15204" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="收回" forBusinessEntity="N" help="" id="d8a34e90-e083-4f58-a592-70055faae309" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="recall" opItfID="b1ab1277-56a3-4372-a76f-485d83e15204" ownerElementID="b1ab1277-56a3-4372-a76f-485d83e15204" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+    </celllist>
+    <connectlist>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:27:52" creator="" description="" displayName="" help="" id="258a3755-e243-41a3-ab25-208983f2c3e1" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:27:52" name="converge connection" realsource="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" realtarget="318db344-681f-49ea-a9ef-1fd879bc77b6" source="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" target="318db344-681f-49ea-a9ef-1fd879bc77b6" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:27:54" creator="" description="" displayName="" help="" id="b12ba186-771a-4447-8bce-03af21c891e4" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:27:54" name="converge connection" realsource="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" realtarget="82bbe3fc-8177-429a-bb07-7360a1203bf0" source="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" target="82bbe3fc-8177-429a-bb07-7360a1203bf0" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:27:55" creator="" description="" displayName="" help="" id="1fe7fcf3-ec59-4da5-836b-28d40136d46b" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:27:55" name="converge connection" realsource="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" realtarget="36107e64-2312-459e-b89f-8a4193ed3548" source="48af4b41-1c9f-4ca1-a1f9-cb3acc8eddc0" target="36107e64-2312-459e-b89f-8a4193ed3548" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:19" creator="" description="" displayName="" help="" id="dab3b799-581e-4f51-ac9a-25599f2920c8" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:19" name="depend connection" realsource="318db344-681f-49ea-a9ef-1fd879bc77b6" realtarget="e7b6e63a-c372-451e-806b-edea10aa7c0b" source="318db344-681f-49ea-a9ef-1fd879bc77b6" target="e7b6e63a-c372-451e-806b-edea10aa7c0b" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:20" creator="" description="" displayName="" help="" id="b2906cef-6dca-423e-adeb-8990915dd8f3" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:20" name="depend connection" realsource="82bbe3fc-8177-429a-bb07-7360a1203bf0" realtarget="e7b6e63a-c372-451e-806b-edea10aa7c0b" source="82bbe3fc-8177-429a-bb07-7360a1203bf0" target="e7b6e63a-c372-451e-806b-edea10aa7c0b" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:22" creator="" description="" displayName="" help="" id="e5ebfa9a-b876-4354-807c-dbb0b6c6eebc" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:22" name="depend connection" realsource="36107e64-2312-459e-b89f-8a4193ed3548" realtarget="e7b6e63a-c372-451e-806b-edea10aa7c0b" source="36107e64-2312-459e-b89f-8a4193ed3548" target="e7b6e63a-c372-451e-806b-edea10aa7c0b" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:32:31" creator="" description="" displayName="" help="" id="56cdf53b-5c75-4f85-ba00-903cefd27cda" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:32:31" name="converge connection" realsource="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" realtarget="d57a1d73-83ab-42ff-8b2e-290f2435f987" source="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" target="d57a1d73-83ab-42ff-8b2e-290f2435f987" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:32:32" creator="" description="" displayName="" help="" id="9fa157fa-f140-4821-a419-b6e7990346c5" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:32:32" name="converge connection" realsource="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" realtarget="f5c282e8-cd8d-4860-aab4-af56eef2df05" source="9c6db5e5-cf64-4d07-9e94-fc340d7b13b5" target="f5c282e8-cd8d-4860-aab4-af56eef2df05" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:25" creator="" description="" displayName="" help="" id="49c8fd5e-73f8-48d7-ba59-917155dfb90c" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:25" name="depend connection" realsource="d57a1d73-83ab-42ff-8b2e-290f2435f987" realtarget="3a56be16-ae52-4d60-af23-6550b089d4ef" source="d57a1d73-83ab-42ff-8b2e-290f2435f987" target="3a56be16-ae52-4d60-af23-6550b089d4ef" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:26" creator="" description="" displayName="" help="" id="98ff82b1-590c-40fc-8d9d-b86a33584d0e" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:26" name="depend connection" realsource="f5c282e8-cd8d-4860-aab4-af56eef2df05" realtarget="3a56be16-ae52-4d60-af23-6550b089d4ef" source="f5c282e8-cd8d-4860-aab4-af56eef2df05" target="3a56be16-ae52-4d60-af23-6550b089d4ef" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:35:03" creator="" description="" displayName="" help="" id="191a0479-88d4-4671-b96b-afae2486b7f2" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:35:03" name="converge connection" realsource="d789927d-c69b-4bf8-964a-ef018f39ecf7" realtarget="7ce92bde-0d9e-42dd-96cd-57c1999df9f5" source="d789927d-c69b-4bf8-964a-ef018f39ecf7" target="7ce92bde-0d9e-42dd-96cd-57c1999df9f5" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:35:04" creator="" description="" displayName="" help="" id="52dd9aff-7f00-4285-8b59-b6d197b2eb12" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:35:04" name="converge connection" realsource="d789927d-c69b-4bf8-964a-ef018f39ecf7" realtarget="ad03341d-98da-4e7e-a3ea-d4ce55bf385b" source="d789927d-c69b-4bf8-964a-ef018f39ecf7" target="ad03341d-98da-4e7e-a3ea-d4ce55bf385b" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:28" creator="" description="" displayName="" help="" id="62385900-bc96-4824-bc1b-c778968f1dd1" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:28" name="depend connection" realsource="7ce92bde-0d9e-42dd-96cd-57c1999df9f5" realtarget="b1ab1277-56a3-4372-a76f-485d83e15204" source="7ce92bde-0d9e-42dd-96cd-57c1999df9f5" target="b1ab1277-56a3-4372-a76f-485d83e15204" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="c50c0dbf-d4e5-4932-9918-5adfb0786dc9" createIndustry="0" createTime="2014-01-09 14:39:29" creator="" description="" displayName="" help="" id="44998e40-1fbc-41ff-8ad2-ebcd6d273df5" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2014-01-09 14:39:29" name="depend connection" realsource="ad03341d-98da-4e7e-a3ea-d4ce55bf385b" realtarget="b1ab1277-56a3-4372-a76f-485d83e15204" source="ad03341d-98da-4e7e-a3ea-d4ce55bf385b" target="b1ab1277-56a3-4372-a76f-485d83e15204" versionType="0">
+            <points/>
+        </dependConnection>
+    </connectlist>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

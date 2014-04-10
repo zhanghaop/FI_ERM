@@ -15,6 +15,7 @@ import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.funcnode.ui.AbstractFunclet;
 import nc.itf.arap.pub.IBxUIControl;
 import nc.itf.bd.fundplan.IFundPlanQryService;
 import nc.itf.fi.pub.Currency;
@@ -26,11 +27,11 @@ import nc.ui.bd.ref.model.AccPeriodDefaultRefModel;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.action.ContrastAction;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
-import nc.ui.erm.billpub.remote.BXDeptRelCostCenterCall;
 import nc.ui.erm.billpub.remote.UserBankAccVoCall;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.billpub.view.ErmBillBillFormHelper;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
+import nc.ui.erm.matterapp.common.MatterAppUiUtil;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIRefPane;
@@ -99,7 +100,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		try {
 			if (key.equals(JKBXHeaderVO.DJRQ)) {
 				// 单据日期编辑后事件
-				afterEditBillDate();
+				afterEditBillDate(e);
 			} else if (key.equals(JKBXHeaderVO.PK_ORG_V)) {
 				// v6.3新增 组织多版本编辑后事件
 				afterEditPk_org_v(e);
@@ -179,20 +180,25 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 				headFieldHandle.editReceiver();
 			} else if (key.equals(JKBXHeaderVO.BZBM)) {
 				// 币种编辑后事件
-				afterEditBZBM();
-
-			} else if (key.equals(JKBXHeaderVO.BBHL)) {
-				resetBodyFinYFB();
-				//eventUtil.setHeadYFB();
-				eventUtil.setHeadBbje();
-			} else if (key.equals(JKBXHeaderVO.GLOBALBBHL)) {
-				resetBodyFinYFB();
-				//eventUtil.setHeadYFB();
-				eventUtil.setHeadBbje();
-			} else if (key.equals(JKBXHeaderVO.GROUPBBHL)) {
-				resetBodyFinYFB();
-				//eventUtil.setHeadYFB();
-				eventUtil.setHeadBbje();
+				afterEditBZBM(e);
+			} else if (key.equals(JKBXHeaderVO.BBHL) || key.equals(JKBXHeaderVO.GLOBALBBHL) 
+					|| key.equals(JKBXHeaderVO.GROUPBBHL)) {
+				String pk_org = getHeadItemStrValue(JKBXHeaderVO.PK_ORG);
+				String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
+				
+				boolean isEnabled = false;
+				if(key.equals(JKBXHeaderVO.BBHL)){//导入导出时使用
+					isEnabled = MatterAppUiUtil.getOrgRateEnableStatus(pk_org, pk_currtype);
+				}else if(key.equals(JKBXHeaderVO.GROUPBBHL)){
+					isEnabled = MatterAppUiUtil.getGroupRateEnableStatus(pk_org, pk_currtype);
+				}else if(key.equals(JKBXHeaderVO.GLOBALBBHL)){
+					isEnabled = MatterAppUiUtil.getGlobalRateEnableStatus(pk_org, pk_currtype);
+				}
+				if(!isEnabled){
+					BillItem currinfoItem = editor.getBillCardPanel().getHeadItem(key);
+					currinfoItem.setValue(e.getOldValue());
+				}
+				afterHLChanged(e);
 			} else if (key.equals(JKBXHeaderVO.YBJE)) {
 				eventUtil.setHeadYfbByHead();
 			} else if (key.equals(BXBusItemVO.AMOUNT)) {
@@ -218,7 +224,6 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			} else if(key.equals(JKBXHeaderVO.CASHPROJ)){
 				afterEditCashProj(e);
 			} 
-			
 			if(bodyEventHandleUtil.getUserdefine(IBillItem.HEAD, e.getKey(), 2)!=null){
 				String formula=bodyEventHandleUtil.getUserdefine(IBillItem.HEAD, e.getKey(), 2);
 				String[] strings = formula.split(";");
@@ -226,14 +231,23 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 					bodyEventHandleUtil.doFormulaAction(form,e.getKey(),-1,e.getTableCode(),e.getValue());
 				}
 			}
-			
 			if (pos == IBillItem.HEAD
 					&& (key.equals(JKBXHeaderVO.SZXMID) || key.equals(JKBXHeaderVO.JOBID)
 							|| key.equals(JKBXHeaderVO.CASHPROJ) || key.equals(JKBXHeaderVO.PK_RESACOSTCENTER)
 							|| key.equals(JKBXHeaderVO.PK_CHECKELE) || key.equals(JKBXHeaderVO.PK_PCORG)
-							|| key.equals(JKBXHeaderVO.PK_PCORG_V) || key.equals(JKBXHeaderVO.PROJECTTASK) || key
-							.equals(JKBXHeaderVO.PK_RESACOSTCENTER))|| key.equals(JKBXHeaderVO.PK_PROLINE) || key.equals(JKBXHeaderVO.PK_BRAND)) {
-
+							|| key.equals(JKBXHeaderVO.PK_PCORG_V) || key.equals(JKBXHeaderVO.PROJECTTASK) 
+							|| key.equals(JKBXHeaderVO.PK_RESACOSTCENTER))|| key.equals(JKBXHeaderVO.PK_PROLINE) 
+							|| key.equals(JKBXHeaderVO.PK_BRAND) 
+							//ehp增加
+							|| key.equals(JKBXHeaderVO.JKBXR)
+							|| key.equals(JKBXHeaderVO.PAYTARGET)
+							|| key.equals(JKBXHeaderVO.RECEIVER)
+							|| key.equals(JKBXHeaderVO.SKYHZH)
+							|| key.equals(JKBXHeaderVO.HBBM)
+							|| key.equals(JKBXHeaderVO.CUSTOMER)
+							|| key.equals(JKBXHeaderVO.CUSTACCOUNT)
+							|| key.equals(JKBXHeaderVO.FREECUST)
+							) {
 				String pk_value = getHeadItemStrValue(key);
 				helper.changeBusItemValue(key, pk_value);
 			}
@@ -242,13 +256,200 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			
 			// 表头字段与表体分摊页签中字段联动
 			ErmForCShareUiUtil.afterEditHeadChangeCsharePageValue(editor.getBillCardPanel(),key);
-
 		} catch (BusinessException e1) {
 			ExceptionHandler.handleExceptionRuntime(e1);
 		}
 		// 事件转换，且发出事件
 		editor.getEventTransformer().afterEdit(e);
 	}
+
+	private void afterHLChanged(BillEditEvent e) throws BusinessException {
+		if(!BXUiUtil.isExistBusiPage(editor.getBillCardPanel())) {
+			UFDouble valueObject = (UFDouble) editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.YBJE).getValueObject();
+			onlydealHeadBBje(editor.getBillCardPanel(),valueObject);
+		} else{
+			// 计算表体相关金额字段数值
+			resetBodyFinYFB();
+			// 根据表头total字段的值设置其他金额字段的值
+			eventUtil.setHeadBbje();
+		}
+		// 设置分摊页签中的汇率值和本币金额
+		resetBodyCShare(e);
+		
+	}
+	
+	/**
+	 * 只处理表头的本币金额、集团本币金额、全局本币金额
+	 * 
+	 */
+	public static void onlydealHeadBBje(BillCardPanel billCardPanel,UFDouble yb) {
+		//BillCardPanel billCardPanel = editor.getBillCardPanel();
+		UFDouble ybje = yb ;
+		
+		UFDouble hl = null;
+		UFDouble globalhl = null;
+		UFDouble grouphl = null;
+		
+		Object bbhlValue = billCardPanel.getHeadItem(JKBXHeaderVO.BBHL).getValueObject();
+		if (bbhlValue != null) {
+			hl = new UFDouble(bbhlValue.toString());
+		}
+		Object groupbbhl = billCardPanel.getHeadItem(JKBXHeaderVO.GROUPBBHL).getValueObject();
+		if (groupbbhl != null) {
+			grouphl = new UFDouble(groupbbhl.toString());
+		}
+		Object globalbbhl = billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALBBHL).getValueObject();
+		if (globalbbhl != null) {
+			globalhl = new UFDouble(globalbbhl.toString());
+		}
+		//需要重新计算的金额，bbje,zfbbje,hkbbje,cjkbbje，bbye，已经集团和全局对应的数据
+		Object bzbmValue = billCardPanel.getHeadItem(JKBXHeaderVO.BZBM).getValueObject();
+		String pk_org =(String) billCardPanel.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
+
+		
+		String bzbm = null;
+		if(bzbmValue==null){
+			return;
+		}else{
+			bzbm=bzbmValue.toString();
+		}
+		try {
+			int ybDecimalDigit = Currency.getCurrDigit(bzbm);// 原币精度
+			int orgBbDecimalDigit = Currency.getCurrDigit(Currency.getOrgLocalCurrPK(pk_org));// 组织本币精度
+			int groupByDecimalDigit = Currency.getCurrDigit(Currency.getGroupCurrpk(BXUiUtil.getPK_group()));// 集团本币精度
+			int globalByDecimalDigit = Currency.getCurrDigit(Currency.getGlobalCurrPk(null));
+
+			// 设置表头原币金额精度
+			BXUiUtil.resetCardDecimalDigit(billCardPanel, ybDecimalDigit, JKBXHeaderVO.getYbjeField(), null);
+			// 设置表体业务页签组织本币金额精度
+			BXUiUtil.resetCardDecimalDigit(billCardPanel, orgBbDecimalDigit, JKBXHeaderVO.getOrgBbjeField(), null);
+			// 重设表体业务页签集团本币精度
+			BXUiUtil.resetCardDecimalDigit(billCardPanel, groupByDecimalDigit, JKBXHeaderVO.getHeadGroupBbjeField(), null);
+			// 重设表体业务页签全局本币精度
+			BXUiUtil.resetCardDecimalDigit(billCardPanel, globalByDecimalDigit, JKBXHeaderVO.getHeadGlobalBbjeField(), null);
+
+			
+			//本币金额
+			UFDouble[] bbje = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, ybje, null, null, null,
+					hl, BXUiUtil.getSysdate());
+			//设置本币金额和本币余额
+			billCardPanel.getHeadItem(JKBXHeaderVO.BBJE).setValue(bbje[2]);
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.BBYE)!=null){
+				billCardPanel.getHeadItem(JKBXHeaderVO.BBYE).setValue(bbje[2]);
+			}
+			
+			//设置冲借款本币金额
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.CJKYBJE)!=null
+					&& billCardPanel.getHeadItem(JKBXHeaderVO.CJKYBJE).getValueObject()!=null){
+				UFDouble cjkybje =(UFDouble) billCardPanel.getHeadItem(JKBXHeaderVO.CJKYBJE).getValueObject();
+				bbje = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, cjkybje, null, null, null, hl,
+						BXUiUtil.getSysdate());
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.CJKBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.CJKBBJE).setValue(bbje[2]);
+				}
+			}
+			//设置还款本币金额
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.HKYBJE)!=null 
+					&& billCardPanel.getHeadItem(JKBXHeaderVO.HKYBJE).getValueObject()!=null){
+				UFDouble hkybje =(UFDouble) billCardPanel.getHeadItem(JKBXHeaderVO.HKYBJE).getValueObject();
+				bbje = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, hkybje, null, null, null, hl,
+						BXUiUtil.getSysdate());
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.HKBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.HKBBJE).setValue(bbje[2]);
+				}
+			}
+			//设置支付本币金额
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.ZFBBJE)!=null
+					&& billCardPanel.getHeadItem(JKBXHeaderVO.ZFBBJE).getValueObject()!=null){
+				UFDouble zfybje =(UFDouble) billCardPanel.getHeadItem(JKBXHeaderVO.ZFYBJE).getValueObject();
+				bbje = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, zfybje, null, null, null, hl,
+						BXUiUtil.getSysdate());
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.ZFBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.ZFBBJE).setValue(bbje[2]);
+				}
+			}
+			/**
+			 * 计算全局集团
+			 */
+			// 需要将集团本币和全局本币设置到界面上
+			UFDouble[] je = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, ybje, null, null, null, hl,
+					BXUiUtil.getSysdate());
+			UFDouble[] money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+					billCardPanel.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), billCardPanel
+							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.GROUPBBJE)!=null){
+				billCardPanel.getHeadItem(JKBXHeaderVO.GROUPBBJE).setValue(money[0]);
+			}
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.GROUPBBYE)!=null){
+				billCardPanel.getHeadItem(JKBXHeaderVO.GROUPBBYE).setValue(money[0]);
+			}
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALBBJE)!=null){
+				billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALBBJE).setValue(money[1]);
+			}
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALBBYE)!=null){
+				billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALBBYE).setValue(money[1]);
+			}
+			
+			// 需要将集团支付本币和全局支付本币设置到界面上
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.ZFYBJE)!=null
+					&& billCardPanel.getHeadItem(JKBXHeaderVO.ZFYBJE).getValueObject()!=null){
+				UFDouble zfybje =(UFDouble) billCardPanel.getHeadItem(JKBXHeaderVO.ZFYBJE).getValueObject();
+				je = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, zfybje, null, null, null, hl,
+						BXUiUtil.getSysdate());
+				money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+						billCardPanel.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), billCardPanel
+						.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
+				
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.GROUPZFBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.GROUPZFBBJE).setValue(money[0]);
+				}
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALZFBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALZFBBJE).setValue(money[1]);
+				}
+			}
+			
+			// 需要将集团冲借款本币和全局冲借款本币设置到界面上
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.CJKYBJE)!=null
+					&& billCardPanel.getHeadItem(JKBXHeaderVO.CJKYBJE).getValueObject()!=null){
+				UFDouble cjkybje =(UFDouble) billCardPanel.getHeadItem(JKBXHeaderVO.CJKYBJE).getValueObject();
+				je = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, cjkybje, null, null, null, hl,
+						BXUiUtil.getSysdate());
+				money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+						billCardPanel.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), billCardPanel
+						.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
+				
+				
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.GROUPCJKBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.GROUPCJKBBJE).setValue(money[0]);
+				}
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALCJKBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALCJKBBJE).setValue(money[1]);
+				}
+			}
+			// 需要将集团还款本币和全局还款本币设置到界面上
+			if(billCardPanel.getHeadItem(JKBXHeaderVO.HKYBJE)!=null 
+					&& billCardPanel.getHeadItem(JKBXHeaderVO.HKYBJE).getValueObject()!=null){
+				
+				UFDouble hkybje =(UFDouble) billCardPanel.getHeadItem(JKBXHeaderVO.HKYBJE).getValueObject();
+				je = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, hkybje, null, null, null, hl,
+						BXUiUtil.getSysdate());
+				money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+						billCardPanel.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), billCardPanel
+						.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.GROUPHKBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.GROUPHKBBJE).setValue(money[0]);
+				}
+				if(billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALHKBBJE)!=null){
+					billCardPanel.getHeadItem(JKBXHeaderVO.GLOBALHKBBJE).setValue(money[1]);
+				}
+			
+			}
+		}catch(BusinessException e){
+			ExceptionHandler.handleExceptionRuntime(e);
+		}
+	}
+
+
 	
 	private void afterEditCustomer() {
 		setHeadValue(JKBXHeaderVO.HBBM, null);
@@ -357,7 +558,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	 * @author wangled
 	 * @throws BusinessException
 	 */
-	private void afterEditBillDate() throws BusinessException {
+	private void afterEditBillDate(BillEditEvent e) throws BusinessException {
 		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.ZHRQ) != null) {
 			Object billDate = getBillCardPanel().getHeadItem(JKBXHeaderVO.DJRQ).getValueObject();
 			// 最迟还款日期参数
@@ -383,7 +584,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			helper.setHeadDeptMultiVersion(new String[] { JKBXHeaderVO.FYDEPTID_V }, (String) getHeadItemStrValue(JKBXHeaderVO.FYDWBM), pk_fydept);
 		}
 		// 单据日期改变后要重新设置汇率和本币金额
-		resetHlAndJe();
+		resetHlAndJe(e);
 	}
 
 	/**
@@ -391,7 +592,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	 * 
 	 * @throws BusinessException
 	 */
-	private void resetHlAndJe() throws BusinessException {
+	private void resetHlAndJe(BillEditEvent e) throws BusinessException {
 		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		if (pk_currtype != null) {
 			final String pk_org = getHeadItemStrValue(JKBXHeaderVO.PK_ORG);
@@ -400,17 +601,14 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			// 设置汇率是否可编辑
 			try {
 				helper.setCurrencyInfo(pk_org, Currency.getOrgLocalCurrPK(pk_org), pk_currtype, date);
-			} catch (BusinessException e) {
-				ExceptionHandler.handleException(e);
+			} catch (BusinessException e1) {
+				ExceptionHandler.handleException(e1);
 			}
 		}
-		// 计算表体相关金额字段数值
-		resetBodyFinYFB();
-		// 根据表头金额字段的值设置其他金额字段的值
-		eventUtil.setHeadBbje();
-
-		// 设置分摊页签中的汇率值和本币金额
-		resetBodyCShare();
+		
+		afterHLChanged(e);
+//		// 设置分摊页签中的汇率值和本币金额
+//		resetBodyCShare();
 	}
 
 	/**
@@ -432,6 +630,8 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		Object value = e.getValue();
 		if (value instanceof String[]) {
 			newpk_org_v = ((String[]) value)[0];
+		}else{
+			newpk_org_v = (String)value;//导入导出
 		}
 		afterEditMultiVersionOrgField(e.getKey(), newpk_org_v, JKBXHeaderVO.getOrgFieldByVField(e.getKey()));
 
@@ -461,10 +661,9 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		}
 		// 切换组织后，重新设置表头和表体的本币金额
 		if (getHeadValue(JKBXHeaderVO.PK_ORG) != null) {
-			//eventUtil.setHeadYFB();
-			resetBodyFinYFB();
-			eventUtil.setHeadBbje();
-			resetBodyCShare();
+			
+			afterHLChanged(e);
+		
 		} else {
 			// 主组织为空时，设置表头表体本币金额字段为0
 			for (String headBbjeField : JKBXHeaderVO.getBbjeField()) {
@@ -558,7 +757,8 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	private void afterEditDeptid() throws BusinessException {
 		// 重新设置借款报销人
 		setHeadValue(JKBXHeaderVO.JKBXR, null);
-		
+		String deptid = getHeadItemStrValue(JKBXHeaderVO.DEPTID);
+		helper.changeBusItemValue(JKBXHeaderVO.DEPTID, deptid);
 		
 	}
 
@@ -566,7 +766,6 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		 String pk_fydept = getHeadItemStrValue(JKBXHeaderVO.FYDEPTID);
 		// v6.1新增自动带出成本中心
 		setCostCenter(pk_fydept);
-
 	}
 
 	/**
@@ -635,7 +834,6 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		UIRefPane refPane = (UIRefPane) getBillCardPanel().getHeadItem(JKBXHeaderVO.ZY).getComponent();
 		final String text = refPane.getText();
 		refPane.getRefModel().matchPkData(text);
-		// 避免value.tostring()返回数组而出现乱码
 		refPane.getUITextField().setToolTipText(text);
 	}
 
@@ -652,14 +850,10 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	 */
 	private void afterEditMultiVersionOrgField(String orgVField, String orgVValue, String orgField)
 			throws BusinessException {
-		// 组织原值
-		// String oldOrgValue = getHeadItemStrValue(orgField);
+
 		// 组织新值
 		String newOrgValue = eventUtil.getBillHeadFinanceOrg(orgVField, orgVValue, getBillCardPanel());
-		// if (newOrgValue != null && newOrgValue.equals(oldOrgValue)) {
-		// // 只切换了版本，组织不变
-		// return;
-		// }
+
 		setHeadValue(orgField, newOrgValue);
 
 		// 触发事件
@@ -682,8 +876,21 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			setHeadValue(JKBXHeaderVO.PK_CHECKELE, null);
 			setHeadValue(JKBXHeaderVO.PK_PCORG, null);
 			setHeadValue(JKBXHeaderVO.PK_PCORG_V, null);
+			//ehp2增加
+			setHeadValue(JKBXHeaderVO.CUSTACCOUNT, null);
+			//表头联动费用承担单位、表体的客户清空，表头联动客户，表体的供应商清空 :ehp2
+			int rowCount = getBillCardPanel().getBillModel().getRowCount();
+			for(int i = 0 ;i<rowCount ;i++){
+				getBillCardPanel().setBodyValueAt(null, i, BXBusItemVO.CUSTOMER + "_ID");
+				getBillCardPanel().setBodyValueAt(null, i, BXBusItemVO.HBBM + "_ID");
+				getBillCardPanel().setBodyValueAt(null, i, BXBusItemVO.CUSTACCOUNT + "_ID");
+				getBillCardPanel().setBodyValueAt(null, i, BXBusItemVO.FREECUST + "_ID");
+				getBillCardPanel().getBillData().getBillModel().setValueAt(null, i, "freecust.bankaccount");
+			}
 		} else if (JKBXHeaderVO.DWBM.equals(orgField)) {
 			afterEditDwbm();
+			//ehp2增加
+			setHeadValue(JKBXHeaderVO.SKYHZH, null);
 		} else if (JKBXHeaderVO.PK_PCORG.equals(orgField)) {
 			headFieldHandle.initPk_Checkele();
 			headFieldHandle.initResaCostCenter();
@@ -810,19 +1017,23 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		BillItem receiverItem = editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.RECEIVER);
 		boolean baseTableCodeShow = receiverItem.isBaseTableCodeShow();
 		if(getHeadValue(JKBXHeaderVO.ISCUSUPPLIER) == null || !(Boolean)getHeadValue(JKBXHeaderVO.ISCUSUPPLIER)){
-			if (jkbxr != null && !jkbxr.equals(receiver) && baseTableCodeShow) {
-				// 借款报销人不再是收款人
-				if (MessageDialog.showYesNoDlg(editor,
-						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0019")/*
-																											 * @
-																											 * res
-																											 * "提示"
-																											 */,
-						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0021")/*
-																											 * @
-																											 * res
-																											 * "是否将收款人也更改为借款报销人?"
-																											 */) == MessageDialog.ID_YES) {
+			if (jkbxr != null && !jkbxr.equals(receiver) && baseTableCodeShow ) {
+				if (receiver != null) {
+					if (MessageDialog
+							.showYesNoDlg(editor, nc.vo.ml.NCLangRes4VoTransl
+									.getNCLangRes().getStrByID("expensepub_0",
+											"02011002-0019")/*
+															 * @ res "提示"
+															 */,
+									nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+											.getStrByID("expensepub_0",
+													"02011002-0021")/*
+																	 * @ res
+																	 * "是否将收款人也更改为借款报销人?"
+																	 */) == MessageDialog.ID_YES) {
+						setHeadValue(JKBXHeaderVO.RECEIVER, jkbxr);
+					}
+				} else {
 					setHeadValue(JKBXHeaderVO.RECEIVER, jkbxr);
 				}
 			}else if(!baseTableCodeShow ){
@@ -837,7 +1048,18 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	 * 
 	 * @throws BusinessException
 	 */
-	private void afterEditBZBM() throws BusinessException {
+	private void afterEditBZBM(BillEditEvent e) throws BusinessException {
+		
+		int rowCount = getBillCardPanel().getBillModel().getRowCount();
+		for(int i = 0 ;i<rowCount ;i++){
+			getBillCardPanel().setBodyValueAt(null, i, JKBXHeaderVO.SKYHZH + "_ID");
+			getBillCardPanel().setBodyValueAt(null, i, JKBXHeaderVO.CUSTACCOUNT + "_ID");
+		}
+		getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
+		getBillCardPanel().setHeadItem(JKBXHeaderVO.CUSTACCOUNT, null);
+		headFieldHandle.initFkyhzh();
+		headFieldHandle.initAccount();
+		
 		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		if (pk_currtype != null) {
 			final String pk_org = getHeadItemStrValue(JKBXHeaderVO.PK_ORG);
@@ -848,26 +1070,45 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		}
 		// 清空冲借款信息
 		clearContrast();
-		// 计算表体相关金额字段数值
-		resetBodyFinYFB();
-		// 根据表头total字段的值设置其他金额字段的值
-		eventUtil.setHeadBbje();
-
-		// 设置分摊页签中的汇率值和本币金额
-		resetBodyCShare();
-
-		getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
-		getBillCardPanel().setHeadItem(JKBXHeaderVO.CUSTACCOUNT, null);
-		headFieldHandle.initFkyhzh();
-		headFieldHandle.initAccount();
+		
+		afterHLChanged(e);
+//		// 设置分摊页签中的汇率值和本币金额
+//		resetBodyCShare();
+		
+		// 清空核销明细页签内容
+		clearVerifyPage();
 	}
 
-	public void resetBodyCShare() {
+	/*
+	 * 清空核销明细页签内容
+	 */
+	private void clearVerifyPage() {
+		editor.setVerifyAccrued(false);
+		BillModel billModel = editor.getBillCardPanel().getBillModel(BXConstans.AccruedVerify_PAGE);
+		if(billModel != null){
+			billModel.clearBodyData();
+		}
+	}
+
+	public void resetBodyCShare(BillEditEvent e) {
 		BillModel csbillModel = getBillCardPanel().getBillModel(BXConstans.CSHARE_PAGE);
 		if (csbillModel != null && csbillModel.getRowCount() != 0) {
 			for (int rowNum = 0; rowNum < csbillModel.getRowCount(); rowNum++) {
-				ErmForCShareUiUtil.setRateAndAmount(rowNum, getBillCardPanel());
+				if(e!= null && (e.getKey().equals(JKBXHeaderVO.BBHL) || e.getKey().equals(JKBXHeaderVO.GROUPBBHL)
+						|| e.getKey().equals(JKBXHeaderVO.GLOBALBBHL))){
+					ErmForCShareUiUtil.setRateAndAmountNEW(rowNum, getBillCardPanel(),e.getKey());
+				}else{
+					ErmForCShareUiUtil.setRateAndAmount(rowNum, getBillCardPanel());
+					
+				}			
 			}
+			try {
+				// EHP2费用调整单，根据分摊明细行合计表头金额
+				ErmForCShareUiUtil.calculateHeadTotal(getBillCardPanel());
+			} catch (BusinessException e1) {
+				ExceptionHandler.handleExceptionRuntime(e1);
+			}
+			
 		}
 	}
 
@@ -914,7 +1155,6 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		// 处理表体的所有业务页签
 		String[] billTableVos = getBillCardPanel().getBillData().getTableCodes(IBillItem.BODY);
 		for (String tableCode : billTableVos) {
-			//!BXConstans.CONST_PAGE.equals(tableCode) && 
 			if (!BXConstans.CSHARE_PAGE.equals(tableCode)) {
 				BillModel billModel = getBillCardPanel().getBillModel(tableCode);
 				if (billModel != null && billModel.getBodyItems() != null) {
@@ -1039,7 +1279,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 
 	private void clearContrast() throws BusinessException, ValidationException {
 		// 改变报销人/币种后，清空冲借款信息
-		ContrastAction.doContrastToUI(editor.getBillCardPanel(), (JKBXVO) editor.getHelper().getJKBXVO(editor),
+		ContrastAction.doContrastToUI(editor.getBillCardPanel(), (JKBXVO) editor.getJKBXVO(),
 				new ArrayList<BxcontrastVO>(), editor);
 		// 改变报销人/币种后，设置冲借款标记,使得冲借款对话框数据重新加载
 		((ErmBillBillForm) editor).setContrast(true);
@@ -1055,6 +1295,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		String dwbm = getHeadItemStrValue(JKBXHeaderVO.DWBM);
 		if (dwbm != null) {
 			editSkyhzh(true, dwbm);
+			helper.changeBusItemValue(JKBXHeaderVO.DWBM, dwbm);
 		}
 	}
 
@@ -1119,7 +1360,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			helper.checkQCClose(pk_org);
 		}
 	}
-
+	
 	protected void setHeadValue(String key, Object value) {
 		if (getBillCardPanel().getHeadItem(key) != null) {
 			getBillCardPanel().getHeadItem(key).setValue(value);
@@ -1134,7 +1375,14 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 
 	public String getHeadItemStrValue(String itemKey) {
 		BillItem headItem = getBillCardPanel().getHeadItem(itemKey);
-		return headItem == null ? null : (String) headItem.getValueObject();
+		if(headItem != null && headItem.getValueObject()!=null){
+			if(headItem.getValueObject() instanceof String){
+				return (String) headItem.getValueObject();
+			}else{
+				return ((Integer)headItem.getValueObject()).toString();
+			}
+		}
+		return null ;
 	}
 
 	public UIRefPane getHeadItemUIRefPane(final String key) {
@@ -1154,6 +1402,13 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	}
 
 	public String getPk_org() {
+		if(editor.getModel().getContext().getEntranceUI() instanceof AbstractFunclet){
+			if(((AbstractFunclet)editor.getModel().getContext().getEntranceUI()).getFuncletContext() == null){
+				//导入导出
+				return (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG)
+				.getValueObject();
+			}
+		}
 		if (!editor.isShowing()) {
 			return null;
 		} else if (editor.isShowing()) {
@@ -1177,14 +1432,6 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		return editor.getBillCardPanel();
 	}
 
-	// protected BxParam getBxParam() {
-	// return editor.getBxParam();
-	// }
-
-	// private VOCache getCache() {
-	// return editor.getCache();
-	// }
-
 	public HeadFieldHandleUtil getHeadFieldHandle() {
 		return headFieldHandle;
 	}
@@ -1195,8 +1442,6 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 
 	@Override
 	public void bodyRowChange(BillEditEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -1263,6 +1508,8 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			} else {
 				editor.getBillCardPanel().setEnabled(true);
 			}
+			// 清空核销明细内容
+			clearVerifyPage();
 			return true;
 		} else {
 			String oldpk_org_v = null;

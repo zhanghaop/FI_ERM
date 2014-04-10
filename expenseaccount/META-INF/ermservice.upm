@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+    <public>
+        <component priority="0" remote="true" singleton="true" supportAlias="true" tx="NONE">
+            <interface>nc.pubitf.erm.jkbx.IJkbxBillQueryService</interface>
+            <implementation>nc.impl.erm.jkbx.JkbxBillQueryServiceImpl</implementation>
+        </component>
+    </public>
+</module>
+

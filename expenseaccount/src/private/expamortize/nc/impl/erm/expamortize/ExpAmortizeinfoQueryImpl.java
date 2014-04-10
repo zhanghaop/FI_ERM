@@ -15,6 +15,7 @@ import nc.vo.erm.expamortize.ExpamtinfoVO;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDouble;
 
 public class ExpAmortizeinfoQueryImpl implements IExpAmortizeinfoQuery {
 
@@ -46,6 +47,31 @@ public class ExpAmortizeinfoQueryImpl implements IExpAmortizeinfoQuery {
 		return queryInfoVOsByWhere(where,para, null);
 	}
 	
+	public AggExpamtinfoVO fillUpAggExpamtinfo(ExpamtinfoVO vo, String currentAccMonth) throws BusinessException {
+		if(vo == null){
+			return null;
+		}
+		
+		IMDPersistenceQueryService service = MDPersistenceService.lookupPersistenceQueryService();
+		StringBuffer whereSql = new StringBuffer(ExpamtinfoVO.PK_EXPAMTINFO + "='" + vo.getPk_expamtinfo() + "' ");
+
+		@SuppressWarnings("unchecked")
+		Collection<AggExpamtinfoVO> aggCollection = service.queryBillOfVOByCond(AggExpamtinfoVO.class,
+				whereSql.toString(), false);
+		if (aggCollection == null || aggCollection.isEmpty()) {
+			return null;
+		} else {
+			if (vo.getCurr_amount() != null && vo.getCurr_amount().compareTo(UFDouble.ZERO_DBL) > 0) {
+				((ExpamtinfoVO) aggCollection.iterator().next().getParentVO()).setCurr_amount(vo.getCurr_amount());
+			}
+		}
+
+		// 补充计算属性
+		AggExpamtinfoVO[] result = aggCollection.toArray(new AggExpamtinfoVO[] {});
+		ExpamtUtil.addComputePropertys(result, currentAccMonth);
+		return result[0];
+	}
+	
 	/**
 	 * 按查询条件查询vos
 	 * 
@@ -54,7 +80,7 @@ public class ExpAmortizeinfoQueryImpl implements IExpAmortizeinfoQuery {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private AggExpamtinfoVO[] queryByWhere(String where, String currentAccMonth) throws BusinessException {
+	public AggExpamtinfoVO[] queryByWhere(String where, String currentAccMonth) throws BusinessException {
 		IMDPersistenceQueryService service = MDPersistenceService.lookupPersistenceQueryService();
 		@SuppressWarnings("unchecked")
 		Collection<AggExpamtinfoVO> c = service.queryBillOfVOByCond(AggExpamtinfoVO.class, where, false);
@@ -66,6 +92,7 @@ public class ExpAmortizeinfoQueryImpl implements IExpAmortizeinfoQuery {
 		ExpamtUtil.addComputePropertys(result, currentAccMonth);
 		return result;
 	}
+	
 	/**
 	 * 按查询条件查询vos
 	 * 

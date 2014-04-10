@@ -26,6 +26,9 @@ public class ExpenseAccountDAO {
 	}
 
 	public ExpenseAccountVO[] insertAccountVO(ExpenseAccountVO[] vos) throws BusinessException {
+		if(vos == null || vos.length == 0){
+			return vos;
+		}
 		String[] pks = getBaseDAO().insertVOArray(vos);
 
 		@SuppressWarnings("unchecked")

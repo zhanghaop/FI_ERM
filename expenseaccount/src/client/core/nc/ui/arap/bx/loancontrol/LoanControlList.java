@@ -1,10 +1,11 @@
 package nc.ui.arap.bx.loancontrol;
 
+import java.awt.Dimension;
 import java.util.Vector;
 
-import nc.bs.logging.Logger;
 import nc.ui.erm.common.CommonList;
 import nc.ui.erm.common.CommonUI;
+import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.beans.ValueChangedEvent;
 import nc.vo.erm.util.FormulaUtil;
 import nc.vo.fipub.exception.ExceptionHandler;
@@ -22,6 +23,8 @@ import nc.vo.pub.BusinessException;
 public class LoanControlList extends CommonList {
 
 	private CommonUI parentUI;
+	
+	private UIRefPane ivjtOrg;
 
 	public CommonUI getParentUI() {
 		return parentUI;
@@ -54,6 +57,28 @@ public class LoanControlList extends CommonList {
 
 	protected boolean isGroup() {
 		return ((LoanControlMailPanel)getParentUI()).isGroup();
+	}
+	
+	@Override
+	public UIRefPane getRefOrg() {
+		if (ivjtOrg == null) {
+
+			ivjtOrg = new UIRefPane();
+			ivjtOrg.setRefNodeName("业务单元");/*-=notranslate=-*/
+			ivjtOrg.setMultiSelectedEnabled(true);
+			ivjtOrg.setPreferredSize(new Dimension(200, ivjtOrg.getHeight()));
+			// 不支持多集团参照
+			ivjtOrg.setMultiCorpRef(false);
+			ivjtOrg.addValueChangedListener(this);
+			ivjtOrg.setMultiSelectedEnabled(false);
+
+		}
+		return ivjtOrg;
+	}
+	
+	@Override
+	protected String getOrgPanelName() {
+		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000396")/*@res "业务单元"*/;
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import nc.ui.uif2.model.BillManageModel;
 import nc.ui.uif2.model.IAppModelDataManagerEx;
 import nc.ui.uif2.model.IQueryAndRefreshManagerEx;
 import nc.ui.uif2.model.ModelDataDescriptor;
-import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.jcom.lang.StringUtil;
@@ -33,8 +33,10 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
 	 * 查询使用的条件,子类可以添加过滤条件
 	 */
 	private String sqlWhere;
-
-    LoginContext context;
+	
+	IQueryScheme qryScheme;
+	
+	LoginContext context;
     
     
 	/**
@@ -92,6 +94,7 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
 
 	@Override
 	public void initModelByQueryScheme(IQueryScheme queryScheme) {
+		this.qryScheme = queryScheme;
 		// 方案查询,快速查询
 		String schemeName = queryScheme.getName();
 		ModelDataDescriptor modelDataDescriptor = new ModelDataDescriptor(
@@ -117,12 +120,17 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
 		if(pkorgs!=null && pkorgs.length!=0){
 			String inStr1;
 			try {
-				inStr1 = SqlUtils.getInStr("pk_org", pkorgs, false);
-				
-				sqlWhere += " and " +inStr1; 
-				
-				this.sqlWhere = sqlWhere;
-				
+				if(BXConstans.BXINIT_NODECODE_G.equals(getModel().getContext().getNodeCode()) ){//常用单据集团级节点不需要 组织信息
+					this.sqlWhere = sqlWhere;
+				}else{
+					
+					inStr1 = SqlUtils.getInStr("pk_org", pkorgs, false);
+					
+					sqlWhere += " and " +inStr1; 
+					
+					this.sqlWhere = sqlWhere;
+					
+				}
 				queryData(modelDataDescriptor);
 			} catch (BusinessException e) {
 				ExceptionHandler.handleExceptionRuntime(e);
@@ -186,4 +194,12 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
     public void setListView(ERMBillListView listView) {
         this.listView = listView;
     }
+    
+    public IQueryScheme getQryScheme() {
+		return qryScheme;
+	}
+
+	public void setQryScheme(IQueryScheme qryScheme) {
+		this.qryScheme = qryScheme;
+	}
 }

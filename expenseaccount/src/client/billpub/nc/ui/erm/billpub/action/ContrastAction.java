@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.logging.Logger;
 import nc.ui.er.util.BXUiUtil;
@@ -26,8 +28,11 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKHeaderVO;
+import nc.vo.er.djlx.DjLXVO;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.ValidationException;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.lang.UFDouble;
 
@@ -53,9 +58,18 @@ public class ContrastAction extends NCAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		JKBXVO vo = ((ErmBillBillForm) editor).getHelper().getJKBXVO(editor);
+		JKBXVO vo = ((ErmBillBillForm) editor).getJKBXVO();
 		if (vo == null) {
 			return;
+		}
+		// 已经核销预提情况，不可冲借款
+		BillModel billModel = editor.getBillCardPanel().getBillModel(BXConstans.AccruedVerify_PAGE);
+		AccruedVerifyVO[] vos = null;
+		if(billModel !=null){
+			vos = (AccruedVerifyVO[]) billModel.getBodyValueVOs(AccruedVerifyVO.class.getName());
+		}
+		if(vos != null && vos.length > 0){
+			throw new ValidationException("报销单已经核销预提，不可冲借款");
 		}
 
 		ContrastDialog dialog = getContrastDialog(vo, getModel().getContext().getPk_org());
@@ -92,6 +106,12 @@ public class ContrastAction extends NCAction {
 	 */
 	public static void doContrastToUI(BillCardPanel card, JKBXVO vo, List<BxcontrastVO> contrastsData,
 			ErmBillBillForm editor) throws BusinessException {
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)editor.getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO, ErmDjlxConst.BXTYPE_ADJUST);
+		if(isAdjust){
+			// 费用调整不处理冲借款
+			return ;
+		}
 		String[] headFields = new String[] { JKBXHeaderVO.CJKYBJE, JKBXHeaderVO.CJKBBJE, JKBXHeaderVO.HKYBJE,
 				JKBXHeaderVO.HKBBJE, JKBXHeaderVO.GROUPCJKBBJE, JKBXHeaderVO.GLOBALCJKBBJE, JKBXHeaderVO.GROUPHKBBJE,
 				JKBXHeaderVO.GLOBALHKBBJE };
@@ -251,7 +271,12 @@ public class ContrastAction extends NCAction {
 	@Override
 	protected boolean isActionEnable() {
 
-		if (BXConstans.JK_DJDL.equals(((ErmBillBillManageModel) getModel()).getCurrentDjLXVO().getDjdl())) {
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel) getModel()).getCurrentDjLXVO();
+		if (BXConstans.JK_DJDL.equals(currentDjLXVO.getDjdl())) {
+			return false;
+		}
+		if(ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO, ErmDjlxConst.BXTYPE_ADJUST)){
+			// 调整单情况，不冲借款
 			return false;
 		}
 		return true;

@@ -7,6 +7,8 @@ import nc.bs.er.control.YsControlBO;
 import nc.bs.erm.common.ErmConst;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.util.ErBudgetUtil;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.tb.control.IBudgetControl;
@@ -20,7 +22,7 @@ import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.costshare.CostShareYsControlVO;
+import nc.vo.erm.costshare.ext.CostShareYsControlVOExt;
 import nc.vo.erm.matterappctrl.MtapppfVO;
 import nc.vo.erm.util.ErVOUtils;
 import nc.vo.pub.BusinessException;
@@ -281,12 +283,17 @@ public class CostShareYsActControlBO {
 				// 待摊情况，不进行预算处理
 				continue;
 			}
+			boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(headvo.getPk_group(), headvo.getDjlxbm(), ErmDjlxConst.BXTYPE_ADJUST);
 			CircularlyAccessibleValueObject[] dtailvos = vos[i].getChildrenVO();
 			for (int j = 0; j < dtailvos.length; j++) {
 
 				// 转换生成controlvo
-				CostShareYsControlVO cscontrolvo = new CostShareYsControlVO(headvo, (CShareDetailVO) dtailvos[j]);
-
+				CShareDetailVO detailvo = (CShareDetailVO) dtailvos[j];
+				CostShareYsControlVOExt cscontrolvo = new CostShareYsControlVOExt(headvo, detailvo);
+				if(isAdjust){
+					// 调整单情况，需要根据分摊明细行的预算占用日期进行预算控制
+					cscontrolvo.setYsDate(detailvo.getYsdate());
+				}
 				if (dtailvos[j].getStatus() != VOStatus.DELETED && cscontrolvo.isYSControlAble()) {
 					list.add(cscontrolvo);
 				}

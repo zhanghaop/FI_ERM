@@ -10,10 +10,10 @@ public class PrintOutputAction extends OutputAction {
 	@Override
 	public String getNodeKey() {
 		String nodeCode = getModel().getContext().getNodeCode();
-		if (!ErmMatterAppConst.MAPP_NODECODE_MN.equals(nodeCode)) {
-			return null;
-		} else {
+		if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(nodeCode) || ErmMatterAppConst.MAPP_NODECODE_QY.equals(nodeCode)) {
 			return ((MAppModel) getModel()).getDjlxbm();
+		} else {
+			return null;
 		}
 	}
 }

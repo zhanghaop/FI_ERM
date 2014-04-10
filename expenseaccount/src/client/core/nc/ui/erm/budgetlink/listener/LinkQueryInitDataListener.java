@@ -3,6 +3,8 @@ package nc.ui.erm.budgetlink.listener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ListSelectionModel;
+
 import nc.bs.framework.common.NCLocator;
 import nc.funcnode.ui.FuncletInitData;
 import nc.itf.erm.ntb.IBugetLinkBO;
@@ -21,6 +23,7 @@ import nc.vo.pub.BusinessException;
 import nc.vo.tb.obj.NtbParamVO;
 import nc.vo.uif2.LoginContext;
 
+@SuppressWarnings("restriction")
 public class LinkQueryInitDataListener implements IFuncNodeInitDataListener {
 
 	private LoginContext context = null;
@@ -42,7 +45,7 @@ public class LinkQueryInitDataListener implements IFuncNodeInitDataListener {
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
 		}
-		if(resultVOs!=null){
+		if (resultVOs != null) {
 			getListView().getModel().initModel(resultVOs.toArray());
 		}
 	}
@@ -57,19 +60,20 @@ public class LinkQueryInitDataListener implements IFuncNodeInitDataListener {
 		BillListData billListData = blp.getBillListData();
 		BillItem[] headItems = billListData.getHeadItems();
 		int length = ntbParamVO.getTypeDim().length;
-		int i=0;
-		for(BillItem item:headItems){
-			if(item.getKey().contains(BxDetailLinkQueryVO.QRYOBJ_PREFIX) && !item.getKey().endsWith("pk")){
-				if(i<length){
+		int i = 0;
+		for (BillItem item : headItems) {
+			if (item.getKey().contains(BxDetailLinkQueryVO.QRYOBJ_PREFIX) && !item.getKey().endsWith("pk")) {
+				if (i < length) {
 					item.setShow(true);
 					item.setName(ntbParamVO.getTypeDim()[i]);
-				}else{
+				} else {
 					item.setShow(false);
 				}
 				i++;
-			} 
+			}
 		}
 		blp.setListData(billListData);
+		blp.getParentListPanel().getTable().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 	}
 
 	public LoginContext getContext() {
@@ -105,7 +109,7 @@ public class LinkQueryInitDataListener implements IFuncNodeInitDataListener {
 		}
 
 		int qryObjCount = qryCondVO == null || datas == null || datas.getDatas().length == 0 ? 0 : qryCondVO
-						.getQryObjs().size();
+				.getQryObjs().size();
 		for (int i = 0; i < qryObjCount; i++) {
 			hiddenColList.remove(IPubReportConstants.QRY_OBJ_PREFIX + i);
 		}

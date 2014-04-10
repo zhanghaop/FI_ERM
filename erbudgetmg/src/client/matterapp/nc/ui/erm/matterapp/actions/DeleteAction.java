@@ -17,11 +17,13 @@ import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
+import nc.vo.trade.pub.IBillStatus;
+
 /**
  * @author chenshuaia
- *
- * 单据删除动作，支持批量删除
- *
+ * 
+ *         单据删除动作，支持批量删除
+ * 
  */
 @SuppressWarnings("serial")
 public class DeleteAction extends nc.ui.uif2.actions.DeleteAction {
@@ -49,17 +51,17 @@ public class DeleteAction extends nc.ui.uif2.actions.DeleteAction {
 			List<AggregatedValueObject> realDeletedVos = ErUiUtil.combineMsgs(msgs, returnMsgs);
 			model.directlyDelete(realDeletedVos.toArray(new AggregatedValueObject[] {}));
 		}
-		
+
 		ErUiUtil.showBatchResults(getModel().getContext(), msgs);
 	}
 
-    @Override
-    public void doAfterSuccess(ActionEvent actionEvent) {
-        if (getMonitor() != null) {
-            getMonitor().done();
-            setMonitor(null);
-        }
-    }
+	@Override
+	public void doAfterSuccess(ActionEvent actionEvent) {
+		if (getMonitor() != null) {
+			getMonitor().done();
+			setMonitor(null);
+		}
+	}
 
 	private MessageVO[] deleteOneByOne(List<AggMatterAppVO> deleteVos) {
 		List<MessageVO> resultList = new ArrayList<MessageVO>();
@@ -67,7 +69,7 @@ public class DeleteAction extends nc.ui.uif2.actions.DeleteAction {
 			MessageVO msgReturn = deleteSingle(aggVo);
 			resultList.add(msgReturn);
 		}
-		return resultList.toArray(new MessageVO[]{});
+		return resultList.toArray(new MessageVO[] {});
 	}
 
 	private MessageVO deleteSingle(AggMatterAppVO aggVo) {
@@ -80,7 +82,7 @@ public class DeleteAction extends nc.ui.uif2.actions.DeleteAction {
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
 			String errMsg = e.getMessage();
-			
+
 			result = new MessageVO(aggVo, ActionUtils.DELETE, false, errMsg);
 		}
 		return result;
@@ -97,21 +99,23 @@ public class DeleteAction extends nc.ui.uif2.actions.DeleteAction {
 
 		return result;
 	}
-	
+
 	@Override
 	protected boolean isActionEnable() {
 		if (getModel().getUiState() != UIState.NOT_EDIT || getModel().getSelectedData() == null) {
 			return false;
 		}
-		
-		Object[] selectedData = ((MAppModel)getModel()).getSelectedOperaDatas();
+
+		Object[] selectedData = ((MAppModel) getModel()).getSelectedOperaDatas();
 		if (selectedData == null)
 			return false;
-		
+
 		for (int i = 0; i < selectedData.length; i++) {
 			AggMatterAppVO aggBean = (AggMatterAppVO) selectedData[i];
 			Integer billStatus = ((MatterAppVO) aggBean.getParentVO()).getBillstatus();
-			if (billStatus.equals(BXStatusConst.DJZT_Saved) || billStatus.equals(BXStatusConst.DJZT_TempSaved)) {
+			if ((billStatus.equals(BXStatusConst.DJZT_Saved) && aggBean.getParentVO().getApprstatus()
+					.equals(IBillStatus.FREE))
+					|| billStatus.equals(BXStatusConst.DJZT_TempSaved)) {
 				return true;
 			}
 		}

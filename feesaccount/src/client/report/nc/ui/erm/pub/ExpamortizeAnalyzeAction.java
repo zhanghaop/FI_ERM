@@ -405,10 +405,12 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
 						// 功能权限过滤
 						ERMQueryActionHelper.filtOrgsForQueryAction(event, pks);
 						// 获得个性化中默认主组织
-						String pk_org = ErUiUtil.getDefaultPsnOrg();
+//						String pk_org = ErUiUtil.getDefaultPsnOrg();
+                        String pk_org = ErUiUtil.getReportDefaultOrgUnit();
 						ERMQueryActionHelper.setPk(event, pk_org, false);
                     } else if ("accperiod".equals(fieldCode)) {
-                        String pk_org = ErUiUtil.getBXDefaultOrgUnit();
+//                        String pk_org = ErUiUtil.getBXDefaultOrgUnit();
+                        String pk_org = ErUiUtil.getReportDefaultOrgUnit();
                         UIRefPane refPane = (UIRefPane) ERMQueryActionHelper
                                 .getFiltComponentForInit(event);
                         refPane.setMultiSelectedEnabled(false);
@@ -448,7 +450,8 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
                                 initAccPeriod(refPane, pkOrgs[0]);
                             }
                         } else {
-                            String pk_org = ErUiUtil.getDefaultPsnOrg();
+//                            String pk_org = ErUiUtil.getDefaultPsnOrg();
+                            String pk_org = ErUiUtil.getReportDefaultOrgUnit();
                             initAccPeriod(refPane, pk_org);
                         }
 		            }

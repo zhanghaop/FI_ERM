@@ -6,6 +6,7 @@ import java.util.List;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmBillTypeUtil;
 import nc.vo.ep.bx.BXBusItemVO;
+import nc.vo.ep.bx.BXVO;
 import nc.vo.ep.bx.BusiTypeVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -14,8 +15,11 @@ import nc.vo.ep.bx.ReimRuleDef;
 import nc.vo.ep.bx.ReimRuleDefVO;
 import nc.vo.er.reimrule.ReimRuleVO;
 import nc.vo.er.reimtype.ReimTypeUtil;
+import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
+import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDate;
 
 public class BXUtil {
 
@@ -123,12 +127,35 @@ public class BXUtil {
 	 * 生成表体行
 	 * 
 	 * @param jkbxvo
+	 * @throws BusinessException 
 	 */
-	public static void generateJKBXRow(JKBXVO jkbxvo) {
+	public static void generateJKBXRow(JKBXVO jkbxvo) throws BusinessException {
 		if (jkbxvo == null || jkbxvo.getParentVO() == null) {
 			return;
 		}
+		
 		final JKBXHeaderVO headVo = jkbxvo.getParentVO();
+		if(headVo.isAdjustBxd()){
+			// 报销类型为费用调整的单据，只需要主表+分摊明细
+			JKBXVO adjustvo = new BXVO(headVo);
+			// 表头基本信息控制
+			headVo.setIscostshare(UFBoolean.TRUE);
+			headVo.setIsexpamt(UFBoolean.FALSE);
+			headVo.setStart_period(null);
+			headVo.setTotal_period(null);
+			// 分摊明细行预算占用日期补全
+			CShareDetailVO[] csDetailVos = jkbxvo.getcShareDetailVo();
+			adjustvo.setcShareDetailVo(csDetailVos);
+			UFDate djrq = headVo.getDjrq();
+			for (int i = 0; i < csDetailVos.length; i++) {
+				if(csDetailVos[i].getYsdate()==null){
+					csDetailVos[i].setYsdate(djrq);
+				}
+			}
+			jkbxvo = adjustvo;
+			return ;
+		}
+		
 		final BXBusItemVO[] busitemVos = jkbxvo.getChildrenVO();
 
 		List<BXBusItemVO> unDeleteItems = new ArrayList<BXBusItemVO>();

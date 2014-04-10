@@ -2,10 +2,8 @@ package nc.util.erm.expamortize;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import nc.bs.erm.expamortize.ExpAmoritizeConst;
 import nc.bs.erm.util.ErAccperiodUtil;
@@ -42,26 +40,27 @@ import nc.vo.util.AuditInfoUtil;
  */
 public class ExpamtUtil {
 	public static String[] getHeadFieldsFromBxVo() {
-		return new String[] { JKBXHeaderVO.PK_JKBX, JKBXHeaderVO.TOTAL_PERIOD, JKBXHeaderVO.START_PERIOD, JKBXHeaderVO.BZBM, JKBXHeaderVO.BBHL,
-				JKBXHeaderVO.GROUPBBHL, JKBXHeaderVO.GLOBALBBHL, JKBXHeaderVO.BBJE, JKBXHeaderVO.GROUPBBJE, JKBXHeaderVO.GLOBALBBJE,
-				JKBXHeaderVO.PK_GROUP , JKBXHeaderVO.ZY};
+		return new String[] { JKBXHeaderVO.PK_JKBX, JKBXHeaderVO.TOTAL_PERIOD, JKBXHeaderVO.START_PERIOD,
+				JKBXHeaderVO.BZBM, JKBXHeaderVO.BBHL, JKBXHeaderVO.GROUPBBHL, JKBXHeaderVO.GLOBALBBHL,
+				JKBXHeaderVO.BBJE, JKBXHeaderVO.GROUPBBJE, JKBXHeaderVO.GLOBALBBJE, JKBXHeaderVO.PK_GROUP,
+				JKBXHeaderVO.ZY };
 	}
 
 	public static String[] getBodyFieldsFromCsBody() {
-		return new String[] { CShareDetailVO.PK_COSTSHARE, CShareDetailVO.PK_TRADETYPE, CShareDetailVO.ASSUME_ORG, CShareDetailVO.PK_JKBX,
-				CShareDetailVO.ASSUME_DEPT, CShareDetailVO.PK_PCORG, CShareDetailVO.PK_IOBSCLASS, CShareDetailVO.PK_RESACOSTCENTER,
-				CShareDetailVO.JOBID, CShareDetailVO.PROJECTTASK, CShareDetailVO.PK_CHECKELE, CShareDetailVO.CUSTOMER, CShareDetailVO.HBBM,
-				CShareDetailVO.BZBM, CShareDetailVO.BBJE, CShareDetailVO.GROUPBBJE, CShareDetailVO.GLOBALBBJE, CShareDetailVO.BBHL,
-				CShareDetailVO.GROUPBBHL, CShareDetailVO.GLOBALBBHL, CShareDetailVO.PK_GROUP , CShareDetailVO.PK_PROLINE, CShareDetailVO.PK_BRAND};
+		return new String[] { CShareDetailVO.PK_COSTSHARE, CShareDetailVO.PK_TRADETYPE, CShareDetailVO.ASSUME_ORG,
+				CShareDetailVO.PK_JKBX, CShareDetailVO.ASSUME_DEPT, CShareDetailVO.PK_PCORG,
+				CShareDetailVO.PK_IOBSCLASS, CShareDetailVO.PK_RESACOSTCENTER, CShareDetailVO.JOBID,
+				CShareDetailVO.PROJECTTASK, CShareDetailVO.PK_CHECKELE, CShareDetailVO.CUSTOMER, CShareDetailVO.HBBM,
+				CShareDetailVO.BZBM, CShareDetailVO.BBJE, CShareDetailVO.GROUPBBJE, CShareDetailVO.GLOBALBBJE,
+				CShareDetailVO.BBHL, CShareDetailVO.GROUPBBHL, CShareDetailVO.GLOBALBBHL, CShareDetailVO.PK_GROUP,
+				CShareDetailVO.PK_PROLINE, CShareDetailVO.PK_BRAND };
 	}
 
 	public static String[] getBodyFieldsFromBusBody() {
-		return new String[] { BXBusItemVO.PK_JKBX, BXBusItemVO.PK_BUSITEM, BXBusItemVO.BZBM, BXBusItemVO.BBJE, BXBusItemVO.GROUPBBJE,
-				BXBusItemVO.GLOBALBBJE };
+		return new String[] { BXBusItemVO.PK_JKBX, BXBusItemVO.PK_BUSITEM, BXBusItemVO.BZBM, BXBusItemVO.BBJE,
+				BXBusItemVO.GROUPBBJE, BXBusItemVO.GLOBALBBJE };
 	}
-	
 
-	
 	/**
 	 * 报销单生成摊销信息聚合VO
 	 * 
@@ -69,14 +68,13 @@ public class ExpamtUtil {
 	 * @return
 	 */
 	public static AggExpamtinfoVO[] getExpamtinfoVosFromBx(JKBXVO[] vos) {
-		
-		
+
 		List<AggExpamtinfoVO> result = new ArrayList<AggExpamtinfoVO>();
-		
-		if(vos != null){
+
+		if (vos != null) {
 			for (int i = 0; i < vos.length; i++) {
 				if (ErmForCShareUtil.isHasCShare(vos[i])) {
-					result.addAll(getAggExpamtinfosByCs(vos[i]));
+					result.add(getAggExpamtinfosByCs(vos[i]));
 				} else {
 					result.add(getAggExpamtinfosByBus(vos[i]));
 				}
@@ -86,60 +84,71 @@ public class ExpamtUtil {
 		return result.toArray(new AggExpamtinfoVO[0]);
 	}
 
-	private static List<AggExpamtinfoVO> getAggExpamtinfosByCs(JKBXVO vo) {
+	/**
+	 * 分摊信息转到摊销
+	 * 
+	 * @param vo
+	 * @return
+	 */
+	private static AggExpamtinfoVO getAggExpamtinfosByCs(JKBXVO vo) {
 		CShareDetailVO[] csChildren = vo.getcShareDetailVo();
 		JKBXHeaderVO bxHead = vo.getParentVO();
 
-		Map<String, List<CShareDetailVO>> orgMap = getOrgCsMap(csChildren);
-		Set<String> orgs = orgMap.keySet();
+		// Map<String, List<CShareDetailVO>> orgMap = getOrgCsMap(csChildren);
+		// Set<String> orgs = orgMap.keySet();
+		//
+		// for (Iterator<String> iterator = orgs.iterator();
+		// iterator.hasNext();) {
+		// String pk_org = iterator.next();
+		// List<CShareDetailVO> csDetailList = orgMap.get(pk_org);
+		// ExpamtDetailVO[] children = new ExpamtDetailVO[csDetailList.size()];
 
-		List<AggExpamtinfoVO> result = new ArrayList<AggExpamtinfoVO>();
+		List<ExpamtDetailVO> childrenList = new ArrayList<ExpamtDetailVO>();
 
-		for (Iterator<String> iterator = orgs.iterator(); iterator.hasNext();) {
-			AggExpamtinfoVO expamtinfo = new AggExpamtinfoVO();
-			String pk_org = iterator.next();
-			List<CShareDetailVO> csDetailList = orgMap.get(pk_org);
-			ExpamtDetailVO[] children = new ExpamtDetailVO[csDetailList.size()];
+		AggExpamtinfoVO expamtinfo = new AggExpamtinfoVO();
+		// 表头
+		ExpamtinfoVO head = new ExpamtinfoVO();
+		setExpamtinfoDefaultValue(head, bxHead);
+		head.setPk_org(bxHead.getPk_org());// 设置pk_org
 
-			// 表头
-			ExpamtinfoVO head = new ExpamtinfoVO();
-			setExpamtinfoDefaultValue(head, bxHead);
-			head.setPk_org(pk_org);//设置pk_org
+		head.setTotal_amount(bxHead.getYbje());
+		head.setBbje(bxHead.getBbje());
+		head.setGroupbbje(bxHead.getGroupbbje());
+		head.setGlobalbbje(bxHead.getGlobalbbje());
 
-			head.setTotal_amount(UFDouble.ZERO_DBL);
-			head.setBbje(UFDouble.ZERO_DBL);
-			head.setGroupbbje(UFDouble.ZERO_DBL);
-			head.setGlobalbbje(UFDouble.ZERO_DBL);
-
-			for (int i = 0; i < csDetailList.size(); i++) {
-				CShareDetailVO cShareDetailVO = csDetailList.get(i);
-				ExpamtDetailVO detail = new ExpamtDetailVO();
-				copyInfo(detail, cShareDetailVO, getBodyFieldsFromCsBody());
-				detail.setTotal_amount(cShareDetailVO.getAssume_amount());// 总摊销金额
-				detail.setTotal_period(head.getTotal_period());// 总摊销期
-				detail.setRes_period(head.getRes_period());// 剩余摊销期
-				detail.setPk_org(head.getPk_org());
-				detail.setBzbm(head.getBzbm());
-				detail.setCashproj(bxHead.getCashproj());
-				
-				setExpamtDetailResAmount(detail);
-
-				// 金额累加
-				head.setTotal_amount(head.getTotal_amount().add(detail.getTotal_amount()));
-				head.setBbje(head.getBbje().add(detail.getBbje()));
-				head.setGroupbbje(head.getGroupbbje().add(detail.getGroupbbje()));
-				head.setGlobalbbje(head.getGlobalbbje().add(detail.getGlobalbbje()));
-				children[i] = detail;
+		for (int i = 0; i < csChildren.length; i++) {
+			CShareDetailVO cShareDetailVO = csChildren[i];
+			if (cShareDetailVO.getAssume_amount().compareTo(UFDouble.ZERO_DBL) <= 0) {
+				continue;
 			}
+			ExpamtDetailVO detail = new ExpamtDetailVO();
+			copyInfo(detail, cShareDetailVO, getBodyFieldsFromCsBody());
+			
+			detail.setPk_cshare_detail(cShareDetailVO.getPk_cshare_detail());
+			detail.setTotal_amount(cShareDetailVO.getAssume_amount());// 总摊销金额
+			detail.setTotal_period(head.getTotal_period());// 总摊销期
+			detail.setRes_period(head.getRes_period());// 剩余摊销期
+			detail.setPk_org(head.getPk_org());
+			detail.setBzbm(head.getBzbm());
+			detail.setCashproj(bxHead.getCashproj());
 
-			setExpamtHeadResAmount(head);// 设置剩余摊销金额
+			setExpamtDetailResAmount(detail);
 
-			expamtinfo.setParentVO(head);
-			expamtinfo.setChildrenVO(children);
-
-			result.add(expamtinfo);
+			// // 金额累加
+			// head.setTotal_amount(head.getTotal_amount().add(detail.getTotal_amount()));
+			// head.setBbje(head.getBbje().add(detail.getBbje()));
+			// head.setGroupbbje(head.getGroupbbje().add(detail.getGroupbbje()));
+			// head.setGlobalbbje(head.getGlobalbbje().add(detail.getGlobalbbje()));
+			childrenList.add(detail);
 		}
-		return result;
+
+		setExpamtHeadResAmount(head);// 设置剩余摊销金额
+
+		expamtinfo.setParentVO(head);
+		expamtinfo.setChildrenVO(childrenList.toArray(new ExpamtDetailVO[0]));
+
+		// }
+		return expamtinfo;
 	}
 
 	private static void setExpamtHeadResAmount(ExpamtinfoVO head) {
@@ -157,11 +166,13 @@ public class ExpamtUtil {
 	}
 
 	/**
-	 * 获取<费用承担单位，分摊信息集合> 存在分摊，并跨公司时，会按费用承担单位生成多个摊销信息
+	 * 获取<费用承担单位，分摊信息集合> 存在分摊，并跨公司时，会按费用承担单位生成多个摊销信息 <br>
+	 * 注：63时按费用承担单位作为摊销信息的主组织，65改为按主组织作为主组织，方法废弃
 	 * 
 	 * @param csChildren
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private static Map<String, List<CShareDetailVO>> getOrgCsMap(CShareDetailVO[] csChildren) {
 		Map<String, List<CShareDetailVO>> orgMap = new HashMap<String, List<CShareDetailVO>>();
 
@@ -184,6 +195,12 @@ public class ExpamtUtil {
 		}
 	}
 
+	/**
+	 * 业务信息转摊销信息
+	 * 
+	 * @param vo
+	 * @return
+	 */
 	private static AggExpamtinfoVO getAggExpamtinfosByBus(JKBXVO vo) {
 		AggExpamtinfoVO aggVo = new AggExpamtinfoVO();
 
@@ -192,32 +209,37 @@ public class ExpamtUtil {
 		JKBXHeaderVO bxHead = vo.getParentVO();
 
 		setExpamtinfoDefaultValue(head, bxHead);
-		head.setPk_org(bxHead.getFydwbm());
-		
+		head.setPk_org(bxHead.getPk_org());
+
 		setExpamtHeadResAmount(head);
 
 		// 设置表体
 		BXBusItemVO[] busBodyVos = vo.getChildrenVO();
-		ExpamtDetailVO[] children = new ExpamtDetailVO[busBodyVos.length];
+		List<ExpamtDetailVO> children = new ArrayList<ExpamtDetailVO>();
 
 		for (int i = 0; i < busBodyVos.length; i++) {
 			BXBusItemVO busIetmVo = busBodyVos[i];
+			if (busIetmVo.getYbje().compareTo(UFDouble.ZERO_DBL) <= 0) {
+				continue;
+			}
+
 			ExpamtDetailVO detailVo = new ExpamtDetailVO();
 
 			setExpamtDetailDefaultValues(detailVo, bxHead, busIetmVo);
 
 			setExpamtDetailResAmount(detailVo);// 设置剩余摊销金额
 
-			children[i] = detailVo;
+			children.add(detailVo);
 		}
 
 		aggVo.setParentVO(head);
-		aggVo.setChildrenVO(children);
+		aggVo.setChildrenVO(children.toArray(new ExpamtDetailVO[]{}));
 		return aggVo;
 	}
-	
+
 	/**
 	 * 设置摊销明细VO的值，来自报销单表头与表体
+	 * 
 	 * @param detail
 	 * @param bxHead
 	 * @param busIetmVo
@@ -225,6 +247,7 @@ public class ExpamtUtil {
 	private static void setExpamtDetailDefaultValues(ExpamtDetailVO detail, JKBXHeaderVO bxHead, BXBusItemVO busIetmVo) {
 		copyInfo(detail, busIetmVo, getBodyFieldsFromBusBody());
 
+		detail.setPk_busitem(busIetmVo.getPk_busitem());//业务行pk
 		detail.setPk_iobsclass(busIetmVo.getSzxmid());// 收支项目
 		detail.setPk_pcorg(busIetmVo.getPk_pcorg());// 利润中心
 		detail.setPk_resacostcenter(busIetmVo.getPk_resacostcenter());
@@ -232,10 +255,10 @@ public class ExpamtUtil {
 		detail.setProjecttask(busIetmVo.getProjecttask());
 		detail.setPk_checkele(busIetmVo.getPk_checkele());
 		detail.setTotal_amount(busIetmVo.getYbje());
-		
-		detail.setPk_proline(busIetmVo.getPk_proline());//产品线
-		detail.setPk_brand(busIetmVo.getPk_brand());//品牌
-		//自定义项
+
+		detail.setPk_proline(busIetmVo.getPk_proline());// 产品线
+		detail.setPk_brand(busIetmVo.getPk_brand());// 品牌
+		// 自定义项
 		String[] attrNames = busIetmVo.getAttributeNames();
 
 		for (String attr : attrNames) {// 表体自定义项转换
@@ -243,7 +266,7 @@ public class ExpamtUtil {
 				detail.setAttributeValue(attr, busIetmVo.getAttributeValue(attr));
 			}
 		}
-		
+
 		// 表头带入信息
 		detail.setPk_org(bxHead.getFydwbm());
 		detail.setBzbm(bxHead.getBzbm());
@@ -253,7 +276,6 @@ public class ExpamtUtil {
 		detail.setHbbm(bxHead.getHbbm());
 		detail.setCashproj(bxHead.getCashproj());
 		detail.setPk_group(bxHead.getPk_group());
-		
 
 		// 本币汇率、汇率 ，金额
 		detail.setBbhl(bxHead.getBbhl());
@@ -282,14 +304,14 @@ public class ExpamtUtil {
 		head.setBx_pk_org(bxHead.getPk_org());
 		head.setBx_pk_billtype(bxHead.getDjlxbm());// 单据类型
 		head.setBx_djrq(bxHead.getDjrq());// 单据日期
-		
-		head.setBillstatus(ExpAmoritizeConst.Billstatus_Init);//单据状态
+
+		head.setBillstatus(ExpAmoritizeConst.Billstatus_Init);// 单据状态
 		head.setPk_billtype(ExpAmoritizeConst.Expamoritize_BILLTYPE);
-		
+
 		String[] attrNames = bxHead.getAttributeNames();
-		
-		for(String attr : attrNames){//表头自定义项转换
-			if(attr.startsWith("zyx")){
+
+		for (String attr : attrNames) {// 表头自定义项转换
+			if (attr.startsWith("zyx")) {
 				String num = attr.substring("zyx".length());
 				head.setAttributeValue("defitem" + num, bxHead.getAttributeValue(attr));
 			}
@@ -304,14 +326,15 @@ public class ExpamtUtil {
 	 *            当前会计月度字符串“2012-02”
 	 * @throws BusinessException
 	 */
-	public static void addComputePropertys(AggExpamtinfoVO[] expamtInfoVos, String currentAccMonth) throws BusinessException {
+	public static void addComputePropertys(AggExpamtinfoVO[] expamtInfoVos, String currentAccMonth)
+			throws BusinessException {
 		if (expamtInfoVos == null || expamtInfoVos.length == 0) {
 			return;
 		}
-		//处理当前会计期间
-		String pk_org = ((ExpamtinfoVO)expamtInfoVos[0].getParentVO()).getPk_org();
-		currentAccMonth = ErAccperiodUtil.getAccperiodmonthByAccMonth(pk_org , currentAccMonth).getYearmth();
-		
+		// 处理当前会计期间
+		String pk_org = ((ExpamtinfoVO) expamtInfoVos[0].getParentVO()).getPk_org();
+		currentAccMonth = ErAccperiodUtil.getAccperiodmonthByAccMonth(pk_org, currentAccMonth).getYearmth();
+
 		try {
 			for (AggExpamtinfoVO vo : expamtInfoVos) {
 				ExpamtinfoVO parentVo = (ExpamtinfoVO) vo.getParentVO();
@@ -319,7 +342,7 @@ public class ExpamtUtil {
 
 				// 设置摊销状态
 				setAmtStatus(parentVo, currentAccMonth);
-				
+
 				// 设置当前摊销金额
 				setAggVoCurrentComputeInfo(vo, currentAccMonth);
 
@@ -352,13 +375,13 @@ public class ExpamtUtil {
 		if (expamtInfoVos == null || expamtInfoVos.length <= 0) {
 			return;
 		}
-		//处理当前会计期间
+		// 处理当前会计期间
 		String pk_org = expamtInfoVos[0].getPk_org();
-		currAccMonth = ErAccperiodUtil.getAccperiodmonthByAccMonth(pk_org , currAccMonth).getYearmth();
-		
+		currAccMonth = ErAccperiodUtil.getAccperiodmonthByAccMonth(pk_org, currAccMonth).getYearmth();
+
 		try {
-			
-			for (ExpamtinfoVO expamtInfoVo :expamtInfoVos) {
+
+			for (ExpamtinfoVO expamtInfoVo : expamtInfoVos) {
 				// 设置摊销状态
 				setAmtStatus(expamtInfoVo, currAccMonth);
 				// 设置当前摊销金额
@@ -378,11 +401,11 @@ public class ExpamtUtil {
 			IMDPersistenceQueryService service = MDPersistenceService.lookupPersistenceQueryService();
 			AggExpamtinfoVO vo = (AggExpamtinfoVO) service.queryBillOfVOByPK(AggExpamtinfoVO.class,
 					expamtInfoVo.getPk_expamtinfo(), false);
-			
+
 			IExpAmortizeprocQuery procService = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
 			ExpamtprocVO[] procVos = procService.queryByInfoPksAndAccperiod(
 					VOUtils.getAttributeValues(vo.getChildrenVO(), ExpamtDetailVO.PK_EXPAMTDETAIL), currAccMonth);
-			
+
 			setHeadCurrComputeInfo(expamtInfoVo, currAccMonth, procVos);
 		}
 	}
@@ -396,7 +419,8 @@ public class ExpamtUtil {
 	private static void setAmtStatus(ExpamtinfoVO parentVo, String currAccMonth) throws Exception {
 		if (parentVo != null) {
 			// 当前会计月度
-			AccperiodmonthVO currPeriod = ErAccperiodUtil.getAccperiodmonthByAccMonth(parentVo.getPk_org(), currAccMonth);
+			AccperiodmonthVO currPeriod = ErAccperiodUtil.getAccperiodmonthByAccMonth(parentVo.getPk_org(),
+					currAccMonth);
 			UFBoolean status = getAmtStatus(parentVo, currPeriod.getYearmth());
 			parentVo.setAmt_status(status);
 		}
@@ -404,6 +428,7 @@ public class ExpamtUtil {
 
 	/**
 	 * 获取摊销信息状态
+	 * 
 	 * @param expamtInfo
 	 *            摊销信息
 	 * @param currAccMonth
@@ -415,23 +440,23 @@ public class ExpamtUtil {
 		int accPeriod = expamtInfo.getTotal_period() - expamtInfo.getRes_period();
 		String startPeriod = expamtInfo.getStart_period();
 		String pk_org = expamtInfo.getPk_org();
-		
+
 		UFBoolean status = UFBoolean.FALSE;
 		if (expamtInfo.getRes_period() > 0) {
-			if(accPeriod == 0){
+			if (accPeriod == 0) {
 				return UFBoolean.FALSE;
 			}
-			
+
 			AccperiodmonthVO lastExpamPeriod = ErAccperiodUtil.getAddAccperiodmonth(pk_org, startPeriod, accPeriod);
 			if (currAccMonth.compareTo(lastExpamPeriod.getYearmth()) <= 0) {
 				status = UFBoolean.TRUE;
 			}
-		}else {//摊销完以后，则记录该
+		} else {// 摊销完以后，则记录该
 			status = UFBoolean.TRUE;
 		}
 		return status;
 	}
-	
+
 	/**
 	 * 设置与本
 	 * 
@@ -446,102 +471,125 @@ public class ExpamtUtil {
 			IExpAmortizeprocQuery service = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
 			ExpamtprocVO[] procVos = service.queryByInfoPksAndAccperiod(
 					VOUtils.getAttributeValues(vo.getChildrenVO(), ExpamtDetailVO.PK_EXPAMTDETAIL), currentAccMonth);
-			
-			setHeadCurrComputeInfo((ExpamtinfoVO)vo.getParentVO(), currentAccMonth, procVos);
+
+			setHeadCurrComputeInfo((ExpamtinfoVO) vo.getParentVO(), currentAccMonth, procVos);
 			setBodyCurrExpamtAmount(vo, currentAccMonth, procVos);
 		}
 	}
-	
+
 	/**
 	 * 设置表体
+	 * 
 	 * @param childrenVO
 	 * @param currentAccMonth
 	 * @throws Exception
 	 */
-	private static void setBodyCurrExpamtAmount(AggExpamtinfoVO vo, String currentAccMonth, ExpamtprocVO[] procVos) throws Exception {
+	private static void setBodyCurrExpamtAmount(AggExpamtinfoVO vo, String currentAccMonth, ExpamtprocVO[] procVos)
+			throws Exception {
 		if (vo.getChildrenVO() != null) {
-			ExpamtDetailVO[] details = (ExpamtDetailVO[])vo.getChildrenVO();
-			ExpamtinfoVO parentVo = (ExpamtinfoVO)vo.getParentVO();
-			for (ExpamtDetailVO detail : details) {
-				UFDouble resAmount = detail.getRes_amount();//剩余摊销金额
-				Integer resPeriod = parentVo.getRes_period();//剩余摊销期
-				
-				//表体中本期因在摊销记录中无记录
-				UFDouble currAmount = UFDouble.ZERO_DBL;
+			ExpamtDetailVO[] details = (ExpamtDetailVO[]) vo.getChildrenVO();
+			ExpamtinfoVO parentVo = (ExpamtinfoVO) vo.getParentVO();
+			UFDouble currAmount = parentVo.getCurr_amount();// 本期摊销金额
+			UFDouble totalAmount = parentVo.getTotal_amount();
+			UFDouble restAmount = new UFDouble(currAmount.getDouble());
+
+			for (int i = 0; i < details.length; i++) {
+				ExpamtDetailVO detail = details[i];
+
+				UFDouble resAmount = detail.getRes_amount();// 剩余摊销金额
+				UFDouble detailTotalAmount = detail.getTotal_amount();
+				Integer resPeriod = detail.getRes_period();
+
+				// 表体中本期因在摊销记录中无记录
+				UFDouble detailCurrAmount = UFDouble.ZERO_DBL;
 				if (resPeriod.intValue() == 1) {
-					currAmount = resAmount;
+					detailCurrAmount = resAmount;
 				} else if (resPeriod.intValue() == 0) {
-					currAmount = UFDouble.ZERO_DBL;
-				} else {
-					currAmount = resAmount.div(resPeriod.intValue());
+					detailCurrAmount = UFDouble.ZERO_DBL;
+				} else {// 表体金额/总金额 * 本期摊销金额，金额均摊
+					if (i == (details.length - 1)) {
+						detailCurrAmount = restAmount;
+						restAmount = UFDouble.ZERO_DBL;
+					} else {
+						detailCurrAmount = (detailTotalAmount.div(totalAmount)).multiply(currAmount);
+						restAmount = restAmount.sub(detailCurrAmount);
+					}
 				}
-				
-				setCurrentAmount(detail, currAmount);
+				setCurrentAmount(detail, detailCurrAmount);
 			}
 		}
 	}
-	
-	//根据原币金额，设置原币，本币等金额
+
+	// 根据原币金额，设置原币，本币等金额
 	private static void setCurrentAmount(ExpamtDetailVO vo, UFDouble currAmount) throws Exception {
 		int ybDecimalDigit = Currency.getCurrDigit(vo.getBzbm());// 原币精度
 		currAmount = currAmount.setScale(ybDecimalDigit, UFDouble.ROUND_HALF_UP);
-		
-		if(currAmount == null){
+
+		if (currAmount == null) {
 			currAmount = UFDouble.ZERO_DBL;
 		}
 		vo.setCurr_amount(currAmount);
-		
-		//计算本币金额
-		UFDouble[] bbJes = getOriAmountsBy(currAmount, vo.getPk_org(), vo.getBzbm(), vo.getPk_group(), vo.getBbhl(), vo.getGroupbbhl(),
-				vo.getGlobalbbhl(), new UFDate());
+
+		// 计算本币金额
+		UFDouble[] bbJes = getOriAmountsBy(currAmount, vo.getPk_org(), vo.getBzbm(), vo.getPk_group(), vo.getBbhl(),
+				vo.getGroupbbhl(), vo.getGlobalbbhl(), new UFDate());
 
 		vo.setCurr_orgamount(bbJes[0]);
 		vo.setCurr_groupamount(bbJes[1]);
 		vo.setCurr_globalamount(bbJes[2]);
 	}
-	
-//	/**
-//	 * 根据会计期间获取当期摊销金额
-//	 * 
-//	 * @param expamtInfo 摊销vo
-//	 * @param currentAccMonth 会计期间
-//	 * @param resPeriod 剩余摊销期
-//	 * @param resAmount 剩余摊销金额
-//	 * @return
-//	 * @throws BusinessException 
-//	 */
-//	public static UFDouble getCurrAmount(ExpamtinfoVO expamtInfo, String currentAccMonth, Integer resPeriod, UFDouble resAmount) throws BusinessException {
-//		
-//		if(currentAccMonth != null && expamtInfo.getEnd_period().compareTo(currentAccMonth) < 0){
-//			return UFDouble.ZERO_DBL;
-//		}
-//		
-//		UFBoolean amtStatus = getAmtStatus(expamtInfo, currentAccMonth);
-//		UFDouble currAmount = UFDouble.ZERO_DBL;
-//		if(amtStatus.equals(UFBoolean.TRUE)){//已摊销的情况下 ，构造记录中查询
-//			IExpAmortizeprocQuery service = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
-//			ExpamtprocVO procVo = service.queryByInfoPkAndAccperiod(expamtInfo.getPk_expamtinfo(), currentAccMonth);
-//			
-//			if(procVo != null){
-//				return procVo.getCurr_amount();
-//			}
-//		}else{
-//			if (resPeriod.intValue() == 1) {
-//				currAmount = resAmount;
-//			}else{
-//				currAmount = resAmount.div(resPeriod.intValue());
-//			}
-//		}
-//		return currAmount;
-//	}
+
+	// /**
+	// * 根据会计期间获取当期摊销金额
+	// *
+	// * @param expamtInfo 摊销vo
+	// * @param currentAccMonth 会计期间
+	// * @param resPeriod 剩余摊销期
+	// * @param resAmount 剩余摊销金额
+	// * @return
+	// * @throws BusinessException
+	// */
+	// public static UFDouble getCurrAmount(ExpamtinfoVO expamtInfo, String
+	// currentAccMonth, Integer resPeriod, UFDouble resAmount) throws
+	// BusinessException {
+	//
+	// if(currentAccMonth != null &&
+	// expamtInfo.getEnd_period().compareTo(currentAccMonth) < 0){
+	// return UFDouble.ZERO_DBL;
+	// }
+	//
+	// UFBoolean amtStatus = getAmtStatus(expamtInfo, currentAccMonth);
+	// UFDouble currAmount = UFDouble.ZERO_DBL;
+	// if(amtStatus.equals(UFBoolean.TRUE)){//已摊销的情况下 ，构造记录中查询
+	// IExpAmortizeprocQuery service =
+	// NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
+	// ExpamtprocVO procVo =
+	// service.queryByInfoPkAndAccperiod(expamtInfo.getPk_expamtinfo(),
+	// currentAccMonth);
+	//
+	// if(procVo != null){
+	// return procVo.getCurr_amount();
+	// }
+	// }else{
+	// if (resPeriod.intValue() == 1) {
+	// currAmount = resAmount;
+	// }else{
+	// currAmount = resAmount.div(resPeriod.intValue());
+	// }
+	// }
+	// return currAmount;
+	// }
 
 	/**
 	 * 设置表头摊销金额
+	 * 
 	 * @param expamtInfo
-	 * @param currAccMonth 当前会计月
+	 * @param currAccMonth
+	 *            当前会计月
 	 * @throws Exception
 	 */
-	public static void setHeadCurrComputeInfo(ExpamtinfoVO expamtInfo, String currAccMonth, ExpamtprocVO[] procVos) throws Exception {
+	public static void setHeadCurrComputeInfo(ExpamtinfoVO expamtInfo, String currAccMonth, ExpamtprocVO[] procVos)
+			throws Exception {
 		if (expamtInfo != null) {
 			Integer resPeriod = expamtInfo.getRes_period();
 			UFDouble resAmount = expamtInfo.getRes_amount();
@@ -549,38 +597,41 @@ public class ExpamtUtil {
 			if (resAmount == null) {
 				resAmount = UFDouble.ZERO_DBL;
 			}
-			
-			//查看本期摊销状态
+
+			// 查看本期摊销状态
 			UFDouble currAmount = UFDouble.ZERO_DBL;
-			
+
 			if (procVos != null && procVos.length > 0) {// 已摊销过，则去摊销记录中的值
-				for( ExpamtprocVO proc : procVos){
+				for (ExpamtprocVO proc : procVos) {
 					currAmount = currAmount.add(proc.getCurr_amount());
 				}
 				expamtInfo.setAmortize_date(procVos[0].getAmortize_date());
 				expamtInfo.setAmortize_user(procVos[0].getAmortize_user());
-			}else{//本期未摊销，则取计算属性
+			} else {// 本期未摊销，则取计算属性
 				if (resPeriod.intValue() == 1) {
 					currAmount = resAmount;
-				}else if(resPeriod.intValue() == 0){
+				} else if (resPeriod.intValue() == 0) {
 					currAmount = UFDouble.ZERO_DBL;
+				} else if(expamtInfo.getCurr_amount() != null && expamtInfo.getCurr_amount().compareTo(UFDouble.ZERO_DBL) > 0){
+					currAmount = expamtInfo.getCurr_amount();//如果已设置本期摊销金额，则按设置的金额计算
 				}else{
 					currAmount = resAmount.div(resPeriod.intValue());
 				}
-				
+
 				expamtInfo.setAmortize_user(AuditInfoUtil.getCurrentUser());
 				expamtInfo.setAmortize_date(new UFDate(InvocationInfoProxy.getInstance().getBizDateTime()));
 			}
-			
-			if(!UFDouble.ZERO_DBL.equals(currAmount)){
+
+			if (!UFDouble.ZERO_DBL.equals(currAmount)) {
 				int ybDecimalDigit = Currency.getCurrDigit(expamtInfo.getBzbm());// 原币精度
 				currAmount = currAmount.setScale(ybDecimalDigit, UFDouble.ROUND_HALF_UP);
 				expamtInfo.setCurr_amount(currAmount);
-				
-				UFDouble[] bbJes = getOriAmountsBy(currAmount, expamtInfo.getPk_org(), expamtInfo.getBzbm(), expamtInfo.getPk_group(),
-						expamtInfo.getBbhl(), expamtInfo.getGroupbbhl(), expamtInfo.getGlobalbbhl(), expamtInfo.getCreationtime() == null ? new UFDate()
-				: expamtInfo.getCreationtime().getDate());
-				
+
+				UFDouble[] bbJes = getOriAmountsBy(currAmount, expamtInfo.getPk_org(), expamtInfo.getBzbm(),
+						expamtInfo.getPk_group(), expamtInfo.getBbhl(), expamtInfo.getGroupbbhl(),
+						expamtInfo.getGlobalbbhl(), expamtInfo.getCreationtime() == null ? new UFDate() : expamtInfo
+								.getCreationtime().getDate());
+
 				expamtInfo.setCurr_orgamount(bbJes[0]);
 				expamtInfo.setCurr_groupamount(bbJes[1]);
 				expamtInfo.setCurr_globalamount(bbJes[2]);
@@ -678,13 +729,15 @@ public class ExpamtUtil {
 	 *            日期
 	 * @throws Exception
 	 */
-	public static UFDouble[] getOriAmountsBy(UFDouble ybAmount, String pk_org, String bzbm, String pk_group, UFDouble orghl, UFDouble grouphl,
-			UFDouble globalhl, UFDate date) throws Exception {
+	public static UFDouble[] getOriAmountsBy(UFDouble ybAmount, String pk_org, String bzbm, String pk_group,
+			UFDouble orghl, UFDouble grouphl, UFDouble globalhl, UFDate date) throws Exception {
 		UFDouble[] result = new UFDouble[3];
 
-		UFDouble[] je = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, ybAmount, null, null, null, orghl, date);
+		UFDouble[] je = Currency.computeYFB(pk_org, Currency.Change_YBCurr, bzbm, ybAmount, null, null, null, orghl,
+				date);
 
-		UFDouble[] money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, date, pk_org, pk_group, globalhl, grouphl);
+		UFDouble[] money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, date, pk_org, pk_group, globalhl,
+				grouphl);
 
 		result[0] = je[2];
 		result[1] = money[0];

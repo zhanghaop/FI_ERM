@@ -25,7 +25,7 @@
     <!-- 列表视图 -->
 	<bean id="listView" class="nc.ui.erm.budgetlink.listener.ErmBillListView" init-method="initUI">
 		<property name="model" ref="billManageModel"></property>
-		<property name="multiSelectionEnable" value="false"></property>
+		<property name="multiSelectionEnable" value="true"></property>
 		<property name="showTotalLine" value="true"></property>
 		<property name="nodekey" value="20110BLB"></property>
 	</bean>

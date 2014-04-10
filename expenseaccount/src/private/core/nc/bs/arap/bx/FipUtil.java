@@ -169,6 +169,7 @@ public class FipUtil {
 		clone.setChildrenVO(splits.toArray(new BXBusItemVO[0]));
 		clone.setSettlevo(settle);
 		clone.setContrastVO(vo.getContrastVO());
+		clone.setAccruedVerifyVO(vo.getAccruedVerifyVO());
 		return clone;
 	}
 

@@ -153,7 +153,9 @@ public class JKBXDAO extends BXSuperDAO implements ICheckStatusCallback {
 					items[j].setPk_busitem(null);
 				}
 			}
-			baseDao.insertVOArray(items);
+			if(items != null && items.length >0){
+				baseDao.insertVOArray(items);
+			}
 
 			// 临时对真实主键的对照
 			Map<String, String> idMap = new HashMap<String, String>();
@@ -178,6 +180,8 @@ public class JKBXDAO extends BXSuperDAO implements ICheckStatusCallback {
 		}
 
 		new ContrastBO().saveContrast(contrasts, null);
+		// 报销单核销预提明细保存
+		new BxVerifyAccruedBillBO().saveVerifyVOs(vos);
 
 		addTsToBXVOs(parentList.toArray(new JKBXHeaderVO[parentList.size()]));
 
@@ -323,6 +327,9 @@ public class JKBXDAO extends BXSuperDAO implements ICheckStatusCallback {
 		// 修改冲借款信息的处理
 		new ContrastBO().saveContrast(contrasts, bxdvos);
 	
+		// 报销单核销预提明细保存
+		new BxVerifyAccruedBillBO().saveVerifyVOs(vos);
+		
 		addTsToBXVOs(toArray);
 
 		return vos;

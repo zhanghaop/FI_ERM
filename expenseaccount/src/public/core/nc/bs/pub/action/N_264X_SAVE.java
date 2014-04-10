@@ -4,7 +4,6 @@ import java.util.Hashtable;
 
 import nc.bs.pub.compiler.AbstractCompiler2;
 import nc.vo.ep.bx.BXVO;
-import nc.vo.ep.bx.JKBXVO;
 import nc.vo.pub.compiler.PfParameterVO;
 
 public class N_264X_SAVE extends AbstractCompiler2 {
@@ -30,14 +29,11 @@ public class N_264X_SAVE extends AbstractCompiler2 {
 			// 方法说明:null
 			// ##################################################
 			// ####该组件为单动作工作流处理开始...不能进行修改####
-			setParameter("billVO", new JKBXVO[]{vo});
+			setParameter("billVO", vo);
 			
 			Object obj = null;
 			
-			obj = runClass("nc.bs.arap.bx.BXZbBO", "save", "&billVO:nc.vo.ep.bx.JKBXVO[]", pfparametervo, m_keyHas);
-			
-//			if (obj != null)
-//				m_methodReturnHas.put("saveBill", obj);
+			obj = runClass("nc.bs.arap.bx.BXZbBO", "commitVO", "&billVO:nc.vo.ep.bx.JKBXVO", pfparametervo, m_keyHas);
 			return obj;
 		} catch (Exception exception) {
 			if (exception instanceof nc.vo.pub.BusinessException)

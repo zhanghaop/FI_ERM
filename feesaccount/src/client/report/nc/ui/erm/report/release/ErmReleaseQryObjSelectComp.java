@@ -21,7 +21,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.queryobjreg.IReportQueryObjRegQuery;
 import nc.itf.fipub.report.IPubReportConstants;
-import nc.ui.fipub.comp.PubUIComboBox;
+import nc.ui.erm.report.comp.ErmUIComboBox;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIComboBox;
 import nc.ui.pub.beans.UILabel;
@@ -41,7 +41,7 @@ import org.apache.commons.lang.StringUtils;
  * @since V60 Create at 2010-11-09
  * 
  */
-@SuppressWarnings("restriction")
+//@SuppressWarnings("restriction")
 public class ErmReleaseQryObjSelectComp extends UIPanel {
     private static final long serialVersionUID = 1L;
 
@@ -123,7 +123,7 @@ public class ErmReleaseQryObjSelectComp extends UIPanel {
 
                     switch (column) {
                     case 0:
-                        PubUIComboBox comboBox = new PubUIComboBox();
+                        ErmUIComboBox comboBox = new ErmUIComboBox();
 
                         comboBox.addItemListener(new ComboBoxItemListener());
                         cellEditors[row] = new DefaultCellEditor(comboBox);
@@ -252,7 +252,7 @@ public class ErmReleaseQryObjSelectComp extends UIPanel {
     public List<Object> getSelectQryObj() {
         List<Object> qryObjList = new ArrayList<Object>();
         for (int i = 0; i < qryObjTblRowCount; i++) {
-            Object qryObj = ((PubUIComboBox) ((DefaultCellEditor) qryObjTable
+            Object qryObj = ((ErmUIComboBox) ((DefaultCellEditor) qryObjTable
                     .getCellEditor(i, 0)).getComponent()).getSelectdItem();
             if (qryObj == null) {
                 continue;
@@ -295,7 +295,7 @@ public class ErmReleaseQryObjSelectComp extends UIPanel {
         }
         String sqlWhere = " ownmodule='"
             + IErmReportConstants.ERM_PRODUCT_CODE_Lower
-            + "' and dsp_objtablename = '" + objtablename + "'";
+            + "' and dsp_objtablename = '" + objtablename + "' and dr = 0 ";
         if (sqlWhere.equals(qryObjSqlWhere)) {
             return;
         } else {
@@ -313,18 +313,18 @@ public class ErmReleaseQryObjSelectComp extends UIPanel {
                             nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
                                     "feesaccount_0", "02011001-0042")/*@res "获取查询对象时发生错误！" */);
         }
-        if (IErmReportConstants.MATTERAPP_REP_NAME.equals(reportType)) {
-            if (qryObjVOList != null && qryObjVOList.size() > 0) {
-                List<QueryObjVO> qryObjVOLista = new ArrayList<QueryObjVO>();
-                for (QueryObjVO qryObj : qryObjVOList) {
-                    if ("billmaker".equals(qryObj.getDsp_objfieldname()) ||
-                            "apply_dept".equals(qryObj.getDsp_objfieldname())) {
-                        qryObjVOLista.add(qryObj);
-                    }
-                }
-                qryObjVOList = qryObjVOLista;
-            }
-        }
+//        if (IErmReportConstants.MATTERAPP_REP_NAME.equals(reportType)) {
+//            if (qryObjVOList != null && qryObjVOList.size() > 0) {
+//                List<QueryObjVO> qryObjVOLista = new ArrayList<QueryObjVO>();
+//                for (QueryObjVO qryObj : qryObjVOList) {
+////                    if ("billmaker".equals(qryObj.getDsp_objfieldname()) ||
+////                            "apply_dept".equals(qryObj.getDsp_objfieldname())) {
+//                        qryObjVOLista.add(qryObj);
+////                    }
+//                }
+//                qryObjVOList = qryObjVOLista;
+//            }
+//        }
         // 设置可选查询对象的值
         setQryObjTableData();
     }
@@ -357,7 +357,7 @@ public class ErmReleaseQryObjSelectComp extends UIPanel {
     private void setQryObjTableData() {
         String prop = QueryObjVO.DSP_OBJNAME;
         for (int i = 0; i < qryObjTblRowCount; i++) {
-            PubUIComboBox combox = ((PubUIComboBox) ((DefaultCellEditor) qryObjTable
+            ErmUIComboBox combox = ((ErmUIComboBox) ((DefaultCellEditor) qryObjTable
                     .getCellEditor(i, 0)).getComponent());
             combox.addItems(qryObjVOList, prop, true);
             combox.setSelectedItem(null);

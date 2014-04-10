@@ -9,8 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.pub.ErCorpUtil;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.er.util.StringUtils;
@@ -139,7 +142,7 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public static String[] getFieldNotCopy() {
 		return new String[] { ZHRQ, SXBZ, JSH, DJZT, SPZT, TS, DR, MODIFIER, OPERATOR, APPROVER, MODIFIEDTIME,VOUCHER,
 				PK_JKBX, DJBH, DJRQ, KJND, KJQJ, JSRQ, SHRQ, JSR, CONTRASTENDDATE, PAYMAN, PAYDATE, PAYFLAG ,BBHL,GROUPBBHL,GLOBALBBHL,
-				START_PERIOD,SHRQ_SHOW};
+				START_PERIOD,SHRQ_SHOW,VOUCHERTAG};
 	}
 
 	/**
@@ -818,7 +821,38 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	
 	public static final String PK_PROLINE = "pk_proline";//产品线
 	public static final String PK_BRAND = "pk_brand";//品牌
+	
+	//ehp2加入
+	public Integer paytarget; //收款对象
+	public Integer vouchertag; //凭证标志
+	public Integer getVouchertag() {
+		return vouchertag;
+	}
 
+	public void setVouchertag(Integer vouchertag) {
+		this.vouchertag = vouchertag;
+	}
+
+	public UFDate  tbb_period ;//预算占用期间
+	public UFDate getTbb_period() {
+		return tbb_period;
+	}
+
+	public void setTbb_period(UFDate tbbPeriod) {
+		tbb_period = tbbPeriod;
+	}
+
+	public Integer getPaytarget() {
+		return paytarget;
+	}
+	
+	public void setPaytarget(Integer paytarget) {
+		this.paytarget = paytarget;
+	}
+	public static final String PAYTARGET = "paytarget";
+	public static final String TBB_PERIOD = "tbb_period";
+	public static final String VOUCHERTAG = "vouchertag";
+	
 	// v6新增
 
 	public static final String GLOBALCJKBBJE = "globalcjkbbje";
@@ -4099,6 +4133,21 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 
 	public void setLoadInitBill(boolean isLoadInitBill) {
 		this.isLoadInitBill = isLoadInitBill;
+	}
+
+	/**
+	 * 当前报销单是否是费用调整类型
+	 * 
+	 * @return
+	 */
+	public boolean isAdjustBxd() {
+		boolean isAdjust = false;
+		try {
+			isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(getPk_group(), getDjlxbm(),ErmDjlxConst.BXTYPE_ADJUST);
+		} catch (BusinessException e) {
+			ExceptionHandler.handleExceptionRuntime(e);
+		}
+		return isAdjust;
 	}
 
 }

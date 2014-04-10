@@ -58,6 +58,7 @@ public class BillCardHeadAfterEditlistener implements BillEditListener, ValueCha
 	public void afterEdit(BillEditEvent evt) {
 		final String key = evt.getKey();
 		try {
+			
 			if (MatterAppVO.PK_CURRTYPE.equals(key)) {// 币种
 				afterEditCurrType();
 			} else if (MatterAppVO.ORIG_AMOUNT.equals(key)) {// 金额
@@ -71,14 +72,34 @@ public class BillCardHeadAfterEditlistener implements BillEditListener, ValueCha
 				}
 			} else if (MatterAppVO.PK_ORG.equals(evt.getKey())) {// 主组织
 				afterEditPkOrg();
+			} else if (MatterAppVO.APPLY_ORG.equals(evt.getKey())) {// 申请单位
+				afterEditApplyOrg();
 			} else if (MatterAppVO.APPLY_DEPT.equals(evt.getKey())) {// 申请部门
 				afterEditApplydept();
 			} else if (MatterAppVO.BILLMAKER.equals(evt.getKey())) {// 申请人修改
 				afterEditBillMaker();
 			} else if (MatterAppVO.ORG_CURRINFO.equals(key) || MatterAppVO.GROUP_CURRINFO.equals(key)
 					|| MatterAppVO.GLOBAL_CURRINFO.equals(key)) {// 汇率
-				billForm.resetHeadAmounts();
 				String pk_org = billForm.getHeadItemStrValue(MatterAppVO.PK_ORG);
+				String pk_currtype = billForm.getHeadItemStrValue(MatterAppVO.PK_CURRTYPE);
+				
+				boolean isEnable = false;
+				if(pk_org != null){
+					if(MatterAppVO.ORG_CURRINFO.equals(key)){
+						isEnable = MatterAppUiUtil.getOrgRateEnableStatus(pk_org, pk_currtype);
+					}else if(MatterAppVO.GROUP_CURRINFO.equals(key)){
+						isEnable = MatterAppUiUtil.getGroupRateEnableStatus(pk_org, pk_currtype);
+					}else if(MatterAppVO.GLOBAL_CURRINFO.equals(key)){
+						isEnable = MatterAppUiUtil.getGlobalRateEnableStatus(pk_org, pk_currtype);
+					}
+				}
+				
+				if(!isEnable){//不可编辑进入，可能是导入造成
+					BillItem currinfoItem = billForm.getBillCardPanel().getHeadItem(key);
+					currinfoItem.setValue(evt.getOldValue());
+				}
+				
+				billForm.resetHeadAmounts();
 
 				BillModel billModel = billForm.getBillCardPanel().getBillModel(
 						ErmMatterAppConst.MatterApp_MDCODE_DETAIL);
@@ -120,6 +141,11 @@ public class BillCardHeadAfterEditlistener implements BillEditListener, ValueCha
 		}
 		// 事件转换，且发出事件
 		billForm.getEventTransformer().afterEdit(evt);
+	}
+
+	private void afterEditApplyOrg() {
+		billForm.setHeadValue(MatterAppVO.BILLMAKER, null);
+		billForm.setHeadValue(MatterAppVO.APPLY_DEPT, null);
 	}
 
 	private void afterEditAssumeDept() {

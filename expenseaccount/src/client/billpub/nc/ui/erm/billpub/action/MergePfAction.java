@@ -60,11 +60,11 @@ public class MergePfAction extends NCAction {
 		validate(selectedvos);
 
 		Map<String, List<String>> temp = new HashMap<String, List<String>>();
-		List<String> selectedPK = new ArrayList<String>();
-
-		for (JKBXVO vo : selectedvos) {
-			selectedPK.add(vo.getParentVO().getPk_jkbx());
-		}
+//		List<String> selectedPK = new ArrayList<String>();
+//
+//		for (JKBXVO vo : selectedvos) {
+//			selectedPK.add(vo.getParentVO().getPk_jkbx());
+//		}
 
 		try {
 			checkTs(selectedvos);
@@ -73,7 +73,7 @@ public class MergePfAction extends NCAction {
 				if (!temp.containsKey((head.getDjlxbm()))) {
 					temp.put(head.getDjlxbm(), new ArrayList<String>());
 				}
-				temp.get(head.getDjlxbm()).add(head.getPk_jkbx());
+				temp.get(head.getDjlxbm()).add(head.getPk_jkbx()+"_"+head.getVouchertag());//ehp2要加上凭证环节
 			}
 			String[][] datas = new String[temp.size()][];
 			int idx = 0;

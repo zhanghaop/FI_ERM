@@ -27,7 +27,7 @@ public class DelRowAction extends DelLineAction {
 
 			// 删除时自动算出表体的本币金额,如果修改过表体的金额就不重新平均分摊
 			for (int i = 0; i < billCardPanel.getRowCount(); i++) {
-				ErmForCShareUiUtil.setRateAndAmount(i, billCardPanel);
+				ErmForCShareUiUtil.setRateAndAmountNEW(i, billCardPanel,"DEL_");
 			}
 		}
 	}

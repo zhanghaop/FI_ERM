@@ -32,12 +32,13 @@ public class AddRowAction extends AddLineAction {
 			ErmForCShareUiUtil.reComputeAllJeByAvg(billCard);
 			
 			for (int i = 0; i < getCardpanel().getBillCardPanel().getRowCount(); i++) {
-				ErmForCShareUiUtil.setRateAndAmount(i, this.getCardpanel().getBillCardPanel());
+				ErmForCShareUiUtil.setRateAndAmountNEW(i, this.getCardpanel().getBillCardPanel(),"ADD_"+rownum);
 			}
 		} else {
 			billCard.setBodyValueAt(UFDouble.ZERO_DBL, rownum, CShareDetailVO.ASSUME_AMOUNT);
 			billCard.setBodyValueAt(UFDouble.ZERO_DBL, rownum, CShareDetailVO.SHARE_RATIO);
-			ErmForCShareUiUtil.setRateAndAmount(rownum, getCardpanel().getBillCardPanel());
+			//ErmForCShareUiUtil.setRateAndAmount(rownum, getCardpanel().getBillCardPanel());
+			ErmForCShareUiUtil.setRateAndAmountNEW(rownum, getCardpanel().getBillCardPanel(),"ADD_"+rownum);
 		}
 		
         getCardpanel().getBillCardPanel().getBillModel().loadLoadRelationItemValue(rownum);

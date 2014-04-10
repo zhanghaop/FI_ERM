@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 
@@ -39,7 +39,10 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.IBillModelRowStateChangeEventListener;
 import nc.ui.pub.bill.RowStateChangeEvent;
+import nc.ui.querytemplate.QueryConditionDLG;
+import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
+import nc.ui.uif2.model.AbstractAppModel;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXParamConstant;
@@ -56,6 +59,7 @@ import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.querytemplate.TemplateInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -77,6 +81,8 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 	private UIRefPane loantotimetext;
 
 	private UIButton loanquerybtn;
+	
+	private UIButton advquerybtn;
 
 	private UIButton btnConfirm;
 
@@ -95,6 +101,8 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 	private UIPanel buttonPanel;
 
 	private BillForm editor;
+	
+	private AbstractAppModel model;
 
 	/**
 	 *  选中表体业务VO缓存
@@ -480,6 +488,9 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 						return false;//界面中除了借款款和 还款金额可编辑，其他不可编辑
 					}
 				});
+				listPanel.getBodyScrollPane("jk_busitem").clearDefalutEditAction();
+				listPanel.getBodyScrollPane("jk_busitem").clearFixAction();
+				listPanel.getBodyScrollPane("jk_busitem").clearNotEditAction();
 				listPanel.addHeadEditListener(new HeadEditListerner());
 				listPanel.addBodyEditListener(new BodyEditListener());
 				listPanel.getBodyBillModel().addRowStateChangeEventListener(new BodyRowStateListener());
@@ -624,12 +635,17 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 	public ContrastDialog(BillForm editor, String nodecode, String pkCorp, JKBXVO bxvo) {
 		super(((BillManageModel) editor.getModel()).getContext().getEntranceUI());
 		this.editor = editor;
+		this.model = editor.getModel();
 		setNodecode(nodecode);
 		setPkCorp(pkCorp);
 		setBxvo(bxvo);
 		initialize();
 	}
-
+	
+	public AbstractAppModel getModel() {
+		return model;
+	}
+	
 	private IBxUIControl getBxUIControl() {
 		return NCLocator.getInstance().lookup(IBxUIControl.class);
 	}
@@ -658,6 +674,7 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 			BXBusItemVO item = map.get(vo.getPk_busitem());
 			if (item != null) {
 				busitemvo.setCjkybje((item.getCjkybje().add(vo.getCjkybje())));
+				busitemvo.setHkybje(item.getHkybje().add(vo.getHkybje()));
 			}
 
 			map.put(vo.getPk_busitem(), busitemvo);
@@ -878,7 +895,7 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 			try {
 				queryPanel = new nc.ui.pub.beans.UIPanel();
 				queryPanel.setName("queryPanel");
-				queryPanel.setPreferredSize(new java.awt.Dimension(660, 50));
+				queryPanel.setPreferredSize(new java.awt.Dimension(1000, 50));
 				queryPanel.setBounds(0, 0, 600, 50);
 				queryPanel.setLayout(null);
 				queryPanel.add(getUserlabel());
@@ -888,11 +905,24 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 				queryPanel.add(gettotimelabel(), gettotimelabel().getName());
 				queryPanel.add(gettotimetext(), gettotimetext().getName());
 				queryPanel.add(getBtnQuery(), getBtnQuery().getName());
+				queryPanel.add(getBtnAdvancedQuery(),getBtnAdvancedQuery().getName());
 			} catch (java.lang.Throwable ivjExc) {
 				handleException(ivjExc);
 			}
 		}
 		return queryPanel;
+	}
+
+	private UIButton getBtnAdvancedQuery() {
+		if (advquerybtn == null) {
+			advquerybtn = new nc.ui.pub.beans.UIButton();
+			advquerybtn.setName("advquerybtn");
+			advquerybtn.setBounds(750, 15, 60, 20);
+			advquerybtn.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000940")/*																								 */);
+			advquerybtn.addActionListener(this);
+
+		}
+		return advquerybtn;
 	}
 
 	private UILabel getUserlabel() {
@@ -920,7 +950,6 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 				loanusertext.setName("loanuser");
 				loanusertext.setRefNodeName("人员");
 				loanusertext.setBounds(95, 15, 100, 20);
-				//loanusertext.setPk_org(getBxvo().getParentVO().getPk_org());
 				loanusertext.setPk_org(getBxvo().getParentVO().getDwbm());
 				loanusertext.getRefModel().setUseDataPower(true);
 				loanusertext.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER);
@@ -1180,7 +1209,6 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 				}
 			}
 		}
-
 		if (e.getSource().equals(getBtnConfirm())) {
 
 			String errormsg = validateData();
@@ -1195,7 +1223,46 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 			destroy();
 		} else if (e.getSource().equals(getBtnQuery())) {
 			onBoquery();
+		} else if(e.getSource().equals(getBtnAdvancedQuery())){
+			onAvdquery();
 		}
+	}
+
+	private void onAvdquery() {
+		if (UIDialog.ID_OK == getQryDlg().showModal()) {
+			//高级查询逻辑
+			BxcontrastVO[] oldcontrastvos = null;
+			if (getModel().getUiState() == UIState.EDIT) {
+				JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
+				if (selectedData != null) {
+					oldcontrastvos = selectedData.getContrastVO();
+				}
+			}
+			try {
+				initData(bxvo, oldcontrastvos, getQryDlg().getWhereSQL());
+			} catch (BusinessException e) {
+				ExceptionHandler.handleRuntimeException(e);
+			}
+		}
+	}
+	/**
+	 * 增加查询对话框
+	 */
+	private QueryConditionDLG queryDialog;
+	private QueryConditionDLG getQryDlg() {
+			if(queryDialog==null){
+				TemplateInfo tempinfo = new TemplateInfo();
+				tempinfo.setPk_Org(getModel().getContext().getPk_group());
+				tempinfo.setFunNode(nodecode);
+				tempinfo.setUserid(getModel().getContext().getPk_loginUser());
+				tempinfo.setNodekey("20110cjkq");
+				queryDialog = new QueryConditionDLG(getEditor(), null,
+						tempinfo,
+						nc.ui.ml.NCLangRes.getInstance().getStrByID("common", "UC000-0002782"));
+				queryDialog.registerCriteriaEditorListener(new CJKQueryCriteriaChangedListener(getModel()));
+				
+			}
+		return queryDialog;
 	}
 
 	private String validateData() {

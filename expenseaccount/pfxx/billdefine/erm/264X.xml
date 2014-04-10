@@ -201,7 +201,7 @@
             <nullallowed>yes</nullallowed>
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
-            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <basdoc>8587f166-2bfd-4960-b394-6eae677a0bbf</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <checkTranslatedPK>no</checkTranslatedPK>
             <variablename>fydwbm</variablename>
@@ -213,7 +213,7 @@
             <nullallowed>yes</nullallowed>
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
-            <basdoc>31736d3d-3626-46c5-b5d0-e10b4ed33dce</basdoc>
+            <basdoc>8587f166-2bfd-4960-b394-6eae677a0bbf</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>
@@ -224,7 +224,7 @@
             <nullallowed>yes</nullallowed>
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
-            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <basdoc>a0ec952c-e4e5-416a-b3e0-d402725f76be</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <checkTranslatedPK>no</checkTranslatedPK>
             <variablename>dwbm</variablename>
@@ -236,7 +236,7 @@
             <nullallowed>yes</nullallowed>
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
-            <basdoc>31736d3d-3626-46c5-b5d0-e10b4ed33dce</basdoc>
+            <basdoc>fa902409-20fe-4c49-89ee-85ee9312174b</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>
@@ -1264,6 +1264,16 @@
             <basdoc>31736d3d-3626-46c5-b5d0-e10b4ed33dce</basdoc>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>
+        <field desc="收款对象">
+            <matchtag>paytarget</matchtag>
+            <name>paytarget</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>65d35dd9-05f8-4cb3-afc9-073ff888e319</enumid>
+        </field>
     </record>
     <record classname="nc.vo.ep.bx.BxcontrastVO[]" displayName="冲销对照行" entitytag="item" metadataid="d099c060-2049-4c16-8fba-5aae8fd3df3f" recordtype="vos" sentitytag="item" tablename="er_bxcontrast" tabletype="embed" typeName="内嵌结构">
         <field desc="冲借款单位">
@@ -1574,6 +1584,122 @@
             <needexport>yes</needexport>
             <basdoc>3ee53558-6398-4096-a91f-c7aa00e93701</basdoc>
             <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="报销人单位">
+            <matchtag>dwbm</matchtag>
+            <name>dwbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>a0ec952c-e4e5-416a-b3e0-d402725f76be</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <variablename>dwbm</variablename>
+        </field>
+        <field desc="借款部门">
+            <matchtag>deptid</matchtag>
+            <name>deptid</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>b26fa3cb-4087-4027-a3b6-c83ab2a086a9</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款人">
+            <matchtag>jkbxr</matchtag>
+            <name>jkbxr</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>40d39c26-a2b6-4f16-a018-45664cac1a1f</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="客商银行账户">
+            <matchtag>custaccount</matchtag>
+            <name>custaccount</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>611652ad-177f-4d3e-9ae7-ef8f96930b78</basdoc>
+            <translator>1001Z01000000000R5MN</translator>
+            <translatorParams>bzbm</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="散户">
+            <matchtag>freecust</matchtag>
+            <name>freecust</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>20d2ca8b-c9da-4def-a9a1-4b11b85bba54</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+       	<field desc="收款对象">
+            <matchtag>paytarget</matchtag>
+            <name>paytarget</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>65d35dd9-05f8-4cb3-afc9-073ff888e319</enumid>
+        </field>
+        <field desc="收款人">
+            <matchtag>receiver</matchtag>
+            <name>receiver</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>40d39c26-a2b6-4f16-a018-45664cac1a1f</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="个人银行账户">
+            <matchtag>skyhzh</matchtag>
+            <name>skyhzh</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>ada13c7f-b854-46cf-95a3-9f59d121c0e7</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="供应商">
+            <matchtag>hbbm</matchtag>
+            <name>hbbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>720dcc7c-ff19-48f4-b9c5-b90906682f45</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="客户">
+            <matchtag>customer</matchtag>
+            <name>customer</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>e4f48eaf-5567-4383-a370-a59cb3e8a451</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>
         <field desc="报销单业务行标识">

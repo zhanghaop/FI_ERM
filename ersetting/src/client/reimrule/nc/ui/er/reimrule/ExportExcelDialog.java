@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.swing.ButtonGroup;
+
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIButton;
 import nc.ui.pub.beans.UICheckBox;
@@ -19,17 +21,21 @@ import nc.ui.pub.beans.UIFileChooser;
 import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UITextField;
+import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
-import nc.ui.er.reimrule.ReimRuleUI;
-import nc.vo.er.reimrule.ReimRuleVO;
+import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.lang.UFDouble;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -63,15 +69,11 @@ public class ExportExcelDialog extends UIDialog {
 	private static String OFFICE03 = ".xls";
 	private static String OFFICE07 = ".xlsx";
 
-//	private File file;  //
-	private final ReimRuleUI ruleUI;
-	/**
-	 * This method initializes
-	 *
-	 */ 
-	public ExportExcelDialog(Container c,ReimRuleUI ruleui) {
+	private final BillCardPanel panel;
+	
+	public ExportExcelDialog(Container c,BillCardPanel panel) {
 		super(c);
-		this.ruleUI = ruleui;
+		this.panel = panel;
 		initialize();
 	}
 	/**
@@ -184,8 +186,8 @@ public class ExportExcelDialog extends UIDialog {
 						}
 					}
 
-					String currentBodyTableCode = ruleUI.getBillCardPanel().getCurrentBodyTableCode();
-					ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) ruleUI.getBillCardPanel().getBillData().getBodyValueVOs(currentBodyTableCode, ReimRuleVO.class.getName());
+					String currentBodyTableCode = panel.getCurrentBodyTableCode();
+					ReimRulerVO[] reimRuleVos = (ReimRulerVO[]) panel.getBillData().getBodyValueVOs(currentBodyTableCode, ReimRulerVO.class.getName());
 					if(reimRuleVos==null || reimRuleVos.length==0){
 						MessageDialog.showHintDlg(ExportExcelDialog.this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000451")/*@res "选中的报销标准中没有具体的值,导出已取消!"*/);
 						return;
@@ -246,9 +248,30 @@ public class ExportExcelDialog extends UIDialog {
 			UIButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if (getFileChooser().showOpenDialog(ExportExcelDialog.this) == UIFileChooser.APPROVE_OPTION) {
-						getUITextField().setText(getFileChooser().getSelectedFile().getPath());
-						excelfile = getFileChooser().getSelectedFile();
+						String filepath = getFileChooser().getSelectedFile().getPath();
+						if(!filepath.endsWith(OFFICE03) && !filepath.endsWith(OFFICE07))
+							filepath += OFFICE07; 
+						getUITextField().setText(filepath);
 						try {
+							if(getFileChooser().getSelectedFile().exists())
+								excelfile = getFileChooser().getSelectedFile();
+							else{
+								XSSFWorkbook workbook = new XSSFWorkbook();
+								XSSFSheet sheet = workbook.createSheet();
+								for(int i=0;i<10;i++){
+									XSSFRow row = sheet.createRow(i);
+									for(int j=0;j<10;j++){
+										XSSFCell cell = row.createCell(j);
+										cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+										cell.setCellValue("");
+									}
+								}
+								FileOutputStream out = new FileOutputStream(filepath);
+								workbook.write(out);
+								out.flush();
+								out.close();
+								excelfile = new File(filepath);
+							}
 							is = new FileInputStream(excelfile);
 							if(excelfile.getPath().endsWith(OFFICE03)){
 								wb = new HSSFWorkbook(is);
@@ -261,7 +284,7 @@ public class ExportExcelDialog extends UIDialog {
 							}
 						} catch (IOException eex) {
 							MessageDialog.showErrorDlg(ExportExcelDialog.this,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000453")/*@res "打开文件时出现错误，可能是文件格式出错或者正在被使用。"*/);
-						}
+						} 
 
 					}
 				
@@ -360,8 +383,6 @@ public class ExportExcelDialog extends UIDialog {
 	}
 
 	private void exportToExcel() {
-
-		excelfile = getFileChooser().getSelectedFile();
 		if(excelfile == null){
 			MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000456")/*@res "请选择目标Excel文件！"*/);
 		}
@@ -387,8 +408,8 @@ public class ExportExcelDialog extends UIDialog {
 			}
 			//在excel文件中导入表头信息
 			Row row0 = sheet.createRow(0);
-			BillItem[] headShowItems = ruleUI.getBillCardPanel().getBodyShowItems();
-			BillModel model = ruleUI.getBillCardPanel().getBillModel();
+			BillItem[] headShowItems = panel.getBodyShowItems();
+			BillModel model = panel.getBillModel();
 
 			for(int i = 0;i < headShowItems.length;i++){
 				row0.createCell((short) i);
@@ -413,11 +434,11 @@ public class ExportExcelDialog extends UIDialog {
 					 }
 				}
 			}
-			int NumOfColumns = ruleUI.getBillCardPanel().getBillTable().getColumnCount();
+			int NumOfColumns = panel.getBillTable().getColumnCount();
 			if(NumOfColumns<=0){
 				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000457")/*@res "不存在数据。"*/);
 			} else{
-				int NumOfRows = ruleUI.getBillCardPanel().getBillTable().getRowCount();
+				int NumOfRows = panel.getBillTable().getRowCount();
 				if(NumOfRows <=0){
 					MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000457")/*@res "不存在数据。"*/);
 				}else {

@@ -1,8 +1,11 @@
 package nc.ui.erm.billpub.action;
 
+import java.awt.event.ActionEvent;
+
 import javax.swing.Action;
 
 import nc.bs.erm.util.action.ErmActionConst;
+import nc.ui.pub.print.PrintEntry;
 import nc.ui.uif2.actions.TemplatePrintAction;
 
 /** 
@@ -22,5 +25,13 @@ public class ERMListTemplatePrintAction extends TemplatePrintAction {
 		putValue(Action.ACCELERATOR_KEY, null);
 		putValue(SHORT_DESCRIPTION, ErmActionConst.getPrintListName());
 	}
-
+	/**
+	 * 每次打印都要预览
+	 */
+	@Override
+	public void doAction(ActionEvent e) throws Exception {
+		PrintEntry entry = createPrintentry();
+		if(entry.selectTemplate() == 1)
+			entry.preview();
+	}
 }

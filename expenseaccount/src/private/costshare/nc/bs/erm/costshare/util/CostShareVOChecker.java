@@ -5,6 +5,8 @@ import java.util.List;
 
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.util.ErUtil;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -12,6 +14,8 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.transaction.DataValidateException;
 import nc.vo.cmp.util.StringUtils;
 import nc.vo.ep.bx.MessageVO;
+import nc.vo.er.djlx.DjLXVO;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
@@ -45,6 +49,7 @@ public class CostShareVOChecker {
 			checkHeader(vo);
 			checkChildren(vo);
 			checkIsCloseAcc(vo);
+			checkFc(vo.getParentVO());
 			
 			//交叉校验
 			new FipubCrossCheckRuleChecker()
@@ -52,6 +57,18 @@ public class CostShareVOChecker {
 		}
 	}
 	
+	private void checkFc(CircularlyAccessibleValueObject parentVO) throws BusinessException {
+		String pkTradetype = ((CostShareVO)parentVO).getPk_tradetype();
+		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(((CostShareVO)parentVO).getPk_group(), pkTradetype);
+		if(djlxVO.getFcbz().booleanValue()){
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
+					.getNCLangRes().getStrByID("expensepub_0", "02011002-0192"));/**
+			 * @res*
+			 *      "对应结转单已封存，请修改或解封对应结转单！"
+			 */
+		}
+	}
+
 	/**
 	 * 后台检查报销管理模块是否关账
 	 * 
@@ -73,8 +90,14 @@ public class CostShareVOChecker {
 
 	private void checkHeader(AggCostShareVO vo) throws ValidationException{
 		CostShareVO header = (CostShareVO)vo.getParentVO();
-
-		if(header.getYbje().compareTo(UFDouble.ZERO_DBL) <= 0){
+		// 费用调整单不控制合计金额为0、负数
+		boolean isAdjust = false ;
+		try {
+			isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(header.getPk_group(), header.getDjlxbm(), ErmDjlxConst.BXTYPE_ADJUST);
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		if(header.getYbje().compareTo(UFDouble.ZERO_DBL) <= 0 && !isAdjust){
 			throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("upp2012v575_0","0upp2012V575-0070")/*@res "单据金额应大于0！"*/);
 		}
 	}
@@ -131,6 +154,14 @@ public class CostShareVOChecker {
 
 		CostShareVO parentVO = (CostShareVO)vo.getParentVO();
 
+		// 费用调整单不控制金额为0、负数
+		boolean isAdjust = false ;
+		try {
+			isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(parentVO.getPk_group(), parentVO.getDjlxbm(), ErmDjlxConst.BXTYPE_ADJUST);
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		
 		UFDouble total = parentVO.getYbje();
 
 		//合计总金额
@@ -147,11 +178,11 @@ public class CostShareVOChecker {
 					shareAmount = UFDouble.ZERO_DBL;
 				}
 
-				if(shareAmount.compareTo(UFDouble.ZERO_DBL) <= 0){
+				if(!isAdjust &&shareAmount.compareTo(UFDouble.ZERO_DBL) <= 0){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("upp2012v575_0","0upp2012V575-0072")/*@res "分摊明细信息不能包括金额小于等于0的行！"*/);
 				}
 				
-				if(share_ratio.compareTo(UFDouble.ZERO_DBL)< 0){
+				if(!isAdjust &&  share_ratio.compareTo(UFDouble.ZERO_DBL)< 0 ){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("upp2012v575_0","0upp2012V575-0087")/*@res "分摊明细信息不能包括分比例小于0的行！"*/);
 				}
 
@@ -160,9 +191,12 @@ public class CostShareVOChecker {
 				controlKey = new StringBuffer();
 
 				for (int j = 0; j < attributeNames.length; j++) {
-					if(getNotRepeatFields().contains(attributeNames[j])||
-							attributeNames[j].startsWith(BXConstans.BODY_USERDEF_PREFIX)){
-						controlKey.append(cShareVos[i].getAttributeValue(attributeNames[j]));
+					String attr = attributeNames[j];
+					if(getNotRepeatFields().contains(attr)||
+							attr.startsWith(BXConstans.BODY_USERDEF_PREFIX)
+							||(isAdjust&&CShareDetailVO.YSDATE.equals(attr))){
+						// 费用调整单情况，不可重复字段包括预算占用日期
+						controlKey.append(cShareVos[i].getAttributeValue(attr));
 					}else{
 						continue;
 					}

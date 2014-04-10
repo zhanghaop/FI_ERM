@@ -16,6 +16,9 @@ public class LinkQuery implements ILinkQueryDataPlural {
 
 	private Object userObject;
 	
+	public LinkQuery() {
+		super();
+	}
 	public LinkQuery(String billType,String[] billIDs) {
 		super();
 		this.billIDs = billIDs;

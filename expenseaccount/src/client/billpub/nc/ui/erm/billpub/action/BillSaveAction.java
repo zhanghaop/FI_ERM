@@ -9,6 +9,7 @@ import nc.itf.arap.pub.IBxUIControl;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.pub.beans.MessageDialog;
+import nc.ui.pub.beans.UIDialog;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
@@ -16,6 +17,7 @@ import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDouble;
@@ -37,7 +39,9 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 //    		billCardPanel.getBillModel(tableCode).clearBodyData();
 //    	}
 		
-		if(!BXConstans.BXRB_CODE.equals(getModel().getContext().getNodeCode())){
+		//ehp2报销单和还款单都不过滤金额为0的行
+		DjLXVO djlxVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		if(djlxVO!=null && BXConstans.JK_DJDL.equals(djlxVO.getDjdl())){
 			delBlankLine(billCardPanel, tableCode);
 		}
 		
@@ -66,6 +70,13 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 			value.setMaheadvo(vo.getMaheadvo());
 		}
 
+		//表体中有超过标准值的行
+		if(((ErmBillBillForm) getEditor()).getRows().size()>0){
+			int result = MessageDialog.showYesNoDlg((ErmBillBillForm) getEditor(), null, "该单据所填金额超过标准允许的最大金额，是否确认保存？");
+			if (result != UIDialog.ID_YES) 
+				return;
+		}
+		
 		if (getModel().getUiState() == UIState.ADD) {
 			doAddSave(value);
 		} else if (getModel().getUiState() == UIState.EDIT) {

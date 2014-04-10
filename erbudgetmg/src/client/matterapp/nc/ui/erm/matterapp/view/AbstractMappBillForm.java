@@ -1,6 +1,9 @@
 package nc.ui.erm.matterapp.view;
 
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.framework.common.NCLocator;
+import nc.funcnode.ui.AbstractFunclet;
+import nc.itf.uap.bbd.func.IFuncRegisterQueryService;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.erm.view.ERMBillForm;
 import nc.ui.pub.beans.UIRefPane;
@@ -15,7 +18,6 @@ import nc.ui.pub.bill.BillTableMouseListener;
 import nc.ui.pubapp.uif2app.event.OrgChangedEvent;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.IExceptionHandler;
-import nc.ui.uif2.ToftPanelAdaptor;
 import nc.ui.uif2.actions.CancelAction;
 import nc.ui.uif2.actions.SaveAction;
 import nc.vo.erm.matterapp.MatterAppVO;
@@ -25,16 +27,17 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.uif2.LoginContext;
 
 @SuppressWarnings("restriction")
-public class AbstractMappBillForm extends ERMBillForm{
+public class AbstractMappBillForm extends ERMBillForm {
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
-	 * 联查类型，默认为-1 
+	 * 联查类型，默认为-1
+	 * 
 	 * @see nc.ui.pub.linkoperate.ILinkType
 	 */
 	private int link_type = -1;
 
-	//卡片表头表体监听
+	// 卡片表头表体监听
 	private BillEditListener2 billCardBodyBeforeEditlistener = null;
 	private BillEditListener billCardBodyAfterEditlistener = null;
 	private BillEditListener billCardHeadAfterEditlistener = null;
@@ -46,50 +49,45 @@ public class AbstractMappBillForm extends ERMBillForm{
 	protected SaveAction saveAction;
 	protected CancelAction cancelAction;
 
-
-
 	private LoginContext context;
-	
+
 	public void initUI() {
-		setTabSingleShow(false);//单页签时不显示
+		setTabSingleShow(false);// 单页签时不显示
 		super.initUI();
 
 		addBillCardListeners(this.getBillCardPanel());
 	}
-	
-	
-	
-	
 
 	@Override
 	public void handleEvent(AppEvent event) {
 		super.handleEvent(event);
 	}
 
-	/**初始化单据卡片模板方法，向模板中添加相应的事件监听器
-	 * 添加的监听有：addBillEditListenerHeadTail，addBodyEditListener2，addEditListener，addBodyMouseListener,
-	 * 				setBillBeforeEditListenerHeadTail
+	/**
+	 * 初始化单据卡片模板方法，向模板中添加相应的事件监听器
+	 * 添加的监听有：addBillEditListenerHeadTail，addBodyEditListener2
+	 * ，addEditListener，addBodyMouseListener, setBillBeforeEditListenerHeadTail
 	 * */
 	protected void addBillCardListeners(BillCardPanel card) {
-		if(card!=null){
+		if (card != null) {
 			card.addBillEditListenerHeadTail(getBillCardHeadAfterEditlistener());
 			card.setBillBeforeEditListenerHeadTail(getBillCardHeadBeforeEditlistener());
 
 			String[] tablecodes = card.getBillData().getBodyTableCodes();
-			if(tablecodes!=null){
-				for( String tablecode :tablecodes){
-					card.addBodyEditListener2(tablecode,getBillCardBodyBeforeEditlistener());
-					card.addEditListener(tablecode,getBillCardBodyAfterEditlistener());
-					card.addBodyMouseListener(tablecode,getBillableMouseListener());
+			if (tablecodes != null) {
+				for (String tablecode : tablecodes) {
+					card.addBodyEditListener2(tablecode, getBillCardBodyBeforeEditlistener());
+					card.addEditListener(tablecode, getBillCardBodyAfterEditlistener());
+					card.addBodyMouseListener(tablecode, getBillableMouseListener());
 				}
-			}else{
+			} else {
 				card.addBodyEditListener2(getBillCardBodyBeforeEditlistener());
 				card.addEditListener(getBillCardBodyAfterEditlistener());
 				card.addBodyMouseListener(getBillableMouseListener());
 			}
 		}
 	}
-	
+
 	public BillEditListener2 getBillCardBodyBeforeEditlistener() {
 		return billCardBodyBeforeEditlistener;
 	}
@@ -126,8 +124,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 		return billCardHeadBeforeEditlistener;
 	}
 
-	public void setBillCardHeadBeforeEditlistener(
-			BillCardBeforeEditListener billCardHeadBeforeEditlistener) {
+	public void setBillCardHeadBeforeEditlistener(BillCardBeforeEditListener billCardHeadBeforeEditlistener) {
 		this.billCardHeadBeforeEditlistener = billCardHeadBeforeEditlistener;
 	}
 
@@ -157,22 +154,36 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 根据节点获取单据交易类型
+	 * 
 	 * @return
 	 */
-	protected String getTradeTypeByNodeCode() {
+	public String getTradeTypeByNodeCode() {
 		String tempBilltype = null;
 		try {
-			//申请单默认节点不设置，直接返回
-			if(context.getNodeCode() != null && context.getNodeCode().equals(ErmMatterAppConst.MAPP_NODECODE_TRAVEL)){
+			// 申请单默认节点不设置，直接返回
+			if (context.getNodeCode() != null && context.getNodeCode().equals(ErmMatterAppConst.MAPP_NODECODE_TRAVEL)) {
 				return ErmMatterAppConst.MatterApp_TRADETYPE_Travel;
 			}
-			
-			//自定义类型的节点取transtype 属性，来获取交易类型
-			ToftPanelAdaptor toftPanel = (ToftPanelAdaptor)context.getEntranceUI();
-			tempBilltype = toftPanel.getParameter("transtype");
 
-			if(tempBilltype == null){
-				throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0026")/*@res "功能注册中未设置单据类型参数transtype"*/);
+			// 自定义类型的节点取transtype 属性，来获取交易类型
+			AbstractFunclet toftPanel = (AbstractFunclet) context.getEntranceUI();
+			if (toftPanel.getFuncletContext() == null) {// 导入导出时会出现为空情况
+				IFuncRegisterQueryService service = NCLocator.getInstance().lookup(IFuncRegisterQueryService.class);
+				String[][] params = service.queryParameter(context.getNodeCode());
+				int count = params == null ? 0 : params.length;
+				for (int i = 0; i < count; i++) {
+					if (params[i][0].equals("transtype")) {
+						tempBilltype = params[i][1];
+						break;
+					}
+				}
+			} else {
+				tempBilltype = toftPanel.getParameter("transtype");
+			}
+
+			if (tempBilltype == null) {
+				throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
+						"0201212-0026")/* @res "功能注册中未设置单据类型参数transtype" */);
 			}
 			return tempBilltype;
 		} catch (BusinessException e) {
@@ -183,7 +194,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 获取表头指定字段字符串Value
-	 *
+	 * 
 	 * @param itemKey
 	 * @return
 	 */
@@ -194,6 +205,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 设置表头值
+	 * 
 	 * @param key
 	 * @param value
 	 * @return
@@ -201,12 +213,12 @@ public class AbstractMappBillForm extends ERMBillForm{
 	public void setHeadValue(String key, Object value) {
 		if (getBillCardPanel().getHeadItem(key) != null) {
 			getBillCardPanel().getHeadItem(key).setValue(value);
-			if(MatterAppVO.PK_ORG.equals(key)){
+			if (MatterAppVO.PK_ORG.equals(key)) {
 				UIRefPane orgpanel = getHeadItemUIRefPane(key);
 				orgpanel.setValueObjFireValueChangeEvent(value);
-				
+
 				String pk_org = (String) value;
-				OrgChangedEvent orgevent = new OrgChangedEvent(getModel().getContext().getPk_org(),pk_org);
+				OrgChangedEvent orgevent = new OrgChangedEvent(getModel().getContext().getPk_org(), pk_org);
 				getModel().getContext().setPk_org(pk_org);
 				getModel().fireEvent(orgevent);
 			}
@@ -215,6 +227,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 设置表尾值
+	 * 
 	 * @param key
 	 * @param value
 	 * @return
@@ -227,7 +240,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 获取表头指定字段参照面板
-	 *
+	 * 
 	 * @param itemKey
 	 * @return
 	 */
@@ -237,6 +250,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 获取表体参照
+	 * 
 	 * @param tableCode
 	 * @param key
 	 * @return
@@ -247,7 +261,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 获取表体值
-	 *
+	 * 
 	 * @param row
 	 *            行号
 	 * @param key
@@ -255,7 +269,8 @@ public class AbstractMappBillForm extends ERMBillForm{
 	 * @return
 	 */
 	public String getBodyItemStrValue(int row, String key) {
-		Object obj = getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).getValueObjectAt(row, key);
+		Object obj = getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).getValueObjectAt(row,
+				key);
 
 		if (obj == null) {
 			return null;
@@ -275,7 +290,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 设置表体值
-	 *
+	 * 
 	 * @param value
 	 * @param row
 	 *            行号
@@ -284,7 +299,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 	 */
 	public void setBodyValue(Object value, int row, String key) {
 		BillModel model = getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL);
-		if(model.getRowState(row) == BillModel.NORMAL){
+		if (model.getRowState(row) == BillModel.NORMAL) {
 			model.setRowState(row, BillModel.MODIFICATION);
 		}
 		getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).setValueAt(value, row, key);
@@ -292,7 +307,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 获取表体值
-	 *
+	 * 
 	 * @param row
 	 *            行号
 	 * @param key
@@ -305,13 +320,13 @@ public class AbstractMappBillForm extends ERMBillForm{
 
 	/**
 	 * 参照设置过滤
+	 * 
 	 * @param refPane
 	 * @param pk_org
 	 * @param wherePart
 	 * @param addWherePart
 	 */
-	public void filterRefModelWithWherePart(UIRefPane refPane, String pk_org, String wherePart,
-			String addWherePart) {
+	public void filterRefModelWithWherePart(UIRefPane refPane, String pk_org, String wherePart, String addWherePart) {
 		AbstractRefModel model = refPane.getRefModel();
 		model.setPk_org(pk_org);
 		model.setWherePart(wherePart);
@@ -328,7 +343,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 	public void setContext(LoginContext context) {
 		this.context = context;
 	}
-	
+
 	public int getLink_type() {
 		return link_type;
 	}

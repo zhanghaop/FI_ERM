@@ -11,9 +11,11 @@ import javax.swing.JTable;
 import nc.bs.erm.common.ErmBillConst;
 import nc.bs.framework.core.util.ObjectCreator;
 import nc.bs.logging.Logger;
+import nc.funcnode.ui.AbstractFunclet;
 import nc.itf.erm.extendconfig.ErmExtendconfigCache;
 import nc.ui.erm.extendtab.AbstractErmExtendList;
 import nc.ui.erm.matterapp.common.MatterAppUiUtil;
+import nc.ui.erm.matterapp.model.MAppModel;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.erm.view.ERMBillListView;
 import nc.ui.pub.bill.BillItem;
@@ -22,7 +24,6 @@ import nc.ui.pub.bill.BillMouseEnent;
 import nc.ui.pub.bill.BillTableCellRenderer;
 import nc.ui.pub.bill.BillTableMouseListener;
 import nc.ui.pub.bill.IBillItem;
-import nc.ui.uif2.ToftPanelAdaptor;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.extendconfig.ErmExtendConfigVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
@@ -104,11 +105,16 @@ public class MatterAppMNListView extends ERMBillListView implements BillTableMou
 	  
 	private void dealExtendTab(BillListData bld) {
 		String pk_group = this.getModel().getContext().getPk_group();
-		ToftPanelAdaptor toftPanel = (ToftPanelAdaptor) this.getModel()
-				.getContext().getEntranceUI();
-		String ma_tradetype = toftPanel.getParameter("transtype");
+		
+		String ma_tradetype = ((MAppModel)this.getModel()).getDjlxbm();
 		if (ma_tradetype == null) {
-			ma_tradetype = ErmBillConst.MatterApp_base_tradeType;
+			AbstractFunclet toftPanel = (AbstractFunclet) this.getModel().getContext().getEntranceUI();
+			
+			if(toftPanel.getFuncletContext() != null){//导入导出时， 取不到funcletContext
+				ma_tradetype = toftPanel.getParameter("transtype");
+			}else{
+				ma_tradetype = ErmBillConst.MatterApp_base_tradeType;
+			}
 		}
 		ErmExtendConfigVO[] extendConfigVO = null;
 		try {

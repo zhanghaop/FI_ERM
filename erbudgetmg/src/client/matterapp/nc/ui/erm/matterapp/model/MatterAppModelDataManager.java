@@ -1,10 +1,16 @@
 package nc.ui.erm.matterapp.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import nc.bs.erm.common.ErmConst;
 import nc.bs.erm.matterapp.common.MatterAppQueryCondition;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.matterapp.IErmMatterAppBillQueryPrivate;
 import nc.ui.erm.matterapp.view.MatterAppMNListView;
+import nc.ui.querytemplate.filter.IFilter;
 import nc.ui.querytemplate.querytree.IQueryScheme;
+import nc.ui.querytemplate.value.IFieldValueElement;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.AppEventListener;
 import nc.ui.uif2.IExceptionHandler;
@@ -45,7 +51,8 @@ public class MatterAppModelDataManager implements IQueryAndRefreshManagerEx, IAp
 	private boolean isRefresh4Query;
 
 	private MatterAppMNListView listView;
-
+	
+	private IQueryScheme qryScheme;
 	@Override
 	public void initModel() {
 		model.setUiState(UIState.NOT_EDIT);
@@ -65,7 +72,7 @@ public class MatterAppModelDataManager implements IQueryAndRefreshManagerEx, IAp
 		if (isRefresh4Query) {
 			initModelBySqlWhere(qryCondition);
 		} else {
-			initModelBySqlWhere(" 1=1 ");
+			initModelBySqlWhere(" 1=0 ");
 		}
 	}
 
@@ -76,11 +83,7 @@ public class MatterAppModelDataManager implements IQueryAndRefreshManagerEx, IAp
 	 */
 	public void initData(String condition) {
 		MatterAppQueryCondition condVo = new MatterAppQueryCondition();
-		condVo.setWhereSql(condition);
-		condVo.setPk_tradetype(((MAppModel) getModel()).getDjlxbm());
-		condVo.setNodeCode(getModel().getContext().getNodeCode());
-		condVo.setPk_group(getModel().getContext().getPk_group());
-		condVo.setPk_user(getModel().getContext().getPk_loginUser());
+		initQueryCondition(condition, condVo);
 
 		try {
 			ModelDataDescriptor mdd = new ModelDataDescriptor();
@@ -98,6 +101,45 @@ public class MatterAppModelDataManager implements IQueryAndRefreshManagerEx, IAp
 			}
 		} catch (BusinessException e) {
 			exceptionHandler.handlerExeption(e);
+		}
+	}
+
+	public void initQueryCondition(String condition, MatterAppQueryCondition condVo) {
+		condVo.setWhereSql(condition);
+		condVo.setPk_tradetype(((MAppModel) getModel()).getDjlxbm());
+		condVo.setNodeCode(getModel().getContext().getNodeCode());
+		condVo.setPk_group(getModel().getContext().getPk_group());
+		condVo.setPk_user(getModel().getContext().getPk_loginUser());
+		
+		if(getQryScheme() != null){
+			//已审批、待审批
+			IFilter[] filters = (IFilter[]) getQryScheme().get(IQueryScheme.KEY_FILTERS);
+			if (filters != null) {
+				for (IFilter iFilter : filters) {
+					String fieldCode = iFilter.getFilterMeta().getFieldCode();
+					if (fieldCode.equals(ErmConst.QUERY_CONDITION_APPROVING)) {// 待审批
+						List<IFieldValueElement> fieldValues = iFilter.getFieldValue().getFieldValues();
+						List<String> valueList = new ArrayList<String>();
+						for (IFieldValueElement value : fieldValues) {
+							valueList.add(value.getSqlString());
+							if ("Y".equals(value.getSqlString())) {
+								condVo.setUser_approving(true);
+							}
+						}
+					}
+					
+					if (fieldCode.equals(ErmConst.QUERY_CONDITION_APPROVED)) {// 我已审批
+						List<IFieldValueElement> fieldValues = iFilter.getFieldValue().getFieldValues();
+						List<String> valueList = new ArrayList<String>();
+						for (IFieldValueElement value : fieldValues) {
+							valueList.add(value.getSqlString());
+							if ("Y".equals(value.getSqlString())) {
+								condVo.setUser_approved(true);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -166,7 +208,16 @@ public class MatterAppModelDataManager implements IQueryAndRefreshManagerEx, IAp
 
 	@Override
 	public void initModelBySqlWhere(IQueryScheme qryScheme) {
+		setQryScheme(qryScheme);
 		String sqlWhere = qryScheme.getWhereSQLOnly();
 		initModelBySqlWhere(sqlWhere);
+	}
+
+	public IQueryScheme getQryScheme() {
+		return qryScheme;
+	}
+
+	public void setQryScheme(IQueryScheme qryScheme) {
+		this.qryScheme = qryScheme;
 	}
 }

@@ -10,8 +10,11 @@ import javax.swing.JComponent;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.erm.util.ErAccperiodUtil;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
+import nc.funcnode.ui.AbstractFunclet;
 import nc.itf.fi.pub.Currency;
 import nc.itf.resa.costcenter.ICostCenterQueryOpt;
 import nc.ui.bd.ref.AbstractRefModel;
@@ -42,6 +45,7 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.util.UFDoubleTool;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
@@ -242,6 +246,24 @@ public class EventHandleUtil {
 	// 增加摊销设置监听处理
 	public void afterEditIsExpamt() {
 		if (isExpamtChecked()) {
+			// 已经核销预提的报销单，不可摊销
+			BillModel billModel = editor.getBillCardPanel().getBillModel(BXConstans.AccruedVerify_PAGE);
+			AccruedVerifyVO[] vos = null;
+			if(billModel !=null){
+				vos = (AccruedVerifyVO[]) billModel.getBodyValueVOs(AccruedVerifyVO.class.getName());
+			}
+			if(vos != null && vos.length > 0){
+				ShowStatusBarMsgUtil.showErrorMsg(
+						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0150")/*
+																										 * @
+																										 * res
+																										 * "待摊失败！"
+																										 */,
+								"报销单已经核销预提，不可进行待摊", editor.getModel().getContext());
+				getBillCardPanel().getHeadItem(JKBXHeaderVO.ISEXPAMT).setValue(UFBoolean.FALSE);
+				return;
+			}
+			
 			String pk_org = getBillCardPanel().getHeadItem(BXHeaderVO.FYDWBM).getValueObject().toString();
 			AccperiodmonthVO accperiodmonthVO;
             try
@@ -315,20 +337,37 @@ public class EventHandleUtil {
 				getBillCardPanel().getHeadItem(JKBXHeaderVO.ISCOSTSHARE).setValue(UFBoolean.FALSE);
 				return;
 			}
-
+			// 已经核销预提的报销单，不可分摊
+			BillModel billModel = editor.getBillCardPanel().getBillModel(BXConstans.AccruedVerify_PAGE);
+			AccruedVerifyVO[] vos = null;
+			if(billModel !=null){
+				vos = (AccruedVerifyVO[]) billModel.getBodyValueVOs(AccruedVerifyVO.class.getName());
+			}
+			if(vos != null && vos.length > 0){
+				ShowStatusBarMsgUtil.showErrorMsg(
+						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0150")/*
+																										 * @
+																										 * res
+																										 * "分摊失败！"
+																										 */,
+								"报销单已经核销预提，不可进行分摊", editor.getModel().getContext());
+				getBillCardPanel().getHeadItem(JKBXHeaderVO.ISCOSTSHARE).setValue(UFBoolean.FALSE);
+				return;
+			}
+			
 			ErmForCShareUiUtil.setCostPageShow(this.getBillCardPanel(), true);
 			
-			BillItem[] items = getBillCardPanel().getBillData().getBillModel(BXConstans.CSHARE_PAGE).getBodyItems();
-			if (items != null) {
-			    for (BillItem item : items) {
-			        if (item.isShow()) {
-			            if (item.getComponent() instanceof UIRefPane) {
-			                UIRefPane refPane = (UIRefPane)item.getComponent();
-			                refPane.setMultiSelectedEnabled(true);
-			            }
-			        }
-			    }
-			}
+//			BillItem[] items = getBillCardPanel().getBillData().getBillModel(BXConstans.CSHARE_PAGE).getBodyItems();
+//			if (items != null) {
+//			    for (BillItem item : items) {
+//			        if (item.isShow()) {
+//			            if (item.getComponent() instanceof UIRefPane) {
+//			                UIRefPane refPane = (UIRefPane)item.getComponent();
+//			                refPane.setMultiSelectedEnabled(true);
+//			            }
+//			        }
+//			    }
+//			}
 			
 			this.getBillCardPanel().getHeadItem(JKBXHeaderVO.FYDWBM_V).getComponent().setEnabled(false);
 
@@ -374,7 +413,19 @@ public class EventHandleUtil {
 	}
 	
 	public void setHeadBbje() throws BusinessException{
-		
+		String pk_group = null;
+		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject() != null) {
+			pk_group = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString();
+		}
+		String djlxbm = null;
+		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.DJLXBM).getValueObject() != null) {
+			djlxbm = getBillCardPanel().getHeadItem(JKBXHeaderVO.DJLXBM).getValueObject().toString();
+		}
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(pk_group, djlxbm, ErmDjlxConst.BXTYPE_ADJUST);
+		if(isAdjust){
+			// 费用调整情况，根据分摊明细行合计表头
+			return ;
+		}
 		UFDouble total =UFDouble.ZERO_DBL;
 		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.TOTAL) != null) {
 			total = setHeadAmountValue(JKBXHeaderVO.TOTAL);
@@ -386,10 +437,6 @@ public class EventHandleUtil {
 			bzbm = getBillCardPanel().getHeadItem(JKBXHeaderVO.BZBM).getValueObject().toString();
 		}
 		UFDouble hl = getBodyAmountValue(JKBXHeaderVO.BBHL);
-		String pk_group = null;
-		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject() != null) {
-			pk_group = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString();
-		}
 		if (getPk_org() != null) {
 			//从表体上得到原币金额和本币金额
 			UFDouble ybje =UFDouble.ZERO_DBL;
@@ -520,7 +567,15 @@ public class EventHandleUtil {
 		}
 		resetCjkjeAndYe(total, bzbm, hl);
 		
-		ErmForCShareUiUtil.reComputeAllJeByRatio(getBillCardPanel());
+		String djlxbm = null;
+		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.DJLXBM).getValueObject() != null) {
+			djlxbm = getBillCardPanel().getHeadItem(JKBXHeaderVO.DJLXBM).getValueObject().toString();
+		}
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(pk_group, djlxbm, ErmDjlxConst.BXTYPE_ADJUST);
+		if(!isAdjust){
+			// 费用调整单情况，不进行分摊明细行表体重算
+			ErmForCShareUiUtil.reComputeAllJeByRatio(getBillCardPanel());
+		}
 	}
 	
 	/**
@@ -655,6 +710,12 @@ public class EventHandleUtil {
 	 */
 	public void resetCjkjeAndYe(UFDouble total, String bzbm, UFDouble hl)
 			throws BusinessException {
+		DjLXVO currentDjlx = ((ErmBillBillManageModel)editor.getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjlx, ErmDjlxConst.BXTYPE_ADJUST);
+		if(isAdjust){
+			// 调整单不处理冲借款、支付金额
+			return ;
+		}
 		UFDouble[] je = null;
 		/**
 		 * 重新设置冲借款金额，还款金额和支付金额字段.
@@ -822,8 +883,12 @@ public class EventHandleUtil {
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.GLOBALBBHL, money[3]);
 
 			resetCjkjeAndYe(je[0], bzbm, hl);
+			boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjlx, ErmDjlxConst.BXTYPE_ADJUST);
+			if(!isAdjust){
+				// 费用调整单情况不处理表体金额联动
+				ErmForCShareUiUtil.reComputeAllJeByRatio(getBillCardPanel());
+			}
 			
-			ErmForCShareUiUtil.reComputeAllJeByRatio(getBillCardPanel());
 		} catch (BusinessException e) {
 			ExceptionHandler.consume(e);
 		}
@@ -849,6 +914,13 @@ public class EventHandleUtil {
 	}
 
 	public String getPk_org() {
+		if(editor.getModel().getContext().getEntranceUI() instanceof AbstractFunclet){
+			if(((AbstractFunclet)editor.getModel().getContext().getEntranceUI()).getFuncletContext() == null){
+				//导入导出
+				return (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG)
+				.getValueObject();
+			}
+		}
 		if (!editor.isShowing()) {
 			return null;
 		} else if (editor.isShowing()) {

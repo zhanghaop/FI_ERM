@@ -413,8 +413,9 @@ public abstract class ArapBxActEffImp {
 
 			List<JKBXHeaderVO> bxFyControlVolist = new ArrayList<JKBXHeaderVO>();
 			for (JKBXVO vo : vos) {
-				// 无费用分摊，待摊 则走预算
-				if (!ErmForCShareUtil.isHasCShare(vo) && vo.getParentVO().getIsexpamt().equals(UFBoolean.FALSE)) {
+				// 无费用分摊，待摊 ,无核销预提----则走预算
+				if (!ErmForCShareUtil.isHasCShare(vo) && vo.getParentVO().getIsexpamt().equals(UFBoolean.FALSE)
+						&& (vo.getAccruedVerifyVO() == null || vo.getAccruedVerifyVO().length ==0)) {
 					JKBXHeaderVO[] headers = ErVOUtils.prepareBxvoItemToHeaderClone(vo);
 					for (JKBXHeaderVO shead : headers) {
 						bxFyControlVolist.add(shead);
@@ -628,16 +629,19 @@ public abstract class ArapBxActEffImp {
 			List<YsControlVO> bxYsControlList = new ArrayList<YsControlVO>();
 
 			for (JKBXVO vo : vos) {
-				// 无费用分摊，无待摊则走预算（处理报销单的新旧VO预算）
-				if (!ErmForCShareUtil.isHasCShare(vo) && vo.getParentVO().getIsexpamt().equals(UFBoolean.FALSE)) {
+				// 无费用分摊，无待摊，无核销预提----则走预算（处理报销单的新旧VO预算）
+				if (!ErmForCShareUtil.isHasCShare(vo) && vo.getParentVO().getIsexpamt().equals(UFBoolean.FALSE)
+						&& (vo.getAccruedVerifyVO() == null || vo.getAccruedVerifyVO().length == 0)) {
 					JKBXHeaderVO[] headers = ErVOUtils.prepareBxvoItemToHeaderClone(vo);
 					for (JKBXHeaderVO shead : headers) {
 						list.add(shead);
 					}
 				}
-				if (!ErmForCShareUtil.isHasCShare(vo.getBxoldvo())
-						&& vo.getBxoldvo().getParentVO().getIsexpamt().equals(UFBoolean.FALSE)) {
-					JKBXHeaderVO[] oldHeaders = ErVOUtils.prepareBxvoItemToHeaderClone(vo.getBxoldvo());
+				JKBXVO bxoldvo = vo.getBxoldvo();
+				if (!ErmForCShareUtil.isHasCShare(bxoldvo)
+						&& bxoldvo.getParentVO().getIsexpamt().equals(UFBoolean.FALSE)
+						&& (bxoldvo.getAccruedVerifyVO() == null || bxoldvo.getAccruedVerifyVO().length == 0)) {
+					JKBXHeaderVO[] oldHeaders = ErVOUtils.prepareBxvoItemToHeaderClone(bxoldvo);
 					for (JKBXHeaderVO shead : oldHeaders) {
 						oldList.add(shead);
 					}
@@ -651,12 +655,12 @@ public abstract class ArapBxActEffImp {
 					}
 					contrastList.addAll(getContrastYsFyVos(vo.getParentVO(), consts));
 				}
-				if (vo.getBxoldvo().getContrastVO() != null && vo.getBxoldvo().getContrastVO().length != 0 && StringUtil.isEmpty(vo.getBxoldvo().getParentVO().getPk_item())) {
+				if (bxoldvo.getContrastVO() != null && bxoldvo.getContrastVO().length != 0 && StringUtil.isEmpty(bxoldvo.getParentVO().getPk_item())) {
 					List<BxcontrastVO> consts = new ArrayList<BxcontrastVO>();
-					for (BxcontrastVO constsvo : vo.getBxoldvo().getContrastVO()) {
+					for (BxcontrastVO constsvo : bxoldvo.getContrastVO()) {
 						consts.add(constsvo);
 					}
-					oldContrastList.addAll(getContrastYsFyVos(vo.getBxoldvo().getParentVO(), consts));
+					oldContrastList.addAll(getContrastYsFyVos(bxoldvo.getParentVO(), consts));
 				}
 
 			}

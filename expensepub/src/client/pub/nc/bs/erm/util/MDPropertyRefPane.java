@@ -24,6 +24,7 @@ public class MDPropertyRefPane extends UIRefPane {
 	private MDPropertyDialog dialog = null;
 	private String dialogName;
 	private String entityid;
+	private String bizmodelStyle;//ÒµÎñ³¡¾°
 	private static final List<String> fieldList = new ArrayList<String>();
     
     static {
@@ -31,34 +32,43 @@ public class MDPropertyRefPane extends UIRefPane {
         fieldList.add("name");
     }
     
+    public MDPropertyRefPane(String dialogName, String entityid,String style) {
+    	this(dialogName,entityid);
+    	this.setBizmodelStyle(style);
+    }
+    
 	public MDPropertyRefPane(String dialogName, String entityid) {
 		super();
 		this.setEntityid(entityid);
 		this.setDialogName(dialogName);
-		this.setRefModel(new AbstractRefModel() {
-		    
-		    public int getFieldIndex(String field) {
-		        return fieldList.indexOf(field);
-		    }
-		    
-		    @SuppressWarnings({ "rawtypes", "unchecked" })
+		this.setBizmodelStyle("erm");
+	}
+	
+	private AbstractRefModel newRefModel() {
+	    AbstractRefModel refModel = new AbstractRefModel() {
+            
+            public int getFieldIndex(String field) {
+                return fieldList.indexOf(field);
+            }
+            
+            @SuppressWarnings({ "unchecked", "rawtypes" })
             @Override
             public Vector getData() {
-		        UITree mdTree = getDialog().getEntityTree();
-		        Enumeration enumera = ((MDTreeNode)mdTree.getModel().getRoot()).children();
-		        Vector vec = new Vector();
-		        while (enumera.hasMoreElements()) {
-		            MDTreeNode treeNode = (MDTreeNode)enumera.nextElement();
-		            MDNode node = (MDNode)treeNode.getUserObject();
-		            IAttribute att = node.getAttribute();
-	                Vector row = new Vector();
-	                row.add(att.getName());
-	                row.add(att.getDisplayName());
-	                vec.add(row);
-		        }
+                UITree mdTree = getDialog().getEntityTree();
+                Enumeration enumera = ((MDTreeNode)mdTree.getModel().getRoot()).children();
+                Vector vec = new Vector();
+                while (enumera.hasMoreElements()) {
+                    MDTreeNode treeNode = (MDTreeNode)enumera.nextElement();
+                    MDNode node = (MDNode)treeNode.getUserObject();
+                    IAttribute att = node.getAttribute();
+                    Vector row = new Vector();
+                    row.add(att.getName());
+                    row.add(att.getDisplayName());
+                    vec.add(row);
+                }
                 return vec;
             }
-		    
+            
             @Override
             public String getPkFieldCode() {
                 return fieldList.get(0);
@@ -79,28 +89,37 @@ public class MDPropertyRefPane extends UIRefPane {
                 return fieldList.toArray(new String[fieldList.size()]);
             }
 
-            @SuppressWarnings("rawtypes")
+            @SuppressWarnings({ "rawtypes" })
             public void setSelectedData(Vector vecSelectedData) {
-		        if (m_vecSelectedData == null && vecSelectedData == null) {
-		            return;
-		        }
+                if (m_vecSelectedData == null && vecSelectedData == null) {
+                    return;
+                }
                 m_vecSelectedData = vecSelectedData;
                 setInitData(vecSelectedData);
+            }
 
-		    }
-
-		});
-		this.getRefModel().addChangeListener(null);
-		getDialog();
+        };
+        return refModel;
 	}
+	
+	@Override
+    public AbstractRefModel getRefModel() {
+	    AbstractRefModel refModel = super.getRefModel();
+	    if (refModel == null) {
+	        refModel = newRefModel();
+	        refModel.addChangeListener(null);
+	        setRefModel(refModel);
+	    }
+	    return refModel;
+    }
 
-	public MDPropertyDialog getDialog() {
+    public MDPropertyDialog getDialog() {
 		if (dialog == null) {
-			dialog = new MDPropertyDialog(this, getDialogName(), getEntityid());
+				dialog = new MDPropertyDialog(this, getDialogName(), getEntityid(),getBizmodelStyle());
 		}
 		return dialog;
 	}
-
+	
 	public void setDialog(MDPropertyDialog dialog) {
 		this.dialog = dialog;
 	}
@@ -121,7 +140,9 @@ public class MDPropertyRefPane extends UIRefPane {
         Map<String, String> map = getDialog().getSelecteddatas();
         if ( map != null) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                sText.append(entry.getValue()+",");
+                if (entry.getValue() != null) {
+                    sText.append(entry.getValue()+",");
+                }
             }
         }
         if (sText.length() > 0) {
@@ -161,8 +182,9 @@ public class MDPropertyRefPane extends UIRefPane {
         return sValue.toString();
     }
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Vector getSelectedData() {
+   
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private Vector getSelectedData() {
         String showCode = getRefShowCode();
         String showName = getRefShowName();
         String[] codeArray = showCode.split(",");
@@ -176,8 +198,8 @@ public class MDPropertyRefPane extends UIRefPane {
         }
         return vecSelectedData;
     }
-    
-    @SuppressWarnings("rawtypes")
+  
+	@SuppressWarnings("rawtypes")
     private void setInitData(Vector vector) {
         Map<String, String> map = new LinkedHashMap<String, String>();
         if (vector != null) {
@@ -209,6 +231,14 @@ public class MDPropertyRefPane extends UIRefPane {
 
 	public void setEntityid(String entityid) {
 		this.entityid = entityid;
+	}
+
+	public String getBizmodelStyle() {
+		return bizmodelStyle;
+	}
+
+	public void setBizmodelStyle(String bizmodelStyle) {
+		this.bizmodelStyle = bizmodelStyle;
 	}
 
 }

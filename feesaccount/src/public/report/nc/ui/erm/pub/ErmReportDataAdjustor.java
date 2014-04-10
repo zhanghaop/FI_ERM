@@ -52,6 +52,7 @@ import com.ufsoft.report.constant.DefaultSetting;
 import com.ufsoft.table.AreaPosition;
 import com.ufsoft.table.Cell;
 import com.ufsoft.table.CellPosition;
+import com.ufsoft.table.CellsModel;
 import com.ufsoft.table.TableStyle;
 import com.ufsoft.table.format.CellAlign;
 import com.ufsoft.table.format.CellFont;
@@ -59,13 +60,13 @@ import com.ufsoft.table.format.CellLines;
 import com.ufsoft.table.format.DefaultDataFormat;
 import com.ufsoft.table.format.ICellLine;
 import com.ufsoft.table.format.IFormat;
+import com.ufsoft.table.header.Header;
 import com.ufsoft.table.header.HeaderModel;
 
 public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
 
     public ErmReportDataAdjustor(IReportQueryCond queryCond) {
         super(queryCond);
-        // TODO Auto-generated constructor stub
     }
     
     private Map<String, String> parseCurrtype(IContext context, DataSet ds) {
@@ -254,8 +255,82 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
 //            TableConstant.UNDEFINED, TableConstant.UNDEFINED,
 //            TableConstant.UNDEFINED, TableConstant.UNDEFINED };
     
+    private void formatTitle(int nStartRow, int extRow, AbsAnaReportModel reportModel ) {
+        CellsModel formatModel = reportModel.getFormatModel();
+        List<List<Cell>> cells = formatModel.getCells(); 
+        ExtendAreaCell[] extendAreaCell = reportModel.getExtendAreaModel().getExtendAreaCells();
+        int endColumn = extendAreaCell[1].getArea().getEnd().getColumn();
+        for (int nRow = nStartRow; nRow < extRow; nRow++) {
+            List<Cell> rowList = cells.get(nRow);
+            for (int nCol = 0; nCol < endColumn; nCol++) {
+                Cell cell = rowList.get(nCol);
+                if (cell != null) {
+                    ReportVariable var = (ReportVariable)cell.getExtFmt("report_var_info");
+                    if (var != null) {
+                        Cell left = rowList.get(nCol - 1);
+                        left.setValue(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+                                "erm_report", "1erm_report0196"));/* @res "业务单元：" */
+                    }
+                }
+            }
+        }
+    }
+    
     private void formatCell(IContext context, DataSet ds,
             AbsAnaReportModel reportModel) {
+
+        CellsModel formatModel = reportModel.getFormatModel();
+        ExtendAreaCell[] extendAreaCell = reportModel.getExtendAreaModel().getExtendAreaCells();
+        List<List<Cell>> cells = formatModel.getCells(); 
+        int extRow = 0;
+        int nStartRow = 1;
+        if (extendAreaCell.length == 1) {
+            extRow = extendAreaCell[0].getArea().getStart().getRow();
+        } else {
+            nStartRow = extendAreaCell[0].getArea().getEnd().getRow();
+            extRow = extendAreaCell[1].getArea().getStart().getRow();
+            formatTitle(nStartRow, extRow, reportModel);
+        }
+        
+        HeaderModel headerModel = formatModel.getColumnHeaderModel();
+        int nHeaderIndex = 0;
+        for (Header header : headerModel.getHeaders()) {
+            if (header.getSize() == TableStyle.MINHEADER) {
+//                int extRow = reportModel.getExtendAreaModel().getExtendAreaCells()[0].getArea().getStart().getRow();
+                for (nStartRow = 1; nStartRow < extRow; nStartRow++) {
+                    List<Cell> rowList = cells.get(nStartRow);
+
+                    Cell pre = rowList.get(nHeaderIndex - 1);
+                    Cell next = rowList.get(nHeaderIndex + 1);
+                    ReportVariable preVar = null;
+                    if (pre != null) {
+                        preVar = (ReportVariable)pre.getExtFmt("report_var_info");
+                    }
+                    ReportVariable nextVar = null;
+                    if (next != null) {
+                        nextVar = (ReportVariable)next.getExtFmt("report_var_info");
+                    }
+                    
+                    if ((pre == null || pre.getValue() == null) && preVar == null) {
+                        if (nextVar == null || nextVar.getValue() == null) {
+                            //值单元格，没有值时，不处理
+                            continue;
+                        }
+
+                        AreaPosition areaPosition = AreaPosition.getInstance(nStartRow, nHeaderIndex - 1, 2, 1);
+                        AreaPosition toMove = AreaPosition.getInstance(nStartRow, nHeaderIndex , 1, 1);
+                        formatModel.moveCells(toMove, CellPosition.getInstance(nStartRow, nHeaderIndex - 1));
+                        formatModel.getCombinedAreaModel().combineCell(areaPosition);
+                    } else if (next == null || next.getValue() == null) {
+                        AreaPosition areaPosition = AreaPosition.getInstance(nStartRow, nHeaderIndex, 2, 1);
+                        formatModel.getCombinedAreaModel().combineCell(areaPosition);
+                    }
+                }
+                break;
+            }
+            nHeaderIndex++;
+        }
+        
         ReportVariables varPool = (ReportVariables)context.getAttribute(IPubReportConstants.REPORT_VAR_POOL);
         if (varPool != null) {
             Map<String, String> excludeCell = new HashMap<String, String>();
@@ -272,12 +347,10 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
                     if (var.getValue() == null || 
                             "".equals(var.getValue().toString().trim())) {
                         cellLine = CellLines.getInstance(DefaultSetting.NO_LINES_TYPE, DefaultSetting.NO_LINES_COLOR);
-//                        cellLine = CellLines.getInstance(DEFAULT_LINES_TYPE, DefaultSetting.NO_LINES_COLOR);
                     } else {
                         excludeCell.put(cellPos.getRow() + "_" + cellPos.getColumn(), null);
                         excludeCell.put(cellPos.getRow() + "_" + (cellPos.getColumn() - 1), null);
                         excludeCell.put(cellPos.getRow() + "_" + (cellPos.getColumn() + 1), null);
-//                        cellLine = CellLines.getInstance(DEFAULT_LINES_TYPE, DefaultSetting.NO_LINES_COLOR);
                         continue;
                     }
                     Cell cell = reportModel.getFormatModel().getCell(cellPos);
@@ -303,22 +376,6 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
                         }
                         cell.setFormat(format);
                     }
-//                    CellPosition celPosPre = CellPosition.getInstance(cell.getRow(), cell.getCol() - 1);
-//                    if (celPosPre != null) {
-//                        Cell cellPre = reportModel.getFormatModel().getCell(celPosPre);
-//                        if (cellPre != null &&
-//                                !excludeCell.containsKey(celPosPre.getRow() + "_" + celPosPre.getColumn())) {
-//                            cellPre.setFormat(format);
-//                        }
-//                    }
-//                    CellPosition celPosNext = CellPosition.getInstance(cell.getRow(), cell.getCol() + 1);
-//                    if (celPosNext != null) {
-//                        Cell cellNext = reportModel.getFormatModel().getCell(celPosNext);
-//                        if (cellNext != null && 
-//                                !excludeCell.containsKey(celPosNext.getRow() + "_" + celPosNext.getColumn())) {
-//                            cellNext.setFormat(format);
-//                        }
-//                    }
                 }
             }
         }
@@ -337,7 +394,6 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
     @Override
     public CrossTableModel doAdjustCrossHeader(String areaPK, IContext context,
             CrossTableModel crossTabel, AbsAnaReportModel reportModel) {
-        // TODO Auto-generated method stub
         return super.doAdjustCrossHeader(areaPK, context, crossTabel, reportModel);
     }
     
@@ -360,6 +416,20 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
         ReportQueryCondVO reportQueryCondVO = getQueryCond(context);
         if (reportQueryCondVO == null || reportQueryCondVO.getRepInitContext() == null) {
             return;
+        }
+        if ((Boolean)reportQueryCondVO.getUserObject().get("isPkorgSameAssumeOrg")) {
+            ExtendAreaModel exModel = ExtendAreaModel.getInstance(reportModel.getCellsModel());
+            CellPosition[] cellPosArr = exModel.getExtendAreaCells()[0].getArea().split();
+            for (CellPosition cellPos : cellPosArr) {
+                AnaRepField fld = (AnaRepField) exModel.getExtendAreaCells()[0].getCellInfoSet().getExtInfo(cellPos, AnaRepField.EXKEY_FIELDINFO);
+                if (fld != null && fld.getFldname().equals("org")) {
+                    CellPosition pos = cellPos.getMoveArea(-1, 0);
+                    Cell cell = reportModel.getFormatModel().getCell(pos);
+                    cell.setValue(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+                            "erm_report", "1erm_report0195"));/* @res "业务单元" */
+                    break;
+                }
+            }
         }
         AggReportInitializeVO aggReportInitializeVO = reportQueryCondVO.getRepInitContext(); 
         boolean beForeignCurrency = IPubReportConstants.ACCOUNT_FORMAT_FOREIGN
@@ -392,8 +462,6 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
 //                bHideField = Boolean.valueOf(true);
 //                context.setAttribute(pk_report, bHideField);
 //            }
-        } else {
-            
         }
     }
     
@@ -431,7 +499,6 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
 
     @Override
     public void doReportAdjust(IContext context, AnaReportModel reportModel) {
-        // TODO Auto-generated method stub
         super.doReportAdjust(context, reportModel);
     }
 

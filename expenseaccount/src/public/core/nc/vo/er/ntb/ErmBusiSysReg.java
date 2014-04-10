@@ -21,7 +21,6 @@ import nc.vo.tb.control.ControlObjectType;
 
 /**
  * <p>
- * TODO
  * 报销管理部分实现预算接口
  *  * 功能描述:需要通过预算系统进行预算控制,通过预算系统进行控制的报销业务系统必须
  			提供该接口的VO实现类,并且需要在预算的业务系统注册表(ntb_id_sysreg)中以如下的方式
@@ -61,7 +60,7 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 		try {
 			String group = InvocationInfoProxy.getInstance().getGroupId();
 			//add by lvhj 查询条件增加费用结转单、事项审批单动作，与报销相同
-			djlxs = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, " djdl in ('jk','bx','ma','cs','at') and pk_group='" + group +"'");
+			djlxs = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, " djdl in ('jk','bx','ma','cs','at','ac') and pk_group='" + group +"'");
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
 			return null;
@@ -104,22 +103,23 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 			ctrlBillOrgs = new ArrayList<String>();
 			ctrlBillOrgsMap.put(djdl, ctrlBillOrgs);
 
-			if(BXConstans.BX_DJDL.equals(djdl)||BXConstans.JK_DJDL.equals(djdl)){
+			if (BXConstans.BX_DJDL.equals(djdl) || BXConstans.JK_DJDL.equals(djdl)) {
 				// 借款报销单主组织
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_ORG);//借款报销单位
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_ORG);// 借款报销单位
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);// 费用承担单位
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_ERM_ORG);// 借款报销人单位
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_PAY_ORG);//支付单位
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);//利润中心
-			}else if(ErmBillConst.MatterApp_DJDL.equals(djdl)){
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_PAY_ORG);// 支付单位
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);// 利润中心
+			} else if (ErmBillConst.MatterApp_DJDL.equals(djdl) || ErmBillConst.AccruedBill_DJDL.equals(djdl)) {
 				// 费用申请单主组织
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);//费用承担单位
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);// 费用承担单位
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_ORG);// 财务组织
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);//利润中心
-			}else if(IErmCostShareConst.COSTSHARE_DJDL.equals(djdl)||ExpAmoritizeConst.Expamoritize_DJDL.equals(djdl)){
-				//费用结转单、摊销信息主组织
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);//费用承担单位
-				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);//利润中心
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);// 利润中心
+			} else if (IErmCostShareConst.COSTSHARE_DJDL.equals(djdl)
+					|| ExpAmoritizeConst.Expamoritize_DJDL.equals(djdl)) {
+				// 费用结转单、摊销信息主组织
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);// 费用承担单位
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);// 利润中心
 			}
 		}
 		return ctrlBillOrgs;
@@ -154,6 +154,10 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 			}else if(ExpAmoritizeConst.Expamoritize_DJDL.equals(djdl)){
 				//摊销预算动作
 				ctrlBillActions.put(BXConstans.ERM_NTB_AMORTIZE_KEY, BXConstans.ERM_NTB_AMORTIZE_VALUE);
+			}else if(ErmBillConst.AccruedBill_DJDL.equals(djdl)){
+				//预提单
+				ctrlBillActions.put(BXConstans.ERM_NTB_SAVE_KEY, BXConstans.ERM_NTB_SAVE_VALUE);
+				ctrlBillActions.put(BXConstans.ERM_NTB_APPROVE_KEY, BXConstans.ERM_NTB_APPROVE_VALUE);
 			}
 		}
 		return ctrlBillActions;
@@ -165,14 +169,12 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
      */
 	public String getBusiSysDesc() {
 		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0116")/*@res "NC费用管理"*/;
-//		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000399")/*@res "NC财务报销"*/;
 	}
 
 	/**
      * 返回报销管理业务系统的ID
      */
 	public String getBusiSysID() {
-
 		return  BXConstans.ERM_PRODUCT_CODE_Lower;
 
 	}
@@ -181,7 +183,6 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 	 * 获取业务系统的可控业务类型
 	 */
 	public String[] getBusiType() {
-
 		return null;
 	}
 
@@ -189,7 +190,6 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 	 * 获取业务系统的可控业务类型描述
 	 */
 	public String[] getBusiTypeDesc() {
-
 		return null;
 	}
 
@@ -206,7 +206,6 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 	 * 获取业务系统的可控方向类型描述
 	 */
 	public String[] getControlableDirectionsDesc() {
-
 		return new String[] { nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000401")/*@res "收"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000402")/*@res "付"*/ };
 	}
 

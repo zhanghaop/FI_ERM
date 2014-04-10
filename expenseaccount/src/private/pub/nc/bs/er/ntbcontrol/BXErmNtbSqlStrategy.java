@@ -52,6 +52,8 @@ public class BXErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		sql.append(" and fb.dr=0 and zb.dr=0 and zb.qcbz='N' ");
 		sql.append(" and zb.isexpamt = 'N' ");
 		sql.append(" and (cs.src_id is null or (cs.src_type = 0 and cs.billstatus < 2))");
+		// 过滤掉核销预提的报销单
+		sql.append(" and (acv.pk_bxd is null)");
 		//单据状态 
 		sql.append(getBillStatus());
 		return sql.toString();
@@ -89,7 +91,8 @@ public class BXErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 	}
 	
 	private String getBxFromSql() {
-		String from = " er_bxzb zb inner join er_busitem fb on zb.pk_jkbx = fb.pk_jkbx left join er_costshare cs on cs.src_id = zb.pk_jkbx ";
+		String from = " er_bxzb zb inner join er_busitem fb on zb.pk_jkbx = fb.pk_jkbx left join er_costshare cs on cs.src_id = zb.pk_jkbx" +
+				" left join er_accrued_verify acv on acv.pk_bxd = zb.pk_jkbx ";
 		return from;
 	}
 

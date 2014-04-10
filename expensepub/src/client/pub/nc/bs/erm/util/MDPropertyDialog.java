@@ -4,19 +4,24 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import nc.bs.logging.Logger;
 import nc.md.MDBaseQueryFacade;
+import nc.md.model.IAttribute;
 import nc.md.model.IBean;
 import nc.md.model.context.MDNode;
 import nc.md.model.type.IType;
 import nc.md.util.MDUtil;
 import nc.ui.md.MDTreeBuilder;
+import nc.ui.md.MDTreeNode;
 import nc.ui.pub.beans.UIButton;
 import nc.ui.pub.beans.UIDialog;
 import nc.ui.pub.beans.UIPanel;
@@ -35,7 +40,7 @@ public class MDPropertyDialog extends UIDialog {
 	private UIButton btnOK = null;
 	private UIButton btnCancel = null;
 	private IBean entitybean = null;
-	private static final String bizmodelStyle = "erm"; // 业务场景
+	private String bizmodelStyle = "erm"; // 业务场景
 	private String entityid;
 	private Map<String, String> selecteddatas = null;
 
@@ -48,6 +53,13 @@ public class MDPropertyDialog extends UIDialog {
 	public MDPropertyDialog(Container parent, String entityid) {
 		super(parent);
 		this.setEntityid(entityid);
+		initialize();
+	}
+	
+	public MDPropertyDialog(Container parent, String title,String entityid,String modelStyle) {
+		super(parent, title);
+		this.setEntityid(entityid);
+		bizmodelStyle=modelStyle;
 		initialize();
 	}
 
@@ -98,21 +110,21 @@ public class MDPropertyDialog extends UIDialog {
 	}
 
 	private Map<String, String> getSelectedFullpathAttr(UITree mdTree) {
-		selecteddatas = new LinkedHashMap<String, String>();
 		TreePath tp = mdTree.getSelectionPath();
 		if (tp == null) {
 			return null;
 		}
+        selecteddatas = new LinkedHashMap<String, String>();
 		addSelectedData(tp);
 		return selecteddatas;
 	}
 
 	private Map<String, String> getSelectedFullpathAttrs(UITree mdTree) {
-		selecteddatas = new LinkedHashMap<String, String>();
 		TreePath[] treePaths = mdTree.getSelectionPaths();
 		if (treePaths == null || treePaths.length == 0) {
 			return null;
 		}
+        selecteddatas = new LinkedHashMap<String, String>();
 		for (TreePath tp : treePaths) {
 			addSelectedData(tp);
 		}
@@ -211,6 +223,67 @@ public class MDPropertyDialog extends UIDialog {
 
 	public void setSelecteddatas(Map<String, String> selecteddatas) {
 		this.selecteddatas = selecteddatas;
+		locateNode();
+	}
+	
+	public MDTreeNode locateNode() {
+	    TreeModel model = getEntityTree().getModel();
+	    MDTreeNode result = null;
+	    if (model instanceof DefaultTreeModel && !selecteddatas.isEmpty()) {
+	        DefaultTreeModel defModel = (DefaultTreeModel)model;
+	        MDTreeNode root = (MDTreeNode)defModel.getRoot();
+	        root.addChilds(true);
+	        @SuppressWarnings("rawtypes")
+            Enumeration enumeration = root.preorderEnumeration();
+	        while (enumeration.hasMoreElements()) {
+	            MDTreeNode treeNode = (MDTreeNode)enumeration.nextElement();
+	            if (treeNode.getLevel() > 2) {
+	                continue;
+	            }
+	            if (treeNode.getUserObject() instanceof MDNode) {
+	                if (treeNode.getLevel() == 0) {
+	                    continue;
+	                }
+                    MDNode mdNode = treeNode.getMDNode();
+	                IAttribute att = mdNode.getAttribute();
+	                if (att == null || att.getRefModelName() == null) {
+                        treeNode.addChilds(true);
+	                }
+	                boolean found = false;
+                    for (String key : selecteddatas.keySet()) {
+                        if (key == null) {
+                            continue;
+                        }
+                        String[] items = key.split("\\.");
+                        if (items.length == 1) {
+                            if (items[0].equals(att.getName()) && 
+                                    treeNode.getParent() != null && 
+                                    treeNode.getParent().getParent() == null) {
+                                found = true;
+                                   break;
+                            }
+                        } else {
+                            if (att != null && att.getOwnerBean() != null && 
+                                    att.getOwnerBean().getTable() != null &&
+                                    (key.equals(att.getOwnerBean().getTable().getName() + "." + att.getName()) ||
+                                            key.equals(att.getOwnerBean().getName() + "." + att.getName()))) {
+                                found = true;
+                                break;
+                            } 
+                        }
+                    }
+                    if (found) {
+                        result = treeNode;
+                        TreePath path = new TreePath(result.getPath());
+                        getEntityTree().setSelectionPath(path);
+                        getEntityTree().scrollPathToVisible(path);
+                        getEntityTree().scrollPathToVisible(path);
+                        break;
+                    }
+	            }
+	        }
+	    }
+	    return result;
 	}
 	
 }

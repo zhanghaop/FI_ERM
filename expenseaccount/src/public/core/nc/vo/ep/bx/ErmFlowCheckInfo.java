@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import nc.bs.erm.event.ErmEventType;
 import nc.bs.framework.common.InvocationInfoProxy;
@@ -12,15 +14,22 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.prv.IWriteBackPrivate;
+import nc.itf.er.reimtype.IReimTypeService;
 import nc.itf.erm.ntb.IBXYsControlService;
+import nc.itf.fi.pub.SysInit;
 import nc.itf.pim.budget.pub.IbudgetExe4ExpenseBill;
 import nc.itf.tb.control.IBudgetControl;
 import nc.pubitf.erm.costshare.IErmCostShareYsControlService;
 import nc.pubitf.erm.matterappctrl.IMatterAppCtrlService;
+import nc.ui.pub.formulaparse.FormulaParse;
 import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXUtil;
+import nc.vo.arap.bx.util.BxUIControlUtil;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.er.reimrule.ReimRuleDimVO;
+import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
@@ -33,6 +42,7 @@ import nc.vo.pm.budget.pub.BudgetReturnMSG;
 import nc.vo.pm.budget.pub.BudgetReturnVO;
 import nc.vo.pmbd.budgetctrl.BudgetCtrlTypeConst;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.tb.control.DataRuleVO;
@@ -86,6 +96,165 @@ public class ErmFlowCheckInfo {
 
 		return isExceed;
 
+	}
+	/**
+	 * 是否超标准，需求最后说要做的，变态啊
+	 * 
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 */
+	/**
+	 * 借款报销单多个子表的编码
+	 * 与单据模版的页签编码对应
+	 */
+	public static String[] tableCodes =  new String[]{"er_busitem",
+		   		"costsharedetail","er_bxcontrast","er_tbbdetail",
+		   		"accrued_verify","jk_contrast","jk_busitem"};
+	public UFBoolean checkReimRule(JKBXVO vo) throws BusinessException {
+		UFBoolean isExceed = UFBoolean.FALSE;
+		if (vo == null || vo.getParentVO() == null)
+			return isExceed;
+		//比较集团级标准,若集团级已经超标准，则直接返回
+		isExceed = doCheckReimRule(vo,vo.getParentVO().getPk_group(),ReimRulerVO.PKORG);
+		if(isExceed.booleanValue() == true)
+			return isExceed;
+		//否则，继续比较组织级标准
+		isExceed = doCheckReimRule(vo,vo.getParentVO().getPk_group(),getPkOrg(vo));
+		return isExceed;
+	}
+	
+	// 根据集团级参数“报销标准适用规则”,来取组织
+	public String getPkOrg(JKBXVO vo){
+		//获取组织
+		String pk_org = null;
+		try {
+			String PARAM_ER8 = SysInit.getParaString(vo.getParentVO().getPk_group(), BXParamConstant.PARAM_ER_REIMRULE);
+			if (PARAM_ER8 != null) {
+				if (PARAM_ER8.equals(BXParamConstant.ER_ER_REIMRULE_PK_ORG)) {
+					pk_org = (String) vo.getParentVO().getAttributeValue(JKBXHeaderVO.PK_ORG);
+				} else if (PARAM_ER8.equals(BXParamConstant.ER_ER_REIMRULE_OPERATOR_ORG)) {
+					pk_org = (String) vo.getParentVO().getAttributeValue(JKBXHeaderVO.DWBM);
+				} else if (PARAM_ER8.equals(BXParamConstant.ER_ER_REIMRULE_ASSUME_ORG)) {
+					pk_org = (String) vo.getParentVO().getAttributeValue(JKBXHeaderVO.FYDWBM);
+				}
+			}
+		} catch (BusinessException e1) {
+			ExceptionHandler.consume(e1);
+		}
+		return pk_org;
+	}
+	
+	//报销标准如果设置了公式，需要进行转换
+	private FormulaParse f;
+	private FormulaParse getFormulaParse(){
+		if(f==null)
+			f = new FormulaParse();
+		return f;
+	}
+	
+	private UFBoolean doCheckReimRule(JKBXVO bxvo,String Pk_group,String pk_org) 
+		throws BusinessException {
+		UFBoolean isExceed = UFBoolean.FALSE;
+		String djlxbm = bxvo.getParentVO().getDjlxbm();
+		if (djlxbm == null || Pk_group==null || pk_org==null)
+			return isExceed;
+		List<ReimRulerVO> ruleVOs;
+		List<ReimRuleDimVO> dimVOs;
+		try {
+			ruleVOs = NCLocator.getInstance().lookup(IReimTypeService.class)
+			.queryReimRuler(djlxbm, Pk_group,pk_org);
+			dimVOs = NCLocator.getInstance().lookup(IReimTypeService.class)
+			.queryReimDim(djlxbm, Pk_group,pk_org);
+			if(dimVOs!=null && dimVOs.size()>=0 && ruleVOs!=null && ruleVOs.size()>0){
+				String regEx = "[^a-zA-Z0-9]";
+				Pattern p = Pattern.compile(regEx);
+				// 根据表头获得相应报销标准
+				List<ReimRulerVO> matchReimRule = BxUIControlUtil.getMatchReimRuleByHead(bxvo, ruleVOs,dimVOs);
+				//单据对应项 为子表的项，需要拿出来与表体一行一行进行比较
+				//例如报销类型就对应子表的属性，需要控制子表的项，dims中存储<报销标准列的item,billrefcode,数据类型名称>
+				List<String> dims = new ArrayList<String>();
+				for(ReimRuleDimVO dimvo:dimVOs)
+				{
+					for(String tablecode:tableCodes)
+						if(dimvo.getBillrefcode()!=null && dimvo.getBillrefcode().startsWith(tablecode))
+						{
+							dims.add(dimvo.getCorrespondingitem()+","+dimvo.getBillrefcode().substring(dimvo.getBillrefcode().indexOf(".")+1)
+									+","+dimvo.getDatatypename());
+						}
+				}
+				for(ReimRulerVO rule:matchReimRule){
+					//提取标准的单据控制项,在表体中找到此项并与标准值进行比较
+					String controlitem = rule.getControlitem_name();
+					if(controlitem==null)
+						continue;
+					String formula = rule.getControlformula();
+					String[] keys = controlitem.split(ReimRulerVO.REMRULE_SPLITER);
+					String tableCode = keys[0];
+					String itemkey = keys[1];
+					CircularlyAccessibleValueObject[] bodyValueVOs = bxvo.getTableVO(tableCode);
+					if (bodyValueVOs != null) {
+						int row = -1;
+						// 对对应子表下的所有行进行遍历
+						for (CircularlyAccessibleValueObject body : bodyValueVOs) {
+							row++;
+							// 查看表体中对应字段值是否与标准相同
+							boolean match = true;
+							for(String str:dims){
+								String[] itemvalues = str.split(",");
+								if(itemvalues.length>3 && itemvalues[2] != null){
+									if (BxUIControlUtil.doSimpleNoEquals(itemvalues[2], Pk_group,
+											rule.getAttributeValue(itemvalues[0]), body.getAttributeValue(itemvalues[1]))) {
+										match = false;
+										break;
+									}
+								}else{
+									if (BxUIControlUtil.doSimpleNoEquals(rule.getAttributeValue(itemvalues[0]), body.getAttributeValue(itemvalues[1]))) {
+										match = false;
+										break;
+									}
+								}
+							}
+							if (match) {
+								if(body.getAttributeValue(itemkey)==null)
+									continue;
+								//比较是否超标准
+								Double amount = Double.parseDouble((body.getAttributeValue(itemkey).toString()));
+								Double standard = rule.getAmount().doubleValue();
+								if(formula!=null){
+									FormulaParse f = getFormulaParse();
+									f.setExpressArray(new String[]{formula});
+									Matcher m = p.matcher(formula);
+									String[] variables = m.replaceAll(" ").trim().split(" ");
+									for(String variable:variables){
+										if(variable!=null && !variable.equals(""))
+											if(body.getAttributeValue(variable) != null){
+												f.addVariable(variable, Double.parseDouble(body.getAttributeValue(variable).toString()));
+											}
+	//									f.addVariable("defitem9", new UFDouble(3));
+									}
+									if(f.getValue()!=null)
+										standard = Double.parseDouble(f.getValue());
+								}
+								if(amount > standard){
+									isExceed=UFBoolean.TRUE;
+									break;
+								}
+							}
+						}
+					}
+					//若已经超过标准，则无需再比较
+					if(isExceed==UFBoolean.TRUE)
+						break;
+				}
+			}
+			return isExceed;
+		} catch (BusinessException e) {
+			nc.bs.logging.Log.getInstance("ermExceptionLog").error(e);
+			ExceptionHandler.consume(e);
+			return UFBoolean.FALSE;
+		}
+		
 	}
 
 	/*
@@ -256,46 +425,49 @@ public class ErmFlowCheckInfo {
 		}
 		
 		// 按部门、单位负责人进行过滤
-		CShareDetailVO[] dtailvos = (CShareDetailVO[]) csVo.getChildrenVO();
-
-		List<String> depts = new ArrayList<String>();
-		List<String> corps = new ArrayList<String>();
-
-		for (int j = 0; j < dtailvos.length; j++) {
-			if (dtailvos[j].getAssume_dept() != null) {
-				depts.add(dtailvos[j].getAssume_dept());
+		if(!vo.getParentVO().isAdjustBxd()){
+			// 费用调整单，不进行负责人过滤
+			CShareDetailVO[] dtailvos = (CShareDetailVO[]) csVo.getChildrenVO();
+			
+			List<String> depts = new ArrayList<String>();
+			List<String> corps = new ArrayList<String>();
+			
+			for (int j = 0; j < dtailvos.length; j++) {
+				if (dtailvos[j].getAssume_dept() != null) {
+					depts.add(dtailvos[j].getAssume_dept());
+				}
+				corps.add(dtailvos[j].getAssume_org());
 			}
-			corps.add(dtailvos[j].getAssume_org());
-		}
-
-		List<String> listCorp = getCorpsByPrincipal(corps);// 当前登录用户负责公司
-		List<String> listDept = getDeptsByPrincipal(depts);// 当前登录用户负责部门
-
-		boolean isNotSameAssumeOrg = new ErmFlowCheckInfo().isSameAssumeOrg(vo).booleanValue();
-		boolean isNotSameAssumeDept = new ErmFlowCheckInfo().isSameAssumeDept(vo).booleanValue();
-
-		List<CShareDetailVO> resultList = new ArrayList<CShareDetailVO>();
-		for (int j = 0; j < dtailvos.length; j++) {
-			if (dtailvos[j].getStatus() == VOStatus.DELETED) {
-				continue;
-			}
-
-			if (isNotSameAssumeOrg) {// 跨单位
-				if (listCorp.contains(dtailvos[j].getAssume_org())) {
-					// 联查负责单位的预算执行情况
+			
+			List<String> listCorp = getCorpsByPrincipal(corps);// 当前登录用户负责公司
+			List<String> listDept = getDeptsByPrincipal(depts);// 当前登录用户负责部门
+			
+			boolean isNotSameAssumeOrg = new ErmFlowCheckInfo().isSameAssumeOrg(vo).booleanValue();
+			boolean isNotSameAssumeDept = new ErmFlowCheckInfo().isSameAssumeDept(vo).booleanValue();
+			
+			List<CShareDetailVO> resultList = new ArrayList<CShareDetailVO>();
+			for (int j = 0; j < dtailvos.length; j++) {
+				if (dtailvos[j].getStatus() == VOStatus.DELETED) {
+					continue;
+				}
+				
+				if (isNotSameAssumeOrg) {// 跨单位
+					if (listCorp.contains(dtailvos[j].getAssume_org())) {
+						// 联查负责单位的预算执行情况
+						resultList.add(dtailvos[j]);
+					}
+				} else if (isNotSameAssumeDept) {// 跨部门
+					if (listDept.contains(dtailvos[j].getAssume_dept())) {
+						// 联查负责部门的预算情况
+						resultList.add(dtailvos[j]);
+					}
+				} else {
 					resultList.add(dtailvos[j]);
 				}
-			} else if (isNotSameAssumeDept) {// 跨部门
-				if (listDept.contains(dtailvos[j].getAssume_dept())) {
-					// 联查负责部门的预算情况
-					resultList.add(dtailvos[j]);
-				}
-			} else {
-				resultList.add(dtailvos[j]);
 			}
+			
+			csVo.setChildrenVO(resultList.toArray(new CShareDetailVO[] {}));
 		}
-
-		csVo.setChildrenVO(resultList.toArray(new CShareDetailVO[] {}));
 
 		IErmCostShareYsControlService service = NCLocator.getInstance().lookup(IErmCostShareYsControlService.class);
 		List<YsControlVO> costYsVoList = service.getCostShareYsVOList(new AggCostShareVO[] { csVo }, false, actionCode);

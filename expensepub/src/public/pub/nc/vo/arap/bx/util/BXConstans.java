@@ -100,6 +100,8 @@ public interface BXConstans {
 	 * 分摊明细页签
 	 */
 	public final String CSHARE_PAGE = "er_cshare_detail";
+	
+	public final String CS_Metadatapath = "costsharedetail";
 
 	public final String CONST_PAGE_JK = "jk_contrast";
 
@@ -109,6 +111,18 @@ public interface BXConstans {
 	public final String BUS_PAGE = "arap_bxbusitem";
 
 	public final String BUS_PAGE_JK = "jk_busitem";
+	
+	/**
+	 * 核销预提明细页签
+	 */
+	public final String AccruedVerify_PAGE = "accrued_verify";
+	
+	public final String AccruedVerify_Metadatapath = "accrued_verify";
+	
+	/**
+	 * 预算占用期间
+	 */
+	public final String Tbb_PAGE = "er_tbbdetail";
 
 	/**
 	 * 集团编码
@@ -237,7 +251,15 @@ public interface BXConstans {
 	public static String ERM_NTB_CONTRAST_MA_UNAPPROVE_NUM = "12";
 	public static String ERM_NTB_CONTRAST_MA_UNAPPROVE_KEY = "CONTRAST_MA_UNAPPROVE";
 	public static String ERM_NTB_CONTRAST_MA_UNAPPROVE_VALUE = "冲费用申请反生效";/*-=notranslate=-*/
-
+	
+	public static String ERM_NTB_REDBACK_NUM = "13";
+	public static String ERM_NTB_REDBACK_KEY = "REDBACK";
+	public static String ERM_NTB_REDBACK_VALUE = "红冲";/*-=notranslate=-*/
+	
+	public static String ERM_NTB_UNREDBACK_NUM = "14";
+	public static String ERM_NTB_UNREDBACK_KEY = "UNREDBACK";
+	public static String ERM_NTB_UNREDBACK_VALUE = "删除红冲";/*-=notranslate=-*/
+	
     /**用于预算单据的主组织类型,可以为多个,比方说销售订单,可以为销售组织,库存组织,财务组织,对应业务系统注册到
      * ntb_id_bdcontrast表中的PK_OBJ字段*/
 
@@ -279,6 +301,8 @@ public interface BXConstans {
 
 	public final String BXMNG_NODECODE="20110BMLB";       //单据管理节点     6.0单据管理 借款单/报销单 集成
 	public final String BXBILL_QUERY = "20110BQLB";       //单据查询节点
+	public final String MONTHEND_DEAL = "20110EndMD";       //月末凭证处理
+	
 	public final String BXLR_QCCODE="20110BO";            //期初单据节点
 	public final String BXREPORT_USERCODE="20111BQB";     //借款人查询节点
 	public final String BXLR_QCCODE_NEW="20110BOII";      //新期初单据节点

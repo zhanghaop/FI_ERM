@@ -55,12 +55,6 @@ public class CostShareYsControlVO  implements IFYControl,java.io.Serializable {
 	}
 
 	@Override
-	public boolean isSSControlAble() {
-		// 不支持事项审批单控制
-		return false;
-	}
-
-	@Override
 	public String getPk_item() {
 		// TODO Auto-generated method stub
 		return null;

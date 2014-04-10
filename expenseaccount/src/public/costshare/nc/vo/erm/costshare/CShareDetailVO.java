@@ -88,6 +88,9 @@ public class CShareDetailVO extends SuperVO {
 	private String pk_proline;// 产品线
 	private String pk_brand;// 品牌
 	public static final String ROWNO = "rowno";//增加行号
+	
+	// EHP2增加
+	private nc.vo.pub.lang.UFDate ysdate;
 
 	public static final String PK_COSTSHARE = "pk_costshare";
 	public static final String PK_CSHARE_DETAIL = "pk_cshare_detail";
@@ -151,6 +154,7 @@ public class CShareDetailVO extends SuperVO {
 	public static final String PK_JKBX = "pk_jkbx";
 	public static final String PK_PROLINE = "pk_proline";// 产品线
 	public static final String PK_BRAND = "pk_brand";// 品牌
+	public static final String YSDATE = "ysdate";// 预算占用日期
 
 	/**
 	 * 费用申请单
@@ -1423,5 +1427,13 @@ public class CShareDetailVO extends SuperVO {
 
 	public void setRowno(java.lang.Integer rowno) {
 		this.rowno = rowno;
+	}
+
+	public nc.vo.pub.lang.UFDate getYsdate() {
+		return ysdate;
+	}
+
+	public void setYsdate(nc.vo.pub.lang.UFDate ysdate) {
+		this.ysdate = ysdate;
 	}
 }

@@ -252,10 +252,10 @@ public class HeadFieldHandleUtil {
 	 * @param headOrg
 	 * @throws BusinessException
 	 */
-	public static void initSqdlr(ErmBillBillForm editor, BillItem headItem, String billtype, BillItem headOrg)
+	public static void initSqdlr(ErmBillBillForm editor, BillItem jkbxr, String billtype, BillItem dwbm)
 			throws BusinessException {
 		UFDate billDate = (UFDate) editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.DJRQ).getValueObject();
-		ErUiUtil.initSqdlr(editor, headItem, billtype, (String) headOrg.getValueObject(), billDate);
+		ErUiUtil.initSqdlr(editor, jkbxr, billtype, (String) dwbm.getValueObject(), billDate);
 	}
 	
 	

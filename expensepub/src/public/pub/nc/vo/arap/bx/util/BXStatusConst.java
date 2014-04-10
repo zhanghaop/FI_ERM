@@ -29,8 +29,17 @@ public class BXStatusConst {
 	public static final int PAYFLAG_Hand = 99;  //支付状态——手工支付 （结算回写）
 	public static final int ALL_CONTRAST = 101;  //全额冲销
 	
+	public static final int MEDeal = 0;	//月末凭证
+	public static final int SXFlag = 1;	//生效环节
+	public static final int ZFFlag = 2;	//当期结算
+	public static final int MEZFFlag = 3;	//跨期结算
+	public static final int ZGDeal = 4;	//暂估凭证
+	public static final int ZGZFFlag = 5;	//暂估结算
+	public static final int ZGMEFlag = 6;	//暂估月末凭证
+	public static final int ZGMEZFFlag = 7;	//暂估月末结算
 	
-	
+	public static final String VounterCondition_QZ = "签字成功";
+	public static final String VounterCondition_ZF = "结算成功";
 
 	
 }

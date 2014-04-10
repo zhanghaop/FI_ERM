@@ -35,6 +35,8 @@
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
 				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
+				<ref bean="nullAction" />
 				<ref bean="printListGroupAction" />
 			</list>
 		</property>
@@ -64,6 +66,8 @@
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
 				<ref bean="nullAction" />
+				<ref bean="importexportActionGroup" />
+				<ref bean="nullAction" />
 				<ref bean="printCardGroupAction" />
 			</list>
 		</property>
@@ -84,7 +88,19 @@
 		</property>
 		<property name="model" ref="manageAppModel" />
 	</bean>
-
+	
+	<bean id="importableEditor"	class="nc.ui.erm.matterapp.importable.MaImportablePanel" >
+		<constructor-arg value ="费用申请单" >
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="manageAppModel" />
+		</constructor-arg>
+		<constructor-arg value ="nc/ui/erm/matterapp/config/matterapp2611.xml" >
+		</constructor-arg>
+		<property name="appModel" ref="manageAppModel"></property>
+		<property name="uiEditor" ref="billFormEditor"></property>
+	</bean>
+	
 	<!-- 界面元素 ###########################################################-->
 	<!-- 列表视图 -->
 	<bean id="listView" class="nc.ui.erm.matterapp.view.MatterAppMNListView" init-method="initUI">

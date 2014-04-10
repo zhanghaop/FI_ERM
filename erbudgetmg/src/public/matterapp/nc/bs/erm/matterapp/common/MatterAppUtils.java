@@ -44,7 +44,7 @@ public class MatterAppUtils {
 			billstatus = ErmMatterAppConst.BILLSTATUS_SAVED;
 			break;
 		case IBillStatus.CHECKGOING:
-			billstatus = ErmMatterAppConst.BILLSTATUS_COMMITED;
+			billstatus = ErmMatterAppConst.BILLSTATUS_SAVED;
 			break;
 		case IBillStatus.CHECKPASS:
 			billstatus = ErmMatterAppConst.BILLSTATUS_APPROVED;
@@ -53,7 +53,7 @@ public class MatterAppUtils {
 			billstatus = ErmMatterAppConst.BILLSTATUS_APPROVED;
 			break;
 		case IBillStatus.COMMIT:
-			billstatus = ErmMatterAppConst.BILLSTATUS_COMMITED;
+			billstatus = ErmMatterAppConst.BILLSTATUS_SAVED;
 			break;
 		default:
 			break;

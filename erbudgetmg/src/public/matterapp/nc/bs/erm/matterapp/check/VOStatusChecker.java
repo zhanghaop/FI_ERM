@@ -9,6 +9,7 @@ import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.pub.lang.UFDateTime;
+import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.trade.pub.IBillStatus;
 
 public class VOStatusChecker {
@@ -20,7 +21,7 @@ public class VOStatusChecker {
 	 */
 	public static void checkApproveStatus(MatterAppVO head) throws DataValidateException {
 		String msgs = checkBillStatus(head.getBillstatus(), ActionUtils.AUDIT,
-				new int[] { ErmMatterAppConst.BILLSTATUS_COMMITED });
+				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED });
 
 		if (!StringUtils.isNullWithTrim(msgs)) {
 			throw new DataValidateException(msgs);
@@ -36,7 +37,7 @@ public class VOStatusChecker {
 	public static void checkUnApproveStatus(AggMatterAppVO aggVo) throws DataValidateException {
 		MatterAppVO head = aggVo.getParentVO();
 		String msgs = checkBillStatus(head.getBillstatus(), ActionUtils.UNAUDIT, new int[] {
-			ErmMatterAppConst.BILLSTATUS_SAVED, ErmMatterAppConst.BILLSTATUS_COMMITED, ErmMatterAppConst.BILLSTATUS_APPROVED });
+			ErmMatterAppConst.BILLSTATUS_SAVED, ErmMatterAppConst.BILLSTATUS_APPROVED });
 
 		if (StringUtils.isNullWithTrim(msgs)) {
 			int closeStatus = head.getClose_status();
@@ -78,6 +79,18 @@ public class VOStatusChecker {
 				ErmMatterAppConst.BILLSTATUS_SAVED, ErmMatterAppConst.BILLSTATUS_TEMPSAVED });
 
 		if (!StringUtils.isNullWithTrim(msgs)) {
+			if (head.getApprstatus() != null
+					&& (head.getApprstatus().equals(IPfRetCheckInfo.GOINGON) || head.getApprstatus().equals(
+							IPfRetCheckInfo.COMMIT))) {
+				msgs = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000398")/*
+																									 * @
+																									 * res
+																									 * "单据正在审核中，不能删除！"
+																									 */;
+			}
+		}
+
+		if (!StringUtils.isNullWithTrim(msgs)) {
 			throw new DataValidateException(msgs);
 		}
 	}
@@ -91,7 +104,14 @@ public class VOStatusChecker {
 	public static void checkCommitStatus(MatterAppVO head) throws DataValidateException {
 		String msgs = checkBillStatus(head.getBillstatus(), ActionUtils.COMMIT,
 				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED });
-
+		
+		if (StringUtils.isNullWithTrim(msgs)) {
+			Integer apprStatus = head.getApprstatus();// 审核状态
+			if (!apprStatus.equals(Integer.valueOf(IBillStatus.FREE))) {
+				msgs = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("201212_0", "非自由态单据,不可提交！", "0201212-0102");
+			}
+		}
+		
 		if (!StringUtils.isNullWithTrim(msgs)) {
 			throw new DataValidateException(msgs);
 		}
@@ -105,7 +125,7 @@ public class VOStatusChecker {
 	 */
 	public static void checkRecallStatus(MatterAppVO head) throws DataValidateException {
 		String msgs = checkBillStatus(head.getBillstatus(), ActionUtils.RECALL,
-				new int[] { ErmMatterAppConst.BILLSTATUS_COMMITED , ErmMatterAppConst.BILLSTATUS_SAVED});
+				new int[] {ErmMatterAppConst.BILLSTATUS_SAVED});
 
 		if (StringUtils.isNullWithTrim(msgs)) {
 			Integer apprStatus = head.getApprstatus();// 审核状态
@@ -208,9 +228,6 @@ public class VOStatusChecker {
 			break;
 		case ErmMatterAppConst.BILLSTATUS_SAVED:
 			name = ErmMatterAppConst.BILLSTATUS_SAVED_NAME;
-			break;
-		case ErmMatterAppConst.BILLSTATUS_COMMITED:
-			name = ErmMatterAppConst.BILLSTATUS_COMMITED_NAME;
 			break;
 		case ErmMatterAppConst.BILLSTATUS_APPROVED:
 			name = ErmMatterAppConst.BILLSTATUS_APPROVED_NAME;

@@ -76,13 +76,12 @@ public class ErPFUtil {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void doTransferArap(JKBXVO vo) throws BusinessException {
 
 		Map<String,TransFerInfo> map=new HashMap<String, TransFerInfo>();
 
 		try {
-
-
 			JKBXHeaderVO head = vo.getParentVO();
 
 			if(head.getDjdl().equals(BXConstans.JK_DJDL)){ //只有报销单才需要进行转往来的操作
@@ -95,7 +94,7 @@ public class ErPFUtil {
 			if(isTransFer!=null && !isTransFer.booleanValue())
 				return;
 
-			if(head.getZfybje().compareTo(new UFDouble(0))!=0){
+			if(head.getZfybje().compareTo(UFDouble.ZERO_DBL)!=0){//支付金额大于0
 				if(!head.getPk_payorg().equals(head.getPk_org())){
 					// 支付金额大于0，且支付单位不等于主组织
 					// 生成支付单位与主组织之间的往来，往来金额为支付金额
@@ -103,42 +102,49 @@ public class ErPFUtil {
 					pubTransInfo(map,new TransFerInfo(head.getPk_org_v(),head.getPk_org(),head.getPk_payorg(),head.getZfybje(),head.getZfbbje(),head.getGlobalzfbbje(),head.getGroupzfbbje(),vo,2));
 				}
 			}
-			if(head.getHkybje().compareTo(new UFDouble(0))!=0){
-
+			
+			if(head.getHkybje().compareTo(UFDouble.ZERO_DBL)!=0){//还款金额大于0
 				Collection<BxcontrastVO> constrasts = new BaseDAO().retrieveByClause(BxcontrastVO.class, BxcontrastVO.PK_BXD+"='"+head.getPrimaryKey()+"'");
-
 				for(BxcontrastVO constrst:constrasts){
-					String jkDwbm = constrst.getPk_org();
-					if(!jkDwbm.equals(head.getPk_org())){
+					String jkPayOrg = constrst.getPk_payorg();
+					if(!jkPayOrg.equals(head.getPk_payorg())){
+						//还款金额
 						UFDouble ybje = constrst.getYbje().sub(constrst.getFyybje());
 						UFDouble bbje = constrst.getBbje().sub(constrst.getFybbje());
 						UFDouble globalbbje = constrst.getGlobalbbje().sub(constrst.getGlobalfybbje());
 						UFDouble groupbbje = constrst.getGroupbbje().sub(constrst.getGroupfybbje());
 
 						if(ybje.compareTo(new UFDouble(0))!=0){
-							// 报销单总还款金额不等于0，且借款单位不等于报销单位，且冲销行冲借款原币不等于费用原币金额(还款金额不等于0)（冲销行的费用原币 = 冲借款原币 - 还款原币）
+							// 报销单总还款金额不等于0，且借款支付单位不等于报销单位，
+							// 且冲销行冲借款原币不等于费用原币金额(还款金额不等于0)（冲销行的费用原币 = 冲借款原币 - 还款原币）
 							// 生成两个主组织之间的往来，往来金额为还款金额
-							pubTransInfo(map,new TransFerInfo(null,jkDwbm,head.getPk_org(),ybje,bbje,globalbbje,groupbbje,vo,1));
-							pubTransInfo(map,new TransFerInfo(head.getPk_org_v(),head.getPk_org(),jkDwbm,ybje,bbje,globalbbje,groupbbje,vo,2));
+							//借款单收钱、报销单支付单位付钱  借款单支付单位生成应收单
+							pubTransInfo(map,new TransFerInfo(null,jkPayOrg,head.getPk_payorg(),ybje,bbje,globalbbje,groupbbje,vo,1));
+							//借款单收钱、报销单支付单位付钱  报销单支付单位生成应付单
+							pubTransInfo(map,new TransFerInfo(head.getPk_payorg_v(),head.getPk_payorg(),jkPayOrg,ybje,bbje,globalbbje,groupbbje,vo,2));
 						}
 					}
+					
+					
 				}
 			}
-			if(head.getCjkybje().sub(head.getHkybje()).compareTo(new UFDouble(0))!=0){
+			
+			if(head.getCjkybje().sub(head.getHkybje()).compareTo(UFDouble.ZERO_DBL)!=0){
 				Collection<BxcontrastVO> constrasts = new BaseDAO().retrieveByClause(BxcontrastVO.class, BxcontrastVO.PK_BXD+"='"+head.getPrimaryKey()+"'");
-
 				for(BxcontrastVO constrst:constrasts){
-					String jkDwbm = constrst.getPk_org();
-					if(!jkDwbm.equals(head.getPk_payorg())){
+					String jkPayOrg = constrst.getPk_payorg();
+					if(!jkPayOrg.equals(head.getPk_org())){
 						UFDouble ybje = constrst.getFyybje();
 						UFDouble bbje = constrst.getFybbje();
 						UFDouble globalbbje = constrst.getGlobalfybbje();
 						UFDouble groupbbje = constrst.getGroupfybbje();
 						if(ybje.compareTo(new UFDouble(0))!=0){
 							// 冲借款金额不等于还款金额（及费用承担金额不等于0），且借款单位不等于报销单的支付单位
-							// 生成借款单主组织与报销单支付单位的之间的往来，往来金额为费用承担金额
-							pubTransInfo(map,new TransFerInfo(head.getPk_payorg_v(),head.getPk_payorg(),jkDwbm,ybje,bbje,globalbbje,groupbbje, vo,1));
-							pubTransInfo(map,new TransFerInfo(null,jkDwbm,head.getPk_payorg(),ybje,bbje,globalbbje,groupbbje,vo,2));
+							// 生成借款单主组织与报销单支付单位的之间的往来，往来金额为费用承担金额fyybje
+							//借款单收钱、报销单位付钱  借款单支付单位生成应收单
+							pubTransInfo(map,new TransFerInfo(null,jkPayOrg,head.getPk_org(),ybje,bbje,globalbbje,groupbbje,vo,1));
+							//借款单收钱、报销单位付钱  借款单报销单位生成应付单
+							pubTransInfo(map,new TransFerInfo(head.getPk_org_v(),head.getPk_org(),jkPayOrg,ybje,bbje,globalbbje,groupbbje, vo,2));
 						}
 					}
 				}
@@ -190,10 +196,8 @@ public class ErPFUtil {
 			head.setGlobalbbje(globalbbje);
 			head.setGroupbbje(groupbbje);
 		}
-
 		head.setPk_org(dwbm);
 		head.setYbje(ybje);
-
 		vo.setParentVO(head);
 		vo.setChildrenVO(new BXBusItemVO[]{new BXBusItemVO()});
 
@@ -325,7 +329,7 @@ public class ErPFUtil {
 		private UFDouble bb;
 		private UFDouble globalbb;
 		private UFDouble groupbb;
-		private int type;
+		private int type;// 1 表示 应收 AR； 2表示 应付AP
 		private JKBXVO vo;
 		public TransFerInfo(String fromCorp_v,String fromCorp, String toCorp, UFDouble zfybje, UFDouble zfbbje, UFDouble globalzfbbje,UFDouble groupzfbbje, JKBXVO vo, int busitype) {
 			this.fromCorp = fromCorp;

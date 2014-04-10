@@ -86,6 +86,106 @@ public class BXBusItemVO extends SuperVO {
 	private String pk_pcorg; // 利润中心
 	private String pk_pcorg_v;// 利润中心版本化
 	private String projecttask;// 项目任务
+	//ehp2新增字段
+	private String dwbm;//报销人单位
+	private String deptid; //报销人部门
+	//private String bxr; //报销人
+	public Integer paytarget; //收款对象
+	private String receiver;//收款人
+	private String skyhzh ;//个人银行帐户
+	private String hbbm ; //供应商
+	private String customer ;//客户
+	private String custaccount;//客商银行帐户
+	private String freecust ; //散户
+	private String freeaccount;//散户银行帐户
+
+	public Integer getPaytarget() {
+		return paytarget;
+	}
+
+	public void setPaytarget(Integer paytarget) {
+		this.paytarget = paytarget;
+	}
+
+	public String getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+
+	public String getSkyhzh() {
+		return skyhzh;
+	}
+
+	public void setSkyhzh(String skyhzh) {
+		this.skyhzh = skyhzh;
+	}
+
+	public String getHbbm() {
+		return hbbm;
+	}
+
+	public void setHbbm(String hbbm) {
+		this.hbbm = hbbm;
+	}
+
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
+	public String getCustaccount() {
+		return custaccount;
+	}
+
+	public void setCustaccount(String custaccount) {
+		this.custaccount = custaccount;
+	}
+
+	public String getFreecust() {
+		return freecust;
+	}
+
+	public void setFreecust(String freecust) {
+		this.freecust = freecust;
+	}
+
+	public String getFreeaccount() {
+		return freeaccount;
+	}
+
+	public void setFreeaccount(String freeaccount) {
+		this.freeaccount = freeaccount;
+	}
+
+	public String getDwbm() {
+		return dwbm;
+	}
+
+	public void setDwbm(String dwbm) {
+		this.dwbm = dwbm;
+	}
+
+	public String getDeptid() {
+		return deptid;
+	}
+
+	public void setDeptid(String deptid) {
+		this.deptid = deptid;
+	}
+
+//	public String getBxr() {
+//		return bxr;
+//	}
+//
+//	public void setBxr(String bxr) {
+//		this.bxr = bxr;
+//	}
 
 	public String getPk_bxcontrast() {
 		return pk_bxcontrast;
@@ -821,8 +921,17 @@ public class BXBusItemVO extends SuperVO {
 	
 	public static final String PK_PROLINE = "pk_proline";
 	public static final String PK_BRAND = "pk_brand";
-	
-
+	public static final String DWBM = "dwbm";
+	public static final String DEPTID = "deptid";
+	public static final String JKBXR	 = "jkbxr";
+	public static final String PAYTARGET = "paytarget";
+	public static final String RECEIVER = "receiver";
+	public static final String SKYHZH = "skyhzh";
+	public static final String HBBM = "hbbm";
+	public static final String CUSTOMER = "customer";
+	public static final String CUSTACCOUNT = "custaccount";
+	public static final String FREECUST = "freecust";
+	public static final String FREEACCOUNT= "freeaccount";
 
 	public static final String SZXMMC = "szxmmc";
 	public static final String BZBM = "bzbm";

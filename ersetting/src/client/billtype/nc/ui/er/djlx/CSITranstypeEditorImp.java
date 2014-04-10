@@ -188,6 +188,7 @@ public class CSITranstypeEditorImp extends AbstractTranstypeEditor implements IT
 					hideField.add(showItems[i].getKey());
 				}
 			}
+			csBillCard.getHeadItem(DjLXVO.BXTYPE).setNull(false);
 			csBillCard.hideHeadItem(hideField.toArray(new String[0]));
 		}
 		return csBillCard;

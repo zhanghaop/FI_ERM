@@ -4,12 +4,16 @@ import java.awt.Container;
 
 import javax.swing.Action;
 
+import nc.bs.erm.common.ErmConst;
 import nc.bs.pf.pub.PfDataCache;
 import nc.funcnode.ui.AbstractFunclet;
+import nc.funcnode.ui.FuncletInitData;
 import nc.pub.smart.data.IRowData;
 import nc.pub.smart.tracedata.ITraceDataOperator;
 import nc.pub.smart.tracedata.TraceDataParam;
+import nc.ui.pub.linkoperate.ILinkType;
 import nc.ui.uap.sf.SFClientUtil;
+import nc.ui.uap.sf.SFClientUtil2;
 import nc.util.erm.expamortize.ExpamortizeLinkQuery;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.link.LinkQuery;
@@ -82,8 +86,17 @@ public class ExpenseLinkQuerybillOperator implements ITraceDataOperator{
 					pkbills);
 		}
 		
-		// 联查具体单据
-		SFClientUtil.openLinkedQueryDialog(nodecode, container, linkQuery);
+		// 联查具体单据 
+		if(pk_billtype != null && (pk_billtype.startsWith("262") || pk_billtype.startsWith("261"))){
+			FuncletInitData initData = new FuncletInitData();
+			initData.setInitData(new LinkQuery(pkbills));
+			initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+			SFClientUtil2.openFuncNodeDialog(container, nodecode, initData, null, false,
+					false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
+		}else{
+			SFClientUtil.openLinkedQueryDialog(nodecode, container, linkQuery);
+		}
+		
 		
 	}
 

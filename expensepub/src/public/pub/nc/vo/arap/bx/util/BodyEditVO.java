@@ -7,6 +7,7 @@ public class BodyEditVO {
 	private int pos;
 	private String itemkey;
 	private String tablecode;
+	
 	public String getItemkey() {
 		return itemkey;
 	}
@@ -38,6 +39,11 @@ public class BodyEditVO {
 		this.value = value;
 	}
 	
+	
+	public String toString()
+    {
+        return (new StringBuilder()).append(value).append(row).append(pos).append(itemkey).append(tablecode).toString();
+    }
 	
 
 }

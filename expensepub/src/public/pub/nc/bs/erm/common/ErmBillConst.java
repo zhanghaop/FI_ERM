@@ -20,6 +20,11 @@ public class ErmBillConst {
 	 * 费用申请单-单据管理节点
 	 */
 	public static final String MatterApp_FUNCODE = "20110MTAMN"; 
+	
+	/**
+	 * 费用申请单管理节点
+	 */
+	public static final String MatterApp_QY_FUNCODE = "20110QUERY";
 	/**
 	 * 费用申请单-基础交易类型
 	 */
@@ -64,4 +69,23 @@ public class ErmBillConst {
 	 */
 	public static final String MatterApp_PREFIX = "261";
 	
+	//预提单
+	public static final String AccruedBill_DJDL = "ac";
+	public static final String AccruedBill_Billtype = "262X";
+	public static final String AccruedBill_Tradetype_Travel = "2621";
+	
+	/**
+	 * 预提单查询节点
+	 */
+	public static final String ACC_NODECODE_QRY = "20110ACCQRY";
+	
+	/**
+	 * 预提单管理节点
+	 */
+	public static final String ACC_NODECODE_MN = "20110ACCMN";
+	
+	/**
+	 * 预提单录入节点
+	 */
+	public static final String ACC_NODECODE_TRAVEL = "201102621";
 }

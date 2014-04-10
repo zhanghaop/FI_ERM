@@ -7,12 +7,9 @@ import java.util.List;
 import nc.bs.ml.NCLangResOnserver;
 import nc.itf.uap.pf.metadata.IFlowBizItf;
 import nc.md.data.access.NCObject;
-import nc.uap.rbac.core.dataperm.DataPermissionFacade;
 import nc.ui.erm.action.ErmAuditAction;
-import nc.ui.erm.matterapp.view.MatterAppMNBillForm;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.MessageDialog;
-import nc.ui.pub.beans.progress.DefaultProgressMonitor;
 import nc.ui.pub.pf.PfUtilClient;
 import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.UIState;
@@ -22,26 +19,19 @@ import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fipub.exception.ExceptionHandler;
-import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
-import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PFBusinessException;
-import nc.vo.uif2.LoginContext;
 
 /**
- * 审核
- *
+ * 申请单审核
  * @author chenshuaia
- *
  */
 public class AuditAction extends ErmAuditAction {
 	private static final long serialVersionUID = 1L;
 
-	private MatterAppMNBillForm billForm;
-	
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		try {
@@ -53,7 +43,7 @@ public class AuditAction extends ErmAuditAction {
 
 			// 审核较验信息
 			msgs = new MessageVO[objs.length];
-			List<AggMatterAppVO> auditList = new ArrayList<AggMatterAppVO>();
+			List<AggregatedValueObject> auditList = new ArrayList<AggregatedValueObject>();
 
 			for (int i = 0; i < objs.length; i++) {
 				AggMatterAppVO vo = (AggMatterAppVO) objs[i];
@@ -67,11 +57,7 @@ public class AuditAction extends ErmAuditAction {
 
 			if (!auditList.isEmpty()) {
 				if (auditList.size() > 1) {
-					final DefaultProgressMonitor mon = getTpaProgressUtil().getTPAProgressMonitor();
-					mon.beginTask(getBtnName(), auditList.size());
-					ListApproveSwingWork lpsw = new ListApproveSwingWork(auditList
-							.toArray(new AggregatedValueObject[0]), mon);
-					lpsw.execute();
+					executeBatchAudit(auditList);
 				} else {
 					MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditList.get(0)) };
 					List<AggregatedValueObject> auditedVos = ErUiUtil.combineMsgs(msgs, returnMsgs);
@@ -112,6 +98,13 @@ public class AuditAction extends ErmAuditAction {
 			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0008")/*@res "该单据当前状态不能进行审核！"*/);
 			return msgVO;
 		}
+		
+		//权限校验
+		if(!checkDataPermission(billvo)){
+			msgVO.setSuccess(false);
+			msgVO.setErrorMessage(IShowMsgConstant.getDataPermissionInfo());
+			return msgVO;
+		}
 
 		return msgVO;
 	}
@@ -120,10 +113,6 @@ public class AuditAction extends ErmAuditAction {
 		AggMatterAppVO aggMaVo = (AggMatterAppVO)appVO;
 		MessageVO result = null;
 		try {
-			if (!checkDataPermission(appVO)) {//数据权限校验
-				throw new BusinessException(IShowMsgConstant.getDataPermissionInfo());
-			}
-			
 			Object returnObj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), "APPROVE", aggMaVo
 					.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
 			if(returnObj ==null){//在审批过程中，弹出审核界面，然后直接点右上角的关闭
@@ -142,7 +131,7 @@ public class AuditAction extends ErmAuditAction {
 				}
 			}
 		} catch (BugetAlarmBusinessException e) {
-			if (MessageDialog.showYesNoDlg(getBillForm().getParent(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+			if (MessageDialog.showYesNoDlg(getEditor().getParent(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
 					.getStrByID("2011", "UPP2011-000049")/*
 														 * @ res "提示"
 														 */, e.getMessage()
@@ -200,31 +189,5 @@ public class AuditAction extends ErmAuditAction {
 		}
 
 		return false;
-	}
-	
-	protected boolean checkDataPermission(AggregatedValueObject appVO) {
-		if (StringUtil.isEmptyWithTrim(getOperateCode()) && StringUtil.isEmptyWithTrim(getMdOperateCode())
-				|| StringUtil.isEmptyWithTrim(getResourceCode()))
-			return true;
-
-		LoginContext context = getModel().getContext();
-		String userId = context.getPk_loginUser();
-		String pkgroup = context.getPk_group();
-		Object data = appVO;
-		boolean hasp = true;
-		if (!StringUtil.isEmptyWithTrim(getMdOperateCode()))
-			hasp = DataPermissionFacade.isUserHasPermissionByMetaDataOperation(userId, getResourceCode(),
-					getMdOperateCode(), pkgroup, data);
-		else
-			hasp = DataPermissionFacade.isUserHasPermission(userId, getResourceCode(), getOperateCode(), pkgroup, data);
-		return hasp;
-	}
-	
-	public MatterAppMNBillForm getBillForm() {
-		return billForm;
-	}
-
-	public void setBillForm(MatterAppMNBillForm billForm) {
-		this.billForm = billForm;
 	}
 }

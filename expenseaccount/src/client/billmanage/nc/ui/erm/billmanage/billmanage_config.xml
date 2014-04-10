@@ -2,6 +2,24 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 	<import resource="classpath:/nc/ui/erm/billpub/bill_base_config.xml" />
+
+	<bean id="VerifyAccruedBillAction" class="nc.ui.erm.billpub.action.VerifyAccruedBillAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="interceptor" ref="interceptor" />
+	</bean>
+	
+	<bean id="importableEditor"	class="nc.ui.erm.billpub.importui.BillImportablePanel" >
+		<constructor-arg value ="单据管理" >
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="manageAppModel" />
+		</constructor-arg>
+		<constructor-arg value ="nc/ui/erm/billmanage/billmanage_config.xml" >
+		</constructor-arg>
+		<property name="appModel" ref="manageAppModel"></property>
+		<property name="uiEditor" ref="editor"></property>
+	</bean>
 	
 	 	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
 	<bean id="modelDataManager" class="nc.ui.erm.billmanage.model.BillMangModelDataManager">
@@ -101,6 +119,7 @@
 				<ref bean="linkruleaction"/>
 				<ref bean="linkfpplanaction"/>
 				<ref bean="linkBillAction"/>
+				<ref bean="linkAccBillAction"/>
 			</list>
 		</property>
 	</bean>
@@ -123,6 +142,7 @@
 				<ref bean="nullAction" />
 				<ref bean="billTypeaction" />
 				<ref bean="nullAction"/>
+				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
 				<ref bean="assistantAction"/>
@@ -131,13 +151,17 @@
 				<ref bean="nullAction"/>
 				<ref bean="mergePfAction"/>
 				<ref bean="nullAction"/>
+				<ref bean="importexportActionGroup" />
+				<ref bean="nullAction"/>
 				<ref bean="printActionGroup"/>
 			</list>
 		</property>
 		<property name="editActions">
 			<list>
 				<ref bean="contrastaction" />
+				<ref bean="VerifyAccruedBillAction" />
 				<ref bean="saveaction" />
+				<ref bean="saveAndCommitAction" />
 				<ref bean="tempsaveaction" />
 				<ref bean="nullAction" />
 				<ref bean="cancelaction" />
@@ -169,6 +193,7 @@
 				<ref bean="nullAction" />
 				<ref bean="ContrastGroupAction" />
 				<ref bean="nullAction"/>
+				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
 				<ref bean="assistantAction"/>
@@ -176,6 +201,8 @@
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="mergePfAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction"/>
 				<ref bean="listprintGroup"/>
 			</list>

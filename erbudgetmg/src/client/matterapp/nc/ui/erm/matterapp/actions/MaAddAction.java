@@ -27,9 +27,6 @@ public class MaAddAction extends AddAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		// 校验交易类型是否封存
-		checkBilltype();
-		
 		// 新增切换交易类型
 		if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(getModel().getContext().getNodeCode())) {
 			String oldDjlxbm = ((MAppModel) getModel()).getDjlxbm();
@@ -45,6 +42,9 @@ public class MaAddAction extends AddAction {
 				throw e2;
 			}
 		}
+		
+		// 校验交易类型是否封存
+		checkBilltype();
 		
 		super.doAction(e);
 

@@ -43,6 +43,7 @@
 				<ref bean="linkruleaction"/>
 				<ref bean="linkfpplanaction"/>
 				<ref bean="linkBillAction"/>
+				<ref bean="linkAccBillAction"/>
 			</list>
 		</property>
 	</bean>

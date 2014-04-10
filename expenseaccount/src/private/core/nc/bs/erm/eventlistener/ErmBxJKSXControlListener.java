@@ -9,6 +9,7 @@ import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.uap.busibean.SysinitAccessor;
+import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.costshare.IErmCostShareBillQuery;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -17,6 +18,8 @@ import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKHeaderVO;
 import nc.vo.er.exception.ErmBusinessRuntimeException;
+import nc.vo.erm.accruedexpense.AccruedVO;
+import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.annotation.CloseAccBiz;
 import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.fipub.annotation.Business;
@@ -90,6 +93,11 @@ public class ErmBxJKSXControlListener implements IBusinessListener {
 //            msg.append(expmsg);
 //        }
 
+        // 4. 预提单
+        String accmsg = checkaccruedbill(pk_org, begindate, enddate);
+        if(accmsg != null){
+        	msg.append(accmsg);
+        }
         if (msg.length() > 0)
             msg.deleteCharAt(msg.length() - 1);
 		//检查并且控制
@@ -114,6 +122,28 @@ public class ErmBxJKSXControlListener implements IBusinessListener {
 		for (JKHeaderVO vo : jkvos) {
 			if (BXStatusConst.DJZT_Sign != vo.getDjzt()) {
 				msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0088")/*@res "有未生效的借款单据"*/ + vo.getDjbh() + "\n");
+			}
+		}
+		if (msg.length() != 0) {
+			return msg.toString();
+		} else {
+			return null;
+		}
+	}
+
+	private String checkaccruedbill(String pk_org, String begindate, String enddate) throws BusinessException {
+		StringBuffer msg = new StringBuffer();
+		String condition = AccruedVO.PK_ORG + "='" + pk_org + "' and " + AccruedVO.BILLDATE + ">='" + begindate
+				+ "' and " + AccruedVO.BILLDATE + "<='" + enddate + "'";
+		AggAccruedBillVO[] aggvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class).queryBillByWhere(
+				condition);
+		if (aggvos == null || aggvos.length == 0) {
+			return null;
+		}
+
+		for (AggAccruedBillVO vo : aggvos) {
+			if (BXStatusConst.DJZT_Sign != vo.getParentVO().getBillstatus()) {
+				msg.append("有未生效的预提单" + vo.getParentVO().getBillno());
 			}
 		}
 		if (msg.length() != 0) {

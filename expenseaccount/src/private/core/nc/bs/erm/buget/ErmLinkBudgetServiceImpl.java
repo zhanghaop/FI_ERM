@@ -11,6 +11,7 @@ import nc.itf.erm.proxy.ErmProxy;
 import nc.itf.tb.control.IBudgetControl;
 import nc.pubitf.erm.costshare.IErmCostShareBillQuery;
 import nc.util.erm.costshare.ErCostBudgetUtil;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.pub.IFYControl;
@@ -39,14 +40,26 @@ public class ErmLinkBudgetServiceImpl implements IErmLinkBudgetService {
 			vo = retrieveChidren(vo);
 		}
 		
+		if(vo.getParentVO().getDjzt() == BXStatusConst.DJZT_TempSaved){//暂存时，按照保存联查
+			vo.getParentVO().setDjzt(BXStatusConst.DJZT_Saved);
+		}
+		
 		IFYControl[] items = null;
 
 		// 进行费用预算联查
 		if (vo.getcShareDetailVo() != null && vo.getcShareDetailVo().length != 0) {
 			// 查询费用结转主vo
-			AggCostShareVO[] csVo = NCLocator.getInstance().lookup(IErmCostShareBillQuery.class)
+			AggCostShareVO[] csVos = NCLocator.getInstance().lookup(IErmCostShareBillQuery.class)
 					.queryBillByWhere(CostShareVO.SRC_ID + "='" + vo.getParentVO().getPk_jkbx() + "'");
-			items = ErCostBudgetUtil.getCostControlVOByCSVO(csVo, AuditInfoUtil.getCurrentUser());
+			
+			if (csVos != null) {
+				for (AggCostShareVO csVo : csVos) {
+					if (((CostShareVO) csVo.getParentVO()).getBillstatus() == BXStatusConst.DJZT_TempSaved) {
+						((CostShareVO) csVo.getParentVO()).setBillstatus(BXStatusConst.DJZT_Saved);
+					}
+				}
+				items = ErCostBudgetUtil.getCostControlVOByCSVO(csVos, AuditInfoUtil.getCurrentUser());
+			}
 		} else {
 			JKBXHeaderVO[] jkbxItems = ErVOUtils.prepareBxvoItemToHeaderClone(vo);
 			// 给财务报销,保存完以后,下一个可能发生的动作可能是审核,可能产生执行数,以前跟liangsg商量的,

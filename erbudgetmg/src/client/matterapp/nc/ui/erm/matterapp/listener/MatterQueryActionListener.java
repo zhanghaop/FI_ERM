@@ -36,6 +36,7 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 	@Override
 	public void criteriaChanged(CriteriaChangedEvent event) {
 		this.key = event.getFieldCode();
+		
 		if (event.getEventtype() == CriteriaChangedEvent.FILTEREDITOR_INITIALIZED) {
 			if (key.equals(MatterAppVO.PK_ORG_V)) {
 				// 主组织权限过滤
@@ -58,6 +59,9 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 				// 设置默认值
 				ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
 			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG)) {
+				// 设置默认值
+				ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
+			} else if (key.equals(MatterAppVO.APPLY_ORG)) {
 				// 设置默认值
 				ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
 			} else if (key.equals(MatterAppVO.BILLDATE)) {
@@ -83,14 +87,6 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 					((UserDefaultRefModel) ref.getRefModel()).setUserType(1);
 				}
 			} else if ((ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG).equals(key)){
-				Object obj = ERMQueryActionHelper.getFiltComponentForInit(event);
-				if (obj != null && obj instanceof UIRefPane) {
-
-					UIRefPane refPane = (UIRefPane) obj;
-					if (refPane.getRefModel() != null) {
-						refPane.setMultiSelectedEnabled(false);
-					}
-				}
 			} else {
 				Object obj = ERMQueryActionHelper.getFiltComponentForInit(event);
 				if (obj != null && obj instanceof UIRefPane) {
@@ -111,6 +107,11 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 				setPkPcorgFilter(event);
 			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG)) {
 				setBodyAssumeOrgFilter(event);
+			} else if(key.equals(MatterAppVO.APPLY_ORG)){
+				UIRefPane apply_org = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+						MatterAppVO.APPLY_ORG, false);
+				filterChildrenByOrg(event, apply_org, new String[] {
+						MatterAppVO.APPLY_DEPT, MatterAppVO.BILLMAKER});
 			}
 		}
 
@@ -119,6 +120,10 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 				setPkPcorgFilter(event);
 			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG)) {
 				setBodyAssumeOrgFilter(event);
+			} else if (key.equals(MatterAppVO.APPLY_ORG)) {
+				UIRefPane apply_org = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+						MatterAppVO.APPLY_ORG, false);
+				filterChildrenByOrg(event, apply_org, new String[] { MatterAppVO.APPLY_DEPT, MatterAppVO.BILLMAKER });
 			}
 		}
 	}
@@ -293,6 +298,9 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 
 		} else if (AggMatterAppVO.getApplyOrgHeadIterms().contains(key)) {
 			orgRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event, MatterAppVO.PK_ORG,
+					false);
+		} else if (key.equals(MatterAppVO.APPLY_DEPT) || key.equals(MatterAppVO.BILLMAKER)) {
+			orgRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event, MatterAppVO.APPLY_ORG,
 					false);
 		} else if (key.equalsIgnoreCase(MtAppDetailVO.PK_CHECKELE)
 				|| key.equalsIgnoreCase(MtAppDetailVO.PK_RESACOSTCENTER)) {

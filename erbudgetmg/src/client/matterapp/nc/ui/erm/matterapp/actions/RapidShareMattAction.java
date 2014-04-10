@@ -497,7 +497,7 @@ public class RapidShareMattAction extends NCAction{
     }
 	
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	private void matchData(SuperVO[] updatevos, BillCardPanel billCardPanel) {
 		for (int i = 0; i < updatevos.length; i++) {
 			BillItem[] items = billCardPanel.getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).getBodyItems();
@@ -508,7 +508,7 @@ public class RapidShareMattAction extends NCAction{
 				if (item.getComponent() instanceof UIRefPane) {
 					UIRefPane refPane = (UIRefPane) item.getComponent();
 					AbstractRefModel refModel = refPane.getRefModel();
-					if (refModel != null && !(refModel instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel)) {
+					if (refModel != null && !(refModel instanceof nc.ui.org.ref.OrgBaseTreeDefaultRefModel)) {
 						if(MtAppDetailVO.PK_RESACOSTCENTER.equals(item.getKey()) || 
 								MtAppDetailVO.PK_CHECKELE.equals(item.getKey())){
 							String pcorg = (String) updatevos[i].getAttributeValue(MtAppDetailVO.PK_PCORG);

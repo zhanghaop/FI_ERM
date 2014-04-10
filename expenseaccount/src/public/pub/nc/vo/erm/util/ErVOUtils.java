@@ -54,16 +54,25 @@ public class ErVOUtils {
 		
 		parentVO.setHkybje(UFDouble.ZERO_DBL);
 		parentVO.setHkbbje(UFDouble.ZERO_DBL);
-		
-		parentVO.setZfybje(parentVO.getYbje());
-		parentVO.setZfbbje(parentVO.getBbje());
-		
 		parentVO.setGlobalcjkbbje(UFDouble.ZERO_DBL);
 		parentVO.setGroupcjkbbje(UFDouble.ZERO_DBL);
 		parentVO.setGlobalhkbbje(UFDouble.ZERO_DBL);
 		parentVO.setGrouphkbbje(UFDouble.ZERO_DBL);
-		parentVO.setGlobalzfbbje(parentVO.getGlobalbbje());
-		parentVO.setGroupzfbbje(parentVO.getGroupbbje());
+		
+		if(parentVO.isAdjustBxd()){
+			// 费用调整类型时，无业务行且不进行支付
+			parentVO.setZfybje(UFDouble.ZERO_DBL);
+			parentVO.setZfbbje(UFDouble.ZERO_DBL);
+			
+			parentVO.setGlobalzfbbje(UFDouble.ZERO_DBL);
+			parentVO.setGroupzfbbje(UFDouble.ZERO_DBL);
+		}else{
+			parentVO.setZfybje(parentVO.getYbje());
+			parentVO.setZfbbje(parentVO.getBbje());
+			
+			parentVO.setGlobalzfbbje(parentVO.getGlobalbbje());
+			parentVO.setGroupzfbbje(parentVO.getGroupbbje());
+		}
 		
 		
 		if (childrenVO == null || childrenVO.length == 0) {

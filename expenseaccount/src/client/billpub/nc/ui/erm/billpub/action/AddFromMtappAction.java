@@ -6,6 +6,8 @@ import javax.swing.Action;
 
 import nc.bs.erm.ext.common.ErmConstExt;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.arap.pub.IErmBillUIPublic;
@@ -42,6 +44,7 @@ public class AddFromMtappAction  extends AddAction{
 		setCode("AddFromMtapp");
 	    setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0142")/*@res "费用申请单"*/);
 	    this.putValue(Action.ACCELERATOR_KEY, null);// 将此按钮的快捷键置为空，防止和父类的快捷键重复
+	    this.putValue(Action.SHORT_DESCRIPTION, null);
 	}
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
@@ -139,7 +142,8 @@ public class AddFromMtappAction  extends AddAction{
 	}
 	private void checkBillType() throws BusinessException {
 		String selectBillTypeCode = ((ErmBillBillManageModel) getModel()).getSelectBillTypeCode();
-		if (((ErmBillBillManageModel) getModel()).getCurrentDjlx(selectBillTypeCode).getFcbz().booleanValue()) {
+		DjLXVO currentDjlx = ((ErmBillBillManageModel) getModel()).getCurrentDjlx(selectBillTypeCode);
+		if (currentDjlx.getFcbz().booleanValue()) {
 			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000171")/**
 			 * @res
 			 *      * "该节点单据类型已被封存，不可操作节点！"
@@ -194,5 +198,14 @@ public class AddFromMtappAction  extends AddAction{
 	}
 	public void setEditor(BillForm editor) {
 		this.editor = editor;
+	}
+	
+	@Override
+	protected boolean isActionEnable() {
+		// 费用调整单情况拉单按钮不可用
+		DjLXVO currentDjlx = ((ErmBillBillManageModel) getModel()).getCurrentDjLXVO();
+		boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjlx, ErmDjlxConst.BXTYPE_ADJUST);
+		
+		return !isAdjust && super.isActionEnable();
 	}
 }

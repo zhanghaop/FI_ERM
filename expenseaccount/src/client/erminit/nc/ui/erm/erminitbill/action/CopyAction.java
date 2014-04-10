@@ -88,6 +88,9 @@ public class CopyAction extends NCAction{
 				itm.setPk_jkbx(null);
 			}
 		}
+		//清空核销明细
+		copyJkbxVO.setAccruedVerifyVO(null);
+		
 		//初始化
 		initVO(copyJkbxVO);
 
@@ -119,7 +122,7 @@ public class CopyAction extends NCAction{
 		getEditor().getEventHandle().getEventHandleUtil().setHeadBbje();
 
 		//设置分摊页签中的汇率值和本币金额
-		getEditor().getEventHandle().resetBodyCShare();
+		getEditor().getEventHandle().resetBodyCShare(null);
 		
 		
 		//设置本币汇率是否能编辑

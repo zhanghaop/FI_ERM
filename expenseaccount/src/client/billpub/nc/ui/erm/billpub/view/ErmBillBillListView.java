@@ -7,8 +7,12 @@ import java.util.List;
 import javax.swing.JTable;
 
 import nc.bs.erm.common.ErmBillConst;
+import nc.bs.erm.common.ErmConst;
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
+import nc.funcnode.ui.FuncletInitData;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.fi.pub.Currency;
 import nc.ui.arap.bx.listeners.BxYbjeDecimalListener;
@@ -23,7 +27,8 @@ import nc.ui.pub.bill.BillItemHyperlinkEvent;
 import nc.ui.pub.bill.BillItemHyperlinkListener;
 import nc.ui.pub.bill.BillListPanel;
 import nc.ui.pub.bill.BillTableCellRenderer;
-import nc.ui.uap.sf.SFClientUtil;
+import nc.ui.pub.linkoperate.ILinkType;
+import nc.ui.uap.sf.SFClientUtil2;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.model.AppEventConst;
 import nc.vo.arap.bx.util.BXConstans;
@@ -82,8 +87,14 @@ public class ErmBillBillListView extends ERMBillListView {
 						LinkQuery linkQuery = new LinkQuery(
 								ErmBillConst.MatterApp_DJDL,
 								new String[] { pkItem });
-						SFClientUtil.openLinkedQueryDialog(BXConstans.MTAMN_NODE,
-								getBillListPanel(), linkQuery);
+//						SFClientUtil.openLinkedQueryDialog(BXConstans.MTAMN_NODE,
+//								getBillListPanel(), linkQuery);
+						
+						FuncletInitData initData = new FuncletInitData();
+						initData.setInitData(linkQuery);
+						initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+						SFClientUtil2.openFuncNodeDialog(getBillListPanel(), BXConstans.MTAMN_NODE, initData, null, false,
+								false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
 					}
 				}
 			}
@@ -153,15 +164,22 @@ public class ErmBillBillListView extends ERMBillListView {
 				try {
 					JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
 					if (selectedData.getChildrenVO() == null || selectedData.getChildrenVO().length == 0) {
-						List<JKBXVO> jkbxvo = NCLocator
-								.getInstance()
-								.lookup(IBXBillPrivate.class)
-								.queryVOsByPrimaryKeysForNewNode(
-										new String[] { selectedData.getParentVO().getPrimaryKey() },
-										selectedData.getParentVO().getDjdl(), selectedData.getParentVO().isInit(),
-										((ErmBillBillManageModel) getModel()).getDjCondVO());
-						if (jkbxvo != null) {
-							// 更新model数据
+						boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(selectedData.getParentVO().getPk_group(), selectedData.getParentVO().getDjlxbm(),ErmDjlxConst.BXTYPE_ADJUST);
+						if(isAdjust && selectedData.getcShareDetailVo()!=null && selectedData.getcShareDetailVo().length!=0){
+							((ErmBillBillManageModel) getModel()).directlyUpdateWithoutFireEvent(selectedData);
+
+						}else{
+							List<JKBXVO> jkbxvo = NCLocator
+							.getInstance()
+							.lookup(IBXBillPrivate.class)
+							.queryVOsByPrimaryKeysForNewNode(
+									new String[] { selectedData.getParentVO().getPrimaryKey() },
+									selectedData.getParentVO().getDjdl(), selectedData.getParentVO().isInit(),
+									((ErmBillBillManageModel) getModel()).getDjCondVO());
+							if (jkbxvo != null) {
+								// 更新model数据
+								selectedData = jkbxvo.get(0);
+							}
 							((ErmBillBillManageModel) getModel()).directlyUpdateWithoutFireEvent(selectedData);
 						}
 					}

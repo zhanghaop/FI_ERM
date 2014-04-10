@@ -4,8 +4,11 @@ import java.awt.event.ActionEvent;
 
 import nc.bs.uif2.IActionCode;
 import nc.ui.uif2.NCAction;
+import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.model.AbstractAppModel;
+import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.trade.pub.IBillStatus;
 
 /**
  * 保存并提交按钮
@@ -48,5 +51,16 @@ public class SaveAndCommitAction extends NCAction {
 
 	public void setModel(AbstractAppModel model) {
 		this.model = model;
+		this.model.addAppEventListener(this);
+	}
+	
+	@Override
+	protected boolean isActionEnable() {
+		if (getModel().getUiState() == UIState.EDIT) {
+			AggMatterAppVO vo = ((AggMatterAppVO) getModel().getSelectedData());
+			return ((vo.getParentVO().getApprstatus()).equals(IBillStatus.FREE));
+		}
+
+		return super.isActionEnable();
 	}
 }

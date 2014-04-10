@@ -107,6 +107,16 @@ public class UFDoubleTool {
 		UFDouble sum = ufd.add(ufd2);
 		return sum;
 	}
+	public static UFDouble sub(UFDouble ufd,UFDouble ufd2){
+		if(ufd2 == null){
+			return ufd;
+		}
+		if(ufd == null){
+			return ufd2.multiply(new UFDouble(-1));
+		}
+		UFDouble sub = ufd.sub(ufd2);
+		return sub;
+	}
 
 	public static UFDouble getDoubleValue(Object d) {
 		return d == null ? UFDouble.ZERO_DBL : (UFDouble) d;

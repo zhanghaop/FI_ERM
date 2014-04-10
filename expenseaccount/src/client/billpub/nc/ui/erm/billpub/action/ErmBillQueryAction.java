@@ -29,7 +29,12 @@ public class ErmBillQueryAction extends QueryAction {
 	 * 凭证状态
 	 */
 	private static final String PZZT = "pzzt";
-
+	
+	/**
+	 * 支付状态
+	 */
+	public static final String JSFLAG = "jsflag"; 
+		
 	private static final long serialVersionUID = 1L;
 
 	private boolean isFirstCall = true;
@@ -121,6 +126,19 @@ public class ErmBillQueryAction extends QueryAction {
 					if (voucherStatus.length != 0) {
 						currCondVO.setVoucherFlags(voucherStatus);
 						((ErmBillBillManageModel) getModel()).setDjCondVO(currCondVO);
+					}
+				}
+				if(fieldCode.equals(JSFLAG)){//只是月末凭证处理的查询方案使用
+					List<IFieldValueElement> fieldValues = iFilter
+					.getFieldValue().getFieldValues();
+					List<String> valueList = new ArrayList<String>();
+					for (IFieldValueElement value : fieldValues) {
+						valueList.add(value.getSqlString());
+						if ("N".equals(value.getSqlString())) {
+							currCondVO.setIsjs(false);
+							((ErmBillBillManageModel) getModel()).setDjCondVO(currCondVO);
+							
+						}
 					}
 				}
 			}

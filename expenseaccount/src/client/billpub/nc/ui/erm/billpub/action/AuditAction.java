@@ -15,9 +15,8 @@ import nc.ui.erm.action.ErmAuditAction;
 import nc.ui.erm.billpub.btnstatus.BxApproveBtnStatusListener;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.MessageDialog;
-import nc.ui.pub.beans.progress.DefaultProgressMonitor;
 import nc.ui.pub.pf.PfUtilClient;
-import nc.ui.uif2.editor.BillForm;
+import nc.ui.uif2.IShowMsgConstant;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.cmp.exception.CmpAuthorizationException;
@@ -32,11 +31,12 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PFBusinessException;
 
 public class AuditAction extends ErmAuditAction {
 	private static final long serialVersionUID = 1L;
-	private BillForm editor;
+
 	private BxApproveBtnStatusListener auditstausListener;
 
 	public AuditAction() {
@@ -56,7 +56,7 @@ public class AuditAction extends ErmAuditAction {
 		// 审核较验信息
 		msgs = new MessageVO[vos.length];
 
-		List<JKBXVO> auditVOs = new ArrayList<JKBXVO>();
+		List<AggregatedValueObject> auditVOs = new ArrayList<AggregatedValueObject>();
 
 		JKBXVO[] jkbxVos = Arrays.asList(vos).toArray(new JKBXVO[0]);
 
@@ -64,8 +64,9 @@ public class AuditAction extends ErmAuditAction {
 
 			JKBXVO vo = jkbxVos[i];
 			// 如果报销单全部用来冲借款后，审批后，支付状态应该设置为：全部冲借款
-			if (vo.getParentVO().zfybje.doubleValue() == 0 && vo.getParentVO().hkybje.doubleValue() == 0) {
-				vo.getParentVO().setPayflag(BXStatusConst.ALL_CONTRAST);
+			JKBXHeaderVO parentVO = vo.getParentVO();
+			if (!parentVO.isAdjustBxd()&&parentVO.zfybje.doubleValue() == 0 && parentVO.hkybje.doubleValue() == 0) {
+				parentVO.setPayflag(BXStatusConst.ALL_CONTRAST);
 			}
 
 			vo.setNCClient(true);
@@ -75,42 +76,22 @@ public class AuditAction extends ErmAuditAction {
 			if (!msgs[i].isSuccess()) {
 				continue;
 			}
-
 			auditVOs.add(vo);
 		}
 
 		if (auditVOs.size() > 0) {
 			// 加入进度条的审批
 			if (auditVOs.size() > 1) {// 加入进度条的审批
-				final DefaultProgressMonitor mon = getTpaProgressUtil().getTPAProgressMonitor();
-				mon.beginTask(getBtnName(), auditVOs.size());
-				ListApproveSwingWork lpsw = new ListApproveSwingWork(auditVOs.toArray(new AggregatedValueObject[0]),
-						mon);
-				lpsw.execute();
+				executeBatchAudit(auditVOs);
 			} else {
 				MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditVOs.get(0)) };
 				List<AggregatedValueObject> auditedVos = ErUiUtil.combineMsgs(msgs, returnMsgs);
 				getModel().directlyUpdate(auditedVos.toArray(new AggregatedValueObject[auditedVos.size()]));
 				ErUiUtil.showBatchResults(getModel().getContext(), msgs);
 			}
-		}else{
+		} else {
 			ErUiUtil.showBatchResults(getModel().getContext(), msgs);
 		}
-
-//		// 显示预算，借款控制的提示信息
-//		if (!StringUtils.isNullWithTrim(jkbxVos[0].getWarningMsg()) && jkbxVos[0].getWarningMsg().length() > 0) {
-//			MessageDialog.showWarningDlg(getEditor(),
-//					nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-//																							 * *
-//																							 * 
-//																							 * @
-//																							 * res
-//																							 * *
-//																							 * "警告"
-//																							 */,
-//					jkbxVos[0].getWarningMsg());
-//			jkbxVos[0].setWarningMsg(null);
-//		}
 	}
 
 	/**
@@ -157,6 +138,19 @@ public class AuditAction extends ErmAuditAction {
 																												 */);
 			return msgVO;
 		}
+		
+		if (!(head.getSpzt().equals(IBillStatus.CHECKGOING) || head.getSpzt().equals(IBillStatus.COMMIT))) {
+			msgVO.setSuccess(false);
+			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0008")/*@res "该单据当前状态不能进行审核！"*/);
+			return msgVO;
+		}
+		
+		//权限校验
+		if(!checkDataPermission(bxvo)){
+			msgVO.setSuccess(false);
+			msgVO.setErrorMessage(IShowMsgConstant.getDataPermissionInfo());
+			return msgVO;
+		}
 
 		return msgVO;
 	}
@@ -170,13 +164,13 @@ public class AuditAction extends ErmAuditAction {
 	 * @author liansg
 	 */
 
-	protected MessageVO approveSingle(AggregatedValueObject appVO) throws Exception{
-		JKBXVO bxvo = (JKBXVO)appVO;
+	protected MessageVO approveSingle(AggregatedValueObject appVO) throws Exception {
+		JKBXVO bxvo = (JKBXVO) appVO;
 		JKBXHeaderVO head = bxvo.getParentVO();
 		MessageVO result = null;
 		try {
 			// 审核动作处理
-			Object msgReturn =  PfUtilClient.runAction(getModel().getContext().getEntranceUI(), "APPROVE"
+			Object msgReturn = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), "APPROVE"
 					+ WorkbenchEnvironment.getInstance().getLoginUser().getCuserid(), head.getDjlxbm(), bxvo, null,
 					null, null, null);
 
@@ -186,29 +180,15 @@ public class AuditAction extends ErmAuditAction {
 															 * @res "用户取消操作"
 															 */);
 			} else {
-				// 显示预算，借款控制的提示信息
-//				String warningMsg = null;
-				if(msgReturn instanceof MessageVO[]){
-					MessageVO[] msgVos = (MessageVO[])msgReturn;
+				if (msgReturn instanceof MessageVO[]) {
+					MessageVO[] msgVos = (MessageVO[]) msgReturn;
 					JKBXVO jkbxvo = (JKBXVO) msgVos[0].getSuccessVO();
-//					warningMsg = jkbxvo.getWarningMsg();
 					jkbxvo.setWarningMsg(null);
 					result = msgVos[0];
-				}else if(msgReturn instanceof JKBXVO){//改签和加签的情况下会出现返回AggVo
-//					warningMsg = ((JKBXVO)msgReturn).getWarningMsg();
-					((JKBXVO)msgReturn).setWarningMsg(null);
-					result = new MessageVO((JKBXVO)msgReturn, ActionUtils.AUDIT);
+				} else if (msgReturn instanceof JKBXVO) {// 改签和加签的情况下会出现返回AggVo
+					((JKBXVO) msgReturn).setWarningMsg(null);
+					result = new MessageVO((JKBXVO) msgReturn, ActionUtils.AUDIT);
 				}
-				
-//				if (!StringUtils.isNullWithTrim(warningMsg)) {
-//					MessageDialog.showWarningDlg(getEditor(),
-//							nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-//							 * @
-//							 * res
-//							 * "警告"
-//							 */,
-//							 warningMsg);
-//				}
 			}
 
 		} catch (BugetAlarmBusinessException e) {
@@ -328,14 +308,6 @@ public class AuditAction extends ErmAuditAction {
 		return getModel().getSelectedData() != null && getAuditstausListener().approveButtonStatus();
 	}
 
-	public BillForm getEditor() {
-		return editor;
-	}
-
-	public void setEditor(BillForm editor) {
-		this.editor = editor;
-	}
-
 	public BxApproveBtnStatusListener getAuditstausListener() {
 		return auditstausListener;
 	}
@@ -343,5 +315,4 @@ public class AuditAction extends ErmAuditAction {
 	public void setAuditstausListener(BxApproveBtnStatusListener auditstausListener) {
 		this.auditstausListener = auditstausListener;
 	}
-
 }

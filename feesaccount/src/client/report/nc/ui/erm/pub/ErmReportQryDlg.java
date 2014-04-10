@@ -10,11 +10,9 @@ import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.logging.Log;
 import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
-import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.itf.fipub.report.IReportQueryCond;
 import nc.pubitf.accperiod.AccountCalendar;
-import nc.ui.arap.bx.remote.PsnVoCall;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.model.AccPeriodDefaultRefModel;
 import nc.ui.erm.util.ErUiUtil;
@@ -178,15 +176,24 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			addComponent(END_TIME_REF, endTimeRef);
 
 			// 财务组织
-			normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0","02011v61013-0062")/*@res "财务组织"*/));
-			UIRefPane financialOrgRef = new UIRefPane(RefConstant.REF_NODENAME_FINANCEORG);
+			UILabel orgLable;
+			UIRefPane financialOrgRef;
+			if (isPkOrgSameAssumeOrg()) {
+			    financialOrgRef = new UIRefPane(RefConstant.REF_NODENAME_BUSICENTER);
+                orgLable = getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("erm_report","1erm_report0195")/*@res "业务单元"*/);
+			} else {
+			    financialOrgRef = new UIRefPane(RefConstant.REF_NODENAME_FINANCEORG);
+                orgLable = getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0","02011v61013-0062")/*@res "财务组织"*/);
+			}
+            normalCondCompList.add(orgLable);
 			financialOrgRef.setMultiSelectedEnabled(true);
 			financialOrgRef.addValueChangedListener(new OrgChangedListener());
 			normalCondCompList.add(financialOrgRef);
 			addComponent(FINANCIAL_ORG_REF, financialOrgRef);
-			final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
-			String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
-			String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+//			final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
+//			String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
+//			String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+			String pk_org = ErUiUtil.getReportDefaultOrgUnit();
 			if (!hasPerm(pk_org, getLoginContext().getPkorgs())) {
 			    pk_org = null;
 			}
@@ -217,9 +224,9 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 								.getBillStatusAllLbl()),
 						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_SAVE, FipubReportResource
 								.getBillStatusSaveLbl()),
-						new DefaultConstEnum(IErmReportConstants.BILL_STATUS_COMMIT,
-						        nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
-						                "201212_0", "0201212-0081")/* @res "已提交" */),// 单据状态——已提交
+//						new DefaultConstEnum(IErmReportConstants.BILL_STATUS_COMMIT,
+//						        nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+//						                "201212_0", "0201212-0081")/* @res "已提交" */),// 单据状态——已提交
 						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_CONFIRM, FipubReportResource
 								.getBillStatusAuditLbl()) });
 			}else {

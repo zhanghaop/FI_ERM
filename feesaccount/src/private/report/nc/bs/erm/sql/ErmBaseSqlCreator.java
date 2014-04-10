@@ -65,14 +65,6 @@ public abstract class ErmBaseSqlCreator {
 	private String fromDummyTable = null;
 
 	protected static final String bdTable = "bd";
-	
-	protected boolean isQueryByDetail(String fieldCode) {
-	    if ("szxmid".equalsIgnoreCase(fieldCode)) {
-	        return true;
-	    } else {
-	        return false;
-	    }
-	}
 
 	public void setParams(ReportQueryCondVO queryVO) {
 		this.queryVO = queryVO;
@@ -259,6 +251,12 @@ public abstract class ErmBaseSqlCreator {
                 powerSql = powerSql.replaceAll("zb." + field, "fb." + field);
             }
         }
+        for (int nPos = 1; nPos <= 50; nPos++) {
+            String defItem = "defitem" + nPos;
+            if (qryObjShow(defItem) || qryConShow(defItem) || qryConShow("jk_busitem." + defItem)) {
+                powerSql = powerSql.replaceAll("zb." + defItem, "fb." + defItem);
+            }
+        }
         return powerSql;
     }
     
@@ -336,7 +334,7 @@ public abstract class ErmBaseSqlCreator {
         String jkzbAliasPoint = jkzbAlias + "\\.";
 //        boolean bNeedQryDetail = needQueryByDetail();
         for (QryObj qryObj : qryObjList) {
-            if (qryObj.getOriginFld() != null && isDetailField(qryObj.getOriginFld())) {
+            if (qryObj.getTallyFieldName() != null && isDetailField(qryObj.getTallyFieldName())) {
 //            if (qryObj.getOriginFld() != null && bNeedQryDetail) {
                 sqlBuffer.append(" and ").append(qryObj.getSql().replaceAll(jkzbAliasPoint, "fb\\."));
                 continue;
@@ -347,20 +345,27 @@ public abstract class ErmBaseSqlCreator {
     }
     
     protected boolean isDetailField(String field) {
-        for (String fld : detailField) {
-            if (fld.equalsIgnoreCase(field)) {
+        String[] path = field.split("\\."); 
+        if (path.length > 1) {
+            if (!"er_jkzb".equalsIgnoreCase(path[0])) {
                 return true;
             }
+        } else {
+            for (String fld : detailField) {
+                if (fld.equalsIgnoreCase(field)) {
+                    return true;
+                }
+            }
+        }
+        String[] split = field.split("\\.");
+        String srcFld = split.length > 1 ? split[1] : split[0];
+        for (int nPos = 1; nPos <= 50; nPos++) {
+            String defItem = "defitem" + nPos;
+            if (srcFld.equalsIgnoreCase(defItem)) {
+                return true;
+            } 
         }
         return false;
-//        if (field.toLowerCase().equals("pk_project") ||
-//                field.toLowerCase().equals("jobid") ||
-//                field.toLowerCase().equals("szxmid") ||
-//                field.toLowerCase().equals("pk_iobsclass") || 
-//                field.toUpperCase().equals("PK_RESACOSTCENTER")) {
-//            return true;
-//        }
-//        return false;
     }
 
     private boolean queryByDetail = false;
@@ -370,18 +375,16 @@ public abstract class ErmBaseSqlCreator {
             List<QryObj> qryObjList = queryVO.getQryObjs();
             for (QryObj qryObj : qryObjList) {
                 if (qryObj.getOriginFld() != null) {
-                    if (isDetailField(qryObj.getOriginFld())) {
+                    String[] path = qryObj.getTallyFieldName().split("\\."); 
+                    if (path.length > 1) {
+                        if (!"er_jkzb".equalsIgnoreCase(path[0])) {
+                            queryByDetail = true;
+                            break;
+                        }
+                    } else if (isDetailField(qryObj.getOriginFld())) {
                         queryByDetail = true;
                         break;
                     }
-//                    if (qryObj.getOriginFld().toLowerCase().equals("pk_project") || 
-//                            qryObj.getOriginFld().toLowerCase().equals("jobid") || 
-//                            qryObj.getOriginFld().toLowerCase().equals("szxmid") ||
-//                            qryObj.getOriginFld().toLowerCase().equals("pk_iobsclass") || 
-//                            qryObj.getOriginFld().toUpperCase().equals("PK_RESACOSTCENTER")) {
-//                        queryByDetail = true;
-//                        break;
-//                    }
                 }
             }
             if (!queryByDetail) {
@@ -400,6 +403,24 @@ public abstract class ErmBaseSqlCreator {
         }
         return queryByDetail;
     }
+    
+    private static final String[] CONTRAST_FIELDS = new String[] {
+        "deptid",
+        "JOBID",
+        "deptid",
+        "szxmid",
+        "jkbxr"
+    };
+    
+    protected boolean isContrastField(String field) {
+        for (String conFld : CONTRAST_FIELDS) {
+            if (conFld.equalsIgnoreCase(field)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }
 
 // /:~

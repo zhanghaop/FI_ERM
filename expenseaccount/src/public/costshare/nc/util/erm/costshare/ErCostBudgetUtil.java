@@ -3,6 +3,8 @@ package nc.util.erm.costshare;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -11,6 +13,7 @@ import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.erm.costshare.CostShareYsControlVO;
+import nc.vo.erm.costshare.ext.CostShareYsControlVOExt;
 import nc.vo.pub.BusinessException;
 
 /**
@@ -48,23 +51,34 @@ public class ErCostBudgetUtil {
 			AggCostShareVO aggvo = (AggCostShareVO) csVo[i];
 			CostShareVO headvo = (CostShareVO) aggvo.getParentVO();
 			CShareDetailVO[] dtailvos = (CShareDetailVO[]) aggvo.getChildrenVO();
+			
+			boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(headvo.getPk_group(), headvo.getDjlxbm(), ErmDjlxConst.BXTYPE_ADJUST);
+
 			for (int j = 0; j < dtailvos.length; j++) {
 				// 转换生成controlvo
-				CostShareYsControlVO cscontrolvo = new CostShareYsControlVO(headvo, dtailvos[j]);
+				CShareDetailVO detailvo = dtailvos[j];
+				CostShareYsControlVOExt cscontrolvo = new CostShareYsControlVOExt(headvo, detailvo);
+				if(isAdjust){
+					// 调整单情况，需要根据分摊明细行的预算占用日期进行预算控制
+					cscontrolvo.setYsDate(detailvo.getYsdate());
+					// 不受负责人限制
+					itemList.add(cscontrolvo);
+					continue;
+				}
 				if (csVo != null && csVo.length == 1) {
 					// 报销管理节点需要处理
-					if (listPerson.contains(dtailvos[j].getAssume_org())) {
+					if (listPerson.contains(detailvo.getAssume_org())) {
 						// 联查负责单位的预算执行情况
 						itemList.add(cscontrolvo);
 						continue;
 					}
-					if (listDept.contains(dtailvos[j].getAssume_dept())) {
+					if (listDept.contains(detailvo.getAssume_dept())) {
 						// 联查负责部门的预算情况
 						itemList.add(cscontrolvo);
 						continue;
 					}
 
-					if (listCenter != null && listCenter.contains(dtailvos[j].getPk_resacostcenter())) {
+					if (listCenter != null && listCenter.contains(detailvo.getPk_resacostcenter())) {
 						// 联查负责成本中心的预算执行情况
 						itemList.add(cscontrolvo);
 						continue;

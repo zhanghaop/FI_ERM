@@ -9,29 +9,26 @@ import javax.swing.border.EtchedBorder;
 
 import nc.ui.er.basepub.AbstractOKCancelDlg;
 import nc.ui.pf.pub.TranstypeRefModel;
+import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIRefPane;
 
-class CopyDialog extends AbstractOKCancelDlg{
-
-	private final ReimRuleUI ruleUI;
+public class CopyDialog extends AbstractOKCancelDlg{
 	
 	
 	@Override
-	@SuppressWarnings("deprecation")
 	protected boolean onBoOK() {
-		String corp = getCorpRef().getRefPK();
 		String djlx = getDjlxRef().getRefPK();
-		if(corp==null || djlx==null){
-			this.ruleUI.showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000439")/*@res "请选择目标公司和交易类型!"*/);
+		if(djlx==null){
+			MessageDialog.showHintDlg(getParent(),"错误","请选择目标交易类型!");
 			return false;
 		}
 		return true;
 	}
-	public CopyDialog(ReimRuleUI ruleUI, Container parent) {
+	
+	public CopyDialog(Container parent) {//ReimRuleUI ruleUI, 
 		super(parent);
-		this.ruleUI = ruleUI;
 	}
 	private static final long serialVersionUID = 1L;
 	private UIPanel contentPanel;
@@ -72,7 +69,7 @@ class CopyDialog extends AbstractOKCancelDlg{
 			corpText.setBounds(10, 12, 150, 22);
 			//FIXME 多语言改动
 //			corpText.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000440")/*@res "复制到目标公司"*/);
-			corpText.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0020")/*@res "复制到目标组织"*/);
+			corpText.setText("目标业务单元");
 		}
 		return corpText;
 	}
@@ -80,7 +77,7 @@ class CopyDialog extends AbstractOKCancelDlg{
 		if (djlxText == null) {
 			djlxText = new UILabel();
 			djlxText.setBounds(10, 42, 150, 22);
-			djlxText.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000441")/*@res "复制到目标交易类型"*/);
+			djlxText.setText("目标交易类型");//nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000441")/*@res "复制到目标交易类型"*/);
 		}
 		return djlxText;
 	}
@@ -88,7 +85,7 @@ class CopyDialog extends AbstractOKCancelDlg{
 		if(corpRef==null){
 			corpRef = new UIRefPane();
 			corpRef.setBounds(150, 12, 160, 22);
-			corpRef.setRefNodeName("财务组织");
+			corpRef.setRefNodeName("业务单元");
 
 		}
 		return corpRef;

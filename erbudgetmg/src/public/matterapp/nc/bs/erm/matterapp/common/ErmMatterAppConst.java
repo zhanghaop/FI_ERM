@@ -1,5 +1,6 @@
 package nc.bs.erm.matterapp.common;
 
+
 /**
  * 
  * 费用申请单常量管理
@@ -56,15 +57,12 @@ public class ErmMatterAppConst {
 	
 	public static final int BILLSTATUS_TEMPSAVED = 0;  //单据状态——暂存
 	public static final int BILLSTATUS_SAVED = 1;	//单据状态——保存
-	public static final int BILLSTATUS_COMMITED = 2;//单据状态——已提交
 	public static final int BILLSTATUS_APPROVED = 3;	//已审批
 	
 	public static final String BILLSTATUS_TEMPSAVED_NAME = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
 			"201212_0", "0201212-0079")/* @res "暂存" */;// 单据状态——暂存
 	public static final String BILLSTATUS_SAVED_NAME = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
 			"201212_0", "0201212-0080")/* @res "保存" */; // 单据状态——保存
-	public static final String BILLSTATUS_COMMITED_NAME = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
-			"201212_0", "0201212-0081")/* @res "已提交" */;// 单据状态——已提交
 	public static final String BILLSTATUS_APPROVED_NAME = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
 			"201212_0", "0201212-0082")/* @res "已审批" */; // 已审批
 
@@ -80,6 +78,11 @@ public class ErmMatterAppConst {
 	 * 费用申请单管理节点
 	 */
 	public static final String MAPP_NODECODE_MN = "20110MTAMN";
+	
+	/**
+	 * 费用申请单管理节点
+	 */
+	public static final String MAPP_NODECODE_QY = "20110QUERY";
 	
 	/**
 	 * 费用申请单管理节点

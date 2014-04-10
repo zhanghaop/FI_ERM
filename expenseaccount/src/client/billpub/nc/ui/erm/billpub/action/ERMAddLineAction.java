@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErmDjlxCache;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
@@ -15,6 +17,7 @@ import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDouble;
@@ -24,6 +27,8 @@ public class ERMAddLineAction extends AddLineAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
+		// 防止界面上，最后编辑的内容不生效
+		getBillCardPanel().stopEditing();
 		// 校验分摊页签，报销金额不能为0
 		validateAddRow();
 
@@ -57,12 +62,14 @@ public class ERMAddLineAction extends AddLineAction {
 			if (isNeedAvg) {
 				ErmForCShareUiUtil.reComputeAllJeByAvg(getBillCardPanel());
 				for (int i = 0; i < getBillCardPanel().getRowCount(); i++) {
-					ErmForCShareUiUtil.setRateAndAmount(i, this.getBillCardPanel());
+					//ErmForCShareUiUtil.setRateAndAmount(i, this.getBillCardPanel());
+					ErmForCShareUiUtil.setRateAndAmountNEW(i, this.getBillCardPanel(),"ADD_"+rownum);
 				}
 			} else {
 				getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, rownum, CShareDetailVO.ASSUME_AMOUNT);
 				getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, rownum, CShareDetailVO.SHARE_RATIO);
-				ErmForCShareUiUtil.setRateAndAmount(rownum, this.getBillCardPanel());
+				//ErmForCShareUiUtil.setRateAndAmount(rownum, this.getBillCardPanel());
+				ErmForCShareUiUtil.setRateAndAmountNEW(rownum, this.getBillCardPanel(),"ADD_"+rownum);
 			}
 		} else {
 			
@@ -83,8 +90,17 @@ public class ERMAddLineAction extends AddLineAction {
 			keyList.add(JKBXHeaderVO.PK_RESACOSTCENTER);
 			keyList.add(JKBXHeaderVO.PK_PROLINE);
 			keyList.add(JKBXHeaderVO.PK_BRAND);
+			keyList.add(JKBXHeaderVO.DWBM);
+			keyList.add(JKBXHeaderVO.DEPTID);
+			keyList.add(JKBXHeaderVO.JKBXR);
+			keyList.add(JKBXHeaderVO.PAYTARGET);
+			keyList.add(JKBXHeaderVO.RECEIVER);
+			keyList.add(JKBXHeaderVO.SKYHZH);
+			keyList.add(JKBXHeaderVO.HBBM);
+			keyList.add(JKBXHeaderVO.CUSTOMER);
+			keyList.add(JKBXHeaderVO.CUSTACCOUNT);
+			keyList.add(JKBXHeaderVO.FREECUST);
 			doCoresp(rownum, keyList, currentBodyTableCode);
-
 			getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, rownum, JKBXHeaderVO.YBJE);
 			getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, rownum, JKBXHeaderVO.CJKYBJE);
 			getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, rownum, JKBXHeaderVO.ZFYBJE);
@@ -128,7 +144,10 @@ public class ERMAddLineAction extends AddLineAction {
 		// 分摊页签，报销金额不能为0
 		if (getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CSHARE_PAGE)) {
 			UFDouble totalAmount = (UFDouble) getBillCardPanel().getHeadItem(JKBXHeaderVO.YBJE).getValueObject();
-			if (!ErmForCShareUtil.isUFDoubleGreaterThanZero(totalAmount)
+			DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+			// 费用调整单不控制合计金额为0、负数
+			boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(currentDjLXVO, ErmDjlxConst.BXTYPE_ADJUST);
+			if (!isAdjust&&!ErmForCShareUtil.isUFDoubleGreaterThanZero(totalAmount)
 					&& !BXConstans.BXINIT_NODECODE_G.equals(getNodeCode())
 					&& !BXConstans.BXINIT_NODECODE_U.equals(getNodeCode())) {
 				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
@@ -148,7 +167,7 @@ public class ERMAddLineAction extends AddLineAction {
 
 			String bodyvalue = (String) getBillCardPanel().getBodyValueAt(rownum, key);
 			if (bodyvalue == null) {
-				getBillCardPanel().setBodyValueAt(value, rownum, key);
+				getBillCardPanel().setBodyValueAt(value, rownum, key,tablecode);
 			}
 		}
 	}

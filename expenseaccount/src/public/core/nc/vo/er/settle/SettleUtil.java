@@ -158,6 +158,10 @@ public class SettleUtil {
 //		HangUp(600),
 //		UnComfirm(700);
 
+		if(head.isAdjustBxd()){
+			// 报销类型为费用调整的单据，不进行支付结算
+			return BusiStatus.Deleted;
+		}
 		if(StringUtils.isNullWithTrim(head.getPrimaryKey()))
 			return BusiStatus.Save;
 

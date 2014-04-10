@@ -11,9 +11,9 @@ import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.cmp.busi.IGetTargetVO;
 import nc.vo.cmp.settlement.SettlementAggVO;
 import nc.vo.cmp.settlement.SettlementBodyVO;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
-import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterappctrl.MtapppfVO;
 import nc.vo.pub.AggregatedValueObject;
@@ -38,6 +38,10 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 	protected BxcontrastVO[] contrastVO;
 
 	protected CShareDetailVO[] cShareDetailVo;// 分摊信息
+	
+	protected AccruedVerifyVO[] accruedVerifyVO;// 核销预提明细
+	
+	protected BXTbbDetailVO[] bxtbbDetailVO ;//预算占用期间
 
 	protected JKBXHeaderVO parentVO;
 
@@ -163,6 +167,13 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 				if (cShareDetailVo[i] != null)
 					voCShareVo[i] = (CShareDetailVO) cShareDetailVo[i].clone();
 		}
+		AccruedVerifyVO[] accVerifyVO = null;
+		if (accruedVerifyVO != null) {
+			accVerifyVO = new AccruedVerifyVO[accruedVerifyVO.length];
+			for (int i = 0; i < accruedVerifyVO.length; i++)
+				if (accruedVerifyVO[i] != null)
+					accVerifyVO[i] = (AccruedVerifyVO) accruedVerifyVO[i].clone();
+		}
 		// 冲销信息复制
 		BxcontrastVO[] voContrastVo = null;
 		if (contrastVO != null) {
@@ -172,8 +183,19 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 					voContrastVo[i] = (BxcontrastVO) contrastVO[i].clone();
 			}
 		}
+		//预算占用期间:以后可能需要
+		BXTbbDetailVO[] vobxtbbDetailVO =null;
+		if(bxtbbDetailVO!=null){
+			vobxtbbDetailVO = new BXTbbDetailVO[bxtbbDetailVO.length];
+			for(int i = 0; i < bxtbbDetailVO.length; i++){
+				if(bxtbbDetailVO[i]!=null){
+					vobxtbbDetailVO[i] = (BXTbbDetailVO)bxtbbDetailVO[i].clone();
+				}
+			}
+		}
+		
 
-		// 冲销信息复制
+		// 拉单信息复制
 		MtapppfVO[] voMaPfVos = null;
 		if (this.maPfVos != null) {
 			voMaPfVos = new MtapppfVO[this.maPfVos.length];
@@ -191,6 +213,7 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 		bxVO.setSettlementMap(getSettlementMap());
 		bxVO.setJkdMap(getJkdMap());
 		bxVO.setMaPfVos(voMaPfVos);
+		bxVO.setAccruedVerifyVO(accVerifyVO);
 
 		if (this.getBxoldvo() != null) {
 			bxVO.setBxoldvo((JKBXVO) this.getBxoldvo().clone());
@@ -201,7 +224,8 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 
 	public String[] getTableCodes() {
 		if (getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
-			return new String[] { new BXBusItemVO().getTableName(), new BxcontrastVO().getTableName(), "costsharedetail"};
+			return new String[] { new BXBusItemVO().getTableName(), new BxcontrastVO().getTableName(),
+					"costsharedetail",BXConstans.AccruedVerify_Metadatapath};
 		} else {
 			return new String[] { BXConstans.BUS_PAGE_JK, BXConstans.CONST_PAGE_JK };
 		}
@@ -221,11 +245,21 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 
 	public String[] getTableNames() {
 
-		return new String[] { nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000279") /*
-																											 * @
-																											 * res
-																											 * "业务信息"
-																											 */};
+		if (getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
+			return new String[] {nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000279") /*
+					 * @
+					 * res
+					 * "业务信息"
+					 */, "报销单冲销对照行",
+					"费用分摊明细","报销核销预提明细"};
+		} else {
+			return new String[] { nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000279") /*
+					 * @
+					 * res
+					 * "业务信息"
+					 */, "报销单冲销对照行"};
+		}
+		
 	}
 
 	public CircularlyAccessibleValueObject[] getTableVO(String tableCode) {
@@ -234,6 +268,10 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 			return contrastVO;
 		} else if (BXConstans.CSHARE_PAGE.equals(tableCode) || "costsharedetail".equals(tableCode)) {
 			return cShareDetailVo;
+		} else if (BXConstans.AccruedVerify_Metadatapath.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
+			return accruedVerifyVO;
+		}else if(BXConstans.Tbb_PAGE.equals(tableCode)){
+			return bxtbbDetailVO;
 		} else if (childrenVO != null && childrenVO.length != 0) {
 			if (BXBusItemVO.getDefaultTableName().equals(tableCode)) {
 				// 适用于会计平台凭证模版取值
@@ -267,7 +305,13 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 				cShareDetailVo[i] = (CShareDetailVO) values[i];
 			}
 
-		} else {
+		} else if (BXConstans.AccruedVerify_Metadatapath.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
+			accruedVerifyVO = new AccruedVerifyVO[values.length];
+			for (int i = 0; i < values.length; i++) {
+				accruedVerifyVO[i] = (AccruedVerifyVO) values[i];
+			}
+		}
+		else {
 			List<CircularlyAccessibleValueObject> list = new ArrayList<CircularlyAccessibleValueObject>();
 
 			if (childrenVO != null && childrenVO.length != 0) {
@@ -377,6 +421,7 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 	public List<String> authList;
 	protected String warningMsg;
 	protected boolean isContrastUpdate = false; // 是否更新冲借款信息
+	protected boolean isVerifyAccruedUpdate = false; // 是否更新报销核销明细
 
 	public boolean getHasProBudgetCheck() {
 		return hasProBudgetCheck;
@@ -511,11 +556,12 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 					"02011v61013-0059")/* @res "实现IExAggVO必须返回页签编码" */);
 		}
 		for (int i = 0; i < tableCodes.length; i++) {
-			List<CircularlyAccessibleValueObject> voList = Arrays.asList(getTableVO(tableCodes[i]));
-			if (voList == null || voList.size() == 0) {
+			CircularlyAccessibleValueObject[] tableVOs = getTableVO(tableCodes[i]);
+			if (tableVOs == null || tableVOs.length == 0) {
 				// 避免空指针异常
 				continue;
 			}
+			List<CircularlyAccessibleValueObject> voList = Arrays.asList(tableVOs);
 			allVOList.addAll(voList);
 		}
 		return allVOList.toArray(new CircularlyAccessibleValueObject[0]);
@@ -596,5 +642,21 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 
 	public void setContrastMaPfVos(MtapppfVO[] contrastMaPfVos) {
 		this.contrastMaPfVos = contrastMaPfVos;
+	}
+
+	public AccruedVerifyVO[] getAccruedVerifyVO() {
+		return accruedVerifyVO;
+	}
+
+	public void setAccruedVerifyVO(AccruedVerifyVO[] accruedVerifyVO) {
+		this.accruedVerifyVO = accruedVerifyVO;
+	}
+
+	public boolean isVerifyAccruedUpdate() {
+		return isVerifyAccruedUpdate;
+	}
+
+	public void setVerifyAccruedUpdate(boolean isVerifyAccruedUpdate) {
+		this.isVerifyAccruedUpdate = isVerifyAccruedUpdate;
 	}
 }

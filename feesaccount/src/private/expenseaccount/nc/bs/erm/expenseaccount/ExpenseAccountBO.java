@@ -1,7 +1,9 @@
 package nc.bs.erm.expenseaccount;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import nc.bs.businessevent.EventDispatcher;
@@ -15,6 +17,7 @@ import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.util.AuditInfoUtil;
 import nc.vo.util.BDReferenceChecker;
 
@@ -36,6 +39,11 @@ public class ExpenseAccountBO {
 	}
 
 	public void insertVOs(ExpenseAccountVO[] vos) throws BusinessException {
+		// 过滤金额为0的行
+		vos = removeNullData(vos);
+		if (vos == null || vos.length == 0) {
+			return;
+		}
 		// 设置审计信息
 		AuditInfoUtil.addData(vos);
 		// vo校验
@@ -55,6 +63,20 @@ public class ExpenseAccountBO {
 		synchExpenseBal(vos, null);
 	}
 
+	private ExpenseAccountVO[] removeNullData(ExpenseAccountVO[] vos) {
+		if (vos == null || vos.length == 0) {
+			return null;
+		}
+		List<ExpenseAccountVO> list = new ArrayList<ExpenseAccountVO>();
+		for (int i = 0; i < vos.length; i++) {
+			 if(vos[i].getAssume_amount().compareTo(UFDouble.ZERO_DBL) != 0){
+             	// 金额为0的行不处理
+             	list.add(vos[i]);
+             }
+		}
+		return list.toArray(new ExpenseAccountVO[list.size()]);
+	}
+
 	private void synchExpenseBal(ExpenseAccountVO[] vos,
 			ExpenseAccountVO[] deletevos) throws BusinessException {
 		new ExpenseAccountBalanceBO().synchExpenseBal(
@@ -63,7 +85,11 @@ public class ExpenseAccountBO {
 
 	public void updateVOs(ExpenseAccountVO[] vos, ExpenseAccountVO[] oldvos)
 			throws BusinessException {
-		
+		// 过滤金额为0的新增行
+		vos = removeNullData(vos);
+		if ((vos == null || vos.length == 0) && (oldvos == null || oldvos.length == 0)){
+			return;
+		}
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkSave(vos);
@@ -256,6 +282,11 @@ public class ExpenseAccountBO {
 		Collection<ExpenseAccountVO> c = qryService.queryBillOfVOByPKs(ExpenseAccountVO.class, getVOsPk(vos), true);
 		ExpenseAccountVO[] oldvos = c.toArray(new ExpenseAccountVO[c.size()]);
 		// 外部赋值，审核状态业务信息
+		for (int i = 0; i < oldvos.length; i++) {
+			if(oldvos[i].getBillstatus().equals(BXStatusConst.DJZT_Verified)){
+				oldvos[i].setBillstatus(BXStatusConst.DJZT_Saved);
+			}
+		}
 		// 更新保存
 		fireBeforeUnSignEvent(vos);
 		

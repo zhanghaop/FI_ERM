@@ -3,6 +3,7 @@ package nc.vo.arap.bx.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -24,22 +25,27 @@ import nc.vo.ep.bx.BusiTypeVO;
 import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.ep.bx.ReimRuleDef;
-import nc.vo.ep.bx.ReimRuleDefVO;
 import nc.vo.ep.dj.DjCondVO;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.er.reimrule.ReimRuleVO;
+import nc.vo.er.reimrule.ReimRuleDimVO;
+import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.erm.util.VOUtils;
-import nc.vo.fipub.report.PubCommonReportMethod;
 import nc.vo.org.DeptVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.SuperVO;
+import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDouble;
 
 public class BxUIControlUtil {
-
+	/**
+	 * 借款报销单多个子表的编码
+	 * 与单据模版的页签编码对应
+	 */
+	public static String[] tableCodes =  new String[]{"er_busitem",
+		   		"costsharedetail","er_bxcontrast","er_tbbdetail",
+		   		"accrued_verify","jk_contrast","jk_busitem"};
 	/**
 	 * 供yer调用，借款报销人设置授权代理
 	 * 
@@ -491,7 +497,7 @@ public class BxUIControlUtil {
 		return BXUtil.getBusTypeVO(djlxbm, djdl);
 	}
 
-	private static boolean doSimpleNoEquals(String reftype, String pk_corp, Object ruleKey, Object voKey) {
+	public static boolean doSimpleNoEquals(String reftype, String pk_corp, Object ruleKey, Object voKey) {
 		IGeneralAccessor acc = null;
 
 		if (reftype.equals("地区分类")) {/* -=notranslate=- */
@@ -514,7 +520,7 @@ public class BxUIControlUtil {
 		return doSimpleNoEquals(ruleKey, voKey);
 	}
 
-	private static boolean doSimpleNoEquals(Object ruleKey, Object voKey) {
+	public static boolean doSimpleNoEquals(Object ruleKey, Object voKey) {
 		if (ruleKey == null)
 			return false;
 		else if (voKey == null)
@@ -535,75 +541,197 @@ public class BxUIControlUtil {
 	 * @return
 	 */
 	public static List<BodyEditVO> doBodyReimAction(JKBXVO bxvo, Map<String, List<SuperVO>> reimRuleDataMap,
-			HashMap<String, String> bodyReimRuleMap) {
-
+			BillTempletBodyVO[] billtempletbodyvos, Map<String, List<SuperVO>> reimDimDataMap) {
 		List<BodyEditVO> result = new ArrayList<BodyEditVO>();
-		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null)
+		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null
+				|| billtempletbodyvos==null || billtempletbodyvos.length==0)
 			return result;
 
 		String djlxbm = bxvo.getParentVO().getDjlxbm();
-		List<ReimRuleVO> matchReimRule = getMatchReimRuleByHead(djlxbm, bxvo, reimRuleDataMap);
 
-		for (String key : bodyReimRuleMap.keySet()) {// 表体报销标准Map<tablecode@itemkey,费用类型pk>循环
-			String expenseKey = bodyReimRuleMap.get(key);// 费用类型key
-			String[] keys = key.split(ReimRuleVO.REMRULE_SPLITER);
+		//若还未设置报销标准维度或没有标准，则直接返回
+		List<SuperVO> matchReimDim = reimDimDataMap.get(djlxbm);
+		if(matchReimDim==null || reimRuleDataMap.get(djlxbm)==null)
+			return result;
+		
+		//报销标准维度中，单据对应项 为子表的项，需要拿出来与表体进行比较
+		//例如报销类型就对应子表的属性，需要控制子表的项，dims中存储<itemkey,billrefcode,数据类型名称>
+		List<String> dims = new ArrayList<String>();
+		String centcontrolitem = null;
+		for(SuperVO vo:reimDimDataMap.get(djlxbm))
+		{
+			ReimRuleDimVO dimvo = (ReimRuleDimVO)vo;
+			if(dimvo.getControlflag().booleanValue())
+				centcontrolitem=dimvo.getCorrespondingitem();
+			for(String tablecode:tableCodes)
+				if(dimvo.getBillrefcode()!=null && dimvo.getBillrefcode().startsWith(tablecode))
+				{
+					dims.add(dimvo.getCorrespondingitem()+","+dimvo.getBillrefcode().substring(dimvo.getBillrefcode().indexOf(".")+1)
+							+","+dimvo.getDatatypename());
+				}
+		}
+		if(centcontrolitem==null)
+			return result;
+		//选出与单据对应的报销标准，只匹配表头
+		List<ReimRulerVO> matchReimRule = getMatchReimRuleByHead(bxvo, reimRuleDataMap.get(djlxbm),matchReimDim);
+		List<String> matchedpks = new ArrayList<String>();
+		for(ReimRulerVO mvo:matchReimRule){
+			matchedpks.add(mvo.getAttributeValue(centcontrolitem).toString());
+		}
+		//将所有标准的显示项提取出来，修改表头时需要清零 pk showitem
+		List<String> pks = new ArrayList<String>();
+		for(SuperVO vo:reimRuleDataMap.get(djlxbm)){
+			if(!matchedpks.contains(vo.getAttributeValue(centcontrolitem).toString()) 
+					&& !pks.contains(vo.getAttributeValue(centcontrolitem).toString())){
+				pks.add(vo.getAttributeValue(centcontrolitem).toString());
+				ReimRulerVO newvo = new ReimRulerVO();
+				newvo.setAttributeValue(centcontrolitem, vo.getAttributeValue(centcontrolitem));
+				newvo.setShowitem(((ReimRulerVO)vo).getShowitem());
+				newvo.setShowitem_name(((ReimRulerVO)vo).getShowitem_name());
+				newvo.setAmount(new UFDouble(0));
+				matchReimRule.add(newvo);
+			}
+		}
+		//根据上面的报销标准计算出单据模板上应该显示标准的项与控制项
+		addBodyEdit(result,bxvo,billtempletbodyvos,matchReimRule,dims,centcontrolitem);
+		return result;
+	}
+
+	/**
+	 *  表体报销标准Map<tablecode@itemkey,centcontrolPK（默认为费用类型pk）>循环
+	 * @param bodyReimRuleMap
+	 * @return
+	 */
+	public static void addBodyEdit(List<BodyEditVO> result,JKBXVO bxvo,
+			BillTempletBodyVO[] billtempletbodyvos,List<ReimRulerVO> matchReimRule,
+			List<String> dims,String centcontrolitem) {
+		//逐一遍历表体每个页签的每一个item，查看其元数据属性，提取显示项与控制项
+		HashMap<String, String> bodyReimRuleMap = new HashMap<String, String>();
+		for(BillTempletBodyVO bodyvo:billtempletbodyvos)
+		{
+			//该项没有元数据，直接跳过
+			if(bodyvo.getMetadataproperty()==null){
+				continue;
+			}
+			else{
+				for(ReimRulerVO rule:matchReimRule){
+					//提取vo的单据显示项、控制项与核心控制项PK
+					String showitem = rule.getShowitem_name();
+					String controlitem = rule.getControlitem_name();
+					//0不控制 1提示 2控制
+					Integer controlflag = rule.getControlflag();
+					String centcontrolPK = rule.getAttributeValue(centcontrolitem).toString();
+				
+					//查看页签的元数据属性
+					String metadata = bodyvo.getMetadataproperty();
+					metadata = metadata.substring(metadata.indexOf(".") + 1);
+					//若与标准的显示项相同，则加入<页签item,核心控制项pk>
+					if(metadata.equals(showitem)){
+						bodyReimRuleMap.put(bodyvo.getTable_code()+ "."+ bodyvo.getItemkey(), 
+								centcontrolPK);
+						break;
+					}
+					//若与标准的控制项相同，则加入<页签item,核心控制项pk;控制模式>
+					if(metadata.equals(controlitem)){
+						bodyReimRuleMap.put(bodyvo.getTable_code()+ "."+ bodyvo.getItemkey(), 
+								centcontrolPK+";"+controlflag);
+						break;
+					}
+				}
+			}
+		}//for
+		for (String key : bodyReimRuleMap.keySet()) {
+			String centcontrolKey = bodyReimRuleMap.get(key);// 费用类型key
+			String[] keys = key.split(ReimRulerVO.REMRULE_SPLITER);
 			String tableCode = keys[0];
 			String itemkey = keys[1];
 			CircularlyAccessibleValueObject[] bodyValueVOs = bxvo.getTableVO(tableCode);
 
 			if (bodyValueVOs != null) {
 				int row = -1;
-				for (CircularlyAccessibleValueObject body : bodyValueVOs) {// 对对应tableCode下的所有数据行进行遍历
+				// 对对应tableCode下的所有数据行进行遍历
+				for (CircularlyAccessibleValueObject body : bodyValueVOs) {
 					row++;
 
-					BodyEditVO bodyEditVO2 = new BodyEditVO();
-					bodyEditVO2.setValue(new UFDouble(0));
-					bodyEditVO2.setRow(row);
-					bodyEditVO2.setItemkey(itemkey);
-					bodyEditVO2.setTablecode(tableCode);
-					result.add(bodyEditVO2);
+					String[] pks = null;
+					String pk = centcontrolKey;
+					if(centcontrolKey.contains(";")){
+						pks= centcontrolKey.split(";");
+						pk = pks[0];
+					}
+					else{
+						BodyEditVO bodyEditVO2 = new BodyEditVO();
+						bodyEditVO2.setValue(new UFDouble(0));
+						bodyEditVO2.setRow(row);
+						bodyEditVO2.setItemkey(itemkey);
+						bodyEditVO2.setTablecode(tableCode);
+						result.add(bodyEditVO2);
+					}
 
-					for (ReimRuleVO rule : matchReimRule) {
-						if (doSimpleNoEquals(rule.getPk_reimtype(), body.getAttributeValue(BXBusItemVO.PK_REIMTYPE))) {
-							// 报销类型
+					for (ReimRulerVO rule : matchReimRule) {
+						// 判断核心控制项（默认为费用类型）是否相同
+						if (doSimpleNoEquals(rule.getAttributeValue(centcontrolitem), pk)) {
 							continue;
 						}
-						if (doSimpleNoEquals(rule.getPk_expensetype(), expenseKey)) {// 费用类型
-							continue;
-						}
+						// 查看维度设置与表体中对应字段值是否相同
 						boolean match = true;
-						ReimRuleDefVO reimRuleDefvo = BXUtil.getReimRuleDefvo(djlxbm);
-						for (ReimRuleDef def : reimRuleDefvo.getReimRuleDefList()) {// 报销标准自定义项
-
-							if (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key)) {
-
-								String itemkey2 = def.getItemkey();
-								String itemvalue = def.getItemvalue();
-								String[] itemvalues = itemvalue.split(ReimRuleVO.REMRULE_SPLITER);
-								String bodyCol = itemvalues[1];
-								if (doSimpleNoEquals(def.getReftype(), bxvo.getParentVO().getPk_group(),
-										rule.getAttributeValue(itemkey2), body.getAttributeValue(bodyCol))) {// 自定义与表体中对应字段值不同
+						List<BodyEditVO> dimlist = new ArrayList<BodyEditVO>();
+						for(String str:dims){
+							String[] itemvalues = str.split(",");
+							//dims中存的是[PK_REIMTYPE, pk_reimtype, 报销类型]，最后一位是数据类型
+							if(itemvalues.length>3 && itemvalues[2]!=null){
+								if (doSimpleNoEquals(itemvalues[2], bxvo.getParentVO().getPk_group(),
+										rule.getAttributeValue(itemvalues[0]), body.getAttributeValue(itemvalues[1]))) {
 									match = false;
 									break;
 								}
 							}
+							else{
+								if (doSimpleNoEquals(rule.getAttributeValue(itemvalues[0]), body.getAttributeValue(itemvalues[1]))) {
+									match = false;
+									break;
+								}
+							}
+							BodyEditVO bvo = new BodyEditVO();
+							bvo.setTablecode(tableCode);
+							bvo.setItemkey(itemvalues[1]);
+							dimlist.add(bvo);
 						}
-
 						if (match) {
-							BodyEditVO bodyEditVO = new BodyEditVO();
-							bodyEditVO.setValue(rule.getAmount());
-							bodyEditVO.setRow(row);
-							bodyEditVO.setItemkey(itemkey);
-							bodyEditVO.setTablecode(tableCode);
-							result.add(bodyEditVO);
+							//pks为空说明不包含分号，为显示项
+							if(pks==null){
+								BodyEditVO bodyEditVO = new BodyEditVO();
+								bodyEditVO.setValue(rule.getAmount());
+								bodyEditVO.setRow(row);
+								bodyEditVO.setItemkey(itemkey);
+								bodyEditVO.setTablecode(tableCode);
+								result.add(bodyEditVO);
+							}
+							else{
+								ControlBodyEditVO bodyEditVO = new ControlBodyEditVO();
+								bodyEditVO.setValue(rule.getAmount());
+								bodyEditVO.setRow(row);
+								bodyEditVO.setItemkey(itemkey);
+								bodyEditVO.setTablecode(tableCode);
+								bodyEditVO.setDimlist(dimlist);
+								if(rule.getControlformula()!=null)
+									bodyEditVO.setFormulaRule(rule.getControlformula());
+								if(pks.length>1){
+									try{
+									bodyEditVO.setTip(Integer.valueOf(pks[1]));
+									}catch(Exception e){
+										
+									}
+								}
+								result.add(bodyEditVO);
+								
+							}
 						}
 					}
 				}
 			}
 		}
-		return result;
 	}
-
 	/**
 	 * 表头报销标准
 	 * 
@@ -611,125 +739,121 @@ public class BxUIControlUtil {
 	 *            单据VO
 	 * @param reimRuleDataMap
 	 *            报销标准Map
+	 * @param reimRuleDataMap
+	 *            标准维度Map
 	 * @param expenseType
 	 *            费用类型
 	 * @param reimtypeMap
 	 *            报销类型
 	 * @return
 	 */
-	public static String doHeadReimAction(JKBXVO bxvo, Map<String, List<SuperVO>> reimRuleDataMap,
-			Map<String, SuperVO> expenseType, Map<String, SuperVO> reimtypeMap) {
-		StringBuffer reimrule = new StringBuffer("");
+	public static List<String> doHeadReimAction(JKBXVO bxvo, Map<String, List<SuperVO>> reimRuleDataMap,
+			Map<String, List<SuperVO>> reimDimDataMap) {//,Map<String, SuperVO> expenseType, Map<String, SuperVO> reimtypeMap
+		List<String> reimrule = new ArrayList<String>();
 
 		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null)
-			return reimrule.toString();
+			return reimrule;
 
 		String djlxbm = bxvo.getParentVO().getDjlxbm();
+		List<SuperVO> matchReimDim = reimDimDataMap.get(djlxbm);
+		if(matchReimDim==null)
+			return reimrule;
 		// 根据单据类型获取自定义报销标准
-		List<ReimRuleVO> matchReimRule = getMatchReimRuleByHead(djlxbm, bxvo, reimRuleDataMap);
-
-		String langIndex = PubCommonReportMethod.getMultiLangIndex();
-		for (ReimRuleVO rule : matchReimRule) {
-			if (expenseType.get(rule.getPk_expensetype()) != null) {
-				reimrule.append(expenseType.get(rule.getPk_expensetype()).getAttributeValue("name" + langIndex));
+		List<ReimRulerVO> matchReimRule = getMatchReimRuleByHead(bxvo, reimRuleDataMap.get(djlxbm),matchReimDim);
+		//选出配置标准维度时设置的需要展示的列
+		List<String> dims = new ArrayList<String>();
+		for(SuperVO vo:matchReimDim)
+		{
+			ReimRuleDimVO dimvo = (ReimRuleDimVO)vo;
+			if(dimvo.getShowflag().booleanValue())
+			{
+				dims.add(dimvo.getCorrespondingitem());
 			}
-			String pk_reimtype = rule.getPk_reimtype();
-			if (pk_reimtype != null) {
-				if (reimtypeMap.get(pk_reimtype) != null) {
-					reimrule.append(":");
-					reimrule.append(reimtypeMap.get(pk_reimtype).getAttributeValue("name" + langIndex));
-				}
-			}
-
-			ReimRuleDefVO reimRuleDefvo = BXUtil.getReimRuleDefvo(djlxbm);
-			for (ReimRuleDef def : reimRuleDefvo.getReimRuleDefList()) {
-				if (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key)) {
-					if (rule.getAttributeValue(def.getItemkey()) != null) {
-						reimrule.append(":");
-						Object nameValue = rule.getAttributeValue(def.getItemkey() + "_name");
-						reimrule.append(nameValue != null ? nameValue : rule.getAttributeValue(def.getItemkey()));
-					}
-				}
-			}
-			reimrule.append("  ");
-			reimrule.append(rule.getAmount());
-			reimrule.append("\t");
 		}
-		return reimrule.toString();
+		for (ReimRulerVO rule : matchReimRule) {
+			StringBuffer reim = new StringBuffer("");
+			for (String str : dims)
+			{
+				if(str.equalsIgnoreCase("amount"))
+					continue;
+				if(rule.getAttributeValue(str+"_name")!=null)
+					reim.append(rule.getAttributeValue(str+"_name")+":");
+			}
+			reim.append(rule.getAmount());
+			reimrule.add(reim.toString());
+		}
+		return reimrule;
 	}
 
-	private static List<ReimRuleVO> getMatchReimRuleByHead(String djlxbm, JKBXVO bxvo,
-			Map<String, List<SuperVO>> reimRuleDataMap) {
-		List<SuperVO> dataList = reimRuleDataMap.get(djlxbm);
-		List<ReimRuleVO> matchedRule = new ArrayList<ReimRuleVO>();
+	public static List<ReimRulerVO> getMatchReimRuleByHead(JKBXVO bxvo,
+			List<? extends SuperVO> dataList,List<? extends SuperVO> matchReimDim) {
+		List<ReimRulerVO> matchedRule = new ArrayList<ReimRulerVO>();
 
-		if (dataList == null || dataList.size() == 0 || bxvo == null || bxvo.getParentVO() == null)
+		if (dataList == null || dataList.size() == 0 || bxvo == null || bxvo.getParentVO() == null || matchReimDim==null)
 			return matchedRule;
 
-		ReimRuleVO[] ruleVOs = dataList.toArray(new ReimRuleVO[] {});
+		ReimRulerVO[] ruleVOs = dataList.toArray(new ReimRulerVO[] {});
 		Arrays.sort(ruleVOs);
 		// 用来保存构造的报销标准
-		HashMap<String, String> rulemap = new HashMap<String, String>();
+		HashSet<String> ruleset = new HashSet<String>();
 
-		for (ReimRuleVO rule : ruleVOs) {
+		for (ReimRulerVO rule : ruleVOs) {
 			StringBuffer bodykey = new StringBuffer();
-			bodykey.append(rule.getPk_expensetype());
-			bodykey.append(rule.getPk_reimtype());
-
-			String deptid = bxvo.getParentVO().getDeptid();
-			while (deptid != null && doSimpleNoEquals(rule.getPk_deptid(), deptid)) {
-				deptid = getFatherDept(deptid);
-			}
-
-			if (doSimpleNoEquals(rule.getPk_deptid(), deptid)) {
-				continue;
-			}
-
-			if (doSimpleNoEquals(rule.getPk_psn(), bxvo.getParentVO().getJkbxr())) {
-				continue;
-			}
-			if (doSimpleNoEquals(rule.getPk_currtype(), bxvo.getParentVO().getBzbm())) {
-				continue;
-			}
-
-			boolean notmatch = false;
-			ReimRuleDefVO reimRuleDefvo = BXUtil.getReimRuleDefvo(djlxbm);
-			for (ReimRuleDef def : reimRuleDefvo.getReimRuleDefList()) {
-				String itemvalue = def.getItemvalue();
-				if (!itemvalue.startsWith(ReimRuleVO.Reim_body_key)) {
-					Object headvalue = "";
-					String[] keys = itemvalue.split(ReimRuleVO.REMRULE_SPLITER);
-					String typeString = keys[0];
-					String keyString = keys[1];
-					if (itemvalue.startsWith(ReimRuleVO.Reim_head_key)) {
-						headvalue = bxvo.getParentVO().getAttributeValue(keyString);
-					} else {
-						if (itemvalue.startsWith(ReimRuleVO.Reim_jkbxr_key)
-								|| itemvalue.startsWith(ReimRuleVO.Reim_receiver_key)) {
-							headvalue = getPsnDef1((String) bxvo.getParentVO().getAttributeValue(typeString), keyString);
-						} else if (itemvalue.startsWith(ReimRuleVO.Reim_deptid_key)
-								|| itemvalue.startsWith(ReimRuleVO.Reim_fydeptid_key)) {
-							try {
-								headvalue = getDeptDef1((String) bxvo.getParentVO().getAttributeValue(typeString),
-										keyString);
-							} catch (BusinessException e) {
-								ExceptionHandler.consume(e);
-							}
+			boolean match = true;
+			for (SuperVO vo : matchReimDim) {
+				ReimRuleDimVO dim = (ReimRuleDimVO)vo;
+				if (rule.getAttributeValue(dim.getCorrespondingitem()) != null) {
+					bodykey.append(rule.getAttributeValue(dim.getCorrespondingitem()));
+				}
+				//如果此列没有设置单据对应项或对应标准上为空，则不做比较，默认为此标准可用
+				if(dim.getBillrefcode()==null || rule.getAttributeValue(dim.getCorrespondingitem())==null)
+					continue;
+				String itemvalue = dim.getBillrefcode();
+				Object headvalue = "";
+				if (itemvalue.contains(".")) {
+					//包含"."，说明可能是主表的下拉项，也可能是子表
+					//主表下拉项只支持报销人、收款人、报销部门、费用承担部门
+					String[] keys = itemvalue.split(ReimRulerVO.REMRULE_SPLITER);
+					if (keys[0].equals(ReimRulerVO.Reim_jkbxr_key)
+							|| itemvalue.startsWith(ReimRulerVO.Reim_receiver_key)) {
+						headvalue = getPsnDef1((String) bxvo.getParentVO().getAttributeValue(keys[0]), keys[1]);
+					} else if (keys[0].equals(ReimRulerVO.Reim_deptid_key)
+							|| itemvalue.startsWith(ReimRulerVO.Reim_fydeptid_key)) {
+						try {
+							headvalue = getDeptDef1((String) bxvo.getParentVO().getAttributeValue(keys[0]),keys[1]);
+						} catch (BusinessException e) {
+							ExceptionHandler.consume(e);
 						}
 					}
-					if (doSimpleNoEquals(def.getReftype(), bxvo.getParentVO().getPk_group(),
-							rule.getAttributeValue(def.getItemkey()), headvalue)) {// 当表头有中有一个条件与标准不同，则跳出，表示不符合
-						notmatch = true;
-						break;
-					}
 				} else {
-					if (rule.getAttributeValue(def.getItemkey()) != null) {
-						bodykey.append(rule.getAttributeValue(def.getItemkey()));
+					//不包含"."，直接与单据的ParentVO进行比较
+					//部门需要特殊处理，本部门没有的话要一直向上找
+					if(dim.getCorrespondingitem().equalsIgnoreCase(ReimRulerVO.PK_DEPTID))
+					{
+						String deptid = bxvo.getParentVO().getDeptid();
+						while (deptid != null && doSimpleNoEquals(rule.getPk_deptid(), deptid)) {
+							//如果部门不一致则一直向上查找，直到找到相同的部门为止
+							deptid = getFatherDept(deptid);
+						}
+
+						if (doSimpleNoEquals(rule.getPk_deptid(), deptid)) {
+							match = false;
+							break;
+						}
 					}
+					headvalue=bxvo.getParentVO().getAttributeValue(dim.getBillrefcode());
+				}
+				if(headvalue==null || headvalue.equals(""))
+					continue;
+				// 当表头有中有一个条件与标准不同，则跳出，表示不符合
+				if (doSimpleNoEquals(dim.getDatatypename(), bxvo.getParentVO().getPk_group(),
+						rule.getAttributeValue(dim.getCorrespondingitem()), headvalue)) {
+					match = false;
+					break;
 				}
 			}
 
-			if (notmatch)
+			if (match == false)
 				continue;
 
 			int scale = 2;
@@ -742,12 +866,11 @@ public class BxUIControlUtil {
 				rule.setAmount(rule.getAmount().setScale(scale, UFDouble.ROUND_HALF_UP));
 			}
 
-			if (rulemap.get(bodykey.toString()) == null) {
+			if (!ruleset.contains(bodykey.toString())) {
 				matchedRule.add(rule);
-				rulemap.put(bodykey.toString(), "");
+				ruleset.add(bodykey.toString());
 			}
 		}
-
 		return matchedRule;
 	}
 

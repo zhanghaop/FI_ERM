@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Action;
 import javax.swing.JSplitPane;
@@ -18,8 +16,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
-import nc.bs.pf.pub.PfDataCache;
+import nc.desktop.ui.WorkbenchEnvironment;
 import nc.funcnode.ui.action.AbstractNCAction;
 import nc.funcnode.ui.action.GroupAction;
 import nc.funcnode.ui.action.INCAction;
@@ -27,12 +27,10 @@ import nc.funcnode.ui.action.MenuAction;
 import nc.itf.er.reimtype.IReimTypeService;
 import nc.itf.erm.prv.IArapCommonPrivate;
 import nc.itf.fi.pub.Currency;
-import nc.ui.arap.bx.BillItemCloneTool;
 import nc.ui.arap.bx.ButtonUtil;
 import nc.ui.arap.bx.print.FIPrintEntry_BX;
-import nc.ui.bill.tools.ColorConstants;
+import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.util.ErUiUtil;
-import nc.ui.org.ref.FinanceOrgDefaultRefTreeModel;
 import nc.ui.pub.ButtonObject;
 import nc.ui.pub.ToftPanel;
 import nc.ui.pub.beans.UIDialog;
@@ -48,8 +46,7 @@ import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillData;
 import nc.ui.pub.bill.BillEditEvent;
 import nc.ui.pub.bill.BillEditListener;
-import nc.ui.pub.bill.BillItem;
-import nc.ui.pub.bill.IBillItem;
+import nc.ui.trade.excelimport.util.StatusBarMsgCleaner;
 import nc.ui.trade.pub.IVOTreeDataByCode;
 import nc.ui.trade.pub.TableTreeNode;
 import nc.ui.trade.pub.TreeCreateTool;
@@ -57,27 +54,22 @@ import nc.ui.trade.pub.VOTreeNode;
 import nc.ui.uif2.actions.ActionInfo;
 import nc.ui.uif2.actions.ActionRegistry;
 import nc.ui.uif2.components.CommonConfirmDialogUtils;
-import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.MyDefusedVO;
-import nc.vo.ep.bx.ReimRuleDef;
-import nc.vo.ep.bx.ReimRuleDefVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.er.reimrule.ReimRuleVO;
-import nc.vo.er.reimtype.ReimTypeUtil;
+import nc.vo.er.reimrule.ReimRuleDimVO;
+import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.ml.MultiLangContext;
+import nc.vo.pf.pub.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.billtype.BilltypeVO;
-import nc.vo.pub.lang.UFDouble;
-
-import org.apache.commons.lang.ArrayUtils;
 
 /**
- * @author twei
- * 
- *         nc.ui.er.reimrule.ReimRuleUI
+ * @author shiwla
+ * nc.ui.er.reimrule.ReimRuleUI
+ * time 2014-01-29
  */
 @SuppressWarnings("deprecation")
 public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
@@ -86,15 +78,20 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	
 	private static final String ROOT = "root";
 	private static final int STATUS_BROWSE = 0;
-	private static final int STATUS_MOD = 1;
+	private static final int STATUS_MODIFY = 1;
+	private static final int STATUS_CONFIG = 2;
+	private static final int STATUS_CONTROL = 3;
 	private int pageStatus = STATUS_BROWSE;
 	private static final String nodecode = "20110RSS";
-	private ReimRuleDefVO ruleDef = null;
+	private static final String nodecodeRule = "20111RSS";//报销标准单据模板
+	private static final String nodecodeDim = "20112RSS";//报销标准维度模板
+	private static final String pk_group=WorkbenchEnvironment.getInstance().getGroupVO().getPk_group();
+	private String centControlItem = null;//核心控制项
 	private ExportExcelDialog expDialog = null;
 	private UIRefPane ivjtOrg;
 	private UIPanel jPanelOrg = null;
 	private UILabel jLabel6 = null;
-
+	
 	private final ButtonObject btnMod = new ButtonObject(
 			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
 					"UPP2011-000055")/* @res "修改" */,
@@ -173,7 +170,13 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 					"UPTcommon-000318")/* @res "复制" */, 5, "Copy"); /*
 																	 * -=notranslate
 																	 * =-
+	
 																	 */
+	//v631新增前台配置和控制设置
+	private final ButtonObject btnConfig = new ButtonObject("配置" ,"配置", 5, "Config");
+	private final ButtonObject btnControl = new ButtonObject("控制设置" ,"控制设置", 5, "Control");
+	private final ButtonObject btnRefresh = new ButtonObject("刷新" ,"刷新", 5, "Refresh");
+	
 	private final ButtonObject btnImp = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
 			"UPP2011-000483")/* @res "导入" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
 			"UPP2011-000483")/* @res "导入" */, 5, "Import"); /*
@@ -217,7 +220,6 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 																	 * -=notranslate
 																	 * =-
 																	 */
-
 	private UISplitPane splitPane;
 
 	private UISplitPane splitPane1;
@@ -225,29 +227,17 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	private BillCardPanel cardPanel;
 
 	private UIScrollPane treePanel;
+	
+	private ReimConfigPanel dimPanel;
 
 	private UITree tree;
-
-	private Map<String, List<SuperVO>> dataMap = new HashMap<String, List<SuperVO>>();
-
-	public Map<String, List<SuperVO>> getDataMap() {
-		return dataMap;
-	}
-
-	public void setDataMap(Map<String, List<SuperVO>> dataMap) {
-		this.dataMap = dataMap;
-	}
 
 	public ReimRuleUI() {
 		super();
 		initialize();
 		btnMod.setEnabled(false);
-		btnMod.setEnabled(false);
-		btnAdd.setEnabled(false);
 		btnAdd.setEnabled(false);
 		btnDel.setEnabled(false);
-		btnDel.setEnabled(false);
-		btnSave.setEnabled(false);
 		btnSave.setEnabled(false);
 		initData();
 		if (ErUiUtil.getBXDefaultOrgUnit() == null) {
@@ -263,7 +253,7 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		btnPrintGroup.addChildButton(btnPreview);
 		btnPrintGroup.addChildButton(btnOutput);
 		return new ButtonObject[] { btnMod, btnAdd, btnDel, btnSave, btnCancel,
-				btnCopy, btnImp, btnExp, btnUp, btnDown, btnTop, btnBottom,
+				btnCopy, btnImp, btnExp, btnConfig, btnControl, btnUp, btnDown, btnTop, btnBottom,
 				btnPrintGroup };
 	}
 
@@ -271,11 +261,11 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	protected void postInit() {
 		super.postInit();
 		initActions();
-		setPageStatus(3);
+		setPageStatus(4);
 		getBillTypeTree().setSelectionInterval(0, 0);
 	}
 
-	// 初始化按钮快捷键等
+	// 遍历所有定义的按钮，并为按钮初始化快捷键等(按按钮定义的顺序依次分配快捷键)
 	private void initActions() {
 		List<Action> menuActions = getMenuActions();
 		for (Action menu : menuActions) {
@@ -338,15 +328,28 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				btnUp, btnDown, btnTop, btnBottom };
 	}
 
+	private ButtonObject[] getConfigButtons() {
+		return new ButtonObject[] { btnAdd, btnDel, btnSave, btnCancel, btnCopy, btnUp, btnDown, btnTop, btnBottom};
+	}
+	
 	private ButtonObject[] getBrowseButtons() {
-		return new ButtonObject[] { btnMod, btnCopy, btnExp, btnPrintGroup };
+		return new ButtonObject[] { btnMod, btnCopy, btnRefresh,btnConfig, btnControl, btnExp, btnPrintGroup};
 	}
 
+	private ButtonObject[] getControlButtons() {
+		return new ButtonObject[] {btnSave, btnCancel};
+	}
 	public ButtonObject[] getUEButtons(Integer status) {
 		switch (status.intValue()) {
 		case 1:
 			// 编辑态
 			return getEditButtons();
+		case 2:
+			// 配置态
+			return getConfigButtons();
+		case 3:
+			//控制态
+			return getControlButtons();
 		default:
 			// 浏览态
 			return getBrowseButtons();
@@ -382,6 +385,7 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	private void createGroupActions(List<Action> actions) {
 		for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
 			Action action = iterator.next();
+			//如果按钮还未分组，则需要给按钮添加组
 			if (action.getValue(BTN_GROUP_NAME) == null) {
 				appendGroupName(action);
 			}
@@ -404,6 +408,14 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 	});
 
+	List<String> BTN_GROUP_CONFIG_CODES = Arrays.asList(new String[] { 
+			"Config","Control"
+	});
+	
+	List<String> BTN_GROUP_REFRESH_CODES = Arrays.asList(new String[] { 
+			"Refresh"
+	});
+	
 	List<String> BTN_GROUP_IMPEXP_CODES = Arrays.asList(new String[] { "Imp",
 			"Exp"
 
@@ -448,16 +460,20 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	 * 导出按钮组
 	 */
 	static String BTN_GROUP_IMPEXP = "BTN_GROUP_IMPEXP";
+	/**
+	 * 配置按钮组
+	 */
+	static String BTN_GROUP_CONFIG = "BTN_GROUP_CONFIG";
 
 	/**
-	 * 导出按钮组
+	 * 上移下移按钮组
 	 */
 	static String BTN_GROUP_UP2DOWN = "BTN_GROUP_UP2DOWN";
 
 	static String BTN_GROUP_NAME = "BTN_GROUP_NAME";
 
 	/**
-	 * 按钮添加组名
+	 * 为给定的action按钮添加组名
 	 * 
 	 * @author chendya
 	 */
@@ -493,7 +509,16 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			action.putValue(groupName, BTN_GROUP_IMPEXP);
 		}
 
-		// 导出按钮组
+		//刷新按钮组
+		else if(BTN_GROUP_REFRESH_CODES.contains(code)){
+			action.putValue(groupName, BTN_GROUP_REFRESH);
+		}
+		
+		//配置按钮组
+		else if(BTN_GROUP_CONFIG_CODES.contains(code)){
+			action.putValue(groupName, BTN_GROUP_CONFIG);
+		}
+		// 下移按钮组
 		else if (BTN_GROUP_UP2DOWN_CODES.contains(code)) {
 			action.putValue(groupName, BTN_GROUP_UP2DOWN);
 		}
@@ -501,15 +526,20 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 	// --end
 
+	//从数据库中获得报销维度和报销标准，保存到本地
 	private void initData() {
 		IReimTypeService remote = NCLocator.getInstance().lookup(IReimTypeService.class);
-		List<ReimRuleVO> vos = new ArrayList<ReimRuleVO>();
+		List<ReimRulerVO> vorules;
+		List<ReimRuleDimVO> vodims;
 		try {
-			vos = remote.queryReimRule(null, getPkOrg());
+			vorules = remote.queryReimRuler(null, pk_group, getPkOrg());
+			ReimRuleUtil.setDataMapRule(VOUtils.changeCollectionToMapList(vorules, "pk_billtype"));
+			vodims = remote.queryReimDim(null, pk_group, getPkOrg());
+			ReimRuleUtil.setDataMapDim(VOUtils.changeCollectionToMapList(vodims, "pk_billtype"));
+			ReimRuleUtil.getTemplateBillDataMap().clear();
 		} catch (BusinessException e) {
 			handleException(e);
 		}
-		setDataMap(VOUtils.changeCollectionToMapList(vos, "pk_billtype"));
 	}
 
 	public UISplitPane getSplitPane() {
@@ -531,6 +561,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			this.add(getSplitPaneTop());
 			getSplitPaneTop().setTopComponent(getUIPanelOrg());
 			getSplitPaneTop().setBottomComponent(getSplitPane());
+			getSplitPaneTop().setDividerLocation(28);
+			getSplitPaneTop().setEnabled(false);
 			getSplitPane().setLeftComponent(getTreePanel());
 			getSplitPane().setRightComponent(getBillCardPanel());
 			getBillCardPanel().setPreferredSize(
@@ -543,6 +575,7 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				initData();
 
 			}
+			dimPanel = new ReimConfigPanel(nodecodeDim);
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
 			showErrorMessage(nc.ui.ml.NCLangRes.getInstance().getStrByID(
@@ -552,112 +585,40 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		}
 	}
 	
-	// 动态显示对象名称，多语问题需处理(费用类型，币种)
-	private void showObjName(BillCardPanel panel) {
-		
-		String namefield = getMultiFieldName("name");
-		String[] currtypeFormula = new String[1];
-		String[] expensetypeFormula = new String[1];
-		
-		currtypeFormula[0] = "currtype->getColValue(bd_currtype, " + namefield + ",pk_currtype , pk_currtype)";
-		expensetypeFormula[0] = "expensetype->getColValue(er_expensetype, " + namefield + ",pk_expensetype, pk_expensetype)";
-		panel.getBillModel().getItemByKey("expensetype").setLoadFormula(currtypeFormula);
-		panel.getBillModel().getItemByKey("currtype").setLoadFormula(expensetypeFormula);
-		panel.getBillModel().execLoadFormula();
-	}
-	
-	/**
-	 * 获取多语字段名称（name2,name,name3）
-	 * @param namefield
-	 * @return
-	 */
-	private String getMultiFieldName(String namefield) {
-		int intValue = MultiLangContext.getInstance().getCurrentLangSeq().intValue();
-		if(intValue>1){
-			namefield=namefield+intValue;
-		}
-		return namefield;
-	}
-	
-	/**
-	 * 返回某个交易类型的初始数据结构
-	 */
-	private Map<String,BillData> templateBillDataMap;
-	
-	public Map<String, BillData> getTemplateBillDataMap() {
-		if(templateBillDataMap==null){
-			templateBillDataMap = new HashMap<String, BillData>();
-		}
-		return templateBillDataMap;
-	}
-	
-	public BillData getTemplateInitBillData(final String tradetype) {
-		if (getTemplateBillDataMap().get(tradetype) == null) {
-			final BillCardPanel billCardPanel = new BillCardPanel();
-			billCardPanel.loadTemplet(nodecode, null, ErUiUtil.getPk_user(),ErUiUtil.getBXDefaultOrgUnit());
-			getTemplateBillDataMap().put(tradetype, billCardPanel.getBillData());
-		}
-		return getTemplateBillDataMap().get(tradetype);
-	}
-
 	public BillCardPanel getBillCardPanel() {
-		if (cardPanel == null) {
-			try {
-				cardPanel = new BillCardPanel();
-				cardPanel.loadTemplet(nodecode, null, ErUiUtil.getPk_user(),
-						ErUiUtil.getBXDefaultOrgUnit());
-				cardPanel.getBodyPanel().getTable().removeSortListener();
-				cardPanel.addEditListener(new BillEditListener() {
+		if(pageStatus==STATUS_CONFIG)
+		{
+			return dimPanel.getBillCardPanel();
+		}
+		else
+		{
+			if (cardPanel == null) {
+				try {
+					cardPanel = new BillCardPanel();
+					cardPanel.loadTemplet(nodecodeRule, null, ErUiUtil.getPk_user(),
+							ErUiUtil.getBXDefaultOrgUnit());
+					cardPanel.getBodyPanel().getTable().removeSortListener();
+					cardPanel.addEditListener(new BillEditListener() {
 
-					@Override
-					public void bodyRowChange(BillEditEvent e) {
+						@Override
+						public void bodyRowChange(BillEditEvent e) {
 
-					}
-
-					/**
-					 * @author liansg
-					 * @see 精度处理
-					 */
-					@Override
-					public void afterEdit(BillEditEvent e) {
-
-						String currentBodyTableCode = getBillCardPanel()
-								.getCurrentBodyTableCode();
-						CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
-								.getBillData().getBodyValueVOs(
-										currentBodyTableCode,
-										ReimRuleVO.class.getName());
-						ReimRuleVO[] reimRuleVOs = (ReimRuleVO[]) bodyValueVOs;
-
-						int currencyPrecision = 0;// 币种精度
-
-						for (ReimRuleVO vo : reimRuleVOs) {
-							if (e.getKey().equals("currtype")) {
-								try {
-									currencyPrecision = Currency
-											.getCurrDigit(vo.getPk_currtype());
-								} catch (Exception e1) {
-									ExceptionHandler.consume(e1);
-								}
-
-								String amount = "amount";
-								getBillCardPanel().getBodyItem(amount).setDecimalDigits(currencyPrecision);
-								
-								getBillCardPanel().setBodyValueAt(vo.getAmount() == null ? UFDouble.ZERO_DBL: 
-									vo.getAmount().setScale(currencyPrecision,UFDouble.ROUND_HALF_UP),
-										e.getRow(), amount);
-							}
 						}
-					}
-				});
 
-			} catch (java.lang.Throwable ivjExc) {
-				handleException(ivjExc);
+						@Override
+						public void afterEdit(BillEditEvent e) {
+							ReimRuleUtil.afterEdit(getBillCardPanel(),getSelectedNodeCode(),e);
+						}
+					});
+
+				} catch (java.lang.Throwable ivjExc) {
+					handleException(ivjExc);
+				}
+
 			}
 
+			return cardPanel;
 		}
-
-		return cardPanel;
 	}
 
 	public UIScrollPane getTreePanel() {
@@ -698,7 +659,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 		IVOTreeDataByCode idtree = new IVOTreeDataByCode() {
 			public String getCodeFieldName() {
-				return "pk_billtypecode";
+				return "djlxbm";
+//				return "pk_billtypecode";
 			}
 
 			public String getCodeRule() {
@@ -706,43 +668,64 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			}
 
 			public String getShowFieldName() {
-				return getMultiFieldName("billtypename");
+				return getMultiFieldName("djlxmc");
+//				return getMultiFieldName("billtypename");
 			}
 
 			public SuperVO[] getTreeVO() {
-				HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
-				List<BilltypeVO> list = new ArrayList<BilltypeVO>();
-				for (BilltypeVO vo : billtypes.values()) {
-					if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
-						if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
-								|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)) {
-							continue;
+				try {
+					List<DjLXVO> list = new ArrayList<DjLXVO>();
+					DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
+							"pk_group = '"+pk_group+"' and djdl in('jk','bx')");
+					for(DjLXVO vo:vos){
+						if(vo.getAttributeValue(getShowFieldName()) == null){
+							//当billtypename多语字段值为空时，手动赋值为~的值（防止自定义交易类型未录制多语时，构建数报空指针）
+							vo.setAttributeValue(getShowFieldName(), vo.getDjlxmc());
 						}
-						// 之所以改动这样的方式是 PfDataCache中的setBilltypeVOs
-						// 中进行了改动去掉了"global0000..",此处通过当前集团进行过滤
-						// if(vo.getPk_group()!=null &&
-						// !vo.getPk_group().equalsIgnoreCase(BXConstans.GLOBAL_CODE)){
-						if (vo.getPk_group() != null && !vo.getPk_group().equalsIgnoreCase(ErUiUtil.getPK_group())) {
-							continue;
-						}
-						if (BXConstans.BX_DJLXBM.equals(vo.getParentbilltype())
-								|| BXConstans.JK_DJLXBM.equals(vo.getParentbilltype())) {
-							
-							if(vo.getAttributeValue(getShowFieldName()) == null){
-								//当billtypename多语字段值为空时，手动赋值为~的值（防止自定义交易类型未录制多语时，构建数报空指针）
-								vo.setAttributeValue(getShowFieldName(), vo.getBilltypename());
-							}
+						if(vo.getBxtype()==null || vo.getBxtype() != ErmDjlxConst.BXTYPE_ADJUST)
 							list.add(vo);
+					}
+					DjLXVO[] toArray = list.toArray(new DjLXVO[] {});
+					Arrays.sort(toArray, new Comparator<DjLXVO>() {
+						public int compare(DjLXVO o1, DjLXVO o2) {
+							return o1.getDjlxbm().compareTo(o2.getDjlxbm());
 						}
-					}
+					});
+					return toArray;
+				}catch (BusinessException e) {
+					return null;
 				}
-				BilltypeVO[] toArray = list.toArray(new BilltypeVO[] {});
-				Arrays.sort(toArray, new Comparator<BilltypeVO>() {
-					public int compare(BilltypeVO o1, BilltypeVO o2) {
-						return o1.getPk_billtypecode().compareTo(o2.getPk_billtypecode());
-					}
-				});
-				return toArray;
+				
+//				HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
+//				List<BilltypeVO> list = new ArrayList<BilltypeVO>();
+//				for (BilltypeVO vo : billtypes.values()) {
+//					if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
+//						if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
+//								|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)) {
+//							continue;
+//						}
+//						// 通过当前集团进行过滤
+//						if (vo.getPk_group() != null && !vo.getPk_group().equalsIgnoreCase(ErUiUtil.getPK_group())) {
+//							continue;
+//						}
+//						if (BXConstans.BX_DJLXBM.equals(vo.getParentbilltype())
+//								|| BXConstans.JK_DJLXBM.equals(vo.getParentbilltype())) {
+//							
+//							if(vo.getAttributeValue(getShowFieldName()) == null){
+//								//当billtypename多语字段值为空时，手动赋值为~的值（防止自定义交易类型未录制多语时，构建数报空指针）
+//								vo.setAttributeValue(getShowFieldName(), vo.getBilltypename());
+//							}
+//							list.add(vo);
+//						}
+//					}
+//				}
+//				BilltypeVO[] toArray = list.toArray(new BilltypeVO[] {});
+//				Arrays.sort(toArray, new Comparator<BilltypeVO>() {
+//					public int compare(BilltypeVO o1, BilltypeVO o2) {
+//						return o1.getPk_billtypecode().compareTo(o2.getPk_billtypecode());
+//					}
+//				});
+//				return toArray;
 			};
 
 		};
@@ -798,229 +781,48 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	}
 
 	/**
-	 * 注掉原因：只有ImportExcelDialog类中使用到，但此方法并无实际意义。
-	 * @param value
-	 * @param defCode
-	 * @param byName
-	 * @return
+	 * 单据类型树的选择项修改时触发
 	 */
-//	public String getDefValueByKey(String value, String defCode, boolean byName) {
-//		if (value == null || value.toString().length() == 0)
-//			return value;
-//
-//		ReimRuleDefVO ruleDef2 = getRuleDef();
-//		List<ReimRuleDef> reimRuleDefList = ruleDef2.getReimRuleDefList();
-//
-//		for (ReimRuleDef def : reimRuleDefList) {
-//			if (def.getItemkey().equals(defCode)) {
-//				int datatype = Integer.parseInt(def.getDatatype());
-//				if (datatype == IBillItem.UFREF
-//						|| datatype == IBillItem.USERDEF) {
-//					String metaID = null;
-//					if (isUserDef(def)) {
-//						// ...
-//					} else {
-//						// preFix bug here 查询元数据ID
-//						// metaID = ...;
-//					}
-//					if (metaID != null) {
-//						IGeneralAccessor accessor = GeneralAccessorFactory
-//								.getAccessor(metaID);
-//						IBDData doc = null;
-//						if (byName) {
-//							if (accessor == null) {
-//								continue;
-//							}
-//							try {
-//								doc = accessor.getDocByNameWithMainLang(
-//										ErUiUtil.getDefaultOrgUnit(ErUiUtil
-//												.getPk_user(), ErUiUtil
-//												.getPK_group()), def
-//												.getDatatype());
-//							} catch (Exception e) {
-//								nc.bs.logging.Log.getInstance(this.getClass())
-//										.error(e.getMessage());
-//							}
-//						} else
-//							try {
-//								doc = accessor.getDocByCode(ErUiUtil
-//										.getDefaultOrgUnit(ErUiUtil
-//												.getPk_user(), ErUiUtil
-//												.getPK_group()), def
-//										.getDatatype());
-//							} catch (Exception e) {
-//								nc.bs.logging.Log.getInstance(this.getClass())
-//										.error(e.getMessage());
-//							}
-//						if (doc != null)
-//							return doc.getPk();
-//					}
-//				} else {
-//					return value;
-//				}
-//			}
-//		}
-//
-//		return value;
-//	}
-
 	private void refreshTemplate() {
 		final String djlxbm = getSelectedNodeCode();
 		if (djlxbm.equals(ROOT)){
 			return;
 		}
-		BillData billData = getTemplateInitBillData(djlxbm);
-		BillItem[] bodyItems = billData.getBillItemsByPos(IBillItem.BODY);
-		//返回所选交易类型配置的自定义字段
-		ReimRuleDefVO reimRuleDefvo = ReimTypeUtil.getReimRuleDefvo(djlxbm);
-		if (reimRuleDefvo == null){
-			//该交易类型没有自定义配置字段
-			getBillCardPanel().setBillData(billData);
-			setRuleDef(null);
-			return;
-		}
-		if (getRuleDef() != null && reimRuleDefvo.getId().equals(getRuleDef().getId()))
-			return;
-		setRuleDef(reimRuleDefvo);
-
-		List<BillItem> items = new ArrayList<BillItem>();
-		if (bodyItems != null) {
-			for (BillItem item : bodyItems) {
-				if (item.getKey().startsWith("def")
-						|| (item.getIDColName() != null && item.getIDColName()
-								.startsWith("def"))) {
-					continue;
-				}
-				items.add(item);
-			}
-		}
-		List<ReimRuleDef> reimRuleDefList = reimRuleDefvo.getReimRuleDefList();
-		if (reimRuleDefList != null) {
-			for (ReimRuleDef def : reimRuleDefList) {
-				int datatype = Integer.parseInt(def.getDatatype());
-				if (datatype == IBillItem.UFREF
-						|| datatype == IBillItem.USERDEF) {
-					BillItem item1 = BillItemCloneTool.clone(bodyItems[1]);
-					item1.setNull(true);
-					item1.setDataType(datatype);
-					item1.setRefType(def.getReftype());
-					item1.setKey(def.getItemkey() + "_name");
-					item1.setName(def.getShowname());
-					item1.setIDColName(def.getItemkey());
-					item1.setShowOrder(1);
-					item1.setShow(true);
-					item1.setM_bNotLeafSelectedEnabled(true);
-					item1.setForeground(ColorConstants.COLOR_DEFAULT);
-					items.add(item1);
-
-					if (isUserDef(def)) {
-						// FIXME
-						// try{
-						// IDef idef =
-						// NCLocator.getInstance().lookup(IDef.class);
-						// String docType =
-						// def.getItemvalue().startsWith(ReimRuleVO.Reim_jkbxr_key)||def.getItemvalue().startsWith(ReimRuleVO.Reim_receiver_key)?"人员管理档案":"";
-						// /*-=notranslate=-*/
-						// docType =
-						// def.getItemvalue().startsWith(ReimRuleVO.Reim_deptid_key)||def.getItemvalue().startsWith(ReimRuleVO.Reim_fydeptid_key)?"部门档案":docType;
-						// /*-=notranslate=-*/
-						//
-						// if(def.getItemvalue().startsWith(ReimRuleVO.Reim_head_key)
-						// ||
-						// def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key)){
-						// String[] defCode=getDefCode(djlxbm);
-						// docType =
-						// def.getItemvalue().startsWith(ReimRuleVO.Reim_head_key)?defCode[0]:docType;
-						// docType =
-						// def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key)?defCode[1]:docType;
-						// }
-						//
-						// DefVO[] defs = idef.queryDefVO(docType,
-						// BXUiUtil.getDefaultOrgUnit()); /*-=notranslate=-*/
-						// if(defs!=null){
-						// for(DefVO defVO:defs){
-						// if(defVO==null ||
-						// !defVO.getFieldName().equals(def.getItemvalue().substring(def.getItemvalue().indexOf(ReimRuleVO.REMRULE_SPLITER)+1)))
-						// continue;
-						// if (defVO.getDefdef().getPk_bdinfo() == null)
-						// continue;
-						//
-						// if(datatype==IBillItem.USERDEF){
-						// item1.setRefType(defVO.getDefdef().getPk_bdinfo());
-						// item1.reCreateComponent();
-						// item1.setIsDef(true);
-						// }else{
-						// BdinfoVO bdinfo =
-						// (BdinfoVO)BdinfoManager.getBdInfoVO(defVO.getDefdef().getPk_bdinfo()).clone();
-						// String refnodename = bdinfo.getRefnodename();
-						// if(refnodename!=null){
-						// item1.setRefType(refnodename);
-						// }else{
-						// item1.setRefType("<"+bdinfo.getSelfrefclass()+">");
-						// }
-						// }
-						//
-						// item1.setDataType(IBillItem.UFREF);
-						// }
-						// }
-						// }catch (Exception e) {
-						// handleException(e);
-						// }
-					}
-
-					BillItem item2 = BillItemCloneTool.clone(bodyItems[1]);
-					item2.setDataType(IBillItem.STRING);
-					item2.setKey(def.getItemkey());
-					item2.setName(def.getShowname());
-					item2.setShow(false);
-					item2.setNull(false);
-					items.add(item2);
-				} else {
-					BillItem item1 = BillItemCloneTool.clone(bodyItems[1]);
-					item1.setDataType(datatype);
-					item1.setShow(true);
-					item1.setNull(false);
-					item1.setKey(def.getItemkey());
-					item1.setName(def.getShowname());
-					item1.setShowOrder(1);
-					item1.setRefType(def.getReftype());
-					items.add(item1);
+		BillData billData = ReimRuleUtil.getTemplateInitBillData(djlxbm,nodecodeRule);
+		List<SuperVO> reimruledim=ReimRuleUtil.getDataMapDim().get(djlxbm);
+		if (reimruledim!=null && reimruledim.size()>0) {
+			getBillCardPanel().setVisible(true);
+			for(SuperVO vo:reimruledim)
+			{
+				if(((ReimRuleDimVO)vo).getControlflag().booleanValue())
+				{
+					centControlItem=((ReimRuleDimVO)vo).getCorrespondingitem();
 				}
 			}
-		}
-
-		// 设置对应参照的财务组织
-		BillItem[] itemArray = items.toArray(new BillItem[] {});
-		for (BillItem item : itemArray) {
-			if (item.getComponent() instanceof UIRefPane) {
-				UIRefPane ref = (UIRefPane) item.getComponent();
-				if (ref.getRefModel() != null) {
-					ref.getRefModel().setPk_org(getPkOrg());
+			if(pageStatus==STATUS_CONTROL){
+				if(centControlItem==null){
+					billData.setBodyItems(null);
+					getBillCardPanel().setBillData(billData);
 				}
+				else
+					ReimRuleUtil.showControlPage(getBillCardPanel(),billData,reimruledim,centControlItem,getPkOrg(),getSelectedNodeCode());
+			}
+			else{
+				ReimRuleUtil.showModifyPage(getBillCardPanel(),billData,reimruledim,getPkOrg());
+//				缓存到该单据类型对应的billdata表中
+				ReimRuleUtil.getTemplateBillDataMap().put(djlxbm, billData);
 			}
 		}
-
-		billData.setBodyItems(itemArray);
-		getBillCardPanel().setBillData(billData);
-		
-		//缓存起来
-		getTemplateBillDataMap().put(djlxbm, billData);
+		else{
+			getBillCardPanel().setVisible(false);
+		}
 	}
-
-	private boolean isUserDef(ReimRuleDef def) {
-		return def.getItemvalue().startsWith(ReimRuleVO.Reim_jkbxr_key)
-				|| def.getItemvalue().startsWith(ReimRuleVO.Reim_receiver_key)
-				|| def.getItemvalue().startsWith(ReimRuleVO.Reim_deptid_key)
-				|| def.getItemvalue().startsWith(ReimRuleVO.Reim_fydeptid_key)
-				|| (def.getItemvalue().startsWith(ReimRuleVO.Reim_head_key) && def
-						.getItemvalue().indexOf("zyx") != -1)
-				|| (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key) && def
-						.getItemvalue().indexOf("defitem") != -1);
-	}
-
+	
 	protected void handleException(java.lang.Throwable ex) {
 		ExceptionHandler.consume(ex);
-		ErUiUtil.showUif2DetailMessage(this, "", ex);
+//		ErUiUtil.showUif2DetailMessage(this, "", ex);
+		showErrorMessage("错误",ex.getMessage());
+		StatusBarMsgCleaner.getInstance().messageAdded(this);
 	}
 
 	@Override
@@ -1037,22 +839,25 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				return;
 			}
 			if (bo.equals(btnMod)) {
-				setPageStatus(STATUS_MOD);
+				setPageStatus(STATUS_MODIFY);
 				getRefOrg().setEnabled(false);
-			} else if (bo.equals(btnAdd)) {
-				getBillCardPanel().addLine();
-					int rowCount = getBillCardPanel().getRowCount();
-					getBillCardPanel().setBodyValueAt(Currency.getOrgLocalCurrPK(getPkOrg()),rowCount - 1, "pk_currtype");
-					
-					getBillCardPanel().execBodyFormulas(rowCount - 1,new String[] { "currtype->getColValue(bd_currtype,"+ 
-							getMultiFieldName("name") + ",pk_currtype , pk_currtype)" });
+			}
+			else if(bo.equals(btnConfig)){
+				if(doProcess(true))
+					refresh();
+//				setPageStatus(STATUS_CONFIG);
+//				getRefOrg().setEnabled(false);
+			}else if(bo.equals(btnControl)){
+				doProcess(false);
+				refresh();
+//				setPageStatus(STATUS_CONTROL);
+//				getRefOrg().setEnabled(false);
+			}else if (bo.equals(btnAdd)) {
+				doAdd();
 			} else if (bo.equals(btnDel)) {
-				getBillCardPanel().delLine();
+				doDelete();
 			} else if (bo.equals(btnSave)) {
-				getBillCardPanel().stopEditing();
 				doSave();
-				getRefOrg().setEnabled(true);
-				setPageStatus(STATUS_BROWSE);
 			} else if (bo.equals(btnCancel)) {
 				setPageStatus(STATUS_BROWSE);
 				getRefOrg().setEnabled(true);
@@ -1079,8 +884,15 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			}
 
 			// 刷新数据
-			if (bo.equals(btnMod) || bo.equals(btnSave) || bo.equals(btnCancel)) {
+			if (bo.equals(btnMod) || bo.equals(btnRefresh) || bo.equals(btnSave) 
+					|| bo.equals(btnCancel)) {
 				refresh();
+			}
+			if(bo.equals(btnRefresh)){
+				initData();
+				refresh();
+				showHintMessage("刷新成功");
+				StatusBarMsgCleaner.getInstance().messageAdded(this);
 			}
 			if(expDialog!=null && expDialog.getResult() != UIDialog.ID_CANCEL ){
 				showHintMessage(ButtonUtil.getButtonHintMsg(ButtonUtil.MSG_TYPE_SUCCESS,bo));
@@ -1089,7 +901,102 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			ErUiUtil.showUif2DetailMessage(this, ButtonUtil.getButtonHintMsg(-1,bo), e);
 		}
 	}
-
+	
+	public boolean doProcess(boolean isConfig) {
+//        LoginContext context = new LoginContext();
+//        ToftPanelAdaptor adpter = new ToftPanelAdaptor();
+//        try{
+//        	adpter.init(getFuncletContext());
+//        }catch(Exception e){
+//        	//会出现null，不用管，不影响
+//        }
+//        context.setEntranceUI(adpter);
+//        context.setPk_group(pk_group);
+//        context.setPk_org(getPkOrg());
+//        context.setPk_loginUser(ErUiUtil.getPk_user());
+//        // 对话框初始化
+//        BatchEditDialog dialog = new BatchEditDialog(adpter);
+//
+//        // 对话框标题
+//        dialog.setTitle("报销标准配置");
+//        FuncletInitData data = new FuncletInitData(-1, dialog);
+//        Dimension dimension = new Dimension(1000, 800);
+//        dialog.initUI(isConfig,getSelectedNodeCode(),context, getFilePath(isConfig), data, dimension);
+//        dialog.setResizable(true);
+//        dialog.showModal();
+//        if(dialog.getResult() == UIDialog.ID_OK)
+//    		return true;
+        return false;
+    }
+	
+	private String getFilePath(boolean isConfig){
+		if(isConfig)
+			return "nc/ui/er/reimrule/config/reimconfig_config.xml";
+		else
+			return "nc/ui/er/reimrule/config/reimcontrol_config.xml";
+		
+	}
+	
+	/**
+	 * 获取多语字段名称（name2,name,name3）
+	 * @param namefield
+	 * @return
+	 */
+	private String getMultiFieldName(String namefield) {
+		int intValue = MultiLangContext.getInstance().getCurrentLangSeq().intValue();
+		if(intValue>1){
+			namefield=namefield+intValue;
+		}
+		return namefield;
+	}
+	// 动态显示对象名称，费用类型的多语问题处理
+	private void showObjName(BillCardPanel panel) {
+		if(panel.getBillModel() == null)
+			return;
+		String namefield = getMultiFieldName("name");
+		String[] expensetypeFormula = new String[1];
+		expensetypeFormula[0] = "pk_expensetype->getColValue(er_expensetype, " + namefield + ",pk_expensetype, pk_expensetype)";
+		String[] a = panel.getBillModel().getItemByKey("pk_expensetype").getLoadFormula();
+		if(ArrayUtil.arrayEquals(a, expensetypeFormula))
+			return;
+		panel.getBillModel().getItemByKey("pk_expensetype").setLoadFormula(expensetypeFormula);
+		panel.getBillModel().execLoadFormula();
+	}
+	private void doAdd() throws BusinessException {
+		if(pageStatus==STATUS_MODIFY)
+		{
+			//修改标准
+			getBillCardPanel().addLine();
+			int rowCount = getBillCardPanel().getRowCount();
+			String pk;
+			if(getPkOrg().equals("~"))
+				pk = Currency.getGroupLocalCurrPK(pk_group);
+			else
+				pk = Currency.getOrgLocalCurrPK(getPkOrg());
+			if(pk==null)
+				pk="";
+			getBillCardPanel().setBodyValueAt(pk,rowCount - 1, ReimRulerVO.PK_CURRTYPE);
+			getBillCardPanel().setBodyValueAt(Currency.getCurrInfo(pk).getAttributeValue(getMultiFieldName("name")),rowCount - 1, ReimRulerVO.PK_CURRTYPE_NAME);
+			if(getBillCardPanel().getBillModel()!=null)
+				getBillCardPanel().getBillModel().loadLoadRelationItemValue(rowCount - 1,rowCount - 1);
+		}
+		else if(pageStatus==STATUS_CONFIG)
+		{
+			//修改标准维度
+			dimPanel.addLine();
+		}
+	}
+	
+	private void doDelete() throws BusinessException {
+		if(pageStatus==STATUS_MODIFY)
+		{
+			getBillCardPanel().delLine();
+		}
+		else if(pageStatus==STATUS_CONFIG)
+		{
+			dimPanel.delLine(ReimRuleUtil.getDataMapRule().get(getSelectedNodeCode()));
+		}
+	}
 	/**
 	 * @param b
 	 * @param i
@@ -1114,9 +1021,19 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		}
 
 		int row1 = 0, row2 = 0, row3 = 0, row4 = 0, row5 = 0, row6 = 0, row7 = 0, row8 = 0, selS = 0, selT = 0;
-		CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
-				.getBillData().getBodyValueVOs(currentBodyTableCode,
-						ReimRuleVO.class.getName());
+		CircularlyAccessibleValueObject[] bodyValueVOs = null;
+		if(pageStatus==STATUS_MODIFY)
+		{
+			bodyValueVOs = getBillCardPanel()
+			.getBillData().getBodyValueVOs(currentBodyTableCode,
+					ReimRulerVO.class.getName());
+		}
+		else if(pageStatus==STATUS_CONFIG)
+		{
+			bodyValueVOs = getBillCardPanel()
+			.getBillData().getBodyValueVOs(currentBodyTableCode,
+					ReimRuleDimVO.class.getName());
+		}
 		List<CircularlyAccessibleValueObject> list = new ArrayList<CircularlyAccessibleValueObject>();
 
 		int fromRow = selectedRow[0];
@@ -1185,20 +1102,46 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		}
 
 		for (int p = row1; p < row2; p++) {
+			if(pageStatus==STATUS_MODIFY)
+			{
+				ReimRulerVO rule = (ReimRulerVO)bodyValueVOs[p];
+	             if(rule.getPk_expensetype()!=null && ReimRuleUtil.getExpenseMap().get(rule.getPk_expensetype())==null)
+	 				rule.setPk_expensetype(ReimRuleUtil.getExpenseNameMap().get(rule.getPk_expensetype()).getPrimaryKey());
+			}
 			list.add(bodyValueVOs[p]);
 		}
 		for (int p = row3; p < row4; p++) {
+			if(pageStatus==STATUS_MODIFY)
+			{
+				ReimRulerVO rule = (ReimRulerVO)bodyValueVOs[p];
+	             if(rule.getPk_expensetype()!=null && ReimRuleUtil.getExpenseMap().get(rule.getPk_expensetype())==null)
+	 				rule.setPk_expensetype(ReimRuleUtil.getExpenseNameMap().get(rule.getPk_expensetype()).getPrimaryKey());
+			}
 			list.add(bodyValueVOs[p]);
 		}
 		for (int p = row5; p < row6; p++) {
+			if(pageStatus==STATUS_MODIFY)
+			{
+				ReimRulerVO rule = (ReimRulerVO)bodyValueVOs[p];
+	             if(rule.getPk_expensetype()!=null && ReimRuleUtil.getExpenseMap().get(rule.getPk_expensetype())==null)
+	 				rule.setPk_expensetype(ReimRuleUtil.getExpenseNameMap().get(rule.getPk_expensetype()).getPrimaryKey());
+			}
 			list.add(bodyValueVOs[p]);
 		}
 		for (int p = row7; p < row8; p++) {
+			if(pageStatus==STATUS_MODIFY)
+			{
+				ReimRulerVO rule = (ReimRulerVO)bodyValueVOs[p];
+	             if(rule.getPk_expensetype()!=null && ReimRuleUtil.getExpenseMap().get(rule.getPk_expensetype())==null)
+	 				rule.setPk_expensetype(ReimRuleUtil.getExpenseNameMap().get(rule.getPk_expensetype()).getPrimaryKey());
+			}
 			list.add(bodyValueVOs[p]);
 		}
 
 		getBillCardPanel().getBillData().setBodyValueVO(
 				list.toArray(new SuperVO[] {}));
+		if(getBillCardPanel().getBillModel()!=null)
+			getBillCardPanel().getBillModel().loadLoadRelationItemValue();
 		getBillCardPanel().getBillModel().execLoadFormula();
 		getBillCardPanel().getBillTable().updateUI();
 
@@ -1207,54 +1150,50 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	}
 
 	private void doImport() {
-		ReimRuleVO[] reimrules = null;
-		// ReimRuleUI ruleUI = null;
-		ReimRuleVO[] reimrulesAll = null;
-		String currentBodyTableCode = this.getBillCardPanel()
-				.getCurrentBodyTableCode();
-		ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) this.getBillCardPanel()
-				.getBillData().getBodyValueVOs(currentBodyTableCode,
-						ReimRuleVO.class.getName());
-		ImportExcelDialog impDialog = new ImportExcelDialog(this, this);
-		if (impDialog.showModal() == UIDialog.ID_OK) {
-
-			reimrules = impDialog.importFromExcel();
-			// impDialog.setVisible(true);
-			// 如果为覆盖方式合并VO
-			reimrulesAll = (ReimRuleVO[]) ArrayUtils.addAll(reimRuleVos,
-					reimrules);
-			getBillCardPanel().getBillData().clearViewData();
-			if (reimrules != null) {
-				if (impDialog.isRBIncrement()) {
-					// getBillCardPanel().getBillData().setBodyValueVO(reimRuleVos);
-					getBillCardPanel().getBillData().setBodyValueVO(
-							reimrulesAll);
-				} else
-					getBillCardPanel().getBillData().setBodyValueVO(reimrules);
-
-			} else
-				getBillCardPanel().getBillData().setBodyValueVO(null);
-		}
-		getBillCardPanel().getBillModel().execLoadFormula();
+//		ReimRuleVO[] reimrules = null;
+//		// ReimRuleUI ruleUI = null;
+//		ReimRuleVO[] reimrulesAll = null;
+//		String currentBodyTableCode = this.getBillCardPanel()
+//				.getCurrentBodyTableCode();
+//		ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) this.getBillCardPanel()
+//				.getBillData().getBodyValueVOs(currentBodyTableCode,
+//						ReimRuleVO.class.getName());
+//		ImportExcelDialog impDialog = new ImportExcelDialog(this, this);
+//		if (impDialog.showModal() == UIDialog.ID_OK) {
+//
+//			reimrules = impDialog.importFromExcel();
+//			// impDialog.setVisible(true);
+//			// 如果为覆盖方式合并VO
+//			reimrulesAll = (ReimRuleVO[]) ArrayUtils.addAll(reimRuleVos,
+//					reimrules);
+//			getBillCardPanel().getBillData().clearViewData();
+//			if (reimrules != null) {
+//				if (impDialog.isRBIncrement()) {
+//					// getBillCardPanel().getBillData().setBodyValueVO(reimRuleVos);
+//					getBillCardPanel().getBillData().setBodyValueVO(
+//							reimrulesAll);
+//				} else
+//					getBillCardPanel().getBillData().setBodyValueVO(reimrules);
+//
+//			} else
+//				getBillCardPanel().getBillData().setBodyValueVO(null);
+//		}
+//		getBillCardPanel().getBillModel().execLoadFormula();
 
 	}
 
 	private void doExport() {
 		if (expDialog == null)
-			expDialog = new ExportExcelDialog(this, this);
+			expDialog = new ExportExcelDialog(this, getBillCardPanel());
 		expDialog.setVisible(true);
 	}
 
 	private void doCopy() {
-		CopyDialog dialog = new CopyDialog(this, this);
+		CopyDialog dialog = new CopyDialog(this);
 		int result = dialog.showModal();
 		if (result == UIDialog.ID_OK) {
 			String corp = dialog.getCorpRef().getRefPK();
 			String djlx = dialog.getDjlxRef().getRefCode();
-			// FIXME 多语言改动
-			// int ret =
-			// showYesNoMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000492")/*@res
-			// "您确定要把当前公司和交易类型设置的标准复制到指定公司和交易类型吗？这样会丢失目的公司和交易类型原有的报销标准数据！"*/);
 			int ret = showYesNoMessage(nc.vo.ml.NCLangRes4VoTransl
 					.getNCLangRes().getStrByID("ersetting_0", "02011001-0021")/*
 																			 * @res
@@ -1263,51 +1202,61 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			if (ret != UIDialog.ID_YES) {
 				return;
 			}
-
-			String currentBodyTableCode = getBillCardPanel()
-					.getCurrentBodyTableCode();
-			ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) getBillCardPanel()
-					.getBillData().getBodyValueVOs(currentBodyTableCode,
-							ReimRuleVO.class.getName());
-			if (reimRuleVos == null || reimRuleVos.length == 0) {
-				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-						.getStrByID("2011", "UPP2011-000493")/*
-															 * @res
-															 * "选中的报销标准中没有具体的值,复制已取消!"
-															 */);
-				return;
+			//若指定公司为空，则默认为集团级标准
+			if(corp == null)
+				corp="~";
+			String pk_billtype = getSelectedNodeCode();
+			String pk_org = getPkOrg();
+			if(pageStatus==STATUS_CONFIG)
+			{
+				dimPanel.doCopy(pk_group,pk_org,pk_billtype,corp,djlx);
 			}
-			String pk_billtype = reimRuleVos[0].getPk_billtype();
-			// String pk_corp = reimRuleVos[0].getPk_corp();
-			String pk_org = reimRuleVos[0].getPk_org();
-
-			int count = 0;
-			if (djlx.equals(pk_billtype) && pk_org.equals(corp)) // 同公司同交易类型不进行复制
-				return;
-			try {
-				for (ReimRuleVO vo : reimRuleVos) {
-					vo.setPk_billtype(djlx);
-					vo.setPk_org(corp);
-					count++;
+			else
+			{
+				String currentBodyTableCode = getBillCardPanel()
+						.getCurrentBodyTableCode();
+				ReimRulerVO[] reimRuleVos = (ReimRulerVO[]) getBillCardPanel()
+						.getBillData().getBodyValueVOs(currentBodyTableCode,
+								ReimRulerVO.class.getName());
+				if (reimRuleVos == null || reimRuleVos.length == 0) {
+					showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+							.getStrByID("2011", "UPP2011-000493")/*
+																 * @res
+																 * "选中的报销标准中没有具体的值,复制已取消!"
+																 */);
+					return;
 				}
-				List<ReimRuleVO> returnVos = NCLocator.getInstance()
-						.lookup(IReimTypeService.class).saveReimRule(
-								djlx, corp, reimRuleVos); // 直接进行保存的动作
-				if (corp.equals(pk_org)) { // 如果是同公司的复制，需要同时更新datamap
-					List<SuperVO> list = new ArrayList<SuperVO>();
-					list.addAll(returnVos);
-					getDataMap().put(djlx, list);
+				int count = 0;
+				if (djlx.equals(pk_billtype) && pk_org.equals(corp)) // 同公司同交易类型不进行复制
+					return;
+				try {
+					for (ReimRulerVO vo : reimRuleVos) {
+						//赋值，费用类型需要特殊处理
+						if(vo.getPk_expensetype()!=null && ReimRuleUtil.getExpenseMap().get(vo.getPk_expensetype())==null)
+							vo.setPk_expensetype(ReimRuleUtil.getExpenseNameMap().get(vo.getPk_expensetype()).getPrimaryKey());
+						vo.setPk_billtype(djlx);
+						vo.setPk_group(pk_group);
+						vo.setPk_org(corp);
+						vo.setPriority(count);
+						count++;
+					}
+					List<ReimRulerVO> returnVos = NCLocator.getInstance()
+							.lookup(IReimTypeService.class).saveReimRule(
+									djlx,pk_group,corp,reimRuleVos); // 直接进行保存的动作
+					if (corp.equals(pk_org)) { // 如果是同公司的复制，需要同时更新datamaprule
+						List<SuperVO> list = new ArrayList<SuperVO>();
+						list.addAll(returnVos);
+						ReimRuleUtil.putRule(djlx, list);
+					}
+				} catch (BusinessException e) {
+					showErrorMessage(nc.vo.ml.NCLangRes4VoTransl
+							.getNCLangRes().getStrByID("2011",
+									"UPP2011-000494")/* @res "复制失败：" */
+							+ e.getMessage());
 				}
-			} catch (BusinessException e) {
-				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl
-						.getNCLangRes().getStrByID("2011",
-								"UPP2011-000494")/* @res "复制失败：" */
-						+ e.getMessage());
+				showWarningMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("2011", "UPP2011-000495",null,new String[]{String.valueOf(count)})/* @res "复制成功,i条记录已复制!" */);
 			}
-		
-
-			showWarningMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-					.getStrByID("2011", "UPP2011-000495",null,new String[]{String.valueOf(count)})/* @res "复制成功,i条记录已复制!" */);
 		}
 	}
 
@@ -1316,7 +1265,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		BillCardPanel billCardPanel = this.getBillCardPanel();
 		FIPrintEntry_BX printEntry = new FIPrintEntry_BX(billCardPanel);
 		String pk_corp = getPkOrg();
-		String pk_user = nc.ui.pub.ClientEnvironment.getInstance().getUser().getPrimaryKey();
+		String pk_user = WorkbenchEnvironment.getInstance().getLoginUser().getPrimaryKey();
+		//String pk_user = nc.ui.pub.ClientEnvironment.getInstance().getUser().getPrimaryKey();
 		printEntry.getPrintEntry().setTemplateID(pk_corp, nodecode, pk_user, null, null);
 		switch (flag) {
 		case 1:
@@ -1334,101 +1284,102 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	}
 
 	private void doSave() throws BusinessException {
-		String currentBodyTableCode = getBillCardPanel()
-				.getCurrentBodyTableCode();
-		CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
-				.getBillData().getBodyValueVOs(currentBodyTableCode,
-						ReimRuleVO.class.getName());
-		String pk_billtype = getSelectedNodeCode();
-		String pk_org = getPkOrg();
-		ReimRuleVO[] reimRuleVOs = (ReimRuleVO[]) bodyValueVOs;
-
-		// 检查维度值
-		checkReimRules(reimRuleVOs);
-
-		for (ReimRuleVO vo : reimRuleVOs) {
-			vo.setPk_billtype(pk_billtype);
-			vo.setPk_corp(pk_org);
-			vo.setPk_org(pk_org);
-		}
-		List<ReimRuleVO> returnVos = NCLocator.getInstance().lookup(
-				IReimTypeService.class).saveReimRule(pk_billtype, pk_org,
-				reimRuleVOs);
-		List<SuperVO> list = new ArrayList<SuperVO>();
-		list.addAll(returnVos);
-		getDataMap().put(pk_billtype, list);
-	}
-
-	private void checkReimRules(ReimRuleVO[] reimRuleVOs)
-			throws BusinessException {
-		List<String> keys = new ArrayList<String>();
-		int i = 0;
-		for (ReimRuleVO rule : reimRuleVOs) {
-
-			String[] attrs = new String[] { "pk_expensetype", "pk_deptid",
-					"pk_psn", "pk_reimtype", "pk_currtype", "def1", "def2",
-					"def3", "def4", "def5", "def6", "def7", "def8", "def9",
-					"def10" };
-
-			if (rule.getAttributeValue("pk_expensetype") == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
-						.getNCLangRes().getStrByID("2011", "UPP2011-000499",null,new String[]{String.valueOf(i + 1)})/*
-																			 * @res
-																			 * "规则设置必须填写费用类型（第{i}行），保存失败!"
-																	 */);
+		if(pageStatus==STATUS_MODIFY)
+		{
+			//报销标准修改界面的保存
+			getBillCardPanel().stopEditing();
+			String currentBodyTableCode = getBillCardPanel()
+					.getCurrentBodyTableCode();
+			CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
+					.getBillData().getBodyValueVOs(currentBodyTableCode,
+							ReimRulerVO.class.getName());
+			String pk_billtype = getSelectedNodeCode();
+			String pk_org = getPkOrg();
+			ReimRulerVO[] reimRuleVOs = (ReimRulerVO[]) bodyValueVOs;
+	
+			// 检查报销标准的值是否正确，其中核心控制项、币种、金额不能为空
+			ReimRuleUtil.checkReimRules(reimRuleVOs,pk_billtype,pk_group,pk_org,centControlItem);
+			//保存时,先从原标准中提取界面控制值，然后保存标准，然后写入控制值
+			List<SuperVO> vos = ReimRuleUtil.getDataMapRule().get(getSelectedNodeCode());
+			List<ReimRulerVO> returnVos;
+			if(vos==null){
+				//若原标准为空，则直接保存
+				returnVos = NCLocator.getInstance().lookup(IReimTypeService.class).saveReimRule(pk_billtype, 
+						pk_group,pk_org,reimRuleVOs);
 			}
-
-			if (rule.getAttributeValue("pk_currtype") == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
-						.getNCLangRes().getStrByID("2011", "UPP2011-000497",null,new String[]{String.valueOf(i + 1)})/*
-																			 * @res
-																			 * "规则设置必须填写币种（第i行），保存失败!"
-																	 */);
-			}
-
-			if (rule.getAttributeValue("amount") == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
-						.getNCLangRes().getStrByID("2011", "UPP2011-000500",null,new String[]{String.valueOf(i + 1)})/*
-																			 * @res
-																			 * "规则设置必须填写金额（第i行），保存失败!"
-																	 */);
-			}
-			StringBuffer key = new StringBuffer();
-
-			for (String attr : attrs) {
-				if (rule.getAttributeValue(attr) != null)
-					key.append(rule.getAttributeValue(attr));
-
-				if (attr.equals("pk_currtype")) {
-					int scale = 2;
-					try {
-
-						scale = Currency.getCurrDigit(rule.getAttributeValue(
-								attr).toString());
-					} catch (Exception e) {
-						ExceptionHandler.consume(e);
+			else{
+				List<SuperVO> vos1 = new ArrayList<SuperVO>();
+				StringBuilder cents = new StringBuilder();
+				for(SuperVO vo:vos){
+					if(!cents.toString().contains((String) vo.getAttributeValue(centControlItem))){
+						vos1.add(vo);
+						cents.append((String) vo.getAttributeValue(centControlItem));
 					}
-					rule.setAmount(rule.getAmount().setScale(scale,
-							UFDouble.ROUND_HALF_UP));
 				}
+				NCLocator.getInstance().lookup(IReimTypeService.class).saveReimRule(pk_billtype, 
+						pk_group,pk_org,reimRuleVOs);
+				returnVos = NCLocator.getInstance().lookup(IReimTypeService.class).
+						saveControlItem(centControlItem,pk_billtype, pk_group,
+						pk_org,vos1.toArray(new ReimRulerVO[0]));
 			}
-
-			rule.setPriority(Integer.valueOf(i++));
-
-			if (keys.contains(key.toString())) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
-						.getNCLangRes().getStrByID("2011", "UPP2011-000501")/*
-																			 * @res
-																			 * "规则设置中包含各个维度全部相同的记录，保存失败!"
-																			 */);
-			} else {
-				keys.add(key.toString());
-			}
+			List<SuperVO> list = new ArrayList<SuperVO>();
+			list.addAll(returnVos);
+			ReimRuleUtil.putRule(pk_billtype, list);
 		}
+		else if(pageStatus==STATUS_CONFIG)
+		{
+			getBillCardPanel().stopEditing();
+			String currentBodyTableCode = getBillCardPanel()
+					.getCurrentBodyTableCode();
+			CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
+					.getBillData().getBodyValueVOs(currentBodyTableCode,
+							ReimRuleDimVO.class.getName());
+			String pk_billtype = getSelectedNodeCode();
+			String pk_org = getPkOrg();
+			ReimRuleDimVO[] reimDimVOs = (ReimRuleDimVO[]) bodyValueVOs;
+	
+			// 检查维度值，并加入单据类型、组织与对应项
+			ReimRuleUtil.checkReimDims(reimDimVOs,pk_billtype,pk_group,pk_org);
+			//保存
+			List<ReimRuleDimVO> returnVos = NCLocator.getInstance().lookup(
+					IReimTypeService.class).saveReimDim(pk_billtype, pk_group,pk_org,
+							reimDimVOs);
+			List<SuperVO> list = new ArrayList<SuperVO>();
+			list.addAll(returnVos);
+			ReimRuleUtil.putDim(pk_billtype, list);
+//			ReimRuleUtil.getTemplateBillDataMap().put(pk_billtype, null);
+		}
+		else if(pageStatus==STATUS_CONTROL)
+		{
+			getBillCardPanel().stopEditing();
+			String currentBodyTableCode = getBillCardPanel()
+					.getCurrentBodyTableCode();
+			CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
+					.getBillData().getBodyValueVOs(currentBodyTableCode,
+							ReimRulerVO.class.getName());
+			String pk_billtype = getSelectedNodeCode();
+			String pk_org = getPkOrg();
+			ReimRulerVO[] controlVOs = (ReimRulerVO[]) bodyValueVOs;
+			if(centControlItem.equalsIgnoreCase(ReimRulerVO.PK_EXPENSETYPE))
+				ReimRuleUtil.addReimRules(controlVOs);
+			List<ReimRulerVO> returnVos = NCLocator.getInstance().lookup(IReimTypeService.class).
+					saveControlItem(centControlItem,pk_billtype, pk_group,
+					pk_org,controlVOs);
+			List<SuperVO> list = new ArrayList<SuperVO>();
+			list.addAll(returnVos);
+			ReimRuleUtil.putRule(pk_billtype, list);
+		}
+		getRefOrg().setEnabled(true);
+		setPageStatus(STATUS_BROWSE);
+		showHintMessage("保存成功");
+		StatusBarMsgCleaner.getInstance().messageAdded(this);
 	}
 
 	private String getPkOrg() {
-		return getRefOrg().getRefPK();
+		if(getRefOrg().getRefPK()!=null)
+			return getRefOrg().getRefPK();
+		else
+			return "~";
 	}
 
 	public int getPageStatus() {
@@ -1460,6 +1411,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				btnPrintGroup.setEnabled(true);
 				btnCopy.setEnabled(true);
 				btnExp.setEnabled(true);
+				btnConfig.setEnabled(true);
+				btnControl.setEnabled(true);
 			}
 			break;
 		}
@@ -1477,7 +1430,28 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 			break;
 		}
-		case 3: {// 全部置灰
+		case 2: {// config
+			btnSave.setEnabled(true);
+			btnAdd.setEnabled(true);
+			btnDel.setEnabled(true);
+			btnCancel.setEnabled(true);
+			
+			btnCopy.setEnabled(true);
+
+			btnDown.setEnabled(true);
+			btnBottom.setEnabled(true);
+			btnTop.setEnabled(true);
+			btnUp.setEnabled(true);
+
+			break;
+		}
+		case 3: {//control
+			btnSave.setEnabled(true);
+			btnCancel.setEnabled(true);
+
+			break;
+		}
+		case 4: {// 全部置灰
 			btnSave.setEnabled(false);
 			btnAdd.setEnabled(false);
 			btnDel.setEnabled(false);
@@ -1516,22 +1490,87 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			return ROOT;
 		} else {
 			VOTreeNode node2 = (VOTreeNode) node;
-			BilltypeVO data = (BilltypeVO) node2.getData();
-			String pk_billtypecode = data.getPk_billtypecode();
-			return pk_billtypecode;
+			DjLXVO data = (DjLXVO) node2.getData();
+			String djlxbm = data.getDjlxbm();
+			return djlxbm;
+//			BilltypeVO data = (BilltypeVO) node2.getData();
+//			String pk_billtypecode = data.getPk_billtypecode();
+//			return pk_billtypecode;
 		}
 	}
 
 	private void refreshUI() {
 		switch (pageStatus) {
-		case 0: { // browse
-			// FIXME
+		//浏览状态，右侧显示浏览界面，装载报销标准数据
+		case 0: { 
+			getSplitPane().setRightComponent(getBillCardPanel());
+			refreshTemplate();
 			getBillCardPanel().setEnabled(false);
 			getBillTypeTree().setEnabled(true);
 			getTreePanel().setEnabled(true);
+			List<SuperVO> vos = ReimRuleUtil.getDataMapRule().get(getSelectedNodeCode());
+			//树形展示页面
+			if (vos != null && getBillCardPanel().getBodyItems()!= null) {
+//				CombineTableUI tableUI=new CombineTableUI();
+//				tableUI.process(vos,getBillCardPanel().getBodyItems());
+//				getBillCardPanel().getBodyPanel().getTable().setUI(tableUI);
+				getBillTypeTree().setEnabled(true);
+				getTreePanel().setEnabled(true);
+				try{
+				getBillCardPanel().getBillData().setBodyValueVO(
+						vos.toArray(new SuperVO[] {}));
+				}catch(Exception e){
+					handleException(e);
+				}
+				if(getBillCardPanel().getBillModel()!=null){
+					getBillCardPanel().getBillModel().execLoadFormula();
+					getBillCardPanel().getBillModel().loadLoadRelationItemValue();
+				}
+			} else {
+				getBillCardPanel().getBillData().setBodyValueVO(null);
+			}
 			break;
 		}
-		case 1: {// edit
+		//修改状态，因为只有在浏览态修改按钮才可用，所以只需要简单配置
+		case 1: {
+			getBillCardPanel().setEnabled(true);
+			getBillTypeTree().setEnabled(false);
+			getTreePanel().setEnabled(false);
+			break;
+		}
+		//配置状态，右侧显示配置界面，加载报销标准维度数据
+		case 2: {
+			getSplitPane().setRightComponent(dimPanel.getBillCardPanel());
+			dimPanel.setCellEditor(getSelectedNodeCode());
+			dimPanel.getBillCardPanel().setPreferredSize(
+					new java.awt.Dimension(298, 469));
+			dimPanel.getBillCardPanel().setEnabled(true);
+			getBillTypeTree().setEnabled(false);
+			getTreePanel().setEnabled(false);
+			List<SuperVO> vos = ReimRuleUtil.getDataMapDim().get(getSelectedNodeCode());
+			//如果未设置维度，则进行初始化
+			if(vos==null || vos.size()==0){
+				if(vos==null)
+					vos = new ArrayList<SuperVO>();
+				try {
+					List<ReimRuleDimVO> vodims = NCLocator.getInstance().lookup(IReimTypeService.class)
+							.queryReimDim("2631", "GLOBLE00000000000000", "~");
+					for(ReimRuleDimVO dimvo:vodims){
+						dimvo.setPk_billtype(getSelectedNodeCode());
+						dimvo.setPk_group(pk_group);
+						dimvo.setPk_org(getPkOrg());
+						vos.add(dimvo);
+					}
+				}catch (BusinessException ex) {
+					ExceptionHandler.consume(ex);
+				}
+			}
+			dimPanel.setData(vos);
+			break;
+		}
+		case 3: {
+			//控制状态，因为只有在浏览态控制按钮才可用，所以不需要修改右侧界面，只需要简单配置
+			refreshTemplate();
 			getBillCardPanel().setEnabled(true);
 			getBillTypeTree().setEnabled(false);
 			getTreePanel().setEnabled(false);
@@ -1540,23 +1579,6 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		default:
 			break;
 		}
-
-		List<SuperVO> vos = getDataMap().get(getSelectedNodeCode());
-		if (vos != null) {
-			getBillCardPanel().getBillData().setBodyValueVO(
-					vos.toArray(new SuperVO[] {}));
-		} else {
-			getBillCardPanel().getBillData().setBodyValueVO(null);
-		}
-		getBillCardPanel().getBillModel().execLoadFormula();
-	}
-
-	public ReimRuleDefVO getRuleDef() {
-		return ruleDef;
-	}
-
-	public void setRuleDef(ReimRuleDefVO ruleDef) {
-		this.ruleDef = ruleDef;
 	}
 
 	public UIRefPane getRefOrg() {
@@ -1564,11 +1586,10 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 			ivjtOrg = new UIRefPane();
 			ivjtOrg.setName("pk_org");
-			ivjtOrg.setRefNodeName("财务组织"); /* -=notranslate=- */
-			ivjtOrg.setRefModel(new FinanceOrgDefaultRefTreeModel());
+			ivjtOrg.setRefNodeName("业务单元"); 
 			ivjtOrg.setPreferredSize(new Dimension(200, ivjtOrg.getHeight()));	
 			ivjtOrg.addValueChangedListener(this);
-			ivjtOrg.getRefModel().setFilterPks(ErUiUtil.getPermissionOrgs(null));
+			ivjtOrg.getRefModel().setFilterPks(BXUiUtil.getPermissionOrgs(null));
 			ivjtOrg.getUITextField().setShowMustInputHint(true);
 		}
 		return ivjtOrg;
@@ -1578,12 +1599,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		if (jPanelOrg == null) {
 			FlowLayout flowLayout1 = new FlowLayout();
 			flowLayout1.setAlignment(FlowLayout.LEFT);
-			// 注意多语
-			// jLabel6.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000048")/*@res
-			// "单据类型"*/);
 			jLabel6 = new UILabel();
-			jLabel6.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-					.getStrByID("common", "UCMD1-000006")/* @res "财务组织" */);
+			jLabel6.setText("业务单元");//nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UCMD1-000006")/* @res "财务组织" */);
 			jPanelOrg = new UIPanel();
 			jPanelOrg.setLayout(flowLayout1);
 			jPanelOrg.setName("jPanelOrg");
@@ -1594,26 +1611,15 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		return jPanelOrg;
 	}
 
+	//组织面板改变时触发，只在浏览态发生
 	@Override
 	public void valueChanged(ValueChangedEvent event) {
-		if(event.getNewValue() != null){
-			getBillCardPanel().setEnabled(true);
-			getBillTypeTree().setEnabled(true);
-			getTreePanel().setEnabled(true);
-			initData();
-			
-			refreshTemplate();
-			refreshUI();
-			refreshButtonStatus();
-		}else{
-			getBillCardPanel().setEnabled(false);
-			getBillTypeTree().setEnabled(false);
-			getTreePanel().setEnabled(false);
-			for(ButtonObject bo : getButtons()){
-				bo.setEnabled(false);
-			}
-		}
-
+		getBillCardPanel().setEnabled(true);		
+		getBillTypeTree().setEnabled(true);
+		getTreePanel().setEnabled(true);
+		initData();
+		refreshUI();
+		refreshButtonStatus();
 	}
 	
 	@Override

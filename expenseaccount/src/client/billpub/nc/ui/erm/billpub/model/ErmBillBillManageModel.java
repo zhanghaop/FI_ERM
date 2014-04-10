@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErmDjlxCache;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.erm.model.ERMBillManageModel;
+import nc.ui.erm.util.TransTypeUtil;
 import nc.ui.pub.beans.constenum.IConstEnum;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXVO;
@@ -14,6 +16,7 @@ import nc.vo.ep.dj.ERMDjCondVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.fi.pub.SqlUtils;
+import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -81,39 +84,55 @@ public class ErmBillBillManageModel extends ERMBillManageModel {
 	 */
 	
 	private void initBillTypeMapCache() {
-		String[] billType = new String[]{BXConstans.JK_DJDL,BXConstans.BX_DJDL};
-		if(isInit()){
-			billType = new String[]{BXConstans.JK_DJDL};
-		}
-		DjLXVO[] validDjlx = getDjlxvosByNodeCode(billType);
-		if (ArrayUtils.isEmpty(validDjlx)) {
-			throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000171")/**
-			 * @res
-			 *      * "该节点单据类型已被封存，不可操作节点！"
-			 */
-			);
-		} else {
-			// 此处默认读取第一个没有封存单据类型
-			if(currentBillTypeCode == null){
-				boolean allFcbz = true;
-				for (DjLXVO djlx : validDjlx) {
-					if (djlx.getFcbz().equals(UFBoolean.FALSE)) {
-						setCurrentBillTypeCode(djlx.getDjlxbm());
-						setSelectBillTypeCode(djlx.getDjlxbm());
-						allFcbz = false;
-						break;
+		//设置当前功能节点的交易类型
+		String nodeCode = getContext().getNodeCode();
+		if(!nodeCode.equals(BXConstans.BXLR_QCCODE)&& !nodeCode.equals(BXConstans.BXMNG_NODECODE)&& !nodeCode.equals(BXConstans.BXBILL_QUERY) &&
+		        !nodeCode.equals(BXConstans.BXINIT_NODECODE_G) && !nodeCode.equals(BXConstans.BXINIT_NODECODE_U) &&!nodeCode.equals(BXConstans.MONTHEND_DEAL)){
+			String transtype = TransTypeUtil.getTranstype(this);
+		    setCurrentBillTypeCode(transtype);
+		    setSelectBillTypeCode(transtype);
+		    DjLXVO djlxVO;
+			try {
+				djlxVO = ErmDjlxCache.getInstance().getDjlxVO(getContext().getPk_group(), transtype);
+				billTypeMapCache.put(transtype, djlxVO);
+			} catch (BusinessException e) {
+				ExceptionHandler.handleExceptionRuntime(e);
+			}
+		}else{
+			String[] billType = new String[]{BXConstans.JK_DJDL,BXConstans.BX_DJDL};
+			if(isInit()){
+				billType = new String[]{BXConstans.JK_DJDL};
+			}
+			DjLXVO[] validDjlx = getDjlxvosByNodeCode(billType);
+			if (ArrayUtils.isEmpty(validDjlx)) {
+				throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000171")/**
+				 * @res
+				 *      * "该节点单据类型已被封存，不可操作节点！"
+				 */
+				);
+			} else {
+				// 此处默认读取第一个没有封存单据类型
+				if(currentBillTypeCode == null){
+					boolean allFcbz = true;
+					for (DjLXVO djlx : validDjlx) {
+						if (djlx.getFcbz().equals(UFBoolean.FALSE)) {
+							setCurrentBillTypeCode(djlx.getDjlxbm());
+							setSelectBillTypeCode(djlx.getDjlxbm());
+							allFcbz = false;
+							break;
+						}
+					}
+					if (allFcbz) {
+						// 全部封存单据类型时，取第一个
+						setCurrentBillTypeCode(validDjlx[0].getDjlxbm());
+						setSelectBillTypeCode(validDjlx[0].getDjlxbm());
 					}
 				}
-				if (allFcbz) {
-					// 全部封存单据类型时，取第一个
-					setCurrentBillTypeCode(validDjlx[0].getDjlxbm());
-					setSelectBillTypeCode(validDjlx[0].getDjlxbm());
-				}
 			}
-		}
-		
-		for (DjLXVO djLXVO : validDjlx) {
-			billTypeMapCache.put(djLXVO.getDjlxbm(), djLXVO);
+			
+			for (DjLXVO djLXVO : validDjlx) {
+				billTypeMapCache.put(djLXVO.getDjlxbm(), djLXVO);
+			}
 		}
 	}
  

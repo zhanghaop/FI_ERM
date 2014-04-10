@@ -8,7 +8,6 @@ package nc.vo.er.djlx;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import nc.vo.ep.bx.BusiTypeVO;
 import nc.vo.pub.NullFieldException;
 import nc.vo.pub.SuperVO;
@@ -124,11 +123,16 @@ public class DjLXVO extends SuperVO {
 	
 	private String parent_billtype;
 	
+	/**
+	 * EHP2-报销费用类型，默认为普通报销
+	 */
+	private java.lang.Integer bxtype;
 	
 	public static final String PARENT_BILLTYPE = "parent_billtype";
 	public static final String MATYPE = "matype";
 	public static final String BX_PERCENTAGE = "bx_percentage";
 	public static final String IS_MACTRL = "is_mactrl";
+	public static final String BXTYPE = "bxtype";
 	
 	
 	public UFBoolean getCreatCashflows() {
@@ -1031,5 +1035,11 @@ public class DjLXVO extends SuperVO {
 	}
 	public void setParent_billtype(String parent_billtype) {
 		this.parent_billtype = parent_billtype;
+	}
+	public java.lang.Integer getBxtype() {
+		return bxtype;
+	}
+	public void setBxtype(java.lang.Integer bxtype) {
+		this.bxtype = bxtype;
 	}
 }

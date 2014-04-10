@@ -56,7 +56,12 @@ public abstract class AbstractErmNtbSqlStrategy {
 	 * @return
 	 * @throws Exception
 	 */
-	@Business(business = ErmBusinessDef.TBB_CTROL, subBusiness = "", description = "查询符合条件的预算取数的sql接口" /*-=notranslate=-*/, type = BusinessType.DOMAIN_INT)
+	@Business(business = ErmBusinessDef.TBB_CTROL, subBusiness = "", description = "查询符合条件的预算取数的sql接口" /*
+																										 * -=
+																										 * notranslate
+																										 * =
+																										 * -
+																										 */, type = BusinessType.DOMAIN_INT)
 	public abstract List<String> getSqls(NtbParamVO ntbParam) throws Exception;
 
 	/**
@@ -66,13 +71,34 @@ public abstract class AbstractErmNtbSqlStrategy {
 	 * @return
 	 * @throws Exception
 	 */
-	@Business(business = ErmBusinessDef.TBB_CTROL, subBusiness = "", description = "查询符合条件预算取数明细的sql接口" /*-=notranslate=-*/, type = BusinessType.DOMAIN_INT)
+	@Business(business = ErmBusinessDef.TBB_CTROL, subBusiness = "", description = "查询符合条件预算取数明细的sql接口" /*
+																										 * -=
+																										 * notranslate
+																										 * =
+																										 * -
+																										 */, type = BusinessType.DOMAIN_INT)
 	public abstract List<String> getDetailSqls(NtbParamVO ntbParam) throws Exception;
 
 	protected String getWhereSql() throws Exception {
 		StringBuffer whereSql = new StringBuffer();
 		// 币种日期、单据类型基本信息
-		whereSql.append(getWhereFromVO());
+		whereSql.append(getWhereFromVO(false));
+		// 档案pk数组
+		whereSql.append(getIncludeSubSql());
+		return whereSql.toString();
+	}
+
+	/**
+	 * 支持预算日期调整的where拼写方式
+	 * 
+	 * @param isAdjust
+	 * @return
+	 * @throws Exception
+	 */
+	protected String getWhereSql(boolean isAdjust) throws Exception {
+		StringBuffer whereSql = new StringBuffer();
+		// 币种日期、单据类型基本信息
+		whereSql.append(getWhereFromVO(isAdjust));
 		// 档案pk数组
 		whereSql.append(getIncludeSubSql());
 		return whereSql.toString();
@@ -111,38 +137,38 @@ public abstract class AbstractErmNtbSqlStrategy {
 			if (nameField == null) {
 				nameField = names[i];
 			}
-			
-//			checkField(nameField);
-			
+
+			// checkField(nameField);
+
 			sql.append(" and " + SqlUtil.buildInSql(nameField, bddata.toArray(new String[] {})));
 		}
 
 		return sql.toString();
 	}
 
-//	private void checkField(String field) throws BusinessException{
-//		String billType = getBillType();
-//		if(billType != null){
-//			String headClassName = null;
-//			String bodyClassName = null;
-//			if(billType.startsWith("261")){
-//				headClassName = MatterAppVO.class.getName();
-//				bodyClassName = MtAppDetailVO.class.getName();
-//			}else if(billType.startsWith("263")){
-//				headClassName = JKHeaderVO.class.getName();
-//				bodyClassName = BXBusItemVO.class.getName();
-//			}else if(billType.startsWith("264")){
-//				headClassName = BXHeaderVO.class.getName();
-//				bodyClassName = BXBusItemVO.class.getName();
-//			}else if(billType.startsWith("265")){
-//				headClassName = CostShareVO.class.getName();
-//				bodyClassName = CShareDetailVO.class.getName();
-//			}else if(billType.startsWith("266")){
-//				headClassName = MatterAppVO.class.getName();
-//				bodyClassName = MtAppDetailVO.class.getName();
-//			}
-//		}
-//	}
+	// private void checkField(String field) throws BusinessException{
+	// String billType = getBillType();
+	// if(billType != null){
+	// String headClassName = null;
+	// String bodyClassName = null;
+	// if(billType.startsWith("261")){
+	// headClassName = MatterAppVO.class.getName();
+	// bodyClassName = MtAppDetailVO.class.getName();
+	// }else if(billType.startsWith("263")){
+	// headClassName = JKHeaderVO.class.getName();
+	// bodyClassName = BXBusItemVO.class.getName();
+	// }else if(billType.startsWith("264")){
+	// headClassName = BXHeaderVO.class.getName();
+	// bodyClassName = BXBusItemVO.class.getName();
+	// }else if(billType.startsWith("265")){
+	// headClassName = CostShareVO.class.getName();
+	// bodyClassName = CShareDetailVO.class.getName();
+	// }else if(billType.startsWith("266")){
+	// headClassName = MatterAppVO.class.getName();
+	// bodyClassName = MtAppDetailVO.class.getName();
+	// }
+	// }
+	// }
 
 	/**
 	 * where条件中固定条件<br>
@@ -151,7 +177,7 @@ public abstract class AbstractErmNtbSqlStrategy {
 	 * @return
 	 * @throws BusinessException
 	 */
-	protected String getWhereFromVO() throws BusinessException {
+	protected String getWhereFromVO(boolean isAdjust) throws BusinessException {
 		NtbParamVO ntbvo = getNtbParam();
 
 		StringBuffer sql = new StringBuffer();
@@ -166,28 +192,8 @@ public abstract class AbstractErmNtbSqlStrategy {
 		}
 
 		// 单据日期
-		String dateTypeField = ntbvo.getDateType();
-		String dateStr = getSrcField(getBillType(), dateTypeField);
-		if (dateStr != null) {
-			dateTypeField = dateStr;
-		} else {
-			if (ErmBillConst.MatterApp_BILLTYPE.equals(getBillType())) {
-				if (dateTypeField.equals(BXConstans.EFFECTDATE) || dateTypeField.equals(BXConstans.APPROVEDATE)) {
-					dateTypeField = "ma.approvetime";
-				} else {
-					dateTypeField = "ma.billdate";
-				}
-			} else if (ErmBillConst.CostShare_BILLTYPE.equals(getBillType())) {
-				if (dateTypeField.equals(BXConstans.EFFECTDATE) || dateTypeField.equals(BXConstans.APPROVEDATE)) {
-					dateTypeField = "cs.approvedate";
-				} else {
-					dateTypeField = "cs.billdate";
-				}
-			} else if (ErmBillConst.Expamoritize_BILLTYPE.equals(getBillType())) {
-				dateTypeField = "proc1.amortize_date";
-			}
-		}
-		
+		String dateTypeField = getDateTypeField(ntbvo, isAdjust);
+
 		if (ntbvo.getBegDate() != null && ntbvo.getBegDate().toString().trim().length() > 0) {
 			sql.append(" and " + dateTypeField + " >='" + ntbvo.getBegDate() + "' ");
 		}
@@ -219,6 +225,38 @@ public abstract class AbstractErmNtbSqlStrategy {
 	}
 
 	/**
+	 * 获得对应单据的日期字段
+	 * 
+	 * @param ntbvo
+	 * @param isAdjust
+	 * @return
+	 */
+	protected String getDateTypeField(NtbParamVO ntbvo, boolean isAdjust) {
+		String dateTypeField = ntbvo.getDateType();
+		String dateStr = getSrcField(getBillType(), dateTypeField);
+		if (dateStr != null) {
+			dateTypeField = dateStr;
+		} else {
+			if (ErmBillConst.MatterApp_BILLTYPE.equals(getBillType())) {
+				if (dateTypeField.equals(BXConstans.EFFECTDATE) || dateTypeField.equals(BXConstans.APPROVEDATE)) {
+					dateTypeField = "ma.approvetime";
+				} else {
+					dateTypeField = "ma.billdate";
+				}
+			} else if (ErmBillConst.CostShare_BILLTYPE.equals(getBillType())) {
+				if (dateTypeField.equals(BXConstans.EFFECTDATE) || dateTypeField.equals(BXConstans.APPROVEDATE)) {
+					dateTypeField = "cs.approvedate";
+				} else {
+					dateTypeField = "cs.billdate";
+				}
+			} else if (ErmBillConst.Expamoritize_BILLTYPE.equals(getBillType())) {
+				dateTypeField = "proc1.amortize_date";
+			}
+		}
+		return dateTypeField;
+	}
+
+	/**
 	 * 获取自身交易类型(包含父类型)
 	 * 
 	 * @return
@@ -234,7 +272,7 @@ public abstract class AbstractErmNtbSqlStrategy {
 			token = new TokenTools(billtypStr, ",", false);
 		}
 
-		String[] billtypes = token.getStringArray();//例如[2611,2641,2642,266X]
+		String[] billtypes = token.getStringArray();// 例如[2611,2641,2642,266X]
 
 		if (billtypes.length > 0) {
 			for (int i = 0; i < billtypes.length; i++) {
@@ -262,15 +300,16 @@ public abstract class AbstractErmNtbSqlStrategy {
 
 	private BilltypeVO getBilltypeVo(String tradeBilltype) throws BusinessException {
 		BilltypeVO billtypeVO = PfDataCache.getBillType(tradeBilltype);
-		if(billtypeVO == null){
+		if (billtypeVO == null) {
 			StringBuffer sql = new StringBuffer();
 			sql.append(" pk_billtypecode = '" + tradeBilltype + "' ");
 			BilltypeVO[] billtypeVos = CacheUtil.getValueFromCacheByWherePart(BilltypeVO.class, sql.toString());
-			if(billtypeVos != null && billtypeVos.length > 0){
+			if (billtypeVos != null && billtypeVos.length > 0) {
 				billtypeVO = billtypeVos[0];
 			}
 		}
-//		Log.getInstance(this.getClass()).error("交易类型查询：" + tradeBilltype + billtypeVO);
+		// Log.getInstance(this.getClass()).error("交易类型查询：" + tradeBilltype +
+		// billtypeVO);
 		return billtypeVO;
 	}
 
@@ -360,16 +399,18 @@ public abstract class AbstractErmNtbSqlStrategy {
 			// 对照字段不存在,该中情况在于在预算对照表中未查找到对应字段
 			if (descField.startsWith(BXConstans.BUDGET_DEFITEM_BODY_PREFIX)) {
 				String prefix = null;
-				if(ErmMatterAppConst.MatterApp_BILLTYPE.equals(getBillType())){
+				if (ErmMatterAppConst.MatterApp_BILLTYPE.equals(getBillType())) {
 					prefix = "mad";
-				}else if(IErmCostShareConst.COSTSHARE_BILLTYPE.equals(getBillType())){
+				} else if (IErmCostShareConst.COSTSHARE_BILLTYPE.equals(getBillType())) {
 					prefix = "csd";
-				}else if(ExpAmoritizeConst.Expamoritize_BILLTYPE.equals(getBillType())){
+				} else if (ExpAmoritizeConst.Expamoritize_BILLTYPE.equals(getBillType())) {
 					prefix = "atd";
-				}else{
+				} else if (ErmBillConst.AccruedBill_Billtype.equals(getBillType())) {
+					prefix = "acd";
+				} else {
 					prefix = "fb";
 				}
-				result = prefix+ "." + BXConstans.BODY_USERDEF_PREFIX
+				result = prefix + "." + BXConstans.BODY_USERDEF_PREFIX
 						+ descField.substring(BXConstans.BUDGET_DEFITEM_BODY_PREFIX.length());
 			} else if (descField.startsWith(BXConstans.BUDGET_DEFITEM_HEAD_PREFIX)) {
 				String prefix = null;
@@ -379,6 +420,8 @@ public abstract class AbstractErmNtbSqlStrategy {
 					prefix = "cs";
 				} else if (ExpAmoritizeConst.Expamoritize_BILLTYPE.equals(getBillType())) {
 					prefix = "at1";
+				} else if (ErmBillConst.AccruedBill_Billtype.equals(getBillType())) {
+					prefix = "ac";
 				} else {
 					prefix = "zb";
 				}

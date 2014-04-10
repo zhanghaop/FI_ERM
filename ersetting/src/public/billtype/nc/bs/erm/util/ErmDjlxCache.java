@@ -66,4 +66,22 @@ public class ErmDjlxCache {
 		return res;
 	}
 
+	/**
+	 * 当前交易类型是否为指定报销类型的交易类型
+	 * 
+	 * @param pk_group
+	 * @param pk_tradetype
+	 * @param bxtype
+	 * @return
+	 * @throws BusinessException
+	 */
+	public boolean isNeedBxtype(String pk_group,String pk_tradetype,int bxtype) throws BusinessException{
+		DjLXVO djlxvo = getDjlxVO(pk_group, pk_tradetype);
+		return isNeedBxtype(djlxvo, bxtype);
+	}
+	
+	public boolean isNeedBxtype(DjLXVO djlxvo,int bxtype){
+		return djlxvo != null && djlxvo.getBxtype() != null && djlxvo.getBxtype() == bxtype;
+	}
+	
 }

@@ -1,6 +1,8 @@
 package nc.impl.arap.bx;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXVO;
@@ -19,7 +21,16 @@ public class ErmJkReflectorServiceImpl extends ErmReflectorServiceImpl {
 		if (null == keys || keys.length == 0) {
 			return null;
 		}
-		return new ArapBXBillPrivateImp().queryVOsByPrimaryKeys(keys,BXConstans.JK_DJDL);
+		//ehp2
+		List<String> billkeys = new ArrayList<String>();
+		for(int i=0 ; i<keys.length ;i++){
+			StringTokenizer st = new StringTokenizer(keys[i],"_");
+			while (st.hasMoreTokens()) {
+				billkeys.add(st.nextToken());//只加入第一个值
+				break;
+			}
+		}
+		return new ArapBXBillPrivateImp().queryVOsByPrimaryKeys(billkeys.toArray(new String[]{}),BXConstans.JK_DJDL);
 	}
 
 }

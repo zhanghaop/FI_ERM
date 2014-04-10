@@ -7,6 +7,7 @@ import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.bd.ref.UFRefManage;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.erm.event.BillTypeChangeEvent;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
@@ -42,11 +43,18 @@ public class ERMBillTypeAction extends NCAction {
 		}
 		
 		Object billTypeCodeObj = billTypeRef.getRefValue(billTypeRef.getRefModel().getPkFieldCode());
-		String billTypeCode = billTypeCodeObj == null ? null : String.valueOf(billTypeCodeObj);
+		String newbillTypeCode = billTypeCodeObj == null ? null : String.valueOf(billTypeCodeObj);
 		
 		ErmBillBillForm editor2 = (ErmBillBillForm)getEditor();
-		((ErmBillBillManageModel)editor2.getModel()).setSelectBillTypeCode(billTypeCode);
-		((ErmBillBillManageModel)editor2.getModel()).setCurrentBillTypeCode(billTypeCode);
+		String currentBillTypeCode = ((ErmBillBillManageModel)editor2.getModel()).getCurrentBillTypeCode();
+
+		((ErmBillBillManageModel)editor2.getModel()).setSelectBillTypeCode(newbillTypeCode);
+		((ErmBillBillManageModel)editor2.getModel()).setCurrentBillTypeCode(newbillTypeCode);
+		
+		if(!currentBillTypeCode.equals(newbillTypeCode)){
+			BillTypeChangeEvent billtypeevent = new BillTypeChangeEvent(currentBillTypeCode,newbillTypeCode);
+			getModel().fireEvent(billtypeevent);
+		}
 	}
 	
 	/**
