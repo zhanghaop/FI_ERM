@@ -1,0 +1,3 @@
+# configure the modules to be deployed
+include.modules=er
+#exclude.modules=

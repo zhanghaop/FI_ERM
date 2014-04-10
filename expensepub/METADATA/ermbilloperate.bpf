@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createTime="2011-03-09 17:03:46" creator="" description="" displayName="ermbilloperate" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" isbizmodel="true" mainEntity="" modifier="" modifyTime="2011-09-20 15:08:42" name="ermbilloperate" namespace="erm" ownModule="erm" preLoad="false" resModuleName="expensepub_2" resid="" version="23" versionType="0">
+    <celllist>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:05:46" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据删除" fullClassName="nc.voerm.ermbilloperate.deleteErmBillHead" height="100" help="" id="78af39d8-92a3-4acc-92ea-3b3eee0dcbba" isAuthorization="true" isBusiActivity="false" modifier="" modifyTime="2011-09-20 15:08:42" name="deleteErmBillHead" resid="22011OPT-000004" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="26" y="217">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:05:48" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据修改" fullClassName="nc.voerm.ermbilloperate.editErmBillHead" height="100" help="" id="66efc3ac-092f-419e-8d48-464d8003b156" isAuthorization="true" isBusiActivity="false" modifier="" modifyTime="2011-09-20 15:08:43" name="editErmBillHead" resid="22011OPT-000005" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="283" y="348">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:06:24" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据审批" fullClassName="nc.voerm.ermbilloperate.approveErmBillHead" height="100" help="" id="9f0c27bf-9cf2-45fb-b9e8-7fc0995b0d48" isAuthorization="true" isBusiActivity="false" modifier="" modifyTime="2011-09-20 15:10:23" name="approveErmBillHead" resid="22011OPT-000003" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="109" y="330">
+            <refoperationlist/>
+        </busioperation>
+        <Reference componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:07:26" creator="" description="" displayName="displayname" fullClassName="nc.voerm.ermbilloperate.reference" height="100" help="" id="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" mdFilePath="\expenseaccount.bmf" modifier="" modifyTime="2011-09-20 15:08:43" moduleName="erm" name="reference" refId="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" resid="" versionType="0" visibility="public" width="100" x="243" y="53"/>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 13:47:01" creator="" description="" displayName="单据查询" fullClassName="nc.voerm.ermbilloperate.queryErmBillHead" height="100" help="" id="5d209562-61af-48c0-9ae9-f6be509589fe" isAuthorization="true" isBusiActivity="false" modifier="" modifyTime="2011-09-20 15:08:43" name="queryErmBillHead" resid="22011OPT-000001" version="" versionType="0" visibility="public" width="80" x="61" y="63">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 13:47:37" creator="" description="" displayName="单据保存" fullClassName="nc.voerm.ermbilloperate.saveErmBillHead" height="100" help="" id="61d667e2-e6cc-4c40-aa89-169c89398b12" isAuthorization="true" isBusiActivity="false" modifier="" modifyTime="2011-09-20 15:08:43" name="saveErmBillHead" resid="22011OPT-000000" version="" versionType="0" visibility="public" width="80" x="392" y="271">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 13:48:01" creator="" description="" displayName="单据反审批" fullClassName="nc.voerm.ermbilloperate.unapproveErmBillHead" height="100" help="" id="e4d66a41-5e12-487e-8444-c81cbab4ce94" isAuthorization="true" isBusiActivity="false" modifier="" modifyTime="2011-09-20 15:10:32" name="unapproveErmBillHead" resid="22011OPT-000002" version="" versionType="0" visibility="public" width="80" x="449" y="133">
+            <refoperationlist/>
+        </busioperation>
+    </celllist>
+    <connectlist>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:07:30" creator="" description="" displayName="" help="" id="384ce143-2348-4dd8-aa59-e948b4dda9df" modifier="" modifyTime="2011-03-25 10:07:31" name="busiItf connection" realsource="78af39d8-92a3-4acc-92ea-3b3eee0dcbba" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="78af39d8-92a3-4acc-92ea-3b3eee0dcbba" target="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:07:37" creator="" description="" displayName="" help="" id="da216519-830c-4547-b63d-499f960ef0ff" modifier="" modifyTime="2011-03-25 10:07:37" name="busiItf connection" realsource="66efc3ac-092f-419e-8d48-464d8003b156" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="66efc3ac-092f-419e-8d48-464d8003b156" target="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 10:07:34" creator="" description="" displayName="" help="" id="bb36ce62-9220-4f78-8365-855208c7ae5c" modifier="" modifyTime="2011-03-25 10:07:34" name="busiItf connection" realsource="9f0c27bf-9cf2-45fb-b9e8-7fc0995b0d48" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="9f0c27bf-9cf2-45fb-b9e8-7fc0995b0d48" target="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 13:47:30" creator="" description="" displayName="" help="" id="887726c1-6d06-4928-9901-c32989b0fe96" modifier="" modifyTime="2011-03-25 13:47:30" name="busiItf connection" realsource="5d209562-61af-48c0-9ae9-f6be509589fe" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="5d209562-61af-48c0-9ae9-f6be509589fe" target="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 13:47:46" creator="" description="" displayName="" help="" id="9fed610f-2b25-485c-8986-63571dfbfa7c" modifier="" modifyTime="2011-03-25 13:47:46" name="busiItf connection" realsource="61d667e2-e6cc-4c40-aa89-169c89398b12" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="61d667e2-e6cc-4c40-aa89-169c89398b12" target="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createTime="2011-03-25 13:48:14" creator="" description="" displayName="" help="" id="921543a0-4122-4c24-8236-540c95002b7f" modifier="" modifyTime="2011-03-25 13:48:14" name="busiItf connection" realsource="e4d66a41-5e12-487e-8444-c81cbab4ce94" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="e4d66a41-5e12-487e-8444-c81cbab4ce94" target="cbc3514c-0e74-4fec-8a1f-8d20f4e0a9c2" versionType="0">
+            <points/>
+        </busiitfconnection>
+    </connectlist>
+    <refdepends>
+        <dependfile entityid="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290"/>
+    </refdepends>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

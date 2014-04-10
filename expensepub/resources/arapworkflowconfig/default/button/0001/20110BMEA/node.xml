@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="GBK"?>
+<nodes extends="billmanage">
+    <node corp="0001" id="20110BMEA">
+        <buttons>
+            <button btncode="Contrast" djlx="" hint="common@UPTcommon-000360"
+                id="batchcontrast_p" name="common@UPTcommon-000360" pageid="0" parentid=""
+                power="5" sequence="10" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener"/>
+        </buttons> 
+    </node>
+    <node corp="0001" id="20110BMEA">
+        <buttons>
+            <button btncode="批量冲借款" djlx="" hint="common@UPTcommon-000363"
+                id="batchcontrast" name="common@UPTcommon-000363" pageid="0"
+                parentid="batchcontrast_p" power="5" sequence="10" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+                <flow id="arap_jkbx#bcontrast"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BMEA">
+        <buttons>
+            <button btncode="取消冲借款" djlx="" hint="common@UPTcommon-000364"
+                id="cancelcontrast" name="common@UPTcommon-000364" pageid="0"
+                parentid="batchcontrast_p" power="5" sequence="10" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+                <flow id="arap_jkbx#cancelContrast"/>
+            </button>
+        </buttons>
+    </node>
+</nodes>

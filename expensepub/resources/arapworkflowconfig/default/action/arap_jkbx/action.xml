@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="GBK"?>
+<actions>
+	<action desc="资金申请" id="arap_jkbx#cashapply"
+        impclass="nc.ui.arap.bx.actions.CashApplyAction"
+        method="cashApplay" name="资金申请" namespace="arap_jkbx" refid="" servflag="false">
+    </action>
+	<action desc="制单" id="arap_jkbx#MergePfAct"
+        impclass="nc.ui.arap.bx.actions.MergePfAct"
+        method="mergePf" name="制单" namespace="arap_jkbx" refid="" servflag="false">
+    </action>
+	<action desc="文档管理" id="arap_jkbx#Documentflow"
+        impclass="nc.ui.arap.bx.actions.DocumentAction"
+        method="showDocument" name="文档管理" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#add"
+        impclass="nc.ui.arap.bx.actions.AddAction" method="add"
+        name="增加" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#changeTab"
+        impclass="nc.ui.arap.bx.actions.CardAction" method="changeTab"
+        name="卡片/列表" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#query"
+        impclass="nc.ui.arap.bx.actions.QueryAction" method="query"
+        name="查询" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#update"
+        impclass="nc.ui.arap.bx.actions.UpdateAction" method="update"
+        name="修改" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#save"
+        impclass="nc.ui.arap.bx.actions.SaveAction" method="save"
+        name="保存" namespace="arap_jkbx" refid="" servflag="false">
+        <output desc="是否进行冲借款" id="arap_jkbx_save_output" name="isCjk" type="boolean"/>
+    </action>
+    <action desc="" id="arap_jkbx#addRow"
+        impclass="nc.ui.arap.bx.actions.AddRowAction" method="addRow"
+        name="增行" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#cancel"
+        impclass="nc.ui.arap.bx.actions.CancelAction" method="cancel"
+        name="取消" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#tempSave"
+        impclass="nc.ui.arap.bx.actions.SaveAction" method="tempSave"
+        name="暂存" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#djlx"
+        impclass="nc.ui.arap.bx.actions.DjlxAction" method="show"
+        name="交易类型" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#delete"
+        impclass="nc.ui.arap.bx.actions.DeleteAction" method="delete"
+        name="删除" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#audit"
+        impclass="nc.ui.arap.bx.actions.AuditAction" method="audit"
+        name="审核" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#delRow"
+        impclass="nc.ui.arap.bx.actions.AddRowAction" method="delRow"
+        name="删行" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#copy"
+        impclass="nc.ui.arap.bx.actions.CopyAction" method="copy"
+        name="复制" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#contrast"
+        impclass="nc.ui.arap.bx.actions.ContrastAction"
+        method="contrast" name="冲借款" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#settle"
+        impclass="nc.ui.arap.bx.actions.SettleAction" method="settle"
+        name="结算" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#unSettle"
+        impclass="nc.ui.arap.bx.actions.SettleAction" method="unSettle"
+        name="反结算" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#allSelect"
+        impclass="nc.ui.arap.bx.actions.SelectAction" method="selectAll"
+        name="全选" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#cancelAll"
+        impclass="nc.ui.arap.bx.actions.SelectAction" method="cancelAll"
+        name="全消" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#unAudit"
+        impclass="nc.ui.arap.bx.actions.AuditAction" method="unAudit"
+        name="反审核" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#link_approve"
+        impclass="nc.ui.arap.bx.actions.LinkAction"
+        method="approveStatus" name="联查审批情况" namespace="arap_jkbx"
+        refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkJkd"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkJkd"
+        name="联查借款单" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkBxd"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkBxd"
+        name="联查报销单" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkJsd"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkJsd"
+        name="联查结算单" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkSettleInfo"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkSettleInfo"
+        name="联查结算信息" namespace="arap_jkbx" refid="" servflag="false"/>    
+    <action desc="" id="arap_jkbx#linkSS"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkSS"
+        name="联查事项审批单" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#printView"
+        impclass="nc.ui.arap.bx.actions.PrintAction" method="printView"
+        name="打印预览" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#printCard"
+        impclass="nc.ui.arap.bx.actions.PrintAction" method="printCard"
+        name="打印卡片" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#printBill"
+        impclass="nc.ui.arap.bx.actions.PrintAction" method="printBill"
+        name="打印单据" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#printOfficial"
+        impclass="nc.ui.arap.bx.actions.PrintAction"
+        method="printOfficial" name="正式打印" namespace="arap_jkbx"
+        refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#Output"
+        impclass="nc.ui.arap.bx.actions.PrintAction"
+        method="Output" name="输出" namespace="arap_jkbx"
+        refid="" servflag="false"/>    
+    <action desc="" id="arap_jkbx#printList"
+        impclass="nc.ui.arap.bx.actions.PrintAction" method="printList"
+        name="打印列表" namespace="arap_jkbx" refid="" servflag="false"/>
+        
+<!-- added by chendya 增加首页末页显示 -->  
+    <action desc="" id="arap_jkbx#first"
+        impclass="nc.ui.arap.bx.actions.PageAction" method="first"
+        name="首页" namespace="arap_jkbx" refid="" servflag="false"/>
+        
+    <action desc="" id="arap_jkbx#next"
+        impclass="nc.ui.arap.bx.actions.PageAction" method="next"
+        name="上翻" namespace="arap_jkbx" refid="" servflag="false"/>
+        
+    <action desc="" id="arap_jkbx#previous"
+        impclass="nc.ui.arap.bx.actions.PageAction" method="previous"
+        name="下翻" namespace="arap_jkbx" refid="" servflag="false"/>
+        
+    <action desc="" id="arap_jkbx#last"
+        impclass="nc.ui.arap.bx.actions.PageAction" method="last"
+        name="末页" namespace="arap_jkbx" refid="" servflag="false"/>
+ <!-- added by chendya 增加首页末页显示 -->       
+ 
+    <action desc="" id="arap_jkbx#linkRule"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkRule"
+        name="联查报销制度" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkLimit"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkLimit"
+        name="联查报销标准" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkVoucher"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkVoucher"
+        name="联查凭证" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#linkYs"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkYs"
+        name="联查预算执行情况" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#on_FpPlan"
+        impclass="nc.ui.arap.bx.actions.LinkAction" method="linkFpplan"
+        name="联查资金计划" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#bcontrast"
+        impclass="nc.ui.arap.bx.actions.BatchContrastAction"
+        method="contrast" name="批冲借款" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#cancelContrast"
+        impclass="nc.ui.arap.bx.actions.BatchContrastAction"
+        method="cancelContrast" name="取消冲借款" namespace="arap_jkbx"
+        refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#refresh"
+        impclass="nc.ui.arap.bx.actions.QueryAction" method="refresh"
+        name="刷新" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#codeBar"
+        impclass="nc.ui.arap.bx.actions.CodeBarAction" method="codeBar"
+        name="条码输入" namespace="arap_jkbx" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx#cancelPrintOfficial"
+        impclass="nc.ui.arap.bx.actions.PrintAction"
+        method="cancelPrintOfficial" name="取消正式打印" namespace="arap_jkbx"
+        refid="" servflag="false"/>
+      	<action desc="" id="arap_jkbx#copyLine"
+        impclass="nc.ui.arap.bx.actions.AddRowAction" method="copyLine"
+        name="复制行" namespace="arap_jkbx" refid="" servflag="false"/>
+        <action desc="" id="arap_jkbx#pasteLine"
+        impclass="nc.ui.arap.bx.actions.AddRowAction" method="pasteLine"
+        name="粘贴行" namespace="arap_jkbx" refid="" servflag="false"/>
+        <action desc="" id="arap_jkbx#insertLine"
+        impclass="nc.ui.arap.bx.actions.AddRowAction" method="insertLine"
+        name="插入行" namespace="arap_jkbx" refid="" servflag="false"/>
+        <action desc="" id="arap_jkbx#pasteLineToTail"
+        impclass="nc.ui.arap.bx.actions.AddRowAction" method="pasteLineToTail"
+        name="粘贴行至表尾" namespace="arap_jkbx" refid="" servflag="false"/>  
+</actions>

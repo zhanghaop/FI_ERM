@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     2005-10-31 8:58:16                                                        
+
+     NC_UAP_Platform    
+     NC_Platform Build File (public, client, private)
+                   
+     chenxy                                                                
+     ====================================================================== -->
+<project name="NC_FI_ERM" default="all">
+	<description>
+		NC_Platform Build File (public, client, private)
+    </description>
+	<property name="proj_code" value="erm" />
+	<property name="module_name" value="erm" />
+	<import file="ant_common.xml" />
+
+	<target name="copy" depends="">
+		<mkdir dir="${home}/src/" />
+		<mkdir dir="${home}/src/public" />
+		<mkdir dir="${home}/src/private" />
+		<mkdir dir="${home}/src/client" />
+		
+		<copy todir="${home}/src/public">
+			<fileset dir="${home}/ersetting/src/public">
+			</fileset>
+			<fileset dir="${home}/expensepub/src/public">
+			</fileset>
+			<fileset dir="${home}/feesaccount/src/public">
+			</fileset>
+		</copy>
+
+		<copy todir="${home}/src/client">
+			<fileset dir="${home}/ersetting/src/client">
+			</fileset>
+			<fileset dir="${home}/expensepub/src/client">
+			</fileset>
+			<fileset dir="${home}/feesaccount/src/client">
+			</fileset>
+		</copy>
+
+		<copy todir="${home}/src/private">
+			<fileset dir="${home}/ersetting/src/private">
+			</fileset>
+			<fileset dir="${home}/expensepub/src/private">
+			</fileset>
+			<fileset dir="${home}/feesaccount/src/private">
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- ================================= 
+          target: public              
+         ================================= -->
+	<target name="public" depends="copy,clean_jar">
+		<echo>${proj_code} public started</echo>
+		<mkdir dir="${pub_bin}" />
+		<javac srcdir="${pub_src}" destdir="${pub_bin}" debug="on">
+			<classpath>
+				<path refid="fw_jar.path" />
+				<fileset dir="${ext_lib_dir}">
+					<include name="${xstream_jar}" />
+				</fileset>
+				<fileset dir="${uap_pub_dir}">
+					<include name="pub*.jar" />
+				</fileset>
+				<fileset dir="${uapbd_pub_dir}">
+					<include name="pub*.jar" />
+				</fileset>
+				<!--<fileset dir="${uap_cli_dir}">
+					<include name="uitemplate.jar" />
+				</fileset>-->
+				<fileset dir="${gl_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fip_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fipub_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				
+			</classpath>
+		</javac>
+		<jar jarfile="${pub_jar}.jar">
+			<fileset dir="${pub_bin}">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		<jar jarfile="${pub_jar}_src.jar">
+			<fileset dir="${pub_src}">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		<echo>${proj_code} public completed</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: client                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="client" depends="public">
+		<echo>${proj_code} client started</echo>
+		<mkdir dir="${cli_bin}" />
+		<javac srcdir="${cli_src}" destdir="${cli_bin}" debug="on">
+			<classpath>
+				<fileset dir="${ext_lib_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<path refid="fw_jar.path" />
+				<pathelement location="${uibeans_jar}" />
+				<fileset dir="${pub_lib_dir}">
+					<include name="iufo_calculate_bin.jar" />
+				</fileset>
+				<fileset dir="${uap_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${uap_cli_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${uapbd_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${uapbd_cli_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${arap_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${gl_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${gl_cli_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fip_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fipub_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fipub_cli_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fip_cli_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${fipub_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		<jar jarfile="${cli_jar}.jar">
+			<fileset dir="${cli_bin}">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		<jar jarfile="${cli_jar}_src.jar">
+			<fileset dir="${cli_src}">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		<echo>${proj_code} client completed</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: private                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="private" depends="public,client">
+		<echo>${proj_code} private started</echo>
+		<mkdir dir="${pri_bin}" />
+		<javac destdir="${pri_bin}" debug="on">
+			<src path="${pri_src}" />
+			<classpath>
+				<fileset dir="${ext_lib_dir}">
+					<include name="${xstream_jar}" />
+					<include name="${xerces_jar}" />
+				</fileset>
+				<fileset dir="${pub_lib_dir}">
+					<include name="${j2ee_jar}" />
+					<include name="${bsh_jar}" />
+				</fileset>
+				<pathelement location="${nc_home}/middleware/${ncmw_jar}" />
+				<path refid="fw_jar.path" />
+				<!--<fileset dir="${uap_pub_dir}">
+					<include name="${pub_jar_name}.jar" />
+					<include name="pub${ml_code}.jar" />
+					<include name="pub${sf_code}.jar" />
+					<include name="pub${sfapp_code}.jar" />
+					<include name="pub${busibean_code}.jar" />
+					<include name="pub${template_code}.jar" />
+					<include name="pub${bbd_code}.jar" />
+					<include name="pub${basedata_code}.jar" />
+				</fileset>-->
+				<!--<fileset dir="${uap_cli_dir}">
+					<include name="${cli_jar_name}.jar" />
+					<include name="ui${busibean_code}.jar" />
+				</fileset>-->
+				<fileset dir="${uap_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${uapbd_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				
+				<fileset dir="${arap_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+
+				<fileset dir="${gl_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				
+				<fileset dir="${fip_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				
+				<fileset dir="${fipub_pub_dir}">
+					<include name="*.jar" />
+				</fileset>
+				
+			</classpath>
+		</javac>
+		<jar jarfile="${pri_jar}.jar">
+			<fileset dir="${pri_bin}">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		<jar jarfile="${pri_jar}_src.jar">
+			<fileset dir="${pri_src}">
+				<include name="**/*" />
+			</fileset>
+		</jar>
+		<echo>${proj_code} private completed</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: all, including public, client, private, ejb                      
+	         - - - - - - - - - - - - - - - - - -->
+	<target name="all" depends="clean_jar,private">
+
+	</target>
+</project>
+

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding='gb2312'?>
+<businessprocessors>
+    <businessprocessor baseclassname="" billtype="263X" classname="nc.bs.erm.bx.outer.ErmExpPfxxPlugin" locklevel="3" metadataid="e0499b58-c604-48a6-825b-9a7e4d6dacca" name="借款单">
+    </businessprocessor>
+    <businessprocessor baseclassname="" billtype="264X" classname="nc.bs.erm.bx.outer.ErmExpPfxxPlugin" locklevel="3" metadataid="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" name="报销单">
+    </businessprocessor>
+</businessprocessors>

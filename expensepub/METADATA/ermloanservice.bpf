@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2011-03-25 14:13:13" creator="" description="" displayName="借款单操作服务" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="2fc46ec7-9387-4289-9cee-7690e32ac33a" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:44" name="ermloanservice" namespace="erm" ownModule="erm" preLoad="false" resModuleName="expensepub_2" resid="22011LOASE-0001" version="12" versionType="0">
+    <celllist>
+        <busioperation componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:13:42" creator="" dataType="e0499b58-c604-48a6-825b-9a7e4d6dacca" dbtype="" description="" displayName="单据删除" fullClassName="nc.voerm.ermloanservice.deleteErmLoanBill" height="100" help="" id="69159c6e-4c8d-4fe0-91c5-b5b700dd0d4f" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="DELETE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:02:14" name="deleteErmLoanBill" needlog="true" resid="22011LOASE-0004" typeDisplayName="借款单" typeName="jkzb" version="" versionType="0" visibility="public" width="80" x="60" y="302">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:13:44" creator="" dataType="e0499b58-c604-48a6-825b-9a7e4d6dacca" dbtype="" description="" displayName="单据审批" fullClassName="nc.voerm.ermloanservice.approveErmLoanBill" height="100" help="" id="b36778d2-fc8a-4016-94a5-a255d5bdda13" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:46" name="approveErmLoanBill" needlog="false" resid="22011LOASE-0003" typeDisplayName="借款单" typeName="jkzb" version="" versionType="0" visibility="public" width="80" x="193" y="328">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:13:45" creator="" dataType="e0499b58-c604-48a6-825b-9a7e4d6dacca" dbtype="" description="" displayName="单据修改" fullClassName="nc.voerm.ermloanservice.editErmLoanBill" height="100" help="" id="4e9bc7ae-a9fa-4f29-9846-a4afcf95ea31" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="MODIFY" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:02:09" name="editErmLoanBill" needlog="true" resid="22011LOASE-0005" typeDisplayName="借款单" typeName="jkzb" version="" versionType="0" visibility="public" width="80" x="293" y="325">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:13:46" creator="" dataType="e0499b58-c604-48a6-825b-9a7e4d6dacca" dbtype="" description="" displayName="单据查询" fullClassName="nc.voerm.ermloanservice.queryErmLoanBill" height="100" help="" id="a6c1e67c-987a-418f-bc09-ead690517311" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:46" name="queryErmLoanBill" needlog="false" resid="22011LOASE-0000" typeDisplayName="借款单" typeName="jkzb" version="" versionType="0" visibility="public" width="80" x="51" y="119">
+            <refoperationlist/>
+        </busioperation>
+        <Reference componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:14:21" creator="" description="" displayName="displayname" fullClassName="nc.voerm.ermloanservice.reference" height="100" help="" id="45332531-422f-4dc3-995a-c797d76576c4" industryChanged="false" isSource="false" mdFilePath="\loanmanage.bmf" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:46" moduleName="erm" name="reference" refId="e0499b58-c604-48a6-825b-9a7e4d6dacca" resid="" versionType="0" visibility="public" width="100" x="255" y="125"/>
+        <busioperation componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:15:15" creator="" dataType="e0499b58-c604-48a6-825b-9a7e4d6dacca" dbtype="" description="" displayName="单据反审批" fullClassName="nc.voerm.ermloanservice.unapproveErmLoanBill" height="100" help="" id="e8c920a8-d991-4dbd-9d81-5d948088ad14" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:46" name="unapproveErmLoanBill" needlog="false" resid="22011LOASE-0002" typeDisplayName="借款单" typeName="jkzb" version="" versionType="0" visibility="public" width="80" x="415" y="167">
+            <refoperationlist/>
+        </busioperation>
+    </celllist>
+    <connectlist>
+        <busiitfconnection bizItfImpClassName="" componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:20:17" creator="" description="" displayName="" help="" id="1b9e3b37-162f-4797-829a-b62c24ad8bbf" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 14:20:17" name="busiItf connection" realsource="69159c6e-4c8d-4fe0-91c5-b5b700dd0d4f" realtarget="e0499b58-c604-48a6-825b-9a7e4d6dacca" source="69159c6e-4c8d-4fe0-91c5-b5b700dd0d4f" target="45332531-422f-4dc3-995a-c797d76576c4" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:20:18" creator="" description="" displayName="" help="" id="d70141c4-39b0-488b-b8bf-7a657e9deba3" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 14:20:18" name="busiItf connection" realsource="b36778d2-fc8a-4016-94a5-a255d5bdda13" realtarget="e0499b58-c604-48a6-825b-9a7e4d6dacca" source="b36778d2-fc8a-4016-94a5-a255d5bdda13" target="45332531-422f-4dc3-995a-c797d76576c4" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:20:20" creator="" description="" displayName="" help="" id="5724c85d-b129-40e3-aab8-dc21e05509d6" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 14:20:20" name="busiItf connection" realsource="4e9bc7ae-a9fa-4f29-9846-a4afcf95ea31" realtarget="e0499b58-c604-48a6-825b-9a7e4d6dacca" source="4e9bc7ae-a9fa-4f29-9846-a4afcf95ea31" target="45332531-422f-4dc3-995a-c797d76576c4" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:20:15" creator="" description="" displayName="" help="" id="ce07dcc1-9d9f-41d7-b3c7-c1c5ccb921d8" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 14:20:15" name="busiItf connection" realsource="a6c1e67c-987a-418f-bc09-ead690517311" realtarget="e0499b58-c604-48a6-825b-9a7e4d6dacca" source="a6c1e67c-987a-418f-bc09-ead690517311" target="45332531-422f-4dc3-995a-c797d76576c4" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="2fc46ec7-9387-4289-9cee-7690e32ac33a" createIndustry="0" createTime="2011-03-25 14:20:22" creator="" description="" displayName="" help="" id="e67bbbc0-f862-4f5c-a80e-e5afb09b46c8" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 14:20:22" name="busiItf connection" realsource="e8c920a8-d991-4dbd-9d81-5d948088ad14" realtarget="e0499b58-c604-48a6-825b-9a7e4d6dacca" source="e8c920a8-d991-4dbd-9d81-5d948088ad14" target="45332531-422f-4dc3-995a-c797d76576c4" versionType="0">
+            <points/>
+        </busiitfconnection>
+    </connectlist>
+    <refdepends>
+        <dependfile entityid="e0499b58-c604-48a6-825b-9a7e4d6dacca"/>
+    </refdepends>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

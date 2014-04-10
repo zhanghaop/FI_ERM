@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<project name="NC_UAP_Common_Ant">
+
+	<!-- set ant argument: -Dnc.home=${FIELD_NC_HOME} -->
+	<property name="nc.home" value="d:\nc-home-60" />
+
+	<property name="home" location="${basedir}" />
+	<property name="module_dir" value="${nc.home}/modules" />
+
+	<property name="fw_dir" value="${nc.home}/framework" />
+	<property name="ext_lib_dir" value="${nc.home}/external/lib" />
+	<property name="pub_lib_dir" value="${nc.home}/lib" />
+	<property name="ncmw.dir" value="${nc.home}/middleware" />
+
+	<property name="uap_pub_dir" value="${module_dir}/uap/lib" />
+	<property name="uap_cli_dir" value="${module_dir}/uap/client/lib" />
+	<property name="uap_pri_dir" value="${module_dir}/uap/META-INF/lib" />
+	<property name="uapbd_pub_dir" value="${module_dir}/uapbd/lib" />
+	<property name="uapbd_cli_dir" value="${module_dir}/uapbd/client/lib" />
+	<property name="uapeai_pub_dir" value="${module_dir}/uapeai/lib" />
+	
+
+	<property name="pub.lib.dir" location="${nc.home}/lib" />
+	<property name="ext.lib.dir" value="${nc.home}/external/lib" />
+	<property name="fw.dir" location="${nc.home}/framework" />
+	<property name="dist.dir" location="${nc.home}/dist" />
+	<property name="gen.code.dir" value="${nc.home}/temp" />
+	<property name="ejb.desc.dir" value="${dist.dir}/ejbXMLs" />
+	<property name="module.home" value="${nc.home}/modules" />
+	<property name="proxy.gen.src" value="${gen.code.dir}/proxy" />
+	<property name="ejb.gen.src" value="${gen.code.dir}/ejb" />
+	<property name="gen.bin" value="${gen.code.dir}/bin" />
+	<property name="single" value="false" />
+
+
+	<property name="iufo_pub_dir" value="${module_dir}/iufo/lib" />
+	<property name="gl_pub_dir" value="${module_dir}/gl/lib" />
+	<property name="gl_cli_dir" value="${module_dir}/gl/client/lib" />
+	<property name="fa_pub_dir" value="${module_dir}/fa/lib" />
+	<property name="fa_cli_dir" value="${module_dir}/fa/client/lib" />
+	<property name="fip_pub_dir" value="${module_dir}/fip/lib" />
+	<property name="fip_cli_dir" value="${module_dir}/fip/client/lib" />
+	<property name="pj_pub_dir" value="${module_dir}/cb/lib" />
+	<property name="pj_cli_dir" value="${module_dir}/cb/client/lib" />
+	<property name="tmp_pub_dir" value="${module_dir}/tmp/lib" />
+	<property name="tmp_cli_dir" value="${module_dir}/tmp/client/lib" />
+	<property name="arap_pub_dir" value="${module_dir}/arap/lib" />
+	<property name="arap_cli_dir" value="${module_dir}/arap/client/lib" />
+	<property name="arap_pri_dir" value="${module_dir}/arap/META-INF/lib" />
+	<property name="pu_pub_dir" value="${module_dir}/pu/lib" />
+	<property name="so_pub_dir" value="${module_dir}/so/lib" />
+	<property name="fipub_pub_dir" value="${module_dir}/fipub/lib" />
+	<property name="fipub_cli_dir" value="${module_dir}/fipub/client/lib" />
+	<property name="tb_cli_dir" value="${module_dir}/TB/client/lib" />
+	<property name="tb_pub_dir" value="${module_dir}/TB/lib" />
+	<property name="scm_pub_dir" value="${module_dir}/scmpub/lib" />
+	<property name="scmpub_cli_dir" value="${module_dir}/scmpub/client/lib" />
+
+	<property name="obm_cli_dir" value="${module_dir}/obm/client/lib" />
+	<property name="obm_pub_dir" value="${module_dir}/obm/lib" />
+	<property name="fts_cli_dir" value="${module_dir}/fts/client/lib" />
+	<property name="fts_pub_dir" value="${module_dir}/fts/lib" />
+	<property name="cdm_cli_dir" value="${module_dir}/cdm/client/lib" />
+	<property name="cdm_pub_dir" value="${module_dir}/cdm/lib" />
+	<property name="ff_cli_dir" value="${module_dir}/ff/client/lib" />
+	<property name="ff_pub_dir" value="${module_dir}/ff/lib" />
+	<property name="fbm_pub_dir" value="${module_dir}/fbm/lib" />
+	<property name="fbm_cli_dir" value="${module_dir}/fbm/client/lib" />
+
+	<property name="pub_jar_name" value="pub${proj_code}" />
+	<property name="cli_jar_name" value="ui${proj_code}" />
+	<property name="pri_jar_name" value="${proj_code}" />
+	<property name="pub_src" value="${home}/src/public" />
+	<property name="pub_bin" value="${gen.bin}/public" />
+	<property name="pub_jar" value="${module_dir}/${module_name}/lib/${pub_jar_name}" />
+	<property name="cli_src" value="${home}/src/client" />
+	<property name="cli_bin" value="${gen.bin}/client" />
+	<property name="cli_jar" value="${module_dir}/${module_name}/client/lib/${cli_jar_name}" />
+	<property name="pri_src" value="${home}/src/private" />
+	<property name="pri_bin" value="${gen.bin}/private" />
+	<property name="pri_jar" value="${module_dir}/${module_name}/META-INF/lib/${pri_jar_name}" />
+
+
+
+
+	<path id="run.classpath">
+		<fileset dir="${ext.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${pub.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${fw.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${module.home}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${ncmw.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="fw_jar.path">
+		<fileset dir="${ext.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${pub.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${fw.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${ncmw.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${uap_pub_dir}/pubjdbcframework.jar" />
+	</path>
+
+	<taskdef name="iterate-call" classname="nc.bs.framework.ant.taskdefs.IterateCallTarget" />
+	<taskdef name="list-file" classname="nc.bs.framework.ant.taskdefs.IterateCallListFile" />
+
+	<target name="gen_task" if="arg.gen.mode">
+		<java classname="nc.bs.deploy.ejb.GeneratorCmdBatchMain">
+			<arg value="${module.home}" />
+			<arg value="${arg.gen.src}" />
+			<arg value="${arg.gen.mode}" />
+			<arg value="single:${single}" />
+			<arg value="gui:${single}" />
+			<classpath refid="run.classpath" />
+		</java>
+
+	</target>
+
+	<target name="gen_proxy">
+		<antcall target="gen_task">
+			<param name="arg.gen.mode" value="proxy" />
+			<param name="arg.gen.src" value="${proxy.gen.src}" />
+		</antcall>
+	</target>
+
+	<target name="gen_ejb">
+		<antcall target="gen_task">
+			<param name="arg.gen.mode" value="wrapper" />
+			<param name="arg.gen.src" value="${ejb.gen.src}" />
+		</antcall>
+	</target>
+
+	<target name="compile_proxy" depends="gen_proxy">
+		<javac debug="on" deprecation="on" target="1.5">
+			<src path="${proxy.gen.src}" />
+			<classpath refid="run.classpath" />
+		</javac>
+		<move todir="${gen.bin}/modules">
+			<fileset dir="${proxy.gen.src}/src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</move>
+	</target>
+
+	<target name="compile_ejb" depends="gen_ejb">
+		<javac debug="on" deprecation="on" target="1.5">
+			<src path="${ejb.gen.src}" />
+			<classpath refid="run.classpath" />
+		</javac>
+		<move todir="${gen.bin}/ejb">
+			<fileset dir="${ejb.gen.src}/src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</move>
+	</target>
+
+
+	<target name="jar_proxy" depends="compile_proxy">
+		<antcall target="jar_biz_task">
+			<param name="arg.codetype.basedir" value="modules" />
+			<param name="arg.codetype.jar.dir" value="META-INF/lib" />
+			<param name="arg.scan.dir" value="${gen.bin}/modules" />
+			<param name="arg.jar.postfix" value="_PROXY" />
+		</antcall>
+	</target>
+
+	<target name="jar_ejb" depends="compile_ejb">
+		<antcall target="jar_biz_task">
+			<param name="arg.codetype.basedir" value="ejb" />
+			<param name="arg.codetype.jar.dir" value="" />
+			<param name="arg.scan.dir" value="${gen.bin}/ejb" />
+			<param name="arg.jar.postfix" value="" />
+		</antcall>
+	</target>
+
+	<target name="jar_proxy_src">
+		<antcall target="jar_biz_task">
+			<param name="arg.codetype.basedir" value="modules" />
+			<param name="arg.codetype.jar.dir" value="META-INF/lib" />
+			<param name="arg.scan.dir" value="${proxy.gen.src}/src" />
+			<param name="arg.jar.postfix" value="_PROXY_src" />
+		</antcall>
+	</target>
+
+	<target name="jar_ejb_src">
+		<antcall target="jar_biz_task">
+			<param name="arg.codetype.basedir" value="ejb" />
+			<param name="arg.codetype.jar.dir" value="" />
+			<param name="arg.scan.dir" value="${ejb.gen.src}/src" />
+			<param name="arg.jar.postfix" value="_src" />
+		</antcall>
+	</target>
+
+	<target name="copy_descriptor">
+		<copy todir="${ejb.desc.dir}" overwrite="true">
+			<fileset dir="${ejb.gen.src}/descriptor" includes="*.xml" />
+		</copy>
+	</target>
+
+	<target name="deploy" depends="copy_descriptor">
+		<echo>deploy from dir ${dist.dir} to dir ${nc.home}</echo>
+		<copy todir="${nc.home}" overwrite="true">
+			<fileset dir="${dist.dir}" />
+		</copy>
+	</target>
+
+	<target name="jar_biz_task">
+		<iterate-call target="mkdir_task" key="file">
+			<map key="file" prop="arg.dir" />
+			<list-file>
+				<fileset dir="${arg.scan.dir}">
+					<include name="*" />
+				</fileset>
+			</list-file>
+		</iterate-call>
+
+		<iterate-call target="jar_task" key="file">
+			<map key="file" prop="arg.basedir" />
+			<map key="file.name" prop="arg.jar.name" />
+			<map key="file.parent" prop="arg.basedir.parent" />
+
+			<list-file>
+				<fileset dir="${arg.scan.dir}">
+					<include name="*/*" />
+				</fileset>
+			</list-file>
+		</iterate-call>
+	</target>
+
+	<target name="jar_task">
+		<jar jarfile="${dist.dir}/${arg.codetype.basedir}/${arg.basedir.parent}/${arg.codetype.jar.dir}/${arg.jar.name}${arg.jar.postfix}.jar" basedir="${arg.scan.dir}/${arg.basedir}" />
+	</target>
+
+	<target name="mkdir_task">
+		<mkdir dir="${dist.dir}/${arg.codetype.basedir}/${arg.dir}/${arg.codetype.jar.dir}" />
+	</target>
+
+	<target name="build_ejb" depends="clean,jar_ejb,jar_proxy,deploy" />
+
+	<target name="clean">
+		<delete dir="${dist.dir}" />
+		<delete dir="${gen.code.dir}" />
+	</target>
+	<target name="clean_jar">
+		<antcall target="clean">
+		</antcall>
+		
+		<delete>
+			
+		<fileset dir="${module_dir}/${module_name}">
+				
+		<include name="**/*.jar" />
+		<exclude name="**/*_PROXY.jar" />
+			
+		</fileset>		
+		</delete>
+	</target>
+	<target name="clean_ejb_jar">
+		<antcall target="clean">
+		</antcall>
+		<delete>
+			<fileset dir="${module_dir}/${module_name}/META-INF/lib">
+				<include name="**/*_PROXY.jar" />
+			</fileset>
+		</delete>
+	</target>
+</project>

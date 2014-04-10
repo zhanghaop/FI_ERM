@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- 报销管理费用类型设置配置文件-业务单元级 -->
+<beans>
+	<!-- 环境变量 -->
+  	<bean id="context" class="nc.vo.uif2.LoginContext">
+  		<property name="nodeType"><value>ORG_NODE</value></property>
+  	</bean>
+  	
+	<import resource="ext_base.xml" />
+	
+  	<!-- ############## UI Layout ########################## -->
+  	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+     	<property name="tangramLayoutRoot">
+     		<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+     			<property name="up">
+     				<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+     					<property name="left">
+     						<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+     							<property name="component">
+     								<ref bean="orgPanel"/>
+     							</property>
+     						</bean>
+     					</property>
+     					<property name="right">
+     						<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+     							<property name="component">
+     								<ref bean="paginationBar"/>
+     							</property>
+     						</bean>
+     					</property>
+     					<property name="dividerLocation">
+     						<value>0.5f</value>
+     					</property>
+     				</bean>
+     				
+     			</property>
+     			<property name="down">
+     				<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+     					<property name="component">
+     						<ref bean="extTable"/>
+     					</property>
+     				</bean>
+     			</property>
+     			<property name="dividerLocation">
+     				<value>0.05f</value>
+     			</property>
+     		</bean>
+     	</property>
+     	<property name="editActions">
+     		<list>
+    			<ref bean="extAddAction"/>
+    			<ref bean="extDeleteAction"/>
+    			<ref bean="extNullAction"/>
+    			<ref bean="extSaveAction"/>
+    			<ref bean="extNullAction"/>
+    			<ref bean="extCancelAction"/>
+     		</list>
+     	</property>
+     	<property name="actions">
+    		<list>
+    			<ref bean="extAddAction"/>
+    			<ref bean="extEditAction"/>
+    			<ref bean="extDeleteAction"/>
+    			
+    			<ref bean="extNullAction"/>
+    			
+    			<ref bean="extRefreshAction"/>
+    			
+    			<ref bean="extNullAction"/>
+    			
+    			<ref bean="extPrintGroupAction"/>
+    		</list>
+     	</property>
+     	<property name="model">
+     		<ref bean="extModel"/>
+     	</property>
+     </bean>
+  	
+</beans>

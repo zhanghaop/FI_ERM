@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="GBK"?>
+<actions>
+    <action desc="" id="arap_jkbx_listener#BxCardHeadEditListener"
+        impclass="nc.ui.arap.bx.listeners.BxCardHeadEditListener"
+        method="afterEdit" name="卡片表头编辑监听"
+        namespace="arap_jkbx_listener" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx_listener#BxCardBodyEditListener"
+        impclass="nc.ui.arap.bx.listeners.BxCardBodyEditListener"
+        method="afterEdit" name="卡片表体编辑监听"
+        namespace="arap_jkbx_listener" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx_listener#listEditListener"
+        impclass="nc.ui.arap.bx.listeners.BxListHeadEditListener"
+        method="afterEdit" name="列表表头编辑监听"
+        namespace="arap_jkbx_listener" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx_listener#listMouseListener"
+        impclass="nc.ui.arap.bx.listeners.BxListMouseListener"
+        method="click2" name="列表表头鼠标监听" namespace="arap_jkbx_listener"
+        refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx_listener#listHeadRowChange"
+        impclass="nc.ui.arap.bx.listeners.BxListHeadEditListener"
+        method="bodyRowChange" name="列表行改变监听"
+        namespace="arap_jkbx_listener" refid="" servflag="false"/>
+     <action desc="" id="arap_jkbx_listener#cardBeforeEdit"
+        impclass="nc.ui.arap.bx.listeners.BxCardHeadBeforeEditListener"
+        method="beforeEdit" name="卡片编辑前监听"
+        namespace="arap_jkbx_listener" refid="" servflag="false"/>
+    <action desc="" id="arap_jkbx_listener#cardBodyBeforeEdit"
+        impclass="nc.ui.arap.bx.listeners.BxCardBodyBeforeEditListener"
+        method="beforeEdit" name="卡片表体编辑前监听"
+        namespace="arap_jkbx_listener" refid="" servflag="false"/>
+</actions>

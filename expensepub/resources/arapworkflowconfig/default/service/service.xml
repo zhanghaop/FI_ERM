@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+<service name="ArapDelBill" flowid="fi_arap_del_dj_service"/>
+	<service name="verifyABill" flowid="sfdsds"/>
+	<service name="sdsfABill" flowid="sfds"/>
+	<service name="ArapSaveDj" flowid="fi_arap#background_ArapSaveDj"/>
+	<service name="SaveOneNewDj"  desc=""  flowid="fi_arap_background_public#background_mysystem_SavOneNewDj"/>
+</services>

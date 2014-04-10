@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- 报销类型初始设置(erm-ersetting)配置文件-集团 -->
+<!-- author:liansg -->
+<beans>
+	<!-- 环境变量 -->
+  	<bean id="context" class="nc.vo.uif2.LoginContext">
+  		<property name="nodeType"><value>GROUP_NODE</value></property>
+  	</bean>
+  	
+	<import resource="ret_base.xml" />
+	
+  	<!-- ############## UI Layout ########################## -->
+  	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+     	<property name="tangramLayoutRoot">
+     	<!-- 
+     		<bean class="nc.ui.uif2.tangramlayout.node.VSNode">     		  	     		  	 
+     			<property name="up">
+     		
+     				<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+		     			<property name="component">		     			 
+		     				<ref bean="paginationBar"/>		     					     			 			     		
+		     			</property>
+     				</bean>
+     		 	
+     			</property>     			 
+     			<property name="down">
+     			 -->
+     				<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+		     			<property name="component">
+		     				<ref bean="retTable"/>
+		     			</property>
+     				</bean>
+     		<!-- 		
+     			</property>
+     			<property name="dividerLocation">
+     				<value>0.04</value>
+     			</property>
+     		</bean>
+     		-->
+     	</property>
+     	 
+     	<property name="editActions">
+     		<list>
+    			<ref bean="retAddAction"/>
+    			<ref bean="retDeleteAction"/>
+    			<ref bean="retNullAction"/>
+    			<ref bean="retSaveAction"/>
+    			<ref bean="retNullAction"/>
+    			<ref bean="retCancelAction"/>
+     		</list>
+     	</property>
+     	<property name="actions">
+    		<list>
+    			<ref bean="retAddAction"/>
+    			<ref bean="retEditAction"/>
+    			<ref bean="retDeleteAction"/>
+    			<ref bean="retNullAction"/>
+    			<ref bean="retRefreshAction"/>
+    			<ref bean="retNullAction"/>
+    			<ref bean="retPrintGroupAction"/>
+    		</list>
+     	</property>
+     	<property name="model">
+     		<ref bean="retModel"/>
+     	</property>
+     </bean>
+  	
+</beans>

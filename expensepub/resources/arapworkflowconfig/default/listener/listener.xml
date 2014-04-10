@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="GBK"?>
+<listeners>
+    <listener billtypecode="264X" eventtype="1" id="bxBillEditListener"
+        ipos="0" method="afterEdit" name="借款报销卡片表头监听" pk_corp=""
+        tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardHeadAfterEdit"/>
+    </listener>
+    <listener billtypecode="264X" eventtype="1"
+        id="bxBillEditHeadListener" ipos="1" method="afterEdit"
+        name="借款报销卡片表体监听" pk_corp="" tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardBodyAfterEdit"/>
+    </listener>
+    <listener billtypecode="264X" eventtype="1"
+        id="listHeadEditListener" ipos="0" method="afterEdit"
+        name="列表表头编辑监听" pk_corp="" tablecode="" templatetype="1">
+        <flow id="arap_jkbx_listener#listHeadEditListener"/>
+    </listener>
+    <listener billtypecode="264X" eventtype="0" id="listMouseListener"
+        ipos="0" method="mouse_doubleclick" name="列表表头鼠标监听" pk_corp=""
+        tablecode="" templatetype="1">
+        <flow id="arap_jkbx_listener#listHeadMouseListener"/>
+    </listener>
+    <listener billtypecode="263X" eventtype="1" id="jkBillEditListener"
+        ipos="0" method="afterEdit" name="借款报销卡片表头监听" pk_corp=""
+        tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardHeadAfterEdit"/>
+    </listener>
+    <listener billtypecode="263X" eventtype="1"
+        id="jkBillEditHeadListener" ipos="1" method="afterEdit"
+        name="借款报销卡片表体监听" pk_corp="" tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardBodyAfterEdit"/>
+    </listener>
+    <listener billtypecode="263X" eventtype="1"
+        id="jklistHeadEditListener" ipos="0" method="afterEdit"
+        name="列表表头编辑监听" pk_corp="" tablecode="" templatetype="1">
+        <flow id="arap_jkbx_listener#listHeadEditListener"/>
+    </listener>
+    <listener billtypecode="263X" eventtype="0" id="jklistMouseListener"
+        ipos="0" method="mouse_doubleclick" name="列表表头鼠标监听" pk_corp=""
+        tablecode="" templatetype="1">
+        <flow id="arap_jkbx_listener#listHeadMouseListener"/>
+    </listener>
+    <listener billtypecode="263X" eventtype="1" id="jkListHeadRowChange"
+        ipos="0" method="bodyRowChange" name="借款列表行改变监听" pk_corp=""
+        tablecode="" templatetype="1">
+        <flow id="arap_jkbx_listener#listHeadRowChange"/>
+    </listener>
+    <listener billtypecode="264X" eventtype="1" id="bxListHeadRowChange"
+        ipos="0" method="bodyRowChange" name="报销列表行改变监听" pk_corp=""
+        tablecode="" templatetype="1">
+        <flow id="arap_jkbx_listener#listHeadRowChange"/>
+    </listener>
+    <listener billtypecode="264X" eventtype="3" id="bxcardBeforeEdit"
+        ipos="0" method="beforeEdit" name="报销卡片表头编辑前监听" pk_corp=""
+        tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardBeforeEdit"/>
+    </listener>
+       <listener billtypecode="263X" eventtype="3" id="jkcardBeforeEdit"
+        ipos="0" method="beforeEdit" name="报销卡片表头编辑前监听" pk_corp=""
+        tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardBeforeEdit"/>
+    </listener>
+    
+    <listener billtypecode="264X" eventtype="2" id="bxcardbodyBeforeEdit"
+        ipos="1" method="beforeEdit" name="报销卡片表头编辑前监听" pk_corp=""
+        tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardBodyBeforeEdit"/>
+    </listener>
+    <listener billtypecode="263X" eventtype="2" id="jkcardbodyBeforeEdit"
+        ipos="1" method="beforeEdit" name="报销卡片表头编辑前监听" pk_corp=""
+        tablecode="" templatetype="0">
+        <flow id="arap_jkbx_listener#cardBodyBeforeEdit"/>
+    </listener>
+    
+    
+    
+    
+</listeners>

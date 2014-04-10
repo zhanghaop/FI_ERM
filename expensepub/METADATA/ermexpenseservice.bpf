@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2011-03-09 17:03:46" creator="" description="" displayName="报销单操作服务" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:49" name="ermexpenseservice" namespace="erm" ownModule="erm" preLoad="false" resModuleName="expensepub_2" resid="22011EXPSE-0001" version="32" versionType="0">
+    <celllist>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 10:05:46" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据删除" fullClassName="nc.voerm.ermbilloperate.deleteErmBillHead" height="100" help="" id="78af39d8-92a3-4acc-92ea-3b3eee0dcbba" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="DELETE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:02:02" name="deleteErmExpenseBill" needlog="true" resid="22011EXPSE-0004" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="26" y="217">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 10:05:48" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据修改" fullClassName="nc.voerm.ermbilloperate.editErmBillHead" height="100" help="" id="66efc3ac-092f-419e-8d48-464d8003b156" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="MODIFY" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:01:52" name="editErmExpenseBill" needlog="true" resid="22011EXPSE-0005" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="334" y="372">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 10:06:24" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据审批" fullClassName="nc.voerm.ermbilloperate.approveErmBillHead" height="100" help="" id="9f0c27bf-9cf2-45fb-b9e8-7fc0995b0d48" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:50" name="approveErmExpenseBill" needlog="false" resid="22011EXPSE-0003" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="146" y="311">
+            <refoperationlist/>
+        </busioperation>
+        <Reference componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 15:17:51" creator="" description="" displayName="displayname" fullClassName="nc.voerm.ermexpenseservice.reference" height="100" help="" id="f296d3b3-fd4b-42b7-ba9c-72aa862d7c41" industryChanged="false" isSource="false" mdFilePath="\expenseaccount.bmf" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:50" moduleName="erm" name="reference" refId="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" resid="" versionType="0" visibility="public" width="100" x="232" y="140"/>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-05-19 10:52:56" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据查询" fullClassName="nc.voerm.ermexpenseservice.queryErmExpenseBill" height="100" help="" id="e175111b-27b3-4f25-b367-721bdd14cb30" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:50" name="queryErmExpenseBill" needlog="false" resid="22011EXPSE-0000" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="40" y="106">
+            <refoperationlist/>
+        </busioperation>
+        <busioperation componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-05-19 10:53:39" creator="" dataType="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" dbtype="" description="" displayName="单据反审批" fullClassName="nc.voerm.ermexpenseservice.unapproveErmExpenseBill" height="100" help="" id="dc0eedb9-1ada-4685-b833-71c402ff2914" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2012-06-19 16:00:50" name="unapproveErmExpenseBill" needlog="false" resid="22011EXPSE-0002" typeDisplayName="报销单" typeName="bxzb" version="" versionType="0" visibility="public" width="80" x="434" y="224">
+            <refoperationlist/>
+        </busioperation>
+    </celllist>
+    <connectlist>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 15:18:01" creator="" description="" displayName="" help="" id="3e19c2b4-76f9-4f9d-a7f7-bbefdad696a4" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 15:18:01" name="busiItf connection" realsource="78af39d8-92a3-4acc-92ea-3b3eee0dcbba" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="78af39d8-92a3-4acc-92ea-3b3eee0dcbba" target="f296d3b3-fd4b-42b7-ba9c-72aa862d7c41" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 15:18:04" creator="" description="" displayName="" help="" id="46928ffd-99ea-48ea-b995-5d7640128f18" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 15:18:04" name="busiItf connection" realsource="66efc3ac-092f-419e-8d48-464d8003b156" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="66efc3ac-092f-419e-8d48-464d8003b156" target="f296d3b3-fd4b-42b7-ba9c-72aa862d7c41" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-03-25 15:18:03" creator="" description="" displayName="" help="" id="ee6db0e9-c970-4e34-baad-e15204225567" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-03-25 15:18:03" name="busiItf connection" realsource="9f0c27bf-9cf2-45fb-b9e8-7fc0995b0d48" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="9f0c27bf-9cf2-45fb-b9e8-7fc0995b0d48" target="f296d3b3-fd4b-42b7-ba9c-72aa862d7c41" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-05-19 10:53:28" creator="" description="" displayName="" help="" id="5ea1baca-94ce-456d-9f2e-a2297148a80f" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-05-19 10:53:28" name="busiItf connection" realsource="e175111b-27b3-4f25-b367-721bdd14cb30" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="e175111b-27b3-4f25-b367-721bdd14cb30" target="f296d3b3-fd4b-42b7-ba9c-72aa862d7c41" versionType="0">
+            <points/>
+        </busiitfconnection>
+        <busiitfconnection bizItfImpClassName="" componentID="5fba1b34-c5ec-4ef9-9029-ea32cd27b1b0" createIndustry="0" createTime="2011-05-19 10:53:43" creator="" description="" displayName="" help="" id="ab9b43c3-4c34-46a1-9c08-47a9952a763d" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2011-05-19 10:53:43" name="busiItf connection" realsource="dc0eedb9-1ada-4685-b833-71c402ff2914" realtarget="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290" source="dc0eedb9-1ada-4685-b833-71c402ff2914" target="f296d3b3-fd4b-42b7-ba9c-72aa862d7c41" versionType="0">
+            <points/>
+        </busiitfconnection>
+    </connectlist>
+    <refdepends>
+        <dependfile entityid="d9b9f860-4dc7-47fa-a7d5-7a5d91f39290"/>
+    </refdepends>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

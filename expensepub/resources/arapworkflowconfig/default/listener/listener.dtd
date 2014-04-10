@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT flow EMPTY>
+<!ATTLIST flow
+	id CDATA #REQUIRED
+>
+<!ELEMENT listener (flow)>
+<!ATTLIST listener
+	name CDATA #REQUIRED
+	id CDATA #REQUIRED
+	billtypecode CDATA #REQUIRED
+	pk_corp CDATA #IMPLIED
+	tablecode CDATA #IMPLIED
+	eventtype CDATA #REQUIRED
+	method CDATA #REQUIRED
+	templatetype CDATA #REQUIRED
+	ipos CDATA #REQUIRED
+>
+<!ELEMENT listeners (listener+)>

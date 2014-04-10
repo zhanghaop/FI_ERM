@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="GBK"?>
+<nodes extends="billpub">
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Add" djlx="" hint="2006030102@UPP2006030102-000823"
+				id="fi_arap_boAdd" name="common@UC001-0000108" pageid="0&amp;1"
+				parentid="" power="5" sequence="100"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#add" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Edit" djlx="" hint="common@UC001-0000045" id="fi_arap_boEdit"
+				name="common@UC001-0000045" pageid="0&amp;1" parentid="" power="5"
+				sequence="101" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+				<flow id="arap_jkbx#update" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Delete" djlx=""
+				hint="2006030102@UPP2006030102-000825" id="fi_arap_boDelDj" name="common@UC001-0000039"
+				pageid="0&amp;1" parentid="" power="5" sequence="102"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+				<flow id="arap_jkbx#delete" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Copy" djlx="" hint="2006030102@UPP2006030102-000824"
+				id="fi_arap_boCopy" name="common@UC001-0000043" pageid="0&amp;1" parentid=""
+				power="5" sequence="103"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+				<flow id="arap_jkbx#copy" />
+			</button>
+		</buttons>
+	</node>
+
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Contrast" djlx="" hint="common@UPTcommon-000360"
+				id="contrast" name="common@UPTcommon-000360" pageid="1" parentid=""
+				power="5" sequence="150"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXContraBtnStatusListener">
+				<flow id="arap_jkbx#contrast" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Save" djlx="" hint="&quot;common@UC001-0000001"
+				id="fi_arap_boSave" name="&quot;common@UC001-0000001" pageid="1"
+				parentid="" power="5" sequence="201"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#save" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Tempsave" djlx="" hint="2008@UPP2008-000113"
+				id="fi_arap_boTempSave" name="2008@UPP2008-000113" pageid="1"
+				parentid="" power="5" sequence="202"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#tempSave" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Cancel" djlx="" hint="common@UC001-0000008"
+				id="fi_arap_bocancel" name="common@UC001-0000008" pageid="1"
+				parentid="" power="5" sequence="250"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#cancel" />
+			</button>
+		</buttons>
+	</node>
+	
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Approve" djlx=""
+				hint="2006030102@UPT2006030102-000051" id="fi_arap_boShenhe"
+				name="2006030102@UPT2006030102-000051" pageid="0&amp;1" parentid=""
+				power="5" sequence="500"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxApproveBtnStatusListener">
+				<flow id="arap_jkbx#audit" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="UnApprove" djlx=""
+				hint="2006030102@UPT2006030102-000047" id="boUnShenhe"
+				name="2006030102@UPT2006030102-000047" pageid="0&amp;1" parentid=""
+				power="5" sequence="501"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxApproveBtnStatusListener">
+				<flow id="arap_jkbx#unAudit" />
+			</button>
+		</buttons>
+	</node>
+
+	<node corp="0001" id="201103">
+		<buttons>
+			<button btncode="Bill" djlx="" hint="common@UPTcommon-000351"
+				id="jkbx_genVoucher" name="common@UPTcommon-000351" pageid="0&amp;1"
+				parentid="" power="5" sequence="700"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+				<flow id="arap_jkbx#mergePfAct" />
+			</button>
+		</buttons>
+	</node>
+</nodes>

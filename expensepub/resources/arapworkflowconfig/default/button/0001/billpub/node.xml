@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="GBK"?>
+<nodes>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Query" djlx="" hint="2006030102@UPP2006030102-000888"
+				id="fi_arap_Query" name="common@UC001-0000006" pageid="0&amp;1"
+				parentid="" power="5" sequence="300"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#query" />
+			</button>
+		</buttons>
+	</node>
+
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Refresh" djlx="" hint="common@UPTcommon-000354"
+				id="refresh" name="common@UPTcommon-000354" pageid="0&amp;1"
+				parentid="" power="5" sequence="301"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#refresh" />
+			</button>
+		</buttons>
+	</node>
+
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="SelAll" djlx="" hint="common@UC001-0000041"
+				id="fi_arap_SelectAll" name="common@UC001-0000041" pageid="0"
+				parentid="" power="5" sequence="401"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#allSelect" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="SelNone" djlx="" hint="common@UC001-0000042"
+				id="fi_arap_UnSelectAll" name="common@UC001-0000042" pageid="0"
+				parentid="" power="5" sequence="402"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#allCancel" />
+			</button>
+		</buttons>
+	</node>
+	
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Ass" djlx="" hint="2011@UPT2011-v56-000002"
+				id="otherbutton" name="2011@UPT2011-v56-000002" pageid="0&amp;1"
+				parentid="" power="5" sequence="502"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener" />
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="条码输入" djlx="" hint="common@UPTcommon-000357"
+				id="fi_arap_boCodeBar" name="common@UPTcommon-000357" pageid="0&amp;1"
+				parentid="otherbutton" power="5" sequence="50201"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#codeBar" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Document" djlx=""
+				hint="2006030102@UPP2006030102-000835" id="fi_jkbx_btDocMng"
+				name="2006030102@UPP2006030102-000835" pageid="0&amp;1" parentid="otherbutton"
+				power="5" sequence="50202"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#Documentflow" />
+			</button>
+		</buttons>
+	</node>
+	
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查" djlx="" hint="2006030102@UPT2006030102-000052"
+				id="fi_arap_boLinkQuery" name="2006030102@UPT2006030102-000052"
+				pageid="0&amp;1" parentid="" power="5" sequence="600"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener" />
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="审批情况" djlx="" hint="2006030102@UPT2006030102-000026"
+				id="boApprove" name="2006030102@UPT2006030102-000026" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60001"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkApprove" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查凭证" djlx="" hint="2006030102@UPT2006030102-000030"
+				id="m_boPf" name="2006030102@UPT2006030102-000030" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60002"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkVoucher" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="预算执行情况" djlx=""
+				hint="2006030102@UPP2006030102-000430" id="m_boBudgetImpl"
+				name="2006030102@UPP2006030102-000430" pageid="0&amp;1" parentid="fi_arap_boLinkQuery"
+				power="5" sequence="60003"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkYs" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查往来单" djlx="" hint="common@UPTcommon-000355"
+				id="linkFk" name="common@UPTcommon-000355" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60004"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkJsd" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查结算信息" djlx="" hint="common@UPTcommon-000578"
+				id="linkSettleInfo" name="common@UPTcommon-000578" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60005"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkSettleInfo" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查报销标准" djlx="" hint="common@UPTcommon-000309"
+				id="linkLimit" name="common@UPTcommon-000309" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60006"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkLimit" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查报销制度" djlx="" hint="common@UPTcommon-000310"
+				id="linkRule" name="common@UPTcommon-000310" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60007"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#linkRule" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="联查资金计划" djlx="" hint="common@UPTcommon-000356"
+				id="btn_on_FpPlan" name="common@UPTcommon-000356" pageid="0&amp;1"
+				parentid="fi_arap_boLinkQuery" power="5" sequence="60008"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#btn_on_FpPlan" />
+			</button>
+		</buttons>
+	</node>
+
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="打印操作" djlx="" hint="2011@UPP2011-000207" id="print_action"
+				name="2011@UPP2011-000207" pageid="0&amp;1" parentid="" power="5"
+				sequence="800" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener" />
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Print" djlx="" hint="common@UC001-0000007"
+				id="fi_arap_on_Print" name="common@UC001-0000007" pageid="1"
+				parentid="print_action" power="5" sequence="80001"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#printCard" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Preview" djlx="" hint="common@UPTcommon-000299"
+				id="fi_arap_on_Print_review" name="common@UPTcommon-000299" pageid="1"
+				parentid="print_action" power="5" sequence="80002"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#printView" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Output" djlx="" hint="common@UC001-0000148" id="m_boOutput"
+				name="common@UC001-0000148" pageid="1" parentid="print_action" power="5"
+				sequence="80003" statusImpClass="nc.ui.arap.bx.btnstatus.BXPageBtnStatusListener">
+				<flow id="arap_jkbx#Output" />
+			</button>
+		</buttons>
+	</node>
+
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Officalprint" djlx="" hint="common@UPTcommon-000308"
+				id="offPrint" name="common@UPTcommon-000308" pageid="1" parentid="print_action"
+				power="5" sequence="80004"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#printOfficial" />
+			</button>
+		</buttons>
+	</node>
+	
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Cancelprint" djlx="" hint="common@UPTcommon-000359"
+				id="canceloffPrint" name="common@UPTcommon-000359" pageid="1"
+				parentid="print_action" power="5" sequence="80005"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#cancelPrintOfficial" />
+			</button>
+		</buttons>
+	</node>
+	
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Printbill" djlx="" hint="common@UPTcommon-000358"
+				id="fi_arap_on_Print_card" name="common@UC001-0000007" pageid="0"
+				parentid="print_action" power="5" sequence="80006"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#printBill" />
+			</button>
+		</buttons>
+	</node>
+	
+	<node corp="0001" id="billpub">
+		<buttons>
+			<button btncode="Printlist" djlx="" hint="2006030102@UPT2006030102-000031"
+				id="fi_arap_on_Print_list" name="2006030102@UPT2006030102-000031"
+				pageid="0" parentid="print_action" power="5" sequence="80007"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#printList" />
+			</button>
+		</buttons>
+	</node>
+	
+</nodes>

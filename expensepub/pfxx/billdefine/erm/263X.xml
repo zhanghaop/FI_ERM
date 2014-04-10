@@ -1,0 +1,1874 @@
+<?xml version="1.0" encoding='gb2312'?>
+<ufinterface roottag="bill">
+    <record displayName="借款单" metadataid="e0499b58-c604-48a6-825b-9a7e4d6dacca" stabletag="header" tablename="billhead" tabletag="billhead" tabletype="head" typeName="表头">
+        <field desc="成本中心">
+            <matchtag>pk_resacostcenter</matchtag>
+            <name>pk_resacostcenter</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>de9796b5-bccd-42a1-97dd-808847bfddbd</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="现金账户">
+            <matchtag>pk_cashaccount</matchtag>
+            <name>pk_cashaccount</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>d5d5b39d-2c93-4686-be49-e08a0a5f5afd</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="核算要素">
+            <matchtag>pk_checkele</matchtag>
+            <name>pk_checkele</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="利润中心">
+            <matchtag>pk_pcorg</matchtag>
+            <name>pk_pcorg</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>5461ada1-ef2a-419a-af14-656cf0641d34</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="财务组织">
+            <matchtag>pk_fiorg</matchtag>
+            <name>pk_fiorg</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="业务单元版本">
+            <matchtag>pk_org_v</matchtag>
+            <name>pk_org_v</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团">
+            <matchtag>pk_group</matchtag>
+            <name>pk_group</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>3b6dd171-2900-47f3-bfbe-41e4483a2a65</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <variablename>pk_group</variablename>
+        </field>
+        <field desc="借款单位">
+            <matchtag>pk_org</matchtag>
+            <name>pk_org</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <variablename>pk_org</variablename>
+        </field>
+        <field desc="借款标准">
+            <matchtag>reimrule</matchtag>
+            <name>reimrule</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>512</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="管理账户">
+            <matchtag>mngaccid</matchtag>
+            <name>mngaccid</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付日期">
+            <matchtag>paydate</matchtag>
+            <name>paydate</name>
+            <type>UFDate</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付人">
+            <matchtag>payman</matchtag>
+            <name>payman</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="合计金额">
+            <matchtag>total</matchtag>
+            <name>total</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="还款原币金额">
+            <matchtag>hkybje</matchtag>
+            <name>hkybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="还款本币金额">
+            <matchtag>hkbbje</matchtag>
+            <name>hkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付原币金额">
+            <matchtag>zfybje</matchtag>
+            <name>zfybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付本币金额">
+            <matchtag>zfbbje</matchtag>
+            <name>zfbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付状态">
+            <matchtag>payflag</matchtag>
+            <name>payflag</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>ce225279-a5be-431e-864a-746747c8a7bb</enumid>
+        </field>
+        <field desc="资金计划项目">
+            <matchtag>cashproj</matchtag>
+            <name>cashproj</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>edc7fbfe-4111-440e-93e0-a88664969dd4</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款单标识">
+            <matchtag>pk_jkbx</matchtag>
+            <name>pk_jkbx</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="费用承担单位">
+            <matchtag>fydwbm</matchtag>
+            <name>fydwbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_group</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <variablename>fydwbm</variablename>
+        </field>
+        <field desc="借款人单位">
+            <matchtag>dwbm</matchtag>
+            <name>dwbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>2cfe13c5-9757-4ae8-9327-f5c2d34bcb46</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_group</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <variablename>dwbm</variablename>
+        </field>
+        <field desc="单据大类">
+            <matchtag>djdl</matchtag>
+            <name>djdl</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>2</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="单据类型编码">
+            <matchtag>djlxbm</matchtag>
+            <name>djlxbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="单据编号">
+            <matchtag>djbh</matchtag>
+            <name>djbh</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>30</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="单据日期">
+            <matchtag>djrq</matchtag>
+            <name>djrq</name>
+            <type>UFDate</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="审核日期">
+            <matchtag>shrq</matchtag>
+            <name>shrq</name>
+            <type>UFDateTime</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="结算日期">
+            <matchtag>jsrq</matchtag>
+            <name>jsrq</name>
+            <type>UFDate</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款部门">
+            <matchtag>deptid</matchtag>
+            <name>deptid</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>b26fa3cb-4087-4027-a3b6-c83ab2a086a9</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款人">
+            <matchtag>jkbxr</matchtag>
+            <name>jkbxr</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>40d39c26-a2b6-4f16-a018-45664cac1a1f</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="录入人">
+            <matchtag>operator</matchtag>
+            <name>operator</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="审批人">
+            <matchtag>approver</matchtag>
+            <name>approver</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="最终修改人">
+            <matchtag>modifier</matchtag>
+            <name>modifier</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="结算方式">
+            <matchtag>jsfs</matchtag>
+            <name>jsfs</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>7016ec17-4116-4b3c-abf1-37e3b5d815ef</basdoc>
+            <translator>1001Z01000000000R5MJ</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="票据号">
+            <matchtag>pjh</matchtag>
+            <name>pjh</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>30</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="个人银行账号">
+            <matchtag>skyhzh</matchtag>
+            <name>skyhzh</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>fdf508bc-e741-415a-aa72-594028ca1a9a</basdoc>
+            <translatorParams>dwbm</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="单位银行账号">
+            <matchtag>fkyhzh</matchtag>
+            <name>fkyhzh</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>cd1f9a1c-eb08-493f-88ff-bcd1c134dee1</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="项目">
+            <matchtag>jobid</matchtag>
+            <name>jobid</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>2ee58f9b-781b-469f-b1d8-1816842515c3</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="收支项目">
+            <matchtag>szxmid</matchtag>
+            <name>szxmid</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>283d91a4-a8f4-4763-ac44-aae7401fa09a</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="现金流量项目">
+            <matchtag>cashitem</matchtag>
+            <name>cashitem</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>08d4138b-a7b5-42fd-94bc-bb6eb7ac0fdc</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="费用承担部门">
+            <matchtag>fydeptid</matchtag>
+            <name>fydeptid</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>b26fa3cb-4087-4027-a3b6-c83ab2a086a9</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>fydwbm</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="事项审批单">
+            <matchtag>pk_item</matchtag>
+            <name>pk_item</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="币种">
+            <matchtag>bzbm</matchtag>
+            <name>bzbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>b498bc9a-e5fd-4613-8da8-bdae2a05704a</basdoc>
+            <translator>1001Z01000000000R5MJ</translator>
+            <translatorParams>bzbm</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="本币汇率">
+            <matchtag>bbhl</matchtag>
+            <name>bbhl</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>15</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款原币金额">
+            <matchtag>ybje</matchtag>
+            <name>ybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款本币金额">
+            <matchtag>bbje</matchtag>
+            <name>bbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="事由">
+            <matchtag>zy</matchtag>
+            <name>zy</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>07a55a1c-ef34-4607-8230-18053e94f27f</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="供应商">
+            <matchtag>hbbm</matchtag>
+            <name>hbbm</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>720dcc7c-ff19-48f4-b9c5-b90906682f45</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="附件张数">
+            <matchtag>fjzs</matchtag>
+            <name>fjzs</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>10</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="单据状态">
+            <matchtag>djzt</matchtag>
+            <name>djzt</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>aed2a08a-03a0-4db7-9ab1-c30e1dc1ca17</enumid>
+        </field>
+        <field desc="结算号">
+            <matchtag>jsh</matchtag>
+            <name>jsh</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>30</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支票限额">
+            <matchtag>zpxe</matchtag>
+            <name>zpxe</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="是否限额支票">
+            <matchtag>ischeck</matchtag>
+            <name>ischeck</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="本币余额">
+            <matchtag>bbye</matchtag>
+            <name>bbye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="原币余额">
+            <matchtag>ybye</matchtag>
+            <name>ybye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项30">
+            <matchtag>zyx30</matchtag>
+            <name>zyx30</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项29">
+            <matchtag>zyx29</matchtag>
+            <name>zyx29</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项28">
+            <matchtag>zyx28</matchtag>
+            <name>zyx28</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项27">
+            <matchtag>zyx27</matchtag>
+            <name>zyx27</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项26">
+            <matchtag>zyx26</matchtag>
+            <name>zyx26</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项25">
+            <matchtag>zyx25</matchtag>
+            <name>zyx25</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项24">
+            <matchtag>zyx24</matchtag>
+            <name>zyx24</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项23">
+            <matchtag>zyx23</matchtag>
+            <name>zyx23</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项22">
+            <matchtag>zyx22</matchtag>
+            <name>zyx22</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项21">
+            <matchtag>zyx21</matchtag>
+            <name>zyx21</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项20">
+            <matchtag>zyx20</matchtag>
+            <name>zyx20</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项19">
+            <matchtag>zyx19</matchtag>
+            <name>zyx19</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项18">
+            <matchtag>zyx18</matchtag>
+            <name>zyx18</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项17">
+            <matchtag>zyx17</matchtag>
+            <name>zyx17</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项16">
+            <matchtag>zyx16</matchtag>
+            <name>zyx16</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项15">
+            <matchtag>zyx15</matchtag>
+            <name>zyx15</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项14">
+            <matchtag>zyx14</matchtag>
+            <name>zyx14</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项13">
+            <matchtag>zyx13</matchtag>
+            <name>zyx13</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项12">
+            <matchtag>zyx12</matchtag>
+            <name>zyx12</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项11">
+            <matchtag>zyx11</matchtag>
+            <name>zyx11</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项10">
+            <matchtag>zyx10</matchtag>
+            <name>zyx10</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项9">
+            <matchtag>zyx9</matchtag>
+            <name>zyx9</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项8">
+            <matchtag>zyx8</matchtag>
+            <name>zyx8</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项7">
+            <matchtag>zyx7</matchtag>
+            <name>zyx7</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项6">
+            <matchtag>zyx6</matchtag>
+            <name>zyx6</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项5">
+            <matchtag>zyx5</matchtag>
+            <name>zyx5</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项4">
+            <matchtag>zyx4</matchtag>
+            <name>zyx4</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项3">
+            <matchtag>zyx3</matchtag>
+            <name>zyx3</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项2">
+            <matchtag>zyx2</matchtag>
+            <name>zyx2</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项1">
+            <matchtag>zyx1</matchtag>
+            <name>zyx1</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="审批状态">
+            <matchtag>spzt</matchtag>
+            <name>spzt</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>6d3eb44c-db5a-45a5-812a-3a040a3746af</enumid>
+        </field>
+        <field desc="期初标志">
+            <matchtag>qcbz</matchtag>
+            <name>qcbz</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="冲销完成日期">
+            <matchtag>contrastenddate</matchtag>
+            <name>contrastenddate</name>
+            <type>UFDate</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="会计年度">
+            <matchtag>kjnd</matchtag>
+            <name>kjnd</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>4</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="会计期间">
+            <matchtag>kjqj</matchtag>
+            <name>kjqj</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>2</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="结算人">
+            <matchtag>jsr</matchtag>
+            <name>jsr</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="正式打印日期">
+            <matchtag>officialprintdate</matchtag>
+            <name>officialprintdate</name>
+            <type>UFDate</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="业务类型">
+            <matchtag>busitype</matchtag>
+            <name>busitype</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="正式打印人">
+            <matchtag>officialprintuser</matchtag>
+            <name>officialprintuser</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="预计余额">
+            <matchtag>yjye</matchtag>
+            <name>yjye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="清账状态">
+            <matchtag>qzzt</matchtag>
+            <name>qzzt</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <defaultvalue>0</defaultvalue>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>675acba6-34fc-440a-a967-eee299d28e59</enumid>
+        </field>
+        <field desc="最迟还款日">
+            <matchtag>zhrq</matchtag>
+            <name>zhrq</name>
+            <type>UFDate</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款类型">
+            <matchtag>loantype</matchtag>
+            <name>loantype</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="生效状态">
+            <matchtag>sxbz</matchtag>
+            <name>sxbz</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <enumid>f61cd296-3d55-4b1d-8428-bda54ae64d6a</enumid>
+        </field>
+        <field desc="借款单业务行">
+            <matchtag>jk_busitem</matchtag>
+            <name>jk_busitem</name>
+            <type>ref(item)</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>0</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <refitem>6953ec6a-329c-4c09-b950-25b4af68e5c5</refitem>
+        </field>
+        <field desc="全局还款本币金额">
+            <matchtag>globalhkbbje</matchtag>
+            <name>globalhkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局支付本币金额">
+            <matchtag>globalzfbbje</matchtag>
+            <name>globalzfbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局本币汇率">
+            <matchtag>globalbbhl</matchtag>
+            <name>globalbbhl</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>15</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局借款本币金额">
+            <matchtag>globalbbje</matchtag>
+            <name>globalbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局本币余额">
+            <matchtag>globalbbye</matchtag>
+            <name>globalbbye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团还款本币金额">
+            <matchtag>grouphkbbje</matchtag>
+            <name>grouphkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团支付本币金额">
+            <matchtag>groupzfbbje</matchtag>
+            <name>groupzfbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团本币汇率">
+            <matchtag>groupbbhl</matchtag>
+            <name>groupbbhl</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>15</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团借款本币金额">
+            <matchtag>groupbbje</matchtag>
+            <name>groupbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团本币余额">
+            <matchtag>groupbbye</matchtag>
+            <name>groupbbye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="创建时间">
+            <matchtag>creationtime</matchtag>
+            <name>creationtime</name>
+            <type>UFDateTime</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="修改时间">
+            <matchtag>modifiedtime</matchtag>
+            <name>modifiedtime</name>
+            <type>UFDateTime</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>19</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="创建人">
+            <matchtag>creator</matchtag>
+            <name>creator</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>f6f9a473-56c0-432f-8bc7-fbf8fde54fee</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="客商银行账号">
+            <matchtag>custaccount</matchtag>
+            <name>custaccount</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>611652ad-177f-4d3e-9ae7-ef8f96930b78</basdoc>
+            <translator>1001Z01000000000R5MN</translator>
+            <translatorParams>bzbm</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="散户">
+            <matchtag>freecust</matchtag>
+            <name>freecust</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>20d2ca8b-c9da-4def-a9a1-4b11b85bba54</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="是否集团常用单据">
+            <matchtag>isinitgroup</matchtag>
+            <name>isinitgroup</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="客户">
+            <matchtag>customer</matchtag>
+            <name>customer</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>e4f48eaf-5567-4383-a370-a59cb3e8a451</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="是否委托付款">
+            <matchtag>iscommisionpay</matchtag>
+            <name>iscommisionpay</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="票据类型">
+            <matchtag>checktype</matchtag>
+            <name>checktype</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>74c98540-4879-4584-a4c9-0f8b6e20b96a</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+    </record>
+    <record classname="nc.vo.ep.bx.BXBusItemVO[]" displayName="借款单业务行" entitytag="item" metadataid="6953ec6a-329c-4c09-b950-25b4af68e5c5" recordtype="vos" sentitytag="item" tablename="jk_busitem" tabletype="embed" typeName="内嵌结构">
+        <field desc="报销类型标识">
+            <matchtag>pk_reimtype</matchtag>
+            <name>pk_reimtype</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>0</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款单业务行标识">
+            <matchtag>pk_busitem</matchtag>
+            <name>pk_busitem</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="借款单标识">
+            <matchtag>pk_jkbx</matchtag>
+            <name>pk_jkbx</name>
+            <type>UFID</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项50">
+            <matchtag>defitem50</matchtag>
+            <name>defitem50</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项49">
+            <matchtag>defitem49</matchtag>
+            <name>defitem49</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项48">
+            <matchtag>defitem48</matchtag>
+            <name>defitem48</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项47">
+            <matchtag>defitem47</matchtag>
+            <name>defitem47</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项46">
+            <matchtag>defitem46</matchtag>
+            <name>defitem46</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项45">
+            <matchtag>defitem45</matchtag>
+            <name>defitem45</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项44">
+            <matchtag>defitem44</matchtag>
+            <name>defitem44</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项43">
+            <matchtag>defitem43</matchtag>
+            <name>defitem43</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项42">
+            <matchtag>defitem42</matchtag>
+            <name>defitem42</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项41">
+            <matchtag>defitem41</matchtag>
+            <name>defitem41</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项40">
+            <matchtag>defitem40</matchtag>
+            <name>defitem40</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项39">
+            <matchtag>defitem39</matchtag>
+            <name>defitem39</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项38">
+            <matchtag>defitem38</matchtag>
+            <name>defitem38</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项37">
+            <matchtag>defitem37</matchtag>
+            <name>defitem37</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项36">
+            <matchtag>defitem36</matchtag>
+            <name>defitem36</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项35">
+            <matchtag>defitem35</matchtag>
+            <name>defitem35</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项34">
+            <matchtag>defitem34</matchtag>
+            <name>defitem34</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项33">
+            <matchtag>defitem33</matchtag>
+            <name>defitem33</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项32">
+            <matchtag>defitem32</matchtag>
+            <name>defitem32</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项31">
+            <matchtag>defitem31</matchtag>
+            <name>defitem31</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项30">
+            <matchtag>defitem30</matchtag>
+            <name>defitem30</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项29">
+            <matchtag>defitem29</matchtag>
+            <name>defitem29</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项28">
+            <matchtag>defitem28</matchtag>
+            <name>defitem28</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项27">
+            <matchtag>defitem27</matchtag>
+            <name>defitem27</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项26">
+            <matchtag>defitem26</matchtag>
+            <name>defitem26</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项25">
+            <matchtag>defitem25</matchtag>
+            <name>defitem25</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项24">
+            <matchtag>defitem24</matchtag>
+            <name>defitem24</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项23">
+            <matchtag>defitem23</matchtag>
+            <name>defitem23</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项22">
+            <matchtag>defitem22</matchtag>
+            <name>defitem22</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项21">
+            <matchtag>defitem21</matchtag>
+            <name>defitem21</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项20">
+            <matchtag>defitem20</matchtag>
+            <name>defitem20</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项19">
+            <matchtag>defitem19</matchtag>
+            <name>defitem19</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项18">
+            <matchtag>defitem18</matchtag>
+            <name>defitem18</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项17">
+            <matchtag>defitem17</matchtag>
+            <name>defitem17</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项16">
+            <matchtag>defitem16</matchtag>
+            <name>defitem16</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项15">
+            <matchtag>defitem15</matchtag>
+            <name>defitem15</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项14">
+            <matchtag>defitem14</matchtag>
+            <name>defitem14</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项13">
+            <matchtag>defitem13</matchtag>
+            <name>defitem13</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项12">
+            <matchtag>defitem12</matchtag>
+            <name>defitem12</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项11">
+            <matchtag>defitem11</matchtag>
+            <name>defitem11</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项10">
+            <matchtag>defitem10</matchtag>
+            <name>defitem10</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项9">
+            <matchtag>defitem9</matchtag>
+            <name>defitem9</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项8">
+            <matchtag>defitem8</matchtag>
+            <name>defitem8</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项7">
+            <matchtag>defitem7</matchtag>
+            <name>defitem7</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项6">
+            <matchtag>defitem6</matchtag>
+            <name>defitem6</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项5">
+            <matchtag>defitem5</matchtag>
+            <name>defitem5</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项4">
+            <matchtag>defitem4</matchtag>
+            <name>defitem4</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项3">
+            <matchtag>defitem3</matchtag>
+            <name>defitem3</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项2">
+            <matchtag>defitem2</matchtag>
+            <name>defitem2</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="自定义项1">
+            <matchtag>defitem1</matchtag>
+            <name>defitem1</name>
+            <type>CUSTOM</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>101</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="页签编码">
+            <matchtag>tablecode</matchtag>
+            <name>tablecode</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="金额">
+            <matchtag>amount</matchtag>
+            <name>amount</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="收支项目">
+            <matchtag>szxmid</matchtag>
+            <name>szxmid</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>283d91a4-a8f4-4763-ac44-aae7401fa09a</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="行号">
+            <matchtag>rowno</matchtag>
+            <name>rowno</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>4</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="原币金额">
+            <matchtag>ybje</matchtag>
+            <name>ybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="本币金额">
+            <matchtag>bbje</matchtag>
+            <name>bbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="原币余额">
+            <matchtag>ybye</matchtag>
+            <name>ybye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="本币余额">
+            <matchtag>bbye</matchtag>
+            <name>bbye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="还款金额">
+            <matchtag>hkybje</matchtag>
+            <name>hkybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="还款本币金额">
+            <matchtag>hkbbje</matchtag>
+            <name>hkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付金额">
+            <matchtag>zfybje</matchtag>
+            <name>zfybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="支付本币金额">
+            <matchtag>zfbbje</matchtag>
+            <name>zfbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="冲借款金额">
+            <matchtag>cjkybje</matchtag>
+            <name>cjkybje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="冲借款本币金额">
+            <matchtag>cjkbbje</matchtag>
+            <name>cjkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="预计余额">
+            <matchtag>yjye</matchtag>
+            <name>yjye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局本币金额">
+            <matchtag>globalbbje</matchtag>
+            <name>globalbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局本币余额">
+            <matchtag>globalbbye</matchtag>
+            <name>globalbbye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局还款本币金额">
+            <matchtag>globalhkbbje</matchtag>
+            <name>globalhkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局支付本币金额">
+            <matchtag>globalzfbbje</matchtag>
+            <name>globalzfbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="全局冲借款本币金额">
+            <matchtag>globalcjkbbje</matchtag>
+            <name>globalcjkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团本币金额">
+            <matchtag>groupbbje</matchtag>
+            <name>groupbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团本币余额">
+            <matchtag>groupbbye</matchtag>
+            <name>groupbbye</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团还款本币金额">
+            <matchtag>grouphkbbje</matchtag>
+            <name>grouphkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团支付本币金额">
+            <matchtag>groupzfbbje</matchtag>
+            <name>groupzfbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="集团冲借款本币金额">
+            <matchtag>groupcjkbbje</matchtag>
+            <name>groupcjkbbje</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>28</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+    </record>
+</ufinterface>

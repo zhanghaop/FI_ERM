@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+    <public>
+		<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.itf.er.expensetype.IExpenseTypeService</interface>
+        	<implementation>nc.impl.er.expensetype.ExpenseTypeServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+        	<interface>nc.itf.er.expensetype.IExpenseTypeQueryService</interface>
+          	<implementation>nc.impl.er.expensetype.ExpenseTypeQueryServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.itf.er.reimtype.IReimTypeService</interface>
+            <implementation>nc.impl.er.reimtype.ReimTypeServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+          	<interface>nc.itf.er.reimtype.IReimTypeQueryService</interface>
+          	<implementation>nc.impl.er.reimtype.ReimTypeQueryServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.itf.er.indauthorize.IIndAuthorizeService</interface>
+           	<implementation>nc.impl.er.indauthorize.IndAuthorizeServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+          	<interface>nc.itf.er.indauthorize.IIndAuthorizeQueryService</interface>
+          	<implementation>nc.impl.er.indauthorize.IndAuthorizeQueryServiceImpl</implementation>
+     	</component>
+    </public>
+</module>

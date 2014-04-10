@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="GBK"?>
+<nodes extends="201103">
+	<node corp="0001" id="billmanage">
+        <buttons>
+            <button btncode="联查报销单" djlx="" hint="common@UPTcommon-000306" id="linkBx"
+                name="common@UPTcommon-000306" pageid="0&amp;1"
+                parentid="fi_arap_boLinkQuery" power="5" sequence="6" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#linkBxd"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="billmanage">
+        <buttons>
+            <button btncode="联查借款单" djlx="" hint="common@UPTcommon-000307" id="linkJkd"
+                name="common@UPTcommon-000307" pageid="0&amp;1"
+                parentid="fi_arap_boLinkQuery" power="5" sequence="7" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#linkJkd"/>
+            </button>
+        </buttons>
+    </node>
+</nodes>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="GBK"?>
+<nodes extends="billmanage">
+	<!-- 单据管理节点 -->
+	<node corp="0001" id="20110BMLB">
+		<buttons>
+			<button btncode="交易类型" djlx="" hint="2006030102@UPP2006030102-000826"
+				id="fi_arap_boDjlx" name="2011@UPP2011-000048" pageid="0&amp;1"
+				parentid="" power="5" sequence="450"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#djlx" />
+			</button>
+		</buttons>
+	</node>
+	<!-- extends ... -->
+	<node corp="0001" id="20110BMLB">
+		<buttons>
+			<button btncode="Contrast" djlx="" hint="common@UPTcommon-000360"
+				id="batchcontrast_p" name="common@UPTcommon-000360" pageid="0"
+				parentid="" power="5" sequence="460"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener" />
+		</buttons>
+	</node>
+	<node corp="0001" id="20110BMLB">
+		<buttons>
+			<button btncode="批量冲借款" djlx="" hint="common@UPTcommon-000363"
+				id="batchcontrast" name="common@UPTcommon-000363" pageid="0"
+				parentid="batchcontrast_p" power="5" sequence="46001"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+				<flow id="arap_jkbx#bcontrast" />
+			</button>
+		</buttons>
+	</node>
+	<node corp="0001" id="20110BMLB">
+		<buttons>
+			<button btncode="取消冲借款" djlx="" hint="common@UPTcommon-000364"
+				id="cancelcontrast" name="common@UPTcommon-000364" pageid="0"
+				parentid="batchcontrast_p" power="5" sequence="46002"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+				<flow id="arap_jkbx#cancelContrast" />
+			</button>
+		</buttons>
+	</node>
+</nodes>
+
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="feesaccount/src/client/report"/>
+	<classpathentry kind="src" path="feesaccount/src/public/report"/>
+	<classpathentry kind="src" path="feesaccount/src/private/report"/>
+	<classpathentry kind="src" path="expensepub/src/private/report"/>
+	<classpathentry kind="src" path="ersetting/src/private/reimtype"/>
+	<classpathentry kind="src" path="expensepub/src/client/core"/>
+	<classpathentry kind="src" path="ersetting/src/client/billtype"/>
+	<classpathentry kind="src" path="ersetting/src/public/billtype"/>
+	<classpathentry kind="src" path="ersetting/src/public/reimtype"/>
+	<classpathentry kind="src" path="ersetting/src/private/indauthorize"/>
+	<classpathentry kind="src" path="ersetting/src/client/reimtype"/>
+	<classpathentry kind="src" path="ersetting/src/client/indauthorize"/>
+	<classpathentry kind="src" path="expensepub/src/public/cmp"/>
+	<classpathentry kind="src" path="expensepub/src/private/core"/>
+	<classpathentry kind="src" path="ersetting/src/client/expensetype"/>
+	<classpathentry kind="src" path="ersetting/src/public/indauthorize"/>
+	<classpathentry kind="src" path="expensepub/src/private/pub"/>
+	<classpathentry kind="src" path="ersetting/src/public/reimrule"/>
+	<classpathentry kind="src" path="ersetting/src/private/expensetype"/>
+	<classpathentry kind="src" path="ersetting/src/client/reimrule"/>
+	<classpathentry kind="src" path="expensepub/src/public/pub"/>
+	<classpathentry kind="src" path="expensepub/src/client/pub"/>
+	<classpathentry kind="src" path="expensepub/src/private/linkarap"/>
+	<classpathentry kind="src" path="expensepub/src/private/billtype"/>
+	<classpathentry kind="src" path="expensepub/src/public/core"/>
+	<classpathentry kind="src" path="ersetting/src/public/expensetype"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fipub6.0"/>
+	<classpathentry kind="src" output="out/resources" path="resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Ant_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Product_Common_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Middleware_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Framework_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Module_Public_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Module_Client_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Module_Private_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Module_Lang_Library"/>
+	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Generated_EJB"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

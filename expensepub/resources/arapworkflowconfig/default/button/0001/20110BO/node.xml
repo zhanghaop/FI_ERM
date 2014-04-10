@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="GBK"?>
+<nodes extends="billpub">
+ 	<node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="Add" djlx=""
+                hint="2006030102@UPP2006030102-000823"
+                id="fi_arap_boAdd" name="common@UC001-0000108"
+                pageid="0&amp;1" parentid="" power="5" sequence="100" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#add"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="Edit" djlx="" hint="common@UC001-0000045"
+                id="fi_arap_boEdit" name="common@UC001-0000045"
+                pageid="0&amp;1" parentid="" power="5" sequence="102" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+                <flow id="arap_jkbx#update"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="Delete" djlx=""
+                hint="2006030102@UPP2006030102-000825"
+                id="fi_arap_boDelDj" name="common@UC001-0000039"
+                pageid="0&amp;1" parentid="" power="5" sequence="103" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+                <flow id="arap_jkbx#delete"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BO">
+       <buttons>
+           <button btncode="Copy" djlx=""
+               hint="2006030102@UPP2006030102-000824"
+               id="fi_arap_boCopy" name="common@UC001-0000043"
+               pageid="1" parentid="" power="5" sequence="104" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+               <flow id="arap_jkbx#copy"/>
+           </button>
+       </buttons>
+   	</node>
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="Save" djlx=""
+                hint="&quot;common@UC001-0000001" id="fi_arap_boSave"
+                name="&quot;common@UC001-0000001" pageid="1" parentid=""
+                power="5" sequence="201" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#save"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BO">
+		<buttons>
+			<button btncode="Tempsave" djlx="" hint="2008@UPP2008-000113"
+				id="fi_arap_boTempSave" name="2008@UPP2008-000113" pageid="1"
+				parentid="" power="5" sequence="202"
+				statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+				<flow id="arap_jkbx#tempSave" />
+			</button>
+		</buttons>
+	</node>
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="Cancel" djlx="" hint="common@UC001-0000008"
+                id="fi_arap_bocancel" name="common@UC001-0000008"
+                pageid="1" parentid="" power="5" sequence="203" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#cancel"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="交易类型" djlx=""
+                hint="2006030102@UPP2006030102-000826"
+                id="fi_arap_boDjlx" name="2011@UPP2011-000048"
+                pageid="0&amp;1" parentid="" power="5" sequence="500" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#djlx"/>
+            </button>
+        </buttons>
+    </node>
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="联查报销单" djlx="" hint="common@UPTcommon-000306" id="linkBx"
+                name="common@UPTcommon-000306" pageid="0&amp;1"
+                parentid="fi_arap_boLinkQuery" power="5" sequence="6" statusImpClass="nc.ui.arap.bx.btnstatus.BXDefaultBtnStatusListener">
+                <flow id="arap_jkbx#linkBxd"/>
+            </button>
+        </buttons>
+    </node> 
+    <node corp="0001" id="20110BO">
+        <buttons>
+            <button btncode="资金申请" djlx=""
+                hint="common@UPTcommon-000350"
+                id="jkbx_boCashApply" name="common@UPTcommon-000350"
+                pageid="0&amp;1" parentid="otherbutton" power="5" sequence="500" statusImpClass="nc.ui.arap.bx.btnstatus.BxOperationBtnStatusListener">
+                <flow id="arap_jkbx#cashapply"/>
+            </button>
+        </buttons>
+    </node>
+</nodes>

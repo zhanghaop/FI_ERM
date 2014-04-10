@@ -1,0 +1,1443 @@
+<?xml version="1.0" encoding="GBK"?>
+<billtypes>
+	<billtype code="263X">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2631" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2632" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="264X">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2641" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2642" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2643" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2644" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2645" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2646" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="2647" rule="" limit="">
+		<interfaces>
+			<interface name="IBodyPrint" impl="nc.ui.arap.bx.BodyPrint" />
+			<interface name="IBodyUIController" impl="nc.ui.arap.bx.BodyController" />
+			<interface name="IBXBusItemBO" impl="nc.bs.arap.bx.BXBusItemBO" />
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+			<billitem itemkey="receiver" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="zyx26" />
+			<billitem itemkey="zyx27" />
+			<billitem itemkey="zyx28" />
+			<billitem itemkey="zyx29" />
+			<billitem itemkey="zyx30" />
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+			<tablecode code="er_bxcontrast" canAddRow="N" templetflag="Y" />
+		</tablecodes>
+	</billtype>
+
+	<billtype code="REPORT" rule="" limit="">
+		<interfaces>
+		</interfaces>
+		<costentity_billitems>
+			<billitem itemkey="fydwbm" />
+			<billitem itemkey="pk_item" />
+			<billitem itemkey="fydeptid" />
+			<billitem itemkey="fydeptid_v" />
+			<billitem itemkey="jobid" />
+			<billitem itemkey="projecttask" />
+			<billitem itemkey="szxmid" />
+			<billitem itemkey="hbbm" />
+			<billitem itemkey="customer" />
+			<billitem itemkey="pk_resacostcenter" />
+			<billitem itemkey="zyx16" />
+			<billitem itemkey="zyx17" />
+			<billitem itemkey="zyx18" />
+			<billitem itemkey="zyx19" />
+			<billitem itemkey="zyx20" />
+			<billitem itemkey="zyx21" />
+			<billitem itemkey="zyx22" />
+			<billitem itemkey="zyx23" />
+			<billitem itemkey="zyx24" />
+			<billitem itemkey="zyx25" />
+		</costentity_billitems>
+		<payentity_billitems>
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="skyhzh" />
+			<billitem itemkey="deptid" />
+			<billitem itemkey="deptid_v" />
+			<billitem itemkey="jkbxr" />
+			<billitem itemkey="mngaccid" />
+			<billitem itemkey="zfdwbm" />
+			<billitem itemkey="jsfs" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="fkyhzh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="cashitem" />
+			<billitem itemkey="zyx1" />
+			<billitem itemkey="zyx2" />
+			<billitem itemkey="zyx3" />
+			<billitem itemkey="zyx4" />
+			<billitem itemkey="zyx5" />
+			<billitem itemkey="zyx6" />
+			<billitem itemkey="zyx7" />
+			<billitem itemkey="zyx8" />
+			<billitem itemkey="zyx9" />
+			<billitem itemkey="zyx10" />
+			<billitem itemkey="zyx11" />
+			<billitem itemkey="zyx12" />
+			<billitem itemkey="zyx13" />
+			<billitem itemkey="zyx14" />
+			<billitem itemkey="zyx15" />
+			<billitem itemkey="zy" />
+			<billitem itemkey="defitem1" />
+			<billitem itemkey="defitem2" />
+			<billitem itemkey="defitem3" />
+			<billitem itemkey="defitem4" />
+			<billitem itemkey="defitem5" />
+			<billitem itemkey="defitem6" />
+			<billitem itemkey="defitem7" />
+			<billitem itemkey="defitem8" />
+			<billitem itemkey="defitem9" />
+			<billitem itemkey="defitem10" />
+			<billitem itemkey="defitem11" />
+			<billitem itemkey="defitem12" />
+			<billitem itemkey="defitem13" />
+			<billitem itemkey="defitem14" />
+			<billitem itemkey="defitem15" />
+			<billitem itemkey="defitem16" />
+			<billitem itemkey="defitem17" />
+			<billitem itemkey="defitem18" />
+			<billitem itemkey="defitem19" />
+			<billitem itemkey="defitem20" />
+			<billitem itemkey="defitem21" />
+			<billitem itemkey="defitem22" />
+			<billitem itemkey="defitem23" />
+			<billitem itemkey="defitem24" />
+			<billitem itemkey="defitem25" />
+			<billitem itemkey="defitem26" />
+			<billitem itemkey="defitem27" />
+			<billitem itemkey="defitem28" />
+			<billitem itemkey="defitem29" />
+			<billitem itemkey="defitem30" />
+			<billitem itemkey="defitem31" />
+			<billitem itemkey="defitem32" />
+			<billitem itemkey="defitem33" />
+			<billitem itemkey="defitem34" />
+			<billitem itemkey="defitem35" />
+			<billitem itemkey="defitem36" />
+			<billitem itemkey="defitem37" />
+			<billitem itemkey="defitem38" />
+			<billitem itemkey="defitem39" />
+			<billitem itemkey="defitem40" />
+			<billitem itemkey="defitem41" />
+			<billitem itemkey="defitem42" />
+			<billitem itemkey="defitem43" />
+			<billitem itemkey="defitem44" />
+			<billitem itemkey="defitem45" />
+			<billitem itemkey="defitem46" />
+			<billitem itemkey="defitem47" />
+			<billitem itemkey="defitem48" />
+			<billitem itemkey="defitem49" />
+			<billitem itemkey="defitem50" />
+		</payentity_billitems>
+		<useentity_billitems>
+		</useentity_billitems>
+		<power_items>
+		</power_items>
+		<tablecodes>
+		</tablecodes>
+	</billtype>
+</billtypes>

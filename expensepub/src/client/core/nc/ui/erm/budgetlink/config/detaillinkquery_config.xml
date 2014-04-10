@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 明细单据联查 -->
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
+
+    <!-- 对象转换工厂，由此获取操作对象的特征信息(元数据信息) -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.GeneralBDObjectAdapterFactory">
+		<property name="mode" value="MD"></property>
+	</bean>
+
+	<!-- 管理应用模型 -->
+	<bean id="billManageModel" class="nc.ui.pubapp.uif2app.model.BillManageModel">
+		<property name="context" ref="context"></property>
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory"></property>
+	</bean>
+
+	<!-- 模型管理器 -->
+	<bean id="modelDataManager" class="nc.ui.erm.budgetlink.model.DetailLinkQueryModelDataManager">
+		<property name="context" ref="context"></property>
+		<property name="listView" ref="listView"></property>
+	</bean>
+
+    <!-- 列表视图 -->
+	<bean id="listView" class="nc.ui.erm.budgetlink.listener.ErmBillListView" init-method="initUI">
+		<property name="model" ref="billManageModel"></property>
+		<property name="multiSelectionEnable" value="false"></property>
+		<property name="showTotalLine" value="true"></property>
+		<property name="nodekey" value="20110BLB"></property>
+	</bean>
+
+	<!-- ################################ 功能按钮 ################################ -->
+
+	<!-- 监听器(Mediator)(可选) -->
+	<!-- 
+	<bean id="appEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
+		<property name="model" ref="billManageModel"></property>
+		<property name="handlerMap">
+			<map>
+				<entry key="nc.ui.pubapp.uif2app.event.list.ListBodyRowChangedEvent">
+					<list>
+						<bean id="bodyRowChangeHandler" class="nc.ui.arap.recpaystatement.action.BillListViewBodyRowChangeHandler">
+							<property name="listView" ref="listView"></property>
+						</bean>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+ 	-->
+
+    <bean id="InitDataListener" class="nc.ui.erm.budgetlink.listener.LinkQueryInitDataListener">
+		<property name="context" ref="context"></property>
+		<property name="listView" ref="listView"></property>
+	</bean>
+
+	<!-- 页面总组装容器 -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+				<property name="name" value=""></property>
+				<property name="component" ref="listView"></property>
+			</bean>
+		</property>
+		<property name="model" ref="billManageModel"></property>
+		<property name="actions">
+			<list>
+				<!--
+				<ref bean="queryAction"></ref>
+				<ref bean="linkQueryAction"></ref>
+				-->
+			</list>
+		</property>
+	</bean>
+
+</beans>

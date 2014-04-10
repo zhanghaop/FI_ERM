@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+    
+    <public>
+        <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.itf.arap.pub.IBXBillPublic</interface>
+            <implementation>nc.impl.arap.bx.ArapBXBillPublicImp</implementation>
+        </component>
+
+	    <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.itf.er.pub.IArapBillTypePublic</interface>
+            <implementation>nc.impl.er.djlx.ArapBillTypeImpl</implementation>
+        </component>
+
+        <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.itf.arap.pub.IBxUIControl</interface>
+            <implementation>nc.impl.arap.bx.ErUIControlImp</implementation>
+        </component>
+        
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.service.IErmEJBService</interface>
+     	    <implementation>nc.bs.erm.service.ErmEJBServiceImpl</implementation>
+        </component>
+    
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.service.IErmServiceProxy</interface>
+     	    <implementation>nc.bs.erm.service.ErmServiceProxyImpl</implementation>
+        </component>
+        
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.termendtransact.ICloseAccountService</interface>
+     	    <implementation>nc.impl.erm.termendtransact.CloseAccountServiceImpl</implementation>
+        </component>
+        
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.termendtransact.ITermEndPrivate</interface>
+     	    <implementation>nc.impl.erm.termendtransact.TermEndPrivateImpl</implementation>
+        </component>
+        
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.prv.IErmParamService</interface>
+     	    <implementation>nc.impl.erm.common.ErmParamServiceImpl</implementation>
+        </component>
+        
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.ntb.IBugetLinkBO</interface>
+     	    <implementation>nc.bs.erm.buget.BugetLinkBOImpl</implementation>
+        </component>
+        
+        <!--added by chendya since v6.1 multiversion qry -->
+        <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
+     	    <interface>nc.itf.erm.multiversion.IMultiVersionQry</interface>
+     	    <implementation>nc.impl.erm.multiversion.MultiVersionQryImpl</implementation>
+        </component>
+        
+    </public>
+</module>
+

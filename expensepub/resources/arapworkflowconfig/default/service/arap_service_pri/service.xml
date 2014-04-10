@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+	<service name="SaveOneNewDj_pri"  desc=""  flowid="fi_arap_background_public#background_mysystem_SavOneNewDj"/>
+	<service name="EditDj_pri"  desc=""  flowid="fi_arap_background_public#background_mysystem_editDj"/>
+	<service name="insertDJZBVO_pri"  desc=""  flowid="fi_arap_background_public#background_mysystem_insertdjzbvo"/>
+</services>

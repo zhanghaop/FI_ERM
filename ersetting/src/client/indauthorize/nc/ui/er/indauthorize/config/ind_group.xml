@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- 授权代理人设置初始设置(erm-ersetting)配置文件-集团 -->
+<!-- IndividualAuthorize的简写ind -->
+<!-- author:liansg -->
+<beans>
+	<!-- 环境变量 -->
+  	<bean id="context" class="nc.vo.uif2.LoginContext">
+  		<property name="nodeType"><value>GROUP_NODE</value></property>
+  	</bean>
+  	
+	<import resource="ind_base.xml" />
+	
+  	<!-- ############## UI Layout ########################## -->
+  	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+     	<property name="tangramLayoutRoot">
+     	<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+		     			<property name="component">
+		     				<ref bean="indTable"/>
+		     			</property>
+     				</bean>
+     	    <!-- 
+     		<bean class="nc.ui.uif2.tangramlayout.node.VSNode">     		  	     		  	 
+     			<property name="up">
+     			  
+     				<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+		     			<property name="component">		     			 
+		     				<ref bean="paginationBar"/>		     					     			 			     		
+		     			</property>
+     				</bean>
+     				
+     			</property>     			 
+     			<property name="down">
+     				<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+		     			<property name="component">
+		     				<ref bean="indTable"/>
+		     			</property>
+     				</bean>
+     			</property>
+     			<property name="dividerLocation">
+     				<value>0.04</value>
+     			</property>
+     		</bean>
+     			-->
+     	</property>
+     	<property name="editActions">
+     		<list>
+    			<ref bean="indAddAction"/>
+    			<ref bean="indDeleteAction"/>
+    			<ref bean="indNullAction"/>
+    			<ref bean="indSaveAction"/>
+    			<ref bean="indNullAction"/>
+    			<ref bean="indCancelAction"/>
+     		</list>
+     	</property>
+     
+     	<property name="actions">
+    		<list>
+    			<ref bean="indAddAction"/>
+    			<ref bean="indEditAction"/>
+    			<ref bean="indDeleteAction"/>
+    			<ref bean="indNullAction"/>
+    			<ref bean="indRefreshAction"/>
+    			<ref bean="indNullAction"/>
+    			<ref bean="indPrintGroupAction"/>
+    		</list>
+     	</property>
+     	<property name="model">
+     		<ref bean="indModel"/>
+     	</property>
+     </bean>
+  	
+</beans>

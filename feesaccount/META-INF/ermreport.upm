@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+    <public>
+		<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.pub.ILoanBalanceBO</interface>
+          <implementation>nc.impl.erm.report.LoanBalanceBOImpl</implementation>
+    	</component>
+    	
+      	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.pub.ILoanDetailBO</interface>
+          <implementation>nc.impl.erm.report.LoanDetailBOImpl</implementation>
+     	</component>
+     	
+      	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.pub.IExpenseBalanceBO</interface>
+          <implementation>nc.impl.erm.report.ExpenseBalanceBOImpl</implementation>
+     	</component>
+     	
+      	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.pub.IExpenseDetailBO</interface>
+          <implementation>nc.impl.erm.report.ExpenseDetailBOImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.accountageana.ILoanAccountAgeAnalyzeBO</interface>
+          <implementation>nc.impl.erm.accountageana.LoanAccountAgeAnalyzeBOImpl</implementation>
+     	</component>
+    </public>
+</module>
+

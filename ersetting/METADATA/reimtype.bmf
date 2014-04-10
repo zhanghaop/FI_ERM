@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createTime="2010-03-09 15:42:34" creator="" description="" displayName="reimtype" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="c45a863d-4d52-4249-89c6-ab54c6cdc725" isbizmodel="false" mainEntity="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" modifier="" modifyTime="2011-09-01 10:27:14" name="reimtype" namespace="erm" ownModule="erm" preLoad="false" resModuleName="ersetting_2" resid="" version="15" versionType="0">
+    <celllist>
+        <entity accessorClassName="nc.md.model.access.javamap.NCBeanStyle" bizItfImpClassName="" componentID="c45a863d-4d52-4249-89c6-ab54c6cdc725" createTime="2010-03-09 15:42:50" creator="" czlist="报销类型" description="" displayName="报销类型" fullClassName="nc.vo.er.reimtype.ReimTypeVO" height="167" help="" id="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" isAuthen="true" isCreateSQL="true" isExtendBean="false" isPrimary="true" keyAttributeId="12de7976-aa59-4a70-bf07-65e5cb140b68" modInfoClassName="" modifier="" modifyTime="2011-09-01 10:27:24" name="ReimType" resid="22011RTP-000001" stereoType="" tableName="er_reimtype" userDefClassName="" versionType="0" visibility="public" width="129" x="103" y="130">
+            <attributelist>
+                <attribute accessStrategy="" accesspower="false" accesspowergroup="" calculation="false" classID="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" dataType="BS000010000100001051" dataTypeStyle="SINGLE" dbtype="char" defaultValue="" description="" displayName="报销类型标识" dynamic="false" dynamicTable="" fieldName="pk_reimtype" fieldType="char" fixedLength="false" forLocale="false" help="" id="12de7976-aa59-4a70-bf07-65e5cb140b68" isActive="true" isAuthorization="true" isDefaultDimensionAttribute="false" isDefaultMeasureAttribute="false" isFeature="false" isGlobalization="false" isHide="false" isKey="true" isNullable="false" isReadOnly="false" isShare="false" length="20" maxValue="" minValue="" name="pk_reimtype" notSerialize="false" precise="" refModelName="" resid="22011RTP-000000" sequence="0" typeDisplayName="UFID" typeName="UFID" versionType="0" visibility="public"/>
+                <attribute accessStrategy="" accesspower="false" accesspowergroup="" calculation="false" classID="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" dataType="BS000010000100001058" dataTypeStyle="SINGLE" dbtype="varchar" defaultValue="" description="" displayName="名称" dynamic="false" dynamicTable="" fieldName="name" fieldType="varchar" fixedLength="false" forLocale="true" help="" id="882f7f32-ca75-4842-8e29-eabd54bc0e0d" isActive="true" isAuthorization="true" isDefaultDimensionAttribute="false" isDefaultMeasureAttribute="false" isFeature="false" isGlobalization="false" isHide="false" isKey="false" isNullable="true" isReadOnly="false" isShare="false" length="200" maxValue="" minValue="" name="name" notSerialize="false" precise="" refModelName="" resid="2UC000-000244" sequence="1" typeDisplayName="多语文本" typeName="Multilangtext" versionType="0" visibility="public"/>
+                <attribute accessStrategy="" accesspower="false" accesspowergroup="" calculation="false" classID="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" dataType="BS000010000100001001" dataTypeStyle="SINGLE" dbtype="varchar" defaultValue="" description="" displayName="编码" dynamic="false" dynamicTable="" fieldName="code" fieldType="varchar" fixedLength="false" forLocale="false" help="" id="28c0636b-da26-46e8-96cc-1a19ce32f7ab" isActive="true" isAuthorization="true" isDefaultDimensionAttribute="false" isDefaultMeasureAttribute="false" isFeature="false" isGlobalization="false" isHide="false" isKey="false" isNullable="true" isReadOnly="false" isShare="false" length="20" maxValue="" minValue="" name="code" notSerialize="false" precise="" refModelName="" resid="2UC000-000721" sequence="2" typeDisplayName="String" typeName="String" versionType="0" visibility="public"/>
+                <attribute accessStrategy="" accesspower="false" accesspowergroup="" calculation="false" classID="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" dataType="BS000010000100001032" dataTypeStyle="SINGLE" dbtype="char" defaultValue="" description="" displayName="封存" dynamic="false" dynamicTable="" fieldName="inuse" fieldType="char" fixedLength="false" forLocale="false" help="" id="ebf5c560-8585-4e77-a64a-f9018f1fb332" isActive="true" isAuthorization="true" isDefaultDimensionAttribute="false" isDefaultMeasureAttribute="false" isFeature="false" isGlobalization="false" isHide="false" isKey="false" isNullable="true" isReadOnly="false" isShare="false" length="1" maxValue="" minValue="" name="inuse" notSerialize="false" precise="" refModelName="" resid="2UC000-000300" sequence="3" typeDisplayName="UFBoolean" typeName="UFBoolean" versionType="0" visibility="public"/>
+                <attribute accessStrategy="" accesspower="false" accesspowergroup="" calculation="false" classID="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" dataType="BS000010000100001001" dataTypeStyle="SINGLE" dbtype="varchar" defaultValue="" description="" displayName="备注" dynamic="false" dynamicTable="" fieldName="memo" fieldType="varchar" fixedLength="false" forLocale="false" help="" id="4bb2184d-5f5a-4ea2-bf39-2648da88976a" isActive="true" isAuthorization="true" isDefaultDimensionAttribute="false" isDefaultMeasureAttribute="false" isFeature="false" isGlobalization="false" isHide="false" isKey="false" isNullable="true" isReadOnly="false" isShare="false" length="300" maxValue="" minValue="" name="memo" notSerialize="false" precise="" refModelName="" resid="2UC000-000258" sequence="4" typeDisplayName="String" typeName="String" versionType="0" visibility="public"/>
+                <attribute accessStrategy="" accesspower="false" accesspowergroup="" calculation="false" classID="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" dataType="3b6dd171-2900-47f3-bfbe-41e4483a2a65" dataTypeStyle="REF" dbtype="" defaultValue="~" description="" displayName="集团" dynamic="false" dynamicTable="" fieldName="pk_group" fieldType="varchar" fixedLength="false" forLocale="false" help="" id="838d8372-6aef-4d3b-9357-a3803dc05ded" isActive="true" isAuthorization="true" isDefaultDimensionAttribute="false" isDefaultMeasureAttribute="false" isFeature="false" isGlobalization="false" isHide="false" isKey="false" isNullable="true" isReadOnly="false" isShare="false" length="20" maxValue="" minValue="" name="pk_group" notSerialize="false" precise="" refModelName="集团" resid="2UC000-001007" sequence="5" typeDisplayName="集团" typeName="group" versionType="0" visibility="public"/>
+            </attributelist>
+            <operationlist/>
+            <busiitfs>
+                <itfid>6c8722b9-911a-489b-8d0d-18bd3734fcf6</itfid>
+            </busiitfs>
+            <busimaps>
+                <busimap attrid="12de7976-aa59-4a70-bf07-65e5cb140b68" attrpath="" attrpathid="" busiitfattrid="5dd3c721-22ad-42b1-9c10-4351c236bc77" busiitfid="6c8722b9-911a-489b-8d0d-18bd3734fcf6" cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b"/>
+                <busimap attrid="" attrpath="" attrpathid="" busiitfattrid="c8334364-7ab9-4266-8d4b-e74537935e46" busiitfid="6c8722b9-911a-489b-8d0d-18bd3734fcf6" cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b"/>
+                <busimap attrid="" attrpath="" attrpathid="" busiitfattrid="ecf1b76a-6e44-42e2-a55e-87596504775b" busiitfid="6c8722b9-911a-489b-8d0d-18bd3734fcf6" cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b"/>
+                <busimap attrid="28c0636b-da26-46e8-96cc-1a19ce32f7ab" attrpath="" attrpathid="" busiitfattrid="d32cc17b-f415-415a-923f-0764443eb102" busiitfid="6c8722b9-911a-489b-8d0d-18bd3734fcf6" cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b"/>
+                <busimap attrid="882f7f32-ca75-4842-8e29-eabd54bc0e0d" attrpath="" attrpathid="" busiitfattrid="89578a97-42fe-439b-827c-8eabd9e3604c" busiitfid="6c8722b9-911a-489b-8d0d-18bd3734fcf6" cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b"/>
+                <busimap attrid="838d8372-6aef-4d3b-9357-a3803dc05ded" attrpath="" attrpathid="" busiitfattrid="a47e6cda-09e4-480b-923f-ec6f41e3e06c" busiitfid="6c8722b9-911a-489b-8d0d-18bd3734fcf6" cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b"/>
+            </busimaps>
+            <canzhaolist>
+                <canzhao cellid="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" isdefault="true" name="报销类型"/>
+            </canzhaolist>
+            <accessor classFullname="nc.md.model.access.javamap.NCBeanStyle" displayName="NCVO" name="NCVO">
+                <properties/>
+            </accessor>
+        </entity>
+        <Reference componentID="c45a863d-4d52-4249-89c6-ab54c6cdc725" createTime="2010-03-09 15:43:38" creator="" description="" displayName="displayname" fullClassName="nc.voerm.reimtype.reference" height="100" help="" id="c2d902fd-222d-4d03-a5af-914084874e43" mdFilePath="\meta\general_interface.bmf" modifier="" modifyTime="2011-09-01 10:27:14" moduleName="uap" name="reference" refId="6c8722b9-911a-489b-8d0d-18bd3734fcf6" resid="" versionType="0" visibility="public" width="100" x="402" y="166"/>
+    </celllist>
+    <connectlist>
+        <busiitfconnection bizItfImpClassName="" componentID="c45a863d-4d52-4249-89c6-ab54c6cdc725" createTime="2010-03-09 15:57:37" creator="" description="" displayName="" help="" id="5e4e9d1f-5311-4eaf-a7d5-e35ce409b0f8" modifier="" modifyTime="2010-03-09 15:57:37" name="busiItf connection" realsource="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" realtarget="6c8722b9-911a-489b-8d0d-18bd3734fcf6" source="b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b" target="c2d902fd-222d-4d03-a5af-914084874e43" versionType="0">
+            <points/>
+        </busiitfconnection>
+    </connectlist>
+    <refdepends>
+        <dependfile entityid="6c8722b9-911a-489b-8d0d-18bd3734fcf6"/>
+        <dependfile entityid="3b6dd171-2900-47f3-bfbe-41e4483a2a65"/>
+    </refdepends>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>
