@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
+
+	<!-- 模型部分配置########################################################### -->
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+	<!-- CA验证拦截器 -->
+	<bean id="interceptor" class="nc.ui.erm.billpub.interceptor.CaActionInterceptor">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="InitDataListener" class="nc.ui.erm.billmanage.action.ERMInitDataListener">
+		<property name="card" ref="editor" />
+		<property name="listView" ref="listView" />
+		<property name="model" ref="manageAppModel" />
+		<property name="listViewActions" ref="listViewActions" />
+		<property name="editorActions" ref="editorActions" />
+		<property name="datamanager" ref="modelDataManager" />
+		<property name="queryAction" ref="queryAction"/>
+	</bean>
+
+	<!-- 应用模型 -->
+	<bean id="manageAppModel" class="nc.ui.erm.billpub.model.ErmBillBillManageModel">
+		<property name="context" ref="context"></property>
+		<property name="service" ref="manageModelService"></property>
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory"></property>
+	</bean>
+
+	<!-- 应用服务类，负责进行模型操作的处理 -->
+	<bean id="manageModelService" class="nc.ui.erm.billpub.model.ErmBillBillAppModelService">
+	</bean>
+
+	<!-- 发生异常 -->
+	<bean id="execeptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context"></property>
+		<!--  property name="errormsg">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0"/>
+				<property name="resId" value="0201107-0141"/>
+				<property name="defaultValue" value="操作失败"/>
+			</bean>
+		</property-->
+	</bean>
+
+	<!-- 联查异常 -->
+	<bean id="linkexeceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context"></property>
+		<property name="errormsg">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0"/>
+				<property name="resId" value="0201107-0148"/>
+				<property name="defaultValue" value="联查失败！"/>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.model.ERMModelDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="delegator" ref="paginationDelegate" />
+	</bean>
+
+	<!-- 分页配置 -->
+	<bean id="paginationModel" class="nc.ui.uif2.components.pagination.PaginationModel"
+		init-method="init">
+		<property name="paginationQueryService" ref="manageModelService"></property>
+		<property name="maxPageSize" value='5000'></property>
+	</bean>
+	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar"
+		init-method="registeCallbak">
+		<property name="paginationModel" ref="paginationModel" />
+		<property name="context" ref="context" />
+	</bean>
+	<!--  响应BillManageModel的增、删、改操作，并反作用于分页模型PaginationModel的事件代理类 -->
+	<bean id="paginationDelegate" class="nc.ui.uif2.components.pagination.BillManagePaginationDelegator">
+		<property name="paginationModel" ref="paginationModel"></property>
+		<property name="billModel" ref="manageAppModel"></property>
+	</bean>
+
+	<!-- 超链接监听器 -->
+	<bean id="linklistener" class="nc.ui.erm.view.ERMHyperLinkListener">
+		<property name="model" ref="manageAppModel"></property>
+	</bean>
+
+	<!-- 界面元素 ########################################################### -->
+	<!-- 查询方案 -->
+	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 查询面板 -->
+	<bean id="queryAreaShell" class="nc.ui.uif2.actions.QueryAreaShell" init-method="initUI">
+		<property name="queryAreaCreator" ref="queryAction" />
+	</bean>
+
+	<!-- 卡片按钮面板 -->
+	<bean id="cardInfoPnl" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="actions">
+			<list>
+				<!-- 浏览按钮 卡片界面共享信息按钮 -->
+				<bean id="accessoryShowAction" class="nc.ui.erm.erminitbill.action.AccessoryAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="editor" ref="editor"/>
+				</bean>
+				<bean id="firstLineAction" class="nc.ui.uif2.actions.FirstLineAction">
+					<property name="model" ref="manageAppModel" />
+				</bean>
+				<bean id="preLineAction" class="nc.ui.uif2.actions.PreLineAction">
+					<property name="model" ref="manageAppModel" />
+				</bean>
+				<bean id="nextLineAction" class="nc.ui.uif2.actions.NextLineAction">
+					<property name="model" ref="manageAppModel" />
+				</bean>
+				<bean id="lastLineAction" class="nc.ui.uif2.actions.LastLineAction">
+					<property name="model" ref="manageAppModel" />
+				</bean>
+				<ref bean="actionsBarSeparator" />
+				<bean class="nc.ui.erm.action.util.ErmHeadZoomAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="billForm" ref="editor" />
+				</bean>
+			</list>
+		</property>
+		<property name="titleAction">
+			<bean id="returnaction" class="nc.ui.uif2.actions.ShowMeUpAction">
+				<property name="goComponent" ref="listView"></property>
+				<property name="model" ref="manageAppModel" />
+			</bean>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model" ref="manageAppModel" />
+		<property name="saveaction" ref="saveaction" />
+		<property name="cancelaction" ref="cancelaction" />
+	</bean>
+
+	<!-- 模板容器，负责对模板的统一装载 -->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer" init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>MNGLIST</value>
+				<value>ERMINIT</value>
+				<value>2631</value>
+				<value>bill</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="actionsBarSeparator" class="nc.ui.pub.beans.ActionsBar$ActionsBarSeparator"
+		/>
+
+	<!-- 自定义项处理-->
+	<bean id="userDefitemContainer" class="nc.ui.uif2.userdefitem.UserDefItemContainer"/>
+	<bean id="userdefitemCardPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerPreparator">
+		<property name="loginContext" ref="context"></property>
+		<property name="prefix" value="zyx"/>
+		<property name="userDefitemContainer" ref="userDefitemContainer" />
+	</bean>
+	<bean id="userdefitemListPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerListPreparator">
+		<property name="loginContext" ref="context"></property>
+		<property name="prefix" value="defitem"/>
+		<property name="userDefitemContainer" ref="userDefitemContainer" />
+	</bean>
+
+	<!-- editor -->
+	<bean id="editor" class="nc.ui.erm.billpub.view.ErmBillBillForm" init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodekey" value="2631" />
+		<property name="showTotalLine" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="closingListener" ref="ClosingListener" />
+		<property name="userdefitemPreparator" ref="userdefitemCardPreparator"/>
+		<property name="tabSingleShow" value="false" />
+		<property name="contrastaction" ref="contrastaction" />
+		<property name="bodyActionMap">
+			<map>
+				<entry key="jk_busitem">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="arap_bxbusitem">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="other">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="er_cshare_detail">
+					<list>
+						<ref bean="csaddlineaction" />
+						<ref bean="csinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="cscopylineaction" />
+						<ref bean="cspastlineaction" />
+						<ref bean="cspastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="er_bxcontrast">
+					<list>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="editor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction"/>
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="cardRefreshAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="billTypeaction" />
+
+				<ref bean="nullAction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+
+				<ref bean="nullAction"/>
+				<ref bean="linkbxbillaction"/>
+
+				<ref bean="nullAction"/>
+				<ref bean="printActionGroup"/>
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveaction" />
+				<ref bean="tempsaveaction"/>
+				<ref bean="nullAction" />
+				<ref bean="cancelaction" />
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 列表视图 -->
+	<bean id="listView" class="nc.ui.erm.billpub.view.ErmBillBillListView" init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="multiSelectionEnable" value="true" />
+		<property name="nodekey" value="MNGLIST" />
+		<!-- <property name="pos" value="head" /> -->
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="north" ref="listInfoPanel" />
+		<property name="paginationBar" ref="paginationBar" />
+		<property name="linklistener" ref="linklistener" />
+	</bean>
+
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction"/>
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="listRefreshAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="billTypeaction" />
+
+				<ref bean="nullAction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+
+				<ref bean="nullAction"/>
+				<ref bean="linkbxbillaction"/>
+
+				<ref bean="nullAction"/>
+				<ref bean="listprintGroup"/>
+			</list>
+		</property>
+	</bean>
+
+	<!--界面的action控制 -->
+	<bean id="toftpanelActionContributors" class="nc.ui.uif2.actions.ActionContributors">
+		<property name="contributors">
+			<list>
+				<ref bean="listViewActions" />
+				<ref bean="editorActions" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 校验 ########################################################### -->
+	<bean name="saveValidation" class="nc.bs.uif2.validation.DefaultValidationService">
+		<property name="validators">
+			<list>
+				<ref bean="defaultValidationService" />
+				<ref bean="ermValidationService"/>
+			</list>
+		</property>
+	</bean>
+
+	<!--非空校验 模板默认部分 -->
+	<bean id="defaultValidationService" class="nc.ui.erm.view.validator.ERMBillNotNullValidator">
+		<property name="billform" ref="editor" />
+	</bean>
+
+	<bean id="ermValidationService" class="nc.ui.erm.billpub.validator.ERMBillCheckValidator">
+		<property name="billform" ref="editor" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- Actions ########################################################### -->
+	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	<bean id="queryAction" class="nc.ui.erm.billpub.action.ErmBillQueryAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+	</bean>
+	<bean id="addaction" class="nc.ui.erm.billpub.action.ErmBillAddAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="interceptor" ref="interceptor"/>
+	</bean>
+
+	<bean id="userDefined" class="nc.ui.erm.billpub.action.ERMUserDefinedAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="interceptor" ref="interceptor" />
+	</bean>
+
+
+
+	<!-- 来源于费用申请单 -->
+	<bean name="addfromMtappaction" class="nc.ui.erm.billpub.action.AddFromMtappAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="interceptor" ref="interceptor"/>
+	</bean>
+	<bean id="copyaction" class="nc.ui.erm.erminitbill.action.CopyAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="interceptor" ref="interceptor"/>
+	</bean>
+	<bean id="editaction" class="nc.ui.erm.billpub.action.ERMBillEditAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="operateCode" value="edit" />
+		<property name="resourceCode" value="ermloanservice" />
+		<property name="interceptor" ref="interceptor"/>
+
+	</bean>
+	<bean id="saveaction" class="nc.ui.erm.billpub.action.BillSaveAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="contrastaction" ref="contrastaction" />
+		<property name="validationService" ref="saveValidation" />
+	</bean>
+	<bean id="tempsaveaction" class="nc.ui.erm.billpub.action.TempSaveAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+	</bean>
+	<bean id="cancelaction" class="nc.ui.uif2.actions.CancelAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+	</bean>
+	<bean id="deleteaction" class="nc.ui.erm.billpub.action.ERMBillDeleteAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="resourceCode" value="ermloanservice" />
+		<property name="operateCode" value="delete" />
+	</bean>
+
+	<bean id="listRefreshAction" class="nc.ui.uif2.actions.RefreshAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+	</bean>
+	<bean id="cardRefreshAction" class="nc.ui.erm.billpub.action.ERMBillSingleRefreshAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<bean id="detailaddlineaction" class="nc.ui.erm.billpub.action.ERMAddLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<!-- 费用分摊页签的增行按钮 -->
+	<bean id="csaddlineaction" class="nc.ui.erm.billpub.action.ERMCSAddLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<bean id="detailinsertlineaction" class="nc.ui.erm.billpub.action.ERMInsertLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<!-- 费用分摊页签的插入行按钮 -->
+	<bean id="csinsertlineaction" class="nc.ui.erm.billpub.action.ERMCSInsertLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<bean id="detailcopylineaction" class="nc.ui.erm.billpub.action.ERMCopyLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<!-- 费用分摊页签的复制行按钮 -->
+	<bean id="cscopylineaction" class="nc.ui.uif2.actions.CopyLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<bean id="detailpastlineaction" class="nc.ui.erm.billpub.action.ERMPasteLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<!-- 费用分摊页签的粘贴行按钮 -->
+	<bean id="cspastlineaction" class="nc.ui.erm.billpub.action.ERMCSPasteLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<bean id="detailpastlinetotailaction" class="nc.ui.erm.billpub.action.ERNPasteLineToTailAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<!-- 费用分摊页签的粘贴到行尾按钮 -->
+	<bean id="cspastlinetotailaction" class="nc.ui.erm.billpub.action.ERNCSPasteLineToTailAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	<bean id="detaildellineaction" class="nc.ui.erm.billpub.action.ERMDelLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+
+	<bean id="displayaction" class="nc.ui.erm.action.util.ErmBodyZoomAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="billForm" ref="editor" />
+	</bean>
+
+	<bean id="billTypeaction" class="nc.ui.erm.billpub.action.ERMBillTypeAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+	</bean>
+
+
+	<bean id="codebaraction" class="nc.ui.erm.billpub.action.CodeBarAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+	<bean id="documentaction" class="nc.ui.erm.action.DocumentAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="listView" ref="listView" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+	<bean id="assistantAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0"/>
+				<property name="resId" value="0201107-0125"/>
+				<property name="defaultValue" value="辅助"/>
+			</bean>
+		</property>
+		<property name="code" value="billAssistant" />
+		<property name="actions">
+			<list>
+				<ref bean="codebaraction" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 联查报销单 -->
+	<bean id="linkbxbillaction" class="nc.ui.erm.billpub.action.LinkBXBillAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查借款单 -->
+	<bean id="linkjkbillaction" class="nc.ui.erm.billpub.action.LinkJkdAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查往来单 -->
+	<bean id="linkjsdaction" class="nc.ui.erm.billpub.action.LinkJsdAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 预算执行情况 -->
+	<bean id="linkysaction" class="nc.ui.erm.billpub.action.LinkYsAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查凭证 -->
+	<bean id="linkvouaction" class="nc.ui.erm.billpub.action.LinkVoucherAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查结算信息 -->
+	<bean id="linksettleaction" class="nc.ui.erm.billpub.action.LinkSettleInfoAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查标准 -->
+	<bean id="linklimitaction" class="nc.ui.erm.billpub.action.LinkLimitAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查标准 -->
+	<bean id="linkruleaction" class="nc.ui.erm.billpub.action.LinkRuleAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查审批情况 -->
+	<bean id="linkappstataction" class="nc.ui.erm.billpub.action.LinkAppStatusAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查资金 -->
+	<bean id="linkfpplanaction" class="nc.ui.erm.billpub.action.LinkFpplanAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<!-- 联查单据 -->
+	<bean id="linkBillAction" class="nc.ui.erm.billpub.action.LinkQueryMappAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+
+	<bean id="datasource" class="nc.ui.erm.billpub.model.ErmDataSingleSelectDataSource">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	<bean id="outputAction" class="nc.ui.erm.billpub.action.ERMOutputAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodeKey" value="2631" />
+		<property name="printDlgParentConatiner" ref="editor" />
+		<property name="datasource" ref="datasource" />
+	</bean>
+	<bean id="templatePreviewAction" class="nc.ui.erm.billpub.action.ERMTemplatePreviewAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodeKey" value="2631" />
+		<property name="printDlgParentConatiner" ref="editor" />
+		<property name="datasource" ref="datasource" />
+	</bean>
+	<bean id="templatePrintAction" class="nc.ui.erm.billpub.action.ERMTemplatePrintAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodeKey" value="2631" />
+		<property name="printDlgParentConatiner" ref="editor" />
+		<property name="datasource" ref="datasource" />
+	</bean>
+
+	<bean id="printOfficialAction" class="nc.ui.erm.billpub.action.PrintOfficialAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodeKey" value="2631" />
+		<property name="printDlgParentConatiner" ref="editor" />
+		<property name="datasource" ref="datasource" />
+	</bean>
+
+	<bean id="unprintOfficialAction" class="nc.ui.erm.billpub.action.UnPrintOfficialAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+	<bean id="auditstausListener" class="nc.ui.erm.billpub.btnstatus.BxApproveBtnStatusListener">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+	<bean id="auditAction" class="nc.ui.erm.billpub.action.AuditAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="auditstausListener" ref="auditstausListener"/>
+	</bean>
+
+	<bean id="unauditAction" class="nc.ui.erm.billpub.action.UnAuditAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="auditstausListener" ref="auditstausListener"/>
+	</bean>
+
+	<bean id="mergePfAction" class="nc.ui.erm.billpub.action.MergePfAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+	<bean id="rapidshareaction" class="nc.ui.erm.billpub.action.RapidShareBXAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+	<bean id="contrastaction" class="nc.ui.erm.billpub.action.ContrastAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+
+
+	<!-- 列表打印 -->
+	<bean id="listdatasource" class="nc.ui.erm.billpub.action.ERMMetaDataAllDatasSource">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<bean id="listTemplatePrintAction" class="nc.ui.erm.billpub.action.ERMListTemplatePrintAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodeKey" value="list" />
+		<property name="printDlgParentConatiner" ref="editor" />
+		<property name="datasource" ref="listdatasource" />
+	</bean>
+
+	<bean id="listprintGroup" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0"/>
+				<property name="resId" value="0201107-0127"/>
+				<property name="defaultValue" value="打印"/>
+			</bean>
+		</property>
+		<property name="code" value="listPrintMenu" />
+		<property name="actions">
+			<list>
+				<ref bean="templatePrintAction" />
+				<ref bean="templatePreviewAction" />
+				<ref bean="outputAction" />
+				<ref bean="nullAction" />
+				<ref bean="printOfficialAction"/>
+				<ref bean="unprintOfficialAction"/>
+				<ref bean="nullAction" />
+				<ref bean="listTemplatePrintAction"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="printActionGroup" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code" value="PrintMenu" />
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0"/>
+				<property name="resId" value="0201107-0127"/>
+				<property name="defaultValue" value="打印"/>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="templatePrintAction" />
+				<ref bean="templatePreviewAction" />
+				<ref bean="outputAction" />
+				<ref bean="nullAction" />
+				<ref bean="printOfficialAction"/>
+				<ref bean="unprintOfficialAction"/>
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- 界面布局总装########################################################### -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+				<property name="tabs">
+					<list>
+						<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+							<property name="name" value="列表" />
+							<property name="left">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="queryAreaShell" />
+								</bean>
+							</property>
+							<property name="right">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="listView" />
+								</bean>
+							</property>
+							<property name="dividerLocation">
+								<value>0.2f</value>
+							</property>
+						</bean>
+						<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+							<property name="showMode" value="NoDivider" />
+							<property name="name" value="卡 片" />
+							<property name="up">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="cardInfoPnl"></property>
+								</bean>
+							</property>
+							<property name="down">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="editor" />
+								</bean>
+							</property>
+							<property name="dividerLocation" value="30f" />
+						</bean>
+					</list>
+				</property>
+				<property name="showMode" value="CardLayout"></property>
+			</bean>
+		</property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+	</bean>
+</beans>

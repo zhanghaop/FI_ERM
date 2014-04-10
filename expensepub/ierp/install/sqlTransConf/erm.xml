@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="gb2312"?>
+<sqltransconf>
+  <tables>
+    <table name="er_qryobj" pk="obj_oid" />
+    <table name="er_djlx" pk="djlxoid" />
+    <table name="er_jkkzfs_def" pk="pk_controlmodedef" />
+    <table name="er_expensetype" pk="pk_expensetype" />
+    <table name="er_fieldcontrast" pk="pk_fieldcontrast" />
+    <table name="er_billcontrast" pk="pk_billcontrast" />
+  </tables>
+</sqltransconf>

@@ -1,7 +1,7 @@
 package nc.ui.er.djlx;
 
 public enum BilltypeSystemenum {
-	ER("0",nc.ui.ml.NCLangRes.getInstance().getStrByID("funcode","D2011")/*@res "应收管理"*/),
+	ER("0",nc.ui.ml.NCLangRes.getInstance().getStrByID("funcode","D2011")/*@res "费用管理"*/),
 	AP("1",nc.ui.ml.NCLangRes.getInstance().getStrByID("funcode","D2008")/*@res "应付管理"*/),
 	CMP("2",nc.ui.ml.NCLangRes.getInstance().getStrByID("funcode","D2004")/*@res "现金平台"*/),
 	ALL("3",nc.ui.ml.NCLangRes.getInstance().getStrByID("2006030101","UPP2006030101-000019")/*@res "全部"*/);

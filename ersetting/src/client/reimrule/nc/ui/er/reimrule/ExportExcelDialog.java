@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.swing.ButtonGroup;
@@ -56,8 +57,8 @@ public class ExportExcelDialog extends UIDialog {
 	private UILabel UILabel2 = null;
 	private UIComboBox UIComboBox = null;
 	private File excelfile = null;
-	private InputStream is = null;
-	private OutputStream os = null;
+	private transient InputStream is = null;
+	private transient OutputStream os = null;
 	private Workbook wb = null;
 	private static String OFFICE03 = ".xls";
 	private static String OFFICE07 = ".xlsx";
@@ -258,7 +259,7 @@ public class ExportExcelDialog extends UIDialog {
 							for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 								getUIComboBox().addItem(wb.getSheetName(i));
 							}
-						} catch (Exception eex) {
+						} catch (IOException eex) {
 							MessageDialog.showErrorDlg(ExportExcelDialog.this,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000453")/*@res "打开文件时出现错误，可能是文件格式出错或者正在被使用。"*/);
 						}
 
@@ -446,7 +447,7 @@ public class ExportExcelDialog extends UIDialog {
 			os.close();
 			is.close();
 			MessageDialog.showHintDlg(this, "",nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000458")/*@res "导出完成"*/);
-		} catch(Exception e) {
+		} catch(IOException e) {
 			ExceptionHandler.consume(e);
 			MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000459")/*@res "导出失败，可能是文件格式错误或者目标文件正在被使用。"*/);
 		}

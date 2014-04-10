@@ -14,15 +14,16 @@ import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIRefPane;
 
 class CopyDialog extends AbstractOKCancelDlg{
-	/**
-	 *
-	 */
+
 	private final ReimRuleUI ruleUI;
+	
+	
 	@Override
+	@SuppressWarnings("deprecation")
 	protected boolean onBoOK() {
-		String[] corps = getCorpRef().getRefPKs();
-		String[] djlxs = getDjlxRef().getRefPKs();
-		if(corps==null || corps.length==0 || djlxs==null || djlxs.length==0){
+		String corp = getCorpRef().getRefPK();
+		String djlx = getDjlxRef().getRefPK();
+		if(corp==null || djlx==null){
 			this.ruleUI.showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000439")/*@res "请选择目标公司和交易类型!"*/);
 			return false;
 		}
@@ -87,7 +88,6 @@ class CopyDialog extends AbstractOKCancelDlg{
 		if(corpRef==null){
 			corpRef = new UIRefPane();
 			corpRef.setBounds(150, 12, 160, 22);
-			corpRef.setMultiSelectedEnabled(true);
 			corpRef.setRefNodeName("财务组织");
 
 		}
@@ -97,7 +97,6 @@ class CopyDialog extends AbstractOKCancelDlg{
 		if(djlxRef==null){
 			djlxRef = new UIRefPane();
 			djlxRef.setBounds(150, 42,160, 22);
-			djlxRef.setMultiSelectedEnabled(true);
 			//此处注意两点 影响因素交易类型的名字中间多了个空格 并且这里setWhere需要在model上设置
 			djlxRef.setRefNodeName("影响因素交 易类型");
 			TranstypeRefModel refmodele = (TranstypeRefModel) djlxRef.getRefModel();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.er.util.SqlUtils;
+import nc.bs.erm.util.ErmReportSqlUtils;
 import nc.bs.erm.util.ReportSqlUtils;
 import nc.bs.erm.util.TmpTableCreator;
 import nc.itf.erm.report.IErmReportConstants;
@@ -18,8 +19,6 @@ import nc.vo.erm.pub.IErmReportAnalyzeConstants;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.timecontrol.TimeCtrlUtil;
 import nc.vo.fipub.timecontrol.TimeCtrlVO;
-import nc.vo.fipub.timecontrol.TimeUnit;
-import nc.vo.fipub.timecontrol.UnitDays;
 import nc.vo.fipub.utils.SqlBuilder;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
@@ -35,7 +34,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 
-	private static final String LBL_BAL = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UC000-0000249")/*@res "余额"*/;
+	private static final String getLBL_BAL() {
+	    return  nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UC000-0000249")/*@res "余额"*/;
+	}
 	
 	private String tmpAccTable = null;
 
@@ -57,12 +58,12 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 
 	// 账龄方案VO
 	private TimeCtrlVO timeCtrlVO = null;
-
+    
 	@Override
 	public String[] getArrangeSqls() throws SQLException, BusinessException {
 		List<String> sqlList = new ArrayList<String>();
 		// 报销部分目前只支持按“账龄”分析，按“日期”的在界面上封闭
-		if (IErmReportConstants.ACC_ANA_MODE_AGE.equals(queryVO.getAnaMode())) {
+		if (IErmReportConstants.getAcc_Ana_Mode_Age().equals(queryVO.getAnaMode())) {
 			// 分析模式：按账龄
 			sqlList.addAll(getAccountAgeByAgeSql());
 		}
@@ -97,8 +98,7 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		StringBuffer sqlBuffer = new StringBuffer(" select ");
 
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
-		sqlBuffer.append(", (case when isnull(org_orgs.code, '~') = '~' then 1 else 0 end) as is_org_null"); // is_org_null
-		sqlBuffer.append(", org_orgs.code code_org, coalesce(org_orgs.name").append(getMultiLangIndex()).append(", org_orgs.name) org"); // code_org, org
+		sqlBuffer.append(", org_orgs.code code_org, isnull(org_orgs.name").append(getMultiLangIndex()).append(", org_orgs.name) org"); // code_org, org
 
 		String[] qryObjs = getQueryObjs();
 		List<QryObj> qryObjList = queryVO.getQryObjs();
@@ -106,19 +106,15 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		for (int i = 0; i < qryObjList.size(); i++) {
 			sqlBuffer.append(", v.").append(qryObjs[i]).append(", ");
 
-			sqlBuffer.append(bdTable + i).append(".").append(qryObjList.get(i).getBd_codeField()).append(" ")
+			sqlBuffer.append(bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_codeField()).append(" ")
 					.append(IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code, ");
 
-			sqlBuffer.append("coalesce(").append(bdTable + i).append(".").append(
+			sqlBuffer.append("isnull(").append(bdTable ).append( i).append(".").append(
 					qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex()).append(", ").append(
-					bdTable + i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
-					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append(", ");
-
-			sqlBuffer.append("(case when isnull(").append(qryObjs[i]).append(
-					", '~') = '~' then 1 else 0 end) as isnull").append(i);
+					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
+					IPubReportConstants.QRY_OBJ_PREFIX).append(i);
 		}
-		sqlBuffer.append(", v.").append(PK_CURR).append(", (case when isnull(v.").append(PK_CURR)
-				.append(", '~') = '~' then 1 else 0 end) as is_currtype_null"); // is_currtype_null
+		sqlBuffer.append(", v.").append(PK_CURR);
 		if (queryVO.isQueryDetail()) {
 			sqlBuffer.append(", ").append(detailFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
 		}
@@ -131,20 +127,35 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		sqlBuffer.append(" left outer join org_orgs on v.pk_org = org_orgs.pk_org ");
 		for (int i = 0; i < qryObjList.size(); i++) {
 			sqlBuffer.append(" left outer join ").append(qryObjList.get(i).getBd_table()).append(" ").append(
-					bdTable + i).append(" on ").append("v.").append(qryObjs[i]).append(" = ").append(
-					bdTable + i).append(".").append(qryObjList.get(i).getBd_pkField());
+					bdTable ).append( i).append(" on ").append("v.").append(qryObjs[i]).append(" = ").append(
+					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_pkField());
 		}
 
+//		sqlBuffer.append(" order by ");
+//		sqlBuffer.append(" code_org");
+//		for (int i = 0; i < qryObjList.size(); i++) {
+//			sqlBuffer.append(", ").append(
+//					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code");
+//		}
+//		sqlBuffer.append(" , pk_currtype, rn");
+//		if (queryVO.isQueryDetail()) {
+//			sqlBuffer.append(", djrq, djbh");
+//		}
 		sqlBuffer.append(" order by ");
-		sqlBuffer.append("is_org_null, code_org");
+		sqlBuffer.append(ErmReportSqlUtils.caseWhenSql("org_orgs.code"));
 		for (int i = 0; i < qryObjList.size(); i++) {
-			sqlBuffer.append(", isnull").append(i).append(", ").append(
-					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code");
+			sqlBuffer.append(",");
+//			sqlBuffer.append(ErmReportSqlUtils.caseWhenSql(IPubReportConstants.QRY_OBJ_PREFIX+i+"pk"));
+            sqlBuffer.append(ErmReportSqlUtils.caseWhenSql(bdTable +  i + "." + qryObjList.get(i).getBd_codeField()));
 		}
-		sqlBuffer.append(", is_currtype_null, pk_currtype, rn");
+//		if (beForeignCurrency) {
+			sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.pk_currtype"));
+//		}
+		sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.rn"));
 		if (queryVO.isQueryDetail()) {
-			sqlBuffer.append(", djrq, djbh");
-		}
+			sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.djrq"));
+			sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.djbh"));
+	    }
 
 		return sqlBuffer.toString();
 	}
@@ -153,8 +164,7 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		StringBuffer sqlBuffer = new StringBuffer(" select ");
 
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
-		sqlBuffer.append(", (case when isnull(org_orgs.code, '~') = '~' then 1 else 0 end) as is_org_null"); // is_org_null
-		sqlBuffer.append(", org_orgs.code code_org, coalesce(org_orgs.name").append(getMultiLangIndex()).append(", org_orgs.name) org"); // code_org, org
+		sqlBuffer.append(", org_orgs.code code_org, isnull(org_orgs.name").append(getMultiLangIndex()).append(", org_orgs.name) org"); // code_org, org
 
 		String[] qryObjs = getQueryObjs();
 		List<QryObj> qryObjList = queryVO.getQryObjs();
@@ -162,20 +172,17 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		for (int i = 0; i < qryObjList.size(); i++) {
 			sqlBuffer.append(", v.").append(qryObjs[i]).append(", ");
 
-			sqlBuffer.append(bdTable + i).append(".").append(qryObjList.get(i).getBd_codeField()).append(" ")
+			sqlBuffer.append(bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_codeField()).append(" ")
 					.append(IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code, ");
 
-			sqlBuffer.append("coalesce(").append(bdTable + i).append(".").append(
+			sqlBuffer.append("isnull(").append(bdTable ).append( i).append(".").append(
 					qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex()).append(", ").append(
-					bdTable + i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
-					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append(", ");
+					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
+					IPubReportConstants.QRY_OBJ_PREFIX).append(i);
 
-			sqlBuffer.append("(case when isnull(").append(qryObjs[i]).append(
-					", '~') = '~' then 1 else 0 end) as isnull").append(i);
 		}
 
-		sqlBuffer.append(", v.").append(PK_CURR).append(", (case when isnull(v.").append(PK_CURR)
-				.append(", '~') = '~' then 1 else 0 end) as is_currtype_null"); // is_currtype_null
+		sqlBuffer.append(", v.").append(PK_CURR);
 		if (queryVO.isQueryDetail()) {
 			sqlBuffer.append(", ").append(detailTemFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
 		}
@@ -192,16 +199,31 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 					bdTable + i).append(".").append(qryObjList.get(i).getBd_pkField());
 		}
 
+//		sqlBuffer.append(" order by ");
+//		sqlBuffer.append(" code_org");
+//		for (int i = 0; i < qryObjList.size(); i++) {
+//			sqlBuffer.append(", ").append(
+//					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code");
+//		}
+//		sqlBuffer.append(", pk_currtype, rn");
+//		if (queryVO.isQueryDetail()) {
+//			sqlBuffer.append(", djrq, djbh");
+//		}
 		sqlBuffer.append(" order by ");
-		sqlBuffer.append("is_org_null, code_org");
+		sqlBuffer.append(ErmReportSqlUtils.caseWhenSql("org_orgs.code"));
 		for (int i = 0; i < qryObjList.size(); i++) {
-			sqlBuffer.append(", isnull").append(i).append(", ").append(
-					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code");
+			sqlBuffer.append(",");
+//			sqlBuffer.append(ErmReportSqlUtils.caseWhenSql(IPubReportConstants.QRY_OBJ_PREFIX+i+"pk"));
+            sqlBuffer.append(ErmReportSqlUtils.caseWhenSql(bdTable +  i + "." + qryObjList.get(i).getBd_codeField()));
 		}
-		sqlBuffer.append(", is_currtype_null, pk_currtype, rn");
+//		if (beForeignCurrency) {
+			sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.pk_currtype"));
+//		}
+		sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.rn"));
 		if (queryVO.isQueryDetail()) {
-			sqlBuffer.append(", djrq, djbh");
-		}
+			sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.djrq"));
+			sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.djbh"));
+	    }
 
 		return sqlBuffer.toString();
 	}
@@ -317,122 +339,132 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 
 		sqlBuffer.append(" select ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(queryObjBaseBal);
-		sqlBuffer.append(", ").append(beForeignCurrency ? jkzbAlias + ".bzbm " : "null ").append(PK_CURR);
+		sqlBuffer.append(", ").append(queryObjBaseBal.replaceAll("fb.", "zb."));
+//		sqlBuffer.append(", ").append(beForeignCurrency ? jkzbAlias + ".bzbm " : "null ").append(PK_CURR);
+		sqlBuffer.append(", ").append(jkzbAlias).append(".bzbm ").append(PK_CURR);
 		sqlBuffer.append(", ").append(detailFields.replace("zb.", jkzbAlias + "."));
-		sqlBuffer.append(", ").append(tmpTableAlias + ".propertyid accageid");
-		sqlBuffer.append(", ").append(tmpTableAlias + ".descr accage");
+		
+        sqlBuffer.append(", ").append(tmpTableAlias ).append( ".propertyid accageid");
+        sqlBuffer.append(", ").append(tmpTableAlias ).append( ".descr accage");
 		sqlBuffer.append(", 0 rn, ");
-		sqlBuffer.append("coalesce(sum(" + jkzbAlias + ".ybye), 0.0) accage_ori, ");
-		sqlBuffer.append("coalesce(sum(" + jkzbAlias + ".bbye), 0.0) accage_loc, ");
-		sqlBuffer.append("coalesce(sum(" + jkzbAlias + ".groupbbye), 0.0) gr_accage_loc, ");
-		sqlBuffer.append("coalesce(sum(" + jkzbAlias + ".globalbbye), 0.0) gl_accage_loc ");
+		sqlBuffer.append("isnull(sum(" ).append( jkzbAlias ).append( ".ybye), 0.0) accage_ori, ");
+		sqlBuffer.append("isnull(sum(" ).append( jkzbAlias ).append( ".bbye), 0.0) accage_loc, ");
+		sqlBuffer.append("isnull(sum(" ).append( jkzbAlias ).append( ".groupbbye), 0.0) gr_accage_loc, ");
+		sqlBuffer.append("isnull(sum(" ).append( jkzbAlias ).append( ".globalbbye), 0.0) gl_accage_loc ");
 
-		sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+//		sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
 
-		// 连接账龄方案(临时)表
-		sqlBuffer.append(", ").append(tmpAccTable).append(tmpTableAlias);
-
+        String anaDateField = ReportSqlUtils.getAnaDateField(queryVO.getAnaDate());
+		// TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(" from ( ");
+        } else {
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+        }
+        
+        // TODO byDetail
+        //和明细表连接
+        if (needQueryByDetail()) {
+            sqlBuffer.append("select ");
+            sqlBuffer.append(fixedFields.replaceAll(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
+//            sqlBuffer.append(", ").append(queryObjBaseBal);
+            sqlBuffer.append(", ").append(groupByBaseExp);
+            sqlBuffer.append(", ").append(jkzbAlias + ".bzbm ");
+            
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".djlxbm");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".pk_jkbx");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".djbh");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".djrq");
+//            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".ybye");
+            if (anaDateField.indexOf("djrq") < 0) {
+                sqlBuffer.append(", ").append(anaDateField);
+            }
+            sqlBuffer.append(", fb.ybye");
+            sqlBuffer.append(", fb.bbye");
+            sqlBuffer.append(", fb.groupbbye");
+            sqlBuffer.append(", fb.globalbbye");
+//            sqlBuffer.append(", ").append(tmpTableAlias).append(".propertyid");
+//            sqlBuffer.append(", ").append(tmpTableAlias).append(".descr");
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_busitem fb on ")
+            .append(jkzbAlias).append(".pk_jkbx = fb.pk_jkbx");
+        } else {
+            // 连接账龄方案(临时)表
+            sqlBuffer.append(", ").append(tmpAccTable).append(tmpTableAlias);
+        }
 		sqlBuffer.append(" where ").append(ReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
 
-		// 取得截止日期字段
-		String dateline = "'" + queryVO.getDateline() + "'";
-		// 取得分析日期字段
-		String anaDateField = ReportSqlUtils.getAnaDateField(queryVO.getAnaDate());
+		
 
-		// 分析日期
-		// select datediff(mm, '2010-01-30', '2010-03-05') + datediff(day, dateadd(mm, datediff(mm, '2010-01-30', '2010-03-05'), '2010-01-30'), '2010-03-05') / 30.0
-		// result：1.166667(个月)
-		StringBuffer tempBuffer = new StringBuffer();
-		switch (SqlBuilder.getDatabaseType()) {
-		case DBConsts.SQLSERVER: // SQLServer版
-			if (UnitDays.CALENDAR == UnitDays.valueOf(timeCtrlVO.getDays())) {
-				// 账龄方案：日历天数
-				sqlBuffer.append(" and ").append(tmpTableAlias).append(".pk_timectrl = '").append(queryVO.getAccAgePlan()).append("' ");
-				if (TimeUnit.MONTH == TimeUnit.valueOf(timeCtrlVO.getUnit())) {
-					// 时间单位：月
-					tempBuffer.append("(datediff(mm, ");
-					tempBuffer.append(anaDateField).append(", ").append(dateline).append(") + datediff(day, dateadd(mm, datediff(mm, ")
-							.append(anaDateField).append(", ").append(dateline).append("), ")
-							.append(anaDateField).append("), ").append(dateline);
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 30.0 > (coalesce(").append(tmpTableAlias).append(".startunit, 0) - 1 )) ");
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 30.0 <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647)) ");
-				} else {
-					// 时间单位：年
-					tempBuffer.append("(datediff(yy, ");
-					tempBuffer.append(anaDateField).append(", ").append(dateline).append(") + datediff(day, dateadd(yy, datediff(yy, ")
-							.append(anaDateField).append(", ").append(dateline).append("), ")
-							.append(anaDateField).append("), ").append(dateline);
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 365.0 > (coalesce(").append(tmpTableAlias).append(".startunit, 0) - 1 )) ");
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 365.0 <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647)) ");
-				}
-			} else {
-				tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
-				sqlBuffer.append(" and (").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue) ");
-				sqlBuffer.append(" and (").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue) ");
-				sqlBuffer.append(" and (").append(tempBuffer).append(" >= 0 ) ");
-			}
-			break;
-
-		case DBConsts.ORACLE: // Oracle版
-			if (UnitDays.CALENDAR == UnitDays.valueOf(timeCtrlVO.getDays())) {
-				// 账龄方案：日历天数
-				sqlBuffer.append(" and ").append(tmpTableAlias).append(".pk_timectrl = '").append(queryVO.getAccAgePlan()).append("' ");
-				tempBuffer.append(" months_between(to_date(").append(dateline).append(", 'yyyy-MM-dd hh24:mi:ss'), to_date(").append(anaDateField).append(", 'yyyy-MM-dd hh24:mi:ss')) ");
-				if (TimeUnit.MONTH == TimeUnit.valueOf(timeCtrlVO.getUnit())) {
-					// 时间单位：月
-					sqlBuffer.append(" and ((").append(tempBuffer).append(" >= (coalesce(").append(tmpTableAlias).append(".startunit, 0) -1 )) ");
-					sqlBuffer.append(" and (").append(tempBuffer).append(" <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647))) ");
-				} else {
-					// 时间单位：年
-					tempBuffer.append(" / 12.0 ");
-					sqlBuffer.append(" and ((").append(tempBuffer).append(" >= (coalesce(").append(tmpTableAlias).append(".startunit, 0) -1 )) ");
-					sqlBuffer.append(" and (").append(tempBuffer).append(" <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647))) ");
-				}
-			} else {
-				tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" >= 0 ");
-			}
-			break;
-
-		default:
-			break;
-
-		}
-
-		sqlBuffer.append(getQueryObjSql()); // 查询对象
-		sqlBuffer.append(" and " + jkzbAlias + ".dr = 0 ");
-		sqlBuffer.append(" and " + jkzbAlias).append(".sxbz = ").append(BXStatusConst.SXBZ_VALID); // 单据状态
+		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
+		sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".dr = 0 ");
+		sqlBuffer.append(" and " ).append( jkzbAlias).append(".sxbz = ").append(BXStatusConst.SXBZ_VALID); // 单据状态
 		sqlBuffer.append(" and (zb.ybye <> 0 or zb.bbye <> 0 or zb.groupbbye <> 0 or zb.globalbbye <> 0)");
 		sqlBuffer.append(ReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), jkzbAlias)); // 币种
 		sqlBuffer.append(" and ").append(SqlUtils.getInStr(jkzbAlias + ".pk_org", queryVO.getPk_orgs())); // 业务单元
-		sqlBuffer.append(" and " + jkzbAlias + ".pk_group = '" + queryVO.getPk_group() + "'"); // 集团
+		sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".pk_group = '" ).append( queryVO.getPk_group() ).append( "'"); // 集团
 
+        // TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(") ").append(jkzbAlias);
+            // 连接账龄方案(临时)表
+            sqlBuffer.append(", ").append(tmpAccTable).append(tmpTableAlias);
+            sqlBuffer.append(" where 1 = 1");
+        }
+     // 取得截止日期字段
+        String dateline = "'" + queryVO.getDateline() + "'";
+        // 取得分析日期字段
+
+        // 分析日期
+        // select datediff(mm, '2010-01-30', '2010-03-05') + datediff(day, dateadd(mm, datediff(mm, '2010-01-30', '2010-03-05'), '2010-01-30'), '2010-03-05') / 30.0
+        // result：1.166667(个月)
+        StringBuffer tempBuffer = new StringBuffer();
+        switch (SqlBuilder.getDatabaseType()) {
+        case DBConsts.DB2: // SQLServer版
+            tempBuffer.append("days(").append(dateline).append(")-days(").append(anaDateField).append(") ");
+            sqlBuffer.append(" and (").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue) ");
+            sqlBuffer.append(" and (").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue) ");
+            break;
+        case DBConsts.SQLSERVER:
+            tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
+            sqlBuffer.append(" and (").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue) ");
+            sqlBuffer.append(" and (").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue) ");
+            break;
+
+        case DBConsts.ORACLE: // Oracle版
+            tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
+            sqlBuffer.append(" and ").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue ");
+            sqlBuffer.append(" and ").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue ");
+            break;
+
+        default:
+            break;
+        }
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(groupByBaseBal);
+		sqlBuffer.append(", ").append(groupByBaseBal.replaceAll("fb.", "zb."));
 		sqlBuffer.append(", ").append(groupByFields);
-		sqlBuffer.append(", ").append(tmpTableAlias + ".descr ");
-		sqlBuffer.append(", ").append(tmpTableAlias + ".propertyid ");
-		if (beForeignCurrency) {
-			sqlBuffer.append(", ").append(jkzbAlias + ".bzbm");
-		}
+		sqlBuffer.append(", ").append(tmpTableAlias ).append( ".descr ");
+		sqlBuffer.append(", ").append(tmpTableAlias ).append( ".propertyid ");
+//		if (beForeignCurrency) {
+			sqlBuffer.append(", ").append(jkzbAlias ).append( ".bzbm");
+//		}
 
 		return sqlBuffer.toString();
 	}
 
 	private String getTmpAccTable(TimeCtrlVO timeCtrlVO) {
 		if (StringUtils.isEmpty(tmpAccTable)) {
-			if (UnitDays.CALENDAR == UnitDays.valueOf(timeCtrlVO.getDays())) {
+//			if (UnitDays.CALENDAR == UnitDays.valueOf(timeCtrlVO.getDays())) {
 				// 账龄方案：日历天数
-				tmpAccTable = "fipub_timecontrol_b";
-			} else {
+//				tmpAccTable = "fipub_timecontrol_b";
+//			} else {
 				// 获取临时表
+	        //获取当前业务日期
+//	        UFDate currBusiDate = WorkbenchEnvironment.getInstance().getBusiDate();
 				tmpAccTable = TimeCtrlUtil.getTimeCtrlTmpTable(queryVO.getAccAgePlan(), new UFDate());
-			}
+//			}
 		}
 
 		return tmpAccTable;
@@ -460,125 +492,139 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		sqlBuffer.append(" select ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
 		sqlBuffer.append(", ").append(queryObjBaseBal);
-		sqlBuffer.append(", ").append(beForeignCurrency ? jkzbAlias + ".bzbm " : "null ").append(PK_CURR);
+//		sqlBuffer.append(", ").append(beForeignCurrency ? jkzbAlias + ".bzbm " : "null ").append(PK_CURR);
+		sqlBuffer.append(", ").append(jkzbAlias).append(".bzbm ").append(PK_CURR);
 		sqlBuffer.append(", ").append(detailFields);
-		sqlBuffer.append(", ").append(tmpTableAlias + ".propertyid accageid");
-		sqlBuffer.append(", ").append(tmpTableAlias + ".descr accage");
+		sqlBuffer.append(", ").append(tmpTableAlias ).append( ".propertyid accageid");
+		sqlBuffer.append(", ").append(tmpTableAlias ).append( ".descr accage");
 		sqlBuffer.append(", 0 rn, ");
-		sqlBuffer.append("coalesce(-sum(" + cxAlias + ".cjkybje), 0.0) accage_ori, ");
-		sqlBuffer.append("coalesce(-sum(" + cxAlias + ".cjkbbje), 0.0) accage_loc, ");
-		sqlBuffer.append("coalesce(-sum(" + cxAlias + ".groupcjkbbje), 0.0) gr_accage_loc, ");
-		sqlBuffer.append("coalesce(-sum(" + cxAlias + ".globalcjkbbje), 0.0) gl_accage_loc ");
+		sqlBuffer.append("isnull(-sum(" ).append( cxAlias ).append( ".cjkybje), 0.0) accage_ori, ");
+		sqlBuffer.append("isnull(-sum(" ).append( cxAlias ).append( ".cjkbbje), 0.0) accage_loc, ");
+		sqlBuffer.append("isnull(-sum(" ).append( cxAlias ).append( ".groupcjkbbje), 0.0) gr_accage_loc, ");
+		sqlBuffer.append("isnull(-sum(" ).append( cxAlias ).append( ".globalcjkbbje), 0.0) gl_accage_loc ");
 
-		sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
-		sqlBuffer.append(" inner join er_bxcontrast ").append(cxAlias).append(" on ").append(jkzbAlias).append(".pk_jkbx = ").append(cxAlias).append(".pk_jkd ");
-		sqlBuffer.append(" inner join er_bxzb ").append(bxzbAlias).append(" on ").append(cxAlias).append(".pk_bxd = ").append(bxzbAlias).append(".pk_jkbx ");
-		// 连接账龄方案(临时)表
-		sqlBuffer.append(", ").append(tmpAccTable).append(tmpTableAlias);
+//		sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+//		sqlBuffer.append(" inner join er_bxcontrast ").append(cxAlias).append(" on ").append(jkzbAlias).append(".pk_jkbx = ").append(cxAlias).append(".pk_jkd ");
+//		sqlBuffer.append(" inner join er_bxzb ").append(bxzbAlias).append(" on ").append(cxAlias).append(".pk_bxd = ").append(bxzbAlias).append(".pk_jkbx ");
 
+        // 取得分析日期字段
+        String anaDateField = ReportSqlUtils.getAnaDateField(queryVO.getAnaDate());
+		// TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(" from ( ");
+        } else {
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_bxcontrast ").append(cxAlias)
+                     .append(" on ").append(jkzbAlias).append(".pk_jkbx = ").append(cxAlias).append(".pk_jkd ");
+            sqlBuffer.append(" inner join er_bxzb ").append(bxzbAlias).append(" on ")
+                     .append(cxAlias).append(".pk_bxd = ").append(bxzbAlias).append(".pk_jkbx ");
+            // 连接账龄方案(临时)表
+            sqlBuffer.append(", ").append(tmpAccTable).append(tmpTableAlias);
+        }
+        
+        // TODO byDetail
+        //和明细表连接
+        if (needQueryByDetail()) {
+            sqlBuffer.append("select ");
+            sqlBuffer.append(fixedFields.replaceAll(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
+//            sqlBuffer.append(", ").append(queryObjBaseBal);
+            sqlBuffer.append(", ").append(groupByBaseExp);
+            sqlBuffer.append(", ").append(jkzbAlias + ".bzbm ");
+            
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".djlxbm");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".pk_jkbx");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".djbh");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".djrq");
+//            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".ybye");
+            sqlBuffer.append(", " ).append( jkzbAlias ).append( ".contrastEndDate");
+            if (anaDateField.indexOf("djrq") < 0) {
+                sqlBuffer.append(", ").append(anaDateField);
+            }
+            sqlBuffer.append(", fb.ybye");
+            sqlBuffer.append(", fb.bbye");
+            sqlBuffer.append(", fb.groupbbye");
+            sqlBuffer.append(", fb.globalbbye");
+            sqlBuffer.append(", fb.bbje");
+            sqlBuffer.append(", fb.groupbbje");
+            sqlBuffer.append(", fb.globalbbje");
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_busitem fb on ")
+            .append(jkzbAlias).append(".pk_jkbx = fb.pk_jkbx");
+        }
+		
 		sqlBuffer.append(" where ").append(ReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
 
-		// 取得截止日期字段
-		String dateline = "'" + queryVO.getDateline() + "'";
-		// 取得分析日期字段
-		String anaDateField = ReportSqlUtils.getAnaDateField(queryVO.getAnaDate());
-
-		// 分析日期
-		// select datediff(mm, '2010-01-30', '2010-03-05') + datediff(day, dateadd(mm, datediff(mm, '2010-01-30', '2010-03-05'), '2010-01-30'), '2010-03-05') / 30.0
-		// result：1.166667(个月)
-		StringBuffer tempBuffer = new StringBuffer();
-		switch (SqlBuilder.getDatabaseType()) {
-		case DBConsts.SQLSERVER: // SQLServer版
-			if (UnitDays.CALENDAR == UnitDays.valueOf(timeCtrlVO.getDays())) {
-				// 账龄方案：日历天数
-				sqlBuffer.append(" and ").append(tmpTableAlias).append(".pk_timectrl = '").append(queryVO.getAccAgePlan()).append("' ");
-				if (TimeUnit.MONTH == TimeUnit.valueOf(timeCtrlVO.getUnit())) {
-					// 时间单位：月
-					tempBuffer.append("(datediff(mm, ");
-					tempBuffer.append(anaDateField).append(", ").append(dateline).append(") + datediff(day, dateadd(mm, datediff(mm, ")
-							.append(anaDateField).append(", ").append(dateline).append("), ")
-							.append(anaDateField).append("), ").append(dateline);
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 30.0 > (coalesce(").append(tmpTableAlias).append(".startunit, 0) - 1 )) ");
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 30.0 <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647)) ");
-				} else {
-					// 时间单位：年
-					tempBuffer.append("(datediff(yy, ");
-					tempBuffer.append(anaDateField).append(", ").append(dateline).append(") + datediff(day, dateadd(yy, datediff(yy, ")
-							.append(anaDateField).append(", ").append(dateline).append("), ")
-							.append(anaDateField).append("), ").append(dateline);
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 365.0 > (coalesce(").append(tmpTableAlias).append(".startunit, 0) - 1 )) ");
-					sqlBuffer.append(" and ").append(tempBuffer).append(") / 365.0 <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647)) ");
-				}
-			} else {
-				tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" >= ").append(tmpTableAlias).append(".startvalue ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" >= 0 ");
-			}
-			break;
-
-		case DBConsts.ORACLE: // Oracle版
-			if (UnitDays.CALENDAR == UnitDays.valueOf(timeCtrlVO.getDays())) {
-				// 账龄方案：日历天数
-				sqlBuffer.append(" and ").append(tmpTableAlias).append(".pk_timectrl = '").append(queryVO.getAccAgePlan()).append("' ");
-				tempBuffer.append(" months_between(to_date(").append(dateline).append(", 'yyyy-MM-dd hh24:mi:ss'), to_date(").append(anaDateField).append(", 'yyyy-MM-dd hh24:mi:ss')) ");
-				if (TimeUnit.MONTH == TimeUnit.valueOf(timeCtrlVO.getUnit())) {
-					// 时间单位：月
-					sqlBuffer.append(" and ((").append(tempBuffer).append(" >= (coalesce(").append(tmpTableAlias).append(".startunit, 0) - 1 )) ");
-					sqlBuffer.append(" and (").append(tempBuffer).append(" <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647))) ");
-				} else {
-					// 时间单位：年
-					tempBuffer.append(" / 12.0 ");
-					sqlBuffer.append(" and ((").append(tempBuffer).append(" >= (coalesce(").append(tmpTableAlias).append(".startunit, 0) - 1 )) ");
-					sqlBuffer.append(" and (").append(tempBuffer).append(" <= coalesce(").append(tmpTableAlias).append(".endunit, 2147483647))) ");
-				}
-			} else {
-				tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" >= ").append(tmpTableAlias).append(".startvalue ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue ");
-				sqlBuffer.append(" and ").append(tempBuffer).append(" >= 0 ");
-			}
-			break;
-
-		default:
-			break;
-
-		}
-
-		sqlBuffer.append(getQueryObjSql()); // 查询对象
-		sqlBuffer.append(" and " + jkzbAlias + ".sxbz = ").append(BXStatusConst.SXBZ_VALID); // 单据状态
-		sqlBuffer.append(" and " + bxzbAlias + ".sxbz < ").append(BXStatusConst.SXBZ_VALID); // 单据状态
+		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
+		sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".sxbz = ").append(BXStatusConst.SXBZ_VALID); // 单据状态
 		sqlBuffer.append(ReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), jkzbAlias)); // 币种
 		sqlBuffer.append(" and ").append(SqlUtils.getInStr(jkzbAlias + ".pk_org", queryVO.getPk_orgs())); // 业务单元
-		sqlBuffer.append(" and " + jkzbAlias + ".pk_group = '" + queryVO.getPk_group() + "'"); // 集团
-		sqlBuffer.append(" and " + bxzbAlias + ".pk_group = '" + queryVO.getPk_group() + "'"); // 集团
+		sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".pk_group = '" ).append( queryVO.getPk_group() ).append( "'"); // 集团
+		// TODO byDetail
+        if (needQueryByDetail()) {
+            String[] fields = groupByBaseBal.split(",");
+            StringBuilder sql = new StringBuilder();
+            for (String field : fields) {
+                int nPos = field.indexOf("fb."); 
+                if (nPos >= 0) {
+                    String fbField = field.replaceAll("fb.", cxAlias + ".");
+                    String zbField = field.replaceAll("fb.", jkzbAlias + ".");
+                    sql.append(zbField).append(" = ");
+                    sql.append(fbField);
+                    sql.append(" and ");
+                }
+            }
+            sqlBuffer.append(") ").append(jkzbAlias);
+            sqlBuffer.append( " inner join er_bxcontrast " ).append( cxAlias);
+            sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd");
+            sqlBuffer.append(" inner join er_bxzb bxzb on bxzb.pk_jkbx = fb.pk_bxd ");
+            // 连接账龄方案(临时)表
+            sqlBuffer.append(", ").append(tmpAccTable).append(tmpTableAlias);
+            sqlBuffer.append(" where ").append(sql.toString());
+        } else {
+            sqlBuffer.append(" and " );
+        }
+        
+        sqlBuffer.append( bxzbAlias ).append( ".sxbz < ").append(BXStatusConst.SXBZ_VALID); // 单据状态
+        sqlBuffer.append(" and " ).append( bxzbAlias ).append( ".pk_group = '" ).append( queryVO.getPk_group() ).append( "'"); // 集团
+        
+        // 取得截止日期字段
+        String dateline = "'" + queryVO.getDateline() + "'";
 
+        // 分析日期
+        // select datediff(mm, '2010-01-30', '2010-03-05') + datediff(day, dateadd(mm, datediff(mm, '2010-01-30', '2010-03-05'), '2010-01-30'), '2010-03-05') / 30.0
+        // result：1.166667(个月)
+        StringBuffer tempBuffer = new StringBuffer();
+        switch (SqlBuilder.getDatabaseType()) {
+        case DBConsts.DB2: // db2版
+            tempBuffer.append("days(").append(dateline).append(")-days(").append(anaDateField).append(") ");
+            sqlBuffer.append(" and (").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue) ");
+            sqlBuffer.append(" and (").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue) ");
+            break;
+        case DBConsts.SQLSERVER: // SQLServer版
+            tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
+            sqlBuffer.append(" and ").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue ");
+            sqlBuffer.append(" and ").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue ");
+            break;
+        case DBConsts.ORACLE: // Oracle版
+            tempBuffer.append("datediff(day, ").append(anaDateField).append(", ").append(dateline).append(") ");
+            sqlBuffer.append(" and ").append(tempBuffer).append(" > ").append(tmpTableAlias).append(".startvalue ");
+            sqlBuffer.append(" and ").append(tempBuffer).append(" <= ").append(tmpTableAlias).append(".endvalue ");
+            break;
+        default:
+            break;
+        }
+        
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
 		sqlBuffer.append(", ").append(groupByBaseBal);
 		sqlBuffer.append(", ").append(groupByFields);
 		sqlBuffer.append(", ").append(tmpTableAlias).append(".descr");
 		sqlBuffer.append(", ").append(tmpTableAlias).append(".propertyid");
-		if (beForeignCurrency) {
+//		if (beForeignCurrency) {
 			sqlBuffer.append(", ").append(jkzbAlias + ".bzbm");
-		}
+//		}
 
-		return sqlBuffer.toString();
-	}
-
-	/**
-	 * 得到查询对象构成的SQL
-	 *
-	 * @return String
-	 * @throws BusinessException
-	 */
-	private String getQueryObjSql() throws BusinessException {
-		List<QryObj> qryObjList = queryVO.getQryObjs();
-		StringBuffer sqlBuffer = new StringBuffer(" ");
-		for (QryObj qryObj : qryObjList) {
-			sqlBuffer.append(" and ").append(qryObj.getSql());
-		}
 		return sqlBuffer.toString();
 	}
 
@@ -647,7 +693,7 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 			sqlBuffer.append(", ").append(collDetailFields);
 		}
 		sqlBuffer.append(", -7 accageid, '");
-		sqlBuffer.append(LBL_BAL);
+		sqlBuffer.append(getLBL_BAL());
 		sqlBuffer.append("' accage, 0 rn, ");
 		sqlBuffer.append(" sum(accage_ori) accage_ori, sum(accage_loc) accage_loc, sum(gr_accage_loc) gr_accage_loc, sum(gl_accage_loc) gl_accage_loc ");
 
@@ -693,9 +739,12 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		allQryobjList.add(PK_CURR);
 
 		int totalCnt = allQryobjList.size() - 2;
-		if (beForeignCurrency) {
-			totalCnt += 1;
-		}
+//		if (beForeignCurrency) {
+
+//        if (queryVO.isQueryDetail()) {
+            totalCnt += 1;
+//        }
+//		}
 
 		String[] details = detailTemFields.replace(IErmReportConstants.REPLACE_TABLE + ".", "").split(",");
 
@@ -798,7 +847,7 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 			}
 
 			sqlBuffer.append("accageid, accage, ");
-			sqlBuffer.append(SmartProcessor.MAX_ROW + 10).append(" rn, ");
+			sqlBuffer.append(SmartProcessor.MAX_ROW ).append( 10).append(" rn, ");
 			sqlBuffer.append("sum(accage_ori) accage_ori, sum(accage_loc) accage_loc, sum(gr_accage_loc) gr_accage_loc, sum(gl_accage_loc) gl_accage_loc ");
 
 			sqlBuffer.append(" from ");

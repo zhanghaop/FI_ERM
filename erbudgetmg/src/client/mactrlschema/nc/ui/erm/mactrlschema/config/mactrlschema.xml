@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
+
+	<bean id="ClosingListener" class="nc.ui.erm.mactrlschema.actions.FunNodeClosingHandler">
+		<property name="ctrlFieldTableModel" ref="ctrlFieldTableModel" />
+		<property name="ctrlBillTableModel" ref="ctrlBillTableModel" />
+		<property name="saveFldAction" ref="saveFldAction" />
+		<property name="saveBilAction" ref="saveBilAction" />
+		<property name="cancelFldAction" ref="cancelFldAction" />
+		<property name="cancelBilAction" ref="cancelBilAction" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 模板容器，负责对模板的统一装载 -->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer"
+		init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>20110MCSF</value>
+				<value>20110MCSB</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.mactrlschema.model.MaCtrlAppModelDataManager">
+		<property name="treeModel" ref="treeModel" />
+		<property name="ctrlfieldtableModel" ref="ctrlFieldTableModel" />
+		<property name="ctrlbilltableModel" ref="ctrlBillTableModel" />
+		<property name="orgPanel" ref="orgPanel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<!-- 功能管理树型模型 -->
+	<bean id="treeModel" class="nc.ui.uif2.model.HierachicalDataAppModel">
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<property name="treeCreateStrategy" ref="treeCreateStrategy" />
+	</bean>
+
+	<bean id="treeCreateStrategy" class="nc.vo.bd.meta.BDObjectTreeCreateStrategy">
+		<property name="factory" ref="boadatorfactory" />
+		<property name="rootName">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0075"></property>
+				<property name="defaultValue" value="费用申请单交易类型"></property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 树面板 -->
+	<bean id="treePanel" class="nc.ui.erm.mactrlschema.view.MaCtrlTreePanel"
+		init-method="init">
+		<property name="model" ref="treeModel"></property>
+	</bean>
+	<!-- 组织面板 -->
+	<bean id="orgPanel" class="nc.ui.erm.mactrlschema.view.MaCtrlOrgPanel"
+		init-method="initUI">
+		<property name="labelName">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0076"></property>
+				<property name="defaultValue" value="财务组织"></property>
+			</bean>
+		</property>
+		<property name="model" ref="treeModel" />
+		<property name="dataManager" ref="modelDataManager" />
+	</bean>
+
+	<bean id="ctrlFldservice" class="nc.ui.erm.mactrlschema.model.MCtrlFieldService" />
+	<!-- 控制维度模型 -->
+	<bean id="ctrlFieldTableModel" class="nc.ui.uif2.model.BatchBillTableModel">
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<property name="service" ref="ctrlFldservice" />
+	</bean>
+	<!-- 控制维度面板 -->
+	<bean id="ctrlFieldTable" class="nc.ui.erm.mactrlschema.view.MaCtrlFieldTable"
+		init-method="initUI">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0077"></property>
+				<property name="defaultValue" value="控制维度"></property>
+			</bean>
+		</property>
+		<property name="nodekey" value="20110MCSF" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="model" ref="ctrlFieldTableModel" />
+		<property name="actions">
+			<list>
+				<ref bean="editFldAction" />
+				<ref bean="addFldAction" />
+				<ref bean="deleteFldAction" />
+				<ref bean="saveFldAction" />
+				<ref bean="cancelFldAction" />
+			</list>
+		</property>
+	</bean>
+	<bean id="editFldAction" class="nc.ui.erm.mactrlschema.actions.EditFldAction">
+		<property name="model" ref="ctrlFieldTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="cancelFldAction" class="nc.ui.erm.mactrlschema.actions.CancelFldAction">
+		<property name="model" ref="ctrlFieldTableModel" />
+		<property name="editor" ref="ctrlFieldTable" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="addFldAction" class="nc.ui.erm.mactrlschema.actions.AddFldAction">
+		<property name="model" ref="ctrlFieldTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="voClassName" value="nc.vo.erm.mactrlschema.MtappCtrlfieldVO" />
+	</bean>
+	<bean id="deleteFldAction" class="nc.ui.erm.mactrlschema.actions.DelLineFldAction">
+		<property name="model" ref="ctrlFieldTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="batchBillTable" ref="ctrlFieldTable"/>
+	</bean>
+	<bean id="saveFldAction" class="nc.ui.erm.mactrlschema.actions.SaveFldAction">
+		<property name="model" ref="ctrlFieldTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="editor" ref="ctrlFieldTable" />
+	</bean>
+	<bean id="ctrlBillservice" class="nc.ui.erm.mactrlschema.model.MCtrlBillService" />
+	<!-- 控制对象模型 -->
+	<bean id="ctrlBillTableModel" class="nc.ui.uif2.model.BatchBillTableModel">
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<property name="service" ref="ctrlBillservice" />
+	</bean>
+	<!-- 控制对象面板 -->
+	<bean id="ctrlBillTable" class="nc.ui.erm.mactrlschema.view.MaCtrlBillTable"
+		init-method="initUI">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0078"></property>
+				<property name="defaultValue" value="控制对象"></property>
+			</bean>
+		</property>
+		<property name="nodekey" value="20110MCSB" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="model" ref="ctrlBillTableModel" />
+		<property name="actions">
+			<list>
+				<ref bean="editBilAction" />
+				<ref bean="addBilAction" />
+				<ref bean="deleteBilAction" />
+				<ref bean="saveBilAction" />
+				<ref bean="cancelBilAction" />
+			</list>
+		</property>
+	</bean>
+	<bean id="editBilAction" class="nc.ui.erm.mactrlschema.actions.EditBilAction">
+		<property name="model" ref="ctrlBillTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="cancelBilAction" class="nc.ui.uif2.actions.batch.BatchCancelAction">
+		<property name="model" ref="ctrlBillTableModel" />
+		<property name="editor" ref="ctrlBillTable" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="addBilAction" class="nc.ui.erm.mactrlschema.actions.AddBilAction">
+		<property name="model" ref="ctrlBillTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="voClassName" value="nc.vo.erm.mactrlschema.MtappCtrlbillVO" />
+	</bean>
+	<bean id="deleteBilAction" class="nc.ui.erm.mactrlschema.actions.DelLineBilAction">
+		<property name="model" ref="ctrlBillTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="batchBillTable" ref="ctrlBillTable"/>
+	</bean>
+	<bean id="saveBilAction" class="nc.ui.erm.mactrlschema.actions.SaveBilAction">
+		<property name="model" ref="ctrlBillTableModel" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="editor" ref="ctrlBillTable" />
+	</bean>
+	<bean id="refreshAction" class="nc.ui.erm.mactrlschema.actions.RefreshAction">
+		<property name="modelManager" ref="modelDataManager" />
+		<property name="treeModel" ref="treeModel" />
+		<property name="treePanel" ref="treePanel" />
+	</bean>
+	<!-- 总装 -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="name" value="财务组织" />
+						<property name="component" ref="orgPanel" />
+					</bean>
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+						<property name="left">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="name" value="左树" />
+								<property name="component" ref="treePanel" />
+							</bean>
+						</property>
+						<property name="right">
+							<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+								<property name="up">
+									<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+										<property name="tabs">
+											<list>
+												<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+													<property name="name">
+														<bean class="nc.ui.uif2.I18nFB ">
+															<property name="resDir" value="201212_0"></property>
+															<property name="resId" value="0201212-0077"></property>
+															<property name="defaultValue" value="控制维度"></property>
+														</bean>
+													</property>
+													<property name="component" ref="ctrlFieldTable" />
+												</bean>
+											</list>
+										</property>
+									</bean>
+								</property>
+
+								<property name="down">
+									<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+										<property name="tabs">
+											<list>
+												<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+													<property name="name">
+														<bean class="nc.ui.uif2.I18nFB ">
+															<property name="resDir" value="201212_0"></property>
+															<property name="resId" value="0201212-0078"></property>
+															<property name="defaultValue" value="控制对象"></property>
+														</bean>
+													</property>
+													<property name="component" ref="ctrlBillTable" />
+												</bean>
+											</list>
+										</property>
+									</bean>
+								</property>
+							</bean>
+						</property>
+						<property name="dividerLocation" value="0.2f"></property>
+					</bean>
+				</property>
+				<property name="dividerLocation" value="0.05f"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="refreshAction" />
+			</list>
+		</property>
+	</bean>
+</beans>

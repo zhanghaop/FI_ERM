@@ -6,7 +6,7 @@
         	<implementation>nc.impl.er.expensetype.ExpenseTypeServiceImpl</implementation>
      	</component>
      	
-     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
         	<interface>nc.itf.er.expensetype.IExpenseTypeQueryService</interface>
           	<implementation>nc.impl.er.expensetype.ExpenseTypeQueryServiceImpl</implementation>
      	</component>
@@ -16,7 +16,7 @@
             <implementation>nc.impl.er.reimtype.ReimTypeServiceImpl</implementation>
      	</component>
      	
-     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
           	<interface>nc.itf.er.reimtype.IReimTypeQueryService</interface>
           	<implementation>nc.impl.er.reimtype.ReimTypeQueryServiceImpl</implementation>
      	</component>
@@ -26,9 +26,41 @@
            	<implementation>nc.impl.er.indauthorize.IndAuthorizeServiceImpl</implementation>
      	</component>
      	
-     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
           	<interface>nc.itf.er.indauthorize.IIndAuthorizeQueryService</interface>
           	<implementation>nc.impl.er.indauthorize.IndAuthorizeQueryServiceImpl</implementation>
      	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.itf.erm.billcontrast.IErmBillcontrastManage</interface>
+           	<implementation>nc.impl.erm.billcontrast.ErmBillcontrastManageImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+          	<interface>nc.itf.erm.billcontrast.IErmBillcontrastQuery</interface>
+          	<implementation>nc.impl.erm.billcontrast.ErmBillcontrastQueryImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+          	<interface>nc.pubitf.erm.billcontrast.IErmBillcontrastQueryService</interface>
+          	<implementation>nc.impl.erm.billcontrast.ErmBillcontrastQueryImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.itf.erm.fieldcontrast.IFieldContrastMgService</interface>
+           	<implementation>nc.impl.erm.fieldcontrast.FieldContrastMgServiceImpl</implementation>
+     	</component>
+     	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+          	<interface>nc.itf.erm.fieldcontrast.IFieldContrastQryService</interface>
+          	<implementation>nc.impl.erm.fieldcontrast.FieldContrastQryServiceImpl</implementation>
+     	</component>
+     	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.pubitf.erm.sharerule.IErShareruleQuery</interface>
+            <implementation>nc.impl.erm.sharerule.ErShareruleQueryImpl</implementation>
+        </component>
+        <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.pubitf.erm.sharerule.IErShareruleManage</interface>
+            <implementation>nc.impl.erm.sharerule.ErShareruleManageImpl</implementation>
+        </component>
     </public>
 </module>

@@ -42,6 +42,7 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 	
 	private UIRadioButton loanaccountageRadioButton = null; //借款账龄分析
 //	private UIRadioButton loanaccountageDetailRadioButton = null; //借款账龄明细分析
+	private UIRadioButton matterappRadioButton = null; //费用申请账表
 
 	List<UIRadioButton> reportTypeList = new ArrayList<UIRadioButton>(); // 按钮列表
 
@@ -64,16 +65,20 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 	private void initErmReport() {
 		// 帐表类型
 		Dimension dim = new Dimension(130, 20);
-		UILabel loanReportLabel = new UILabel(IErmReportConstants.ERM_LOAN_REPORT_NAME); // 借款帐表
+		UILabel loanReportLabel = new UILabel(IErmReportConstants.getErm_Loan_Report_Name()); // 借款帐表
 		loanReportLabel.setSize(dim);
 		loanReportLabel.setPreferredSize(dim);
-		UILabel expenseReportLabel = new UILabel(IErmReportConstants.ERM_EXPENSE_REPORT_NAME); // 费用类报表
+		UILabel expenseReportLabel = new UILabel(IErmReportConstants.getErm_Expense_Report_Name()); // 费用类报表
 		expenseReportLabel.setSize(dim);
 		expenseReportLabel.setPreferredSize(dim);
 		
-		UILabel loanaccountageReportLabel = new UILabel(IErmReportConstants.ERM_ACCOUNTAGE_REPORT_NAME); // 账龄分析
+		UILabel loanaccountageReportLabel = new UILabel(IErmReportConstants.getErm_Accountage_Report_Name()); // 账龄分析
 		loanaccountageReportLabel.setSize(dim);
 		loanaccountageReportLabel.setPreferredSize(dim);
+		
+		UILabel matterappReportLabel = new UILabel(IErmReportConstants.getMATTERAPP_REP_NAME_LBL()); //费用申请
+		matterappReportLabel.setSize(dim);
+		matterappReportLabel.setPreferredSize(dim);
 		
 
 		// 借款查询-借款人		
@@ -81,31 +86,30 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 //		borrowerRadioButton.setName(IErmReportConstants.BORROWER_REP_NAME);
 		
 		// 借款明细帐		
-		loanDetailRadioButton = new UIRadioButton(IErmReportConstants.LOAN_DETAIL_REP_NAME_LBL);
+		loanDetailRadioButton = new UIRadioButton(IErmReportConstants.getLoan_Detail_Rep_Name_Lbl());
 		loanDetailRadioButton.setName(IErmReportConstants.LOAN_DETAIL_REP_NAME);
 		
 		// 借款余额表		
-		loanBalanceRadioButton = new UIRadioButton(IErmReportConstants.LOAN_BALANCE_REP_NAME_LBL);
+		loanBalanceRadioButton = new UIRadioButton(IErmReportConstants.getLoan_Balance_Rep_Name_Lbl());
 		loanBalanceRadioButton.setName(IErmReportConstants.LOAN_BALANCE_REP_NAME);
 
 		// 费用明细账
-		expenseDetailRadioButton = new UIRadioButton(IErmReportConstants.EXPENSE_DETAIL_REP_NAME_LBL);
+		expenseDetailRadioButton = new UIRadioButton(IErmReportConstants.getExpense_Detail_Rep_Name());
 		expenseDetailRadioButton.setName(IErmReportConstants.EXPENSE_DETAIL_REP_NAME);
 
 		// 费用汇总表
-		expenseBalanceRadioButton = new UIRadioButton(IErmReportConstants.EXPENSE_BALANCE_REP_NAME_LBL);
+		expenseBalanceRadioButton = new UIRadioButton(IErmReportConstants.getExpense_Balance_Rep_Name_Lbl());
 		expenseBalanceRadioButton.setName(IErmReportConstants.EXPENSE_BALANCE_REP_NAME);
 		
 		//借款账龄分析
-		loanaccountageRadioButton = new UIRadioButton(IErmReportConstants.LOAN_ACCOUNTAGE_REP_NAME_LBL);
+		loanaccountageRadioButton = new UIRadioButton(IErmReportConstants.getLoan_Accountage_Rep_Name_Lbl());
 		loanaccountageRadioButton.setName(IErmReportConstants.LOAN_ACCOUNTAGE_REP_NAME);
 
 		//借款账龄明细分析
-//		loanaccountageDetailRadioButton = new UIRadioButton(IErmReportConstants.LOAN_ACCOUNTAGE_DETAIL_REP_NAME);
-//		loanaccountageDetailRadioButton.setName(IErmReportConstants.LOAN_ACCOUNTAGE_DETAIL_REP_NAME);
+		matterappRadioButton = new UIRadioButton(IErmReportConstants.getMATTERAPP_REP_NAME_LBL());
+		matterappRadioButton.setName(IErmReportConstants.MATTERAPP_REP_NAME);
 		
 		// 添加到按钮列表
-//		btnErmReportList.add(borrowerRadioButton);
 		reportTypeList.add(loanDetailRadioButton);
 		reportTypeList.add(loanBalanceRadioButton);
 
@@ -113,12 +117,11 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 		reportTypeList.add(expenseBalanceRadioButton);
 		
 		reportTypeList.add(loanaccountageRadioButton);
-//		reportTypeList.add(loanaccountageDetailRadioButton);
+		reportTypeList.add(matterappRadioButton);
 
 
 		// 添加到按钮组
 		ButtonGroup btnGroup = new ButtonGroup();
-//		btnGroup.add(borrowerRadioButton);
 		btnGroup.add(loanDetailRadioButton);
 		btnGroup.add(loanBalanceRadioButton);
 
@@ -127,10 +130,12 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 		
 		btnGroup.add(loanaccountageRadioButton);
 //		btnGroup.add(loanaccountageDetailRadioButton);
+		btnGroup.add(matterappRadioButton);
 
 		UIPanel framePanel1 = new UIPanel();
 		UIPanel framePanel2 = new UIPanel();
 		UIPanel framePanel3 = new UIPanel();
+		UIPanel framePanel4 = new UIPanel();
 	
 		framePanel1.setLayout(new BorderLayout());
 		framePanel1.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -138,6 +143,8 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 		framePanel2.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		framePanel3.setLayout(new BorderLayout());
 		framePanel3.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		framePanel4.setLayout(new BorderLayout());
+		framePanel4.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		
 		Dimension dimension = new Dimension(530, 30);
 		// 添加到初始界面
@@ -181,7 +188,6 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 		accountageReportPanel.setPreferredSize(dimension);
 		accountageReportPanel.setLayout(new GridLayout(1, 4));		
 		accountageReportPanel.add(loanaccountageRadioButton);
-//		accountageReportPanel.add(loanaccountageDetailRadioButton);
 		accountageReportPanel.add(new UILabel(" "));
 		UIPanel blankPanel3 = new UIPanel();
 		blankPanel3.setPreferredSize(new Dimension(50, 50));
@@ -190,9 +196,25 @@ public class ErmReleaseReportTypeSelectComp extends UIPanel {
 		framePanel3.add(loanaccountageReportLabel, BorderLayout.NORTH);
 		framePanel3.add(rowPanel3, BorderLayout.CENTER);
 		
+		UIPanel rowPanel4 = new UIPanel();
+		rowPanel4.setLayout(new BorderLayout());
+		UIPanel matterappReportPanel = new UIPanel();
+		matterappReportPanel.setSize(dimension);
+		matterappReportPanel.setPreferredSize(dimension);
+		matterappReportPanel.setLayout(new GridLayout(1, 4));		
+		matterappReportPanel.add(matterappRadioButton);
+		matterappReportPanel.add(new UILabel(" "));
+		UIPanel blankPanel4 = new UIPanel();
+		blankPanel4.setPreferredSize(new Dimension(50, 50));
+		rowPanel4.add(blankPanel4, BorderLayout.WEST);
+		rowPanel4.add(matterappReportPanel, BorderLayout.CENTER);
+		framePanel4.add(matterappReportLabel, BorderLayout.NORTH);
+		framePanel4.add(rowPanel4, BorderLayout.CENTER);
+		
 		add(framePanel1);
 		add(framePanel2);
 		add(framePanel3);
+		add(framePanel4);
 	}
 	
 	/**

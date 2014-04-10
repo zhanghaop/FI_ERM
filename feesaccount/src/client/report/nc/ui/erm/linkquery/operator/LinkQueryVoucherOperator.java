@@ -10,10 +10,14 @@ import nc.funcnode.ui.AbstractFunclet;
 import nc.pub.smart.data.IRowData;
 import nc.pub.smart.tracedata.ITraceDataOperator;
 import nc.pub.smart.tracedata.TraceDataParam;
+import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.link.FipBillLinkQueryCenter;
 import nc.vo.fip.service.FipRelationInfoVO;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessRuntimeException;
+
 import org.apache.commons.lang.StringUtils;
+
 import com.ufida.report.free.userdef.DefaultMenu;
 import com.ufida.report.free.userdef.IMenuActionInfo;
 
@@ -40,6 +44,13 @@ public class LinkQueryVoucherOperator implements ITraceDataOperator {
 
 		// 取得选中行单据主键
 		Object tempValue = rowData.getData("pk_jkbx");
+		
+		if (tempValue == null || StringUtil.isEmpty(tempValue.toString())) {
+            MessageDialog.showHintDlg(container, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
+                    nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0121")/*@res "请选择单据进行联查！"*/);
+            return;
+        }
+		
 		String pk_bill = tempValue == null ? null : tempValue.toString();
 
 		// 取得选中行单据类型

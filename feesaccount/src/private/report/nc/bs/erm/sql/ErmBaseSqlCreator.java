@@ -2,9 +2,9 @@ package nc.bs.erm.sql;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import nc.bs.erm.util.ReportSqlUtils;
-import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.jdbc.framework.util.DBConsts;
 import nc.vo.fipub.report.QryObj;
@@ -63,6 +63,14 @@ public abstract class ErmBaseSqlCreator {
 	private String fromDummyTable = null;
 
 	protected static final String bdTable = "bd";
+	
+	protected boolean isQueryByDetail(String fieldCode) {
+	    if ("szxmid".equalsIgnoreCase(fieldCode)) {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
 
 	public void setParams(ReportQueryCondVO queryVO) {
 		this.queryVO = queryVO;
@@ -74,15 +82,16 @@ public abstract class ErmBaseSqlCreator {
 
 			String alias = null;
 			String aliasExp = null;
-			if ("szxmid".equalsIgnoreCase(qryObj.getOriginFld())) {
-				// 收支项目需要走辅表
-				alias = "fb.";
-				aliasExp = "fb.";
+			if (isQueryByDetail(qryObj.getOriginFld())) {
+                // 收支项目需要走辅表
+                alias = "fb.";
+                aliasExp = "fb.";
+			    
 			} else {
-				alias = "zb.";
-				aliasExp = "zb.";
-			}
-
+                alias = "zb.";
+                aliasExp = "zb.";
+            }
+			
 			queryObjBaseBal += (alias + qryObj.getOriginFld() + " qryobj" + i + "pk, ");
 			groupByBaseBal += (alias + qryObj.getOriginFld() + ", ");
 
@@ -154,7 +163,7 @@ public abstract class ErmBaseSqlCreator {
 			if (!isLoan) {
 				strRtn = " and " + getAlias("er_bxzb") + ".djzt >= 2 ";
 			} else {
-				strRtn = " and " + getAlias("er_jkzb") + ".djzt = 3 ";
+				strRtn = " and " + getAlias("er_jkzb") + ".djzt >= 3 ";
 			}
 			if (hascontrast) {
 				strRtn += " and " + getAlias("er_bxcontrast") + ".sxbz = 1 ";
@@ -195,21 +204,47 @@ public abstract class ErmBaseSqlCreator {
 				sqlBuffer.append(" and ").append(StringUtils.replace(queryVO.getWhereSql(), "zb.", tempAlias + "."));
 			}
 
+			Map<String,String> qryObjMeta = nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID(); 
+			fileterQryObj(qryObjMeta);
 			// 处理查询数据权限
 			String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
 					.getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
-					(String[])nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID().values().toArray(new String[0]), IPubReportConstants.FI_REPORT_REF_POWER);
+					(String[])qryObjMeta.values().toArray(new String[0]), IPubReportConstants.FI_REPORT_REF_POWER);
 
 			if (!StringUtils.isEmpty(powerSql)) {
+			    powerSql = convertToDetailSql(powerSql);
 				sqlBuffer.append(powerSql);
 			}
-
+			
 			compositeWhereSql = sqlBuffer.toString();
 		}
 
 		return compositeWhereSql;
 	}	
+	
+	private void fileterQryObj(Map<String,String> qryObjMeta) {
+        
+        for (String field : detailField) {
+            if (!qryObjShow(field)) {
+                qryObjMeta.remove(field);
+            }
+        }
+	    
+	}
+	
+	private static String[] detailField = new String[] {
+	        "pk_project", "jobid", "szxmid", "pk_iobsclass", "PK_RESACOSTCENTER"
+	};
 
+    protected String convertToDetailSql(String powerSql) {
+        for (String field : detailField) {
+            if (qryObjShow(field)) {
+                powerSql = powerSql.replaceAll("zb." + field, "fb." + field);
+            }
+        }
+        return powerSql;
+    }
+    
 	public abstract String[] getArrangeSqls() throws SQLException, BusinessException;
 
 	public abstract String getResultSql() throws SQLException, BusinessException;
@@ -237,12 +272,85 @@ public abstract class ErmBaseSqlCreator {
 		}
 		return qryObjs;
 	}
+	
+	protected boolean qryObjShow(String targetField) {
+	    if (queryVO.getQryObjs() == null) {
+	        return false;
+	    }
+	    for (QryObj fld : queryVO.getQryObjs()) {
+	        if (fld.getOriginFld().equalsIgnoreCase(targetField)) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 
 	static class ComputeTotal {
 		String field = null;
 		boolean isDimension = false;
 	}
 
+	/**
+     * 得到查询对象构成的SQL
+     * 
+     * @return String
+     * @throws BusinessException
+     */
+    protected String getQueryObjSql(String jkzbAlias) throws BusinessException {
+        List<QryObj> qryObjList = queryVO.getQryObjs();
+        StringBuffer sqlBuffer = new StringBuffer(" ");
+        String jkzbAliasPoint = jkzbAlias + "\\.";
+        for (QryObj qryObj : qryObjList) {
+            if (qryObj.getOriginFld() != null && isDetailField(qryObj.getOriginFld())) {
+                sqlBuffer.append(" and ").append(qryObj.getSql().replaceAll(jkzbAliasPoint, "fb\\."));
+                continue;
+            }
+            sqlBuffer.append(" and ").append(qryObj.getSql());
+        }
+        return sqlBuffer.toString();
+    }
+    
+    protected boolean isDetailField(String field) {
+        for (String fld : detailField) {
+            if (fld.equalsIgnoreCase(field)) {
+                return true;
+            }
+        }
+        return false;
+//        if (field.toLowerCase().equals("pk_project") ||
+//                field.toLowerCase().equals("jobid") ||
+//                field.toLowerCase().equals("szxmid") ||
+//                field.toLowerCase().equals("pk_iobsclass") || 
+//                field.toUpperCase().equals("PK_RESACOSTCENTER")) {
+//            return true;
+//        }
+//        return false;
+    }
+
+    private boolean queryByDetail = false;
+    
+    protected boolean needQueryByDetail() {
+        if (!queryByDetail) {
+            List<QryObj> qryObjList = queryVO.getQryObjs();
+            for (QryObj qryObj : qryObjList) {
+                if (qryObj.getOriginFld() != null) {
+                    if (isDetailField(qryObj.getOriginFld())) {
+                        queryByDetail = true;
+                        break;
+                    }
+//                    if (qryObj.getOriginFld().toLowerCase().equals("pk_project") || 
+//                            qryObj.getOriginFld().toLowerCase().equals("jobid") || 
+//                            qryObj.getOriginFld().toLowerCase().equals("szxmid") ||
+//                            qryObj.getOriginFld().toLowerCase().equals("pk_iobsclass") || 
+//                            qryObj.getOriginFld().toUpperCase().equals("PK_RESACOSTCENTER")) {
+//                        queryByDetail = true;
+//                        break;
+//                    }
+                }
+            }
+        }
+        return queryByDetail;
+    }
 }
 
 // /:~

@@ -31,32 +31,29 @@ public class SqlUtils_Pub {
 			return inStr;
 		}
 		else{
-				
-				String m_str=" ( ";
-				
 				int end=tmpTableMinCount;
-				
+				StringBuilder sb_str = new StringBuilder();
+				sb_str.append(" ( ");
 				for(int i=0;i<pks.length;){
 					
 					String inStr = getInStr(fieldName, pks, i ,end );
-					
 					if(i!=0){
-						m_str+=" or ";
+					    sb_str.append(" or ");
 					}
 					
-					m_str+=inStr;
+					sb_str.append(inStr);
 					
 					i+=tmpTableMinCount;
 					end+=tmpTableMinCount;
 				}
 				
-				return m_str+=" )";
+				return sb_str.append(" )").toString();
 				
 			}
 		
 		
 	}
-
+	
 	private static String getInStr(String fieldName, String[] pks,int start , int end) {
 		StringBuffer sb=new StringBuffer();
 		

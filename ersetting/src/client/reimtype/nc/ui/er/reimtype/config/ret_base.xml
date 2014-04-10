@@ -223,16 +223,22 @@
 	</bean>
 
 	<bean id="retTemplatePreviewAction" class="nc.ui.uif2.actions.TemplatePreviewAction">
-		<property name="model" ref="retModel"/>
+		<property name="model">
+			<ref bean="retModel" />
+		</property>
+		<property name="Code" value="Preview" />
 		<property name="datasource" ref="datasource" />
 		<property name="nodeKey" value="20110RTS"/>
 	</bean>
 	<bean id="retTemplatePrintAction" class="nc.ui.uif2.actions.TemplatePrintAction">
-		<property name="model" ref="retModel"/>
+		<property name="model">
+			<ref bean="retModel" />
+		</property>
+		<property name="Code" value="Print" />
 		<property name="datasource" ref="datasource" />
 		<property name="nodeKey" value="20110RTS"/>
 	</bean>
-	<bean id="datasource" class="nc.ui.arap.bx.print.MetaDataAllDatasSource">
+	<bean id="datasource" class="nc.ui.bd.pub.actions.print.MetaDataAllDatasSource">
 		<property name="model" ref="retModel" />
 	</bean>
 

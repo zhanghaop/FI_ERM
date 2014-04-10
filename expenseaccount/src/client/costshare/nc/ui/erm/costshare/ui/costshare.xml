@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext" />
+
+	<!-- 应用服务类，负责进行模型操作的处理 -->
+	<bean id="modelService" class="nc.ui.erm.costshare.ui.CostShareModelService" />
+
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model" ref="manageAppModel" />
+		<property name="saveaction" ref="saveAction" />
+		<property name="cancelaction" ref="cancelAction" />
+	</bean>
+
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.costshare.ui.CostShareDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="pageModel" ref="paginationModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<!-- 界面元素 ###########################################################-->
+
+	<!-- 超链接监听器 -->
+	<bean id="linklistener" class="nc.ui.erm.view.ERMHyperLinkListener">
+		<property name="model" ref="manageAppModel"></property>
+	</bean>
+	<!-- 超链接bx监听器 -->
+	<bean id="linkBXlistener" class="nc.ui.erm.costshare.ui.CsLinkBxListener">
+		<property name="linkBx" ref="linkBxAction" />
+	</bean>
+
+	<!-- 列表视图 -->
+	<bean id="userdefitemListPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerListPreparator">
+		<property name="loginContext" ref="context"></property>
+		<property name="prefix" value="defitem" />
+	</bean>
+	<bean id="listView" class="nc.ui.erm.costshare.ui.CostShareView"
+		init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="multiSelectionEnable" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="nodekey" value="201105"></property>
+		<property name="north" ref="listInfoPanel" />
+		<property name="paginationBar" ref="paginationBar" />
+		<property name="userdefitemListPreparator" ref="userdefitemListPreparator" />
+		<property name="linklistener" ref="linklistener" />
+	</bean>
+	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<!--卡控件-->
+	<bean id="userdefitemCardPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerPreparator">
+		<property name="loginContext" ref="context"></property>
+		<property name="prefix" value="defitem" />
+	</bean>
+	
+	<bean id="actionsBarSeparator" class="nc.ui.pub.beans.ActionsBar$ActionsBarSeparator" />
+	<bean id="editor" class="nc.ui.erm.costshare.ui.CostShareEditor"
+		init-method="initUI">
+		<property name="saveAction" ref="saveAction" />
+		<property name="cancelAction" ref="cancelAction" />
+		<property name="rapidShareAction" ref="rapidShareAction" />
+		<property name="returnaction" ref="returnaction" />
+		<property name="model" ref="manageAppModel" />
+		<property name="showTotalLine" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="nodekey" value="2651" />
+		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
+		<property name="linklistener" ref="linkBXlistener" />
+		<property name="bodyActionMap">
+			<map>
+				<entry key="er_cshare_detail">
+					<list>
+						<ref bean="addLineAction" />
+						<ref bean="insertLineAction" />
+						<ref bean="deleteLineAction" />
+						<ref bean="copyLineAction" />
+						<ref bean="pasteLineAction" />
+						<ref bean="pasteLineToTailAction" />
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="displayaction" class="nc.ui.erm.action.util.ErmBodyZoomAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="billForm" ref="editor" />
+	</bean>
+
+
+	<!--
+		Actions ###########################################################
+	-->
+	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	<bean id="rapidShareAction" class="nc.ui.erm.costshare.actions.RapidShareCostShareAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="saveAction" class="nc.ui.erm.costshare.actions.CsSaveAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="addAction" class="nc.ui.erm.costshare.actions.CsAddAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="cancelAction" class="nc.ui.erm.costshare.actions.CsCancelAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="deleteAction" class="nc.ui.erm.costshare.actions.CsDeleteAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="Delete" />
+	</bean>
+
+	<bean id="cardDeleteAction" class="nc.ui.erm.costshare.actions.CsDeleteAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="card" value="true" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="Delete" />
+	</bean>
+
+	<bean id="editAction" class="nc.ui.erm.costshare.actions.ModifAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="Edit" />
+	</bean>
+
+	<bean id="deleteLineAction" class="nc.ui.erm.costshare.actions.DelRowAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="addLineAction" class="nc.ui.erm.costshare.actions.AddRowAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="insertLineAction" class="nc.ui.erm.costshare.actions.InsertRowAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="pasteLineAction" class="nc.ui.erm.action.CommonPasteLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="nullPkNames">
+			<list>
+				<value>pk_cshare_detail</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="pasteLineToTailAction" class="nc.ui.erm.action.CommonPasteLineToTailAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="nullPkNames">
+			<list>
+				<value>pk_cshare_detail</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="copyLineAction" class="nc.ui.uif2.actions.CopyLineAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="cardpanel" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="queryAction" class="nc.ui.erm.costshare.actions.CsQueryAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="listView" ref="listView" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="tempSaveAction" class="nc.ui.erm.costshare.actions.TempSaveAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="saveAddAction" class="nc.ui.erm.costshare.actions.CsSaveAddAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="saveAction" ref="saveAction" />
+		<property name="addAction" ref="addAction" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="documentAction" class="nc.ui.erm.action.DocumentAction">
+		<property name="editor" ref="editor" />
+		<property name="listView" ref="listView" />
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="refreshAction" class="nc.ui.uif2.actions.RefreshAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="refreshSingleAction" class="nc.ui.uif2.actions.RefreshSingleAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+
+	<bean id="linkVoucherAction" class="nc.ui.erm.costshare.actions.LinkVoucherAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="linkBxAction" class="nc.ui.erm.costshare.actions.LinkBxAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="linkBillAction" class="nc.ui.pubapp.uif2app.actions.LinkQueryAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="billType" value="265X" />
+	</bean>
+	<bean id="linkBudgetAction" class="nc.ui.erm.costshare.actions.LinkBudgetAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="modelService" ref="modelService" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="codeBarAction" class="nc.ui.erm.costshare.actions.CodeBarAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManagerEx" ref="modelDataManager" />
+	</bean>
+
+	<bean id="cardCodeBarAction" class="nc.ui.erm.costshare.actions.CodeBarAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="card" value="true" />
+		<property name="dataManagerEx" ref="modelDataManager" />
+	</bean>
+	
+	<bean id="printListAction" class="nc.ui.erm.costshare.actions.PrintListAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="metidataSource" ref="metidataSource" />
+	</bean>
+
+	<bean id="printCardAction" class="nc.ui.erm.costshare.actions.CsPrintAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="printAction" class="nc.ui.erm.costshare.actions.CsPrintAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="printNormalAction" class="nc.ui.erm.costshare.actions.PrintNormalAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="printUnNormalAction" class="nc.ui.erm.costshare.actions.PrintUnNormalAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="printBrowseCardAction" class="nc.ui.erm.costshare.actions.PrintBrowseCardAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="outPrintAction" class="nc.ui.erm.costshare.actions.CSERMOutputAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="nodeKey" value="2651" />
+		<property name="printDlgParentConatiner" ref="editor" />
+		<property name="datasource" ref="dataSource" />
+	</bean>
+
+	<!--辅助操作  按钮组  待多语 -->
+	<bean id="helpGroupAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201107_0"></property>
+				<property name="resId" value="0201107-0125"></property>
+				<property name="defaultValue" value="辅助"></property>
+			</bean>
+		</property>
+		<property name="code" value="helpGroup" />
+		<property name="actions">
+			<list>
+				<!-- ref bean="documentAction" /-->
+				<ref bean="codeBarAction" />
+			</list>
+		</property>
+	</bean>
+	<!--辅助操作  按钮组  待多语 -->
+	<bean id="cardhelpGroupAction" class="nc.funcnode.ui.action.MenuAction">
+			<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201107_0"></property>
+				<property name="resId" value="0201107-0125"></property>
+				<property name="defaultValue" value="辅助"></property>
+			</bean>
+		</property>
+		<property name="code" value="cardhelpGroup" />
+		<property name="actions">
+			<list>
+				<!-- ref bean="cardCodeBarAction" /-->
+				<ref bean="cardCodeBarAction" />
+			</list>
+		</property>
+	</bean>
+	<!-- 列表打印操作 按钮组  待多语 -->
+	<bean id="printGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code" value="printGroup" />
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0071"></property>
+				<property name="defaultValue" value="打印"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="printCardAction" />
+				<ref bean="printBrowseCardAction" />
+				<ref bean="outPrintAction"/>
+				<ref bean="nullAction" />
+				<ref bean="printNormalAction" />
+				<ref bean="printUnNormalAction" />
+				<ref bean="nullAction" />
+				<ref bean="printListAction" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="dataSource"
+		class="nc.ui.erm.costshare.common.CSDataSingleDataSource">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 多行数据源 -->
+	<bean id="metidataSource" class="nc.ui.erm.costshare.common.CsDataAllDatasSource">
+		<property name="model" ref="manageAppModel" />
+		<property name="csShareView" ref="listView" />
+	</bean>
+
+	<!-- 打印操作 按钮组  待多语 -->
+	<bean id="confirmGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code" value="confirmGroup" />
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="2011000_0"></property>
+				<property name="resId" value="02011000-0001"></property>
+				<property name="defaultValue" value="确认"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="confirmAction" />
+				<ref bean="unConfirmAction" />
+			</list>
+		</property>
+	</bean>
+	<!-- 打印操作 按钮组  待多语 -->
+	<bean id="cardConfirmGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="code" value="cardConfirmGroup" />
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="2011000_0"></property>
+				<property name="resId" value="02011000-0001"></property>
+				<property name="defaultValue" value="确认"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="cardConfirmAction" />
+				<ref bean="cardUnConfirmAction" />
+			</list>
+		</property>
+	</bean>
+	<!-- 打印操作 按钮组  待多语 -->
+	<bean id="printCardGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0071"></property>
+				<property name="defaultValue" value="打印"></property>
+			</bean>
+		</property>
+		<property name="code" value="printCardGroup" />
+		<property name="actions">
+			<list>
+				<ref bean="printAction" />
+				<ref bean="printBrowseCardAction" />
+				<ref bean="outPrintAction"/>
+				<ref bean="nullAction" />
+				<ref bean="printNormalAction" />
+				<ref bean="printUnNormalAction" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 联查 按钮组  待多语 -->
+	<bean id="linkGroupAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0070"></property>
+				<property name="defaultValue" value="联查"></property>
+			</bean>
+		</property>
+		<property name="code" value="linkview" />
+		<property name="actions">
+			<list>
+				<ref bean="linkBudgetAction" />
+				<ref bean="linkBxAction" />
+				<ref bean="linkVoucherAction" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="confirmAction" class="nc.ui.erm.costshare.actions.ConfirmAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="modelService" ref="modelService" />
+		<property name="model" ref="manageAppModel" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="Approve" />
+	</bean>
+
+	<bean id="unConfirmAction" class="nc.ui.erm.costshare.actions.UnConfirmAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="modelService" ref="modelService" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="UnApprove" />
+	</bean>
+
+	<bean id="cardConfirmAction" class="nc.ui.erm.costshare.actions.ConfirmAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="modelService" ref="modelService" />
+		<property name="model" ref="manageAppModel" />
+		<property name="card" value="true" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="Approve" />
+	</bean>
+
+	<bean id="cardUnConfirmAction" class="nc.ui.erm.costshare.actions.UnConfirmAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="modelService" ref="modelService" />
+		<property name="card" value="true" />
+		<property name="resourceCode" value="costshare" />
+		<property name="operateCode" value="UnApprove" />
+	</bean>
+
+	<bean id="voucherAction" class="nc.ui.erm.costshare.actions.VoucherAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
+
+	<!--界面的action控制 -->
+	<bean id="toftpanelActionContributors" class="nc.ui.uif2.actions.ActionContributors">
+		<property name="contributors">
+			<list>
+				<ref bean="listViewActions" />
+				<ref bean="editorActions" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="editAction" />
+				<ref bean="deleteAction" />
+				<ref bean="nullAction" />
+
+				<ref bean="queryAction" />
+				<ref bean="refreshAction" />
+				<ref bean="nullAction" />
+
+				<ref bean="confirmGroupAction" />
+				<ref bean="documentAction" />
+				<ref bean="helpGroupAction" />
+				<ref bean="nullAction" />
+
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="voucherAction" />
+				<ref bean="nullAction" />
+				<ref bean="printGroupAction" />
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="editor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="editAction" />
+				<ref bean="cardDeleteAction" />
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="refreshSingleAction" />
+				<ref bean="nullAction" />
+				<ref bean="cardConfirmGroupAction" />
+				<ref bean="documentAction" />
+				<ref bean="cardhelpGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="voucherAction" />
+				<ref bean="nullAction" />
+				<ref bean="printCardGroupAction" />
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveAction" />
+				<ref bean="tempSaveAction" />
+				<ref bean="saveAddAction" />
+				<ref bean="cancelAction" />
+				<ref bean="separatorAction" />
+				<ref bean="rapidShareAction" />
+				<ref bean="nullAction" />
+				<ref bean="documentAction" />
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 管理应用模型 -->
+	<bean id="manageAppModel" class="nc.ui.erm.costshare.ui.CsBillManageModel">
+		<property name="service" ref="modelService" />
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 模板容器，负责对模板的统一装载-->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer"
+		init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>201105</value>
+				<value>2651</value>
+				<value>2652</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="cardInfoPnl" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="actions">
+			<list>
+				<bean id="accessoryShowAction" class="nc.ui.erm.costshare.actions.AccessoryAction">
+					<property name="model" ref="manageAppModel" />
+				</bean>
+				<!-- 浏览按钮 卡片界面共享信息按钮 -->
+				<bean id="firstLineAction" class="nc.ui.uif2.actions.FirstLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<bean id="preLineAction" class="nc.ui.uif2.actions.PreLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<bean id="nextLineAction" class="nc.ui.uif2.actions.NextLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<bean id="lastLineAction" class="nc.ui.uif2.actions.LastLineAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="exceptionHandler" ref="exceptionHandler" />
+				</bean>
+				<ref bean="actionsBarSeparator"/>
+				<bean class="nc.ui.erm.action.util.ErmHeadZoomAction">
+					<property name="model" ref="manageAppModel" />
+					<property name="billForm" ref="editor" />
+				</bean>
+			</list>
+		</property>
+		<property name="titleAction" ref ="returnaction" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="returnaction" class="nc.ui.uif2.actions.ShowMeUpAction">
+		<property name="goComponent" ref="listView" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 查询面板 -->
+	<bean id="queryAreaShell" class="nc.ui.uif2.actions.QueryAreaShell"
+		init-method="initUI">
+		<property name="queryArea">
+			<bean factory-bean="queryAction" factory-method="createQueryArea" />
+		</property>
+	</bean>
+	<!-- ############## 界面总布局  ########################## -->
+
+	<!--  ############## UI Layout ################## 
+
+	-->
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.TBNode">
+				<property name="tabs">
+					<list>
+						<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+							<property name="name" value="列表" />
+							<property name="left">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="queryAreaShell" />
+								</bean>
+							</property>
+							<property name="right">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="listView" />
+								</bean>
+							</property>
+							<property name="dividerLocation">
+								<value>0.2f</value>
+							</property>
+						</bean>
+						<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+							<property name="showMode" value="NoDivider" />
+							<property name="name" value="卡片" />
+							<property name="up">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="cardInfoPnl" />
+								</bean>
+							</property>
+							<property name="down">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+									<property name="component" ref="editor" />
+								</bean>
+							</property>
+							<property name="dividerLocation" value="30f" />
+						</bean>
+					</list>
+				</property>
+				<property name="showMode" value="CardLayout" />
+			</bean>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 分页 -->
+
+	<bean id="paginationModel" class="nc.ui.uif2.components.pagination.PaginationModel"
+		init-method="init">
+		<property name="paginationQueryService" ref="modelService"></property>
+	</bean>
+	<!--连查	-->
+	<bean id="InitDataListener" class="nc.ui.erm.costshare.ui.CostShareLinkListener">
+		<property name="datamanager" ref="modelDataManager" />
+		<property name="queryAction" ref="queryAction"/>
+		<property name="listViewActions" ref="listViewActions" />
+       	<property name="editorActions" ref="editorActions" />
+	</bean>
+
+	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar"
+		init-method="registeCallbak">
+		<property name="paginationModel" ref="paginationModel" />
+		<property name="context" ref="context" />
+	</bean>
+</beans>

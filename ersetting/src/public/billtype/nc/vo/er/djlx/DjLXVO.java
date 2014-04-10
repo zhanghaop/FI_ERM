@@ -69,9 +69,9 @@ public class DjLXVO extends SuperVO {
 
 	private UFBoolean iscorresp;
 
-	private UFBoolean iscontrast = new UFBoolean(true);
+	private UFBoolean iscontrast = UFBoolean.TRUE;
 	
-	private UFBoolean isloadtemplate = new UFBoolean(true);
+	private UFBoolean isloadtemplate = UFBoolean.TRUE;
 	
 	private Integer sysid;
 
@@ -177,6 +177,7 @@ public class DjLXVO extends SuperVO {
 		try {
 			o = super.clone();
 		} catch (Exception e) {
+		    throw new RuntimeException(e.getMessage());
 		}
 		DjLXVO djlx = (DjLXVO) o;
 
@@ -700,32 +701,32 @@ public class DjLXVO extends SuperVO {
 												// fields that cannot be null.
 		// 检查是否为不允许空的字段赋了空值，你可能需要修改下面的提示信息：
 		if (djlxoid == null) {
-			errFields.add(new String("m_djlxoid"));
+			errFields.add("m_djlxoid");
 		}
 		if (dwbm == null) {
-			errFields.add(new String("m_dwbm"));
+			errFields.add("m_dwbm");
 		}
 		if (sfbz == null) {
-			errFields.add(new String("m_sfbz"));
+			errFields.add("m_sfbz");
 		}
 		if (djdl == null) {
-			errFields.add(new String("m_djdl"));
+			errFields.add("m_djdl");
 		}
 		if (djlxmc == null) {
-			errFields.add(new String("m_djlxmc"));
+			errFields.add("m_djlxmc");
 		}
 
 		if (fcbz == null) {
-			errFields.add(new String("m_fcbz"));
+			errFields.add("m_fcbz");
 		}
 		if (mjbz == null) {
-			errFields.add(new String("m_mjbz"));
+			errFields.add("m_mjbz");
 		}
 		// if (m_djmboid == null) {
-		// errFields.add(new String("m_djmboid"));
+		// errFields.add("m_djmboid"));
 		// }
 		if (djlxbm == null) {
-			errFields.add(new String("m_djlxbm"));
+			errFields.add("m_djlxbm");
 		}
 		// construct the exception message:
 		StringBuffer message = new StringBuffer();
@@ -841,6 +842,10 @@ public class DjLXVO extends SuperVO {
 		// 
 		return "er_djlx";
 	}
+	
+	public static String getDefaultTableName() {
+		return "er_djlx";
+	}
 
 	public UFBoolean getIsqr() {
 		return isqr;
@@ -951,9 +956,4 @@ public class DjLXVO extends SuperVO {
 		this.isloadtemplate = isloadtemplate;
 	}
 
- 
-
- 
-
- 
 }

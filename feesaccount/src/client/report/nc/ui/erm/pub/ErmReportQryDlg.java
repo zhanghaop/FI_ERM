@@ -7,16 +7,18 @@ import java.awt.event.ItemListener;
 import java.util.List;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
+import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.logging.Log;
 import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.itf.fipub.report.IReportQueryCond;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.ui.arap.bx.remote.PsnVoCall;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.model.AccPeriodDefaultRefModel;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.fipub.comp.ReportUiUtil;
 import nc.ui.pub.beans.UIComboBox;
 import nc.ui.pub.beans.UILabel;
@@ -26,12 +28,11 @@ import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.utils.fipub.FipubReportResource;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.bd.ref.IFilterStrategy;
-import nc.vo.fipub.utils.RefConstant;
 import nc.vo.fipub.report.ReportQueryCondVO;
+import nc.vo.fipub.utils.RefConstant;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.querytemplate.TemplateInfo;
-import nc.vo.tmpub.util.StringUtil;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -47,17 +48,27 @@ import com.ufida.dataset.IContext;
  * @version V6.1
  * @since V6.1 创建时间：2010-12-16 下午01:45:55
  */
+@SuppressWarnings("restriction")
 public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 
 	private static final long serialVersionUID = 8970799451247766950L;
+	
+	//费用余额
+	public static final int ERM_EXPBAL= 6;
+	//费用明细
+	public static final int ERM_EXPDETAIL = 7;
+	//费用申请单明细
+	public static final int ERM_MATTERAPP= 8;
 
 	public ErmReportQryDlg(Container parent, IContext context,
-			String strNodeCode, int iSysCode, TemplateInfo ti, String title) {
-		super(parent, context, strNodeCode, iSysCode, ti, title);
+            String strNodeCode, int iSysCode, TemplateInfo ti, String title,
+            String djlx) {
+        super(parent, context, strNodeCode, iSysCode, ti, title, djlx);
 	}
 	
 	private class ComboBoxItemListener implements ItemListener {
-		public void itemStateChanged(ItemEvent e) {
+		@Override
+        public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				try {
 					setQueryPeriod((String) ((DefaultConstEnum) e.getItem()).getValue(), null);
@@ -76,8 +87,12 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 		setQueryPeriod(queryCondVO.getQryMode(), queryCondVO);
 	}
 	
-	
 	@Override
+    public void initUIData() throws BusinessException {
+	    beforeShowModal();
+    }
+
+    @Override
 	protected String doBusiCheck() {
 		// ①执行父类校验
 		String errMsg = super.doBusiCheck();
@@ -88,9 +103,10 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 		try{
 			Object startVal = ((UIRefPane) getComponent(BEGIN_TIME_REF)).getValueObj();
 			Object endVal = ((UIRefPane) getComponent(END_TIME_REF)).getValueObj();
-			if (StringUtil.isNull(endVal) || StringUtil.isNull(startVal)) {
+			
+			if (endVal == null || startVal == null) {
 				errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0117")/*@res "查询日期不能为空！"*/;
-			}else if(StringUtil.isNotNull(startVal) && StringUtil.isNotNull(endVal)){
+			}else if(endVal != null && startVal != null){
 				UFDate startDate = getRefDateByObj(startVal, true);
 				UFDate endDate = getRefDateByObj(endVal, false);
 				if(startDate.compareTo(endDate) > 0){
@@ -111,6 +127,9 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 		((UIComboBox) getComponent(BILL_STATE_COMB)).setSelectedItem(queryCondVO.getBillState()); // 单据状态
 		((UIRefPane) getComponent(CURRENCY_REF)).setPK(queryCondVO.getPk_currency()); // 币种
 		((UIRefPane) getComponent(FINANCIAL_ORG_REF)).setPKs(queryCondVO.getPk_orgs()); // 财务组织
+		
+		queryCondVO.setBeginDate(null);
+		queryCondVO.setEndDate(null);
 		
 		try {
 			setQueryPeriod(queryCondVO.getQryMode(), queryCondVO);
@@ -145,6 +164,7 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			currencyRef.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
 			normalCondCompList.add(currencyRef);
 			addComponent(CURRENCY_REF, currencyRef);
+			currencyRef.setDisabledDataButtonShow(true);
 			// 开始时间
 			UILabel timeTypeLabel = getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0026")/*@res "月　　份"*/);
 			normalCondCompList.add(timeTypeLabel);
@@ -165,11 +185,13 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			financialOrgRef.addValueChangedListener(new OrgChangedListener());
 			normalCondCompList.add(financialOrgRef);
 			addComponent(FINANCIAL_ORG_REF, financialOrgRef);
-			final String key = PsnVoCall.FIORG_PK_ + BXUiUtil.getPk_user() + BXUiUtil.getPK_group();
+			final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
 			String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
 			String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
 			financialOrgRef.setPK(pk_org);
-
+            financialOrgRef.getRefModel().setFilterPks(getAllPermissionOrgs());
+            financialOrgRef.setDisabledDataButtonShow(true);
+            
 			// added by chendya 特殊处理->去掉数据权限控制
 			if (!ArrayUtils.isEmpty(getAllPermissionOrgs())) {
 				AbstractRefModel refModel = financialOrgRef.getRefModel();
@@ -183,11 +205,23 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			// 单据状态
 			normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UC000-0000804")/*@res "单据状态"*/));
 			UIComboBox billStateComb = new UIComboBox();
-			billStateComb.addItems(new DefaultConstEnum[] {
-					new DefaultConstEnum(IPubReportConstants.BILL_STATUS_ALL, FipubReportResource.getBillStatusAllLbl()),
-					new DefaultConstEnum(IPubReportConstants.BILL_STATUS_SAVE, FipubReportResource.getBillStatusSaveLbl()),
-					new DefaultConstEnum(IPubReportConstants.BILL_STATUS_CONFIRM, FipubReportResource.getBillStatusAuditLbl()),
-					new DefaultConstEnum(IPubReportConstants.BILL_STATUS_EFFECT, FipubReportResource.getBillStatusEffectLbl())});
+			if(getSysCode()==ERM_MATTERAPP){
+				billStateComb.addItems(new DefaultConstEnum[] {
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_ALL, FipubReportResource
+								.getBillStatusAllLbl()),
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_SAVE, FipubReportResource
+								.getBillStatusSaveLbl()),
+						new DefaultConstEnum(IErmReportConstants.BILL_STATUS_COMMIT,
+								ErmMatterAppConst.BILLSTATUS_COMMITED_NAME),
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_CONFIRM, FipubReportResource
+								.getBillStatusAuditLbl()) });
+			}else {
+				billStateComb.addItems(new DefaultConstEnum[] {
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_ALL, FipubReportResource.getBillStatusAllLbl()),
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_SAVE, FipubReportResource.getBillStatusSaveLbl()),
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_CONFIRM, FipubReportResource.getBillStatusAuditLbl()),
+						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_EFFECT, FipubReportResource.getBillStatusEffectLbl())});
+			}
 			normalCondCompList.add(billStateComb);
 			addComponent(BILL_STATE_COMB, billStateComb);
 		}
@@ -214,25 +248,35 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			tempEndRefPane.setRefNodeName(RefConstant.REF_NODENAME_ACCPERIOD);
 
 			String[] pk_orgs = getPk_org();
+			AccountCalendar calendar = ArrayUtils.isEmpty(pk_orgs) ? AccountCalendar
+			.getInstance() : AccountCalendar.getInstanceByPk_org(pk_orgs[0]);
 			if (!ArrayUtils.isEmpty(pk_orgs)) {
-				String defaultpk_accperiodscheme = ReportUiUtil.getAccPeriodSchemeByFinanceorg(pk_orgs[0]);
+				String defaultpk_accperiodscheme = calendar.getMonthVO()==null ? null :calendar.getMonthVO().getPk_accperiodscheme();
 				((AccPeriodDefaultRefModel) tempBeginRefPane.getRefModel())
 						.setDefaultpk_accperiodscheme(defaultpk_accperiodscheme);
 				((AccPeriodDefaultRefModel) tempEndRefPane.getRefModel())
 						.setDefaultpk_accperiodscheme(defaultpk_accperiodscheme);
 			}
-
-			AccountCalendar calendar = ArrayUtils.isEmpty(pk_orgs) ? AccountCalendar
-					.getInstance() : AccountCalendar.getInstanceByPk_org(pk_orgs[0]);
 			
-			calendar.setDate((queryCondVO == null || queryCondVO.getBeginDate() == null) ? currBusiDate : queryCondVO.getBeginDate());
-			String pk_accperiodmonthbegin = calendar.getMonthVO().getPk_accperiodmonth();
-			calendar.setDate((queryCondVO == null || queryCondVO.getEndDate() == null)? currBusiDate : queryCondVO.getEndDate());
-			String pk_accperiodmonthend = calendar.getMonthVO().getPk_accperiodmonth();
+			String pk_accperiodmonthbegin = null;
+			String pk_accperiodmonthend = null;
+            try {
+                calendar.setDate((queryCondVO == null || queryCondVO
+                        .getBeginDate() == null) ? currBusiDate : queryCondVO
+                        .getBeginDate());
+                pk_accperiodmonthbegin = calendar.getMonthVO()
+                        .getPk_accperiodmonth();
+                calendar.setDate((queryCondVO == null || queryCondVO
+                        .getEndDate() == null) ? currBusiDate : queryCondVO
+                        .getEndDate());
+                pk_accperiodmonthend = calendar.getMonthVO()
+                        .getPk_accperiodmonth();
+            } catch (Exception e) {
+                Logger.error(e.getMessage(), e);
+            }
 
 			tempBeginRefPane.setPK(pk_accperiodmonthbegin);
 			tempEndRefPane.setPK(pk_accperiodmonthend);
-			
 		} else {
 			tempLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0031")/*@res "日　　 期"*/);
 
@@ -244,7 +288,6 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 		}
 
 		tempLabel.repaint();
-		
 	}
 	
 	@Override
@@ -255,7 +298,8 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 	/**
 	 * 功能：设置常用查询条件VO
 	 */
-	protected void setQueryCond(ReportQueryCondVO qryCondVO) throws BusinessException {
+	@Override
+    protected void setQueryCond(ReportQueryCondVO qryCondVO) throws BusinessException {
 		// 查询方式
 		UIComboBox tempComboBox = (UIComboBox) getComponent(QRY_MODE_COMB);
 		if (tempComboBox != null) {

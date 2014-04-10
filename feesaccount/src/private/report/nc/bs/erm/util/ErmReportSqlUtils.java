@@ -1,7 +1,11 @@
 package nc.bs.erm.util;
 
 import java.sql.SQLException;
+
+import nc.bs.er.util.SqlUtil;
 import nc.bs.er.util.SqlUtils;
+import nc.bs.logging.Logger;
+import nc.vo.pub.BusinessException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -46,6 +50,16 @@ public class ErmReportSqlUtils {
 			return " and " + getAlias("er_jkzb") + ".pk_group = '" + pk_group + "'";
 		}
 	}
+	
+	/**
+	 * 适配不同数据库写的casewhen
+	 * @param sql
+	 * @return
+	 */
+	public static String caseWhenSql(String field){
+		return "case when " +field+" is null then 1 else 0 end, " +field;
+	}
+	
 //	public static String getGroupSql(String pk_group, ReportTableEnum table) {
 //		if (StringUtils.isEmpty(pk_group)) {
 //			// 不支持跨集团查询
@@ -80,11 +94,27 @@ public class ErmReportSqlUtils {
 		if (StringUtils.isEmpty(pk_currency)) {
 			return " ";
 		}
+		String field;
 		if(!isBalance){
-			return " and " + getAlias("er_bxzb") + ".bzbm = '" + pk_currency + "' ";
-		} else {
-			return " and " + getAlias("er_jkzb") + ".bzbm = '" + pk_currency + "' ";
-		}
+		    field = getAlias("er_bxzb") + ".bzbm";
+        } else {
+            field = getAlias("er_jkzb") + ".bzbm";
+        }
+		String[] pkCurrTypes = pk_currency.split(",");
+        String sqlCurrType;
+        try {
+            sqlCurrType = SqlUtil.buildInSql(field, pkCurrTypes);
+        } catch (BusinessException e) {
+            Logger.error(e.getMessage(), e);
+            sqlCurrType = "1 = 1";
+        }
+        return " and " + sqlCurrType + " ";
+//        sqlBuffer.append(" and ").append(sqlCurrType).append(" ");
+//		if(!isBalance){
+//			return " and " + getAlias("er_bxzb") + ".bzbm = '" + pk_currency + "' ";
+//		} else {
+//			return " and " + getAlias("er_jkzb") + ".bzbm = '" + pk_currency + "' ";
+//		}
 	}
 	/**
 	 * 报销管理通用方法：取表别名<br>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2012-09-25 09:20:17" creator="" description="" displayName="expamortize_operator" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="b8e23343-61e3-4257-b560-772f589daac9" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="expamortize_operator" namespace="erm" ownModule="erm" preLoad="false" programcode="" resModuleName="mdcommon" resid="2201112-000270" version="38" versionType="0">
+    <celllist>
+        <opinterface componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:20:22" creator="" description="" displayName="报销单待摊信息设置" fullClassName="nc.itf.erm.IBxExpAmortizeSetting" height="119" help="" id="a6d2994c-f268-41ab-81df-5b598089828d" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="IBxExpAmortizeSetting" remote="true" resid="2201112-000280" singleton="true" transprop="CMT" version="" versionType="0" visibility="public" width="142" x="493" y="41">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="待摊设置" forBusinessEntity="N" help="" id="f2bbd106-63ef-4054-9bff-f3df10d9acd6" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="expAmortizeSet" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="a6d2994c-f268-41ab-81df-5b598089828d" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="取消待摊设置" forBusinessEntity="N" help="" id="2b026e31-ed5e-44fb-a0aa-29be37f615f2" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="expAmortizeUnSet" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="a6d2994c-f268-41ab-81df-5b598089828d" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="待摊设置生效" forBusinessEntity="N" help="" id="80e5988c-0ac5-482e-aab7-ab7eb6b2970c" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="expAmortizeApprove" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="a6d2994c-f268-41ab-81df-5b598089828d" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="待摊设置取消生效" forBusinessEntity="N" help="" id="e4916564-2247-4179-b530-22e56d6b3343" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="expAmortizeUnApprove" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="a6d2994c-f268-41ab-81df-5b598089828d" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:20:33" creator="" dataType="565ae2dd-fa85-4733-8434-48c8e5023dbe" dbtype="" description="" displayName="待摊摊销" fullClassName="nc.itf.erm.IExpAmortize" height="100" help="" id="5df3d404-f690-4c8c-9640-7285d5173098" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="IExpAmortize" remote="true" resid="2201112-000283" singleton="false" transprop="CMT" typeDisplayName="费用摊销过程记录" typeName="expamtproc" version="" versionType="0" visibility="public" width="116" x="500" y="691">
+            <operationlist>
+                <operation dataTypeStyle="ARRAY" defclassname="" displayName="摊销" forBusinessEntity="N" help="" id="822fb982-a2c6-4d66-a67d-4ff5463ded57" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="amortize" opItfID="5df3d404-f690-4c8c-9640-7285d5173098" ownerElementID="5df3d404-f690-4c8c-9640-7285d5173098" transKind="REQUIRED" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="565ae2dd-fa85-4733-8434-48c8e5023dbe" dataTypeStyle="ARRAY" dbtype="" description="" displayName="摊销过程记录" isAggVO="false" name="vos" operationID="822fb982-a2c6-4d66-a67d-4ff5463ded57" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="费用摊销过程记录" typeName="expamtproc" versionType="0"/>
+                    </paramlist>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:20:44" creator="" description="" displayName="摊销信息查询" fullClassName="nc.itf.erm.IExpAmortizeinfoQuery" height="100" help="" id="7ff41bbf-f288-441c-ae46-6cc999759abc" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="IExpAmortizeinfoQuery" remote="true" resid="2201112-000282" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="126" x="483" y="521">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="根据报销pk查询" forBusinessEntity="N" help="" id="889ccb18-178c-4911-be42-5fdd65a84eb3" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="queryByBxPK" opItfID="7ff41bbf-f288-441c-ae46-6cc999759abc" ownerElementID="7ff41bbf-f288-441c-ae46-6cc999759abc" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="按组织、期间查询" forBusinessEntity="N" help="" id="76d8d2bf-780e-48ce-9964-5ce5d9e27887" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="queryByOrg" opItfID="7ff41bbf-f288-441c-ae46-6cc999759abc" ownerElementID="7ff41bbf-f288-441c-ae46-6cc999759abc" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:24:15" creator="" description="" displayName="待摊设置" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_insert" height="100" help="" id="0d9be5f6-8041-4664-9631-6bfc51c8f764" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortize_set" needlog="false" resid="" version="" versionType="0" visibility="public" width="111" x="263" y="6">
+            <refoperationlist>
+                <refoperation id="f2bbd106-63ef-4054-9bff-f3df10d9acd6" industry="0" isAuthorization="true" isSource="false" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="0d9be5f6-8041-4664-9631-6bfc51c8f764" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:25:05" creator="" description="" displayName="待摊设置生效" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_update" height="100" help="" id="02ba5492-d9fe-452a-b983-a9e5517eaf1b" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortize_approve" needlog="false" resid="" version="" versionType="0" visibility="public" width="106" x="277" y="241">
+            <refoperationlist>
+                <refoperation id="80e5988c-0ac5-482e-aab7-ab7eb6b2970c" industry="0" isAuthorization="true" isSource="false" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="02ba5492-d9fe-452a-b983-a9e5517eaf1b" versiontype="0"/>
+                <refoperation id="eac6d9ce-fc00-4ce2-ab37-133531f0552c" industry="0" isAuthorization="true" isSource="false" opItfID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" ownerElementID="02ba5492-d9fe-452a-b983-a9e5517eaf1b" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:25:17" creator="" description="" displayName="取消待摊设置" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_delete" height="100" help="" id="18e29ac4-7153-4454-8b1c-aa3a8567b974" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortize_unset" needlog="false" resid="" version="" versionType="0" visibility="public" width="101" x="265" y="123">
+            <refoperationlist>
+                <refoperation id="2b026e31-ed5e-44fb-a0aa-29be37f615f2" industry="0" isAuthorization="true" isSource="false" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="18e29ac4-7153-4454-8b1c-aa3a8567b974" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:25:29" creator="" description="" displayName="查询" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_query" height="100" help="" id="ee90d9de-8406-4515-9077-23211b197eeb" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortizeinfo_query" needlog="false" resid="" version="" versionType="0" visibility="public" width="122" x="229" y="495">
+            <refoperationlist>
+                <refoperation id="889ccb18-178c-4911-be42-5fdd65a84eb3" industry="0" isAuthorization="true" isSource="false" opItfID="7ff41bbf-f288-441c-ae46-6cc999759abc" ownerElementID="ee90d9de-8406-4515-9077-23211b197eeb" versiontype="0"/>
+                <refoperation id="76d8d2bf-780e-48ce-9964-5ce5d9e27887" industry="0" isAuthorization="true" isSource="false" opItfID="7ff41bbf-f288-441c-ae46-6cc999759abc" ownerElementID="ee90d9de-8406-4515-9077-23211b197eeb" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:25:48" creator="" dataType="565ae2dd-fa85-4733-8434-48c8e5023dbe" dbtype="" description="" displayName="摊销" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_amortize" height="100" help="" id="8be8aaa0-53c2-4313-ad09-cf32e07a034a" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="ADD" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortizeinfo_amortize" needlog="true" resid="" typeDisplayName="费用摊销过程记录" typeName="expamtproc" version="" versionType="0" visibility="public" width="96" x="216" y="704">
+            <refoperationlist>
+                <refoperation id="822fb982-a2c6-4d66-a67d-4ff5463ded57" industry="0" isAuthorization="true" isSource="false" opItfID="5df3d404-f690-4c8c-9640-7285d5173098" ownerElementID="8be8aaa0-53c2-4313-ad09-cf32e07a034a" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busiActivity componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:26:07" creator="" description="" displayName="报销单待摊设置活动" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_mg_act" height="141" help="" id="79217a6e-07dc-46bc-92e0-32eeb11c6593" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortizeinfo_mg_act" resid="" version="" versionType="0" visibility="public" width="115" x="67" y="166">
+            <refBusiOperationlist>
+                <refbusioperation id="4132e869-180e-4646-8581-8314352dc879" industry="0" isAuthorization="true" isSource="false" ownerElementID="79217a6e-07dc-46bc-92e0-32eeb11c6593" realBusiOpid="0d9be5f6-8041-4664-9631-6bfc51c8f764" versiontype="0"/>
+                <refbusioperation id="43e6e06d-4eab-4d3c-b4cb-421eeeda1dcc" industry="0" isAuthorization="true" isSource="false" ownerElementID="79217a6e-07dc-46bc-92e0-32eeb11c6593" realBusiOpid="02ba5492-d9fe-452a-b983-a9e5517eaf1b" versiontype="0"/>
+                <refbusioperation id="f625ebaa-a186-4c21-b1ba-da9024e13d82" industry="0" isAuthorization="true" isSource="false" ownerElementID="79217a6e-07dc-46bc-92e0-32eeb11c6593" realBusiOpid="18e29ac4-7153-4454-8b1c-aa3a8567b974" versiontype="0"/>
+                <refbusioperation id="bdc1c2b0-943b-41c4-98af-9cb1230b990a" industry="0" isAuthorization="true" isSource="false" ownerElementID="79217a6e-07dc-46bc-92e0-32eeb11c6593" realBusiOpid="ee90d9de-8406-4515-9077-23211b197eeb" versiontype="0"/>
+                <refbusioperation id="fecf2846-d7bb-4d57-8f10-82094816a006" industry="0" isAuthorization="true" isSource="false" ownerElementID="79217a6e-07dc-46bc-92e0-32eeb11c6593" realBusiOpid="468e9655-4bc7-4de2-8f2f-51a7d752bba2" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+        <busiActivity componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:26:40" creator="" description="" displayName="待摊摊销活动" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_amortize_act" height="100" help="" id="687ca76f-3250-424c-9fdc-15bdaf52f08c" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortizeinfo_amortize_act" resid="" version="" versionType="0" visibility="public" width="103" x="58" y="548">
+            <refBusiOperationlist>
+                <refbusioperation id="bbc83577-7d31-47cc-ad7e-2a82ec5d12f0" industry="0" isAuthorization="true" isSource="false" ownerElementID="687ca76f-3250-424c-9fdc-15bdaf52f08c" realBusiOpid="ee90d9de-8406-4515-9077-23211b197eeb" versiontype="0"/>
+                <refbusioperation id="01ea7915-22fa-4eeb-b1af-e4ba72bb50b3" industry="0" isAuthorization="true" isSource="false" ownerElementID="687ca76f-3250-424c-9fdc-15bdaf52f08c" realBusiOpid="8be8aaa0-53c2-4313-ad09-cf32e07a034a" versiontype="0"/>
+                <refbusioperation id="b85e12b0-1931-499e-b120-77b88d357132" industry="0" isAuthorization="true" isSource="false" ownerElementID="687ca76f-3250-424c-9fdc-15bdaf52f08c" realBusiOpid="cc21c049-4011-4793-8e80-0d35797faa59" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+        <opinterface componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 09:59:51" creator="" description="" displayName="摊销信息维护" fullClassName="nc.itf.erm.IExpAmortizeManage" height="124" help="" id="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="IExpAmortizeManage" remote="true" resid="2201112-000281" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="143" x="512" y="262">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="摊销信息新增" forBusinessEntity="N" help="" id="eac6d9ce-fc00-4ce2-ab37-133531f0552c" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insert" opItfID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" ownerElementID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="摊销信息删除" forBusinessEntity="N" help="" id="28201b61-a8dd-46b2-82fe-95f3555a10ff" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="delete" opItfID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" ownerElementID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="摊销期修改" forBusinessEntity="N" help="" id="95f2c797-4b1e-44d0-9f60-efe155b8046b" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="updatePeriod" opItfID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" ownerElementID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:02:25" creator="" description="" displayName="摊销期修改" fullClassName="nc.voerm.expamortize_operator.ExpAmortizeinfo_updateperiod" height="100" help="" id="cc21c049-4011-4793-8e80-0d35797faa59" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortizeinfo_updateperiod" needlog="false" resid="" version="" versionType="0" visibility="public" width="117" x="325" y="615">
+            <refoperationlist>
+                <refoperation id="95f2c797-4b1e-44d0-9f60-efe155b8046b" industry="0" isAuthorization="true" isSource="false" opItfID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" ownerElementID="cc21c049-4011-4793-8e80-0d35797faa59" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:05:56" creator="" description="" displayName="待摊设置取消生效" fullClassName="nc.voerm.expamortize_operator.ExpAmortize_Update" height="100" help="" id="468e9655-4bc7-4de2-8f2f-51a7d752bba2" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:02:57" name="ExpAmortize_unapprove" needlog="false" resid="" version="" versionType="0" visibility="public" width="125" x="288" y="381">
+            <refoperationlist>
+                <refoperation id="e4916564-2247-4179-b530-22e56d6b3343" industry="0" isAuthorization="true" isSource="false" opItfID="a6d2994c-f268-41ab-81df-5b598089828d" ownerElementID="468e9655-4bc7-4de2-8f2f-51a7d752bba2" versiontype="0"/>
+                <refoperation id="28201b61-a8dd-46b2-82fe-95f3555a10ff" industry="0" isAuthorization="true" isSource="false" opItfID="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" ownerElementID="468e9655-4bc7-4de2-8f2f-51a7d752bba2" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+    </celllist>
+    <connectlist>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:57" creator="" description="" displayName="" help="" id="2713f77c-51a7-40ce-980d-a9d855778ce5" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:57" name="converge connection" realsource="0d9be5f6-8041-4664-9631-6bfc51c8f764" realtarget="a6d2994c-f268-41ab-81df-5b598089828d" source="0d9be5f6-8041-4664-9631-6bfc51c8f764" target="a6d2994c-f268-41ab-81df-5b598089828d" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:58" creator="" description="" displayName="" help="" id="8136ffc3-1293-4684-b8d3-2014cb2607cb" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:58" name="converge connection" realsource="02ba5492-d9fe-452a-b983-a9e5517eaf1b" realtarget="a6d2994c-f268-41ab-81df-5b598089828d" source="02ba5492-d9fe-452a-b983-a9e5517eaf1b" target="a6d2994c-f268-41ab-81df-5b598089828d" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:59" creator="" description="" displayName="" help="" id="5fa62d91-84f5-45aa-87aa-a9c4d4628909" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:59" name="converge connection" realsource="18e29ac4-7153-4454-8b1c-aa3a8567b974" realtarget="a6d2994c-f268-41ab-81df-5b598089828d" source="18e29ac4-7153-4454-8b1c-aa3a8567b974" target="a6d2994c-f268-41ab-81df-5b598089828d" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:06:41" creator="" description="" displayName="" help="" id="8806a32d-b915-495d-bbc5-049339e5c464" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:06:41" name="converge connection" realsource="468e9655-4bc7-4de2-8f2f-51a7d752bba2" realtarget="a6d2994c-f268-41ab-81df-5b598089828d" source="468e9655-4bc7-4de2-8f2f-51a7d752bba2" target="a6d2994c-f268-41ab-81df-5b598089828d" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:32:01" creator="" description="" displayName="" help="" id="abe2ec08-8a13-41ba-b594-fbcf8fe4f10b" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:32:01" name="converge connection" realsource="8be8aaa0-53c2-4313-ad09-cf32e07a034a" realtarget="5df3d404-f690-4c8c-9640-7285d5173098" source="8be8aaa0-53c2-4313-ad09-cf32e07a034a" target="5df3d404-f690-4c8c-9640-7285d5173098" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:32:00" creator="" description="" displayName="" help="" id="a32e60f3-ddf0-4d17-967b-c335439119b8" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:32:00" name="converge connection" realsource="ee90d9de-8406-4515-9077-23211b197eeb" realtarget="7ff41bbf-f288-441c-ae46-6cc999759abc" source="ee90d9de-8406-4515-9077-23211b197eeb" target="7ff41bbf-f288-441c-ae46-6cc999759abc" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:01:58" creator="" description="" displayName="" help="" id="0f6de7d3-73a9-4ca7-a238-a98892779f59" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:01:58" name="converge connection" realsource="0d9be5f6-8041-4664-9631-6bfc51c8f764" realtarget="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" source="0d9be5f6-8041-4664-9631-6bfc51c8f764" target="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:46" creator="" description="" displayName="" help="" id="899493f4-9346-4a54-94c0-556a3058c764" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:46" name="depend connection" realsource="79217a6e-07dc-46bc-92e0-32eeb11c6593" realtarget="0d9be5f6-8041-4664-9631-6bfc51c8f764" source="79217a6e-07dc-46bc-92e0-32eeb11c6593" target="0d9be5f6-8041-4664-9631-6bfc51c8f764" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:02:02" creator="" description="" displayName="" help="" id="ccbb5d88-f901-4d3e-9fa6-9cd23133d8e0" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:02:02" name="converge connection" realsource="02ba5492-d9fe-452a-b983-a9e5517eaf1b" realtarget="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" source="02ba5492-d9fe-452a-b983-a9e5517eaf1b" target="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:46" creator="" description="" displayName="" help="" id="f350e21f-9d27-482c-9af2-b21d1f402f2a" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:46" name="depend connection" realsource="79217a6e-07dc-46bc-92e0-32eeb11c6593" realtarget="02ba5492-d9fe-452a-b983-a9e5517eaf1b" source="79217a6e-07dc-46bc-92e0-32eeb11c6593" target="02ba5492-d9fe-452a-b983-a9e5517eaf1b" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:02:01" creator="" description="" displayName="" help="" id="54bc9aaf-dcd0-4362-a591-deb197490739" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:02:01" name="converge connection" realsource="18e29ac4-7153-4454-8b1c-aa3a8567b974" realtarget="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" source="18e29ac4-7153-4454-8b1c-aa3a8567b974" target="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:48" creator="" description="" displayName="" help="" id="e00ebc32-4a4e-4141-b095-675fb378ff8c" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:48" name="depend connection" realsource="79217a6e-07dc-46bc-92e0-32eeb11c6593" realtarget="18e29ac4-7153-4454-8b1c-aa3a8567b974" source="79217a6e-07dc-46bc-92e0-32eeb11c6593" target="18e29ac4-7153-4454-8b1c-aa3a8567b974" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:51" creator="" description="" displayName="" help="" id="731cb603-8c82-4d58-a1ea-21e8c221d628" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:51" name="depend connection" realsource="687ca76f-3250-424c-9fdc-15bdaf52f08c" realtarget="ee90d9de-8406-4515-9077-23211b197eeb" source="687ca76f-3250-424c-9fdc-15bdaf52f08c" target="ee90d9de-8406-4515-9077-23211b197eeb" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:35:35" creator="" description="" displayName="" help="" id="a5445e6b-da24-4281-9f03-1f1e3b1b2dbe" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:35:35" name="depend connection" realsource="79217a6e-07dc-46bc-92e0-32eeb11c6593" realtarget="ee90d9de-8406-4515-9077-23211b197eeb" source="79217a6e-07dc-46bc-92e0-32eeb11c6593" target="ee90d9de-8406-4515-9077-23211b197eeb" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-25 09:31:52" creator="" description="" displayName="" help="" id="9ccc0332-1b70-48ef-a7f7-9a2bbb6e5840" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-25 09:31:52" name="depend connection" realsource="687ca76f-3250-424c-9fdc-15bdaf52f08c" realtarget="8be8aaa0-53c2-4313-ad09-cf32e07a034a" source="687ca76f-3250-424c-9fdc-15bdaf52f08c" target="8be8aaa0-53c2-4313-ad09-cf32e07a034a" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:06:38" creator="" description="" displayName="" help="" id="734fdbc1-8aa8-46d3-a109-c6156cbe7fb1" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:06:38" name="depend connection" realsource="79217a6e-07dc-46bc-92e0-32eeb11c6593" realtarget="468e9655-4bc7-4de2-8f2f-51a7d752bba2" source="79217a6e-07dc-46bc-92e0-32eeb11c6593" target="468e9655-4bc7-4de2-8f2f-51a7d752bba2" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:03:18" creator="" description="" displayName="" help="" id="7e2c1ac0-f63b-4c01-ac31-c9f1bf3fecef" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:03:18" name="depend connection" realsource="687ca76f-3250-424c-9fdc-15bdaf52f08c" realtarget="cc21c049-4011-4793-8e80-0d35797faa59" source="687ca76f-3250-424c-9fdc-15bdaf52f08c" target="cc21c049-4011-4793-8e80-0d35797faa59" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:03:20" creator="" description="" displayName="" help="" id="16d8473d-cd76-4480-8092-af8834ef9c88" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:03:20" name="converge connection" realsource="cc21c049-4011-4793-8e80-0d35797faa59" realtarget="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" source="cc21c049-4011-4793-8e80-0d35797faa59" target="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="b8e23343-61e3-4257-b560-772f589daac9" createIndustry="0" createTime="2012-09-27 10:06:42" creator="" description="" displayName="" help="" id="f2f2fb9d-8147-4530-8d99-7d4e7dc58173" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-27 10:06:42" name="converge connection" realsource="468e9655-4bc7-4de2-8f2f-51a7d752bba2" realtarget="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" source="468e9655-4bc7-4de2-8f2f-51a7d752bba2" target="b706f4ab-d1b6-4077-bc09-f2b7ff0cb60a" versionType="0">
+            <points/>
+        </convergeconnection>
+    </connectlist>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

@@ -132,7 +132,7 @@ public class ReimTypeHeaderVO extends SuperVO {
 
 		// 检查是否为不允许空的字段赋了空值,你可能需要修改下面的提示信息:
 		if (pk_reimtype == null) {
-			errFields.add(new String("pk_reimtype"));
+			errFields.add("pk_reimtype");
 		}
 
 		StringBuffer message = new StringBuffer();

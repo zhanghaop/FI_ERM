@@ -1,5 +1,6 @@
 package nc.ui.er.djlx;
 
+import nc.itf.org.IOrgConst;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.vo.bd.ref.RefVO_mlang;
 import nc.vo.jcom.lang.StringUtil;
@@ -14,9 +15,31 @@ import nc.vo.jcom.lang.StringUtil;
  *
  */
 public class ErmBilltypeRefModel extends AbstractRefModel {
+    // 要可以参照到封存的单据类型
+    final String wherePart = " systemcode = 'erm' and pk_billtypecode like '26%' and istransaction = 'N' and (pk_group='"
+            + getPk_group() + "' or pk_org = '" + IOrgConst.GLOBEORG + "')";
+	
+	
+	public ErmBilltypeRefModel() {
+		super();
+		setAddEnableStateWherePart(true);
+	}
 
-	final String wherePart = " pk_billtypecode like '26%' and istransaction = 'Y' and pk_group='"+getPk_group()+"' and isnull(islock, 'N')='N'";
-
+	/**
+	 * 是否显示停用的数据
+	 * 
+	 * @param isEnable
+	 * @return
+	 */
+	@Override
+    protected String getDisableDataWherePart(boolean isDisableDataShow) {
+		if (isDisableDataShow) {
+            return " islock = 'Y' or isnull(islock,'N') = 'N' ";
+		} else {
+            return " isnull(islock,'N') = 'N' ";
+		}
+	}
+		
 	/**
 	 * getDefaultFieldCount 方法注解。
 	 */
@@ -56,7 +79,20 @@ public class ErmBilltypeRefModel extends AbstractRefModel {
 	 */
 	@Override
 	public java.lang.String[] getFieldName() {
-		return new String[] { nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000172")/*@res "交易类型编码"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0023")/*@res "交易类型名称"*/ ,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000026")/*@res "交易类型主键"*/};
+        // return new String[] {
+        // nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000172")/*@res
+        // "交易类型编码"*/,
+        // nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0023")/*@res
+        // "交易类型名称"*/
+        // ,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000026")/*@res
+        // "交易类型主键"*/};
+        return new String[] {
+                nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+                        "ersetting_0", "02011001-0032")/* @res "单据类型编码" */,
+                nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+                        "ersetting_0", "02011001-0033")/* @res "单据类型名称" */,
+                nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+                        "ersetting_0", "02011001-0034") /* @res "单据类型主键" */};
 	}
 
 	@Override
@@ -79,7 +115,8 @@ public class ErmBilltypeRefModel extends AbstractRefModel {
 	 */
 	@Override
 	public String getRefTitle() {
-		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0024")/*@res "交易类型参照"*/;
+        return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+                "ersetting_0", "02011001-0035")/* @res "单据类型参照" */;
 	}
 
 	/**

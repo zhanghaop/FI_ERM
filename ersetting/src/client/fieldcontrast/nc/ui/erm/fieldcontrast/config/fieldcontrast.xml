@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="context" class="nc.vo.uif2.LoginContext" />
+	
+	<bean id="ClosingListener" class="nc.ui.erm.fieldcontrast.actions.FieldctrstFunNodeClosingHandler">
+		<property name="fieldContrastModel" ref="fieldContrastModel" />
+		<property name="saveFieldctrstAction" ref="saveFieldctrstAction" />
+		<property name="cancelFieldctrstAction" ref="cancelFieldctrstAction" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+	
+	<!-- 表格批处理后台服务类 -->
+	<bean id="fieldContrastService" class="nc.ui.erm.fieldcontrast.model.FieldContrastService" />
+	
+	
+	<!-- 维度对照表格model -->
+	<bean id="fieldContrastModel" class="nc.ui.uif2.model.BatchBillTableModel">
+		<property name="context" ref="context" />
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="service" ref="fieldContrastService" />
+	</bean>
+	
+	<!-- 维度对照表格 -->
+	<bean id="fieldContrastTable" class="nc.ui.erm.fieldcontrast.view.FieldContrastTable"
+		init-method="initUI">
+		<property name="nodekey" value="fieldctrst" />
+		<property name="model" ref="fieldContrastModel" />
+	</bean>
+
+	<bean id="fieldBilRefPanel" class="nc.ui.erm.fieldcontrast.view.FieldBilRefPanel" init-method="initUI">
+		<property name="model" ref="fieldContrastModel" />
+	</bean>
+	
+	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	
+	<bean id="addFieldctrstAction" class="nc.ui.erm.fieldcontrast.actions.AddFieldctrstAction">
+		<property name="model" ref="fieldContrastModel" />
+		<property name="voClassName" value="nc.vo.erm.fieldcontrast.FieldcontrastVO" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="refPanel" ref="fieldBilRefPanel" />
+	</bean>
+	
+	<bean id="refreshAction" class="nc.ui.erm.fieldcontrast.actions.RefreshAction">
+		<property name="fctable" ref="fieldContrastTable" />
+		<property name="model" ref="fieldContrastModel" />
+	</bean>
+	<bean id="editFieldctrstAction" class="nc.ui.uif2.actions.batch.BatchEditAction">
+		<property name="model" ref="fieldContrastModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="deleteFieldctrstAction" class="nc.ui.uif2.actions.batch.BatchDelLineAction">
+		<property name="model" ref="fieldContrastModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="saveFieldctrstAction" class="nc.ui.uif2.actions.batch.BatchSaveAction">
+		<property name="model" ref="fieldContrastModel" />
+		<property name="editor" ref="fieldContrastTable" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+			<property name="validationService">
+			<ref bean="saveValidationService" />
+		</property>
+	</bean>
+	
+	<bean id="saveValidationService"
+		class="nc.ui.uif2.model.DefaultBatchValidationService">
+		<property name="editor">
+			<ref bean="fieldContrastTable" />
+		</property>
+	</bean>
+	
+	<bean id="cancelFieldctrstAction" class="nc.ui.uif2.actions.batch.BatchCancelAction">
+		<property name="model" ref="fieldContrastModel" />
+		<property name="editor" ref="fieldContrastTable"/>
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	
+		<!-- 对话框显示界面dialogContainer -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="name" value="控制对象" />
+						<property name="component" ref="fieldBilRefPanel" />
+					</bean>
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="name" value="维度对照面板" />
+						<property name="component" ref="fieldContrastTable" />
+					</bean>
+				</property>
+				<property name="dividerLocation" value="0.05f"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="addFieldctrstAction" />
+				<ref bean="editFieldctrstAction" />
+				<ref bean="deleteFieldctrstAction" />
+				<ref bean="separatorAction" />
+				<ref bean="refreshAction" />
+				
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="addFieldctrstAction" />
+				<ref bean="deleteFieldctrstAction"/>
+				<ref bean="separatorAction" />
+				<ref bean="saveFieldctrstAction" />
+				<ref bean="separatorAction" />
+				<ref bean="cancelFieldctrstAction" />
+			</list>
+		</property>
+		<property name="model" ref="fieldContrastModel" />
+	</bean>
+	
+</beans>
+

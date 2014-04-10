@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding='gb2312'?>
+<nc.vo.smart.config.ProviderConfigRegister>
+    <providers>
+        <!--######## 报销管理借款余额表语义数据提供者 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>报销管理借款余额表语义数据提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0094</resId>
+            <providerClzName>nc.pub.smart.smartprovider.LoanBalanceDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.LoanBalanceDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+
+		<!--######## 借款账龄分析语义提供者 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>借款账龄分析语义提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0095</resId>
+            <providerClzName>nc.pub.smart.smartprovider.LoanAgeAnalyzeDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.LoanAgeAnalyzeDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+
+		<!--######## 借款账龄分析明细 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>借款账龄分析明细</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0096</resId>
+            <providerClzName>nc.pub.smart.smartprovider.LoanAgeDetailAnalyzeDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.LoanAgeDetailDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+
+		<!--######## 借款明细账语义模型 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>借款明细账语义模型</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0097</resId>
+            <providerClzName>nc.pub.smart.smartprovider.LoanDetailDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.LoanDetailDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+        
+		<!--######## 报销管理费用汇总表语义数据提供者 ########-->
+         <nc.vo.smart.config.ProviderConfig>
+            <title>报销管理费用汇总表语义数据提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0098</resId>
+            <providerClzName>nc.pub.smart.smartprovider.ExpBalanceDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.ExpBalanceDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+        
+		<!--######## 报销管理费用明细账语义数据提供者 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>报销管理费用明细账语义数据提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0099</resId>
+            <providerClzName>nc.pub.smart.smartprovider.ExpDetailDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.ExpDetailDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig> 
+        <!--######## 报销管理费用汇总表语义数据提供者 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>报销管理费用趋势图语义数据提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0100</resId>
+            <providerClzName>nc.pub.smart.smartprovider.ExptrendDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.expensetrend.smartdesigner.ExptrendDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+        <!--######## 报销管理摊销信息分析语义数据提供者 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>报销管理摊销信息分析语义数据提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0101</resId>
+            <providerClzName>nc.pub.smart.smartprovider.ExpamortizeDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.ExpamortizeDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+        
+         <!--######## 费用申请明细语义数据提供者 ########-->
+        <nc.vo.smart.config.ProviderConfig>
+            <title>费用申请明细语义数据提供者</title>
+            <icon></icon>
+            <type>custom</type>
+            <resDir>201109_0</resDir>
+            <resId>0201109-0102</resId>
+            <providerClzName>nc.pub.smart.smartprovider.MatterappDataProvider</providerClzName>
+            <designWizardClzName>nc.ui.erm.smartdesigner.MatterappDataProviderDesigner</designWizardClzName>
+        </nc.vo.smart.config.ProviderConfig>
+        
+    </providers> 
+</nc.vo.smart.config.ProviderConfigRegister>

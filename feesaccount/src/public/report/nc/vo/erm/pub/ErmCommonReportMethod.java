@@ -13,11 +13,11 @@ import nc.itf.fipub.timecontrol.ITimeControlQueryService;
 import nc.vo.er.util.StringUtils;
 import nc.vo.fipub.timecontrol.TimeCtrlDetail;
 import nc.vo.fipub.timecontrol.TimeCtrlVO;
+import nc.vo.fipub.timecontrol.TimeUnit;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.rs.MemoryResultSet;
 import nc.vo.pub.rs.MemoryResultSetMetaData;
-import nc.vo.fipub.timecontrol.TimeUnit;
 
 public class ErmCommonReportMethod {
 
@@ -82,20 +82,20 @@ public class ErmCommonReportMethod {
 		// 计算余额
 		Map<String, Map<String, UFDouble>> totalMap = new HashMap<String, Map<String, UFDouble>>();
 		Map<String, UFDouble> rowMap = null;
-		String key = null;
+		StringBuilder keySb = null;
 		while (resultSet.next()) {
-			key = "";
+		    keySb = new StringBuilder();
 			for (int i = 0; i < sumDimenIndexs.length; i++) {
-				key += resultSet.getString(sumDimenIndexs[i] + 1);
+				keySb.append(resultSet.getString(sumDimenIndexs[i] + 1));
 			}
 
-			rowMap = totalMap.get(key);
+			rowMap = totalMap.get(keySb.toString());
 			if (rowMap == null) {
 				rowMap = new HashMap<String, UFDouble>();
 				for (String field : sumTargetFields) {
 					rowMap.put(field, new UFDouble(0.0));
 				}
-				totalMap.put(key, rowMap);
+				totalMap.put(keySb.toString(), rowMap);
 			}
 
 			for (int i = 0; i < sumFieldIndexs.length; i++) {
@@ -107,13 +107,13 @@ public class ErmCommonReportMethod {
 		// 为最后的结果赋值
 		resultSet.beforeFirst();
 		while (resultSet.next()) {
-			key = "";
+            keySb = new StringBuilder();
 			for (int i = 0; i < sumDimenIndexs.length; i++) {
-				key += resultSet.getString(sumDimenIndexs[i] + 1);
+			    keySb.append(resultSet.getString(sumDimenIndexs[i] + 1));
 			}
 			for (int i = 0; i < sumTargetieldIndexs.length; i++) {
 				resultSet.getRowArrayList().set(sumTargetieldIndexs[i],
-						totalMap.get(key).get(sumTargetFields[i]));
+						totalMap.get(keySb.toString()).get(sumTargetFields[i]));
 			}
 		}
 
@@ -236,13 +236,12 @@ public class ErmCommonReportMethod {
 		List<String> existAges = new ArrayList<String>();
 		for (int i = 0; i < resultList.size(); i++) {
 			currRow = (List<Object>) resultList.get(i);
-			if (qryobj0pk.equals(currRow.get(idxQryobj0pk))) {
+			if (qryobj0pk==null || qryobj0pk.equals(currRow.get(idxQryobj0pk))) {
 				existAges.add(String.valueOf(currRow.get(indexPropertyid)));
 				continue;
 			}
 			break;
 		}
-
 
 		// 针对每个账龄段，在结果集中添加一条记录
 		// 添加的所有记录，数值字段取值为0.0，账龄描述字段取值为账龄方案中的描述，其余字段取值为第一条记录的值
@@ -257,9 +256,12 @@ public class ErmCommonReportMethod {
 //					timeCtrlDetails[0].getStartunit()));
 //			addResultList.add(addRow);
 //		}
+		
+		Map<String, TimeCtrlDetail> timeCtrlDetail = new HashMap<String, TimeCtrlDetail>();
 
 		for (TimeCtrlDetail detail : timeCtrlDetails) {
 			propid = detail.getPropertyid();
+            timeCtrlDetail.put(Integer.toString(propid), detail);
 			if (existAges.contains(String.valueOf(propid))) {
 				continue;
 			}
@@ -268,6 +270,21 @@ public class ErmCommonReportMethod {
 			addRow.set(indexAccountage, getTimeCtrlDesc(detail.getDescr(), timeCtrlVO.getUnit(),
 					detail.getStartunit(), detail.getEndunit()));
 			addResultList.add(addRow);
+		}
+		
+		for (int nPos = 0; nPos < resultList.size(); nPos++) {
+		    List<Object> curRow = (List<Object>)resultList.get(nPos);
+		    Object propidObj = curRow.get(indexPropertyid);
+		    if (propidObj == null) {
+		        continue;
+		    }
+		    String sPropid = propidObj.toString();
+		    TimeCtrlDetail detail = timeCtrlDetail.get(sPropid);
+		    if (detail == null) {
+		        continue;
+		    }
+		    curRow.set(indexAccountage, getTimeCtrlDesc(detail.getDescr(), timeCtrlVO.getUnit(),
+                    detail.getStartunit(), detail.getEndunit()));
 		}
 
 		propid = timeCtrlDetails[timeCtrlDetails.length - 1].getPropertyid() + 1;

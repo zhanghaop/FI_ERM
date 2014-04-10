@@ -7,13 +7,12 @@ import java.util.List;
 
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
-import nc.bs.logging.Logger;
-import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.er.indauthorize.IIndAuthorizeQueryService;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ArrayListProcessor;
 import nc.ui.arap.engine.IActionRuntime;
 import nc.ui.dbcache.DBCacheQueryFacade;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.batch.BatchSaveAction;
 import nc.vo.bd.meta.BatchOperateVO;
@@ -21,6 +20,8 @@ import nc.vo.er.indauthorize.IndAuthorizeVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
+
+import org.apache.commons.lang.ArrayUtils;
 
 public class IndSaveAction extends BatchSaveAction {
 
@@ -40,18 +41,19 @@ public class IndSaveAction extends BatchSaveAction {
 	}
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		//保存时脱离编辑状态
-		getEditor().getBillCardPanel().stopEditing();
+		//保存时脱离编辑状态，无数据时，则不需要，防止报空指针错
+		if(getEditor().getModel().getRowCount()>0){
+			getEditor().getBillCardPanel().stopEditing();
+		}
 		BatchOperateVO operVO = this.getModel().getCurrentSaveObject();
 		Object[] addObjs = operVO.getAddObjs();
 		Object[] updObjs = operVO.getUpdObjs();
 		Object[] delObjs = operVO.getDelObjs();
 
 		//判断如果更改需要更新数据
-	    if(addObjs.length ==0 && updObjs.length ==0 && delObjs.length ==0){
+	    if(ArrayUtils.isEmpty(addObjs) && ArrayUtils.isEmpty(updObjs) && ArrayUtils.isEmpty(delObjs)){
 			if(this.getModel().getUiState()==UIState.EDIT){
-				if(updObjs==null || updObjs.length==0)
-					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0013")/*@res " 请修改数据后，进行保存！"*/);
+			    throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0013")/*@res " 请修改数据后，进行保存！"*/);
 			}
 		}
 	    Object[] indVOs = this.getModel().getRows().toArray();
@@ -69,10 +71,10 @@ public class IndSaveAction extends BatchSaveAction {
 			if(code == null || "".equals(code)){
 				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0014")/*@res "操作员不能为空"*/);
 			}
-			if(startDate == null || "".equals(startDate)){
+			if(startDate == null){
 				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0015")/*@res "开始日期不能为空"*/);
 			}
-			if(endDate == null || "".equals(endDate)){
+			if(endDate == null){
 				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0016")/*@res "结束日期不能为空"*/);
 			}
 			if(billtype == null || "".equals(billtype)){
@@ -121,10 +123,10 @@ public class IndSaveAction extends BatchSaveAction {
 	}
 	private String getPsndocByUser() throws BusinessException {
 		if(psndoc == null){
-			String cid = BXUiUtil.getPk_user();
+			String cid = ErUiUtil.getPk_user();
 			String[] queryPsnidAndDeptid = null;
 			try {
-				queryPsnidAndDeptid = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPsnidAndDeptid(cid, BXUiUtil.getPK_group());
+				queryPsnidAndDeptid = NCLocator.getInstance().lookup(IIndAuthorizeQueryService.class).queryPsnidAndDeptid(cid,ErUiUtil.getPK_group());
 			} catch (ComponentException e2) {
 				ExceptionHandler.consume(e2);
 			} catch (BusinessException e2) {

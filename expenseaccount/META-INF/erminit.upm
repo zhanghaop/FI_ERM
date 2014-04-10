@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+	<public>
+	 	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.pubitf.erm.erminit.IErminitCloseService</interface>
+     		<implementation>nc.pubitf.erm.erminit.IErminitCloseServiceImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.pubitf.erm.erminit.IErminitQueryService</interface>
+     		<implementation>nc.pubitf.erm.erminit.ErminitQueryServiceImpl</implementation>
+		</component>
+    </public>
+</module>

@@ -9,7 +9,12 @@ import nc.bs.framework.common.InvocationInfoProxy;
  * nc.vo.er.ref.ReimTypeRefModel
  */
 public class ReimTypeRefModel extends nc.ui.bd.ref.AbstractRefModel {
-
+	
+	
+	public ReimTypeRefModel() {
+		super();
+		setAddEnableStateWherePart(true);
+	}
 	public String[] getHiddenFieldCode() {
 		return new String[]{"pk_reimtype"};
 	}
@@ -39,9 +44,25 @@ public class ReimTypeRefModel extends nc.ui.bd.ref.AbstractRefModel {
     public String getWherePart() {
 		String where = super.getWherePart();
 		if(where == null || where.length() == 0)
-    		return " isnull(dr,0)=0 and  isnull(inuse,'N')='N'" + " and pk_group='" + InvocationInfoProxy.getInstance().getGroupId() + "'";
+    		return " isnull(dr,0)=0 and pk_group='" + InvocationInfoProxy.getInstance().getGroupId() + "'";
 		else
-			return where + " and isnull(dr,0)=0 and  isnull(inuse,'N')='N'" + " and pk_group='" + InvocationInfoProxy.getInstance().getGroupId() + "'";
+			return where + " and isnull(dr,0)=0 and pk_group='" + InvocationInfoProxy.getInstance().getGroupId() + "'";
 	}
+    
+    /**
+     * 是否显示停用的数据
+     * 
+     * @param isEnable
+     * @return
+     */
+    protected String getDisableDataWherePart(boolean isDisableDataShow) {
+     if (isDisableDataShow) {
+      return " inuse = 'Y'  or inuse = 'N' ";
+     } else {
+      return " inuse = 'N' ";
+     }
+    }
+
+
     
 }

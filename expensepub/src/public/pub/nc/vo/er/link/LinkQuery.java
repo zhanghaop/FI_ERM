@@ -15,8 +15,6 @@ public class LinkQuery implements ILinkQueryDataPlural {
 	private String billType;
 
 	private Object userObject;
-
-	Collection<Object> billVOs;
 	
 	public LinkQuery(String billType,String[] billIDs) {
 		super();
@@ -66,7 +64,7 @@ public class LinkQuery implements ILinkQueryDataPlural {
 
 	@Override
 	public Collection<Object> getBillVOs() {
-		return billVOs;
+		return null;
 	}
 
 	@Override
@@ -77,6 +75,10 @@ public class LinkQuery implements ILinkQueryDataPlural {
 	@Override
 	public String getPkOrg() {
 		return pkOrg;
+	}
+
+	public void setPkOrg(String pkOrg) {
+		this.pkOrg = pkOrg;
 	}
 
 }

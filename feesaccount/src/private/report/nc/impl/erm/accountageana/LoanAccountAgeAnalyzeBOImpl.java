@@ -3,9 +3,6 @@ package nc.impl.erm.accountageana;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
-
-import com.ufida.report.anareport.FreeReportContextKey;
 
 import nc.bs.erm.accountage.AccountAgeAnalyzerFactory;
 import nc.bs.erm.accountage.IAccountAgeAna;
@@ -59,7 +56,7 @@ public class LoanAccountAgeAnalyzeBOImpl implements ILoanAccountAgeAnalyzeBO {
 			// 插入【交易类型】名称
 			PubCommonReportMethod.insertNameColumn(resultSet, IPubReportConstants.BILLTYPE, "pk_billtype", "billtype");
 
-			if (IErmReportAnalyzeConstants.ACC_ANA_MODE_AGE.equals(queryVO.getAnaMode())) {
+			if (IErmReportAnalyzeConstants.getACC_ANA_MODE_AGE().equals(queryVO.getAnaMode())) {
 				// 填充(补足)所有账龄段
 				ErmCommonReportMethod.fillAllAccountAge(resultSet, queryVO.getAccAgePlan(), false);
 			}
@@ -136,8 +133,8 @@ public class LoanAccountAgeAnalyzeBOImpl implements ILoanAccountAgeAnalyzeBO {
 				int j = qryObjIndex.size() - 1;
 				for (; j >= 0; j--) {
 					if (dataRow[qryObjIndex.get(j) - 1] != null && !"".equals(dataRow[qryObjIndex.get(j) - 1])) {
-						dataRow[qryObjIndex.get(j) - 1] = dataRow[qryObjIndex.get(j) - 1] + IErmReportConstants.CONST_SUB_TOTAL; // 小计
-						dataRow[qryObjNameIndex.get(j) - 1] = dataRow[qryObjNameIndex.get(j) - 1] + IErmReportConstants.CONST_SUB_TOTAL; // 小计
+						dataRow[qryObjIndex.get(j) - 1] = dataRow[qryObjIndex.get(j) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
+						dataRow[qryObjNameIndex.get(j) - 1] = dataRow[qryObjNameIndex.get(j) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
 						isObj = true;
 						j--;
 						break;
@@ -151,10 +148,11 @@ public class LoanAccountAgeAnalyzeBOImpl implements ILoanAccountAgeAnalyzeBO {
 					}
 					dataRow[orgIndex - 1] = "";
 				} else if (isMultiOrg && (dataRow[orgIndex - 1] != null && !"".equals(dataRow[orgIndex - 1]))) {
-					dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.CONST_SUB_TOTAL; // 小计
+					dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
 					isObj = true;
+                    dataRow[qryObjIndex.get(0)] = IErmReportConstants.getCONST_AGG_TOTAL(); // 合计
 				} else{
-					dataRow[qryObjIndex.get(0)] = IErmReportConstants.CONST_AGG_TOTAL; // 合计
+					dataRow[qryObjIndex.get(0)] = IErmReportConstants.getCONST_AGG_TOTAL(); // 合计
 				}
 
 			}

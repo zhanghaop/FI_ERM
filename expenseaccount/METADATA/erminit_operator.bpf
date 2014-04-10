@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2012-10-26 16:33:03" creator="" description="" displayName="erminit_operator" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" industry="0" industryChanged="false" industryIncrease="false" industryName="" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="erminit_operator" namespace="erm" ownModule="erm" preLoad="false" programcode="" resModuleName="mdcommon" resid="2201112-000277" version="7" versionType="0">
+    <celllist>
+        <opinterface componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:33:07" creator="" description="" displayName="费用期初关闭服务" fullClassName="nc.itf.erm.erminit.IErminitCloseService" height="100" help="" id="a3d1c5f8-0998-4333-a531-1eeb30d223cc" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="IErminitCloseService" remote="true" resid="2201112-000278" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="121" x="363" y="54">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="关闭" forBusinessEntity="N" help="" id="9a416d20-8b2a-4b0f-9c69-11271a8a65c7" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="close" opItfID="a3d1c5f8-0998-4333-a531-1eeb30d223cc" ownerElementID="a3d1c5f8-0998-4333-a531-1eeb30d223cc" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="取消关闭" forBusinessEntity="N" help="" id="cc625a90-0897-4a67-9124-043192480dad" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="unclose" opItfID="a3d1c5f8-0998-4333-a531-1eeb30d223cc" ownerElementID="a3d1c5f8-0998-4333-a531-1eeb30d223cc" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:36:10" creator="" description="" displayName="费用期初查询服务" fullClassName="nc.itf.erm.erminit.IErminitQueryService" height="100" help="" id="662f8b6b-5d87-456e-b875-4dafbe0e2aeb" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="IErminitQueryService" remote="true" resid="2201112-000279" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="149" x="369" y="256">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="查询组织期初是否关闭" forBusinessEntity="N" help="" id="486e774e-3539-45c0-9c4b-c3853c3ad6cf" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="querybyOrg" opItfID="662f8b6b-5d87-456e-b875-4dafbe0e2aeb" ownerElementID="662f8b6b-5d87-456e-b875-4dafbe0e2aeb" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:37:12" creator="" dataType="1cb39494-732b-4705-ad5b-68a13b6bd8ff" dbtype="" description="" displayName="关闭" fullClassName="nc.vo.erm.erminit_operator.erminit_close" height="95" help="" id="61094e25-4fc5-4274-be32-9e75c104d1f6" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="erminit_close" needlog="false" resid="" typeDisplayName="费用管理期初" typeName="erminit" version="" versionType="0" visibility="public" width="138" x="188" y="71">
+            <refoperationlist>
+                <refoperation id="9a416d20-8b2a-4b0f-9c69-11271a8a65c7" industry="0" isAuthorization="true" isSource="false" opItfID="a3d1c5f8-0998-4333-a531-1eeb30d223cc" ownerElementID="61094e25-4fc5-4274-be32-9e75c104d1f6" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:38:03" creator="" description="" displayName="取消关闭" fullClassName="nc.vo.erm.erminit_operator.erminit_unclose" height="100" help="" id="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="erminit_unclose" needlog="false" resid="" version="" versionType="0" visibility="public" width="127" x="202" y="188">
+            <refoperationlist>
+                <refoperation id="cc625a90-0897-4a67-9124-043192480dad" industry="0" isAuthorization="true" isSource="false" opItfID="a3d1c5f8-0998-4333-a531-1eeb30d223cc" ownerElementID="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:38:26" creator="" description="" displayName="查询" fullClassName="nc.vo.erm.erminit_operator.erminit_query" height="100" help="" id="38cec86a-9e88-42ab-b195-aaad0998e515" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="erminit_query" needlog="false" resid="" version="" versionType="0" visibility="public" width="102" x="238" y="302">
+            <refoperationlist>
+                <refoperation id="486e774e-3539-45c0-9c4b-c3853c3ad6cf" industry="0" isAuthorization="true" isSource="false" opItfID="662f8b6b-5d87-456e-b875-4dafbe0e2aeb" ownerElementID="38cec86a-9e88-42ab-b195-aaad0998e515" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busiActivity componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:38:47" creator="" description="" displayName="费用期初管理" fullClassName="nc.vo.erm.erminit_operator.erminit_mg" height="109" help="" id="b1013539-c0aa-4b43-abf2-b50757f14eab" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:53:50" name="erminit_mg" resid="" version="" versionType="0" visibility="public" width="94" x="61" y="162">
+            <refBusiOperationlist>
+                <refbusioperation id="510b6140-f177-46df-83f1-5fe9987249f2" industry="0" isAuthorization="true" isSource="false" ownerElementID="b1013539-c0aa-4b43-abf2-b50757f14eab" realBusiOpid="61094e25-4fc5-4274-be32-9e75c104d1f6" versiontype="0"/>
+                <refbusioperation id="4b8e82b1-29b2-4bf5-9bbb-259a40e9c5f6" industry="0" isAuthorization="true" isSource="false" ownerElementID="b1013539-c0aa-4b43-abf2-b50757f14eab" realBusiOpid="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" versiontype="0"/>
+                <refbusioperation id="b40165aa-86ab-4d7c-acff-9b1de1cac157" industry="0" isAuthorization="true" isSource="false" ownerElementID="b1013539-c0aa-4b43-abf2-b50757f14eab" realBusiOpid="38cec86a-9e88-42ab-b195-aaad0998e515" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+    </celllist>
+    <connectlist>
+        <convergeconnection componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:39:23" creator="" description="" displayName="" help="" id="cec45c96-f479-4557-9437-fb6763a19652" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-10-26 16:39:23" name="converge connection" realsource="61094e25-4fc5-4274-be32-9e75c104d1f6" realtarget="a3d1c5f8-0998-4333-a531-1eeb30d223cc" source="61094e25-4fc5-4274-be32-9e75c104d1f6" target="a3d1c5f8-0998-4333-a531-1eeb30d223cc" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:39:24" creator="" description="" displayName="" help="" id="91ec6587-36d2-4b3f-9297-8753b05b79ac" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-10-26 16:39:24" name="converge connection" realsource="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" realtarget="a3d1c5f8-0998-4333-a531-1eeb30d223cc" source="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" target="a3d1c5f8-0998-4333-a531-1eeb30d223cc" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:39:25" creator="" description="" displayName="" help="" id="649dd2db-d8fd-44e8-908d-fa0dc0258709" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-10-26 16:39:25" name="converge connection" realsource="38cec86a-9e88-42ab-b195-aaad0998e515" realtarget="662f8b6b-5d87-456e-b875-4dafbe0e2aeb" source="38cec86a-9e88-42ab-b195-aaad0998e515" target="662f8b6b-5d87-456e-b875-4dafbe0e2aeb" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:39:19" creator="" description="" displayName="" help="" id="4aae5e1f-d0a7-4dff-8335-f01b1fbc977d" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-10-26 16:39:19" name="depend connection" realsource="b1013539-c0aa-4b43-abf2-b50757f14eab" realtarget="61094e25-4fc5-4274-be32-9e75c104d1f6" source="b1013539-c0aa-4b43-abf2-b50757f14eab" target="61094e25-4fc5-4274-be32-9e75c104d1f6" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:39:20" creator="" description="" displayName="" help="" id="974a6bab-ed45-4e46-9926-be7615769ee6" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-10-26 16:39:20" name="depend connection" realsource="b1013539-c0aa-4b43-abf2-b50757f14eab" realtarget="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" source="b1013539-c0aa-4b43-abf2-b50757f14eab" target="922f76bf-63ff-48f6-8bf2-4eeecff5aa4c" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="5af5ab87-d15b-4e60-a8ce-fb50fcf5854c" createIndustry="0" createTime="2012-10-26 16:39:21" creator="" description="" displayName="" help="" id="f857f5e6-30cb-47e6-a99a-23e52d75807a" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-10-26 16:39:21" name="depend connection" realsource="b1013539-c0aa-4b43-abf2-b50757f14eab" realtarget="38cec86a-9e88-42ab-b195-aaad0998e515" source="b1013539-c0aa-4b43-abf2-b50757f14eab" target="38cec86a-9e88-42ab-b195-aaad0998e515" versionType="0">
+            <points/>
+        </dependConnection>
+    </connectlist>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

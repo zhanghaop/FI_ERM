@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+    <public>
+		<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.pubitf.erm.expenseaccount.IErmExpenseaccountApproveService</interface>
+        	<implementation>nc.impl.erm.expenseaccount.ErmExpenseaccountApproveServiceImpl</implementation>
+     	</component>
+     	
+		<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.pubitf.erm.expenseaccount.IErmExpenseaccountManageService</interface>
+        	<implementation>nc.impl.erm.expenseaccount.ErmExpenseaccountManageServiceImpl</implementation>
+     	</component>
+     	
+		<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+	   		<interface>nc.pubitf.erm.expenseaccount.IErmExpenseaccountWriteoffService</interface>
+        	<implementation>nc.impl.erm.expenseaccount.ErmExpenseaccountWriteoffServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+        	<interface>nc.pubitf.erm.expenseaccount.IErmExpenseaccountQueryService</interface>
+          	<implementation>nc.impl.erm.expenseaccount.ErmExpenseaccountQueryServiceImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+        	<interface>nc.itf.erm.pub.IMatterappDataBO</interface>
+          	<implementation>nc.impl.erm.report.MatterappDataBOImpl</implementation>
+     	</component>
+     	
+    </public>
+</module>

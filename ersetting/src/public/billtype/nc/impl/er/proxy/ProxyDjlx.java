@@ -8,13 +8,11 @@ import nc.itf.er.pub.IArapBillTypePublic;
 public class ProxyDjlx {
 
 	public static IArapBillTypePublic getIArapBillTypePublic() throws ComponentException {
-		return ((IArapBillTypePublic) NCLocator.getInstance().lookup(IArapBillTypePublic.class.getName()));
+		return NCLocator.getInstance().lookup(IArapBillTypePublic.class);
 	}
 
 	public static IArapBillTypePrivate getIArapBillTypePrivate() throws ComponentException {
-
-		return ((IArapBillTypePrivate) NCLocator.getInstance().lookup(IArapBillTypePrivate.class.getName()));
-
+		return  NCLocator.getInstance().lookup(IArapBillTypePrivate.class);
 	}
 
 }

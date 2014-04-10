@@ -168,16 +168,22 @@
 	</property>
   	</bean>
 	<bean id="extTemplatePreviewAction" class="nc.ui.uif2.actions.TemplatePreviewAction">
-		<property name="model" ref="extModel"/>
+		<property name="model">
+			<ref bean="extModel" />
+		</property>
+		<property name="Code" value="Print" />
 		<property name="datasource" ref="datasource" />
 		<property name="nodeKey" value="20110ETS"/>
 	</bean>
 	<bean id="extTemplatePrintAction" class="nc.ui.uif2.actions.TemplatePrintAction">
-		<property name="model" ref="extModel"/>
-		<property name="nodeKey" value="20110ETS"/>
+		<property name="model">
+			<ref bean="extModel" />
+		</property>
+		<property name="Code" value="Preview" />
 		<property name="datasource" ref="datasource" />
+		<property name="nodeKey" value="20110ETS"/>
 	</bean>
-	<bean id="datasource" class="nc.ui.arap.bx.print.MetaDataAllDatasSource">
+	<bean id="datasource" class="nc.ui.bd.pub.actions.print.MetaDataAllDatasSource">
 		<property name="model" ref="extModel" />
 	</bean>	
 

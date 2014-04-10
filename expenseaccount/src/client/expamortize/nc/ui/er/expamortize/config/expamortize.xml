@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+	<!-- 待摊费用摊销-->
+	<!-- Expamortize -->
+	<!-- author:wangle -->
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext">
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 发生异常 -->
+	<bean id="execeptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context"></property>
+	</bean>
+
+	<!-- 应用服务类，负责进行模型操作的处理 -->
+	<bean id="service" class="nc.ui.erm.expamortize.model.ExpamortizeModelService">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 管理应用模型 -->
+	<bean id="manageAppModel" class="nc.ui.erm.expamortize.model.ExpamorizeManageModel">
+		<property name="service" ref="service" />
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.expamortize.model.ExpamorizeDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="pageModel" ref="paginationModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="topperiodpane" ref="topperiodpane"></property>
+	</bean>
+
+	<!-- 界面顶部的panel -->
+	<bean id="toppane" class="nc.ui.erm.expamortize.view.ExpamortizePanel"
+		init-method="initUI">
+		<property name="toporgpane" ref="toporgpane"></property>
+		<property name="topperiodpane" ref="topperiodpane"></property>
+	</bean>
+
+	<bean id="toporgpane" class="nc.ui.erm.expamortize.view.ExpamortizeFinOrgPanel"
+		init-method="initUI">
+		<property name="dataManager" ref="modelDataManager"></property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+		<property name="topperiodpane" ref="topperiodpane"></property>
+		<property name="labelName">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0" />
+				<property name="resId" value="0201107-0130" />
+				<property name="defaultValue" value="财务组织" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="topperiodpane" class="nc.ui.erm.expamortize.view.ExpamortizePeriodPanel"
+		init-method="initUI">
+		<property name="modelmanager" ref="modelDataManager"></property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+	</bean>
+
+
+	<!-- 分页 -->
+	<bean id="paginationModel" class="nc.ui.uif2.components.pagination.PaginationModel"
+		init-method="init">
+		<property name="paginationQueryService" ref="service"></property>
+	</bean>
+
+	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar"
+		init-method="registeCallbak">
+		<property name="paginationModel" ref="paginationModel" />
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 列表视图 -->
+	<bean id="listView" class="nc.ui.erm.expamortize.view.ExpamortizeListView"
+		init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="multiSelectionEnable" value="true" />
+		<property name="nodekey" value="201106EXPMG"></property>
+		<property name="south" ref="paginationBar" />
+		<property name="north" ref="listInfoPanel" />
+	</bean>
+	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 单行数据源 -->
+	<bean id="dataSource"
+		class="nc.ui.erm.expamortize.model.ERMMetaDataSingleDatasSource">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 多行数据源 -->
+	<bean id="metidataSource" class="nc.ui.erm.expamortize.model.ERMMetaDataAllDatasSource">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+
+	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
+
+	<bean id="refreshAction" class="nc.ui.uif2.actions.RefreshAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+	</bean>
+
+	<bean id="amtAction" class="nc.ui.erm.expamortize.action.AmtAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="amtperiodAction" class="nc.ui.erm.expamortize.action.AmtPeriodAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="view" ref="listView" />
+	</bean>
+
+	<bean id="linkVoucherAction" class="nc.ui.erm.expamortize.action.LinkVoucherAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="linkBxAction" class="nc.ui.erm.expamortize.action.LinkBxAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="linkAmtDetailAction" class="nc.ui.erm.expamortize.action.LinkAmtDetailAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="linkYSDetailAction" class="nc.ui.erm.expamortize.action.LinkYSDetailAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="voucherAction" class="nc.ui.erm.expamortize.action.VoucherAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="printCardAction" class="nc.ui.erm.expamortize.action.PrintCardAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="printListAction" class="nc.ui.erm.expamortize.action.PrintListAction">
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="metidataSource" ref="metidataSource" />
+	</bean>
+
+	<!-- 联查 按钮组  待多语 -->
+	<bean id="linkGroupAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0" />
+				<property name="resId" value="0201107-0013" />
+				<property name="defaultValue" value="联查" />
+			</bean>
+		</property>
+		<property name="code">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0" />
+				<property name="resId" value="0201107-0013" />
+				<property name="defaultValue" value="联查" />
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="linkVoucherAction" />
+				<ref bean="linkBxAction" />
+				<ref bean="linkAmtDetailAction" />
+				<ref bean="linkYSDetailAction" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 列表打印操作 按钮组  待多语 -->
+	<bean id="printGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0" />
+				<property name="resId" value="0201107-0127" />
+				<property name="defaultValue" value="打印" />
+			</bean>
+		</property>
+		<property name="code">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0" />
+				<property name="resId" value="0201107-0127" />
+				<property name="defaultValue" value="打印" />
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="printCardAction" />
+				<ref bean="printListAction" />
+			</list>
+		</property>
+	</bean>
+
+	<!--报表联查后的处理类  -->
+	<bean id="InitDataListener" class="nc.ui.erm.expamortize.action.AmtFuncNodeInitData">
+		<property name="dataManager" ref="modelDataManager"></property>
+		<property name="model" ref="manageAppModel" />
+		<property name="toporgpane" ref="toporgpane"></property>
+		<property name="topperiodpane" ref="topperiodpane"></property>
+		<property name="amtAction" ref="amtAction"></property>
+		<property name="amtperiodAction" ref="amtperiodAction"></property>
+		<property name="voucherAction" ref="voucherAction"></property>
+		<property name="exceptionHandler" ref="execeptionHandler" />
+	</bean>
+
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="toppane"></property>
+					</bean>
+					<!--
+						bean class="nc.ui.uif2.tangramlayout.node.HSNode"> <property
+						name="left"> <bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="toporgpane"></property> </bean>
+						</property> <property name="right"> <bean
+						class="nc.ui.uif2.tangramlayout.node.CNode"> <property
+						name="component" ref="topperiodpane"></property> </bean>
+						</property> <property name="dividerLocation" value="15f" /> </bean
+					-->
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component">
+							<ref bean="listView" />
+						</property>
+					</bean>
+				</property>
+				<property name="dividerLocation" value="0.058f"></property>
+			</bean>
+		</property>
+		<property name="editActions">
+			<list>
+			</list>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="refreshAction" />
+				<ref bean="nullAction" />
+				<ref bean="amtAction" />
+				<ref bean="amtperiodAction" />
+				<ref bean="nullAction" />
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="voucherAction" />
+				<ref bean="nullAction" />
+				<ref bean="printGroupAction" />
+			</list>
+		</property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+	</bean>
+</beans>

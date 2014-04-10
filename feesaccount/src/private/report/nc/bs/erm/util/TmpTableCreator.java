@@ -62,7 +62,7 @@ public class TmpTableCreator {
 			// colsBuffer.append("ts char(19)");
 
 			String cols = colsBuffer.toString().substring(0, colsBuffer.length() - 2);
-			tableName = tempTable.createTempTable(conn, tableName, cols, null);
+			tableName = tempTable.createTempTable(conn, tableName, cols, "");
 		} finally {
 			try {
 				if (conn != null) {

@@ -1,10 +1,12 @@
 package nc.impl.erm.report;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import nc.bs.dao.BaseDAO;
 import nc.bs.erm.sql.ErmBaseSqlCreator;
 import nc.bs.erm.sql.LoanBalanceSQLCreator;
 import nc.bs.logging.Logger;
@@ -12,6 +14,7 @@ import nc.itf.erm.pub.ILoanBalanceBO;
 import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.jdbc.framework.processor.ResultSetProcessor;
+import nc.jdbc.framework.util.DBConsts;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
@@ -25,6 +28,8 @@ import nc.vo.fipub.report.PubCommonReportMethod;
 import nc.vo.fipub.report.ReportQueryCondVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.rs.MemoryResultSet;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * <p>
@@ -89,14 +94,19 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
 			ErmCommonReportMethod.computeEndPeriodBalance(result, sign);
 
 			// 设置返回结果元数据
-			resultDataSet.setMetaData(SmartProcessor.getMetaData(result));
+			if(getBaseDAO().getDBType()==DBConsts.DB2){
+				// 设置返回结果元数据
+				resultDataSet.setMetaData(SmartProcessor.getMetaDataForDB2(result));
+			}else {
+				resultDataSet.setMetaData(SmartProcessor.getMetaData(result));
+			}
 
 			Object[][] datas = getDatasForBalance(result, queryVO);
 			datas = new ReportMultiVersionSetter(result.getMetaData0(), queryVO).setOrg(datas, null);
-			PubCommonReportMethod.setVSeq(datas, resultDataSet.getMetaData().getIndex(IPubReportConstants.ORDER_MANAGE_VSEQ));
-
+			datas = getDatasForBalance(result, queryVO);
+            PubCommonReportMethod.setVSeq(datas, resultDataSet.getMetaData().getIndex(IPubReportConstants.ORDER_MANAGE_VSEQ));
 			// 设置返回结果数据集
-			resultDataSet.setDatas(getDatasForBalance(result, queryVO));
+			resultDataSet.setDatas(datas);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0054"); /*@res "借款余额表查询出错！"*/
 			Logger.error(errMsg, e);
@@ -116,7 +126,6 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
 	 */
 	@SuppressWarnings("unchecked")
 	private Object[][] getDatasForBalance(MemoryResultSet mrs, ReportQueryCondVO queryVO) throws SQLException {
-		boolean isMultiOrg = queryVO.getPk_orgs().length > 1;
 
 		ArrayList<List<Object>> dataRowList = mrs.getResultArrayList();
 
@@ -138,47 +147,171 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
 		}
 		Object datas[][] = new Object[dataRowList.size()][mrs.getMetaData().getColumnCount()];
 
-		int rnIndex = mrs.getColumnIndex("rn");
-		int orgIndex = mrs.getColumnIndex("org");
+		//////////////////////////////
 		List<Integer> qryObjIndex = new ArrayList<Integer>();
-		List<Integer> qryObjNameIndex = new ArrayList<Integer>();
-		for (int i = 0; i < queryVO.getQryObjs().size(); i++) {
-			qryObjIndex.add(mrs.getColumnIndex(IPubReportConstants.QRY_OBJ_PREFIX + i));
-			qryObjNameIndex.add(mrs.getColumnIndex(IPubReportConstants.QRY_OBJ_PREFIX + i + "code"));
-		}
+        List<Integer> qryObjNameIndex = new ArrayList<Integer>();
+        List<Integer> totalCol = new ArrayList<Integer>(); // 小计列
+        List<Integer> totalCol2 = new ArrayList<Integer>(); // 小计列
+        int orgIndex = mrs.getColumnIndex("org");
+        int currtypeIndex = mrs.getColumnIndex("currtype");
+        for (int i = 0; i < queryVO.getQryObjs().size(); i++) {
+            qryObjIndex.add(mrs.getColumnIndex(IPubReportConstants.QRY_OBJ_PREFIX + i));
+            qryObjNameIndex.add(mrs.getColumnIndex(IPubReportConstants.QRY_OBJ_PREFIX + i + "code"));
+            totalCol.add(qryObjIndex.get(i));
+            totalCol2.add(qryObjNameIndex.get(i));
+        }
+        totalCol.add(currtypeIndex);
+        totalCol2.add(orgIndex);
 
-		int rn = -1;
-		boolean isObj = false;
-		Object[] dataRow = null;
+        boolean isCurrtype = false;
+        String[] amount_ori = new String[] {"init_ori", "jk_ori", "hk_ori", "bal_ori"};
+        int[] currtypeCount = new int[amount_ori.length];
+        int[] orgCurrtypeCount = new int[amount_ori.length];
+        int[] amount_ori_pos = new int[amount_ori.length];
+        for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+            amount_ori_pos[nPos] = mrs.getColumnIndex(amount_ori[nPos]);
+        }
+        
+        Map<String, Map<String, String>> countMap = new HashMap<String, Map<String, String>>();
+        
+        Object[] dataRow = null;
+        int rn = -1;
+        boolean isObj = false;
+        boolean isMultiOrg = queryVO.getPk_orgs().length > 1;
+		
+		////////////////////////////////////////////////////////////////////////
+		int rnIndex = mrs.getColumnIndex("rn");
 		for (int i = 0; i < dataRowList.size(); i++) {
-			dataRow = dataRowList.get(i).toArray();
-			rn = Integer.parseInt(dataRow[rnIndex - 1].toString());
-			isObj = false;
+		    dataRow = dataRowList.get(i).toArray();
+            rn = Integer.parseInt(dataRow[rnIndex - 1].toString());
+            isObj = false;
+            
+            for (int nPos = 0; nPos < totalCol2.size(); nPos++) {
+                String key = (String)dataRow[totalCol2.get(nPos) - 1];
+                String currtype = (String)dataRow[currtypeIndex - 1];
+                if (StringUtils.isEmpty(key)) {
+                    continue;
+                }
+                Map<String, String> currtypeMap = countMap.get(key); 
+                if (currtypeMap == null) {
+                    currtypeMap = new HashMap<String, String>();
+                    countMap.put(key, currtypeMap);
+                }
+                if (StringUtils.isNotEmpty(currtype)) {
+                    currtypeMap.put(currtype, null);
+                }
+            }
+		    
 			if (rn >= SmartProcessor.MAX_ROW) {
-				// 处理合计行
-				int j = qryObjIndex.size() - 1;
-				for (; j >= 0; j--) {
-					if (dataRow[qryObjIndex.get(j) - 1] != null && !"".equals(dataRow[qryObjIndex.get(j) - 1])) {
-						dataRow[qryObjIndex.get(j) - 1] = dataRow[qryObjIndex.get(j) - 1] + IErmReportConstants.CONST_SUB_TOTAL; // 小计
-						dataRow[qryObjNameIndex.get(j) - 1] = dataRow[qryObjNameIndex.get(j) - 1] + IErmReportConstants.CONST_SUB_TOTAL; // 小计
-						isObj = true;
-						break;
-					}
-				}
+                // 处理合计行
+//                if (rn == SmartProcessor.MAX_ROW) {
+                    // rn == SmartProcessor.MAX_ROW：本日小计
+//                    dataRow[tallydateIndex - 1] = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0055")/*@res "本日小计"*/;
+                    // 日小计期末余额=上一行期末余额
+//                    dataRow[oriIndex - 1] = datas[i - 1][oriIndex - 1];
+//                    dataRow[locIndex - 1] = datas[i - 1][locIndex - 1];
+//                    dataRow[grlocIndex - 1] = datas[i - 1][grlocIndex - 1];
+//                    dataRow[gllocIndex - 1] = datas[i - 1][gllocIndex - 1];
+//                    int j = qryObjIndex.size() - 1;
+//                    for (; j >= 0; j--) {
+//                        dataRow[qryObjIndex.get(j) - 1] = "";
+//                        dataRow[qryObjNameIndex.get(j) - 1] = "";
+//                    }
+//                    dataRow[currtypeIndex - 1] = "";
+//                    dataRow[orgIndex - 1] = "";
+//                } else {
+                    int k = totalCol.size() - 1;
+                    int curRowQryObjIndex = 0;
+                    for (; k >= 0; k--) {
+                        if (dataRow[totalCol.get(k) - 1] != null && !"".equals(dataRow[totalCol.get(k) - 1])) {
+                            if (k == totalCol.size() - 1) {
+                                // 币种小计
+                                dataRow[currtypeIndex - 1] = dataRow[currtypeIndex - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
+                                
+                                if (!isCurrtype) {
+                                    for (int nPos = 0; nPos < orgCurrtypeCount.length; nPos++) {
+                                        currtypeCount[nPos] = 0;
+                                    }
+                                }
+                                for (int nPos = 0; nPos < orgCurrtypeCount.length; nPos++) {
+                                    if (dataRow[amount_ori_pos[nPos] - 1] != null && 
+                                            BigDecimal.ZERO.compareTo((BigDecimal)dataRow[amount_ori_pos[nPos] - 1]) != 0) {
+                                        currtypeCount[nPos]++;
+                                        orgCurrtypeCount[nPos]++;
+                                    }
+                                }
+                                isCurrtype = true;
+                            } else {
+                                // 查询对象小计
+                                dataRow[qryObjIndex.get(k) - 1] = dataRow[qryObjIndex.get(k) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
+//                              dataRow[qryObjNameIndex.get(k) - 1] = dataRow[qryObjNameIndex.get(k) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
+                                curRowQryObjIndex = qryObjNameIndex.get(k);
+                                isCurrtype = false;
+                            }
+                            isObj = true;
+                            break;
+                        }
+                    }
 
-				if (isObj) {
-					dataRow[orgIndex - 1] = "";
-				} else if (isMultiOrg && (dataRow[orgIndex - 1] != null && !"".equals(dataRow[orgIndex - 1]))) {
-					dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.CONST_SUB_TOTAL; // 小计
-					isObj = true;
-				}
+                    for (k--; k >= 0; k--) {
+                        dataRow[qryObjIndex.get(k) - 1] = "";
+                        dataRow[qryObjNameIndex.get(k) - 1] = "";
+                    }
 
-				if (!isObj) {
-					dataRow[orgIndex - 1] = IErmReportConstants.CONST_AGG_TOTAL; // 合计
-				}
-			}
+                    if (!isObj&& isMultiOrg && (dataRow[orgIndex - 1] == null || dataRow[orgIndex - 1].toString().length() == 0)) {
+//                        dataRow[briefIndex - 1] = IErmReportConstants.CONST_ALL_TOTAL; // 总计
+                        dataRow[orgIndex - 1] = "";
+                        // 多组织、多币种清空金额字段信息
+//                        if (!isCurrtype) {
+//                            // 多币种清空金额字段信息
+//                            for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+//                                if (currtypeCount[nPos] > 1) {
+//                                    dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
+//                                }
+//                            }
+//                        }
 
-			datas[i] = dataRow;
+                        String org = (String)dataRow[orgIndex - 1];
+                        if (!isCurrtype) {
+                            // 多币种清空金额字段信息
+                            Map<String, String> currtypeMap = countMap.get(org); 
+                            for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+                                if (currtypeMap != null && currtypeMap.keySet().size() > 1) {
+                                    dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
+                                }
+                                orgCurrtypeCount[nPos] = 0;
+                            }
+                        }
+                    } else if (!isObj) {
+                        String org = (String)dataRow[orgIndex - 1];
+                        dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.getCONST_AGG_TOTAL(); // 合计
+//                        dataRow[tallydateIndex - 1] = "";
+                        if (!isCurrtype) {
+                            // 多币种清空金额字段信息
+                            Map<String, String> currtypeMap = countMap.get(org); 
+                            for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+                                if (currtypeMap != null && currtypeMap.keySet().size() > 1) {
+                                    dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
+                                }
+                                orgCurrtypeCount[nPos] = 0;
+                            }
+                        }
+                    } else {
+                        dataRow[orgIndex - 1] = "";
+                    }
+                    if (!isCurrtype && curRowQryObjIndex > 0) {
+                        String curRowQryObj = (String)dataRow[curRowQryObjIndex - 1];
+                        Map<String, String> currtypeMap = countMap.get(curRowQryObj); 
+                        // 多币种清空金额字段信息
+                        for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+                            if (currtypeMap != null && currtypeMap.keySet().size() > 1) {
+                                dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
+                            }
+                        }
+                    }
+//                }
+            }
+            datas[i] = dataRow;
 		}
 
 		return datas;

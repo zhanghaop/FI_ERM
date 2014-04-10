@@ -27,14 +27,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -50,6 +51,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -147,14 +150,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -170,6 +174,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -267,14 +273,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -290,6 +297,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -387,14 +396,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -410,7 +420,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
-			<billitem itemkey="zy" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
 			<billitem itemkey="defitem3" />
@@ -508,14 +519,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -531,6 +543,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -629,14 +643,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -652,6 +667,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -750,14 +767,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -773,6 +791,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -871,14 +891,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -894,6 +915,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -992,14 +1015,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -1015,6 +1039,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -1113,14 +1139,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -1136,6 +1163,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -1234,14 +1263,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -1257,6 +1287,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />
@@ -1353,19 +1385,15 @@
 			<billitem itemkey="zyx24" />
 			<billitem itemkey="zyx25" />
 		</costentity_billitems>
-		<payentity_billitems>
-			<billitem itemkey="cashproj" />
-			<billitem itemkey="skyhzh" />
-			<billitem itemkey="deptid" />
-			<billitem itemkey="deptid_v" />
-			<billitem itemkey="jkbxr" />
-			<billitem itemkey="mngaccid" />
-			<billitem itemkey="zfdwbm" />
-			<billitem itemkey="jsfs" />
-			<billitem itemkey="pjh" />
+		<payorgentity_billitems>
 			<billitem itemkey="fkyhzh" />
-			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="jsfs" />
 			<billitem itemkey="cashitem" />
+			<billitem itemkey="cashproj" />
+			<billitem itemkey="checktype" />
+			<billitem itemkey="pjh" />
+			<billitem itemkey="pk_cashaccount" />
+			<billitem itemkey="mngaccid" />
 			<billitem itemkey="zyx1" />
 			<billitem itemkey="zyx2" />
 			<billitem itemkey="zyx3" />
@@ -1381,6 +1409,8 @@
 			<billitem itemkey="zyx13" />
 			<billitem itemkey="zyx14" />
 			<billitem itemkey="zyx15" />
+		</payorgentity_billitems>
+		<payentity_billitems>
 			<billitem itemkey="zy" />
 			<billitem itemkey="defitem1" />
 			<billitem itemkey="defitem2" />

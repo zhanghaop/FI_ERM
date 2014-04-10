@@ -1,7 +1,5 @@
 package nc.ui.er.reimtype.model;
 
-import java.util.ArrayList;
-
 import nc.bs.framework.common.NCLocator;
 import nc.itf.er.reimtype.IReimTypeQueryService;
 import nc.ui.uif2.AppEvent;
@@ -76,7 +74,7 @@ public class ReimTypeModelDataManager implements IAppModelDataManager,
 
 	public void initModel() {
 		ReimTypeVO[] vos = null;
-		ArrayList<String> pks = new ArrayList<String>();
+//		ArrayList<String> pks = new ArrayList<String>();
 		String whereCond = "pk_group = '" + getContext().getPk_group() + "'";
 		try {
 			vos = getReimTypeQueryService().queryReimTypes(

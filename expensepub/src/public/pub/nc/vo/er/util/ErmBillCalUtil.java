@@ -32,42 +32,17 @@ public class ErmBillCalUtil {
 	}
 
 	public static UFDouble getOrgRate(String pk_currtype, String pk_group, String pk_org, UFDate date, String pk_billtype) throws BusinessException {
-		int rateType = getRateType(pk_billtype, pk_group);
-		UFDouble outrate = Currency.getRate(pk_org, pk_currtype, date, rateType);
+//		int rateType = getRateType(pk_billtype, pk_group);
+		UFDouble outrate = Currency.getRate(pk_org, pk_currtype, date);
 		return outrate == null ? UFDouble.ZERO_DBL : outrate;
 	}
 
 	public static UFDouble getGroupRate(String pk_currtype, String pk_group, String pk_org, UFDate date, String pk_billtype) throws BusinessException {
-		String NC001 = SysInit.getParaString(pk_group, "NC001");
-		if (BXConstans.GROUP_DISABLE.equals(NC001))
-			return UFDouble.ZERO_DBL;
-		int rateType = getRateType(pk_billtype, pk_group);
-		final String groupCurrpk = Currency.getGroupCurrpk(pk_group);
-		if (BXConstans.BaseOriginal.equals(NC001)) {
-			UFDouble outrate = Currency.getRate(pk_org, pk_currtype,groupCurrpk, date, rateType);
-			return outrate == null ? UFDouble.ZERO_DBL : outrate;
-		} else {
-			if(null == Currency.getOrgLocalCurrPK(pk_org))
-				return UFDouble.ZERO_DBL;
-			UFDouble outrate = Currency.getRate(pk_org, Currency.getOrgLocalCurrPK(pk_org),groupCurrpk, date, rateType);
-			return outrate == null ? UFDouble.ZERO_DBL : outrate;
-		}
+		return Currency.getGroupRate(pk_org,pk_group, pk_currtype, date);
 	}
 
 	public static UFDouble getGlobalRate(String pk_currtype, String pk_org, UFDate date) throws BusinessException {
-		String NC002 = SysInit.getParaString(BXConstans.GLOBAL_CODE, "NC002");
-		final String globalCurrPk = Currency.getGlobalCurrPk(null);
-		if (BXConstans.GLOBAL_DISABLE.equals(NC002))
-			return UFDouble.ZERO_DBL;
-		if (BXConstans.BaseOriginal.equals(NC002)) {
-			UFDouble outrate = Currency.getRate(pk_org, pk_currtype,globalCurrPk, date);
-			return outrate == null ? UFDouble.ZERO_DBL : outrate;
-		} else {
-			if(null == Currency.getOrgLocalCurrPK(pk_org))
-				return UFDouble.ZERO_DBL;
-			UFDouble outrate = Currency.getRate(pk_org, Currency.getOrgLocalCurrPK(pk_org),globalCurrPk, date);
-			return outrate == null ? UFDouble.ZERO_DBL : outrate;
-		}
+		return Currency.getGlobalRate(pk_org, pk_currtype, date);
 	}
 	/**
 	 * 获取中间价

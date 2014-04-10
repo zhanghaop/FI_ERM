@@ -21,17 +21,17 @@ public class QryObjList<E> implements List<E>,Serializable{
     @Override
 	public String toString(){
     	
-    	String str ="";
+    	StringBuffer str = new StringBuffer();
     	for(int i = 0; i < m_array.size(); i++){
     		Object obj = m_array.get(i);
     		if(obj != null){
     			if(i>0){
-    				str +=",";
+    				str.append(",");
     			}
-    			str += obj.toString();
+    			str.append(obj.toString());
     		}
     	}
-		return str;
+		return str.toString();
     }
     public void setArray(List<E> array){
         m_array = array;

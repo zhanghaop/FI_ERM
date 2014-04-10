@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+	<public>
+	 	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.pubitf.erm.closeacc.IErmCloseAccService</interface>
+     		<implementation>nc.pubitf.erm.closeacc.ErmCloseAccServiceImpl</implementation>
+		</component>
+        <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.pubitf.erm.closeacc.IErmCloseAccBookQryService</interface>
+            <implementation>nc.pubitf.erm.closeacc.ErmCloseAccBookQryServiceImpl</implementation>
+        </component>
+    </public>
+</module>

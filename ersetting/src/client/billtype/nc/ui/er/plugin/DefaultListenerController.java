@@ -64,7 +64,8 @@ public class DefaultListenerController implements IListenerController{
 
 	/**刷新ui,主要是刷新按钮状态*/
 	private void refUI(){
-		List list = getBtnList();
+		@SuppressWarnings("rawtypes")
+        List list = getBtnList();
 		ExButtonObject btn =null;
 		for(int i=0;i<list.size();i++){
 			btn = (ExButtonObject)list.get(i);
@@ -296,7 +297,7 @@ public class DefaultListenerController implements IListenerController{
 		// TODO 自动生成方法存根
 		Object[] listeners = getTreeSelectionList().getListenerList();
 		for (int i = 0; i <listeners.length; i++) {
-			if (listeners[i] == TreeSelectionListener.class) {
+			if (listeners[i].getClass() == TreeSelectionListener.class) {
 				((TreeSelectionListener) listeners[i]).valueChanged(e);
 			}
 		}

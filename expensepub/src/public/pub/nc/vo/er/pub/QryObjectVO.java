@@ -8,6 +8,7 @@ package nc.vo.er.pub;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.control.QryCondVO;
 import nc.vo.pub.NullFieldException;
 import nc.vo.pub.ValidationException;
@@ -86,11 +87,15 @@ public Object clone() {
 	Object o = null;
 	try {
 		o = super.clone();
-	} catch (Exception e) {}
+	} catch (Exception e) {
+		ExceptionHandler.handleExceptionRuntime(e);
+	}
+	
+	if(o == null){
+		throw new AssertionError();
+	}
 	QryObjectVO qryobj = (QryObjectVO)o;
-
 	// 你在下面复制本VO对象的所有属性：
-
 	return qryobj;
 }
 /**
@@ -458,51 +463,49 @@ public void validate() throws ValidationException {
 	ArrayList<String> errFields = new ArrayList<String>(); // errFields record those null fields that cannot be null.
 	// 检查是否为不允许空的字段赋了空值，你可能需要修改下面的提示信息：
 	if (m_obj_oid == null) {
-		errFields.add(new String("m_obj_oid"));
+		errFields.add("m_obj_oid");
 	}
 	if (m_point == null) {
-		errFields.add(new String("m_point"));
+		errFields.add("m_point");
 	}
 	if (m_disp_tab == null) {
-		errFields.add(new String("m_disp_tab"));
+		errFields.add("m_disp_tab");
 	}
 	if (m_disp_fld == null) {
-		errFields.add(new String("m_disp_fld"));
+		errFields.add("m_disp_fld");
 	}
 	if (m_cond_tab == null) {
-		errFields.add(new String("m_cond_tab"));
+		errFields.add("m_cond_tab");
 	}
 	if (m_cond_fld == null) {
-		errFields.add(new String("m_cond_fld"));
+		errFields.add("m_cond_fld");
 	}
 	if (m_obj_name == null) {
-		errFields.add(new String("m_obj_name"));
+		errFields.add("m_obj_name");
 	}
 	if (m_obj_datatype == null) {
-		errFields.add(new String("m_obj_datatype"));
+		errFields.add("m_obj_datatype");
 	}
 	if (m_disp_order == null) {
-		errFields.add(new String("m_disp_order"));
+		errFields.add("m_disp_order");
 	}
 	if (m_value_tab == null) {
-		errFields.add(new String("m_value_tab"));
+		errFields.add("m_value_tab");
 	}
 	if (m_value_fld == null) {
-		errFields.add(new String("m_value_fld"));
+		errFields.add("m_value_fld");
 	}
-	// construct the exception message:
 	StringBuffer message = new StringBuffer();
-//	message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275")/*@res "下列字段不能为空："*/);
-	String msg ="";
 	if (errFields.size() > 0) {
 		String[] temp = (String[]) errFields.toArray(new String[0]);
 		message.append(temp[0]);
+		
+		StringBuffer msg = new StringBuffer();
 		for ( int i= 1; i < temp.length; i++ ) {
-			msg+=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000276");
-			msg += temp[i];
+			msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000276"));
+			msg.append(temp[i]);
 		}
-		// throw the exception:
-		message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275",null,new String[]{msg})/*@res "下列字段不能为空："*/);
+		message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275",null,new String[]{msg.toString()})/*@res "下列字段不能为空："*/);
 		throw new NullFieldException(message.toString());
 	}
 }

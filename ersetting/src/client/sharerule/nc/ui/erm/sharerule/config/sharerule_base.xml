@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
+
+	<!-- 并发异常的处理 -->
+	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context" />
+	</bean>
+
+	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+		<property name="model">
+			<ref bean="treeModel" />
+		</property>
+		<property name="saveaction">
+			<ref bean="saveShareruleAction" />
+		</property>
+		<property name="cancelaction">
+			<ref bean="cancelShareruleAction" />
+		</property>
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 模板容器，负责对模板的统一装载 -->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer"
+		init-method="load">
+		<property name="context" ref="context" />
+		<property name="nodeKeies">
+			<list>
+				<value>20110SR</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化-->
+	<bean id="modelDataManager" class="nc.ui.erm.sharerule.model.ShareRuleAppModelDataManager">
+		<property name="treeModel" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="treeService" class="nc.ui.erm.sharerule.model.ShareRuleTreeService" />
+	<!-- 功能管理树型模型 -->
+	<bean id="treeModel" class="nc.ui.uif2.model.HierachicalDataAppModel">
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+		<property name="treeCreateStrategy" ref="treeCreateStrategy" />
+		<property name="service" ref="treeService" />
+	</bean>
+
+	<bean id="treeCreateStrategy" class="nc.vo.bd.meta.BDObjectTreeCreateStrategy">
+		<property name="factory" ref="boadatorfactory" />
+		<property name="rootName">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201100_0"></property>
+				<property name="resId" value="0201100-0035"></property>
+				<property name="defaultValue" value="分摊规则"></property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 树面板 -->
+	<bean id="treePanel" class="nc.ui.uif2.components.TreePanel"
+		init-method="init">
+		<property name="model" ref="treeModel"></property>
+	</bean>
+	<!-- 组织面板 -->
+	<bean id="orgPanel" class="nc.bs.erm.util.ErmFinOrgPanel"
+		init-method="initUI">
+		<property name="labelName">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0076"></property>
+				<property name="defaultValue" value="财务组织"></property>
+			</bean>
+		</property>
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="model" ref="treeModel" />
+	</bean>
+
+	<!--卡控件-->
+	<bean id="billFormEditor" class="nc.ui.erm.sharerule.view.ShareRuleBillForm"
+		init-method="initUI">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201100_0"></property>
+				<property name="resId" value="0201100-0035"></property>
+				<property name="defaultValue" value="分摊规则"></property>
+			</bean>
+		</property>
+		<property name="model" ref="treeModel"></property>
+		<property name="nodekey" value="20110SR"></property>
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="bodyActionMap">
+			<map>
+				<entry key="rule_data">
+					<list>
+						<ref bean="addLineAction" />
+						<ref bean="deleteLineAction" />
+						<ref bean="insertLineAction" />
+						<ref bean="copyLineAction" />
+						<ref bean="pasteLineAction" />
+						<ref bean="pasteLineToTailAction" />
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	<bean id="addLineAction" class="nc.ui.erm.sharerule.actions.AddLineShareruleDataAction">
+		<property name="model" ref="treeModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+	</bean>
+	<bean id="deleteLineAction" class="nc.ui.uif2.actions.DelLineAction">
+		<property name="model" ref="treeModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+	</bean>
+	<bean id="insertLineAction" class="nc.ui.uif2.actions.InsertLineAction">
+		<property name="model" ref="treeModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+	</bean>
+	<bean id="copyLineAction" class="nc.ui.uif2.actions.CopyLineAction">
+		<property name="model" ref="treeModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+	</bean>
+	<bean id="pasteLineAction" class="nc.ui.erm.sharerule.actions.SharerulePasteLineAction">
+		<property name="model" ref="treeModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+	</bean>
+	<bean id="pasteLineToTailAction" class="nc.ui.erm.sharerule.actions.SharerulePasteLineToTailAction">
+		<property name="model" ref="treeModel" />
+		<property name="cardpanel" ref="billFormEditor" />
+	</bean>
+
+	<!-- 按钮 -->
+	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction" />
+	<bean id="addShareruleAction" class="nc.ui.erm.sharerule.actions.AddShareruleAction">
+		<property name="model" ref="treeModel" />
+		<property name="billForm" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="editShareruleAction" class="nc.ui.uif2.actions.EditAction">
+		<property name="model" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="deleteShareruleAction" class="nc.ui.uif2.actions.DeleteAction">
+		<property name="model" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="cancelShareruleAction" class="nc.ui.uif2.actions.CancelAction">
+		<property name="model" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	<bean id="shareruleValidationService" class="nc.bs.uif2.validation.DefaultValidationService">
+		<property name="validators">
+			<list>
+				<bean class="nc.ui.erm.sharerule.validator.ShareruleValidator" />
+			</list>
+		</property>
+	</bean>
+	<bean id="saveShareruleAction" class="nc.ui.erm.sharerule.actions.SaveShareruleAction">
+		<property name="model" ref="treeModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="validationService" ref="shareruleValidationService" />
+	</bean>
+	<bean id="refreshAction" class="nc.ui.uif2.actions.RefreshAction">
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="model" ref="treeModel" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+</beans>

@@ -19,7 +19,7 @@ public class  ExpenseTypeBillVO extends HYBillVO {
 	}
 
 	public CircularlyAccessibleValueObject getParentVO() {
-		return super.getParentVO();
+		return (ExpenseTypeVO) super.getParentVO();
 	}
 
 	public void setChildrenVO(CircularlyAccessibleValueObject[] children) {
@@ -32,7 +32,7 @@ public class  ExpenseTypeBillVO extends HYBillVO {
 	}
 
 	public void setParentVO(CircularlyAccessibleValueObject parent) {
-		super.setParentVO(parent);
+		super.setParentVO((ExpenseTypeVO)parent);
 	}
 
 }

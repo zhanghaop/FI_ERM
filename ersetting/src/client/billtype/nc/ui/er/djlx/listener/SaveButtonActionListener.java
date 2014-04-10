@@ -4,7 +4,7 @@ import nc.bs.logging.Log;
 import nc.impl.er.proxy.ProxyDjlx;
 import nc.ui.er.plugin.IButtonActionListener;
 import nc.ui.er.pub.BillWorkPageConst;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.ml.NCLangRes;
 import nc.vo.er.djlx.BillTypeVO;
 import nc.vo.er.djlx.DjLXVO;
@@ -66,7 +66,7 @@ public class SaveButtonActionListener extends BaseListener implements IButtonAct
 	private void check(BillTypeVO vo) throws BusinessException {
 		DjLXVO djlx = (DjLXVO) vo.getParentVO();
 		if (djlx.getDwbm() == null) {
-			djlx.setDwbm(BXUiUtil.getPK_group());
+			djlx.setDwbm(ErUiUtil.getPK_group());
 		}
 		if (djlx.getDr() == null) {
 			djlx.setDr(0);

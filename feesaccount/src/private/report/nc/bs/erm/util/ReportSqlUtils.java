@@ -7,21 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import nc.bs.er.util.SqlUtil;
 import nc.bs.er.util.SqlUtils;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
-import nc.itf.erm.report.IErmReportConstants;
+import nc.bs.logging.Logger;
 import nc.itf.fipub.analyzedate.IDateAnalyzeQueryService;
 import nc.itf.fipub.queryobjreg.IReportQueryObjRegQuery;
-import nc.itf.fipub.report.IPubReportConstants;
 import nc.pubitf.rbac.IDataPermissionPubService;
-import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.ep.bx.BXBusItemVO;
-import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.erm.pub.IErmReportAnalyzeConstants;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.report.QueryObjVO;
-import nc.vo.fipub.timecontrol.TimeCtrlUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.util.innercode.NamedParamUtil;
 
@@ -91,14 +87,14 @@ public class ReportSqlUtils {
 
 	public static String getAnaDateField(String anaDate) {
 		String field = null;
-		if (IErmReportAnalyzeConstants.ACC_ANA_DATE_BILLDATE.equals(anaDate)) { // 单据日期
-			field = "zb" + "." + JKBXHeaderVO.DJRQ;
-		} else if (IErmReportAnalyzeConstants.ACC_ANA_DATE_LASTPAYDATE.equals(anaDate)) { // 最迟还款日
-			field = "zb" + "." + JKBXHeaderVO.ZHRQ;
-		} else if (IErmReportAnalyzeConstants.ACC_ANA_DATE_AUDITDATE.equals(anaDate)) { // 审核日期
-			field = "zb" + "." + JKBXHeaderVO.SHRQ;
-		} else if (IErmReportAnalyzeConstants.ACC_ANA_DATE_EFFECTDATE.equals(anaDate)) { // 生效日期
-			field = "zb" + "." + JKBXHeaderVO.JSRQ;
+		if (IErmReportAnalyzeConstants.getACC_ANA_DATE_BILLDATE().equals(anaDate)) { // 单据日期
+			field = "zb.djrq";
+		} else if (IErmReportAnalyzeConstants.getACC_ANA_DATE_LASTPAYDATE().equals(anaDate)) { // 最迟还款日
+			field = "zb.zhrq";
+		} else if (IErmReportAnalyzeConstants.getACC_ANA_DATE_AUDITDATE().equals(anaDate)) { // 审核日期
+			field = "zb.shrq";
+		} else if (IErmReportAnalyzeConstants.getACC_ANA_DATE_EFFECTDATE().equals(anaDate)) { // 生效日期
+			field = "zb.jsrq";
 		} 
 		return field;
 	}
@@ -127,9 +123,15 @@ public class ReportSqlUtils {
 			return powerSqlBuffer.toString();
 		}
 
+		Map<String, String> filter = new HashMap<String, String>();
 		String powerSql = null;
 		Map<String, String> map = null;
 		for (String resCode : resCodes) {
+		    if (filter.containsKey(resCode)) {
+		        continue;
+		    } else {
+		        filter.put(resCode, null);
+		    }
 			map = getPowerAlias(resCode);
 			powerSql = getDataRefSQLWherePart(userID, pk_group, resCode, operationCode, map
 					.get("table"), map.get("column"));
@@ -139,6 +141,38 @@ public class ReportSqlUtils {
 			powerSqlBuffer.append(" and ").append(powerSql);
 		}
 
+		return powerSqlBuffer.toString();
+	}
+	
+	/**
+	 * 获取报表数据选线SQL，费用申请<br>
+	 * 
+	 * @param userID 用户主键<br>
+	 * @param pk_group 集团主键<br>
+	 * @param resCodes 权限资源实体编码数组，参考nc.itf.bd.pub.IBDResourceIDConst<br>
+	 * @param operationCode, "" 操作(场景)编码<br>
+	 * @return String<br>
+	 * @throws BusinessException<br>
+	 */
+	public static String getDataPermissionSql(String userID, String pk_group, 
+			String operationCode,String dsp_objtablename) throws BusinessException {
+		Map<String, String> fieldMap = nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID(dsp_objtablename);
+		StringBuffer powerSqlBuffer = new StringBuffer("");
+		if (StringUtils.isEmpty(userID) || StringUtils.isEmpty(pk_group) || fieldMap.isEmpty()) {
+			return powerSqlBuffer.toString();
+		}
+		
+		Iterator<Entry<String, String>> iter = fieldMap.entrySet().iterator();
+		String powerSql = null;
+		while (iter.hasNext()) {
+			Map.Entry<String,String> entry = iter.next();
+			powerSql = getDataRefSQLWherePart(userID, pk_group, entry.getValue(), operationCode, getAlias("er_jkzb"),
+					entry.getKey());
+			if (StringUtils.isEmpty(powerSql)) {
+				continue;
+			}
+			powerSqlBuffer.append(" and ").append(powerSql);
+		}
 		return powerSqlBuffer.toString();
 	}
 
@@ -169,7 +203,26 @@ public class ReportSqlUtils {
 	 */
 	public static Map<String,String> getErmQryObjectMetaID() throws BusinessException{
 		Map<String, String> map = new HashMap<String, String>();
-		List<QueryObjVO> voList = NCLocator.getInstance().lookup(IReportQueryObjRegQuery.class).getRegisteredQueryObj(BXConstans.ERM_PRODUCT_CODE_Lower);
+		List<QueryObjVO> voList = NCLocator.getInstance().lookup(IReportQueryObjRegQuery.class).getRegisteredQueryObjByClause("ownmodule = 'erm'  and dsp_objtablename = 'zb'");
+		for(QueryObjVO vo: voList){
+			if(map.containsKey(vo.getQry_objfieldname())){
+				continue;
+			}
+			map.put(vo.getQry_objfieldname(), vo.getBd_mdid());
+		}
+		return map;
+	}
+	
+	/**
+	 * 返回报销管理查询对象字段对应的元数据
+	 * @author chendya
+	 * @return
+	 * @throws BusinessException
+	 */
+	public static Map<String,String> getErmQryObjectMetaID(String dsp_objtablename) throws BusinessException{
+		Map<String, String> map = new HashMap<String, String>();
+		List<QueryObjVO> voList = NCLocator.getInstance().lookup(IReportQueryObjRegQuery.class).getRegisteredQueryObjByClause("ownmodule = 'erm'  and dsp_objtablename = '" +dsp_objtablename+
+				"'");
 		for(QueryObjVO vo: voList){
 			if(map.containsKey(vo.getQry_objfieldname())){
 				continue;
@@ -197,11 +250,26 @@ public class ReportSqlUtils {
 	}
 
 	public static String getCurrencySql(String pk_currency, String table) {
+//		if (StringUtils.isEmpty(pk_currency)) {
+//			return " ";
+//		}
+//
+//		return " and " + table + ".bzbm = '" + pk_currency + "' ";
+		
+		
 		if (StringUtils.isEmpty(pk_currency)) {
-			return " ";
-		}
-
-		return " and " + table + ".bzbm = '" + pk_currency + "' ";
+            return " ";
+        }
+        String field = table + ".bzbm";
+        String[] pkCurrTypes = pk_currency.split(",");
+        String sqlCurrType;
+        try {
+            sqlCurrType = SqlUtil.buildInSql(field, pkCurrTypes);
+        } catch (BusinessException e) {
+            Logger.error(e.getMessage(), e);
+            sqlCurrType = "1 = 1";
+        }
+        return " and " + sqlCurrType + " ";
 	}
 
 	/**

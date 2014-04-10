@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<import resource="sharerule_base.xml"/>
+	<!-- 总装 -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="name" value="财务组织" />
+						<property name="component" ref="orgPanel" />
+					</bean>
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+						<property name="left">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="name" value="左树" />
+								<property name="component" ref="treePanel" />
+							</bean>
+						</property>
+						<property name="right">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="name" value="右卡" />
+								<property name="component" ref="billFormEditor" />
+							</bean>
+						</property>
+						<property name="dividerLocation" value="180f"></property>
+					</bean>
+				</property>
+				<property name="dividerLocation" value="0.05f"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="addShareruleAction" />
+				<ref bean="editShareruleAction" />
+				<ref bean="deleteShareruleAction" />
+				<ref bean="separatorAction" />
+				<ref bean="refreshAction" />
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveShareruleAction" />
+				<ref bean="separatorAction" />
+				<ref bean="cancelShareruleAction" />
+			</list>
+		</property>
+		<property name="model" ref="treeModel"></property>
+	</bean>
+</beans>

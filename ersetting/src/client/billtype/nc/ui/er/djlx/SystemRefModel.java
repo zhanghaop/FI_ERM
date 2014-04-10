@@ -32,7 +32,6 @@ public SystemRefModel() {
 public java.util.Vector getData() {
 	Vector<Object> vetData = new Vector<Object>();
 	Vector<Object> vetLine = new Vector<Object>();	
-	vetLine = new Vector<Object>();
 	vetLine.addElement(BilltypeSystemenum.ER.getSyscode());
 	vetLine.addElement(BilltypeSystemenum.ER.getSysname());
 	vetData.addElement(vetLine);

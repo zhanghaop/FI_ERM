@@ -42,8 +42,7 @@ public class ErmGLCloseAccListener implements IBusinessListener {
 
 		try {
 			if (!canBeClose) {
-				String sysName = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0", "02011001-0027")
-				/* 报销系统 */;
+				String sysName = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("funcode","D2011")/*@res "费用管理"*/;
 				eve.addUnSettleSystem(closeAccBookVO, sysName);
 			}
 		} catch (NotSupportedException e) {
@@ -52,34 +51,48 @@ public class ErmGLCloseAccListener implements IBusinessListener {
 	}
 
 	public void checkUnCloseAcc(String year, String cope, String pk_org) throws BusinessException {
-		String period = year + "-" + cope;
-		Map<String, String> book = NCLocator.getInstance().lookup(IAccountingBookPubService.class).queryAccountingBookIDByFinanceOrgIDWithMainAccountBook(new String[] { pk_org });
-		String pkbook = null;
-		if (book != null && book.size() != 0) {
-			pkbook = book.values().iterator().next();
-		}
-		if (StringUtil.isEmpty(pkbook)) {
-			Log.getInstance(getClass()).debug("this org has no bookaccount");
-			return;
-		}
-		//安装总账产品，需要总账关账检查业务系统的参数是否启用，是单产品，就不需要检查业务系统的参数
-		boolean isInstallGL = InitGroupQuery.isEnabled( InvocationInfoProxy
-		          .getInstance().getGroupId(), BXConstans.GL_FUNCODE);
-		String isCheck=null;
-		if(isInstallGL)
-		{
-			  isCheck = SysInitQuery.getParaString(pk_org, "GL034");
-		}
-		else{
-			  isCheck="";
-		}
-		//期间帐簿是否关帐
-		boolean isClosed = NCLocator.getInstance().lookup(ICloseAccQryPubServicer.class).isCloseByAccountBookId(pkbook, period);
-		if (isClosed && isCheck!=null) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0", "02011001-0025")
-			/* @res "总账已经关帐，不能进行报销管理反关账! */);
-		}
+	    checkUnCloseAcc(year, cope, pk_org, 
+	            nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0",
+                    "02011001-0025") /* @res "总账已经关帐，不能进行报销管理反关账! */);
 	}
+
+    public void checkUnCloseAcc(String year, String cope, String pk_org,
+            String errorMsg) throws BusinessException {
+        String period = year + "-" + cope;
+        Map<String, String> book = NCLocator
+                .getInstance()
+                .lookup(IAccountingBookPubService.class)
+                .queryAccountingBookIDByFinanceOrgIDWithMainAccountBook(
+                        new String[] { pk_org });
+        String pkbook = null;
+        if (book != null && book.size() != 0) {
+            pkbook = book.values().iterator().next();
+        }
+        if (StringUtil.isEmpty(pkbook)) {
+            Log.getInstance(getClass()).debug("this org has no bookaccount");
+            return;
+        }
+        // 安装总账产品，需要总账关账检查业务系统的参数是否启用，是单产品，就不需要检查业务系统的参数
+        boolean isInstallGL = InitGroupQuery.isEnabled(InvocationInfoProxy
+                .getInstance().getGroupId(), BXConstans.GL_FUNCODE);
+        boolean isValidate = false;
+        if (isInstallGL) {
+            String glPara = SysInitQuery.getParaString(pk_org, "GL034");
+            String erPara = SysInitQuery.getParaString(pk_org, "ER12");
+            if (glPara != null && "Y".equals(erPara))
+                isValidate = true;
+        }
+        if (isValidate) {
+            // 期间帐簿是否关帐
+            boolean isClosed = NCLocator.getInstance()
+                    .lookup(ICloseAccQryPubServicer.class)
+                    .isCloseByAccountBookId(pkbook, period);
+            if (isClosed) {
+                throw new BusinessException(errorMsg);
+            }
+        }
+
+    }
 
 	private boolean checkSystem(String ermCreateDate, String pk_org, String period)
 			throws BusinessException {

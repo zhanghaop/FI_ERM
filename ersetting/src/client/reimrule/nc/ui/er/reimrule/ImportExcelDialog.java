@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -293,7 +294,7 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 							for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 								getUIComboBox().addItem(wb.getSheetName(i));
 							}
-						} catch (Exception eex) {
+						} catch (IOException eex) {
 							MessageDialog.showErrorDlg(ImportExcelDialog.this,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000453")/*@res "打开文件时出现错误，可能是文件格式出错或者正在被使用。"*/);
 						}
 					}
@@ -650,11 +651,12 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 					}else if(colsMap.get(j).contains("def")){ // 部门自定义@def?
 						String key=colsMap.get(j);
 						String defcode=key.substring(key.indexOf("def"));
-						String bdpk = null;
-						if(getRBUseName().isSelected())
-							bdpk = ruleUI.getDefValueByKey(cell.toString(), defcode, true);
-						else
-							bdpk = ruleUI.getDefValueByKey(cell.toString(), defcode, false);
+//						String bdpk = null;
+//						if(getRBUseName().isSelected())
+//							bdpk = ruleUI.getDefValueByKey(cell.toString(), defcode, true);
+//						else
+//							bdpk = ruleUI.getDefValueByKey(cell.toString(), defcode, false);
+						String bdpk = cell.toString();
 						reimrule.setAttributeValue(defcode, bdpk);
 						reimrule.setAttributeValue(defcode+"_name", cell.toString());
 					}

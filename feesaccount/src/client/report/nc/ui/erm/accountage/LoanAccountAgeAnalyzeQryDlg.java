@@ -2,18 +2,19 @@ package nc.ui.erm.accountage;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 
-
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.fipub.report.IReportQueryCond;
+import nc.ui.arap.bx.remote.PsnVoCall;
 import nc.ui.erm.pub.ErmAbstractReportBaseDlg;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.fipub.comp.ReportUiUtil;
 import nc.ui.pub.beans.UICheckBox;
 import nc.ui.pub.beans.UIComboBox;
+import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIRefPane;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.bd.ref.IFilterStrategy;
@@ -39,6 +40,7 @@ import com.ufida.dataset.IContext;
  * @version V6.0
  * @since V6.0 创建时间：2011-2-24 下午05:06:41
  */
+@SuppressWarnings("restriction")
 public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 
 
@@ -52,11 +54,17 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 	private static final String EFFECT_CHECK = "effectCheck"; // 生效状态
 
 	public LoanAccountAgeAnalyzeQryDlg(Container parent, IContext context,
-			String strNodeCode, int iSysCode, TemplateInfo ti, String title) {
-		super(parent, context, strNodeCode, iSysCode, ti, title);
+            String strNodeCode, int iSysCode, TemplateInfo ti, String title,
+            String djlx) {
+        super(parent, context, strNodeCode, iSysCode, ti, title, djlx);
 	}
 
-	@Override
+    @Override
+    public void initUIData() throws BusinessException {
+        beforeShowModal();
+    }
+
+    @Override
 	protected List<Component> getComponentList() throws BusinessException {
 		List<Component> normalCondCompList = super.getNormalCondCompList();
 		if (normalCondCompList.size() > 0) {
@@ -64,6 +72,10 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 			return normalCondCompList;
 		}
 
+        final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
+        String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
+        String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+        
 		// 获取当前业务日期
 		String currBusiDate = WorkbenchEnvironment.getInstance().getBusiDate().toStdString();
 		
@@ -78,8 +90,8 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		// 账龄方案
 		normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0013")/*@res "账龄方案"*/));
 		UIRefPane accAgePlanRef = new UIRefPane(RefConstant.REF_NODENAME_ACCAGEPLAN);
-		if(ReportUiUtil.getDefaultOrgUnit()!=null){
-			accAgePlanRef.setPk_org(ReportUiUtil.getDefaultOrgUnit());
+		if(pk_org!=null){
+			accAgePlanRef.setPk_org(pk_org);
 		}
 		normalCondCompList.add(accAgePlanRef);
 		addComponent(ACC_AGE_PLAN_REF, accAgePlanRef);
@@ -87,8 +99,8 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		// 币种
 		normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0014")/*@res "币　　种"*/));
 		UIRefPane currencyRef = new UIRefPane(RefConstant.REF_NODENAME_CURRENCY);
-		if(ReportUiUtil.getDefaultOrgUnit()!=null){
-			currencyRef.setPk_org(ReportUiUtil.getDefaultOrgUnit());
+		if(pk_org!=null){
+			currencyRef.setPk_org(pk_org);
 		}	
 		normalCondCompList.add(currencyRef);
 		addComponent(CURRENCY_REF, currencyRef);
@@ -98,7 +110,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		UIComboBox anaModeComb = new UIComboBox();
 		//目前报销只需要按照账期
 		anaModeComb.addItems(new String[] {
-				IErmReportAnalyzeConstants.ACC_ANA_MODE_AGE
+				IErmReportAnalyzeConstants.getACC_ANA_MODE_AGE()
 				 });
 		anaModeComb.addItemListener(new AnaModeChangeListener());
 		normalCondCompList.add(anaModeComb);
@@ -109,10 +121,10 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0017")/*@res "分析日期"*/));
 		UIComboBox anaDateComb = new UIComboBox();
 		anaDateComb.addItems(new String[] {
-				IErmReportAnalyzeConstants.ACC_ANA_DATE_LASTPAYDATE,
-				IErmReportAnalyzeConstants.ACC_ANA_DATE_BILLDATE,
-				IErmReportAnalyzeConstants.ACC_ANA_DATE_AUDITDATE,
-				IErmReportAnalyzeConstants.ACC_ANA_DATE_EFFECTDATE });
+				IErmReportAnalyzeConstants.getACC_ANA_DATE_LASTPAYDATE(),
+				IErmReportAnalyzeConstants.getACC_ANA_DATE_BILLDATE(),
+				IErmReportAnalyzeConstants.getACC_ANA_DATE_AUDITDATE(),
+				IErmReportAnalyzeConstants.getACC_ANA_DATE_EFFECTDATE() });
 
 		normalCondCompList.add(anaDateComb);
 		addComponent(ANA_DATE_COMB, anaDateComb);
@@ -122,7 +134,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0018")/*@res "分析方式"*/));
 		UIComboBox anaPatternComb = new UIComboBox();
 		anaPatternComb.addItems(new String[] {
-				IErmReportAnalyzeConstants.ACC_ANA_PATTERN_FINAL });
+				IErmReportAnalyzeConstants.getACC_ANA_PATTERN_FINAL() });
 		anaPatternComb.addItemListener(new ForDatelineListener());
 		normalCondCompList.add(anaPatternComb);
 		addComponent(ANA_PATTERN_COMB, anaPatternComb);
@@ -131,7 +143,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		// 财务组织
 		normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UCMD1-000006")/*@res "财务组织"*/));
 		UIRefPane financialOrgRefV = new UIRefPane(RefConstant.REF_NODENAME_FINANCEORG);
-		financialOrgRefV.setPK(ReportUiUtil.getDefaultOrgUnit());
+		financialOrgRefV.setPK(pk_org);
 		financialOrgRefV.addValueChangedListener(new OrgChangedListener());
 		financialOrgRefV.setMultiSelectedEnabled(true);
 		if (getAllPermissionOrgs() != null && getAllPermissionOrgs().length != 0) {
@@ -140,23 +152,27 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 				financialOrgRefV.getRefModel().setUseDataPower(false);
 			}
 		}
+		financialOrgRefV.setDisabledDataButtonShow(true);
 
 		normalCondCompList.add(financialOrgRefV);
 		addComponent(FINANCIAL_ORG_REF, financialOrgRefV);
 
 		// 设置查询对象可参照组织
-		if (ReportUiUtil.getDefaultOrgUnit() != null) {
-			setPk_org(new String[] { ReportUiUtil.getDefaultOrgUnit() });
+		if (pk_org != null) {
+			setPk_org(new String[] { pk_org });
 		}
 
 		// 包含未生效报销单
-		normalCondCompList.add(getShowLabel0(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0019")/*@res "含未生效报销单"*/));
 		UICheckBox effectCheck= new UICheckBox();
-		effectCheck.setPreferredSize(new java.awt.Dimension(180, 22));
+		effectCheck.setName("unSettleChkBox");
+//		effectCheck.setPreferredSize(new java.awt.Dimension(180, 22));
 //		effectCheck.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0019")/*@res "含未生效报销单"*/);		
 		effectCheck.setSelected(false);
 		normalCondCompList.add(effectCheck);
-		addComponent(EFFECT_CHECK, effectCheck);
+		UILabel label = getShowLabel0(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0019")/*@res "含未生效报销单"*/);
+		label.setName("unSettledLbl");
+		normalCondCompList.add(label);
+        addComponent(EFFECT_CHECK, effectCheck);
 
 		return normalCondCompList;
 	}
@@ -177,7 +193,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 
 			ReportQueryCondVO queryCondVO = (ReportQueryCondVO) getReportQueryCondVO();
 			// ②按账龄分析时，必须选择账龄方案
-			if (IErmReportAnalyzeConstants.ACC_ANA_MODE_AGE.equals(queryCondVO.getAnaMode())
+			if (IErmReportAnalyzeConstants.getACC_ANA_MODE_AGE().equals(queryCondVO.getAnaMode())
 					&& StringUtils.isEmpty(queryCondVO.getAccAgePlan())) {
 				errMsg += nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0020")/*@res "按账龄分析必须选择账龄方案！"*/;
 			}
@@ -197,7 +213,8 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 	/**
 	 * 功能：设置常用查询条件VO
 	 */
-	protected void setQueryCond(ReportQueryCondVO qryCondVO) throws BusinessException {
+    @Override
+    protected void setQueryCond(ReportQueryCondVO qryCondVO) throws BusinessException {
 		UIComboBox tempComboBox = null;
 		UIRefPane tempRefPane = null;
 
@@ -247,7 +264,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		qryCondVO.setPk_currency(((UIRefPane) getComponent(CURRENCY_REF)).getRefPK());
 		// 单据状态
 		qryCondVO.getUserObject().put(IErmReportAnalyzeConstants.INCLUDE_UNEFFECT,
-				new UFBoolean(((UICheckBox) getComponent(EFFECT_CHECK)).isSelected()));
+				UFBoolean.valueOf(((UICheckBox) getComponent(EFFECT_CHECK)).isSelected()));
 
 		// 财务组织
 		qryCondVO.setPk_orgs(getPk_org());
@@ -258,7 +275,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 
 	}
 
-	@Override
+    @Override
 	protected void resetUserReportQueryCondVO(IReportQueryCond queryCond) {
 		ReportQueryCondVO queryCondVO = (ReportQueryCondVO) queryCond;
 		((UIComboBox) getComponent(ANA_MODE_COMB)).setSelectedItem(queryCondVO.getAnaMode()); // 分析模式
@@ -270,7 +287,9 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		UIRefPane dateRef = null;
 		if (getComponent(DATELINE_REF) != null) {
 			dateRef = (UIRefPane) getComponent(DATELINE_REF); // 截止日期
-			dateRef.setValue(queryCondVO.getDateline().toLocalString());
+//			dateRef.setValue(queryCondVO.getDateline().toLocalString());
+	        UFDate currBusiDate = WorkbenchEnvironment.getInstance().getBusiDate();
+	        dateRef.setValue(currBusiDate.toLocalString());
 		}
 
 		UIComboBox comboBox = null;
@@ -296,9 +315,10 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 	 * @since V60<br>
 	 */
 	class AnaModeChangeListener implements ItemListener {
-		public void itemStateChanged(ItemEvent e) {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
 			Component comp = null;
-			if (e.getStateChange() == ItemEvent.SELECTED && IErmReportAnalyzeConstants.ACC_ANA_MODE_AGE.equals(e.getItem())) {
+			if (e.getStateChange() == ItemEvent.SELECTED && IErmReportAnalyzeConstants.getACC_ANA_MODE_AGE().equals(e.getItem())) {
 				// 按账龄分析
 				comp = getComponent(ACC_AGE_PLAN_REF); // 账龄方案
 				if (comp != null) {
@@ -311,7 +331,7 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 					((UIComboBox) comp).setSelectedIndex(0);
 					getComponent(DATELINE_REF).setEnabled(false); // 截止日期
 				}
-			} else if (e.getStateChange() == ItemEvent.SELECTED && IErmReportAnalyzeConstants.ACC_ANA_MODE_DATE.equals(e.getItem())) {
+			} else if (e.getStateChange() == ItemEvent.SELECTED && IErmReportAnalyzeConstants.getACC_ANA_MODE_DATE().equals(e.getItem())) {
 				// 按日期分析
 				comp = getComponent(ACC_AGE_PLAN_REF); // 账龄方案
 				if (comp != null) {
@@ -329,15 +349,16 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 	}
 
 	class ForDatelineListener implements ItemListener {
-		public void itemStateChanged(ItemEvent e) {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
 			Component comp = getComponent(DATELINE_REF); // 截止日期
 			if (e.getStateChange() == ItemEvent.SELECTED
-					&& (IErmReportAnalyzeConstants.ACC_ANA_PATTERN_POINT.equals(e.getItem())
-							|| IErmReportAnalyzeConstants.ACC_ANA_TYP_DEADLINE.equals(e.getItem()))) {
+					&& (IErmReportAnalyzeConstants.getACC_ANA_PATTERN_POINT().equals(e.getItem())
+							|| IErmReportAnalyzeConstants.getACC_ANA_TYP_DEADLINE().equals(e.getItem()))) {
 				comp.setEnabled(true);
 			} else if (e.getStateChange() == ItemEvent.SELECTED
-					&& (IErmReportAnalyzeConstants.ACC_ANA_PATTERN_FINAL.equals(e.getItem())
-							|| IErmReportAnalyzeConstants.ACC_ANA_TYP_SETTLE.equals(e.getItem()))) {
+					&& (IErmReportAnalyzeConstants.getACC_ANA_PATTERN_FINAL().equals(e.getItem())
+							|| IErmReportAnalyzeConstants.getACC_ANA_TYP_SETTLE().equals(e.getItem()))) {
 				comp.setEnabled(false);
 			}
 		}

@@ -67,7 +67,7 @@ public class DjlxPanel extends ToftPanel implements IMainFrame, ValueChangedList
 	private int m_workstat = BillWorkPageConst.WORKSTAT_BROWSE;
 	
 	/**监听器管理器*/
-	private IListenerController m_listenerController;
+	private transient IListenerController m_listenerController;
 
 	/**上下文信息*/
 	private PluginContext context;
@@ -77,7 +77,6 @@ public class DjlxPanel extends ToftPanel implements IMainFrame, ValueChangedList
 	 * @throws BusinessException 
 	 */
 	public DjlxPanel() {
-		super();
 		initialize();
 	}
 
@@ -225,6 +224,7 @@ public class DjlxPanel extends ToftPanel implements IMainFrame, ValueChangedList
 	 * @throws BusinessException 
 	 */
 	/* 警告：此方法将重新生成。 */
+	@SuppressWarnings("deprecation")
 	private void initialize(){
 		setName("DjlxPanel");
 		setSize(774, 419);
@@ -235,7 +235,6 @@ public class DjlxPanel extends ToftPanel implements IMainFrame, ValueChangedList
 		try {
 			getDataModel().initData();
 		} catch (BusinessException e) {
-			// TODO 自动生成 catch 块
 			Log.getInstance(this.getClass()).error(e.getMessage(),e);
 	 		showErrorMessage(e.getMessage());
 		}
@@ -249,13 +248,15 @@ public class DjlxPanel extends ToftPanel implements IMainFrame, ValueChangedList
 	/**
 	 * onButtonClicked 方法注解。
 	 */
+	@SuppressWarnings("deprecation")
 	public void onButtonClicked(nc.ui.pub.ButtonObject bo) {
-		
 		try {
-			getListenerController().onBtnClicked((ExButtonObject)bo);
+			if (bo instanceof ExButtonObject) {
+				getListenerController().onBtnClicked((ExButtonObject) bo);
+			}
 		} catch (BusinessException e) {
 			Log.getInstance(this.getClass()).error(e.getMessage(),e);
-	 		showErrorMessage(e.getMessage());
+			showErrorMessage(e.getMessage());
 		}
 	}
 
@@ -398,7 +399,7 @@ public class DjlxPanel extends ToftPanel implements IMainFrame, ValueChangedList
 		 
 		 ButtonObject btn=this.getButtonByID(btns,"sysinit_save");
 		 
-		 if(btn.isEnabled())
+		 if(btn != null && btn.isEnabled())
 		 {
 
 		 int choose=this.showYesNoCancelMessage(NCLangRes.getInstance().getStrByID("common","MT3",null,new String[]{NCLangRes.getInstance().getStrByID("common","UC001-0000001")}));//当前有正在编辑的数据,是否{0}//保存

@@ -9,15 +9,15 @@ package nc.ui.erm.linkquery.impl;
  */
 import nc.pub.smart.tracedata.ITraceDataOperator;
 import nc.pub.smart.tracedata.TraceDataInterface;
-import nc.ui.erm.linkquery.operator.LinkQueryBillOperator;
-import nc.ui.erm.linkquery.operator.LinkQueryVoucherOperator;
+import nc.ui.erm.linkquery.operator.ExpenseLinkQueryVoucherOperator;
+import nc.ui.erm.linkquery.operator.ExpenseLinkQuerybillOperator;
 
 
 public class ExpenseDetailLinkQueryImpl implements TraceDataInterface {
 
 	public ITraceDataOperator[] provideTraceDataOperator() {
-		return new ITraceDataOperator[] { new LinkQueryBillOperator(),
-				new LinkQueryVoucherOperator() };
+		return new ITraceDataOperator[] { new ExpenseLinkQuerybillOperator(),
+				new ExpenseLinkQueryVoucherOperator() };
 	}
 }
 

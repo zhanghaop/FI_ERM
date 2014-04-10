@@ -11,19 +11,29 @@
           <implementation>nc.impl.erm.report.LoanDetailBOImpl</implementation>
      	</component>
      	
-      	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
-          <interface>nc.itf.erm.pub.IExpenseBalanceBO</interface>
-          <implementation>nc.impl.erm.report.ExpenseBalanceBOImpl</implementation>
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.pub.IExpDetailBO</interface>
+          <implementation>nc.impl.erm.report.ExpDetailBOImpl</implementation>
      	</component>
      	
-      	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
-          <interface>nc.itf.erm.pub.IExpenseDetailBO</interface>
-          <implementation>nc.impl.erm.report.ExpenseDetailBOImpl</implementation>
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+          <interface>nc.itf.erm.pub.IExpBalanceBO</interface>
+          <implementation>nc.impl.erm.report.ExpBalanceBOImpl</implementation>
      	</component>
      	
      	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
           <interface>nc.itf.erm.accountageana.ILoanAccountAgeAnalyzeBO</interface>
           <implementation>nc.impl.erm.accountageana.LoanAccountAgeAnalyzeBOImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="NONE">
+        	<interface>nc.itf.erm.expensetrend.IExpenseTrendBO</interface>
+          	<implementation>nc.impl.erm.expensetrend.ExpTrendBOImpl</implementation>
+     	</component>
+     	
+     	<component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT">
+        	<interface>nc.itf.erm.pub.IExpamortizeBO</interface>
+          <implementation>nc.impl.erm.report.ExpamortizeBOImpl</implementation>
      	</component>
     </public>
 </module>

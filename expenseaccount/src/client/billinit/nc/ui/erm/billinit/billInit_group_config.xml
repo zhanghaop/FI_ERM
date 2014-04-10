@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<import resource="classpath:/nc/ui/erm/billpub/bill_base_config.xml" />
+	
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.billinit.model.BillCommModelDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="delegator" ref="paginationDelegate" />
+		<property name="listView" ref="listView"/>
+	</bean>
+	
+	<!-- 列表视图 -->
+	<bean id="listView" class="nc.ui.erm.billinit.view.BillComBillListView" init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="multiSelectionEnable" value="true" />
+		<property name="nodekey" value="ERMINIT" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="north" ref="listInfoPanel" />
+		<property name="paginationBar" ref="paginationBar" />
+		<property name="linklistener" ref="linklistener" />
+	</bean>
+	
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction"/>
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="listRefreshAction" />
+				
+				<ref bean="nullAction" />
+				<ref bean="billTypeaction" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="editor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction"/>
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="cardRefreshAction" />
+				
+				<ref bean="nullAction" />
+				<ref bean="billTypeaction" />
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="tempsaveaction" />
+				<ref bean="nullAction" />
+				<ref bean="cancelaction" />
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	<bean id="tempsaveaction" class="nc.ui.erm.billpub.action.TempSaveAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="btnName">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="uif2" />
+				<property name="resId" value="ActionRegistry-000000" />
+				<property name="defaultValue" value="保存" />
+			</bean>
+		</property>
+		<property name="code" value="save"/>
+	</bean>
+
+	<bean id="cardRefreshAction" class="nc.ui.erm.billinit.action.RefreshSingleInitAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="editor" class="nc.ui.erm.billpub.view.ErmBillBillForm"
+		init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodekey" value="2631" />
+		<property name="showTotalLine" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="closingListener" ref="ClosingListener" />
+		<property name="userdefitemPreparator" ref="userdefitemCardPreparator"/>
+		<property name="tabSingleShow" value="false" />
+		<property name="contrastaction" ref="contrastaction" />
+		<property name="bodyActionMap">
+			<map>
+				<entry key="jk_busitem">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="arap_bxbusitem">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="other">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="er_cshare_detail">
+					<list>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="er_bxcontrast">
+					<list>
+						<ref bean="displayaction" />					
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+</beans>

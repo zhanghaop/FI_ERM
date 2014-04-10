@@ -13,7 +13,6 @@ import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.jdbc.framework.util.DBConsts;
 import nc.utils.fipub.SmartProcessor;
-import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.utils.SqlBuilder;
 import nc.vo.pub.BusinessException;
@@ -35,7 +34,7 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 	private Integer[] tmpTblColTypes = null;
 
 	private final List<ComputeTotal> allQryobjList = new ArrayList<ComputeTotal>();
-
+	
 	@Override
 	public String[] getArrangeSqls() throws SQLException, BusinessException {
 		List<String> sqlList = new ArrayList<String>();
@@ -50,7 +49,7 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
 		sqlBuffer.append(", (case when isnull(org_orgs.code, '~') = '~' then 1 else 0 end) as is_org_null"); // is_org_null
-		sqlBuffer.append(", org_orgs.code code_org, coalesce(org_orgs.name").append(getMultiLangIndex()).append(", org_orgs.name) org"); // code_org, org
+		sqlBuffer.append(", org_orgs.code code_org, isnull(org_orgs.name").append(getMultiLangIndex()).append(", org_orgs.name) org"); // code_org, org
 
 		String[] qryObjs = getQueryObjs();
 		List<QryObj> qryObjList = queryVO.getQryObjs();
@@ -58,19 +57,15 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 		for (int i = 0; i < qryObjList.size(); i++) {
 			sqlBuffer.append(", v.").append(qryObjs[i]).append(", ");
 
-			sqlBuffer.append(bdTable + i).append(".").append(qryObjList.get(i).getBd_codeField()).append(" ")
+			sqlBuffer.append(bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_codeField()).append(" ")
 					.append(IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code, ");
 
-			sqlBuffer.append("coalesce(").append(bdTable + i).append(".").append(
+			sqlBuffer.append("isnull(").append(bdTable ).append( i).append(".").append(
 					qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex()).append(", ").append(
-					bdTable + i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
-					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append(", ");
-
-			sqlBuffer.append("(case when isnull(").append(qryObjs[i]).append(
-					", '~') = '~' then 1 else 0 end) as isnull").append(i);
+					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
+					IPubReportConstants.QRY_OBJ_PREFIX).append(i);
 		}
-
-		sqlBuffer.append(", v.").append(PK_CURR).append(", v.rn");
+		sqlBuffer.append(",  v.").append(PK_CURR).append(", v.rn");
 		sqlBuffer.append(", 0 ").append(IPubReportConstants.ORDER_MANAGE_VSEQ);
 
 		sqlBuffer.append(", sum(v.init_ori) init_ori, sum(v.init_loc) init_loc, sum(v.gr_init_loc) gr_init_loc, sum(v.gl_init_loc) gl_init_loc");
@@ -82,8 +77,8 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 		sqlBuffer.append(" left outer join org_orgs on v.pk_org = org_orgs.pk_org ");
 		for (int i = 0; i < qryObjList.size(); i++) {
 			sqlBuffer.append(" left outer join ").append(qryObjList.get(i).getBd_table()).append(" ").append(
-					bdTable + i).append(" on ").append("v.").append(qryObjs[i]).append(" = ").append(
-					bdTable + i).append(".").append(qryObjList.get(i).getBd_pkField());
+					bdTable ).append( i).append(" on ").append("v.").append(qryObjs[i]).append(" = ").append(
+					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_pkField());
 		}
 
 		sqlBuffer.append(" group by ");
@@ -92,23 +87,33 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 		for (int i = 0; i < qryObjList.size(); i++) {
 			sqlBuffer.append(", v.").append(qryObjs[i]);
 
-			sqlBuffer.append(", ").append(bdTable + i).append(".")
+			sqlBuffer.append(", ").append(bdTable ).append( i).append(".")
 					.append(qryObjList.get(i).getBd_codeField());
 
-			sqlBuffer.append(", ").append(bdTable + i).append(".")
-					.append(qryObjList.get(i).getBd_nameField()).append(", ").append(bdTable + i).append(".")
+			sqlBuffer.append(", ").append(bdTable ).append( i).append(".")
+					.append(qryObjList.get(i).getBd_nameField()).append(", ").append(bdTable ).append( i).append(".")
 					.append(qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex());
 		}
 		sqlBuffer.append(", v.").append(PK_CURR);
 		sqlBuffer.append(", rn ");
 
+//		sqlBuffer.append(" order by ");
+//		sqlBuffer.append("is_org_null, code_org");
+//		for (int i = 0; i < qryObjList.size(); i++) {
+//			sqlBuffer.append(", ").append(
+//					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code");
+//		}
+//		sqlBuffer.append(", rn ");
+//		
 		sqlBuffer.append(" order by ");
-		sqlBuffer.append("is_org_null, code_org");
+		sqlBuffer.append(ErmReportSqlUtils.caseWhenSql("org_orgs.code"));
 		for (int i = 0; i < qryObjList.size(); i++) {
-			sqlBuffer.append(", isnull").append(i).append(", ").append(
-					IPubReportConstants.QRY_OBJ_PREFIX).append(i).append("code");
+			sqlBuffer.append(",");
+//			sqlBuffer.append(ErmReportSqlUtils.caseWhenSql(IPubReportConstants.QRY_OBJ_PREFIX+i+"pk"));
+            sqlBuffer.append(ErmReportSqlUtils.caseWhenSql(bdTable +  i + "." + qryObjList.get(i).getBd_codeField()));
 		}
-		sqlBuffer.append(", rn ");
+//        sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.pk_currtype"));
+		sqlBuffer.append(", ").append(ErmReportSqlUtils.caseWhenSql("v.rn"));
 		return sqlBuffer.toString();
 	}
 
@@ -155,10 +160,22 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 		sqlBuffer.append(", 0.0 hk_ori, 0.0 hk_loc, 0.0 gr_hk_loc, 0.0 gl_hk_loc");
 
 		sqlBuffer.append(" from (");
-		sqlBuffer.append(getLoanOriginalSql() + " union all " + getLoanContrastSql()).append(") a ");
+		sqlBuffer.append(getLoanOriginalSql() ).append( " union all " ).append( getLoanContrastSql()).append(") a ");
 
 		return sqlBuffer.toString();
 	}
+	
+    protected boolean isQueryByDetail(String fieldCode) {
+        if ("pk_project".equalsIgnoreCase(fieldCode) ||
+                "jobid".equalsIgnoreCase(fieldCode) || 
+                "szxmid".equalsIgnoreCase(fieldCode) || 
+                "pk_iobsclass".equalsIgnoreCase(fieldCode) ||
+                "PK_RESACOSTCENTER".equalsIgnoreCase(fieldCode)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 	/**
 	 * 报销管理：查询借款原值(汇总数)<br>
@@ -172,17 +189,42 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 	private String getLoanOriginalSql() throws BusinessException, SQLException {
 		String jkzbAlias = getAlias("er_jkzb");
 
+		boolean foreignTmp = beForeignCurrency;
+		beForeignCurrency = true;
+		
 		StringBuffer sqlBuffer = new StringBuffer(" select ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(queryObjBaseBal.replace("fb." + BXBusItemVO.SZXMID, jkzbAlias + "." + BXBusItemVO.SZXMID));
+	    sqlBuffer.append(", ").append(queryObjBaseBal.replace("fb.", jkzbAlias + ".")); // TODO byDetail
 		sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" pk_currtype");
 		sqlBuffer.append(", sum(").append(jkzbAlias).append(".ybje) init_ori");
 		sqlBuffer.append(", sum(").append(jkzbAlias).append(".bbje) init_loc");
 		sqlBuffer.append(", sum(").append(jkzbAlias).append(".groupbbje) gr_init_loc");
 		sqlBuffer.append(", sum(").append(jkzbAlias).append(".globalbbje) gl_init_loc");
 
-		sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+		// TODO byDetail
+		if (needQueryByDetail()) {
+	        sqlBuffer.append(" from ( ");
+		} else {
+	        sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+		}
 
+		// TODO byDetail
+		//和明细表连接
+		if (needQueryByDetail()) {
+            sqlBuffer.append("select ");
+		    sqlBuffer.append(fixedFields.replaceAll(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
+//	        sqlBuffer.append(", ").append(queryObjBaseBal);
+            sqlBuffer.append(", ").append(groupByBaseExp);
+	        sqlBuffer.append(", ").append(jkzbAlias + ".bzbm");
+	        sqlBuffer.append(", fb.ybje");
+	        sqlBuffer.append(", fb.bbje");
+	        sqlBuffer.append(", fb.groupbbje");
+	        sqlBuffer.append(", fb.globalbbje");
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_busitem fb on ")
+            .append(jkzbAlias).append(".pk_jkbx = fb.pk_jkbx");
+		}
+		
 		// 设置查询条件固定值
 		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
@@ -191,27 +233,30 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 			sqlBuffer.append(" and ").append(jkzbAlias).append(".djrq < '").append(
 					queryVO.getBeginDate().toString()).append("' ");
 
-			sqlBuffer.append(" and (").append(jkzbAlias).append(".contrastEndDate >= '").append(
+			sqlBuffer.append(" and ").append(jkzbAlias).append(".contrastEndDate >= '").append(
 					queryVO.getBeginDate().toString()).append("' ");
-			sqlBuffer.append(" or isnull(").append(jkzbAlias).append(".contrastEndDate, '~') = '~')");
-		} else {
-			sqlBuffer.append(" and isnull(").append(jkzbAlias).append(".contrastEndDate, '~') = '~')");
-		}
+		} 
 
-		sqlBuffer.append(getQueryObjSql()); // 查询对象
+		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
 		sqlBuffer.append(ErmReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), true)); // 币种
 		sqlBuffer.append(ErmReportSqlUtils.getOrgSql(queryVO.getPk_orgs(), true)); // 业务单元
 		sqlBuffer.append(ErmReportSqlUtils.getGroupSql(queryVO.getPk_group(), true)); // 集团
 		sqlBuffer.append(" and ").append(jkzbAlias).append(".dr = 0 ");
 
+        // TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(") ").append(jkzbAlias);
+        }
+        
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(groupByBaseBal.replace("fb." + BXBusItemVO.SZXMID, jkzbAlias + "." + BXBusItemVO.SZXMID));
+		sqlBuffer.append(", ").append(groupByBaseBal.replace("fb.", jkzbAlias + "."));
 		if (beForeignCurrency) {
 			sqlBuffer.append(", zb.bzbm");
 		}
 
+        beForeignCurrency = foreignTmp;
 		return sqlBuffer.toString();
 	}
 
@@ -225,19 +270,47 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 	private String getLoanContrastSql() throws BusinessException, SQLException {
 		String jkzbAlias = getAlias("er_jkzb");
 		String cxAlias = getAlias("er_bxcontrast");
-
+		
+		boolean foreignTmp = beForeignCurrency;
+        beForeignCurrency = true;
+        
 		StringBuffer sqlBuffer = new StringBuffer(" select ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(queryObjBaseBal.replace("fb." + BXBusItemVO.SZXMID, jkzbAlias + "." + BXBusItemVO.SZXMID));
+//		sqlBuffer.append(", ").append(queryObjBaseBal.replace("fb.szxmid", jkzbAlias + ".szxmid"));
+        sqlBuffer.append(", ").append(queryObjBaseBal.replaceAll("fb.", jkzbAlias + ".")); // TODO byDetail
 		sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" pk_currtype");
-		sqlBuffer.append(", -sum(" + cxAlias + ".ybje) init_ori");
-		sqlBuffer.append(", -sum(" + cxAlias + ".bbje) init_loc");
-		sqlBuffer.append(", -sum(" + cxAlias + ".groupbbje) gr_init_loc");
-		sqlBuffer.append(", -sum(" + cxAlias + ".globalbbje) gl_init_loc");
+		sqlBuffer.append(", -sum(" ).append( cxAlias ).append( ".ybje) init_ori");
+		sqlBuffer.append(", -sum(" ).append( cxAlias ).append( ".bbje) init_loc");
+		sqlBuffer.append(", -sum(" ).append( cxAlias ).append( ".groupbbje) gr_init_loc");
+		sqlBuffer.append(", -sum(" ).append( cxAlias ).append( ".globalbbje) gl_init_loc");
 
-		sqlBuffer.append(" from er_jkzb " + jkzbAlias + " inner join er_bxcontrast " + cxAlias);
-		sqlBuffer.append(" on " + jkzbAlias + ".pk_jkbx = " + cxAlias + ".pk_jkd ");
-
+        // TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(" from ( ");
+        } else {
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append( " inner join er_bxcontrast " ).append( cxAlias);
+            sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd ");
+        }
+        
+        // TODO byDetail
+        //和明细表连接
+        if (needQueryByDetail()) {
+            sqlBuffer.append("select ");
+            sqlBuffer.append(fixedFields.replaceAll(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
+//            sqlBuffer.append(", ").append(queryObjBaseBal);
+            sqlBuffer.append(", ").append(groupByBaseExp);
+            sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" ");
+            sqlBuffer.append(", fb.ybje");
+            sqlBuffer.append(", fb.bbje");
+            sqlBuffer.append(", fb.groupbbje");
+            sqlBuffer.append(", fb.globalbbje");
+            sqlBuffer.append(", zb.pk_jkbx");
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_busitem fb on ")
+            .append(jkzbAlias).append(".pk_jkbx = fb.pk_jkbx");
+        }
+        
 		// 设置查询条件固定值
 		sqlBuffer.append(" where ").append(ReportSqlUtils.getFixedWhere());
 		// 借款单的收支项目权限走借款单表头
@@ -245,31 +318,39 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 
 		if (queryVO.getBeginDate() != null) {
 			// 单据日期的处理
-			sqlBuffer.append(" and ").append(jkzbAlias + ".djrq < '").append(queryVO.getBeginDate().toString()).append("' ");
+			sqlBuffer.append(" and ").append(jkzbAlias ).append( ".djrq < '").append(queryVO.getBeginDate().toString()).append("' ");
 			// 核销完成日期
-			sqlBuffer.append(" and (").append(jkzbAlias).append(".contrastEndDate >= '").append(queryVO.getBeginDate().toString()).append("' ");
-			sqlBuffer.append(" or isnull(").append(jkzbAlias).append(".contrastEndDate, '~') = '~')");
-			//冲销日期
-			sqlBuffer.append(" and " + cxAlias + ".cxrq < '").append(queryVO.getBeginDate().toString()).append("' ");
+			sqlBuffer.append(" and ").append(jkzbAlias).append(".contrastEndDate >= '").append(queryVO.getBeginDate().toString()).append("' ");
 		} else {
-			sqlBuffer.append(" and isnull(").append(jkzbAlias).append(".contrastEndDate, '~') = '~')");
 		}
 
-		sqlBuffer.append(getQueryObjSql()); // 查询对象
+		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
 			sqlBuffer.append(ErmReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), true)); // 币种
 		sqlBuffer.append(ErmReportSqlUtils.getOrgSql(queryVO.getPk_orgs(), true)); // 业务单元
 		sqlBuffer.append(ErmReportSqlUtils.getGroupSql(queryVO.getPk_group(), true)); // 集团
 		sqlBuffer.append(" and ").append(jkzbAlias).append(".dr = 0 ");
 		sqlBuffer.append(" and ").append(cxAlias).append(".dr = 0 ");
-
+		
+		// TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(") ").append(jkzbAlias);
+            sqlBuffer.append( " inner join er_bxcontrast " ).append( cxAlias);
+            sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd ");
+        }
+        if (queryVO.getBeginDate() != null) {
+            //冲销日期
+            sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq < '").append(queryVO.getBeginDate().toString()).append("' ");
+        }
+        
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(groupByBaseBal.replace("fb." + BXBusItemVO.SZXMID, jkzbAlias + "." + BXBusItemVO.SZXMID));
+		sqlBuffer.append(", ").append(groupByBaseBal.replace("fb.", jkzbAlias + "."));
 		if (beForeignCurrency) {
-			sqlBuffer.append(", ").append(jkzbAlias + ".bzbm");
+			sqlBuffer.append(", ").append(jkzbAlias ).append( ".bzbm");
 		}
-
+		
+        beForeignCurrency = foreignTmp;
 		return sqlBuffer.toString();
 	}
 
@@ -283,50 +364,82 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 	private String getLoanAccumulativeOccur() throws SQLException, BusinessException{
 		String jkzbAlias = getAlias("er_jkzb");
 
-		StringBuffer sqlBuffer = new StringBuffer(" insert into ");
+		boolean foreignTmp = beForeignCurrency;
+        beForeignCurrency = true;
+        
+        StringBuffer sqlBuffer = new StringBuffer(" insert into ");
 		sqlBuffer.append(getTmpTblName());
 
 		sqlBuffer.append(" select ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(queryObjBaseBal.replace("fb." + BXBusItemVO.SZXMID, jkzbAlias + "." + BXBusItemVO.SZXMID));
+//		sqlBuffer.append(", ").append(queryObjBaseBal.replace("fb.szxmid", jkzbAlias + ".szxmid"));
+        sqlBuffer.append(", ").append(queryObjBaseBal.replaceAll("fb.", jkzbAlias + ".")); // TODO byDetail
 		sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" pk_currtype");
 		sqlBuffer.append(", 0 rn ");
 		sqlBuffer.append(", 0.0 init_ori, 0.0 init_loc, 0.0 gr_init_loc, 0.0 gl_init_loc");
-		sqlBuffer.append(", sum(" + jkzbAlias + ".ybje) jk_ori");
-		sqlBuffer.append(", sum(" + jkzbAlias + ".bbje) jk_loc");
-		sqlBuffer.append(", sum(" + jkzbAlias + ".groupbbje) gr_jk_loc");
-		sqlBuffer.append(", sum(" + jkzbAlias + ".globalbbje) gl_jk_loc");
+		sqlBuffer.append(", sum(" ).append( jkzbAlias ).append( ".ybje) jk_ori");
+		sqlBuffer.append(", sum(" ).append( jkzbAlias ).append( ".bbje) jk_loc");
+		sqlBuffer.append(", sum(" ).append( jkzbAlias ).append( ".groupbbje) gr_jk_loc");
+		sqlBuffer.append(", sum(" ).append( jkzbAlias ).append( ".globalbbje) gl_jk_loc");
 		sqlBuffer.append(", 0.0 hk_ori, 0.0 hk_loc, 0.0 gr_hk_loc, 0.0 gl_hk_loc ");
 
-		sqlBuffer.append(" from er_jkzb " + jkzbAlias);
-
+        // TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(" from ( ");
+        } else {
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+        }
+        
+        // TODO byDetail
+        //和明细表连接
+        if (needQueryByDetail()) {
+            sqlBuffer.append("select ");
+            sqlBuffer.append(fixedFields.replaceAll(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
+//            sqlBuffer.append(", ").append(queryObjBaseBal);
+            sqlBuffer.append(", ").append(groupByBaseExp);
+            sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" ");
+            sqlBuffer.append(", fb.ybje");
+            sqlBuffer.append(", fb.bbje");
+            sqlBuffer.append(", fb.groupbbje");
+            sqlBuffer.append(", fb.globalbbje");
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_busitem fb on ")
+            .append(jkzbAlias).append(".pk_jkbx = fb.pk_jkbx");
+        }
+        
 		// 设置查询条件固定值
 		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
 
 		// 日期单独处理，包括单据日期以及核销完成日期
 		if (queryVO.getBeginDate() != null) { // 查询开始日期
-			sqlBuffer.append(" and " + jkzbAlias + ".djrq > '").append(queryVO.getBeginDate()).append("' ");
+			sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".djrq > '").append(queryVO.getBeginDate()).append("' ");
 		}
 
 		if (queryVO.getEndDate() != null) { // 查询截止日期
-			sqlBuffer.append(" and " + jkzbAlias + ".djrq <= '").append(queryVO.getEndDate()).append("' ");
+			sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".djrq <= '").append(queryVO.getEndDate()).append("' ");
 		}
 
-		sqlBuffer.append(getQueryObjSql()); // 查询对象
+		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
 		sqlBuffer.append(ErmReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), true)); // 币种
 		sqlBuffer.append(ErmReportSqlUtils.getOrgSql(queryVO.getPk_orgs(), true)); // 业务单元
 		sqlBuffer.append(ErmReportSqlUtils.getGroupSql(queryVO.getPk_group(), true)); // 集团
 		sqlBuffer.append(" and ").append(jkzbAlias).append(".dr = 0 ");
-
+		
+		// TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(") ").append(jkzbAlias);
+        }
+        
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(groupByBaseBal.replace("fb." + BXBusItemVO.SZXMID, jkzbAlias + "." + BXBusItemVO.SZXMID));
+		sqlBuffer.append(", ").append(groupByBaseBal.replace("fb.", jkzbAlias + "."));
 		if (beForeignCurrency) {
-			sqlBuffer.append(", ").append(jkzbAlias + ".bzbm");
+			sqlBuffer.append(", ").append(jkzbAlias ).append( ".bzbm");
 		}
-
+		beForeignCurrency = foreignTmp;
+		
 		return sqlBuffer.toString();
 	}
 
@@ -344,69 +457,113 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 
 		StringBuffer sqlBuffer = new StringBuffer(" insert into ");
 		sqlBuffer.append(getTmpTblName());
-
+		
+		boolean foreignTmp = beForeignCurrency;
+        beForeignCurrency = true;
+        
 		sqlBuffer.append(" select ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(queryObjBaseBal);
+//		sqlBuffer.append(", ").append(queryObjBaseBal);
+        sqlBuffer.append(", ").append(queryObjBaseBal.replaceAll("fb.", jkzbAlias + ".")); // TODO byDetail
 		sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" pk_currtype");
 		sqlBuffer.append(", 0 rn ");
 		sqlBuffer.append(", 0.0 init_ori, 0.0 init_loc, 0.0 gr_init_loc, 0.0 gl_init_loc");
 		sqlBuffer.append(", 0.0 jk_ori, 0.0 jk_loc, 0.0 gr_jk_loc, 0.0 gl_jk_loc");
-		sqlBuffer.append(", sum(" + cxAlias + ".ybje) hk_ori");
-		sqlBuffer.append(", sum(" + cxAlias + ".bbje) hk_loc");
-		sqlBuffer.append(", sum(" + cxAlias + ".groupbbje) gr_hk_loc");
-		sqlBuffer.append(", sum(" + cxAlias + ".globalbbje) gl_hk_loc");
+		sqlBuffer.append(", sum(" ).append( cxAlias ).append( ".ybje) hk_ori");
+		sqlBuffer.append(", sum(" ).append( cxAlias ).append( ".bbje) hk_loc");
+		sqlBuffer.append(", sum(" ).append( cxAlias ).append( ".groupbbje) gr_hk_loc");
+		sqlBuffer.append(", sum(" ).append( cxAlias ).append( ".globalbbje) gl_hk_loc");
 
-		sqlBuffer.append(" from er_jkzb " + jkzbAlias + " inner join er_bxcontrast " + cxAlias);
-		sqlBuffer.append(" on " + jkzbAlias + ".pk_jkbx = " + cxAlias + ".pk_jkd");
-
+        // TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(" from ( ");
+        } else {
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append( " inner join er_bxcontrast " ).append( cxAlias);
+            sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd");
+            sqlBuffer.append(" left join er_bxzb bxzb on bxzb.pk_jkbx = fb.pk_bxd ");
+        }
+        
+        // TODO byDetail
+        //和明细表连接
+        if (needQueryByDetail()) {
+            sqlBuffer.append("select ");
+            sqlBuffer.append(fixedFields.replaceAll(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
+//            sqlBuffer.append(", ").append(queryObjBaseBal);
+            sqlBuffer.append(", ").append(groupByBaseExp);
+            sqlBuffer.append(", ").append(beForeignCurrency ? (jkzbAlias + ".bzbm") : "null").append(" ");
+            sqlBuffer.append(", fb.ybje");
+            sqlBuffer.append(", fb.bbje");
+            sqlBuffer.append(", fb.groupbbje");
+            sqlBuffer.append(", fb.globalbbje");
+            sqlBuffer.append(", zb.pk_jkbx");
+            sqlBuffer.append(", zb.contrastEndDate");
+            sqlBuffer.append(" from er_jkzb ").append(jkzbAlias);
+            sqlBuffer.append(" inner join er_busitem fb on ")
+            .append(jkzbAlias).append(".pk_jkbx = fb.pk_jkbx");
+        }
+        
 		// 设置查询条件固定值
 		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
 
-		// 日期单独处理，包括单据日期以及核销完成日期
-		if (queryVO.getBeginDate() != null) { // 查询日期
-			// 核销完成日期
-			sqlBuffer.append(" and ").append(jkzbAlias).append(".contrastEndDate >= '").append(
-					queryVO.getBeginDate()).append("' ");
-			// 冲销日期
-			sqlBuffer.append(" and " + cxAlias + ".cxrq >= '").append(queryVO.getBeginDate()).append("' ");
-		}
-		if (queryVO.getEndDate() != null) {
-			// 冲销日期
-			sqlBuffer.append(" and " + cxAlias + ".cxrq <= '").append(queryVO.getEndDate()).append("' ");
-		}
-
-		sqlBuffer.append(getQueryObjSql()); // 查询对象
+        //当期的借款单和期初的借款单
+        sqlBuffer.append(" and ((").append(jkzbAlias).append(".djrq >= '").append(
+                queryVO.getBeginDate()).append("' and ");
+        sqlBuffer.append(jkzbAlias).append(".djrq <= '").append(queryVO.getEndDate()).append("') or  (");
+        sqlBuffer.append(jkzbAlias).append(".qcbz = 'Y' and ");
+        sqlBuffer.append(jkzbAlias).append(".djrq < '").append(queryVO.getBeginDate()).append("') )");
+        
+		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
 		sqlBuffer.append(ErmReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), true)); // 币种
 		sqlBuffer.append(SqlUtils.getInStr(" and " + jkzbAlias + ".pk_org", queryVO.getPk_orgs())); // 业务单元
 		sqlBuffer.append(ErmReportSqlUtils.getGroupSql(queryVO.getPk_group(), true)); // 集团
 		sqlBuffer.append(" and ").append(jkzbAlias).append(".dr = 0");
 		sqlBuffer.append(" and ").append(cxAlias).append(".dr = 0");
+		
+		// TODO byDetail
+        if (needQueryByDetail()) {
+            sqlBuffer.append(") ").append(jkzbAlias);
+            sqlBuffer.append( " inner join er_bxcontrast " ).append( cxAlias);
+            sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd");
+            sqlBuffer.append(" left join er_bxzb bxzb on bxzb.pk_jkbx = fb.pk_bxd where ");
+        } else {
+            sqlBuffer.append(" and ");
+        }
+        
+     // 日期单独处理，包括单据日期以及核销完成日期
+//      if (queryVO.getBeginDate() != null) { // 查询日期
+            // 核销完成日期
+       sqlBuffer.append(jkzbAlias).append(".contrastEndDate >= '").append(
+                    queryVO.getBeginDate()).append("' ");
+            // 冲销日期
+       sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq >= '").append(queryVO.getBeginDate()).append("' ");
+//      }
+//      if (queryVO.getEndDate() != null) {
+            // 冲销日期
+//          sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq <= '").append(queryVO.getEndDate()).append("' ");
+//      }
+            
 
+        String billStatus = queryVO.getBillState().toString();
+        if (IPubReportConstants.BILL_STATUS_EFFECT.equals(billStatus)) {
+            sqlBuffer.append(" and bxzb.djzt >= 3 "); //单据状态——签字BXStatusConst
+            // sqlBuffer.append(" and " + cxAlias + ".sxbz = 1 ");
+        } else if (IPubReportConstants.BILL_STATUS_CONFIRM.equals(billStatus)) {
+            sqlBuffer.append(" and bxzb.djzt >= 2 "); //单据状态——签字BXStatusConst
+        } else {
+            sqlBuffer.append(" and bxzb.djzt >= 1 "); //单据状态——保存BXStatusConst
+        }
+            
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, jkzbAlias));
-		sqlBuffer.append(", ").append(groupByBaseBal);
+		sqlBuffer.append(", ").append(groupByBaseBal.replaceAll("fb.", "zb."));
 		if (beForeignCurrency) {
-			sqlBuffer.append(", ").append(jkzbAlias + ".bzbm ");
+			sqlBuffer.append(", ").append(jkzbAlias ).append( ".bzbm ");
 		}
-
-		return sqlBuffer.toString();
-	}
-
-	/**
-	 * 得到查询对象构成的SQL
-	 * 
-	 * @return String
-	 * @throws BusinessException
-	 */
-	private String getQueryObjSql() throws BusinessException {
-		List<QryObj> qryObjList = queryVO.getQryObjs();
-		StringBuffer sqlBuffer = new StringBuffer(" ");
-		for (QryObj qryObj : qryObjList) {
-			sqlBuffer.append(" and ").append(qryObj.getSql());
-		}
+		beForeignCurrency = foreignTmp;
+		
 		return sqlBuffer.toString();
 	}
 
@@ -514,7 +671,8 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 
 			total = new ComputeTotal();
 			total.field = dimensions.get(i);
-			total.isDimension = beForeignCurrency;
+//			total.isDimension = beForeignCurrency;
+            total.isDimension = true;
 			allQryobjList.add(total);
 
 			total = new ComputeTotal();

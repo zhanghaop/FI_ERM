@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+ 	<import resource="classpath:/nc/ui/erm/billpub/bill_base_config.xml" />
+ 	
+ 	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.erminitbill.model.InitBillModelDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="paginationModel" ref="paginationModel"/>
+		<property name="delegator" ref="paginationDelegate" />
+		<property name="listView" ref="listView"/>
+	</bean>
+	
+ 	<bean id="copyaction" class="nc.ui.erm.erminitbill.action.CopyAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+	</bean>
+	<bean id="editaction" class="nc.ui.erm.erminitbill.action.InitEditAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+	</bean>
+	<bean id="deleteaction" class="nc.ui.erm.erminitbill.action.InitDeleteAction">
+		<property name="model" ref="manageAppModel"></property>
+	</bean>
+	<bean id="closeaction" class="nc.ui.erm.erminitbill.action.CloseAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="uncloseaction" class="nc.ui.erm.erminitbill.action.UnCloseAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="groupAction" class="nc.funcnode.ui.action.MenuAction">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+	              <property name="resDir" value="201107_0"/>
+	              <property name="resId" value="0201107-0126"/>
+	              <property name="defaultValue" value="期初操作"/>
+           </bean>
+		</property>
+		<property name="code" value="QCCZ" />
+		<property name="actions">
+			<list>
+				<ref bean="closeaction" />
+				<ref bean="uncloseaction" />
+			</list>
+		</property>
+	</bean>
+	
+	
+ 	<!-- editor -->
+	<bean id="editor" class="nc.ui.erm.erminitbill.view.InitBillBillForm"
+		init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodekey" value="2631" />
+		<property name="showTotalLine" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="closingListener" ref="ClosingListener" />
+		<property name="tabSingleShow" value="false" />
+
+		<property name="bodyActionMap">
+			<map>
+				<entry key="jk_busitem">
+					<list>
+						<ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detailpastlinetotailaction"/>
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+				<entry key="arap_bxbusitem">
+					<list>
+						<!--ref bean="detailaddlineaction" />
+						<ref bean="detailinsertlineaction" />
+						<ref bean="detailcopylineaction" />
+						<ref bean="detailpastlineaction" />
+						<ref bean="detaildellineaction" />
+						<ref bean="displayaction" /> -->
+					</list>
+				</entry>
+				<entry key="er_bxcontrast">
+					<list>
+						<ref bean="displayaction" />					
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="editor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction"/>
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="cardRefreshAction" />
+				
+				<ref bean="nullAction" />
+				<ref bean="groupAction"/>
+				
+				<ref bean="nullAction" />
+				<ref bean="billTypeaction" />
+				
+				<ref bean="nullAction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+				
+				<ref bean="nullAction"/>
+				<ref bean="linkbxbillaction"/>
+				
+				<ref bean="nullAction"/>
+				<ref bean="printActionGroup"/>
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveaction" />
+				<ref bean="tempsaveaction"/>
+				<ref bean="nullAction" />
+				<ref bean="cancelaction" />
+				<ref bean="nullAction"/>
+				<ref bean="documentaction"/>
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction"/>
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="listRefreshAction" />
+				
+				<ref bean="nullAction" />
+				<ref bean="groupAction"/>
+				
+				<ref bean="nullAction" />
+				<ref bean="billTypeaction" />
+				
+				<ref bean="nullAction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+				
+				<ref bean="nullAction"/>
+				<ref bean="linkbxbillaction"/>
+				
+				<ref bean="nullAction"/>
+				<ref bean="listprintGroup"/>
+			</list>
+		</property>
+	</bean>
+</beans>

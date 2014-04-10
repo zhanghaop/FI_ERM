@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.itf.tb.control.IAccessableBusiVO;
+import nc.itf.tb.control.IAccessableOrgsBusiVO;
 import nc.itf.tb.sysmaintain.BdContrastCache;
 import nc.pubitf.bd.accessor.GeneralAccessorFactory;
 import nc.pubitf.bd.accessor.IGeneralAccessor;
@@ -20,35 +21,31 @@ import nc.vo.tb.control.IdBdcontrastVO;
  * V5.5加入了控制日期选项，按预算的设计方案，
  * 在IAccessableBusiVO接口的getAttributesValue方法中要根据日期类型名称（IDateType实现类给出），返回对应的日期
  */
-public abstract class FiBillAccessableBusiVO implements Serializable, IAccessableBusiVO
-{
-	/**
-	 * 
-	 */
+public abstract class FiBillAccessableBusiVO implements Serializable, IAccessableOrgsBusiVO {
+
 	private static final long serialVersionUID = 1L;
+
 	private IAccessableBusiVO iAcc_tb = null;
 
 	/**
 	 * @roseuid 488596240148
 	 */
-	public FiBillAccessableBusiVO()
-	{
+	public FiBillAccessableBusiVO() {
 
 	}
 
 	/**
-	 * 统一默认实现
-	 * 用来查找下级的父类，包括自己本身
+	 * 统一默认实现 用来查找下级的父类，包括自己本身
 	 */
 	public String[] getAllUpLevels(String fieldname, String pk) throws Exception {
-		if(pk==null){
+		if (pk == null) {
 			return null;
 		}
-		String classTypeId  = null;
+		String classTypeId = null;
 		/**通过PK_BDINFO获取classTypeId*/
 		IdBdcontrastVO vo = BdContrastCache.getNewInstance().getVOByField("erm", fieldname);
-		if(vo == null){
-			return new String[]{pk};
+		if (vo == null) {
+			return new String[] { pk };
 		}
 		classTypeId  = vo.getPk_bdinfo();
 		IGeneralAccessor accessor = GeneralAccessorFactory.getAccessor(classTypeId);

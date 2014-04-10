@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+
+	<public>
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.pubitf.erm.matterapp.IErmMatterAppBillQuery</interface>
+			<implementation>nc.impl.erm.matterapp.ErmMatterAppBillQueryImpl</implementation>
+		</component>
+
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.pubitf.erm.matterapp.IErmMatterAppBillApprove
+			</interface>
+			<implementation>nc.impl.erm.matterapp.ErmMatterAppBillApproveImpl</implementation>
+		</component>
+
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.pubitf.erm.matterapp.IErmMatterAppBillClose</interface>
+			<implementation>nc.impl.erm.matterapp.ErmMatterAppBillCloseImpl</implementation>
+		</component>
+
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.pubitf.erm.matterapp.IErmMatterAppBillManage</interface>
+			<implementation>nc.impl.erm.matterapp.ErmMatterAppBillManageImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.itf.erm.matterapp.IErmMatterAppBillQueryPrivate</interface>
+			<implementation>nc.impl.erm.matterapp.ErmMatterAppBillQueryImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+	        <interface>nc.bs.erm.matterapp.control.IErmMatterAppYsControlService</interface>
+	        <implementation>nc.bs.erm.matterapp.eventlistener.ErmMatterAppYsControlServiceImpl</implementation>
+	  </component>
+	  
+	  <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+	        <interface>nc.itf.erm.mactrlschema.IErmMappCtrlBillManage</interface>
+	        <implementation>nc.impl.erm.mactrlschema.ErmMappCtrlBillManageImpl</implementation>
+	  </component>
+	  
+	  <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+	        <interface>nc.itf.erm.mactrlschema.IErmMappCtrlFieldManage</interface>
+	        <implementation>nc.impl.erm.mactrlschema.ErmMappCtrlFieldManageImpl</implementation>
+	  </component>
+	  
+	  <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+	        <interface>nc.itf.erm.mactrlschema.IErmMappCtrlBillQuery</interface>
+	        <implementation>nc.impl.erm.mactrlschema.ErmMappCtrlBillQueryImpl</implementation>
+	  </component>
+	  
+	  <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+	        <interface>nc.itf.erm.mactrlschema.IErmMappCtrlFieldQuery</interface>
+	        <implementation>nc.impl.erm.mactrlschema.ErmMappCtrlFieldQueryImpl</implementation>
+	  </component>
+	  
+	</public>
+</module>
+

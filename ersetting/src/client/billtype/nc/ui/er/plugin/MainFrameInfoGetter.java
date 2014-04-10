@@ -1,7 +1,7 @@
 package nc.ui.er.plugin;
 
 import nc.ui.er.component.ExButtonObject;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.UITree;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillListPanel;
@@ -68,7 +68,7 @@ public class MainFrameInfoGetter{
 	 * @return boolean
 	 */
 	public boolean isSysCorp() {
-		if (BXUiUtil.getBXDefaultOrgUnit().equals(BXConstans.GROUP_CODE)) {
+		if (ErUiUtil.getBXDefaultOrgUnit().equals(BXConstans.GROUP_CODE)) {
 			return true;
 		}
 		return false;

@@ -2,10 +2,8 @@ package nc.ui.er.indauthorize.model;
 
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
-import nc.bs.logging.Logger;
-import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.er.indauthorize.IIndAuthorizeQueryService;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.AppEventListener;
 import nc.ui.uif2.IExceptionHandler;
@@ -125,11 +123,11 @@ public class IndAuthorizeModelDataManager implements IAppModelDataManager,
 	}
 	private String[] getOperatorUser() throws BusinessException {
 		if(userid == null){
-			String cid = BXUiUtil.getPk_user();
+			String cid = ErUiUtil.getPk_user();
 			String[] queryPsnidAndDeptid = null;
 			try {
 				//通过用户区查找业务员（代理人（用户）查找人员）
-				queryPsnidAndDeptid = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPsnidAndDeptid(cid, BXUiUtil.getPK_group());
+				queryPsnidAndDeptid = getIndAuthorizeQueryService().queryPsnidAndDeptid(cid, ErUiUtil.getPK_group());
 			} catch (ComponentException e2) {
 				ExceptionHandler.consume(e2);
 			} catch (BusinessException e2) {

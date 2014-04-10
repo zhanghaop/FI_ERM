@@ -1,236 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-	<!-- 授权代理人设置(erm-ersetting)配置文件-公共 -->
-	<!-- IndividualAuthorize的简写ind -->
-	<!-- author:liansg -->
+<!-- 授权代理人设置(erm-ersetting)配置文件-公共 -->
+<!-- IndividualAuthorize的简写ind -->
+<!-- author:liansg -->
 <beans>
 	<!-- ############## model & service #################### -->
-	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="saveaction">
-			<ref bean="indSaveAction" />
-		</property>
-		<property name="cancelaction">
-			<ref bean="indCancelAction" />
-		</property>
-	</bean>
-
-	<bean id="service"
-		class="nc.ui.er.indauthorize.model.IndAuthorizeBatchModelService">
-	</bean>
-
-	<bean id="indModel" class="nc.ui.uif2.model.BatchBillTableModel">
-		<property name="context">
-			<ref bean="context" />
-		</property>
-		<property name="service">
+  	<bean id="ClosingListener" class="nc.ui.uif2.FunNodeClosingHandler">
+   		<property name="model"><ref bean="indModel"/></property>
+   		<property name="saveaction"><ref bean="indSaveAction"/></property>
+   		<property name="cancelaction"><ref bean="indCancelAction"/></property>
+  	</bean>
+  	
+  	<bean id="service" class="nc.ui.er.indauthorize.model.IndAuthorizeBatchModelService">
+  	</bean>
+  
+  	<bean id="indModel" class="nc.ui.uif2.model.BatchBillTableModel">
+  		<property name="context"><ref bean="context"/></property>
+  		<property name="service"><ref bean="service"/></property>
+  		<property name="businessObjectAdapterFactory"><bean class="nc.vo.bd.meta.BDObjectAdpaterFactory"/></property>
+  		
+  	</bean>
+  	
+  	<!-- 
+  	<bean id="paginationModel" class="nc.ui.uif2.components.pagination.PaginationModel" init-method="init">
+		<property name="paginationQueryService">
 			<ref bean="service" />
 		</property>
-		<property name="businessObjectAdapterFactory">
-			<bean class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
-		</property>
+  	</bean>
+  	
+  	<bean id="paginationDelegator" class="nc.ui.er.indauthorize.model.BillManagePaginationDelegator">
+		<property name="paginationModel"><ref bean="paginationModel" /></property>
+		<property name="billModel"><ref bean="indModel" /></property>
+  	</bean>
+  	 -->
+  	
+  	<!-- 数据模型管理器，进行节点模型的数据装载 -->
+  	<bean id="modelDataManager" class="nc.ui.er.indauthorize.model.IndAuthorizeModelDataManager">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<!--  
+  		<property name="paginationModel"><ref bean="paginationModel" /></property>
+  		<property name="paginationDelegator"><ref bean="paginationDelegator" /></property>
+  		-->
+  		<property name="exceptionHandler"><ref bean="execeptionHandler" /></property> 
+  		
+  	</bean>
+  	
 
-	</bean>
-
-	<!--
-		<bean id="paginationModel"
-		class="nc.ui.uif2.components.pagination.PaginationModel"
-		init-method="init"> <property name="paginationQueryService"> <ref
-		bean="service" /> </property> </bean> <bean id="paginationDelegator"
-		class="nc.ui.er.indauthorize.model.BillManagePaginationDelegator">
-		<property name="paginationModel"><ref bean="paginationModel"
-		/></property> <property name="billModel"><ref bean="indModel"
-		/></property> </bean>
-	-->
-
-	<!-- 数据模型管理器，进行节点模型的数据装载 -->
-	<bean id="modelDataManager"
-		class="nc.ui.er.indauthorize.model.IndAuthorizeModelDataManager">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<!--
-			<property name="paginationModel"><ref bean="paginationModel"
-			/></property> <property name="paginationDelegator"><ref
-			bean="paginationDelegator" /></property>
-		-->
-		<property name="exceptionHandler">
-			<ref bean="execeptionHandler" />
-		</property>
-
-	</bean>
-
-
-	<!-- 分页面板 -->
-	<!--
-		<bean id="paginationBar"
-		class="nc.ui.uif2.components.pagination.PaginationBar"> <property
-		name="paginationModel"><ref bean="paginationModel" /></property>
-		</bean>
-	-->
-
-	<bean id="orgPanel" class="nc.ui.er.indauthorize.view.ControlAreaOrgPanel"
-		init-method="initUI">
-		<property name="model">
+  	<!-- 分页面板 --> 
+  	<!-- 
+  	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar">
+	    <property name="paginationModel"><ref bean="paginationModel" /></property>
+  	</bean>
+  	 -->
+  	
+  	<bean id="orgPanel" class="nc.ui.er.indauthorize.view.ControlAreaOrgPanel" init-method="initUI">
+  		<property name="model">
 			<ref bean="indModel" />
 		</property>
 		<property name="dataManager">
 			<ref bean="modelDataManager" />
 		</property>
 		<property name="labelName" value="管控范围" />
-	</bean>
-
-	<bean id="indTable" class="nc.ui.er.indauthorize.view.IndAuthorizeEditor"
-		init-method="initUI">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="nodekey">
-			<value>20110IASG</value>
-		</property>
-		<property name="context">
-			<ref bean="context" />
-		</property>
-		<property name="caOrgPanel">
-			<ref bean="orgPanel" />
-		</property>
-		<property name="voClassName" value="nc.vo.er.indauthorize.IndAuthorizeVO"></property>
-	</bean>
-
+  	</bean>
+  	
+  	<bean id="indTable" class="nc.ui.er.indauthorize.view.IndAuthorizeEditor" init-method="initUI">
+  		<property name="model"><ref bean="indModel" /></property>
+  		<property name="nodekey"><value>20110IASG</value></property>
+  		<property name="context"><ref bean="context"/></property>
+  		<property name="caOrgPanel"><ref bean="orgPanel"/></property>
+  		<property name="voClassName" value="nc.vo.er.indauthorize.IndAuthorizeVO"></property>
+  	</bean>
+  	
 	<!-- ############## Validator ########################## -->
 	<!-- -->
-	<bean id="validationService"
-		class="nc.ui.er.indauthorize.model.IndAuthorizeValidationService">
-		<property name="editor">
-			<ref bean="indTable" />
-		</property>
-	</bean>
-	<!-- -->
-	<bean id="execeptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<bean id="validationService" class="nc.ui.er.indauthorize.model.IndAuthorizeValidationService">
+			<property name="editor"><ref bean="indTable"/></property>
+		</bean>
+	 <!-- -->
+  	<bean id="execeptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
 		<property name="context" ref="context"></property>
-	</bean>
+  	</bean>
+  
+  	<!-- ############### Interceptor ####################### -->
+  	<bean id="deleteInterceptor" class="nc.ui.uif2.actions.DeleteConfirmInterceptor"/>
+  	
+  	<!-- ############## Actions List ####################### -->
+  	<bean id="indNullAction" class="nc.funcnode.ui.action.SeparatorAction"/>
 
-	<!-- ############### Interceptor ####################### -->
-	<bean id="deleteInterceptor" class="nc.ui.uif2.actions.DeleteConfirmInterceptor" />
-
-	<!-- ############## Actions List ####################### -->
-	<bean id="indNullAction" class="nc.funcnode.ui.action.SeparatorAction" />
-
-	<bean id="indAddAction" class="nc.ui.er.indauthorize.action.IndAddAction">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="voClassName">
-			<value>nc.vo.er.indauthorize.IndAuthorizeVO</value>
-		</property>
-		<property name="editor">
-			<ref bean="indTable" />
-		</property>
-		<property name="caOrgPanel">
-			<ref bean="orgPanel" />
-		</property>
-		<property name="exceptionHandler">
-			<ref bean="execeptionHandler" />
-		</property>
-	</bean>
-
-	<bean id="indCancelAction" class="nc.ui.pubapp.uif2app.actions.batch.BatchCancelAction">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="editor">
-			<ref bean="indTable" />
-		</property>
-		<property name="exceptionHandler">
-			<ref bean="execeptionHandler" />
-		</property>
-	</bean>
-
-	<bean id="indDeleteAction" class="nc.ui.er.indauthorize.action.IndDeleteAction">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="editor">
-			<ref bean="indTable" />
-		</property>
-		<!--
-			<property name="paginationModel"><ref bean="paginationModel"
-			/></property>
-		-->
-		<property name="exceptionHandler">
-			<ref bean="execeptionHandler" />
-		</property>
-	</bean>
-
-	<bean id="indEditAction" class="nc.ui.er.indauthorize.action.IndEditAction">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="editor">
-			<ref bean="indTable" />
-		</property>
-	</bean>
-
-	<bean id="indSaveAction" class="nc.ui.er.indauthorize.action.IndSaveAction">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="editor">
-			<ref bean="indTable" />
-		</property>
-		<property name="validationService">
-			<ref bean="validationService" />
-		</property>
-	</bean>
-
-	<bean id="indRefreshAction" class="nc.ui.pubapp.uif2app.actions.batch.BatchRefreshAction">
-		<property name="model">
-			<ref bean="indModel" />
-		</property>
-		<property name="modelManager">
-			<ref bean="modelDataManager" />
-		</property>
-	</bean>
-
-	<bean id="indPrintGroupAction" class="nc.funcnode.ui.action.GroupAction">
-		<property name="code">
-			<value>print</value>
-		</property>
+  	<bean id="indAddAction" class="nc.ui.er.indauthorize.action.IndAddAction">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<property name="voClassName">
+  			<value>nc.vo.er.indauthorize.IndAuthorizeVO</value>
+  		</property>
+  		<property name="editor"><ref bean="indTable"/></property>
+  		<property name="caOrgPanel"><ref bean="orgPanel"/></property>
+  		<property name="exceptionHandler"><ref bean="execeptionHandler" /></property> 
+  	</bean>
+  	
+  	<bean id="indCancelAction" class="nc.ui.pubapp.uif2app.actions.batch.BatchCancelAction">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<property name="editor"><ref bean="indTable"/></property>
+  		<property name="exceptionHandler"><ref bean="execeptionHandler" /></property> 
+  	</bean>
+  	
+  	<bean id="indDeleteAction" class="nc.ui.er.indauthorize.action.IndDeleteAction">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<property name="editor"><ref bean="indTable"/></property>
+  		<!-- 
+  		<property name="paginationModel"><ref bean="paginationModel" /></property>
+  		 -->
+  		<property name="exceptionHandler"><ref bean="execeptionHandler" /></property> 
+  	</bean>
+  	
+  	<bean id="indEditAction" class="nc.ui.er.indauthorize.action.IndEditAction">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<property name="editor"><ref bean="indTable"/></property>
+  	</bean>
+  	
+  	<bean id="indSaveAction" class="nc.ui.er.indauthorize.action.IndSaveAction">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<property name="editor"><ref bean="indTable"/></property>
+  		<property name="validationService"><ref bean="validationService"/></property>
+  	</bean>
+  	
+  	<bean id="indRefreshAction" class="nc.ui.pubapp.uif2app.actions.batch.BatchRefreshAction">
+  		<property name="model"><ref bean="indModel"/></property>
+  		<property name="modelManager"><ref bean="modelDataManager"/></property>
+  	</bean>
+  	
+  	<bean id="indPrintGroupAction" class="nc.funcnode.ui.action.GroupAction">
+	  	<property name="code"><value>print</value> </property>
 		<property name="name">
 			<bean class="nc.ui.uif2.I18nFB">
-				<property name="resDir" value="common" />
-				<property name="resId" value="UC001-0000007" />
-				<property name="defaultValue" value="打印" />
-			</bean>
+	              <property name="resDir" value="common"/>
+	              <property name="resId" value="UC001-0000007"/>
+	              <property name="defaultValue" value="打印"/>
+           </bean>
 		</property>
-		<property name="actions">
-			<list>
-				<ref bean="indTemplatePrintAction" />
-				<ref bean="indTemplatePreviewAction" />
-				<ref bean="indTemplateOutputAction" />
-			</list>
+	<property name="actions">
+		<list>
+			<ref bean="indTemplatePrintAction" />
+ 			<ref bean="indTemplatePreviewAction" />				
+			<ref bean="indTemplateOutputAction" />
+		</list>
+	</property>
+  	</bean>
+  	<bean id="indTemplatePreviewAction" class="nc.ui.uif2.actions.TemplatePreviewAction">
+		<property name="model">
+			<ref bean="indModel" />
 		</property>
-	</bean>
-	<bean id="indTemplatePreviewAction" class="nc.ui.uif2.actions.TemplatePreviewAction">
-		<property name="model" ref="indModel" />
-		<property name="nodeKey" value="20110IASG" />
 		<property name="datasource" ref="datasource" />
+		<property name="nodeKey" value="20110IASG"/>
 	</bean>
 	<bean id="indTemplatePrintAction" class="nc.ui.uif2.actions.TemplatePrintAction">
-		<property name="model" ref="indModel"/>
-		<property name="nodeKey" value="20110IASG" />
+		<property name="model">
+			<ref bean="indModel" />
+		</property>
 		<property name="datasource" ref="datasource" />
+		<property name="nodeKey" value="20110IASG"/>
 	</bean>
 
 	<bean id="indTemplateOutputAction" class="nc.ui.uif2.actions.OutputAction">
-		<property name="model" ref="indModel" />
-		<property name="nodeKey" value="20110IASG" />
-		<property name="datasource" ref="datasource" />
+	    <property name="model" ref="indModel"/>
+	    <property name="datasource" ref="datasource" />
+	    <property name="nodeKey" value="20110IASG"/>
 	</bean>
 	<bean id="datasource" class="nc.ui.bd.pub.actions.print.MetaDataAllDatasSource">
 		<property name="model" ref="indModel" />
 	</bean>
-
+  
 </beans>

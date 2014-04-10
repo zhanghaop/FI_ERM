@@ -125,13 +125,15 @@ public class IndAuthorizeEditor extends BatchBillTable implements
 			UIRefPane refpane = (UIRefPane) getBillCardPanel().getBodyItem(
 					"pk_operator").getComponent();
 			refpane.setMultiCorpRef(true);
+			// 设置参照过滤，只能过滤出普通用户
+			refpane.setWhereString(" user_type=1 ");
 		}else if(IndAuthorizeVO.PK_BILLTYPEID.equals(e.getKey())){
 			// 单据类型过滤(仅包含借款报销单据类型)
 			UIRefPane ref = (UIRefPane) getBillCardPanel().getBodyItem(
 					"pk_billtypeid").getComponent();
 			TranstypeRefModel refmodel = (TranstypeRefModel) ref.getRefModel();
 			refmodel.setPkFieldCode("pk_billtypecode");
-			final String filterStr = " and pk_billtypecode like '26%' and isnull(canextendtransaction,'~')='~' and pk_group='"
+			final String filterStr = " and parentbilltype in ('263X','264X') and isnull(canextendtransaction,'~')='~' and pk_group='"
 					+ getModel().getContext().getPk_group() + "'";
 			String addWherePart = refmodel.getAddWherePart();
 			if (addWherePart == null || addWherePart.trim().length() == 0) {
@@ -147,7 +149,7 @@ public class IndAuthorizeEditor extends BatchBillTable implements
 	/**
 	 * 前台公式解析器
 	 */
-	private static nc.ui.pub.formulaparse.FormulaParse parser;
+	private static volatile nc.ui.pub.formulaparse.FormulaParse parser;
 
 	private static nc.ui.pub.formulaparse.FormulaParse getFormularParser() {
 		if (parser == null) {

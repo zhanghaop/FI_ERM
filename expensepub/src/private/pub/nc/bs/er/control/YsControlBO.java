@@ -7,48 +7,77 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import nc.bs.erm.annotation.ErmBusinessDef;
+import nc.bs.erm.common.ErmConst;
+import nc.bs.erm.costshare.IErmCostShareConst;
+import nc.bs.erm.util.ErBudgetUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBudgetControl;
+import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
+import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.arap.verifynew.BusinessShowException;
 import nc.vo.er.exception.BugetAlarmBusinessException;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.erm.control.YsControlVO;
-import nc.vo.erm.verifynew.BusinessShowException;
+import nc.vo.erm.costshare.CostShareVO;
+import nc.vo.erm.costshare.CostShareYsControlVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
+import nc.vo.fipub.annotation.Business;
+import nc.vo.fipub.annotation.BusinessType;
 import nc.vo.pub.BusinessException;
 import nc.vo.tb.control.DataRuleVO;
 import nc.vo.tb.control.NtbCtlInfoVO;
+import nc.vo.util.AuditInfoUtil;
+import nc.vo.wfengine.definition.WorkflowTypeEnum;
 
 /**
  * @author twei
  * 
  *         预算控制BO nc.bs.arap.control.YsControlBO
  */
+@Business(business=ErmBusinessDef.TBB_CTROL,subBusiness="", description = "费用预算控制核心代码" /*-=notranslate=-*/,type=BusinessType.CORE)
 public class YsControlBO {
-
-	public YsControlBO() {
-		super();
-	}
+	
+	/**
+	 * 预算控制方式
+	 */
+	private Integer YsControlType = null;
 
 	/**
-	 * 预算控制 
-	 * @author modified by chendya
-	 * @param items 实现预算控制的单据
-	 * @param iscontrary 是否反向控制(删除和反生效为反向,保存和生效为正向)
-	 * @param hascheck 是否再校验
-	 * @param ruleVOs 控制规则
+	 * 预算控制
+	 * @param items
+	 *            实现预算控制的单据
+	 * @param iscontrary
+	 *            是否反向控制(删除和反生效为反向,保存和生效为正向)
+	 * @param hascheck
+	 *            是否再校验
+	 * @param ruleVOs
+	 *            控制规则
 	 * @return
 	 * @throws BusinessException
 	 */
-	public String budgetCtrl(IFYControl[] items, boolean iscontrary,
-			Boolean hascheck, DataRuleVO[] ruleVOs) throws BusinessException {
+	public String budgetCtrl(IFYControl[] items, boolean iscontrary, Boolean hascheck, DataRuleVO[] ruleVOs) throws BusinessException {
 
-		YsControlVO[] ps = getCtrlVOs(items, iscontrary, ruleVOs);
+		YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(items, iscontrary, ruleVOs);
 
-		return ysControl(ps, hascheck, iscontrary);
+		return ysControl(controlVos, hascheck);
+	}
+	
+	/**
+	 * 预算控制<br>
+	 * 外部调用可以将多个预算VO统一放到一个数组里面进行控制<br>
+	 * 处理问题：对于预算一般处理为先释放后占用，这里统一放在一起交到预算来处理
+	 * @param ps 预算控制VO
+	 * @param hascheck 是否检查（预警控制，前台天际确定后显示true，超预算不控制）
+	 * @return
+	 * @throws BusinessException
+	 */
+	public String budgetCtrl(YsControlVO[] ps, Boolean hascheck) throws BusinessException {
+		return ysControl(ps, hascheck);
 	}
 
 	/**
@@ -58,113 +87,31 @@ public class YsControlBO {
 	 *            要控制的元素原始数组
 	 * @throws BusinessException
 	 */
-	public String edit(IFYControl[] items, IFYControl[] items_old,
-			Boolean hascheck, DataRuleVO[] ruleVOs) throws BusinessException {
-
-		YsControlVO[] ps = getEditControlVOs(items, items_old, ruleVOs);
-
-		return ysControl(ps, hascheck, false);
-
+	public String edit(IFYControl[] items, IFYControl[] items_old, Boolean hascheck, DataRuleVO[] ruleVOs) throws BusinessException {
+		YsControlVO[] ps = ErBudgetUtil.getEditControlVOs(items, items_old, ruleVOs);
+		
+		return ysControl(ps, hascheck);
 	}
 
-	private YsControlVO[] getEditControlVOs(IFYControl[] items,
-			IFYControl[] items_old, DataRuleVO[] ruleVOs) {
-
-		YsControlVO[] ps = null;
-		Vector<YsControlVO> v = new Vector<YsControlVO>();
-		for (int n = 0; n < (ruleVOs == null ? 0 : ruleVOs.length); n++) {
-
-			DataRuleVO ruleVo = ruleVOs[n];
-			if (ruleVo == null)
-				continue;
-			/** 单据类型/交易类型 */
-			/** 预占的：PREFIND,执行：UFIND */
-			String methodFunc = ruleVo.getDataType();
-			/** 如果是增加：true，如果是减少，false */
-			boolean isAdd = ruleVo.isAdd();
-			for (int i = 0; i < items.length; i++) {
-				if (items[i].isYSControlAble()) {
-					YsControlVO psTemp = new YsControlVO();
-					psTemp.setIscontrary(false);
-					psTemp.setItems(new IFYControl[] { items[i] });
-					psTemp.setAdd(isAdd);
-					psTemp.setMethodCode(methodFunc);
-					v.addElement(psTemp);
-				}
-			}
-
-			for (int i = 0; i < items_old.length; i++) {
-				if (items_old[i].isYSControlAble()) {
-					YsControlVO psTemp = new YsControlVO();
-					psTemp.setIscontrary(true);
-					psTemp.setItems(new IFYControl[] { items_old[i] });
-					// 问下twei
-					psTemp.setAdd(!isAdd);
-					psTemp.setMethodCode(methodFunc);
-					v.addElement(psTemp);
-				}
-			}
-		}
-		ps = new YsControlVO[v.size()];
-		v.copyInto(ps);
-		return ps;
-	}
-
-	// @see ErmNtbVO
-	public YsControlVO[] getCtrlVOs(IFYControl[] items,
-			boolean iscontrary, DataRuleVO[] ruleVOs) {
-
-		YsControlVO[] ps = null;
-		Vector<YsControlVO> v = new Vector<YsControlVO>();
-		for (int n = 0; n < (ruleVOs == null ? 0 : ruleVOs.length); n++) {
-			DataRuleVO ruleVo = ruleVOs[n];
-			if (ruleVo == null)
-				continue;
-			/** 单据类型/交易类型 */
-			String billType = ruleVo.getBilltype_code();
-			/** 预占的：PREFIND,执行：UFIND */
-			String methodFunc = ruleVo.getDataType();
-			/** 如果是增加：true，如果是减少，false */
-			boolean isAdd = ruleVo.isAdd();
-			IFYControl[] itemsTemp = getRealItems(items, billType);
-			for (int i = 0; i < items.length; i++) {
-				YsControlVO psTemp = new YsControlVO();
-				psTemp.setIscontrary(iscontrary);
-				psTemp.setItems(new IFYControl[] { itemsTemp[i] });
-				psTemp.setAdd(isAdd);
-				psTemp.setMethodCode(methodFunc);
-				v.addElement(psTemp);
-			}
-		}
-		ps = new YsControlVO[v.size()];
-		v.copyInto(ps);
-
-		return ps;
-	}
-
-	/** 根据单据类型来生成VOS */
-	private IFYControl[] getRealItems(IFYControl[] items, String billtype) {
-		return items;
-	}
+	
 
 	/**
 	 * 调用预算控制接口
 	 * 
-	 * @param ps
+	 * @param controlVos
 	 * @param hascheck
 	 * @param iscontrary
 	 * @return
 	 * @throws BusinessShowException
 	 */
-	private String ysControl(YsControlVO[] ps, Boolean hascheck,
-			boolean iscontrary) throws BusinessException {
+	public String ysControl(YsControlVO[] controlVos, Boolean hascheck) throws BusinessException {
 
-		if (ps == null || ps.length == 0) {
+		if (controlVos == null || controlVos.length == 0) {
 			return null;
 		}
 
 		Map<String, List<YsControlVO>> map = new HashMap<String, List<YsControlVO>>();
-		for (YsControlVO vo : ps) {
+		for (YsControlVO vo : controlVos) {
 			String key = vo.getPKOrg();
 			if (map.containsKey(key)) {
 				List<YsControlVO> list = map.get(key);
@@ -177,92 +124,164 @@ public class YsControlBO {
 		}
 		Set<String> pkcorps = map.keySet();
 
-		StringBuffer sb = new StringBuffer("");
+		// 用于判断抛出何种异常，如果为true:预警，false：刚性控制，null：柔性控制
+		Boolean isAlarm = null;
+		StringBuffer resultStr = new StringBuffer("");
 
-		for (String corp : pkcorps) {
-			String msg = ysControl(map.get(corp).toArray(new YsControlVO[] {}),
-					corp, hascheck, iscontrary);
-			if (msg != null && msg.length()>0) {
-				sb.append(msg).append("\n");
+		for (String corp : pkcorps) {// 这里将多个公司的预算控制一起抛出
+			NtbCtlInfoVO ctrlInfoVO = ysControlCore(map.get(corp).toArray(new YsControlVO[] {}));
+			if (ctrlInfoVO == null) {
+				continue;
+			}
+
+			StringBuffer controlMsg = new StringBuffer();
+
+			if (ctrlInfoVO.isControl()) {// 刚性控制
+				isAlarm = Boolean.FALSE;
+				controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getControlInfos()));
+			} else if (ctrlInfoVO.isAlarm()) {// 预警控制
+				if (hascheck != null && Boolean.TRUE.equals(hascheck)) {
+					continue;
+				}
+				
+				if (isAlarm == null) {
+					isAlarm = Boolean.TRUE;
+				}
+				
+				controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getAlarmInfos()));
+			} else if (ctrlInfoVO.isMayBeControl()) {// 柔性控制, 无审批流时刚性控制
+				boolean isStartWorkFlow = false;
+				String bill_pk = controlVos[0].getItems()[0].getPk();
+				String djlxbm = controlVos[0].getItems()[0].getDjlxbm();
+				
+				if(controlVos[0].getItems()[0] instanceof CostShareYsControlVO){//事前结转，按报销单是否有审批流为准
+					Integer src_type = (Integer)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.SRC_TYPE);
+					if(src_type == IErmCostShareConst.CostShare_Bill_SCRTYPE_BX){
+						bill_pk = (String)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.SRC_ID);
+						djlxbm = (String)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.DJLXBM);
+					}
+				}
+				
+				isStartWorkFlow = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
+						.isApproveFlowStartup(bill_pk, djlxbm);
+
+				if (!isStartWorkFlow) {
+					if (controlVos[0].getItems()[0].getDjzt() <= BXStatusConst.DJZT_Saved) {
+						isStartWorkFlow = NCLocator
+								.getInstance()
+								.lookup(IPFWorkflowQry.class)
+								.isExistWorkflowDefinitionWithEmend(djlxbm,
+										controlVos[0].getItems()[0].getPk_org(), AuditInfoUtil.getCurrentUser(), -1,
+										WorkflowTypeEnum.Approveflow.getIntValue());
+					}
+				}
+
+				if (!isStartWorkFlow) {// 借款报销单存不存在审批流则刚性控制
+					isAlarm = Boolean.FALSE;
+				}
+
+				// 柔性控制弹出警告提示信息
+				if (isAlarm != null) {
+					controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getFlexibleControlInfos()));
+				}
+			}
+
+			if (controlMsg.length() != 0) {
+				resultStr.append(controlMsg).append("\n");
 			}
 		}
 
-		if (sb.length() != 0) {
-			return sb.toString();
+		if (isAlarm == null) {
+			if (resultStr.toString().length() == 0) {
+				return null;
+			}
+			return resultStr.toString();
+		} else if (isAlarm.equals(Boolean.TRUE)) {
+			
+			if(getYsControlType() == ErmConst.YsControlType_AlarmNOCHECK_CONTROL){
+				return null;
+			}else{// 预警控制直接抛出异常
+				throw new BugetAlarmBusinessException(resultStr.toString());
+			}
+		} else if (isAlarm.equals(Boolean.FALSE)) {
+			// 刚性控制直接抛出异常
+			throw new BusinessException(resultStr.toString());
 		}
 
+		return null;
+	}
+	
+	private String getStringFromArrayStr(String[] infos){
+		if(infos != null){
+			StringBuffer controlMsg = new StringBuffer("");
+			for (String info: infos) {
+				controlMsg.append("\n" + info);
+			}
+			
+			return controlMsg.toString();
+		}
+		
 		return null;
 	}
 
 	/**
 	 * 报销管理预算控制核心代码
-	 * @param ps
-	 * @param corp
-	 * @param hascheck
-	 * @param iscontrary
+	 * 
+	 * @param controlVos 预算控制VO
 	 * @return
 	 * @throws BusinessException
 	 */
-	private String ysControl(YsControlVO[] ps, String corp, Boolean hascheck,
-			boolean iscontrary) throws BusinessException {
-		
-		// 返回的控制信息
-		StringBuffer retCtrlMsg = new StringBuffer();
-		
+	@Business(business=ErmBusinessDef.TBB_CTROL,subBusiness="", description = "预算控制核心" /*-=notranslate=-*/,type=BusinessType.CORE)
+	private NtbCtlInfoVO ysControlCore(YsControlVO[] controlVos) throws BusinessException {
+
 		// 是否安装预算
-		boolean isInstallTBB = BXUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
+		boolean isInstallTBB = ErUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 		if (!isInstallTBB) {
 			return null;
 		}
-		Vector<IAccessableBusiVO> v = new Vector<IAccessableBusiVO>();
-		for (YsControlVO vo : ps) {
-			FiBillAccessableBusiVOProxy busiVOProxy = new FiBillAccessableBusiVOProxy(vo, BXConstans.ERM_PRODUCT_CODE_Lower);
-			v.addElement(busiVOProxy);
+		Vector<IAccessableBusiVO> busiVoVector = new Vector<IAccessableBusiVO>();
+		for (YsControlVO vo : controlVos) {
+			FiBillAccessableBusiVOProxy busiVOProxy = new FiBillAccessableBusiVOProxy(vo);
+			busiVoVector.addElement(busiVOProxy);
 		}
-		if (v == null || v.size() == 0){
+		if (busiVoVector == null || busiVoVector.size() == 0) {
 			return null;
 		}
-		FiBillAccessableBusiVO[] fiBillAccessableBusiVOs = v.toArray(new FiBillAccessableBusiVO[0]);
-		
-		//调用预算接口查询控制信息
-		NtbCtlInfoVO ctrlInfoVO = NCLocator.getInstance().lookup(IBudgetControl.class).getControlInfo(fiBillAccessableBusiVOs);
+		FiBillAccessableBusiVO[] fiBillAccessableBusiVOs = busiVoVector.toArray(new FiBillAccessableBusiVO[0]);
 
-		if(ctrlInfoVO==null){
-			return null;
-		}
-		// 刚性控制
-		if (ctrlInfoVO.isControl()) {
-			String[] infos = ctrlInfoVO.getControlInfos();
-			for (int j = 0; j < infos.length; j++) {
-				retCtrlMsg.append("\n" + infos[j]);
+		// 调用预算接口查询控制信息
+		IBudgetControl budgetservice = NCLocator.getInstance().lookup(IBudgetControl.class);
+		NtbCtlInfoVO ctrlInfoVO = null;
+		switch (getYsControlType()) {
+			case ErmConst.YsControlType_CHECK:{
+				ctrlInfoVO = budgetservice.getCheckInfo(fiBillAccessableBusiVOs);
+				break;
 			}
-			//刚性控制直接抛出异常
-			throw new BusinessException(retCtrlMsg.toString());
-		}
-		// 预警控制
-		else if (ctrlInfoVO.isAlarm()) {
-			if (hascheck != null && Boolean.TRUE.equals(hascheck)) {
-				return null;
+			case ErmConst.YsControlType_NOCHECK_CONTROL:{
+				budgetservice.noCheckUpdateExe(fiBillAccessableBusiVOs);
+				break;
 			}
-			if (iscontrary) {
-				return null;
-			}
-			retCtrlMsg = new StringBuffer("");
-			String[] seminfos = ctrlInfoVO.getAlarmInfos();
-			for (int j = 0; j < seminfos.length; j++) {
-				retCtrlMsg.append("\n" + seminfos[j]);
-			}
-			//预警控制直接抛出异常
-			throw new BugetAlarmBusinessException(retCtrlMsg.toString());
-		}
-		// 柔性控制
-		else if ((ctrlInfoVO != null) && ctrlInfoVO.isMayBeControl()) {
-			//柔性控制弹出警告提示信息
-			String[] infos = ctrlInfoVO.getFlexibleControlInfos();
-			for (int j = 0; j < infos.length; j++) {
-				retCtrlMsg.append("\n" + infos[j]);
+			default:{
+				ctrlInfoVO = budgetservice.getControlInfo(fiBillAccessableBusiVOs);
+				break;
 			}
 		}
-		return retCtrlMsg.toString();
+
+		return ctrlInfoVO;
+	}
+	
+	/**
+	 * 获取控制方式
+	 * <li>检查且回写
+	 * <li>只检查不回写
+	 * <li>不检查直接回写
+	 * @return
+	 */
+	public int getYsControlType() {
+		return YsControlType == null?ErmConst.YsControlType_CONTROL:YsControlType;
+	}
+
+	public void setYsControlType(Integer ysControlType) {
+		YsControlType = ysControlType;
 	}
 }

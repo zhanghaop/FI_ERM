@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:dbCacheConfig activate="true" configurable="true" lfuMax="10000"
+    refreshInterval="30" autoRefresh="false" appliable="false"
+    tableType="MEMORY" pagedSize="1000" xmlns:ns2="http://www.ufida.com.cn/NC/dbcache/cacheconfig">
+    <table name="er_reimtype" strategy="FULL" primaryKey="pk_reimtype">
+        <filterSql><![CDATA[]]></filterSql>
+    </table>
+    <table name="er_djlx" strategy="FULL" primaryKey="djlxoid">
+        <filterSql><![CDATA[]]></filterSql>
+    </table>
+    <table name="er_expensetype" strategy="FULL" primaryKey="pk_expensetype">
+        <filterSql><![CDATA[]]></filterSql>
+    </table>
+    <table name="er_reimrule" strategy="FULL" primaryKey="pk_reimrule">
+        <filterSql><![CDATA[]]></filterSql>
+    </table>
+    <table name="er_billcontrast" strategy="FULL" primaryKey="pk_billcontrast">
+        <filterSql><![CDATA[]]></filterSql>
+    </table>
+    <table name="sm_user_ex" strategy="FULL" primaryKey="CUSEXID">
+        <filterSql><![CDATA[]]></filterSql>
+    </table>
+    <table name="bd_accperiodmonth" strategy="FULL" primaryKey="pk_accperiodmonth">
+        <column system="false" name="pk_accperiodmonth"/>
+        <column system="false" name="yearmth"/>
+        <column system="false" name="accperiodmth"/>
+        <column system="false" name="begindate"/>
+        <column system="false" name="beginmonth"/>
+        <column system="false" name="dataoriginflag"/>
+        <column system="false" name="dr"/>
+        <column system="false" name="enddate"/>
+        <column system="false" name="endmonth"/>
+        <column system="false" name="isadj"/>
+        <column system="false" name="pk_accperiod"/>
+        <column system="false" name="pk_accperiodscheme"/>
+        <column system="false" name="pk_org"/>
+        <column system="false" name="ts"/>
+        <filterSql><![CDATA[
+        ]]></filterSql>
+    </table>
+</ns2:dbCacheConfig>

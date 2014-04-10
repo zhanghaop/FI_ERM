@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+	<!-- 期末结账-->
+	<!-- closeacc -->
+	<!-- author:wangle -->
+<beans>
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.uif2.LoginContext">
+	</bean>
+
+	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
+	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
+
+	<!-- 发生异常 -->
+	<bean id="execeptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context"></property>
+	</bean>
+
+	<!-- 应用服务类，负责进行模型操作的处理 -->
+	<bean id="service" class="nc.ui.erm.closeacc.model.CloseAccModelService">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<!-- 管理应用模型 -->
+	<bean id="manageAppModel" class="nc.ui.erm.closeacc.model.CloseAccManageModel">
+		<property name="service" ref="service" />
+		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
+		<property name="context" ref="context" />
+	</bean>
+
+	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->
+	<bean id="modelDataManager" class="nc.ui.erm.closeacc.model.CloseAccDataManager">
+		<property name="model" ref="manageAppModel" />
+		<property name="rightView" ref="rightView" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+	</bean>
+
+	<!-- 界面顶部的panel -->
+	<bean id="toppane" class="nc.ui.erm.closeacc.view.CloseAccPanel"
+		init-method="initUI">
+		<property name="toporgpane" ref="toporgpane"></property>
+		<property name="topperiodpane" ref="topperiodpane"></property>
+	</bean>
+
+	<bean id="toporgpane" class="nc.ui.erm.closeacc.view.CloseAccFinOrgPanel"
+		init-method="initUI">
+		<property name="dataManager" ref="modelDataManager"></property>
+		<property name="topperiodpane" ref="topperiodpane"></property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+		<property name="labelName">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="201107_0" />
+				<property name="resId" value="0201107-0130" />
+                        <!-- 财务组织-->
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="topperiodpane" class="nc.ui.erm.closeacc.view.CloseAccPeriodPanel"
+		init-method="initUI">
+		<property name="modelmanager" ref="modelDataManager"></property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+	</bean>
+
+	<!-- 列表视图 -->
+	<bean id="listView" class="nc.ui.erm.closeacc.view.CloseAccListView"
+		init-method="initUI">
+		<property name="model" ref="manageAppModel" />
+		<property name="nodekey" value="201110"></property>
+
+	</bean>
+	<!--提示信息面板  -->
+	<bean id="rightView" class="nc.ui.erm.closeacc.view.CloseaccDesInfoPanel"
+		init-method="initUI">
+	</bean>
+
+	<bean id="refreshAction" class="nc.ui.uif2.actions.RefreshAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+	</bean>
+
+	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
+
+	<bean id="closeValidationService" class="nc.bs.uif2.validation.DefaultValidationService">
+		<property name="validators">
+			<list>
+				<bean id="closeAccValidator" class="nc.ui.erm.closeacc.validator.CloseAccValidator" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="closeAction" class="nc.ui.erm.closeacc.action.CloseAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="listView" ref="listView" />
+		<property name="exceptionHandler">
+			<bean class="nc.ui.uif2.DefaultExceptionHanler">
+				<property name="context" ref="context"></property>
+				<property name="errormsg">
+                    <bean class="nc.ui.uif2.I18nFB">
+                        <property name="resDir" value="201109_0" />
+                        <property name="resId" value="0201109-0090" />
+                        <!-- 结账失败-->
+                    </bean>
+                </property>
+			</bean>
+		</property>
+		<property name="validationService" ref="closeValidationService" />
+	</bean>
+
+	<bean id="uncloseAction" class="nc.ui.erm.closeacc.action.UnCloseAction">
+		<property name="listView" ref="listView" />
+		<property name="model" ref="manageAppModel" />
+		<property name="dataManager" ref="modelDataManager" />
+		<property name="exceptionHandler">
+			<bean class="nc.ui.uif2.DefaultExceptionHanler">
+				<property name="context" ref="context"></property>
+				<property name="errormsg">
+                    <bean class="nc.ui.uif2.I18nFB">
+                        <property name="resDir" value="201109_0" />
+                        <property name="resId" value="0201109-0091" />
+                        <!-- 取消结账失败！-->
+                    </bean>
+                </property>
+			</bean>
+		</property>
+		<property name="validationService" ref="uncloseValidationService" />
+	</bean>
+
+	<bean id="uncloseValidationService" class="nc.bs.uif2.validation.DefaultValidationService">
+		<property name="validators">
+			<list>
+				<bean id="uncloseAccValidator" class="nc.ui.erm.closeacc.validator.UnCloseAccValidator" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="toppane"></property>
+					</bean>
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+						<property name="left">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="component" ref="listView"></property>
+							</bean>
+						</property>
+						<property name="right">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="component" ref="rightView"></property>
+							</bean>
+						</property>
+						<property name="dividerLocation" value="0.7"></property>
+					</bean>
+				</property>
+				<property name="dividerLocation" value="0.06"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="refreshAction" />
+				<ref bean="nullAction" />
+				<ref bean="closeActionGroupAction" />
+			</list>
+		</property>
+		<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
+	</bean>
+	
+	<bean id="closeActionGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="actions">
+			<list>
+				<ref bean="closeAction" />
+				<ref bean="uncloseAction" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2012-07-24 16:31:45" creator="" description="" displayName="费用结转单业务活动" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="25a523fe-dc3f-447f-81df-4efe968b57fa" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="costshare_operate" namespace="erm" ownModule="erm" preLoad="false" programcode="" resModuleName="mdcommon" resid="2201112-000273" version="24" versionType="0">
+    <celllist>
+        <busiActivity componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:32:12" creator="" description="" displayName="费用结转单维护活动" fullClassName="nc.voerm.costshare_operate.costshare_MgActivity" height="109" help="" id="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="costshare_MgActivity" resid="" version="" versionType="0" visibility="public" width="119" x="15" y="162">
+            <refBusiOperationlist>
+                <refbusioperation id="44405f45-4384-408c-8445-dffac03ade5a" industry="0" isAuthorization="true" isSource="false" ownerElementID="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realBusiOpid="52547fb0-55dc-4390-a376-03a80bc7c15d" versiontype="0"/>
+                <refbusioperation id="1778a8f5-130f-4d03-9adf-28b722d2eefd" industry="0" isAuthorization="true" isSource="false" ownerElementID="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realBusiOpid="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" versiontype="0"/>
+                <refbusioperation id="12647048-43be-4103-911d-7ca375f6a74a" industry="0" isAuthorization="true" isSource="false" ownerElementID="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realBusiOpid="1351566d-346e-479e-abf3-e73b5ea41317" versiontype="0"/>
+                <refbusioperation id="91c13dbb-0ffc-48b1-ac0e-88bea7f44f6d" industry="0" isAuthorization="true" isSource="false" ownerElementID="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realBusiOpid="04106ae8-924c-4ab6-8f57-f1e657628cf8" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+        <opinterface componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:32:17" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="费用结转单维护" fullClassName="nc.pubitf.erm.costshare.IErmCostShareBillManage" height="100" help="" id="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="IErmCostShareBillManage" remote="true" resid="2201112-000274" singleton="false" transprop="CMT" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="118" x="350" y="138">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="新增" forBusinessEntity="N" help="" id="863df4f6-0a61-4385-9c7f-d82107574dae" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insertVO" opItfID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" ownerElementID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="SINGLE" dbtype="" description="" displayName="费用结转单" isAggVO="true" name="vo" operationID="863df4f6-0a61-4385-9c7f-d82107574dae" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="费用结转单" typeName="costshare" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="SINGLE" dbtype="" defclassname="" displayName="修改" forBusinessEntity="N" help="" id="6626027b-fcc1-448c-a55e-e63b47efaf02" isAggVOReturn="true" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="updateVO" opItfID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" ownerElementID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" transKind="REQUIRED" typeDisplayName="费用结转单" typeName="costshare" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="SINGLE" dbtype="" description="" displayName="费用结转单" isAggVO="true" name="vo" operationID="6626027b-fcc1-448c-a55e-e63b47efaf02" paramTypeForLog="0" paramdefclassname="" sequence="0" typeDisplayName="费用结转单" typeName="costshare" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="ARRAY" dbtype="" defclassname="" displayName="删除" forBusinessEntity="N" help="" id="48abf335-4aff-417f-ab13-6062bd4a0844" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="deleteVOs" opItfID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" ownerElementID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" transKind="REQUIRED" typeDisplayName="费用结转单" typeName="costshare" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="ARRAY" dbtype="" description="" displayName="费用结转单" isAggVO="true" name="vos" operationID="48abf335-4aff-417f-ab13-6062bd4a0844" paramTypeForLog="0" paramdefclassname="" sequence="0" typeDisplayName="费用结转单" typeName="costshare" versionType="0"/>
+                    </paramlist>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <Reference componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:32:28" creator="" description="" displayName="displayname" fullClassName="nc.voerm.costshare_operate.reference" height="100" help="" id="eff65320-c4cf-421d-82e0-6eed70e9fcbb" industryChanged="false" isSource="false" mdFilePath="\costsharebill.bmf" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" moduleName="erm" name="reference" refId="204d357b-d993-43b1-baa9-8bfde873ba3b" resid="" versionType="0" visibility="public" width="100" x="573" y="327"/>
+        <busioperation componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:37:42" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="新增" fullClassName="nc.voerm.costshare_operate.Costshare_Add" height="100" help="" id="52547fb0-55dc-4390-a376-03a80bc7c15d" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="ADD" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="Costshare_Add" needlog="false" resid="" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="80" x="205" y="60">
+            <refoperationlist>
+                <refoperation id="863df4f6-0a61-4385-9c7f-d82107574dae" industry="0" isAuthorization="true" isSource="false" opItfID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" ownerElementID="52547fb0-55dc-4390-a376-03a80bc7c15d" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:39:41" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="修改" fullClassName="nc.voerm.costshare_operate.Costshare_Update" height="99" help="" id="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="MODIFY" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="Costshare_Update" needlog="true" resid="" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="78" x="206" y="181">
+            <refoperationlist>
+                <refoperation id="6626027b-fcc1-448c-a55e-e63b47efaf02" industry="0" isAuthorization="true" isSource="false" opItfID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" ownerElementID="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:40:55" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="删除" fullClassName="nc.voerm.costshare_operate.Costshare_Delete" height="100" help="" id="1351566d-346e-479e-abf3-e73b5ea41317" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="DELETE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="Costshare_Delete" needlog="true" resid="" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="80" x="204" y="305">
+            <refoperationlist>
+                <refoperation id="48abf335-4aff-417f-ab13-6062bd4a0844" industry="0" isAuthorization="true" isSource="false" opItfID="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" ownerElementID="1351566d-346e-479e-abf3-e73b5ea41317" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <opinterface componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:41:50" creator="" description="" displayName="费用结转单查询" fullClassName="nc.pubitf.erm.costshare.IErmCostShareBillQuery" height="96" help="" id="c1733660-fad6-4251-a819-46103ac0a265" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="IErmCostShareBillQuery" remote="true" resid="2201112-000275" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="130" x="367" y="362">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="按PK查询" forBusinessEntity="N" help="" id="a8fd3e6e-c932-4586-b788-d4c6478a45e6" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="queryBillByPK" opItfID="c1733660-fad6-4251-a819-46103ac0a265" ownerElementID="c1733660-fad6-4251-a819-46103ac0a265" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="按PK数组查询" forBusinessEntity="N" help="" id="ae435138-881d-443f-a296-3564d8683082" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="queryBillByPKs" opItfID="c1733660-fad6-4251-a819-46103ac0a265" ownerElementID="c1733660-fad6-4251-a819-46103ac0a265" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="按条件查询" forBusinessEntity="N" help="" id="75013587-b97c-4140-8943-de6aac9e1396" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="queryBillByWhere" opItfID="c1733660-fad6-4251-a819-46103ac0a265" ownerElementID="c1733660-fad6-4251-a819-46103ac0a265" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:43:32" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="查询" fullClassName="nc.voerm.costshare_operate.Costshare_Qry" height="100" help="" id="04106ae8-924c-4ab6-8f57-f1e657628cf8" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="Costshare_Qry" needlog="false" resid="" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="108" x="197" y="437">
+            <refoperationlist>
+                <refoperation id="a8fd3e6e-c932-4586-b788-d4c6478a45e6" industry="0" isAuthorization="true" isSource="false" opItfID="c1733660-fad6-4251-a819-46103ac0a265" ownerElementID="04106ae8-924c-4ab6-8f57-f1e657628cf8" versiontype="0"/>
+                <refoperation id="ae435138-881d-443f-a296-3564d8683082" industry="0" isAuthorization="true" isSource="false" opItfID="c1733660-fad6-4251-a819-46103ac0a265" ownerElementID="04106ae8-924c-4ab6-8f57-f1e657628cf8" versiontype="0"/>
+                <refoperation id="75013587-b97c-4140-8943-de6aac9e1396" industry="0" isAuthorization="true" isSource="false" opItfID="c1733660-fad6-4251-a819-46103ac0a265" ownerElementID="04106ae8-924c-4ab6-8f57-f1e657628cf8" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <opinterface componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:44:19" creator="" description="" displayName="费用结转单确认" fullClassName="nc.pubitf.erm.costshare.IErmCostShareBillApprove" height="100" help="" id="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="IErmCostShareBillApprove" remote="true" resid="2201112-000276" singleton="true" transprop="CMT" version="" versionType="0" visibility="public" width="148" x="365" y="555">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="确认" forBusinessEntity="N" help="" id="52229f19-45e5-473e-a3e0-cdf643d6b59c" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="approveVOs" opItfID="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" ownerElementID="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="ARRAY" dbtype="" description="" displayName="费用结转单" isAggVO="true" name="vos" operationID="52229f19-45e5-473e-a3e0-cdf643d6b59c" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="费用结转单" typeName="costshare" versionType="0"/>
+                    </paramlist>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="取消确认" forBusinessEntity="N" help="" id="ebb501db-d298-4d28-a379-9e1e279fbdc0" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="unapproveVOs" opItfID="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" ownerElementID="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist>
+                        <parameter dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dataTypeStyle="ARRAY" dbtype="" description="" displayName="费用结转单" isAggVO="true" name="vos" operationID="ebb501db-d298-4d28-a379-9e1e279fbdc0" paramTypeForLog="7" paramdefclassname="" sequence="0" typeDisplayName="费用结转单" typeName="costshare" versionType="0"/>
+                    </paramlist>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:45:46" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="确认" fullClassName="nc.voerm.costshare_operate.Costshare_Approve" height="100" help="" id="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="Costshare_Approve" needlog="false" resid="" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="80" x="203" y="565">
+            <refoperationlist>
+                <refoperation id="52229f19-45e5-473e-a3e0-cdf643d6b59c" industry="0" isAuthorization="true" isSource="false" opItfID="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" ownerElementID="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:46:24" creator="" dataType="204d357b-d993-43b1-baa9-8bfde873ba3b" dbtype="" description="" displayName="取消确认" fullClassName="nc.voerm.costshare_operate.Costshare_UnApprove" height="100" help="" id="9bc434b7-2715-4c3c-8f8b-15f01c32b879" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="Costshare_UnApprove" needlog="false" resid="" typeDisplayName="费用结转单" typeName="costshare" version="" versionType="0" visibility="public" width="80" x="194" y="680">
+            <refoperationlist>
+                <refoperation id="ebb501db-d298-4d28-a379-9e1e279fbdc0" industry="0" isAuthorization="true" isSource="false" opItfID="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" ownerElementID="9bc434b7-2715-4c3c-8f8b-15f01c32b879" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busiActivity componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:48:30" creator="" description="" displayName="费用结转单确认活动" fullClassName="nc.voerm.costshare_operate.costshare_ApproveActivity" height="124" help="" id="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 10:03:27" name="costshare_ApproveActivity" resid="" version="" versionType="0" visibility="public" width="117" x="15" y="519">
+            <refBusiOperationlist>
+                <refbusioperation id="21c75dc9-8742-450b-a8ae-4fb77b58e5ae" industry="0" isAuthorization="true" isSource="false" ownerElementID="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" realBusiOpid="04106ae8-924c-4ab6-8f57-f1e657628cf8" versiontype="0"/>
+                <refbusioperation id="276008d4-1a73-41a9-be4c-b45f95028ffd" industry="0" isAuthorization="true" isSource="false" ownerElementID="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" realBusiOpid="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" versiontype="0"/>
+                <refbusioperation id="908d2ce1-6eb9-4924-b1c4-f503d7590127" industry="0" isAuthorization="true" isSource="false" ownerElementID="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" realBusiOpid="9bc434b7-2715-4c3c-8f8b-15f01c32b879" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+    </celllist>
+    <connectlist>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:41:31" creator="" description="" displayName="" help="" id="e5eb4a89-b2b9-45d0-b79a-e492e962e028" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:41:31" name="converge connection" realsource="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realtarget="52547fb0-55dc-4390-a376-03a80bc7c15d" source="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" target="52547fb0-55dc-4390-a376-03a80bc7c15d" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:41:32" creator="" description="" displayName="" help="" id="52a9ea64-25fa-4162-a5b3-ae6b1525d23c" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:41:32" name="converge connection" realsource="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realtarget="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" source="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" target="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:41:33" creator="" description="" displayName="" help="" id="a4e673b3-0649-4a50-9168-2f53d6e295c1" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:41:33" name="converge connection" realsource="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realtarget="1351566d-346e-479e-abf3-e73b5ea41317" source="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" target="1351566d-346e-479e-abf3-e73b5ea41317" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:43:59" creator="" description="" displayName="" help="" id="b3d45b88-5c6f-4643-ba76-0e8608d5ec1e" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:43:59" name="converge connection" realsource="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" realtarget="04106ae8-924c-4ab6-8f57-f1e657628cf8" source="a6fcc56e-9e14-4d05-a3b1-77ce52ade6a3" target="04106ae8-924c-4ab6-8f57-f1e657628cf8" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:37:27" creator="" description="" displayName="" help="" id="510acc9f-6445-4608-89c8-b1f2e8405328" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:37:27" name="depend connection" realsource="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" realtarget="204d357b-d993-43b1-baa9-8bfde873ba3b" source="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" target="eff65320-c4cf-421d-82e0-6eed70e9fcbb" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:38:08" creator="" description="" displayName="" help="" id="1e8b856a-f180-4eb6-8190-b2cb9e15f800" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:38:08" name="depend connection" realsource="52547fb0-55dc-4390-a376-03a80bc7c15d" realtarget="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" source="52547fb0-55dc-4390-a376-03a80bc7c15d" target="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:41:28" creator="" description="" displayName="" help="" id="65f29eea-66b6-482e-b86e-48ecf8076c53" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:41:28" name="depend connection" realsource="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" realtarget="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" source="9fc7bd92-a6d3-4c43-ba0b-55b468c78afc" target="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:41:29" creator="" description="" displayName="" help="" id="642c6e91-6b30-4d1a-85c9-14d72c33d115" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:41:29" name="depend connection" realsource="1351566d-346e-479e-abf3-e73b5ea41317" realtarget="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" source="1351566d-346e-479e-abf3-e73b5ea41317" target="0afbee8d-e874-4c4e-a5a7-5b93d6a7d644" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:43:24" creator="" description="" displayName="" help="" id="a2bd14ea-0c7e-464c-9b04-4ce8803d9d0e" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:43:24" name="depend connection" realsource="c1733660-fad6-4251-a819-46103ac0a265" realtarget="204d357b-d993-43b1-baa9-8bfde873ba3b" source="c1733660-fad6-4251-a819-46103ac0a265" target="eff65320-c4cf-421d-82e0-6eed70e9fcbb" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:45:02" creator="" description="" displayName="" help="" id="cb82e225-8601-4d17-87fe-441be30cb629" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:45:02" name="depend connection" realsource="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" realtarget="204d357b-d993-43b1-baa9-8bfde873ba3b" source="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" target="eff65320-c4cf-421d-82e0-6eed70e9fcbb" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:43:57" creator="" description="" displayName="" help="" id="e3c4d9b0-de8c-4964-b6f5-e4dc149ca1de" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:43:57" name="depend connection" realsource="04106ae8-924c-4ab6-8f57-f1e657628cf8" realtarget="c1733660-fad6-4251-a819-46103ac0a265" source="04106ae8-924c-4ab6-8f57-f1e657628cf8" target="c1733660-fad6-4251-a819-46103ac0a265" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:49:07" creator="" description="" displayName="" help="" id="7e563f53-dfeb-4dee-8ec1-b00d4963a50f" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:49:07" name="converge connection" realsource="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" realtarget="04106ae8-924c-4ab6-8f57-f1e657628cf8" source="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" target="04106ae8-924c-4ab6-8f57-f1e657628cf8" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:47:12" creator="" description="" displayName="" help="" id="3b2b7acb-76a3-4ad2-ad70-b89a126d77e5" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:47:12" name="depend connection" realsource="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" realtarget="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" source="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" target="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:47:13" creator="" description="" displayName="" help="" id="17eeb4a0-62f2-4a02-88fe-60d8e1b5cf71" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:47:13" name="depend connection" realsource="9bc434b7-2715-4c3c-8f8b-15f01c32b879" realtarget="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" source="9bc434b7-2715-4c3c-8f8b-15f01c32b879" target="ea8ae2bf-a360-417b-8d2b-b0712293bfd8" versionType="0">
+            <points/>
+        </dependConnection>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:49:01" creator="" description="" displayName="" help="" id="637424bf-5467-4508-ae84-2e82b372ce5a" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:49:01" name="converge connection" realsource="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" realtarget="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" source="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" target="e7b2bb62-cba0-44fa-a7d7-cd90428c6e9e" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="25a523fe-dc3f-447f-81df-4efe968b57fa" createIndustry="0" createTime="2012-07-24 16:49:02" creator="" description="" displayName="" help="" id="26a646a0-1baf-44b7-97cc-2a591920b7ed" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-07-24 16:49:02" name="converge connection" realsource="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" realtarget="9bc434b7-2715-4c3c-8f8b-15f01c32b879" source="f1b6ed8a-a926-4d10-b5c7-2bd7d94b34e1" target="9bc434b7-2715-4c3c-8f8b-15f01c32b879" versionType="0">
+            <points/>
+        </convergeconnection>
+    </connectlist>
+    <refdepends>
+        <dependfile entityid="204d357b-d993-43b1-baa9-8bfde873ba3b"/>
+    </refdepends>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

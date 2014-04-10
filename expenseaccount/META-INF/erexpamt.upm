@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+    <public>
+    <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+      	<interface>nc.pubitf.erm.expamortize.IExpAmortizeinfoManage</interface>
+        <implementation>nc.impl.erm.expamortize.ErmExpAmortizeinfoManageImpl</implementation>
+    </component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+      	<interface>nc.pubitf.erm.expamortize.IExpAmortizeinfoQuery</interface>
+      	<implementation>nc.impl.erm.expamortize.ExpAmortizeinfoQueryImpl</implementation>
+    </component>
+  	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.pubitf.erm.expamortize.IExpAmortize</interface>
+     		<implementation>nc.impl.erm.expamortize.ExpAmortizeImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.bs.erm.expamortize.control.IErmExpamortizeYsControlService</interface>
+     		<implementation>nc.bs.erm.expamortize.eventlistener.ExpamortizeYsControlServiceImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.pubitf.erm.expamortize.IExpAmortizeprocManage</interface>
+     		<implementation>nc.impl.erm.expamortize.ExpAmortizeprocManageImpl</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+     		<interface>nc.pubitf.erm.expamortize.IExpAmortizeprocQuery</interface>
+     		<implementation>nc.impl.erm.expamortize.ExpAmortizeprocQueryImpl</implementation>
+		</component>
+		
+    </public>
+</module>

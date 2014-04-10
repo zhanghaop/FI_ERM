@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2013-01-09 10:08:07" creator="" description="" displayName="matterschema_operate" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" industry="0" industryChanged="false" industryIncrease="false" industryName="" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="matterschema_operate" namespace="erm" ownModule="erm" preLoad="false" programcode="" resModuleName="201212_0" resid="2201BTP-0006" version="10" versionType="0">
+    <celllist>
+        <opinterface componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 10:08:13" creator="" description="" displayName="控制对象维护服务" fullClassName="nc.itf.erm.IErmMappCtrlBillManage" height="102" help="" id="74b58631-fd9c-4cee-bd85-47744420f9bd" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="IErmMappCtrlBillManage" remote="true" resid="2201BTP-0007" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="120" x="456" y="23">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="新增" forBusinessEntity="N" help="" id="04ccb9d2-8d22-4a4f-9261-5aa68d7237b3" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insert" opItfID="74b58631-fd9c-4cee-bd85-47744420f9bd" ownerElementID="74b58631-fd9c-4cee-bd85-47744420f9bd" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="删除" forBusinessEntity="N" help="" id="a99d8631-ff6c-4bff-8fa7-017a0ffcf026" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="delete" opItfID="74b58631-fd9c-4cee-bd85-47744420f9bd" ownerElementID="74b58631-fd9c-4cee-bd85-47744420f9bd" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 10:09:23" creator="" description="" displayName="控制维度维护服务" fullClassName="nc.itf.erm.IErmMappCtrlFieldManage" height="88" help="" id="9258028b-cde3-4a96-9830-454d622e95bb" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="IErmMappCtrlFieldManage" remote="true" resid="2201BTP-0008" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="140" x="439" y="147">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="新增" forBusinessEntity="N" help="" id="46d658bd-dbdd-490a-8356-58fe555d6dc8" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insert" opItfID="9258028b-cde3-4a96-9830-454d622e95bb" ownerElementID="9258028b-cde3-4a96-9830-454d622e95bb" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="删除" forBusinessEntity="N" help="" id="a072bb4b-6f06-4d99-b919-f02a8c22348c" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="delete" opItfID="9258028b-cde3-4a96-9830-454d622e95bb" ownerElementID="9258028b-cde3-4a96-9830-454d622e95bb" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 10:17:58" creator="" description="" displayName="控制对象查询服务" fullClassName="nc.itf.erm.IErmMappCtrlBillQuery" height="67" help="" id="a00309fa-c8ac-4c55-8972-02fc8c30e615" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="IErmMappCtrlBillQuery" remote="true" resid="2201BTP-0009" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="146" x="429" y="266">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="按组织+交易类型查询" forBusinessEntity="N" help="" id="2e79b609-b6c6-4b42-b35c-dfbfeb5dfea3" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="query" opItfID="a00309fa-c8ac-4c55-8972-02fc8c30e615" ownerElementID="a00309fa-c8ac-4c55-8972-02fc8c30e615" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 10:18:15" creator="" description="" displayName="控制维度查询服务" fullClassName="nc.itf.erm.IErmMappCtrlFieldQuery" height="72" help="" id="db943736-7345-497a-b629-469b4ee1ad39" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="IErmMappCtrlFieldQuery" remote="true" resid="2201BTP-0010" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="154" x="430" y="364">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="按组织+交易类型查询" forBusinessEntity="N" help="" id="cf8a45ca-37ad-4fea-a269-dbbf818767f9" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="query" opItfID="db943736-7345-497a-b629-469b4ee1ad39" ownerElementID="db943736-7345-497a-b629-469b4ee1ad39" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 10:19:31" creator="" description="" displayName="控制对象维护" fullClassName="nc.vo.erm.matterschema_operate.MappCtrlBillManage" height="100" help="" id="31105aa6-c199-4b56-a68a-1b14a53239ac" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="MappCtrlBillManage" needlog="false" resid="" version="" versionType="0" visibility="public" width="109" x="231" y="69">
+            <refoperationlist>
+                <refoperation id="04ccb9d2-8d22-4a4f-9261-5aa68d7237b3" industry="0" isAuthorization="true" isSource="false" opItfID="74b58631-fd9c-4cee-bd85-47744420f9bd" ownerElementID="31105aa6-c199-4b56-a68a-1b14a53239ac" versiontype="0"/>
+                <refoperation id="a99d8631-ff6c-4bff-8fa7-017a0ffcf026" industry="0" isAuthorization="true" isSource="false" opItfID="74b58631-fd9c-4cee-bd85-47744420f9bd" ownerElementID="31105aa6-c199-4b56-a68a-1b14a53239ac" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 10:19:33" creator="" description="" displayName="控制维度维护" fullClassName="nc.vo.erm.matterschema_operate.MappCtrlFieldManage" height="100" help="" id="6ea6dd56-7929-40d7-a61d-885a86a98562" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="MappCtrlFieldManage" needlog="false" resid="" version="" versionType="0" visibility="public" width="119" x="225" y="211">
+            <refoperationlist>
+                <refoperation id="46d658bd-dbdd-490a-8356-58fe555d6dc8" industry="0" isAuthorization="true" isSource="false" opItfID="9258028b-cde3-4a96-9830-454d622e95bb" ownerElementID="6ea6dd56-7929-40d7-a61d-885a86a98562" versiontype="0"/>
+                <refoperation id="a072bb4b-6f06-4d99-b919-f02a8c22348c" industry="0" isAuthorization="true" isSource="false" opItfID="9258028b-cde3-4a96-9830-454d622e95bb" ownerElementID="6ea6dd56-7929-40d7-a61d-885a86a98562" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:07:00" creator="" description="" displayName="控制规则查询" fullClassName="nc.vo.erm.matterschema_operate.MappCtrlQuery" height="100" help="" id="533b5113-2b65-49e0-9e8b-bf51973c01d1" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="MappCtrlQuery" needlog="false" resid="" version="" versionType="0" visibility="public" width="159" x="199" y="339">
+            <refoperationlist>
+                <refoperation id="2e79b609-b6c6-4b42-b35c-dfbfeb5dfea3" industry="0" isAuthorization="true" isSource="false" opItfID="a00309fa-c8ac-4c55-8972-02fc8c30e615" ownerElementID="533b5113-2b65-49e0-9e8b-bf51973c01d1" versiontype="0"/>
+                <refoperation id="cf8a45ca-37ad-4fea-a269-dbbf818767f9" industry="0" isAuthorization="true" isSource="false" opItfID="db943736-7345-497a-b629-469b4ee1ad39" ownerElementID="533b5113-2b65-49e0-9e8b-bf51973c01d1" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busiActivity componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:16" creator="" description="" displayName="控制规则维护" fullClassName="nc.vo.erm.matterschema_operate.MappCtrlMg" height="123" help="" id="e3223912-d582-42c4-bce1-5d5c3358900d" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-17 11:15:16" name="MappCtrlMg" resid="" version="" versionType="0" visibility="public" width="134" x="34" y="167">
+            <refBusiOperationlist>
+                <refbusioperation id="9687d6f0-0851-41a1-9524-f21cc31c494b" industry="0" isAuthorization="true" isSource="false" ownerElementID="e3223912-d582-42c4-bce1-5d5c3358900d" realBusiOpid="31105aa6-c199-4b56-a68a-1b14a53239ac" versiontype="0"/>
+                <refbusioperation id="e0f71d16-cec1-413d-a0b6-2987e9c19238" industry="0" isAuthorization="true" isSource="false" ownerElementID="e3223912-d582-42c4-bce1-5d5c3358900d" realBusiOpid="6ea6dd56-7929-40d7-a61d-885a86a98562" versiontype="0"/>
+                <refbusioperation id="4d7309cc-dc4a-4844-a932-62e45487175b" industry="0" isAuthorization="true" isSource="false" ownerElementID="e3223912-d582-42c4-bce1-5d5c3358900d" realBusiOpid="533b5113-2b65-49e0-9e8b-bf51973c01d1" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+    </celllist>
+    <connectlist>
+        <convergeconnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:51" creator="" description="" displayName="" help="" id="a9ab181d-d6f1-4087-80b3-5dfc4d90ffb8" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:51" name="converge connection" realsource="31105aa6-c199-4b56-a68a-1b14a53239ac" realtarget="74b58631-fd9c-4cee-bd85-47744420f9bd" source="31105aa6-c199-4b56-a68a-1b14a53239ac" target="74b58631-fd9c-4cee-bd85-47744420f9bd" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:52" creator="" description="" displayName="" help="" id="22bebe80-2ec9-48ff-8a89-efa86c31f390" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:52" name="converge connection" realsource="6ea6dd56-7929-40d7-a61d-885a86a98562" realtarget="9258028b-cde3-4a96-9830-454d622e95bb" source="6ea6dd56-7929-40d7-a61d-885a86a98562" target="9258028b-cde3-4a96-9830-454d622e95bb" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:53" creator="" description="" displayName="" help="" id="5cdbbbcf-12c9-471e-bbb8-8333ce1383cf" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:53" name="converge connection" realsource="533b5113-2b65-49e0-9e8b-bf51973c01d1" realtarget="a00309fa-c8ac-4c55-8972-02fc8c30e615" source="533b5113-2b65-49e0-9e8b-bf51973c01d1" target="a00309fa-c8ac-4c55-8972-02fc8c30e615" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:54" creator="" description="" displayName="" help="" id="0f76e703-4262-49f6-8003-fb948b48a0c2" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:54" name="converge connection" realsource="533b5113-2b65-49e0-9e8b-bf51973c01d1" realtarget="db943736-7345-497a-b629-469b4ee1ad39" source="533b5113-2b65-49e0-9e8b-bf51973c01d1" target="db943736-7345-497a-b629-469b4ee1ad39" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:48" creator="" description="" displayName="" help="" id="ad82f03d-9aa2-4f93-ab10-3e9100365402" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:48" name="depend connection" realsource="e3223912-d582-42c4-bce1-5d5c3358900d" realtarget="31105aa6-c199-4b56-a68a-1b14a53239ac" source="e3223912-d582-42c4-bce1-5d5c3358900d" target="31105aa6-c199-4b56-a68a-1b14a53239ac" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:49" creator="" description="" displayName="" help="" id="42fd00f7-4e74-45b8-b1b6-120736e485ed" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:49" name="depend connection" realsource="e3223912-d582-42c4-bce1-5d5c3358900d" realtarget="6ea6dd56-7929-40d7-a61d-885a86a98562" source="e3223912-d582-42c4-bce1-5d5c3358900d" target="6ea6dd56-7929-40d7-a61d-885a86a98562" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="4a2ce28f-9e5e-4ad2-8e8d-2e454fb0e117" createIndustry="0" createTime="2013-01-09 11:08:49" creator="" description="" displayName="" help="" id="456d3109-ab26-423c-8465-58a3e8d4280b" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-01-09 11:08:49" name="depend connection" realsource="e3223912-d582-42c4-bce1-5d5c3358900d" realtarget="533b5113-2b65-49e0-9e8b-bf51973c01d1" source="e3223912-d582-42c4-bce1-5d5c3358900d" target="533b5113-2b65-49e0-9e8b-bf51973c01d1" versionType="0">
+            <points/>
+        </dependConnection>
+    </connectlist>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

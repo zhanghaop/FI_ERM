@@ -154,8 +154,8 @@ public class SqlUtil {
 			canCreateTable = RuntimeEnv.getInstance()
 					.isRunningInServer();
 		} catch (Exception e) {
-		} catch (Error e) {
-		}
+		    Logger.error(e.getMessage(), e);
+		} 
 		if (canCreateTable) {
 			try {
 				String tablename = getTempTablename(fieldName);
@@ -290,7 +290,7 @@ public class SqlUtil {
 		try {
 			con = ConnectionFactory.getConnection();
 			TempTable tt = new TempTable();
-			tablename = tt.createTempTable(con, tablename, " " + colname + " " + coltype + " ", null);
+			tablename = tt.createTempTable(con, tablename, " " + colname + " " + coltype + " ", "");
 		} finally {
 			try {
 				if (con != null)

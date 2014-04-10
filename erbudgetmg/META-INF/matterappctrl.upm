@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding='gb2312'?>
+<module name="erm_EJB">
+	<public>
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="false" tx="CMT">
+			<interface>nc.pubitf.erm.matterappctrl.IMatterAppCtrlService
+			</interface>
+			<implementation>nc.bs.erm.matterappctrl.MatterAppCtrlServiceImp
+			</implementation>
+		</component>
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="false" tx="CMT">
+			<interface>nc.itf.erm.prv.IFieldContrastService</interface>
+			<implementation>nc.impl.erm.common.FieldContrastServiceImpl
+			</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="false" tx="CMT">
+			<interface>nc.pubitf.erm.matterappctrl.IMtapppfVOQryService</interface>
+			<implementation>nc.bs.erm.matterappctrl.MtapppfVOQryServiceImp</implementation>
+		</component>
+	</public>
+</module>

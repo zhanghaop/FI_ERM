@@ -314,7 +314,7 @@ public class DateDlg extends UIDialog {
 	 * @param add
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Object[][] convertVector2DToObject2D(Vector dataVector, int add) {
 		Vector rowVector = null;
 		Vector midVector = new Vector();
@@ -457,7 +457,7 @@ public class DateDlg extends UIDialog {
 		}
 
 		Object[] obj = new Object[4];
-		obj[0] = new Integer(rowSelected + 1);
+		obj[0] = rowSelected + 1;
 		UFDate newRowDate = getAimDate(rowSelected + 1, 1);
 		obj[1] = newRowDate == null ? "" : newRowDate.toStdString();
 
@@ -466,7 +466,7 @@ public class DateDlg extends UIDialog {
 
 		// 更新行号
 		for (int i = rowSelected; i < rowCount + 1; i++) {
-			m_tableModel.setValueAt(new Integer(i + 1), i, 0);
+			m_tableModel.setValueAt(i + 1, i, 0);
 		}
 
 		m_table.editCellAt(rowSelected + 1, 2);
@@ -491,7 +491,7 @@ public class DateDlg extends UIDialog {
 
 			// 更正行号
 			for (int i = 0; i < rowCount - 1; i++) {
-				m_tableModel.setValueAt(new Integer(i + 1), i, 0);
+				m_tableModel.setValueAt(i + 1, i, 0);
 			}
 			return;
 		}
@@ -509,7 +509,7 @@ public class DateDlg extends UIDialog {
 
 		// 更正行号
 		for (int i = rowSelected; i < rowCount - 1; i++) {
-			m_tableModel.setValueAt(new Integer(i + 1), i, 0);
+			m_tableModel.setValueAt(i + 1, i, 0);
 		}
 
 	}

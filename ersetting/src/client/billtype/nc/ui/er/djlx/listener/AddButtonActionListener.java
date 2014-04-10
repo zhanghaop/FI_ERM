@@ -6,7 +6,7 @@ import nc.ui.er.component.ExTreeNode;
 import nc.ui.er.djlx.IDjlxModel;
 import nc.ui.er.plugin.IButtonActionListener;
 import nc.ui.er.pub.BillWorkPageConst;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.ml.NCLangRes;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
@@ -52,7 +52,7 @@ public class AddButtonActionListener extends BaseListener implements IButtonActi
 			getBillCardPanel().getHeadItem("djmboid").setValue(null);
 			//FIXME 增加为集团
 //			getBillCardPanel().getHeadItem("dwbm").setValue(BXUiUtil.getDefaultOrgUnit());
-			getBillCardPanel().getHeadItem("dwbm").setValue(BXUiUtil.getPK_group());
+			getBillCardPanel().getHeadItem("dwbm").setValue(ErUiUtil.getPK_group());
 			getBillCardPanel().getHeadItem("dr").setValue(0);
 //			String djdl = (String)getBillCardPanel().getHeadItem("djdl").getValueObject();
 

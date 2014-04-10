@@ -60,12 +60,13 @@ public class MessageLog extends nc.ui.pub.beans.UIDialog {
 		initialize();
 	}
 
-	public void f_setText(java.util.Vector textV) {
-		String strValue = "";
+	@SuppressWarnings("rawtypes")
+    public void f_setText(java.util.Vector textV) {
+		StringBuilder sbValue = new StringBuilder();
 		for (int i = 0; i < textV.size(); i++) {
-			strValue = strValue + textV.elementAt(i).toString() + "\n\n";
+			sbValue.append(textV.elementAt(i).toString()).append("\r\n");
 		}
-		getJTextArea1().setText(strValue);
+		getJTextArea1().setText(sbValue.toString());
 	}
 
 	/**

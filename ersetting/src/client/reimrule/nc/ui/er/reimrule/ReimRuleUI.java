@@ -19,22 +19,20 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import nc.bs.framework.common.NCLocator;
-import nc.bs.logging.Logger;
 import nc.bs.pf.pub.PfDataCache;
 import nc.funcnode.ui.action.AbstractNCAction;
 import nc.funcnode.ui.action.GroupAction;
 import nc.funcnode.ui.action.INCAction;
 import nc.funcnode.ui.action.MenuAction;
-import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.er.reimtype.IReimTypeService;
 import nc.itf.erm.prv.IArapCommonPrivate;
 import nc.itf.fi.pub.Currency;
-import nc.pubitf.bd.accessor.GeneralAccessorFactory;
-import nc.pubitf.bd.accessor.IGeneralAccessor;
 import nc.ui.arap.bx.BillItemCloneTool;
 import nc.ui.arap.bx.ButtonUtil;
 import nc.ui.arap.bx.print.FIPrintEntry_BX;
 import nc.ui.bill.tools.ColorConstants;
 import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.org.ref.FinanceOrgDefaultRefTreeModel;
 import nc.ui.pub.ButtonObject;
 import nc.ui.pub.ToftPanel;
@@ -53,21 +51,20 @@ import nc.ui.pub.bill.BillEditEvent;
 import nc.ui.pub.bill.BillEditListener;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.IBillItem;
-import nc.ui.pub.print.PrintEntry;
 import nc.ui.trade.pub.IVOTreeDataByCode;
 import nc.ui.trade.pub.TableTreeNode;
 import nc.ui.trade.pub.TreeCreateTool;
 import nc.ui.trade.pub.VOTreeNode;
 import nc.ui.uif2.actions.ActionInfo;
 import nc.ui.uif2.actions.ActionRegistry;
+import nc.ui.uif2.components.CommonConfirmDialogUtils;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
-import nc.vo.bd.accessor.IBDData;
 import nc.vo.ep.bx.MyDefusedVO;
 import nc.vo.ep.bx.ReimRuleDef;
 import nc.vo.ep.bx.ReimRuleDefVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.reimrule.ReimRuleVO;
+import nc.vo.er.reimtype.ReimTypeUtil;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.ml.MultiLangContext;
 import nc.vo.pub.BusinessException;
@@ -86,128 +83,141 @@ import org.apache.commons.lang.ArrayUtils;
 @SuppressWarnings("deprecation")
 public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
-	private static final String ROOT = "root";
-	private final int STATUS_BROWSE = 0;
-	private final int STATUS_MOD = 1;
-	private int pageStatus = STATUS_BROWSE;
-	private final String nodecode = "20110RSS";
 	private static final long serialVersionUID = 1L;
+	
+	private static final String ROOT = "root";
+	private static final int STATUS_BROWSE = 0;
+	private static final int STATUS_MOD = 1;
+	private int pageStatus = STATUS_BROWSE;
+	private static final String nodecode = "20110RSS";
 	private ReimRuleDefVO ruleDef = null;
 	private ExportExcelDialog expDialog = null;
 	private UIRefPane ivjtOrg;
 	private UIPanel jPanelOrg = null;
 	private UILabel jLabel6 = null;
 
-	private final ButtonObject btnMod = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000055")/* @res "修改" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000055")/* @res "修改" */, 5, "Edit"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
-	private final ButtonObject btnAdd = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000187")/* @res "增行" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000187")/* @res "增行" */, 5, "AddLine"); /*
-																				 * -=notranslate
-																				 * =
-																				 * -
-																				 */
-	private final ButtonObject btnDel = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000188")/* @res "删行" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000188")/* @res "删行" */, 5, "DelLine"); /*
-																				 * -=notranslate
-																				 * =
-																				 * -
-																				 */
-	private final ButtonObject btnSave = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000061")/* @res "保存" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000061")/* @res "保存" */, 5, "Save"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
-	private final ButtonObject btnCancel = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000064")/* @res "取消" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000064")/* @res "取消" */, 5, "Cancel"); /*
-																				 * -=notranslate
-																				 * =
-																				 * -
-																				 */
-	private final ButtonObject btnPrintGroup = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000207")/* @res "打印" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000207")/* @res "打印" */, 5, "PrintGroup"); /*
-																					 * -=notranslate
-																					 * =
-																					 * -
-																					 */
+	private final ButtonObject btnMod = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000055")/* @res "修改" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000055")/* @res "修改" */, 5, "Edit"); /*
+																 * -=notranslate=
+																 * -
+																 */
+	private final ButtonObject btnAdd = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000187")/* @res "增行" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000187")/* @res "增行" */, 5, "AddLine"); /*
+																	 * -=notranslate
+																	 * =-
+																	 */
+	private final ButtonObject btnDel = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000188")/* @res "删行" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000188")/* @res "删行" */, 5, "DelLine"); /*
+																	 * -=notranslate
+																	 * =-
+																	 */
+	private final ButtonObject btnSave = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000061")/* @res "保存" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000061")/* @res "保存" */, 5, "Save"); /*
+																 * -=notranslate=
+																 * -
+																 */
+	private final ButtonObject btnCancel = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000064")/* @res "取消" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000064")/* @res "取消" */, 5, "Cancel"); /*
+																	 * -=notranslate
+																	 * =-
+																	 */
+	private final ButtonObject btnPrintGroup = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000207")/* @res "打印" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000207")/* @res "打印" */, 5, "PrintGroup"); /*
+																		 * -=notranslate
+																		 * = -
+																		 */
 
-	private final ButtonObject btnPrint = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000207")/* @res "打印" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000207")/* @res "打印" */, 5, "Print"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
-	private final ButtonObject btnPreview = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("common", "UC001-0000112")/* @res "预览" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("common", "UC001-0000112")/* @res "预览" */, 5, "Preview"); /*
-																				 * -=notranslate
-																				 * =
-																				 * -
-																				 */
-	private final ButtonObject btnOutput = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("common", "UC001-0000148")/* @res "输出" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("common", "UC001-0000148")/* @res "输出" */, 5, "Output");
-	private final ButtonObject btnCopy = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPTcommon-000318")/* @res "复制" */, nc.vo.ml.NCLangRes4VoTransl
-			.getNCLangRes().getStrByID("2011", "UPTcommon-000318")/* @res "复制" */, 5, "Copy"); /*
-																							 * -=notranslate
-																							 * =
-																							 * -
-																							 */
-	private final ButtonObject btnImp = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000483")/* @res "导入" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000483")/* @res "导入" */, 5, "Imp"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
-	private final ButtonObject btnExp = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000484")/* @res "导出" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000484")/* @res "导出" */, 5, "Exp"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
+	private final ButtonObject btnPrint = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000207")/* @res "打印" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000207")/* @res "打印" */, 5, "Print"); /*
+																 * -=notranslate=
+																 * -
+																 */
+	private final ButtonObject btnPreview = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common",
+					"UC001-0000112")/* @res "预览" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common",
+					"UC001-0000112")/* @res "预览" */, 5, "Preview"); /*
+																	 * -=notranslate
+																	 * = -
+																	 */
+	//v63去掉输出功能
+	private final ButtonObject btnOutput = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common",
+					"UC001-0000148")/* @res "输出" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common",
+					"UC001-0000148")/* @res "输出" */, 5, "Output");
+	private final ButtonObject btnCopy = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPTcommon-000318")/* @res "复制" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPTcommon-000318")/* @res "复制" */, 5, "Copy"); /*
+																	 * -=notranslate
+																	 * =-
+																	 */
+	private final ButtonObject btnImp = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+			"UPP2011-000483")/* @res "导入" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+			"UPP2011-000483")/* @res "导入" */, 5, "Import"); /*
+															 * -=notranslate= -
+															 */
+	private final ButtonObject btnExp = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+			"UPP2011-000484")/* @res "导出" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+			"UPP2011-000484")/* @res "导出" */, 5, "Export"); /*
+															 * -=notranslate= -
+															 */
 
-	private final ButtonObject btnUp = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000485")/* @res "上移" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000485")/* @res "上移" */, 5, "Up"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
-	private final ButtonObject btnDown = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000486")/* @res "下移" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000486")/* @res "下移" */, 5, "Down"); /*
-																			 * -=notranslate
-																			 * =
-																			 * -
-																			 */
-	private final ButtonObject btnTop = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000487")/* @res "上移到最前" */, nc.vo.ml.NCLangRes4VoTransl
-			.getNCLangRes().getStrByID("2011", "UPP2011-000487")/* @res "上移到最前" */, 5, "Top"); /*
-																								 * -=notranslate
-																								 * =
-																								 * -
-																								 */
-	private final ButtonObject btnBottom = new ButtonObject(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-			.getStrByID("2011", "UPP2011-000488")/* @res "下移到最后" */, nc.vo.ml.NCLangRes4VoTransl
-			.getNCLangRes().getStrByID("2011", "UPP2011-000488")/* @res "下移到最后" */, 5, "Bottom"); /*
-																								 * -=notranslate
-																								 * =
-																								 * -
-																								 */
+	private final ButtonObject btnUp = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000485")/* @res "上移" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000485")/* @res "上移" */, 5, "Up"); /*
+																 * -=notranslate=
+																 * -
+																 */
+	private final ButtonObject btnDown = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000486")/* @res "下移" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000486")/* @res "下移" */, 5, "Down"); /*
+																 * -=notranslate=
+																 * -
+																 */
+	private final ButtonObject btnTop = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000487")/* @res "上移到最前" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000487")/* @res "上移到最前" */, 5, "Top"); /*
+																	 * -=notranslate
+																	 * =-
+																	 */
+	private final ButtonObject btnBottom = new ButtonObject(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000488")/* @res "下移到最后" */,
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+					"UPP2011-000488")/* @res "下移到最后" */, 5, "Bottom"); /*
+																	 * -=notranslate
+																	 * =-
+																	 */
 
 	private UISplitPane splitPane;
 
@@ -232,7 +242,20 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	public ReimRuleUI() {
 		super();
 		initialize();
-
+		btnMod.setEnabled(false);
+		btnMod.setEnabled(false);
+		btnAdd.setEnabled(false);
+		btnAdd.setEnabled(false);
+		btnDel.setEnabled(false);
+		btnDel.setEnabled(false);
+		btnSave.setEnabled(false);
+		btnSave.setEnabled(false);
+		initData();
+		if (ErUiUtil.getBXDefaultOrgUnit() == null) {
+			getBillCardPanel().setEnabled(false);
+			getBillTypeTree().setEnabled(false);
+			getTreePanel().setEnabled(false);
+		}
 	}
 
 	@Override
@@ -240,8 +263,9 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		btnPrintGroup.addChildButton(btnPrint);
 		btnPrintGroup.addChildButton(btnPreview);
 		btnPrintGroup.addChildButton(btnOutput);
-		return new ButtonObject[] { btnMod, btnAdd, btnDel, btnSave, btnCancel, btnCopy, btnImp, btnExp,
-				btnUp, btnDown, btnTop, btnBottom, btnPrintGroup };
+		return new ButtonObject[] { btnMod, btnAdd, btnDel, btnSave, btnCancel,
+				btnCopy, btnImp, btnExp, btnUp, btnDown, btnTop, btnBottom,
+				btnPrintGroup };
 	}
 
 	@Override
@@ -258,11 +282,15 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		for (Action menu : menuActions) {
 			if (menu instanceof AbstractNCAction) {
 				AbstractNCAction action = (AbstractNCAction) menu;
-				ActionInfo info = ActionRegistry.getActionInfo(action.getCode());
+				ActionInfo info = ActionRegistry
+						.getActionInfo(action.getCode());
 				if (info != null) {
 					action.setCode(info.getCode());
-					action.putValue(Action.ACCELERATOR_KEY, info.getKeyStroke());
-					action.putValue(Action.SHORT_DESCRIPTION, info.getShort_description());
+					action
+							.putValue(Action.ACCELERATOR_KEY, info
+									.getKeyStroke());
+					action.putValue(Action.SHORT_DESCRIPTION, info
+							.getShort_description());
 					action.putValue(Action.SMALL_ICON, info.getIcon());
 				}
 			}
@@ -307,8 +335,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	}
 
 	private ButtonObject[] getEditButtons() {
-		return new ButtonObject[] { btnAdd, btnDel, btnSave, btnCancel, btnImp, btnUp, btnDown, btnTop,
-				btnBottom };
+		return new ButtonObject[] { btnAdd, btnDel, btnSave, btnCancel, btnImp,
+				btnUp, btnDown, btnTop, btnBottom };
 	}
 
 	private ButtonObject[] getBrowseButtons() {
@@ -336,8 +364,10 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		Action[] actions = list.toArray(new Action[0]);
 		for (int i = 0, j = i + 1; i < actions.length; i++, j++) {
 			retList.add(actions[i]);
-			if (j <= actions.length - 1 && actions[i].getValue(BTN_GROUP_NAME) != null
-					&& !actions[i].getValue(BTN_GROUP_NAME).equals(actions[j].getValue(BTN_GROUP_NAME))) {
+			if (j <= actions.length - 1
+					&& actions[i].getValue(BTN_GROUP_NAME) != null
+					&& !actions[i].getValue(BTN_GROUP_NAME).equals(
+							actions[j].getValue(BTN_GROUP_NAME))) {
 				retList.add(new nc.funcnode.ui.action.SeparatorAction());
 			}
 		}
@@ -359,8 +389,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		}
 	}
 
-	List<String> BTN_GROUP_ADD_MODIFIY_DEL_CODES = Arrays.asList(new String[] { "Edit", "AddLine", "DelLine",
-			"Copy"
+	List<String> BTN_GROUP_ADD_MODIFIY_DEL_CODES = Arrays.asList(new String[] {
+			"Edit", "AddLine", "DelLine", "Copy"
 
 	});
 
@@ -375,11 +405,13 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 	});
 
-	List<String> BTN_GROUP_IMPEXP_CODES = Arrays.asList(new String[] { "Imp", "Exp"
+	List<String> BTN_GROUP_IMPEXP_CODES = Arrays.asList(new String[] { "Imp",
+			"Exp"
 
 	});
 
-	List<String> BTN_GROUP_UP2DOWN_CODES = Arrays.asList(new String[] { "Up", "Down", "Top", "Bottom"
+	List<String> BTN_GROUP_UP2DOWN_CODES = Arrays.asList(new String[] { "Up",
+			"Down", "Top", "Bottom"
 
 	});
 
@@ -471,7 +503,7 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	// --end
 
 	private void initData() {
-		IBXBillPrivate remote = NCLocator.getInstance().lookup(IBXBillPrivate.class);
+		IReimTypeService remote = NCLocator.getInstance().lookup(IReimTypeService.class);
 		List<ReimRuleVO> vos = new ArrayList<ReimRuleVO>();
 		try {
 			vos = remote.queryReimRule(null, getPkOrg());
@@ -502,71 +534,68 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			getSplitPaneTop().setBottomComponent(getSplitPane());
 			getSplitPane().setLeftComponent(getTreePanel());
 			getSplitPane().setRightComponent(getBillCardPanel());
-			getBillCardPanel().setPreferredSize(new java.awt.Dimension(298, 469));
-			getRefOrg().setPK(BXUiUtil.getBXDefaultOrgUnit());
-			getBillCardPanel().setEnabled(true);
-			getBillTypeTree().setEnabled(true);
-			getTreePanel().setEnabled(true);
-			initData();
-			btnMod.setEnabled(false);
-			btnAdd.setEnabled(false);
-			btnDel.setEnabled(false);
-			btnSave.setEnabled(false);
+			getBillCardPanel().setPreferredSize(
+					new java.awt.Dimension(298, 469));
+			if (ErUiUtil.getBXDefaultOrgUnit() != null) {
+				getRefOrg().setPK(ErUiUtil.getBXDefaultOrgUnit());
+				getBillCardPanel().setEnabled(true);
+				getBillTypeTree().setEnabled(true);
+				getTreePanel().setEnabled(true);
+				initData();
+
+			}
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
-			showErrorMessage(nc.ui.ml.NCLangRes.getInstance().getStrByID("uifactory", "UPPuifactory-000109")/*
-																											 * @res
-																											 * "发生异常，界面初始化错误"
-																											 */);
+			showErrorMessage(nc.ui.ml.NCLangRes.getInstance().getStrByID(
+					"uifactory", "UPPuifactory-000109")/*
+														 * @res "发生异常，界面初始化错误"
+														 */);
 		}
 	}
-
+	
 	// 动态显示对象名称，多语问题需处理(费用类型，币种)
 	private void showObjName(BillCardPanel panel) {
-
+		
 		String namefield = getMultiFieldName("name");
 		String[] currtypeFormula = new String[1];
 		String[] expensetypeFormula = new String[1];
-
-		currtypeFormula[0] = "currtype->getColValue(bd_currtype, " + namefield
-				+ ",pk_currtype , pk_currtype)";
-		expensetypeFormula[0] = "expensetype->getColValue(er_expensetype, " + namefield
-				+ ",pk_expensetype, pk_expensetype)";
+		
+		currtypeFormula[0] = "currtype->getColValue(bd_currtype, " + namefield + ",pk_currtype , pk_currtype)";
+		expensetypeFormula[0] = "expensetype->getColValue(er_expensetype, " + namefield + ",pk_expensetype, pk_expensetype)";
 		panel.getBillModel().getItemByKey("expensetype").setLoadFormula(currtypeFormula);
 		panel.getBillModel().getItemByKey("currtype").setLoadFormula(expensetypeFormula);
 		panel.getBillModel().execLoadFormula();
 	}
-
+	
 	/**
 	 * 获取多语字段名称（name2,name,name3）
-	 * 
 	 * @param namefield
 	 * @return
 	 */
 	private String getMultiFieldName(String namefield) {
 		int intValue = MultiLangContext.getInstance().getCurrentLangSeq().intValue();
-		if (intValue > 1) {
-			namefield = namefield + intValue;
+		if(intValue>1){
+			namefield=namefield+intValue;
 		}
 		return namefield;
 	}
-
+	
 	/**
 	 * 返回某个交易类型的初始数据结构
 	 */
-	private Map<String, BillData> templateBillDataMap;
-
+	private Map<String,BillData> templateBillDataMap;
+	
 	public Map<String, BillData> getTemplateBillDataMap() {
-		if (templateBillDataMap == null) {
+		if(templateBillDataMap==null){
 			templateBillDataMap = new HashMap<String, BillData>();
 		}
 		return templateBillDataMap;
 	}
-
+	
 	public BillData getTemplateInitBillData(final String tradetype) {
 		if (getTemplateBillDataMap().get(tradetype) == null) {
 			final BillCardPanel billCardPanel = new BillCardPanel();
-			billCardPanel.loadTemplet(nodecode, null, BXUiUtil.getPk_user(), BXUiUtil.getBXDefaultOrgUnit());
+			billCardPanel.loadTemplet(nodecode, null, ErUiUtil.getPk_user(),ErUiUtil.getBXDefaultOrgUnit());
 			getTemplateBillDataMap().put(tradetype, billCardPanel.getBillData());
 		}
 		return getTemplateBillDataMap().get(tradetype);
@@ -576,7 +605,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		if (cardPanel == null) {
 			try {
 				cardPanel = new BillCardPanel();
-				cardPanel.loadTemplet(nodecode, null, BXUiUtil.getPk_user(), BXUiUtil.getBXDefaultOrgUnit());
+				cardPanel.loadTemplet(nodecode, null, ErUiUtil.getPk_user(),
+						ErUiUtil.getBXDefaultOrgUnit());
 				cardPanel.getBodyPanel().getTable().removeSortListener();
 				cardPanel.addEditListener(new BillEditListener() {
 
@@ -592,9 +622,12 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 					@Override
 					public void afterEdit(BillEditEvent e) {
 
-						String currentBodyTableCode = getBillCardPanel().getCurrentBodyTableCode();
-						CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel().getBillData()
-								.getBodyValueVOs(currentBodyTableCode, ReimRuleVO.class.getName());
+						String currentBodyTableCode = getBillCardPanel()
+								.getCurrentBodyTableCode();
+						CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
+								.getBillData().getBodyValueVOs(
+										currentBodyTableCode,
+										ReimRuleVO.class.getName());
 						ReimRuleVO[] reimRuleVOs = (ReimRuleVO[]) bodyValueVOs;
 
 						int currencyPrecision = 0;// 币种精度
@@ -602,18 +635,18 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 						for (ReimRuleVO vo : reimRuleVOs) {
 							if (e.getKey().equals("currtype")) {
 								try {
-									currencyPrecision = Currency.getCurrDigit(vo.getPk_currtype());
+									currencyPrecision = Currency
+											.getCurrDigit(vo.getPk_currtype());
 								} catch (Exception e1) {
 									ExceptionHandler.consume(e1);
 								}
 
 								String amount = "amount";
 								getBillCardPanel().getBodyItem(amount).setDecimalDigits(currencyPrecision);
-
-								getBillCardPanel().setBodyValueAt(
-										vo.getAmount() == null ? UFDouble.ZERO_DBL : vo.getAmount().setScale(
-												currencyPrecision, UFDouble.ROUND_HALF_UP), e.getRow(),
-										amount);
+								
+								getBillCardPanel().setBodyValueAt(vo.getAmount() == null ? UFDouble.ZERO_DBL: 
+									vo.getAmount().setScale(currencyPrecision,UFDouble.ROUND_HALF_UP),
+										e.getRow(), amount);
 							}
 						}
 					}
@@ -632,8 +665,10 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		if (treePanel == null) {
 			treePanel = new UIScrollPane();
 			treePanel.setAutoscrolls(true);
-			treePanel.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-			treePanel.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			treePanel
+					.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			treePanel
+					.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			treePanel.setMinimumSize(new java.awt.Dimension(3, 3));
 			treePanel.setPreferredSize(new java.awt.Dimension(168, 469));
 			treePanel.setViewportView(getBillTypeTree());
@@ -645,11 +680,13 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	protected UITree getBillTypeTree() {
 		if (tree == null) {
 			tree = new UITree();
-			tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			tree.getSelectionModel().setSelectionMode(
+					TreeSelectionModel.SINGLE_TREE_SELECTION);
 			tree.setModel(getBillTypeTreeModel());
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
-					onBillTreeSelect((TableTreeNode) e.getPath().getLastPathComponent());
+					onBillTreeSelect((TableTreeNode) e.getPath()
+							.getLastPathComponent());
 				}
 			});
 		}
@@ -677,8 +714,7 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
 				List<BilltypeVO> list = new ArrayList<BilltypeVO>();
 				for (BilltypeVO vo : billtypes.values()) {
-					if (vo.getSystemcode() != null
-							&& vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
+					if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
 						if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
 								|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)) {
 							continue;
@@ -687,11 +723,18 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 						// 中进行了改动去掉了"global0000..",此处通过当前集团进行过滤
 						// if(vo.getPk_group()!=null &&
 						// !vo.getPk_group().equalsIgnoreCase(BXConstans.GLOBAL_CODE)){
-						if (vo.getPk_group() != null
-								&& !vo.getPk_group().equalsIgnoreCase(BXUiUtil.getPK_group())) {
+						if (vo.getPk_group() != null && !vo.getPk_group().equalsIgnoreCase(ErUiUtil.getPK_group())) {
 							continue;
 						}
-						list.add(vo);
+						if (BXConstans.BX_DJLXBM.equals(vo.getParentbilltype())
+								|| BXConstans.JK_DJLXBM.equals(vo.getParentbilltype())) {
+							
+							if(vo.getAttributeValue(getShowFieldName()) == null){
+								//当billtypename多语字段值为空时，手动赋值为~的值（防止自定义交易类型未录制多语时，构建数报空指针）
+								vo.setAttributeValue(getShowFieldName(), vo.getBilltypename());
+							}
+							list.add(vo);
+						}
 					}
 				}
 				BilltypeVO[] toArray = list.toArray(new BilltypeVO[] {});
@@ -704,13 +747,15 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			};
 
 		};
-		DefaultTreeModel model = treeCreateTool.createTreeByCode(idtree.getTreeVO(), idtree
-				.getCodeFieldName(), idtree.getCodeRule(), idtree.getShowFieldName());
+		DefaultTreeModel model = treeCreateTool.createTreeByCode(idtree
+				.getTreeVO(), idtree.getCodeFieldName(), idtree.getCodeRule(),
+				idtree.getShowFieldName());
 
-		treeCreateTool.modifyRootNodeShowName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-				"UPP2011-000489")/*
-								 * @res "报销管理交易类型"
-								 */);
+		treeCreateTool.modifyRootNodeShowName(nc.vo.ml.NCLangRes4VoTransl
+				.getNCLangRes().getStrByID("2011", "UPP2011-000489")/*
+																	 * @res
+																	 * "报销管理交易类型"
+																	 */);
 
 		return model;
 
@@ -729,12 +774,13 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 		try {
 
-			IArapCommonPrivate query = NCLocator.getInstance().lookup(IArapCommonPrivate.class);
-			Collection defusedVOs = query.getVOs(MyDefusedVO.class, "objcode='" + djlxbm + "' or objcode='"
-					+ djlxbm + "B'", false);
+			IArapCommonPrivate query = NCLocator.getInstance().lookup(
+					IArapCommonPrivate.class);
+			Collection<SuperVO> defusedVOs = query.getVOs(MyDefusedVO.class, "objcode='"
+					+ djlxbm + "' or objcode='" + djlxbm + "B'", false);
 
 			if (defusedVOs != null && defusedVOs.size() != 0) {
-				for (Iterator iter = defusedVOs.iterator(); iter.hasNext();) {
+				for (Iterator<SuperVO> iter = defusedVOs.iterator(); iter.hasNext();) {
 					MyDefusedVO vo = (MyDefusedVO) iter.next();
 					if (vo.getObjcode().equals(djlxbm)) {
 						codeDefs[0] = vo.getObjname();
@@ -752,67 +798,84 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		return codeDefs;
 	}
 
-	public String getDefValueByKey(String value, String defCode, boolean byName) {
-		if (value == null || value.toString().length() == 0)
-			return value;
-
-		ReimRuleDefVO ruleDef2 = getRuleDef();
-		List<ReimRuleDef> reimRuleDefList = ruleDef2.getReimRuleDefList();
-
-		for (ReimRuleDef def : reimRuleDefList) {
-			if (def.getItemkey().equals(defCode)) {
-				int datatype = Integer.parseInt(def.getDatatype());
-				if (datatype == IBillItem.UFREF || datatype == IBillItem.USERDEF) {
-					String metaID = null;
-					if (isUserDef(def)) {
-						// ...
-					} else {
-						// preFix bug here 查询元数据ID
-						// metaID = ...;
-					}
-					if (metaID != null) {
-						IGeneralAccessor accessor = GeneralAccessorFactory.getAccessor(metaID);
-						IBDData doc = null;
-						if (byName) {
-							if (accessor == null) {
-								continue;
-							}
-							try {
-								doc = accessor.getDocByNameWithMainLang(BXUiUtil.getDefaultOrgUnit(BXUiUtil
-										.getPk_user(), BXUiUtil.getPK_group()), def.getDatatype());
-							} catch (Exception e) {
-								nc.bs.logging.Log.getInstance(this.getClass()).error(e.getMessage());
-							}
-						} else
-							try {
-								doc = accessor.getDocByCode(BXUiUtil.getDefaultOrgUnit(BXUiUtil.getPk_user(),
-										BXUiUtil.getPK_group()), def.getDatatype());
-							} catch (Exception e) {
-								nc.bs.logging.Log.getInstance(this.getClass()).error(e.getMessage());
-							}
-						if (doc != null)
-							return doc.getPk();
-					}
-				} else {
-					return value;
-				}
-			}
-		}
-
-		return value;
-	}
+	/**
+	 * 注掉原因：只有ImportExcelDialog类中使用到，但此方法并无实际意义。
+	 * @param value
+	 * @param defCode
+	 * @param byName
+	 * @return
+	 */
+//	public String getDefValueByKey(String value, String defCode, boolean byName) {
+//		if (value == null || value.toString().length() == 0)
+//			return value;
+//
+//		ReimRuleDefVO ruleDef2 = getRuleDef();
+//		List<ReimRuleDef> reimRuleDefList = ruleDef2.getReimRuleDefList();
+//
+//		for (ReimRuleDef def : reimRuleDefList) {
+//			if (def.getItemkey().equals(defCode)) {
+//				int datatype = Integer.parseInt(def.getDatatype());
+//				if (datatype == IBillItem.UFREF
+//						|| datatype == IBillItem.USERDEF) {
+//					String metaID = null;
+//					if (isUserDef(def)) {
+//						// ...
+//					} else {
+//						// preFix bug here 查询元数据ID
+//						// metaID = ...;
+//					}
+//					if (metaID != null) {
+//						IGeneralAccessor accessor = GeneralAccessorFactory
+//								.getAccessor(metaID);
+//						IBDData doc = null;
+//						if (byName) {
+//							if (accessor == null) {
+//								continue;
+//							}
+//							try {
+//								doc = accessor.getDocByNameWithMainLang(
+//										ErUiUtil.getDefaultOrgUnit(ErUiUtil
+//												.getPk_user(), ErUiUtil
+//												.getPK_group()), def
+//												.getDatatype());
+//							} catch (Exception e) {
+//								nc.bs.logging.Log.getInstance(this.getClass())
+//										.error(e.getMessage());
+//							}
+//						} else
+//							try {
+//								doc = accessor.getDocByCode(ErUiUtil
+//										.getDefaultOrgUnit(ErUiUtil
+//												.getPk_user(), ErUiUtil
+//												.getPK_group()), def
+//										.getDatatype());
+//							} catch (Exception e) {
+//								nc.bs.logging.Log.getInstance(this.getClass())
+//										.error(e.getMessage());
+//							}
+//						if (doc != null)
+//							return doc.getPk();
+//					}
+//				} else {
+//					return value;
+//				}
+//			}
+//		}
+//
+//		return value;
+//	}
 
 	private void refreshTemplate() {
 		final String djlxbm = getSelectedNodeCode();
-		if (djlxbm.equals(ROOT)) {
+		if (djlxbm.equals(ROOT)){
 			return;
 		}
 		BillData billData = getTemplateInitBillData(djlxbm);
 		BillItem[] bodyItems = billData.getBillItemsByPos(IBillItem.BODY);
-		// 返回所选交易类型配置的自定义字段
-		ReimRuleDefVO reimRuleDefvo = BXUtil.getReimRuleDefvo(djlxbm);
-		if (reimRuleDefvo == null) {
-			// 该交易类型没有自定义配置字段
+		//返回所选交易类型配置的自定义字段
+		ReimRuleDefVO reimRuleDefvo = ReimTypeUtil.getReimRuleDefvo(djlxbm);
+		if (reimRuleDefvo == null){
+			//该交易类型没有自定义配置字段
 			getBillCardPanel().setBillData(billData);
 			setRuleDef(null);
 			return;
@@ -825,7 +888,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		if (bodyItems != null) {
 			for (BillItem item : bodyItems) {
 				if (item.getKey().startsWith("def")
-						|| (item.getIDColName() != null && item.getIDColName().startsWith("def"))) {
+						|| (item.getIDColName() != null && item.getIDColName()
+								.startsWith("def"))) {
 					continue;
 				}
 				items.add(item);
@@ -835,7 +899,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		if (reimRuleDefList != null) {
 			for (ReimRuleDef def : reimRuleDefList) {
 				int datatype = Integer.parseInt(def.getDatatype());
-				if (datatype == IBillItem.UFREF || datatype == IBillItem.USERDEF) {
+				if (datatype == IBillItem.UFREF
+						|| datatype == IBillItem.USERDEF) {
 					BillItem item1 = BillItemCloneTool.clone(bodyItems[1]);
 					item1.setNull(true);
 					item1.setDataType(datatype);
@@ -938,8 +1003,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 		billData.setBodyItems(itemArray);
 		getBillCardPanel().setBillData(billData);
-
-		// 缓存起来
+		
+		//缓存起来
 		getTemplateBillDataMap().put(djlxbm, billData);
 	}
 
@@ -948,30 +1013,27 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				|| def.getItemvalue().startsWith(ReimRuleVO.Reim_receiver_key)
 				|| def.getItemvalue().startsWith(ReimRuleVO.Reim_deptid_key)
 				|| def.getItemvalue().startsWith(ReimRuleVO.Reim_fydeptid_key)
-				|| (def.getItemvalue().startsWith(ReimRuleVO.Reim_head_key) && def.getItemvalue().indexOf(
-						"zyx") != -1)
-				|| (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key) && def.getItemvalue().indexOf(
-						"defitem") != -1);
+				|| (def.getItemvalue().startsWith(ReimRuleVO.Reim_head_key) && def
+						.getItemvalue().indexOf("zyx") != -1)
+				|| (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key) && def
+						.getItemvalue().indexOf("defitem") != -1);
 	}
 
 	protected void handleException(java.lang.Throwable ex) {
 		ExceptionHandler.consume(ex);
-		BXUiUtil.showUif2DetailMessage(this, "", ex);
+		ErUiUtil.showUif2DetailMessage(this, "", ex);
 	}
 
 	@Override
 	public String getTitle() {
-		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000490")/*
-																							 * @res
-																							 * "报销标准设置"
-																							 */;
+		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+				"UPP2011-000490")/* @res "报销标准设置" */;
 	}
 
 	@Override
 	public void onButtonClicked(ButtonObject bo) {
 		try {
-			Object nodeId = ((TableTreeNode) getBillTypeTree().getSelectionPath().getLastPathComponent())
-					.getNodeID();
+			Object nodeId = ((TableTreeNode) getBillTypeTree().getSelectionPath().getLastPathComponent()).getNodeID();
 			if (nodeId == null || nodeId.toString().trim().equals(ROOT)) {
 				return;
 			}
@@ -980,18 +1042,11 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				getRefOrg().setEnabled(false);
 			} else if (bo.equals(btnAdd)) {
 				getBillCardPanel().addLine();
-				try {
 					int rowCount = getBillCardPanel().getRowCount();
-					getBillCardPanel().setBodyValueAt(Currency.getOrgLocalCurrPK(getPkOrg()), rowCount - 1,
-							"pk_currtype");
-
-					getBillCardPanel().execBodyFormulas(
-							rowCount - 1,
-							new String[] { "currtype->getColValue(bd_currtype," + getMultiFieldName("name")
-									+ ",pk_currtype , pk_currtype)" });
-				} catch (Exception e) {
-					return;
-				}
+					getBillCardPanel().setBodyValueAt(Currency.getOrgLocalCurrPK(getPkOrg()),rowCount - 1, "pk_currtype");
+					
+					getBillCardPanel().execBodyFormulas(rowCount - 1,new String[] { "currtype->getColValue(bd_currtype,"+ 
+							getMultiFieldName("name") + ",pk_currtype , pk_currtype)" });
 			} else if (bo.equals(btnDel)) {
 				getBillCardPanel().delLine();
 			} else if (bo.equals(btnSave)) {
@@ -1018,17 +1073,21 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 				doMove(2);
 			} else if (bo.equals(btnDown)) {
 				doMove(1);
-			} else if (bo.equals(btnPreview)) {
+			}else if (bo.equals(btnPreview)) {
 				doPrint(2);
+			}else if (bo.equals(btnOutput)) {
+				doPrint(3);
 			}
 
 			// 刷新数据
 			if (bo.equals(btnMod) || bo.equals(btnSave) || bo.equals(btnCancel)) {
 				refresh();
 			}
-			showHintMessage(ButtonUtil.getButtonHintMsg(ButtonUtil.MSG_TYPE_SUCCESS, bo));
+			if(expDialog!=null && expDialog.getResult() != UIDialog.ID_CANCEL ){
+				showHintMessage(ButtonUtil.getButtonHintMsg(ButtonUtil.MSG_TYPE_SUCCESS,bo));
+			}
 		} catch (Exception e) {
-			BXUiUtil.showUif2DetailMessage(this, ButtonUtil.getButtonHintMsg(-1, bo), e);
+			ErUiUtil.showUif2DetailMessage(this, ButtonUtil.getButtonHintMsg(-1,bo), e);
 		}
 	}
 
@@ -1038,24 +1097,27 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	 * 
 	 */
 	private void doMove(int i) {
-		String currentBodyTableCode = getBillCardPanel().getCurrentBodyTableCode();
+		String currentBodyTableCode = getBillCardPanel()
+				.getCurrentBodyTableCode();
 		int[] selectedRow = getBillCardPanel().getBillTable().getSelectedRows();
 		if (selectedRow == null || selectedRow.length == 0)
 			return;
 
 		for (int j = 0; j < selectedRow.length - 1; j++) {
 			if (selectedRow[j] + 1 != selectedRow[j + 1]) {
-				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000491")/*
-										 * @res "请选中相邻的行进行移动操作！"
-										 */);
+				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("2011", "UPP2011-000491")/*
+															 * @res
+															 * "请选中相邻的行进行移动操作！"
+															 */);
 				return;
 			}
 		}
 
 		int row1 = 0, row2 = 0, row3 = 0, row4 = 0, row5 = 0, row6 = 0, row7 = 0, row8 = 0, selS = 0, selT = 0;
-		CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel().getBillData().getBodyValueVOs(
-				currentBodyTableCode, ReimRuleVO.class.getName());
+		CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
+				.getBillData().getBodyValueVOs(currentBodyTableCode,
+						ReimRuleVO.class.getName());
 		List<CircularlyAccessibleValueObject> list = new ArrayList<CircularlyAccessibleValueObject>();
 
 		int fromRow = selectedRow[0];
@@ -1136,37 +1198,43 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			list.add(bodyValueVOs[p]);
 		}
 
-		getBillCardPanel().getBillData().setBodyValueVO(list.toArray(new SuperVO[] {}));
+		getBillCardPanel().getBillData().setBodyValueVO(
+				list.toArray(new SuperVO[] {}));
 		getBillCardPanel().getBillModel().execLoadFormula();
 		getBillCardPanel().getBillTable().updateUI();
 
-		getBillCardPanel().getBillTable().getSelectionModel().setSelectionInterval(selS, selT);
+		getBillCardPanel().getBillTable().getSelectionModel()
+				.setSelectionInterval(selS, selT);
 	}
 
 	private void doImport() {
 		ReimRuleVO[] reimrules = null;
 		// ReimRuleUI ruleUI = null;
 		ReimRuleVO[] reimrulesAll = null;
-		String currentBodyTableCode = this.getBillCardPanel().getCurrentBodyTableCode();
-		ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) this.getBillCardPanel().getBillData().getBodyValueVOs(
-				currentBodyTableCode, ReimRuleVO.class.getName());
+		String currentBodyTableCode = this.getBillCardPanel()
+				.getCurrentBodyTableCode();
+		ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) this.getBillCardPanel()
+				.getBillData().getBodyValueVOs(currentBodyTableCode,
+						ReimRuleVO.class.getName());
 		ImportExcelDialog impDialog = new ImportExcelDialog(this, this);
 		if (impDialog.showModal() == UIDialog.ID_OK) {
 
 			reimrules = impDialog.importFromExcel();
 			// impDialog.setVisible(true);
 			// 如果为覆盖方式合并VO
-			reimrulesAll = (ReimRuleVO[]) ArrayUtils.addAll(reimRuleVos, reimrules);
+			reimrulesAll = (ReimRuleVO[]) ArrayUtils.addAll(reimRuleVos,
+					reimrules);
 			getBillCardPanel().getBillData().clearViewData();
 			if (reimrules != null) {
 				if (impDialog.isRBIncrement()) {
 					// getBillCardPanel().getBillData().setBodyValueVO(reimRuleVos);
-					getBillCardPanel().getBillData().setBodyValueVO(reimrulesAll);
+					getBillCardPanel().getBillData().setBodyValueVO(
+							reimrulesAll);
 				} else
 					getBillCardPanel().getBillData().setBodyValueVO(reimrules);
 
 			} else
-				getBillCardPanel().getBillData().setBodyValueVO(reimRuleVos);
+				getBillCardPanel().getBillData().setBodyValueVO(null);
 		}
 		getBillCardPanel().getBillModel().execLoadFormula();
 
@@ -1182,29 +1250,32 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		CopyDialog dialog = new CopyDialog(this, this);
 		int result = dialog.showModal();
 		if (result == UIDialog.ID_OK) {
-			String[] corps = dialog.getCorpRef().getRefPKs();
-			String[] djlxs = dialog.getDjlxRef().getRefCodes();
+			String corp = dialog.getCorpRef().getRefPK();
+			String djlx = dialog.getDjlxRef().getRefCode();
 			// FIXME 多语言改动
 			// int ret =
 			// showYesNoMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000492")/*@res
 			// "您确定要把当前公司和交易类型设置的标准复制到指定公司和交易类型吗？这样会丢失目的公司和交易类型原有的报销标准数据！"*/);
-			int ret = showYesNoMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0",
-					"02011001-0021")/*
-									 * @res
-									 * "您确定要把当前组织和交易类型设置的标准复制到指定组织和交易类型吗？这样会丢失目的组织和交易类型原有的报销标准数据！"
-									 */);
+			int ret = showYesNoMessage(nc.vo.ml.NCLangRes4VoTransl
+					.getNCLangRes().getStrByID("ersetting_0", "02011001-0021")/*
+																			 * @res
+																			 * "您确定要把当前组织和交易类型设置的标准复制到指定组织和交易类型吗？这样会丢失目的组织和交易类型原有的报销标准数据！"
+																			 */);
 			if (ret != UIDialog.ID_YES) {
 				return;
 			}
 
-			String currentBodyTableCode = getBillCardPanel().getCurrentBodyTableCode();
-			ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) getBillCardPanel().getBillData().getBodyValueVOs(
-					currentBodyTableCode, ReimRuleVO.class.getName());
+			String currentBodyTableCode = getBillCardPanel()
+					.getCurrentBodyTableCode();
+			ReimRuleVO[] reimRuleVos = (ReimRuleVO[]) getBillCardPanel()
+					.getBillData().getBodyValueVOs(currentBodyTableCode,
+							ReimRuleVO.class.getName());
 			if (reimRuleVos == null || reimRuleVos.length == 0) {
-				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000493")/*
-										 * @res "选中的报销标准中没有具体的值,复制已取消!"
-										 */);
+				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("2011", "UPP2011-000493")/*
+															 * @res
+															 * "选中的报销标准中没有具体的值,复制已取消!"
+															 */);
 				return;
 			}
 			String pk_billtype = reimRuleVos[0].getPk_billtype();
@@ -1212,36 +1283,32 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			String pk_org = reimRuleVos[0].getPk_org();
 
 			int count = 0;
-			for (String corp : corps) {
-				for (String djlx : djlxs) {
-					if (djlx.equals(pk_billtype) && pk_org.equals(corp)) // 同公司同交易类型不进行复制
-						continue;
-					try {
-						for (ReimRuleVO vo : reimRuleVos) {
-							vo.setPk_billtype(djlx);
-							vo.setPk_org(corp);
-							count++;
-						}
-						List<ReimRuleVO> returnVos = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-								.saveReimRule(djlx, corp, reimRuleVos); // 直接进行保存的动作
-						if (corp.equals(pk_org)) { // 如果是同公司的复制，需要同时更新datamap
-							List<SuperVO> list = new ArrayList<SuperVO>();
-							list.addAll(returnVos);
-							getDataMap().put(djlx, list);
-						}
-					} catch (BusinessException e) {
-						showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-								"UPP2011-000494")/* @res "复制失败：" */
-								+ e.getMessage());
-					}
+			if (djlx.equals(pk_billtype) && pk_org.equals(corp)) // 同公司同交易类型不进行复制
+				return;
+			try {
+				for (ReimRuleVO vo : reimRuleVos) {
+					vo.setPk_billtype(djlx);
+					vo.setPk_org(corp);
+					count++;
 				}
+				List<ReimRuleVO> returnVos = NCLocator.getInstance()
+						.lookup(IReimTypeService.class).saveReimRule(
+								djlx, corp, reimRuleVos); // 直接进行保存的动作
+				if (corp.equals(pk_org)) { // 如果是同公司的复制，需要同时更新datamap
+					List<SuperVO> list = new ArrayList<SuperVO>();
+					list.addAll(returnVos);
+					getDataMap().put(djlx, list);
+				}
+			} catch (BusinessException e) {
+				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011",
+								"UPP2011-000494")/* @res "复制失败：" */
+						+ e.getMessage());
 			}
+		
 
-			showWarningMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-					"UPP2011-000495", null, new String[] { String.valueOf(count) })/*
-																					 * @res
-																					 * "复制成功,i条记录已复制!"
-																					 */);
+			showWarningMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("2011", "UPP2011-000495",null,new String[]{String.valueOf(count)})/* @res "复制成功,i条记录已复制!" */);
 		}
 	}
 
@@ -1259,6 +1326,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 		case 2:
 			printEntry.printView(pk_corp, nodecode, null);
 			break;
+		case 3:
+			printEntry.output(pk_corp, nodecode, null);
 		default:
 			printEntry.printView(pk_corp, nodecode, null);
 		}
@@ -1266,9 +1335,11 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	}
 
 	private void doSave() throws BusinessException {
-		String currentBodyTableCode = getBillCardPanel().getCurrentBodyTableCode();
-		CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel().getBillData().getBodyValueVOs(
-				currentBodyTableCode, ReimRuleVO.class.getName());
+		String currentBodyTableCode = getBillCardPanel()
+				.getCurrentBodyTableCode();
+		CircularlyAccessibleValueObject[] bodyValueVOs = getBillCardPanel()
+				.getBillData().getBodyValueVOs(currentBodyTableCode,
+						ReimRuleVO.class.getName());
 		String pk_billtype = getSelectedNodeCode();
 		String pk_org = getPkOrg();
 		ReimRuleVO[] reimRuleVOs = (ReimRuleVO[]) bodyValueVOs;
@@ -1281,72 +1352,78 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			vo.setPk_corp(pk_org);
 			vo.setPk_org(pk_org);
 		}
-		List<ReimRuleVO> returnVos = NCLocator.getInstance().lookup(IBXBillPrivate.class).saveReimRule(
-				pk_billtype, pk_org, reimRuleVOs);
+		List<ReimRuleVO> returnVos = NCLocator.getInstance().lookup(
+				IReimTypeService.class).saveReimRule(pk_billtype, pk_org,
+				reimRuleVOs);
 		List<SuperVO> list = new ArrayList<SuperVO>();
 		list.addAll(returnVos);
 		getDataMap().put(pk_billtype, list);
 	}
 
-	private void checkReimRules(ReimRuleVO[] reimRuleVOs) throws BusinessException {
+	private void checkReimRules(ReimRuleVO[] reimRuleVOs)
+			throws BusinessException {
 		List<String> keys = new ArrayList<String>();
 		int i = 0;
 		for (ReimRuleVO rule : reimRuleVOs) {
 
-			String[] attrs = new String[] { "pk_expensetype", "pk_deptid", "pk_psn", "pk_reimtype",
-					"pk_currtype", "def1", "def2", "def3", "def4", "def5", "def6", "def7", "def8", "def9",
+			String[] attrs = new String[] { "pk_expensetype", "pk_deptid",
+					"pk_psn", "pk_reimtype", "pk_currtype", "def1", "def2",
+					"def3", "def4", "def5", "def6", "def7", "def8", "def9",
 					"def10" };
-			String key = "";
 
 			if (rule.getAttributeValue("pk_expensetype") == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000499", null, new String[] { String.valueOf(i + 1) })/*
-																						 * @res
-																						 * "规则设置必须填写费用类型（第{i}行），保存失败!"
-																						 */);
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011", "UPP2011-000499",null,new String[]{String.valueOf(i + 1)})/*
+																			 * @res
+																			 * "规则设置必须填写费用类型（第{i}行），保存失败!"
+																	 */);
 			}
 
 			if (rule.getAttributeValue("pk_currtype") == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000497", null, new String[] { String.valueOf(i + 1) })/*
-																						 * @res
-																						 * "规则设置必须填写币种（第i行），保存失败!"
-																						 */);
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011", "UPP2011-000497",null,new String[]{String.valueOf(i + 1)})/*
+																			 * @res
+																			 * "规则设置必须填写币种（第i行），保存失败!"
+																	 */);
 			}
 
 			if (rule.getAttributeValue("amount") == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000500", null, new String[] { String.valueOf(i + 1) })/*
-																						 * @res
-																						 * "规则设置必须填写金额（第i行），保存失败!"
-																						 */);
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011", "UPP2011-000500",null,new String[]{String.valueOf(i + 1)})/*
+																			 * @res
+																			 * "规则设置必须填写金额（第i行），保存失败!"
+																	 */);
 			}
+			StringBuffer key = new StringBuffer();
 
 			for (String attr : attrs) {
 				if (rule.getAttributeValue(attr) != null)
-					key += rule.getAttributeValue(attr);
+					key.append(rule.getAttributeValue(attr));
 
 				if (attr.equals("pk_currtype")) {
 					int scale = 2;
 					try {
 
-						scale = Currency.getCurrDigit(rule.getAttributeValue(attr).toString());
+						scale = Currency.getCurrDigit(rule.getAttributeValue(
+								attr).toString());
 					} catch (Exception e) {
 						ExceptionHandler.consume(e);
 					}
-					rule.setAmount(rule.getAmount().setScale(scale, UFDouble.ROUND_HALF_UP));
+					rule.setAmount(rule.getAmount().setScale(scale,
+							UFDouble.ROUND_HALF_UP));
 				}
 			}
 
-			rule.setPriority(new Integer(i++));
+			rule.setPriority(Integer.valueOf(i++));
 
-			if (keys.contains(key)) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-						"UPP2011-000501")/*
-										 * @res "规则设置中包含各个维度全部相同的记录，保存失败!"
-										 */);
+			if (keys.contains(key.toString())) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011", "UPP2011-000501")/*
+																			 * @res
+																			 * "规则设置中包含各个维度全部相同的记录，保存失败!"
+																			 */);
 			} else {
-				keys.add(key);
+				keys.add(key.toString());
 			}
 		}
 	}
@@ -1433,8 +1510,10 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 	}
 
 	private String getSelectedNodeCode() {
-		TableTreeNode node = ((TableTreeNode) getBillTypeTree().getSelectionPath().getLastPathComponent());
-		if (node.getNodeID() == null || node.getNodeID().toString().trim().equals(ROOT)) {
+		TableTreeNode node = ((TableTreeNode) getBillTypeTree()
+				.getSelectionPath().getLastPathComponent());
+		if (node.getNodeID() == null
+				|| node.getNodeID().toString().trim().equals(ROOT)) {
 			return ROOT;
 		} else {
 			VOTreeNode node2 = (VOTreeNode) node;
@@ -1465,7 +1544,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 		List<SuperVO> vos = getDataMap().get(getSelectedNodeCode());
 		if (vos != null) {
-			getBillCardPanel().getBillData().setBodyValueVO(vos.toArray(new SuperVO[] {}));
+			getBillCardPanel().getBillData().setBodyValueVO(
+					vos.toArray(new SuperVO[] {}));
 		} else {
 			getBillCardPanel().getBillData().setBodyValueVO(null);
 		}
@@ -1487,10 +1567,10 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			ivjtOrg.setName("pk_org");
 			ivjtOrg.setRefNodeName("财务组织"); /* -=notranslate=- */
 			ivjtOrg.setRefModel(new FinanceOrgDefaultRefTreeModel());
-			ivjtOrg.setPreferredSize(new Dimension(200, ivjtOrg.getHeight()));
-			ivjtOrg.setMultiSelectedEnabled(true);
+			ivjtOrg.setPreferredSize(new Dimension(200, ivjtOrg.getHeight()));	
 			ivjtOrg.addValueChangedListener(this);
-
+			ivjtOrg.getRefModel().setFilterPks(BXUiUtil.getPermissionOrgs(null));
+			ivjtOrg.getUITextField().setShowMustInputHint(true);
 		}
 		return ivjtOrg;
 	}
@@ -1503,11 +1583,8 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			// jLabel6.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000048")/*@res
 			// "单据类型"*/);
 			jLabel6 = new UILabel();
-			jLabel6
-					.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UCMD1-000006")/*
-																											 * @res
-																											 * "财务组织"
-																											 */);
+			jLabel6.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("common", "UCMD1-000006")/* @res "财务组织" */);
 			jPanelOrg = new UIPanel();
 			jPanelOrg.setLayout(flowLayout1);
 			jPanelOrg.setName("jPanelOrg");
@@ -1520,14 +1597,56 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 
 	@Override
 	public void valueChanged(ValueChangedEvent event) {
-		getBillCardPanel().setEnabled(true);
-		getBillTypeTree().setEnabled(true);
-		getTreePanel().setEnabled(true);
-		initData();
+		if(event.getNewValue() != null){
+			getBillCardPanel().setEnabled(true);
+			getBillTypeTree().setEnabled(true);
+			getTreePanel().setEnabled(true);
+			initData();
+			
+			refreshTemplate();
+			refreshUI();
+			refreshButtonStatus();
+		}else{
+			getBillCardPanel().setEnabled(false);
+			getBillTypeTree().setEnabled(false);
+			getTreePanel().setEnabled(false);
+			for(ButtonObject bo : getButtons()){
+				bo.setEnabled(false);
+			}
+		}
 
-		refreshTemplate();
-		refreshUI();
-		refreshButtonStatus();
+	}
+	
+	@Override
+	public boolean onClosing() {
+		if (STATUS_BROWSE != getPageStatus()) {
+			return doClosing();
+		} else {
+			return true;
+		}
+	}
+	
+	private boolean doClosing() {
+
+		int i = CommonConfirmDialogUtils.showConfirmSaveDialog(getParent());
+		switch (i) {
+		case UIDialog.ID_YES: {
+			try {
+				getBillCardPanel().stopEditing();
+				doSave();
+			} catch (BusinessException e) {
+				ErUiUtil.showUif2DetailMessage(this, ButtonUtil.getButtonHintMsg(-1,btnSave), e);
+				return false;
+			}
+			return true;
+		}
+		case UIDialog.ID_CANCEL: {
+			return false;
+		}
+		case UIDialog.ID_NO:
+		default:
+			return true;
+		}
 
 	}
 

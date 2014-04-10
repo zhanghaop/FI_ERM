@@ -10,7 +10,7 @@ import nc.bs.framework.exception.ComponentException;
 import nc.bs.logging.Log;
 import nc.impl.er.proxy.ProxyDjlx;
 import nc.ui.er.plugin.IFrameDataModel;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.ValueChangedEvent;
 import nc.ui.pub.beans.ValueChangedListener;
 import nc.vo.arap.bx.util.BXConstans;
@@ -176,7 +176,7 @@ public class DjlxFrameModel implements IFrameDataModel, IDjlxModel {
 
 	public void initData() throws BusinessException{
 		// TODO 自动生成方法存根
-		BillTypeVO[] vos = ProxyDjlx.getIArapBillTypePrivate().queryBillType(BXUiUtil.getBXDefaultOrgUnit());
+		BillTypeVO[] vos = ProxyDjlx.getIArapBillTypePrivate().queryBillType(ErUiUtil.getBXDefaultOrgUnit());
 		setDatas(vos);
 
 	}
@@ -190,7 +190,7 @@ public class DjlxFrameModel implements IFrameDataModel, IDjlxModel {
 				rebuildvos();
 				fireValueChanged(new ValueChangedEvent("updatevo",vo));
 			}else{
-				getBmmachine().BMDirty(m_currvo.getDjlxbm());
+				getBmmachine().bMDirty(m_currvo.getDjlxbm());
 				getDjlxCache().put(((DjLXVO)m_currvo.getParentVO()).getDjlxoid(),m_currvo);
 				rebuildvos();
 				fireValueChanged(new ValueChangedEvent("addnewvo",vo));

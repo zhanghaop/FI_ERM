@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component conRouterType="手动" createIndustry="0" createTime="2012-09-24 13:44:42" creator="" description="" displayName="费用分摊规则业务操作" fromSourceBmf="true" gencodestyle="NC传统样式" help="" id="4064fabe-6423-42cd-b749-4319535fcbfd" industry="0" industryChanged="false" industryIncrease="false" industryName="基础行业" isSource="false" isbizmodel="true" mainEntity="" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="ersharerule_operator" namespace="erm" ownModule="erm" preLoad="false" programcode="" resModuleName="ersetting_2" resid="22011BTP-000026" version="9" versionType="0">
+    <celllist>
+        <opinterface componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 13:45:05" creator="" description="" displayName="分摊规则维护" fullClassName="nc.itf.erm.IErShareruleManage" height="110" help="" id="848d334c-b337-4187-b03a-012f8ef36fda" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerulemanage" remote="true" resid="22011BTP-000027" singleton="true" transprop="CMT" version="" versionType="0" visibility="public" width="108" x="385" y="54">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="新增" forBusinessEntity="N" help="" id="caec1d02-131e-4971-a079-a9b49126e007" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="insert" opItfID="848d334c-b337-4187-b03a-012f8ef36fda" ownerElementID="848d334c-b337-4187-b03a-012f8ef36fda" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="修改" forBusinessEntity="N" help="" id="78b0f653-525c-47d5-8f54-0b597040e929" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="update" opItfID="848d334c-b337-4187-b03a-012f8ef36fda" ownerElementID="848d334c-b337-4187-b03a-012f8ef36fda" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="删除" forBusinessEntity="N" help="" id="ab5281bd-1dd3-4c78-a7c4-80ac8169fc5f" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="delete" opItfID="848d334c-b337-4187-b03a-012f8ef36fda" ownerElementID="848d334c-b337-4187-b03a-012f8ef36fda" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <opinterface componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 13:45:26" creator="" description="" displayName="分摊规则查询" fullClassName="nc.itf.erm.IErShareruleQuery" height="107" help="" id="18ed626a-2b04-4317-95dd-a3ea50cf8370" implClsName="" industryChanged="false" isAuthorization="true" isBusiActivity="false" isBusiOperation="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerulequery" remote="true" resid="22011BTP-000028" singleton="true" transprop="NONE" version="" versionType="0" visibility="public" width="101" x="403" y="355">
+            <operationlist>
+                <operation dataTypeStyle="SINGLE" defclassname="" displayName="根据PK查询" forBusinessEntity="N" help="" id="6a46cc32-3f31-475a-a56b-a4aa2d7f9e02" isAggVOReturn="false" isBusiActivity="false" methodException="nc.vo.pub.BusinessException" name="querybyPk" opItfID="18ed626a-2b04-4317-95dd-a3ea50cf8370" ownerElementID="18ed626a-2b04-4317-95dd-a3ea50cf8370" transKind="NEVER" versionType="0" visibility="public">
+                    <paramlist/>
+                </operation>
+            </operationlist>
+            <opImpllist/>
+        </opinterface>
+        <busioperation componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:01:50" creator="" description="" displayName="新增" fullClassName="nc.voerm.ersharerule_operator.sharerule_insert" height="100" help="" id="282ca421-40e7-44e4-b4b4-faa3b0a73130" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerule_insert" needlog="false" resid="" version="" versionType="0" visibility="public" width="80" x="232" y="51">
+            <refoperationlist>
+                <refoperation id="caec1d02-131e-4971-a079-a9b49126e007" industry="0" isAuthorization="true" isSource="false" opItfID="848d334c-b337-4187-b03a-012f8ef36fda" ownerElementID="282ca421-40e7-44e4-b4b4-faa3b0a73130" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:02:36" creator="" description="" displayName="修改" fullClassName="nc.voerm.ersharerule_operator.sharerule_update" height="100" help="" id="b8d442cd-4d3c-497b-83fe-3d25b820afa8" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerule_update" needlog="false" resid="" version="" versionType="0" visibility="public" width="80" x="234" y="165">
+            <refoperationlist>
+                <refoperation id="78b0f653-525c-47d5-8f54-0b597040e929" industry="0" isAuthorization="true" isSource="false" opItfID="848d334c-b337-4187-b03a-012f8ef36fda" ownerElementID="b8d442cd-4d3c-497b-83fe-3d25b820afa8" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:02:56" creator="" description="" displayName="删除" fullClassName="nc.voerm.ersharerule_operator.sharerule_delete" height="100" help="" id="47f0f609-bc83-457d-a0c6-056a87eb1092" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerule_delete" needlog="false" resid="" version="" versionType="0" visibility="public" width="80" x="238" y="282">
+            <refoperationlist>
+                <refoperation id="ab5281bd-1dd3-4c78-a7c4-80ac8169fc5f" industry="0" isAuthorization="true" isSource="false" opItfID="848d334c-b337-4187-b03a-012f8ef36fda" ownerElementID="47f0f609-bc83-457d-a0c6-056a87eb1092" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busioperation componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:03:17" creator="" description="" displayName="查询" fullClassName="nc.voerm.ersharerule_operator.sharerule_query" height="98" help="" id="37ecd7c0-ea87-4172-933f-8069b3365c97" industryChanged="false" isAuthorization="true" isBusiActivity="false" isSource="false" logtype="IGNORE" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerule_query" needlog="false" resid="" version="" versionType="0" visibility="public" width="116" x="220" y="407">
+            <refoperationlist>
+                <refoperation id="6a46cc32-3f31-475a-a56b-a4aa2d7f9e02" industry="0" isAuthorization="true" isSource="false" opItfID="18ed626a-2b04-4317-95dd-a3ea50cf8370" ownerElementID="37ecd7c0-ea87-4172-933f-8069b3365c97" versiontype="0"/>
+            </refoperationlist>
+        </busioperation>
+        <busiActivity componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:03:41" creator="" description="" displayName="分摊规则维护活动" fullClassName="nc.voerm.ersharerule_operator.sharerule_mg" height="141" help="" id="aebe64c0-425d-4571-87b6-539e35e20b82" industryChanged="false" isAuthorization="true" isService="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2013-05-20 16:30:58" name="sharerule_mg" resid="" version="" versionType="0" visibility="public" width="115" x="46" y="141">
+            <refBusiOperationlist>
+                <refbusioperation id="c9223a22-10ec-41cf-993d-5de9124437f9" industry="0" isAuthorization="true" isSource="false" ownerElementID="aebe64c0-425d-4571-87b6-539e35e20b82" realBusiOpid="282ca421-40e7-44e4-b4b4-faa3b0a73130" versiontype="0"/>
+                <refbusioperation id="c322e53a-44d6-4dab-b833-122da971ba57" industry="0" isAuthorization="true" isSource="false" ownerElementID="aebe64c0-425d-4571-87b6-539e35e20b82" realBusiOpid="b8d442cd-4d3c-497b-83fe-3d25b820afa8" versiontype="0"/>
+                <refbusioperation id="b6fe06c5-905b-4f30-994b-b290aa0df918" industry="0" isAuthorization="true" isSource="false" ownerElementID="aebe64c0-425d-4571-87b6-539e35e20b82" realBusiOpid="47f0f609-bc83-457d-a0c6-056a87eb1092" versiontype="0"/>
+                <refbusioperation id="d1750ad1-6d10-4088-bc2b-2114cfb1de60" industry="0" isAuthorization="true" isSource="false" ownerElementID="aebe64c0-425d-4571-87b6-539e35e20b82" realBusiOpid="37ecd7c0-ea87-4172-933f-8069b3365c97" versiontype="0"/>
+            </refBusiOperationlist>
+        </busiActivity>
+    </celllist>
+    <connectlist>
+        <convergeconnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:18" creator="" description="" displayName="" help="" id="9d1a5b41-b225-4ff4-8f17-33ed24d239c2" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:18" name="converge connection" realsource="282ca421-40e7-44e4-b4b4-faa3b0a73130" realtarget="848d334c-b337-4187-b03a-012f8ef36fda" source="282ca421-40e7-44e4-b4b4-faa3b0a73130" target="848d334c-b337-4187-b03a-012f8ef36fda" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:20" creator="" description="" displayName="" help="" id="dfed19d3-efa0-4234-ae79-d500443665c2" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:20" name="converge connection" realsource="b8d442cd-4d3c-497b-83fe-3d25b820afa8" realtarget="848d334c-b337-4187-b03a-012f8ef36fda" source="b8d442cd-4d3c-497b-83fe-3d25b820afa8" target="848d334c-b337-4187-b03a-012f8ef36fda" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:21" creator="" description="" displayName="" help="" id="6f5a2dec-a4a3-4017-ab06-0e3698864a02" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:21" name="converge connection" realsource="47f0f609-bc83-457d-a0c6-056a87eb1092" realtarget="848d334c-b337-4187-b03a-012f8ef36fda" source="47f0f609-bc83-457d-a0c6-056a87eb1092" target="848d334c-b337-4187-b03a-012f8ef36fda" versionType="0">
+            <points/>
+        </convergeconnection>
+        <convergeconnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:22" creator="" description="" displayName="" help="" id="c6037e33-0068-49ae-9d42-3df89cc99a12" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:22" name="converge connection" realsource="37ecd7c0-ea87-4172-933f-8069b3365c97" realtarget="18ed626a-2b04-4317-95dd-a3ea50cf8370" source="37ecd7c0-ea87-4172-933f-8069b3365c97" target="18ed626a-2b04-4317-95dd-a3ea50cf8370" versionType="0">
+            <points/>
+        </convergeconnection>
+        <dependConnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:08" creator="" description="" displayName="" help="" id="04883218-df5f-4724-a669-e4c0f610c04f" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:08" name="depend connection" realsource="aebe64c0-425d-4571-87b6-539e35e20b82" realtarget="282ca421-40e7-44e4-b4b4-faa3b0a73130" source="aebe64c0-425d-4571-87b6-539e35e20b82" target="282ca421-40e7-44e4-b4b4-faa3b0a73130" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:10" creator="" description="" displayName="" help="" id="6521b6dd-0883-486c-b7c6-b037c60e7b29" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:10" name="depend connection" realsource="aebe64c0-425d-4571-87b6-539e35e20b82" realtarget="b8d442cd-4d3c-497b-83fe-3d25b820afa8" source="aebe64c0-425d-4571-87b6-539e35e20b82" target="b8d442cd-4d3c-497b-83fe-3d25b820afa8" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:11" creator="" description="" displayName="" help="" id="e01054d4-2958-4362-9ced-dea139b1f92f" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:11" name="depend connection" realsource="aebe64c0-425d-4571-87b6-539e35e20b82" realtarget="47f0f609-bc83-457d-a0c6-056a87eb1092" source="aebe64c0-425d-4571-87b6-539e35e20b82" target="47f0f609-bc83-457d-a0c6-056a87eb1092" versionType="0">
+            <points/>
+        </dependConnection>
+        <dependConnection componentID="4064fabe-6423-42cd-b749-4319535fcbfd" createIndustry="0" createTime="2012-09-24 15:04:12" creator="" description="" displayName="" help="" id="a9a429a6-f40a-4e13-b8b9-9a33265a5a91" industryChanged="false" isSource="false" modifier="" modifyIndustry="0" modifyTime="2012-09-24 15:04:12" name="depend connection" realsource="aebe64c0-425d-4571-87b6-539e35e20b82" realtarget="37ecd7c0-ea87-4172-933f-8069b3365c97" source="aebe64c0-425d-4571-87b6-539e35e20b82" target="37ecd7c0-ea87-4172-933f-8069b3365c97" versionType="0">
+            <points/>
+        </dependConnection>
+    </connectlist>
+    <refdepends/>
+    <refdependLoseIDs/>
+    <cellRemoveLog/>
+    <rulers>
+        <ruler isHorizontal="true" unit="0">
+            <guideList/>
+        </ruler>
+        <ruler isHorizontal="false" unit="0">
+            <guideList/>
+        </ruler>
+    </rulers>
+</component>

@@ -7,6 +7,7 @@ package nc.vo.er.pub;
 
 import java.util.ArrayList;
 
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.pub.NullFieldException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.ValueObject;
@@ -30,7 +31,7 @@ public class QryCondVO extends ValueObject implements PubConstData{
 	 */
 	private static final long serialVersionUID = 470705833828828242L;
 	public String m_qryfld;//查询字段
-	public Integer m_fldtype = new Integer(STRING);//字段类型编码
+	public Integer m_fldtype = Integer.valueOf(STRING);//字段类型编码
 	public String m_fldorigin;//字段来源标志
 	public String m_boolopr;//逻辑符
 	public String m_value;//值
@@ -55,17 +56,24 @@ public Object clone() {
 	Object o = null;
 	try {
 		o = super.clone();
-	} catch (Exception e) {}
+	} catch (Exception e) {
+		ExceptionHandler.handleExceptionRuntime(e);
+	}
+	
+	if(o == null){
+		throw new AssertionError();
+	}
 	QryCondVO qryCond = (QryCondVO)o;
-
-	// 你在下面复制本VO对象的所有属性：
-
-	qryCond.setQryfld(m_qryfld);//查询字段
-	qryCond.setFldtype(m_fldtype);//字段类型编码
-	qryCond.setFldorigin(m_fldorigin);//字段来源标志
-	qryCond.setBoolopr(m_boolopr);//逻辑符
-	qryCond.setValue(m_value);//值
-	qryCond.setObjValues(m_ObjValues);//可以用来传递值的集合，从而传递多个值
+	
+	if(qryCond != null){
+		// 你在下面复制本VO对象的所有属性：
+		qryCond.setQryfld(m_qryfld);//查询字段
+		qryCond.setFldtype(m_fldtype);//字段类型编码
+		qryCond.setFldorigin(m_fldorigin);//字段来源标志
+		qryCond.setBoolopr(m_boolopr);//逻辑符
+		qryCond.setValue(m_value);//值
+		qryCond.setObjValues(m_ObjValues);//可以用来传递值的集合，从而传递多个值
+	}
 
 	return qryCond;
 }
@@ -197,19 +205,17 @@ public void validate() throws ValidationException {
 
 	ArrayList<String> errFields = new ArrayList<String>(); // errFields record those null fields that cannot be null.
 	// 检查是否为不允许空的字段赋了空值，你可能需要修改下面的提示信息：
-	// construct the exception message:
 	StringBuffer message = new StringBuffer();
-//	message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275")/*@res "下列字段不能为空："*/);
-	String msg = "";
+	StringBuffer msg = new StringBuffer();
 	if (errFields.size() > 0) {
 		String[] temp = (String[]) errFields.toArray(new String[0]);
 		message.append(temp[0]);
 		for ( int i= 1; i < temp.length; i++ ) {
-			msg+=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000276");
-			msg += temp[i];
+			msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000276"));
+			msg.append(temp[i]);
 		}
 		// throw the exception:
-		message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275",null,new String[]{msg})/*@res "下列字段不能为空："*/);
+		message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275",null,new String[]{msg.toString()})/*@res "下列字段不能为空："*/);
 		throw new NullFieldException(message.toString());
 	}
 }
