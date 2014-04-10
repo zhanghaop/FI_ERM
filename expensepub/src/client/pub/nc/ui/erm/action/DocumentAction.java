@@ -5,9 +5,6 @@ import java.awt.event.ActionEvent;
 
 import nc.bs.framework.common.NCLocator;
 import nc.jdbc.framework.generator.IdGenerator;
-import nc.ui.erm.billpub.view.ErmBillBillForm;
-import nc.ui.erm.costshare.ui.CostShareEditor;
-import nc.ui.erm.matterapp.view.MatterAppMNBillForm;
 import nc.ui.pub.beans.UIDialog;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
@@ -17,12 +14,10 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.editor.BillListView;
 import nc.ui.uif2.model.BillManageModel;
-import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.SuperVO;
 
 @SuppressWarnings("serial")
 public class DocumentAction extends NCAction{
@@ -104,18 +99,11 @@ public class DocumentAction extends NCAction{
 	 * @param pk
 	 * @throws BusinessException
 	 */
+	@SuppressWarnings("deprecation")
 	private void setHeadItemPK(BillForm editor, String pk) throws BusinessException {
-
 		BillCardPanel panel = editor.getBillCardPanel();
-		String pkName = null;
 		
-		if (editor instanceof MatterAppMNBillForm) {
-			pkName = MatterAppVO.PK_MTAPP_BILL;
-		} else if (editor instanceof CostShareEditor) {
-			pkName = CostShareVO.PK_COSTSHARE;
-		} else if(editor instanceof ErmBillBillForm){
-			pkName = JKBXHeaderVO.PK_JKBX;
-		}
+		String pkName = ((SuperVO)((AggregatedValueObject)editor.getValue()).getParentVO()).getPKFieldName();
 		
 		BillItem billItem = panel.getHeadItem(pkName);
 		if (billItem == null) {

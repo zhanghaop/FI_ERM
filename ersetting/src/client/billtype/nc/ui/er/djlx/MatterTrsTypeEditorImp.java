@@ -1,16 +1,13 @@
 package nc.ui.er.djlx;
 
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
 
 import nc.bs.erm.common.ErmBillConst;
-import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.er.prv.IArapBillTypePrivate;
+import nc.ui.dbcache.DBCacheFacade;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.bill.BillCardPanel;
-import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.transtype.AbstractTranstypeEditor;
 import nc.ui.pub.transtype.EditorContext;
 import nc.ui.pub.transtype.ITranstypeEditor;
@@ -19,6 +16,7 @@ import nc.vo.er.djlx.BillTypeVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.billtype.BilltypeVO;
+import nc.vo.pub.lang.UFDouble;
 
 public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements ITranstypeEditor {
 	private BillCardPanel csBillCard;
@@ -33,7 +31,9 @@ public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements I
 	protected void newTranstypeExtProp() throws BusinessException {
 		setEditable(true);
 		getCsBillCard().setBillValueVO(new BillTypeVO());
-
+		
+		getCsBillCard().getHeadItem(DjLXVO.BX_PERCENTAGE).setValue(new UFDouble(100));
+		getCsBillCard().getHeadItem(DjLXVO.MATYPE).setValue(Integer.valueOf(1));
 	}
 
 	/**
@@ -62,6 +62,7 @@ public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements I
 		default:
 			break;
 		}
+		DBCacheFacade.refreshTable(DjLXVO.getDefaultTableName());
 	}
 
 	private void qryTransobj(EditorContext ec) throws BusinessException {
@@ -120,8 +121,8 @@ public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements I
 			getCsBillCard().getHeadItem("djlxmc_remark").setValue(transtype.getBilltypename());
 			// getCsBillCard()
 			// .getHeadItem("fcbz").setValue(transtype.getIsLock());
-			getCsBillCard().dataNotNullValidate();
 			getCsBillCard().stopEditing();
+			getCsBillCard().dataNotNullValidate();
 			vo = (BillTypeVO) getCsBillCard().getBillValueVO("nc.vo.er.djlx.BillTypeVO", "nc.vo.er.djlx.DjLXVO",
 					"nc.vo.er.djlx.DjLXVO");
 			head = (DjLXVO) vo.getParentVO();
@@ -143,8 +144,8 @@ public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements I
 			if (vo != null) {
 				getCsBillCard().getHeadItem("djlxoid").setValue(vo.getDjlxoid());
 			}
-			getCsBillCard().dataNotNullValidate();
 			getCsBillCard().stopEditing();
+			getCsBillCard().dataNotNullValidate();
 			vo = (BillTypeVO) getCsBillCard().getBillValueVO("nc.vo.er.djlx.BillTypeVO", "nc.vo.er.djlx.DjLXVO",
 					"nc.vo.er.djlx.DjLXVO");
 			head = (DjLXVO) vo.getParentVO();
@@ -172,22 +173,21 @@ public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements I
 			head.setFcbz(transtype.getIsLock());
 			head.setDjdl(ErmBillConst.MatterApp_DJDL);
 		}
-		setEditable(false);
 		return vo;
 	}
 
 	public BillCardPanel getCsBillCard() {
 		if (csBillCard == null) {
 			csBillCard = new BillCardPanel();
-			csBillCard.loadTemplet("djlxZ3ertemplet00001");
-			BillItem[] showItems = csBillCard.getHeadShowItems();
-			List<String> hideField = new ArrayList<String>();
-			for (int i = 0; i < showItems.length; i++) {
-				if (!"scomment".equals(showItems[i].getKey()) && !"defcurrency".equals(showItems[i].getKey())) {
-					hideField.add(showItems[i].getKey());
-				}
-			}
-			csBillCard.hideHeadItem(hideField.toArray(new String[0]));
+			csBillCard.loadTemplet("1001Z310000000006AV2");
+//			BillItem[] showItems = csBillCard.getHeadShowItems();
+//			List<String> hideField = new ArrayList<String>();
+//			for (int i = 0; i < showItems.length; i++) {
+//				if (!"scomment".equals(showItems[i].getKey()) && !"defcurrency".equals(showItems[i].getKey())) {
+//					hideField.add(showItems[i].getKey());
+//				}
+//			}
+//			csBillCard.hideHeadItem(hideField.toArray(new String[0]));
 		}
 		return csBillCard;
 	}

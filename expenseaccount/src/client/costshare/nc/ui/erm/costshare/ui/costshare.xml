@@ -37,11 +37,64 @@
 		<property name="linkBx" ref="linkBxAction" />
 	</bean>
 
-	<!-- 列表视图 -->
-	<bean id="userdefitemListPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerListPreparator">
+	<!-- 自定义项处理,container用于减少流量 -->
+	<bean id="userdefitemContainer" class="nc.ui.uif2.userdefitem.UserDefItemContainer">
+		<property name="context" ref="context" />
+		<property name="params">
+			<list> 
+				<bean class="nc.ui.uif2.userdefitem.QueryParam">
+					<property name="mdfullname" value="erm.costshare" />
+				</bean>
+				<bean class="nc.ui.uif2.userdefitem.QueryParam">
+					<property name="mdfullname" value="erm.cshare_detail" />
+				</bean>				
+			</list>
+		</property>
+	</bean>
+	
+<!-- 	<bean id="userdefitemListPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerListPreparator">
 		<property name="loginContext" ref="context"></property>
 		<property name="prefix" value="defitem" />
+	</bean> -->
+	
+	<bean id="userdefitemListPreparator"  class="nc.ui.uif2.editor.UserdefitemContainerListPreparator">
+					<property name="container" ref="userdefitemContainer" />
+					<property name="params">				
+						<list>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.costshare" />
+								<property name="pos" value="0" />
+								<property name="prefix" value="defitem" />
+							</bean>	
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.cshare_detail" />
+								<property name="pos" value="1" />
+								<property name="prefix" value="defitem" />
+							</bean>									
+						</list>
+					</property>
 	</bean>
+	
+	<bean id="userdefitemCardPreparator" class="nc.ui.uif2.editor.UserdefitemContainerPreparator">
+					<property name="container" ref="userdefitemContainer" />
+					<property name="params">				
+						<list>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.costshare" />
+								<property name="pos" value="0" />
+								<property name="prefix" value="defitem" />
+							</bean>	
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.cshare_detail" />
+								<property name="pos" value="1" />
+								<property name="prefix" value="defitem" />
+							</bean>									
+						</list>
+					</property>
+	</bean>
+			
+	<!-- 列表视图 -->
+			
 	<bean id="listView" class="nc.ui.erm.costshare.ui.CostShareView"
 		init-method="initUI">
 		<property name="model" ref="manageAppModel" />
@@ -49,7 +102,7 @@
 		<property name="templateContainer" ref="templateContainer" />
 		<property name="nodekey" value="201105"></property>
 		<property name="north" ref="listInfoPanel" />
-		<property name="paginationBar" ref="paginationBar" />
+		<property name="south" ref="paginationBar" />
 		<property name="userdefitemListPreparator" ref="userdefitemListPreparator" />
 		<property name="linklistener" ref="linklistener" />
 	</bean>
@@ -57,10 +110,10 @@
 		<property name="model" ref="manageAppModel" />
 	</bean>
 	<!--卡控件-->
-	<bean id="userdefitemCardPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerPreparator">
+<!-- 	<bean id="userdefitemCardPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerPreparator">
 		<property name="loginContext" ref="context"></property>
 		<property name="prefix" value="defitem" />
-	</bean>
+	</bean> -->
 	
 	<bean id="actionsBarSeparator" class="nc.ui.pub.beans.ActionsBar$ActionsBarSeparator" />
 	<bean id="editor" class="nc.ui.erm.costshare.ui.CostShareEditor"
@@ -597,6 +650,7 @@
 				<bean id="accessoryShowAction" class="nc.ui.erm.costshare.actions.AccessoryAction">
 					<property name="model" ref="manageAppModel" />
 				</bean>
+				<ref bean="actionsBarSeparator"/>
 				<!-- 浏览按钮 卡片界面共享信息按钮 -->
 				<bean id="firstLineAction" class="nc.ui.uif2.actions.FirstLineAction">
 					<property name="model" ref="manageAppModel" />

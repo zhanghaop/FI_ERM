@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import nc.bs.erm.util.ErLockUtil;
+import nc.bs.businessevent.EventDispatcher;
+import nc.bs.erm.event.ErmBusinessEvent;
+import nc.bs.erm.event.ErmEventType;
 import nc.bs.logging.Logger;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.MDPersistenceService;
@@ -34,17 +36,23 @@ public class ExpenseAccountBO {
 	}
 
 	public void insertVOs(ExpenseAccountVO[] vos) throws BusinessException {
-		// 新增加锁
-//		insertlockOperate(vos);
 		// 设置审计信息
 		AuditInfoUtil.addData(vos);
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkSave(vos);
+
+		fireBeforeInsertEvent(vos);
+		if (vos[0].getBillstatus() == 3) {
+			fireBeforeSignEvent(vos);
+		}
 		// 新增保存
-		getDAO().insertAccountVO(vos);
+		vos = getDAO().insertAccountVO(vos);
+
+		fireAfterInsertEvent(vos);
+
 		// 回写余额表
-		synchExpenseBal(vos,null);
+		synchExpenseBal(vos, null);
 	}
 
 	private void synchExpenseBal(ExpenseAccountVO[] vos,
@@ -55,20 +63,23 @@ public class ExpenseAccountBO {
 
 	public void updateVOs(ExpenseAccountVO[] vos, ExpenseAccountVO[] oldvos)
 			throws BusinessException {
-//		// 修改加锁
-//		updatelockOperate(vos);
-//		// 版本校验
-//		BDVersionValidationUtil.validateSuperVO(vos);
-//		BDVersionValidationUtil.validateSuperVO(oldvos);
+		
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkSave(vos);
 		// 设置审计信息
 		AuditInfoUtil.updateData(vos);
+		
 		// 删除原帐
+		fireBeforeDeleteEvent(oldvos);
 		getDAO().deleteAccountVO(oldvos);
+		fireAfterDeleteEvent(oldvos);
+		
 		// 新增新帐
+		fireBeforeInsertEvent(vos);
 		getDAO().insertAccountVO(vos);
+		fireAfterInsertEvent(vos);
+		
 		// 回写余额表
 		synchExpenseBal(vos,oldvos);
 	}
@@ -77,20 +88,18 @@ public class ExpenseAccountBO {
 		if (vos == null || vos.length == 0) {
 			return;
 		}
-//		// 删除加锁
-//		deletelockOperate(vos);
-//		// 版本校验
-//		BDVersionValidationUtil.validateVersion(vos);
+		
 		// 删除引用校验
 		BDReferenceChecker.getInstance().validate(vos);
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkDelete(vos);
 		// 删除单据
+		fireBeforeDeleteEvent(vos);
 		getDAO().deleteAccountVO(vos);
+		fireAfterDeleteEvent(vos);
 		// 回写余额表
 		synchExpenseBal(null,vos);
-
 	}
 	
 	public void approveVOs(ExpenseAccountVO[] vos) throws BusinessException {
@@ -98,10 +107,7 @@ public class ExpenseAccountBO {
 		if (vos == null || vos.length == 0) {
 			return;
 		}
-//		// 加锁
-//		updatelockOperate(vos);
-//		// 版本校验
-//		BDVersionValidationUtil.validateVersion(vos);
+
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkApprove(vos);
@@ -114,6 +120,7 @@ public class ExpenseAccountBO {
 		for (int i = 0; i < vos.length; i++) {
 			vos[i].setBillstatus(BXStatusConst.DJZT_Verified);
 		}
+		
 		// 更新保存
 		getDAO().updateAccountVO(
 				vos,
@@ -161,11 +168,16 @@ public class ExpenseAccountBO {
 		for (int i = 0; i < vos.length; i++) {
 			vos[i].setBillstatus(BXStatusConst.DJZT_Sign);
 		}
+		
+		fireBeforeSignEvent(vos);
 		// 更新保存
 		getDAO().updateAccountVO(
 				vos,
 				new String[] { ExpenseAccountVO.PK_EXPENSEACCOUNT,
 						ExpenseAccountVO.BILLSTATUS });
+		
+		fireAfterSignEvent(vos);
+		
 //		end = System.currentTimeMillis();
 //		Logger.debug("同步费用帐汇总表耗时-生效-生效更新保存：" + String.valueOf(end - start)+" 毫秒 ");
 //		start = System.currentTimeMillis();
@@ -209,10 +221,6 @@ public class ExpenseAccountBO {
 		if (vos == null || vos.length == 0) {
 			return;
 		}
-//		// 加锁
-//		updatelockOperate(vos);
-//		// 版本校验
-//		BDVersionValidationUtil.validateVersion(vos);
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkunApprove(vos);
@@ -249,10 +257,13 @@ public class ExpenseAccountBO {
 		ExpenseAccountVO[] oldvos = c.toArray(new ExpenseAccountVO[c.size()]);
 		// 外部赋值，审核状态业务信息
 		// 更新保存
+		fireBeforeUnSignEvent(vos);
+		
 		getDAO().updateAccountVO(
 				vos,
 				new String[] { ExpenseAccountVO.PK_EXPENSEACCOUNT,
 						ExpenseAccountVO.BILLSTATUS });
+		fireAfterUnSignEvent(vos);
 		// 回写余额表
 		synchExpenseBal(vos,oldvos);
 	}
@@ -261,10 +272,7 @@ public class ExpenseAccountBO {
 		if (vos == null || vos.length == 0) {
 			return;
 		}
-//		// 加锁
-//		updatelockOperate(vos);
-//		// 版本校验
-//		BDVersionValidationUtil.validateVersion(vos);
+		
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkWriteoff(vos);
@@ -277,11 +285,15 @@ public class ExpenseAccountBO {
 		for (int i = 0; i < vos.length; i++) {
 			vos[i].setIswriteoff(UFBoolean.TRUE);
 		}
+		
+		fireBeforeWriteOffEvent(vos);
 		// 更新保存
 		getDAO().updateAccountVO(
 				vos,
 				new String[] { ExpenseAccountVO.PK_EXPENSEACCOUNT,
 						ExpenseAccountVO.ISWRITEOFF });
+		
+		fireAfterWriteOffEvent(vos);
 		// 回写余额表
 		synchExpenseBal(vos,oldvos);
 	}
@@ -290,10 +302,7 @@ public class ExpenseAccountBO {
 		if (vos == null || vos.length == 0) {
 			return;
 		}
-//		// 加锁
-//		updatelockOperate(vos);
-//		// 版本校验
-//		BDVersionValidationUtil.validateVersion(vos);
+		
 		// vo校验
 		ExpenseAccountChecker vochecker = new ExpenseAccountChecker();
 		vochecker.checkunWriteoff(vos);
@@ -306,11 +315,15 @@ public class ExpenseAccountBO {
 		for (int i = 0; i < vos.length; i++) {
 			vos[i].setIswriteoff(UFBoolean.FALSE);
 		}
+		
+		fireBeforeUnWriteOffEvent(vos);
 		// 更新保存
 		getDAO().updateAccountVO(
 				vos,
 				new String[] { ExpenseAccountVO.PK_EXPENSEACCOUNT,
 						ExpenseAccountVO.ISWRITEOFF });
+		
+		fireAfterUnWriteOffEvent(vos);
 		// 回写余额表
 		synchExpenseBal(vos,oldvos);
 	}
@@ -321,45 +334,80 @@ public class ExpenseAccountBO {
 			ExpenseAccountVO.SRC_BILLTYPE, ExpenseAccountVO.SRC_TRADETYPE,
 			ExpenseAccountVO.SRC_ID, ExpenseAccountVO.SRC_SUBID };
 
-	/**
-	 * 新增加锁
-	 * 
-	 * @param vos
-	 * @throws BusinessException
-	 */
-	private void insertlockOperate(ExpenseAccountVO[] vos)
-			throws BusinessException {
-		// 业务锁
-		ErLockUtil.lockVO(accountLockFields, lockmessage, vos);
+	
+	private void fireBeforeSignEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_SIGN_BEFORE, vos));
+		}
 	}
 
-	/**
-	 * 更新加锁
-	 * 
-	 * @param vos
-	 * @throws BusinessException
-	 */
-	@SuppressWarnings("unused")
-	private void updatelockOperate(ExpenseAccountVO[] vos)
-			throws BusinessException {
-		// 业务锁
-		ErLockUtil.lockVO(accountLockFields, lockmessage, vos);
-		// 主键锁
-		ErLockUtil.lockVOByPk(lockmessage, vos);
-
+	private void fireAfterSignEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_SIGN_AFTER, vos));
+		}
 	}
 
-	/**
-	 * 删除加锁
-	 * 
-	 * @param vos
-	 * @throws BusinessException
-	 */
-	@SuppressWarnings("unused")
-	private void deletelockOperate(ExpenseAccountVO[] vos)
-			throws BusinessException {
-		// 主键锁
-		ErLockUtil.lockVOByPk(lockmessage, vos);
+	private void fireBeforeUnSignEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_UNSIGN_BEFORE, vos));
+		}
 	}
 
+	private void fireAfterUnSignEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_UNSIGN_AFTER, vos));
+		}
+	}
+
+	private void fireBeforeInsertEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_INSERT_BEFORE, vos));
+		}
+	}
+
+	private void fireAfterInsertEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_INSERT_AFTER, vos));
+		}
+	}
+
+	private void fireBeforeDeleteEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_DELETE_BEFORE, vos));
+		}
+	}
+
+	private void fireAfterDeleteEvent(ExpenseAccountVO... vos) throws BusinessException {
+		if(vos != null && vos.length > 0 && !vos[0].getIswriteoff().booleanValue()){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+					ErmEventType.TYPE_DELETE_AFTER, vos));
+		}
+	}
+
+	private void fireBeforeWriteOffEvent(ExpenseAccountVO... vos) throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+				ErmEventType.TYPE_WRITEOFF_BEFORE, vos));
+	}
+
+	private void fireAfterWriteOffEvent(ExpenseAccountVO... vos) throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+				ErmEventType.TYPE_WRITEOFF_AFTER, vos));
+	}
+
+	private void fireBeforeUnWriteOffEvent(ExpenseAccountVO... vos) throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+				ErmEventType.TYPE_UNWRITEOFF_BEFORE, vos));
+	}
+
+	private void fireAfterUnWriteOffEvent(ExpenseAccountVO... vos) throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(ExpenseAccountConst.ExpenseAccount_MDID,
+				ErmEventType.TYPE_UNWRITEOFF_AFTER, vos));
+	}
 }

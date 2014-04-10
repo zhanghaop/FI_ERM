@@ -274,8 +274,9 @@ public class ContrastBO {
 			}
 		}
 
-		VOChecker vochecker = new VOChecker();
-		vochecker.adjuestCjkje(bxvo.getParentVO(), cjkybje, cjkbbje, groupcjkbbje, globalcjkbbje);
+//		VOChecker vochecker = new VOChecker();
+//		vochecker.adjuestCjkje(bxvo.getParentVO(), cjkybje, cjkbbje, groupcjkbbje, globalcjkbbje);
+		VOChecker.adjuestCjkje(bxvo.getParentVO(), cjkybje, cjkbbje, groupcjkbbje, globalcjkbbje);
 
 		getBXZbBO().updateHeader(bxvo.getParentVO(), new String[] { JKBXHeaderVO.CJKBBJE, JKBXHeaderVO.HKBBJE, JKBXHeaderVO.ZFBBJE });
 	}
@@ -609,13 +610,16 @@ public class ContrastBO {
 		return results;
 	}
 	
+	
 	public void saveBatchContrastVO(List<BxcontrastVO> selectedData, boolean delete) throws BusinessException {
+
+
 		List<String> adjuestBxds = new ArrayList<String>();
 
 		Set<String> jkdSet = new HashSet<String>();
 		Set<String> bxdSet = new HashSet<String>();
 		ErContrastUtil.addinfotoContrastVos(selectedData);
-		Map<String, BxcontrastVO> jkContrastMap = new HashMap<String, BxcontrastVO>();
+		Map<String,BxcontrastVO> jkContrastMap = new HashMap<String, BxcontrastVO>();
 
 		for (BxcontrastVO vo : selectedData) {
 			String pk_bxd = vo.getPk_bxd();
@@ -626,69 +630,64 @@ public class ContrastBO {
 			jkContrastMap.put(pk_jkd, vo);
 		}
 
-		List<JKBXHeaderVO> jkds = getBXZbBO().queryHeadersByPrimaryKeys(jkdSet.toArray(new String[] {}),
-				BXConstans.JK_DJDL);
-		List<JKBXVO> bxds = new ArapBXBillPrivateImp().queryVOsByPrimaryKeys(bxdSet.toArray(new String[] {}),
-				BXConstans.BX_DJDL);
+		List<JKBXHeaderVO> jkds = getBXZbBO().queryHeadersByPrimaryKeys(jkdSet.toArray(new String[] {}), BXConstans.JK_DJDL);
+		List<JKBXVO> bxds = new ArapBXBillPrivateImp().queryVOsByPrimaryKeys(bxdSet.toArray(new String[] {}), BXConstans.BX_DJDL);
 
 		Map<String, JKBXVO> bxdMap = new HashMap<String, JKBXVO>();
 		Map<String, JKBXHeaderVO> jkdMap = new HashMap<String, JKBXHeaderVO>();
 		HashMap<String, BXBusItemVO> busitemMap = new HashMap<String, BXBusItemVO>();
-
+		
 		for (JKBXHeaderVO vo : jkds) {
 			jkdMap.put(vo.getPk_jkbx(), vo);
 		}
-
-		// modify 将借款单的业务行先放入缓存
+		
+		//modify 将借款单的业务行先放入缓存
 		try {
-			BXBusItemVO[] busitems = getBusItemDAO().queryByBXVOPks(jkdSet.toArray(new String[0]), true);
+			BXBusItemVO[] busitems = getBusItemDAO().queryByBXVOPks(
+					jkdSet.toArray(new String[0]), true);
 			for (BXBusItemVO busitem : busitems) {
 				busitemMap.put(busitem.getPk_busitem(), busitem);
 			}
 		} catch (SQLException e) {
 			ExceptionHandler.consume(e);
 		}
-
-		// 新增借款单业务行
+		
+		//新增借款单业务行
 		List<BxcontrastVO> newSelectedData = new ArrayList<BxcontrastVO>();
-		for (BxcontrastVO contrastvo : selectedData) {
-			// try {
-			// BXBusItemVO[] busitems = getBusItemDAO().queryByBXVOPks(
-			// new String[] {contrastvo.getPk_jkd()}, true);
-			UFDouble cjkybje = contrastvo.getCjkybje();
-			// /busitemMap.get(key)
-			for (Map.Entry<String, BXBusItemVO> busitem : busitemMap.entrySet()) {
-				BXBusItemVO vo = busitem.getValue();
-
-				if (vo.getYjye().compareTo(UFDouble.ZERO_DBL) > 0) {
-					if (cjkybje.compareTo(UFDouble.ZERO_DBL) > 0) {
-						// busitemMap.put(vo.getPk_busitem(), (BXBusItemVO) vo);
-						// 转换借款单主表冲借款到借款单业务子表
-						BxcontrastVO newvo = (BxcontrastVO) contrastvo.clone();
-						newvo.setPk_busitem(vo.getPk_busitem());
-						// modify 20130814:对于有多行的借款单时，应需要重新设置借款单的冲借款金额和原币金额
-						if (vo.getYjye().compareTo(cjkybje) >= 0) {
-							newvo.setCjkybje(cjkybje);
-							newvo.setYbje(cjkybje);
-							vo.setYjye(vo.getYjye().sub(cjkybje));
-							cjkybje = UFDouble.ZERO_DBL;
-						} else {
-							newvo.setCjkybje(vo.getYjye());
-							newvo.setYbje(vo.getYjye());
-							cjkybje = cjkybje.sub(vo.getYjye());
-							vo.setYjye(UFDouble.ZERO_DBL);
+		if(delete){
+			newSelectedData.addAll(selectedData);
+		}
+		else{
+			for(BxcontrastVO contrastvo : selectedData){
+				UFDouble cjkybje = contrastvo.getCjkybje();
+				for (Map.Entry<String, BXBusItemVO> busitem : busitemMap.entrySet()) {
+					BXBusItemVO vo=busitem.getValue();
+					
+					if(vo.getYjye().compareTo(UFDouble.ZERO_DBL)>0){
+						if(cjkybje.compareTo(UFDouble.ZERO_DBL)>0){
+							//busitemMap.put(vo.getPk_busitem(), (BXBusItemVO) vo);
+							// 转换借款单主表冲借款到借款单业务子表
+							BxcontrastVO newvo = (BxcontrastVO) contrastvo.clone();
+							newvo.setPk_busitem(vo.getPk_busitem());
+							//modify 20130814:对于有多行的借款单时，应需要重新设置借款单的冲借款金额和原币金额
+							if(vo.getYjye().compareTo(cjkybje)>=0){
+								newvo.setCjkybje(cjkybje);
+								newvo.setYbje(cjkybje);
+								vo.setYjye(vo.getYjye().sub(cjkybje));
+								cjkybje=UFDouble.ZERO_DBL;
+							}else{
+								newvo.setCjkybje(vo.getYjye());
+								newvo.setYbje(vo.getYjye());
+								cjkybje=cjkybje.sub(vo.getYjye());
+								vo.setYjye(UFDouble.ZERO_DBL);
+							}
+							newSelectedData.add(newvo);
 						}
-						newSelectedData.add(newvo);
 					}
 				}
-			}
-
-			// for (BXBusItemVO vo : busitems) {
-			// }
-			// } catch (SQLException e) {
-			// ExceptionHandler.consume(e);
-			// }
 		}
+		}
+		
 
 		for (JKBXVO vo : bxds) {
 			vo.setBxoldvo((JKBXVO) vo.clone());
@@ -699,7 +698,7 @@ public class ContrastBO {
 			}
 			bxdMap.put(vo.getParentVO().getPk_jkbx(), vo);
 		}
-
+		
 		for (BxcontrastVO vo : newSelectedData) {
 
 			String pk_bxd = vo.getPk_bxd();
@@ -718,17 +717,17 @@ public class ContrastBO {
 
 			if (delete) {
 				jkd.setYjye(jkd.getYjye().add(cjkybje));
-
-				// 新增业务行
+				
+				//新增业务行
 				BXBusItemVO busitem = busitemMap.get(vo.getPk_busitem());
-				busitem.setYjye(busitem.getYjye().add(vo.getYbje()));
+				busitem.setYjye(busitem.getYjye().add(vo.getYbje()));				
 			} else {
 				jkd.setYjye(jkd.getYjye().sub(cjkybje));
-
-				// 新增业务行
+				
+				//新增业务行
 				BXBusItemVO busitem = busitemMap.get(vo.getPk_busitem());
 				busitem.setYjye(busitem.getYjye().sub(vo.getYbje()));
-
+				
 				// 处理外币业务时，借款单原币被冲为0时，本币不能冲为0 的特殊情况
 				adjuestBxds.addAll(dealWbSpecialCjk(selectedData, jkd, vo));
 			}
@@ -781,9 +780,9 @@ public class ContrastBO {
 		for (String pk_bxd : adjuestBxds) {
 			adjuestBXHeadContrastInfo(pk_bxd);
 		}
-	}	
-	@SuppressWarnings("unused")
-	private void saveBatchContrast(List<BxcontrastVO> selectedData, boolean delete) throws BusinessException {
+	}
+	
+	public void saveBatchContrast(List<BxcontrastVO> selectedData, boolean delete) throws BusinessException {
 
 		List<String> adjuestBxds = new ArrayList<String>();
 

@@ -1,5 +1,6 @@
 package nc.bs.erm.matterapp;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,14 +19,16 @@ import nc.bs.erm.matterapp.check.MatterAppVOChecker;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.erm.matterapp.common.MatterAppUtils;
 import nc.bs.erm.util.ErLockUtil;
+import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.CheckStatusCallbackContext;
 import nc.bs.pub.pf.ICheckStatusCallback;
-import nc.md.persist.framework.IMDPersistenceQueryService;
+import nc.itf.fi.pub.Currency;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
@@ -36,7 +39,6 @@ import nc.vo.fipub.billcode.FinanceBillCodeInfo;
 import nc.vo.fipub.billcode.FinanceBillCodeUtils;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
@@ -44,7 +46,6 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.rbac.constant.INCSystemUserConst;
 import nc.vo.util.AuditInfoUtil;
-import nc.vo.util.BDReferenceChecker;
 import nc.vo.util.BDVersionValidationUtil;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -84,6 +85,11 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 			result = getDAO().insertVO(vo);
 			// 新增后事件处理
 			fireAfterInsertEvent(vo);
+			
+			// 查询返回结果
+			IErmMatterAppBillQuery qryService = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
+			result = qryService.queryBillByPK(vo.getParentVO().getPrimaryKey());
+			
 		} catch (Exception e) {
 			returnBillno(new AggMatterAppVO[] { vo });
 			ExceptionHandler.handleException(e);
@@ -100,9 +106,11 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(vo.getParentVO());
 
+		// 查询修改前的vo
 		IErmMatterAppBillQuery qryService = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
 		AggMatterAppVO oldvo = qryService.queryBillByPK(vo.getParentVO().getPrimaryKey());
 		
+
 		// 补齐children信息（因前台传过来的的只是改变的children）
 		fillUpChildren(vo, oldvo);
 
@@ -121,6 +129,8 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		vo = getDAO().updateVO(vo);
 		// 修改后事件处理
 		fireAfterUpdateEvent(new AggMatterAppVO[] { vo }, new AggMatterAppVO[] { oldvo });
+		// 查询返回结果
+		vo = qryService.queryBillByPK(vo.getParentVO().getPrimaryKey());
 		// 记录业务日志
 		BusiLogUtil.insertSmartBusiLog(ErmMatterAppConst.MAPP_MD_UPDATE_OPER, new AggMatterAppVO[] { vo },
 				new AggMatterAppVO[] { oldvo });
@@ -335,11 +345,9 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		MatterAppVOChecker vochecker = new MatterAppVOChecker();
 		vochecker.checkunApprove(vos);
 
-		// 查询oldvos
-		AggMatterAppVO[] oldvos = queryOldVOsByVOs(vos);
 		try {
 			for (int i = 0; i < vos.length; i++) {
-				unApproveBack(vos[i], oldvos[i]);
+				unApproveBack(vos[i]);
 				msgs[i] = new MessageVO(vos[i], ActionUtils.UNAUDIT);
 			}
 		} catch (Exception e) {
@@ -349,13 +357,13 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		return msgs;
 	}
 
-	private void unApproveBack(AggMatterAppVO vo, AggMatterAppVO oldvo) throws BusinessException {
-		// 是否是取消生效动作
-		MatterAppVO parentvo = (MatterAppVO) vo.getParentVO();
-
-		parentvo.setApprovetime(oldvo.getParentVO().getApprovetime());//用于预算控制为审核日期的情况，审核日期不能丢
+	private void unApproveBack(AggMatterAppVO vo) throws BusinessException {
+//		// 是否是取消生效动作
+//		MatterAppVO parentvo = (MatterAppVO) vo.getParentVO();
+//
+//		parentvo.setApprovetime(oldvo.getParentVO().getApprovetime());//用于预算控制为审核日期的情况，审核日期不能丢
 		// 取消审核前事件处理
-		fireBeforeUnApproveEvent(vo);
+		fireBeforeUnApproveEvent(vo.getOldvo());
 
 		// 设置单据状态、生效信息
 		setAggMatterAppVOAttribute(new AggMatterAppVO[] { vo }, MatterAppVO.EFFECTSTATUS,
@@ -363,6 +371,10 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 
 		setAggMatterAppVOAttribute(new AggMatterAppVO[] { vo }, MatterAppVO.BILLSTATUS,
 				ErmMatterAppConst.BILLSTATUS_COMMITED, true);
+
+		// 清空审核人、审核日期
+//		parentvo.setApprover(null);
+//		parentvo.setApprovetime(null);
 
 		// 更新保存
 		getDAO().updateAggVOsByFields(
@@ -408,27 +420,28 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		// 关闭前事件处理
 		fireBeforeCloseEvent(isAuto, vos);
 
-		// 如果是单选，并且子表个数与old个数不同，其它情况都认为是整单取消关闭
-		boolean isAllClose = isAllClose(vos);
-
 		// 设置表头关闭信息
 		UFDate closeDate = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());
 		String closeman = isAuto ? INCSystemUserConst.NC_USER_PK : AuditInfoUtil.getCurrentUser();
-		if (isAllClose) {
-			for (int i = 0; i < vos.length; i++) {
-				vos[i].getParentVO().setAttributeValue(MatterAppVO.CLOSE_STATUS, ErmMatterAppConst.CLOSESTATUS_Y);
-				vos[i].getParentVO().setAttributeValue(MatterAppVO.CLOSEMAN, closeman);
-				vos[i].getParentVO().setAttributeValue(MatterAppVO.CLOSEDATE, closeDate);
-			}
-		}
+		
 		// 设置子表关闭信息
 		for (int i = 0; i < vos.length; i++) {
-			for (int j = 0; j < vos[i].getChildrenVO().length; j++) {
-				if (!(ErmMatterAppConst.CLOSESTATUS_Y == vos[i].getChildrenVO()[j].getClose_status())) {
-					vos[i].getChildrenVO()[j].setAttributeValue(MtAppDetailVO.CLOSE_STATUS,
+			// 如果是单选，并且子表个数与old个数不同，其它情况都认为是整单取消关闭
+			AggMatterAppVO aggMatterAppVO = vos[i];
+			boolean isAllClose = isAllClose(aggMatterAppVO);
+			
+			if (isAllClose) {
+				aggMatterAppVO.getParentVO().setAttributeValue(MatterAppVO.CLOSE_STATUS, ErmMatterAppConst.CLOSESTATUS_Y);
+				aggMatterAppVO.getParentVO().setAttributeValue(MatterAppVO.CLOSEMAN, closeman);
+				aggMatterAppVO.getParentVO().setAttributeValue(MatterAppVO.CLOSEDATE, closeDate);
+			}
+			
+			for (int j = 0; j < aggMatterAppVO.getChildrenVO().length; j++) {
+				if (!(ErmMatterAppConst.CLOSESTATUS_Y == aggMatterAppVO.getChildrenVO()[j].getClose_status())) {
+					aggMatterAppVO.getChildrenVO()[j].setAttributeValue(MtAppDetailVO.CLOSE_STATUS,
 							ErmMatterAppConst.CLOSESTATUS_Y);
-					vos[i].getChildrenVO()[j].setAttributeValue(MtAppDetailVO.CLOSEMAN, closeman);
-					vos[i].getChildrenVO()[j].setAttributeValue(MtAppDetailVO.CLOSEDATE, closeDate);
+					aggMatterAppVO.getChildrenVO()[j].setAttributeValue(MtAppDetailVO.CLOSEMAN, closeman);
+					aggMatterAppVO.getChildrenVO()[j].setAttributeValue(MtAppDetailVO.CLOSEDATE, closeDate);
 				}
 			}
 		}
@@ -463,16 +476,30 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 	}
 
 	public AggMatterAppVO tempSave(AggMatterAppVO vo) throws BusinessException {
-
+		// 修改加锁
+		pklockOperate(vo);
+		
+		// 查询修改前的vo
+		IErmMatterAppBillQuery qryService = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
+		
+		AggMatterAppVO oldvo = null;
+		if (vo.getParentVO().getStatus() != VOStatus.NEW) {
+			oldvo = qryService.queryBillByPK(vo.getParentVO().getPrimaryKey());
+			// 补齐children信息（因前台传过来的的只是改变的children）
+			if (oldvo != null) {
+				fillUpChildren(vo, oldvo);
+			}
+		}
+		
+		// 获取单据号
+		createBillNo(vo);
+		
 		prepareVoValue(vo);
+		
 		// 设置暂存状态
 		setAggMatterAppVOAttribute(new AggMatterAppVO[] { vo }, MatterAppVO.BILLSTATUS,
 				ErmMatterAppConst.BILLSTATUS_TEMPSAVED, true);
-
-		// 修改加锁
-		pklockOperate(vo);
-		// 获取单据号
-		createBillNo(vo);
+		
 		// 设置审计信息
 		if (vo.getParentVO().getPk_mtapp_bill() != null) {
 			AuditInfoUtil.updateData(vo.getParentVO());
@@ -481,8 +508,30 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		}
 		// 更新保存
 		vo = getDAO().updateVO(vo);
+		
+		// 新增后事件处理
+		if (oldvo == null) {
+			fireAfterTempSaveEvent(new AggMatterAppVO[] { vo }, null);
+		} else {
+			fireAfterTempSaveEvent(new AggMatterAppVO[] { vo }, new AggMatterAppVO[] { oldvo });
+		}
 		// 返回
 		return vo;
+	}
+	
+	/**
+	 * 暂存后事件监听类:分新增暂存和修改暂存
+	 * @param vos
+	 * @throws BusinessException
+	 */
+	private void fireAfterTempSaveEvent(AggMatterAppVO[] vos, AggMatterAppVO[] oldvos) throws BusinessException {
+		if(oldvos == null){
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ErmMatterAppConst.MatterApp_MDID,
+					ErmEventType.TYPE_TEMPSAVE_AFTER, vos));
+		}else{
+			EventDispatcher.fireEvent(new ErmBusinessEvent(ErmMatterAppConst.MatterApp_MDID,
+					ErmEventType.TYPE_TEMPUPDATE_AFTER, vos,oldvos));
+		}
 	}
 
 	public MatterAppVO updatePrintInfo(MatterAppVO vo) throws BusinessException {
@@ -526,6 +575,9 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 			boolean openflag = false;
 			
 			List<String> effectDetails = getEffectOpenDetails(vos[i]);
+			if(effectDetails.isEmpty()){
+				continue;
+			}
 			
 			for (int j = 0; j < vos[i].getChildrenVO().length; j++) {
 				MtAppDetailVO mtAppDetailVO = vos[i].getChildrenVO()[j];
@@ -555,6 +607,35 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		return queryOldVOsByVOs(vos);
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<String> getEffectOpenDetails(AggMatterAppVO vo) throws BusinessException {
+		List<String> result = new ArrayList<String>();
+		if(vo.getChildrenVO() == null || vo.getChildrenVO().length == 0){
+			return result;
+		}
+
+		StringBuffer sql = new StringBuffer();
+		sql.append(" orig_amount > isnull(( SELECT sum(p.exe_amount) FROM er_mtapp_billpf p ");
+		sql
+				.append(" WHERE p.pk_mtapp_detail=er_mtapp_detail.pk_mtapp_detail and p.pk_djdl='bx' GROUP BY p.pk_mtapp_detail ),0 ) ");
+
+		String[] pk_maDetails = VOUtils.getAttributeValues(vo.getChildrenVO(), MtAppDetailVO.PK_MTAPP_DETAIL);
+		sql.append(" and " + SqlUtil.buildInSql("er_mtapp_detail.pk_mtapp_detail", pk_maDetails));
+
+		Collection<MtAppDetailVO> detailList = MDPersistenceService.lookupPersistenceQueryService()
+				.queryBillOfVOByCond(MtAppDetailVO.class, sql.toString(), false);
+
+		if (detailList != null && !detailList.isEmpty()) {
+			pk_maDetails = VOUtils.getAttributeValues(detailList.toArray(new MtAppDetailVO[0]),
+					MtAppDetailVO.PK_MTAPP_DETAIL);
+
+			for (String pk_maDetail : pk_maDetails) {
+				result.add(pk_maDetail);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * 判断是否为整单关闭操作
 	 * 
@@ -563,31 +644,30 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 	 * @return
 	 * @throws BusinessException
 	 */
-	private boolean isAllClose(AggMatterAppVO[] vos) throws BusinessException {
+	private boolean isAllClose(AggMatterAppVO vo) throws BusinessException {
 		// 列表页面只有整单关闭
-		if (vos.length == 1) {
-			MtAppDetailVO[] newchilds = vos[0].getChildrenVO();
-			List<String> newchildpks = new ArrayList<String>();
+		MtAppDetailVO[] newchilds = vo.getChildrenVO();
+		List<String> newchildpks = new ArrayList<String>();
 
-			if (newchilds == null || newchilds.length == 0) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-						"0201212-0031")/* @res "没有可操作的费用申请单行数据" */);
+		if (newchilds == null || newchilds.length == 0) {
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
+					"0201212-0031")/* @res "没有可操作的费用申请单行数据" */);
+		}
+
+		for (int i = 0; i < newchilds.length; i++) {
+			if (newchilds[i].getBillstatus() == null
+					|| newchilds[i].getClose_status() == ErmMatterAppConst.CLOSESTATUS_N) {
+				newchildpks.add(newchilds[i].getPk_mtapp_detail());
 			}
+		}
 
-			for (int i = 0; i < newchilds.length; i++) {
-				if (newchilds[i].getBillstatus() == null
-						|| newchilds[i].getClose_status() == ErmMatterAppConst.CLOSESTATUS_N) {
-					newchildpks.add(newchilds[i].getPk_mtapp_detail());
-				}
-			}
-
-			MtAppDetailVO[] oldchilds = queryOldVOsByVOs(vos)[0].getChildrenVO();
-			for (int i = 0; i < oldchilds.length; i++) {
-				if ((oldchilds[i].getClose_status() == null || oldchilds[i].getClose_status() == ErmMatterAppConst.CLOSESTATUS_N)
-						&& !newchildpks.contains(oldchilds[i].getPk_mtapp_detail())) {
-					// 关闭操作中，如果表体里只要还有一个未关闭，那就认为非整单取消关闭
-					return false;
-				}
+		MtAppDetailVO[] oldchilds = queryOldVOsByVOs(vo)[0].getChildrenVO();
+		for (int i = 0; i < oldchilds.length; i++) {
+			if ((oldchilds[i].getClose_status() == null
+					|| oldchilds[i].getClose_status() == ErmMatterAppConst.CLOSESTATUS_N) && !newchildpks
+							.contains(oldchilds[i].getPk_mtapp_detail())) {
+				// 关闭操作中，如果表体里只要还有一个未关闭，那就认为非整单取消关闭
+				return false;
 			}
 		}
 
@@ -595,21 +675,21 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 	}
 
 	private void deleteValidate(AggMatterAppVO[] vos) {
-		List<MatterAppVO> headlist = new ArrayList<MatterAppVO>();
-		List<MtAppDetailVO> detaillist = new ArrayList<MtAppDetailVO>();
-		for (AggMatterAppVO aggvo : vos) {
-			headlist.add((MatterAppVO) aggvo.getParentVO());
-			CircularlyAccessibleValueObject[] childrenVO = aggvo.getChildrenVO();
-			if (childrenVO != null && childrenVO.length > 0) {
-				for (int j = 0; j < childrenVO.length; j++) {
-					detaillist.add((MtAppDetailVO) childrenVO[j]);
-				}
-			}
-		}
-		BDReferenceChecker.getInstance().validate(headlist.toArray(new MatterAppVO[headlist.size()]));
-		if (!detaillist.isEmpty()) {
-			BDReferenceChecker.getInstance().validate(detaillist.toArray(new MtAppDetailVO[detaillist.size()]));
-		}
+//		List<MatterAppVO> headlist = new ArrayList<MatterAppVO>();
+//		List<MtAppDetailVO> detaillist = new ArrayList<MtAppDetailVO>();
+//		for (AggMatterAppVO aggvo : vos) {
+//			headlist.add((MatterAppVO) aggvo.getParentVO());
+//			CircularlyAccessibleValueObject[] childrenVO = aggvo.getChildrenVO();
+//			if (childrenVO != null && childrenVO.length > 0) {
+//				for (int j = 0; j < childrenVO.length; j++) {
+//					detaillist.add((MtAppDetailVO) childrenVO[j]);
+//				}
+//			}
+//		}
+//		BDReferenceChecker.getInstance().validate(headlist.toArray(new MatterAppVO[headlist.size()]));
+//		if (!detaillist.isEmpty()) {
+//			BDReferenceChecker.getInstance().validate(detaillist.toArray(new MtAppDetailVO[detaillist.size()]));
+//		}
 	}
 
 	/**
@@ -814,18 +894,16 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		}
 	}
 
-	private AggMatterAppVO[] queryOldVOsByVOs(AggMatterAppVO[] vos) throws BusinessException {
+	private AggMatterAppVO[] queryOldVOsByVOs(AggMatterAppVO... vos) throws BusinessException {
 
 		String[] pks = new String[vos.length];
 		for (int i = 0; i < vos.length; i++) {
 			pks[i] = vos[i].getParentVO().getPrimaryKey();
 		}
-		IMDPersistenceQueryService service = MDPersistenceService.lookupPersistenceQueryService();
+		// 查询返回结果
+		IErmMatterAppBillQuery qryService = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
 
-		@SuppressWarnings("unchecked")
-		Collection<AggMatterAppVO> c = service.queryBillOfVOByPKs(AggMatterAppVO.class, pks, false);
-
-		return c.toArray(new AggMatterAppVO[c.size()]);
+		return qryService.queryBillByPKs(pks);
 	}
 
 	// 补充vo数据
@@ -834,10 +912,166 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		prepareForNullJe(vo);
 		prepareHeader(parentVo);
 		prepareChildrenVO(vo);
+		// 根据费用申请单交易类型允许报销百分比，计算允许报销最大金额
+		prepareHeadMaxAmount(parentVo);
+		
+		if(parentVo.getBillstatus() != ErmMatterAppConst.BILLSTATUS_TEMPSAVED){
+			//如果没有计算分摊比例，或比例合计不为100，这里给与比例重算
+			prepareChildRaido(vo.getChildrenVO(), parentVo);
+			
+			// 根据明细行占比，计算各个行允许报销最大金额
+			prepareChildMaxAmont(vo.getChildrenVO(), parentVo);
+		}
+	}
+	
+	//补充分摊比例
+	private void prepareChildRaido(MtAppDetailVO[] childrenVO, MatterAppVO parentVo) {
+		if(childrenVO == null){
+			return;
+		}
+		
+		int rows = childrenVO.length;
+		if (rows == 0) {
+			return;
+		}
+		
+		UFDouble sumShareRadio = UFDouble.ZERO_DBL;
+		for (int row = 0; row < rows; row++) {
+			if(childrenVO[row].getShare_ratio() != null  && 
+					childrenVO[row].getStatus() != VOStatus.DELETED){
+				sumShareRadio = childrenVO[row].getShare_ratio().add(sumShareRadio);
+			}
+		}
+		
+		if(sumShareRadio.compareTo(new UFDouble(100)) != 0){//合计金额不为100，则进行重算
+			UFDouble ori_amount = parentVo.getOrig_amount();
+			ori_amount = ori_amount == null ? UFDouble.ZERO_DBL : ori_amount;
+
+			UFDouble uf100 = new UFDouble(100);
+			UFDouble differ_ratio = new UFDouble(100).setScale(2, UFDouble.ROUND_HALF_UP);// 占比尾差
+
+			int lastRow = 0;// 最后有效行
+			for (int row = 0; row < rows; row++) {
+				// 计算各行占比
+				if(childrenVO[row].getStatus() == VOStatus.DELETED){
+					continue;
+				}
+				UFDouble rowAmount = childrenVO[row].getOrig_amount();
+				rowAmount = rowAmount == null ? UFDouble.ZERO_DBL : rowAmount;
+
+				if (rowAmount.compareTo(UFDouble.ZERO_DBL) == 0) {
+					childrenVO[row].setShare_ratio(UFDouble.ZERO_DBL);
+				} else {
+					UFDouble shareRatio = (ori_amount.compareTo(UFDouble.ZERO_DBL) == 0 ? UFDouble.ZERO_DBL : rowAmount
+							.div(ori_amount)).multiply(uf100);
+					shareRatio = shareRatio.setScale(2, UFDouble.ROUND_HALF_UP);
+					childrenVO[row].setShare_ratio(shareRatio);
+
+					differ_ratio = differ_ratio.sub(shareRatio);
+					lastRow = row;
+				}
+			}
+			
+			if (lastRow > 0 && differ_ratio.compareTo(UFDouble.ZERO_DBL) != 0) {
+				if (differ_ratio.compareTo(UFDouble.ZERO_DBL) > 0) {
+					UFDouble lastrow_ratio = childrenVO[lastRow].getShare_ratio();
+					childrenVO[lastRow].setShare_ratio(differ_ratio.add(lastrow_ratio));
+				} else {// 合计值大于100时，差额为负数
+					for (int row = lastRow; row > 0; row--) {
+						UFDouble oriAmount = childrenVO[row].getOrig_amount();
+						if (oriAmount == null || oriAmount.compareTo(UFDouble.ZERO_DBL) == 0
+								|| childrenVO[row].getStatus()== VOStatus.DELETED) {
+							continue;
+						}
+						
+						UFDouble lastrow_ratio = childrenVO[row].getShare_ratio();
+						if (lastrow_ratio.compareTo(differ_ratio.abs()) >= 0) {
+							childrenVO[row].setShare_ratio(differ_ratio.add(lastrow_ratio));
+							break;
+						} else {
+							childrenVO[row].setShare_ratio(UFDouble.ZERO_DBL);
+							differ_ratio = lastrow_ratio.add(differ_ratio);
+						}
+					}
+				}
+			}
+		}
+		
+	}
+
+	private void prepareChildMaxAmont(MtAppDetailVO[] childrenVO, MatterAppVO parentVo) {
+		if(childrenVO != null && childrenVO.length > 0){
+			UFDouble max_amount = parentVo.getMax_amount();
+			UFDouble max_amount_sum = UFDouble.ZERO_DBL;
+			boolean amount_recompute = false;// 是否需要重算允许报销金额
+			for (int i = 0; i < childrenVO.length; i++) {
+				if(childrenVO[i].getStatus() == VOStatus.DELETED){//删除行过滤掉
+					continue;
+				}
+				UFDouble detail_max_amount = childrenVO[i].getMax_amount();
+				if(detail_max_amount==null){
+					amount_recompute = true;
+				}
+				max_amount_sum = max_amount_sum.add(detail_max_amount==null?UFDouble.ZERO_DBL:detail_max_amount);
+			}
+			
+			if(amount_recompute || max_amount_sum.compareTo(max_amount) != 0){
+				// 金额重算
+				amount_recompute = true;
+			}else{
+				// 不需要重算任何数据
+				return ;
+			}
+			
+			UFDouble diffAmount = max_amount.sub(max_amount_sum);// 差额
+
+			for (int row = childrenVO.length - 1 ; row >= 0; row--) {
+				if(childrenVO[row].getStatus() == VOStatus.DELETED){//删除行过滤掉
+					continue;
+				}
+				
+				UFDouble rowMaxAmount = childrenVO[row].getMax_amount();
+				rowMaxAmount = rowMaxAmount == null ? UFDouble.ZERO_DBL : rowMaxAmount;
+				UFDouble rowAmount = childrenVO[row].getOrig_amount();
+
+				if (rowAmount != null && rowAmount.compareTo(UFDouble.ZERO_DBL) != 0) {
+					if (diffAmount.compareTo(UFDouble.ZERO_DBL) > 0) {
+						childrenVO[row].setMax_amount(rowMaxAmount.add(diffAmount));
+						break;
+					} else {
+						UFDouble tempDiffAmount = rowMaxAmount.sub(rowAmount);
+						if (diffAmount.abs().compareTo(tempDiffAmount) <= 0) {
+							childrenVO[row].setMax_amount(rowMaxAmount.add(diffAmount));
+							break;
+						} else {
+							childrenVO[row].setMax_amount(rowAmount);
+							diffAmount = diffAmount.add(tempDiffAmount);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void prepareHeadMaxAmount(MatterAppVO parentVo)
+			throws BusinessException {
+		// 未计算最大允许报销金额情况，在后台进行补充
+		if(parentVo.getMax_amount() ==  null){
+			DjLXVO djlx = ErmDjlxCache.getInstance().getDjlxVO(parentVo.getPk_group(), parentVo.getPk_tradetype());
+			UFDouble bx_percentage = djlx.getBx_percentage();
+			UFDouble multi_amount = bx_percentage == null? UFDouble.ONE_DBL:bx_percentage.div(100);
+			UFDouble max_amount = parentVo.getOrig_amount().multiply(multi_amount);
+			int ybDecimalDigit = Currency.getCurrDigit(parentVo.getPk_currtype());// 原币精度
+			max_amount = max_amount.setScale(ybDecimalDigit,BigDecimal.ROUND_UP);
+			parentVo.setMax_amount(max_amount);
+		}
 	}
 
 	private void prepareHeader(MatterAppVO parentVo) {
-		parentVo.setBillstatus(MatterAppUtils.getBillStatus(parentVo.getApprstatus()));
+		if(parentVo.getApprstatus() != IBillStatus.FREE){
+			parentVo.setBillstatus(MatterAppUtils.getBillStatus(parentVo.getApprstatus()));
+		}
+		
 		parentVo.setPk_billtype(ErmMatterAppConst.MatterApp_BILLTYPE);
 		if (parentVo.getBillmaker() != null) {
 			try {
@@ -871,11 +1105,6 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 						item.setAttributeValue(field, UFDouble.ZERO_DBL);
 					}
 				}
-
-				// 设置表体汇率
-				item.setOrg_currinfo(parentVo.getOrg_currinfo());
-				item.setGroup_currinfo(parentVo.getGroup_currinfo());
-				item.setGlobal_currinfo(parentVo.getGlobal_currinfo());
 			}
 		}
 	}
@@ -907,10 +1136,24 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		MatterAppVO parentVo = vo.getParentVO();
 		MtAppDetailVO[] children = (MtAppDetailVO[]) vo.getChildrenVO();
 
-		if (children != null) {
+		
+		if (children != null && children.length > 0) {
+			UFBoolean iscostshare = UFBoolean.FALSE;// 是否分摊，判断条件为明细行费用承担单位和费用承担部门是否相同
+			
+			String assumeorg = children[0].getAssume_org()==null?"~":children[0].getAssume_org();
+			String assumedept = children[0].getAssume_dept()==null?"~":children[0].getAssume_dept();
+			
 			for (int i = 0; i < children.length; i++) {
 				if (children[i].getStatus() == VOStatus.DELETED) {
 					continue;
+				}
+				
+				if(!iscostshare.booleanValue()){
+					String org  = children[i].getAssume_org()==null?"~":children[i].getAssume_org();
+					String dept  = children[i].getAssume_dept()==null?"~":children[i].getAssume_dept();
+					if(!(assumeorg.equals(org)&&assumedept.equals(dept))){
+						iscostshare = UFBoolean.TRUE;
+					}
 				}
 
 				children[i].setPk_currtype(parentVo.getPk_currtype());
@@ -921,18 +1164,19 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 				children[i].setPk_org(parentVo.getPk_org());
 
 				children[i].setPk_currtype(parentVo.getPk_currtype());
-				children[i].setOrg_currinfo(parentVo.getOrg_currinfo());// 汇率
-				children[i].setGroup_currinfo(parentVo.getGroup_currinfo());
-				children[i].setGlobal_currinfo(parentVo.getGlobal_currinfo());
+				
 				children[i].setApply_dept(parentVo.getApply_dept());
 				children[i].setBillmaker(parentVo.getBillmaker());
 				
 				children[i].setBillno(parentVo.getBillno());//单据编号，注：在createCode中在修改时，可能没有设置billno
 				children[i].setClose_status(ErmMatterAppConst.CLOSESTATUS_N);// 关闭状态
 				children[i].setBillstatus(parentVo.getBillstatus());// 表头单据状态冗余到表体
+				children[i].setEffectstatus(ErmMatterAppConst.EFFECTSTATUS_NO);
 			}
+			// 设置申请单是否分摊
+			parentVo.setIscostshare(iscostshare);
 		}
-	}
+		}
 	
 	/**
 	 * 回写申请单审批信息
@@ -946,6 +1190,13 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 			// 版本校验
 			BDVersionValidationUtil.validateVersion(updateVO);
 
+			// 查询oldvos
+			AggMatterAppVO[] oldvos = queryOldVOsByVOs(updateVO);
+			if(oldvos != null && oldvos.length > 0){
+				// 保留下来oldvo，供业务处理的事件前使用
+				updateVO.setOldvo(oldvos[0]);
+			}
+			
 			// 数据更新到数据库
 			getDAO().updateAggVOsByFields(new AggMatterAppVO[] { updateVO },
 					new String[] { MatterAppVO.APPRSTATUS, MatterAppVO.APPROVER, MatterAppVO.APPROVETIME },
@@ -983,31 +1234,4 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		}
 		return null;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private List<String> getEffectOpenDetails(AggMatterAppVO vo) throws BusinessException {
-		List<String> result = new ArrayList<String>();
-
-		StringBuffer sql = new StringBuffer();
-		sql.append(" orig_amount > isnull(( SELECT sum(p.exe_amount+p.pre_amount) FROM er_mtapp_billpf p ");
-		sql
-				.append(" WHERE p.pk_mtapp_detail=er_mtapp_detail.pk_mtapp_detail and p.pk_djdl='bx' GROUP BY p.pk_mtapp_detail ),0 ) ");
-
-		String[] pk_maDetails = VOUtils.getAttributeValues(vo.getChildrenVO(), MtAppDetailVO.PK_MTAPP_DETAIL);
-		sql.append(" and " + SqlUtil.buildInSql("er_mtapp_detail.pk_mtapp_detail", pk_maDetails));
-
-		Collection<MtAppDetailVO> detailList = MDPersistenceService.lookupPersistenceQueryService()
-				.queryBillOfVOByCond(MtAppDetailVO.class, sql.toString(), false);
-
-		if (detailList != null) {
-			pk_maDetails = VOUtils.getAttributeValues(detailList.toArray(new MtAppDetailVO[0]),
-					MtAppDetailVO.PK_MTAPP_DETAIL);
-
-			for (String pk_maDetail : pk_maDetails) {
-				result.add(pk_maDetail);
-			}
-		}
-		return result;
-	}
-
 }

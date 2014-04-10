@@ -5,10 +5,10 @@ import java.awt.Container;
 import javax.swing.Action;
 
 import nc.bs.pf.pub.PfDataCache;
+import nc.funcnode.ui.AbstractFunclet;
 import nc.pub.smart.data.IRowData;
 import nc.pub.smart.tracedata.ITraceDataOperator;
 import nc.pub.smart.tracedata.TraceDataParam;
-import nc.ui.pub.beans.MessageDialog;
 import nc.ui.uap.sf.SFClientUtil;
 import nc.util.erm.expamortize.ExpamortizeLinkQuery;
 import nc.vo.arap.bx.util.BXConstans;
@@ -48,18 +48,21 @@ public class ExpenseLinkQuerybillOperator implements ITraceDataOperator{
 		
 		// 取得选中行数据集
 		IRowData rowData = param.getRowData();
-		Object value = null;
+//		Object value = null;
 		
 		// 取得选中行单据主键
-		value = rowData.getData(ExpenseAccountVO.SRC_ID);
+		Object value = rowData.getData(ExpenseAccountVO.SRC_ID);
 		
         if (value == null || StringUtil.isEmpty(value.toString())) {
-            MessageDialog.showHintDlg(container, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
+//            MessageDialog.showHintDlg(container, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
+//                    nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0121")/*@res "请选择单据进行联查！"*/);
+            AbstractFunclet funclet = (AbstractFunclet)container.getParent();
+            funclet.showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
                     nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0121")/*@res "请选择单据进行联查！"*/);
             return;
         }
         
-		String pk_bill = value == null ? null : value.toString();
+		String pk_bill = value.toString();
 		
 		// 取得选中行单据类型
 		value = rowData.getData("pk_billtype");

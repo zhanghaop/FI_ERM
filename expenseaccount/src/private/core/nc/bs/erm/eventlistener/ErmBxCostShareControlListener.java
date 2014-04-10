@@ -63,6 +63,7 @@ public class ErmBxCostShareControlListener implements IBusinessListener {
 					// 修改前无分摊，修改后有分摊，则进行新增结转单操作
 					costBillManager.insertVO(shareVo);
 				} else if(shareVo != null){
+					shareVo.setOldvo(oldShareVo);
 					// 查询修改前的vo
 					IMDPersistenceQueryService qryservice = MDPersistenceService.lookupPersistenceQueryService();
 					AggCostShareVO oldvo = qryservice.queryBillOfVOByPK(AggCostShareVO.class, ((CostShareVO)shareVo.getParentVO()).getPrimaryKey(), false);

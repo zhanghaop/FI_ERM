@@ -53,7 +53,7 @@ public class ListBodyAmountDigitListener implements IBillModelDecimalListener2 {
 	 * 该值不能随便返回，如果返回的值对应的字段没有值，则不会设置该字段的精度
 	 */
 	public String getSource() {
-		return MtAppDetailVO.PK_ORG;
+		return MtAppDetailVO.ASSUME_ORG;
 	}
 
 	@Override

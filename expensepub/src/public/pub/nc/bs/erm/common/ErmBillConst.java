@@ -53,4 +53,15 @@ public class ErmBillConst {
 	 */
 	public static final String ExpamoritizeInfo_MDID = "a65f104f-f472-44c3-83d0-7789347c924c";
 	
+	
+	/**
+	 * 费用申请单表体元数据编码
+	 */
+	public static final String MatterApp_MDCODE_DETAIL = "mtapp_detail";
+	
+	/**
+	 * 费用申请单交易类型前缀
+	 */
+	public static final String MatterApp_PREFIX = "261";
+	
 }

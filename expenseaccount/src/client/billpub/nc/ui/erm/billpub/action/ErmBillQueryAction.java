@@ -1,5 +1,6 @@
 package nc.ui.erm.billpub.action;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,12 @@ public class ErmBillQueryAction extends QueryAction {
 	private static final long serialVersionUID = 1L;
 
 	private boolean isFirstCall = true;
+	
+	@Override
+	public void doAction(ActionEvent e) throws Exception {
+		getQueryCoinditionDLG();
+		super.doAction(e);
+	}
 
 	@Override
 	protected IQueryConditionDLG getQueryCoinditionDLG() {

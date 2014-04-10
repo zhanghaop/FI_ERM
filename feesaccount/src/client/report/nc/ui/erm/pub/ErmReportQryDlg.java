@@ -7,7 +7,6 @@ import java.awt.event.ItemListener;
 import java.util.List;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
-import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.logging.Log;
 import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
@@ -120,7 +119,7 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 		return StringUtils.isEmpty(errMsg) ? null : errMsg;
 	}
 
-	@Override
+    @Override
 	protected void resetUserReportQueryCondVO(IReportQueryCond queryCond) {
 		ReportQueryCondVO queryCondVO = (ReportQueryCondVO) queryCond;
 		((UIComboBox) getComponent(QRY_MODE_COMB)).setSelectedItem(queryCondVO.getQryMode()); // 查询方式
@@ -188,6 +187,9 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			final String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
 			String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
 			String pk_org = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+			if (!hasPerm(pk_org, getLoginContext().getPkorgs())) {
+			    pk_org = null;
+			}
 			financialOrgRef.setPK(pk_org);
             financialOrgRef.getRefModel().setFilterPks(getAllPermissionOrgs());
             financialOrgRef.setDisabledDataButtonShow(true);
@@ -200,7 +202,11 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 			}
 
 			// 设置查询对象可参照组织
-			setPk_org(new String[] { pk_org });
+			if (pk_org != null) {
+		         setPk_org(new String[] { pk_org });
+			} else {
+			    setPk_org(null);
+			}
 
 			// 单据状态
 			normalCondCompList.add(getShowLabel(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UC000-0000804")/*@res "单据状态"*/));
@@ -212,7 +218,8 @@ public class ErmReportQryDlg extends ErmAbstractReportBaseDlg {
 						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_SAVE, FipubReportResource
 								.getBillStatusSaveLbl()),
 						new DefaultConstEnum(IErmReportConstants.BILL_STATUS_COMMIT,
-								ErmMatterAppConst.BILLSTATUS_COMMITED_NAME),
+						        nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+						                "201212_0", "0201212-0081")/* @res "已提交" */),// 单据状态——已提交
 						new DefaultConstEnum(IPubReportConstants.BILL_STATUS_CONFIRM, FipubReportResource
 								.getBillStatusAuditLbl()) });
 			}else {

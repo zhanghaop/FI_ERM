@@ -1,6 +1,5 @@
 package nc.bs.erm.matterapp;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import nc.bs.arap.util.SqlUtils;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.erm.util.ErMdpersistUtil;
@@ -26,6 +24,7 @@ import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.SuperVO;
@@ -72,17 +71,17 @@ public class ErmMatterAppDAO {
 		setRowNo(vo);
 		try {
 			String pk = getService().saveBill(vo);
-			AggMatterAppVO savedVo = getQryService().queryBillOfVOByPK(AggMatterAppVO.class, pk, false);
-			savedVo.getParentVO().setHasntbcheck(vo.getParentVO().getHasntbcheck());//设置预算控制
-			return savedVo;
+//			vo.getParentVO().setPk_mtapp_bill(pk);
+			fillExtendTabVO(vo, pk, vo);
+			return vo;
 		} catch (MetaDataException e) {
 			throw new BusinessException(e.getCause().getMessage(),e.getCause());
 		}
+		
 	}
 	
 	/**
 	 * 设置行号
-	 * 
 	 * @param vo
 	 */
 	private void setRowNo(AggMatterAppVO vo) {
@@ -122,11 +121,42 @@ public class ErmMatterAppDAO {
 		setRowNo(vo);
 		try {
 			String pk = getService().saveBillWithRealDelete(vo);
-			AggMatterAppVO savedVo = getQryService().queryBillOfVOByPK(AggMatterAppVO.class, pk, false);
-			savedVo.getParentVO().setHasntbcheck(vo.getParentVO().getHasntbcheck());
-			return savedVo;
+			AggMatterAppVO newvo = getQryService().queryBillOfVOByPK(AggMatterAppVO.class, pk, false);
+			
+			if(newvo != null){//补齐计算属性
+				newvo.getParentVO().setHasntbcheck(vo.getParentVO().getHasntbcheck());
+				newvo.getParentVO().setIsignoreatpcheck(vo.getParentVO().getIsignoreatpcheck());
+	            fillExtendTabVO(vo, pk, newvo);
+			}
+			return vo;
 		} catch (MetaDataException e) {
 			throw new BusinessException(e.getCause().getMessage(), e.getCause());
+		}
+	}
+
+	/**
+	 * 补充动态扩展页签的信息，且为扩展页签设置外键值
+	 * 
+	 * @param vo
+	 * @param pk
+	 * @param newvo
+	 */
+	private void fillExtendTabVO(AggMatterAppVO vo, String pk,
+			AggMatterAppVO newvo) {
+		// 为动态扩展子表信息设置到返回的聚合vo中
+		vo.setParentVO(newvo.getParentVO());
+		vo.setChildrenVO(newvo.getChildrenVO());
+		
+		String[] allExtendTabcodes = vo.getAllExtendTabcodes();
+		if(allExtendTabcodes != null && allExtendTabcodes.length > 0){
+			for (int i = 0; i < allExtendTabcodes.length; i++) {
+				CircularlyAccessibleValueObject[] tableVOs = vo.getTableVO(allExtendTabcodes[i]);
+				if(tableVOs != null && tableVOs.length >0){
+					for (CircularlyAccessibleValueObject tabvo : tableVOs) {
+						tabvo.setAttributeValue(MatterAppVO.PK_MTAPP_BILL, pk);
+					}
+				}
+			}
 		}
 	}
 
@@ -203,13 +233,7 @@ public class ErmMatterAppDAO {
 	}
 	
 	public Map<String, List<MtAppDetailVO>> queryMtDetailsByPks(String[] mAppPk) throws BusinessException {
-	    String sWhere;
-	    try {
-	        sWhere = SqlUtils.getInStr(MtAppDetailVO.PK_MTAPP_BILL, mAppPk, true);
-        } catch (SQLException e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-
+	    String sWhere = SqlUtils.getInStr(MtAppDetailVO.PK_MTAPP_BILL, mAppPk, true);
         Map<String, List<MtAppDetailVO>> map = new HashMap<String, List<MtAppDetailVO>>();
         @SuppressWarnings("unchecked")
         Collection<MtAppDetailVO> result = getBaseDAO().retrieveByClause(MtAppDetailVO.class, sWhere);

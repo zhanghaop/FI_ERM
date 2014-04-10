@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,17 +22,22 @@ import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.erm.util.ErmBillTypeUtil;
 import nc.bs.logging.Log;
 import nc.bs.logging.Logger;
+import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.bd.pub.IBDMetaDataIDConst;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.itf.fipub.report.IReportQueryCond;
 import nc.ui.arap.bx.BXQryTplUtil;
+import nc.ui.arap.bx.remote.PsnVoCall;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.RefInitializeCondition;
 import nc.ui.er.djlx.ErmTrantypeRefModel;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.fipub.comp.ReportNormalPanel;
 import nc.ui.fipub.comp.ReportQryDlg;
+import nc.ui.fipub.comp.ReportUiUtil;
 import nc.ui.fipub.comp.editorandrender.QueryObjTableCellEditor;
+import nc.ui.org.ref.FinanceOrgDefaultRefTreeModel;
+import nc.ui.org.ref.LiabilityCenterDefaultRefModel;
 import nc.ui.pub.beans.UICheckBox;
 import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIRefPane;
@@ -43,7 +49,7 @@ import nc.ui.querytemplate.filter.IFilter;
 import nc.ui.querytemplate.filtereditor.DefaultFilterEditor;
 import nc.ui.querytemplate.filtereditor.IFilterEditor;
 import nc.ui.querytemplate.meta.FilterMeta;
-import nc.util.fi.pub.SqlUtils;
+import nc.ui.resa.refmodel.CostCenterTreeRefModel;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.bd.currtype.CurrtypeVO;
 import nc.vo.ep.bx.BusiTypeVO;
@@ -53,9 +59,7 @@ import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.report.ReportInitializeItemVO;
 import nc.vo.fipub.report.ReportQueryCondVO;
 import nc.vo.fipub.utils.RefConstant;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.query.QueryConditionVO;
 import nc.vo.pub.query.QueryTempletTotalVO;
@@ -92,8 +96,10 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 	private static final String BX_FYDWBM = "fydwbm";
 	private static final String BX_DWBM = "dwbm";
 	private BusiTypeVO busTypeVO;
-    private final String djlx;
-	
+    private String djlx;
+
+    private boolean filterByFunPermLiabilityCenter = true;
+    
 	protected BusiTypeVO getBusTypeVO(){
 		if(busTypeVO==null){
 			busTypeVO = ErmBillTypeUtil.getBusTypeVO(BXConstans.BILLTYPECODE_CLFBX,BXConstans.BX_DJDL);
@@ -105,10 +111,35 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
             String strNodeCode, int iSysCode, TemplateInfo ti, String title,
             String djlx) {
 		super(parent, context, strNodeCode, iSysCode, ti, title);
-        this.djlx = djlx;
+		if (StringUtils.isEmpty(djlx)) {
+		    this.djlx = parseDjlx(strNodeCode);
+		} else {
+	        this.djlx = djlx;
+		}
 		initialize();
 	}
+	
+	private static final String[][] funccodes = new String[][] {
+	  new String[]{"20110501", "263X"},//借款余额
+	  new String[]{"20110502", "263X"},//借款明细
+	  new String[]{"20110503", "263X"},//借款账龄
+	  new String[]{"20110504", "264X,265X,266X"},//费用汇总
+	  new String[]{"20110505", "264X,265X,266X"},//费用明细
+	  new String[]{"20110506", null},//费用趋势图
+	  new String[]{"20110507", "261X"}, //费用申请
+	};
 
+    private String parseDjlx(String nodeCode) {
+        String sDjlx = null;
+        for (int nPos = 0; nPos < funccodes.length; nPos++) {
+            if (nodeCode.startsWith(funccodes[nPos][0])) {
+                sDjlx = funccodes[nPos][1];
+                break;
+            }
+        }
+        return sDjlx;
+    }
+    
 	private void initialize(){
 		// 修改查询条件
 		registerQueryTemplateTotalVOProceeor(new IQueryTemplateTotalVOProcessor() {
@@ -138,6 +169,27 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 	 */
 	protected abstract String[] getOrgRelationField();
 
+	@Override
+    public String checkCondition() {
+        String condition = null;
+        String beanId = null;
+        QueryTempletTotalVO totalVo = null;
+        try {
+            totalVo = getQryCondEditor().getTotalVO();
+            if (totalVo != null && totalVo.getTempletVO() != null) {
+                beanId = totalVo.getTempletVO().getMetaclass(); 
+                totalVo.getTempletVO().setMetaclass(null);
+            }
+        } catch (BusinessException e) {
+            Logger.error(e.getMessage(), e);
+        }
+        condition =  super.checkCondition();
+        if (beanId != null && totalVo != null) {
+//            totalVo.getTempletVO().setMetaclass(beanId);
+        }
+        return condition;
+    }
+	
 	/**
 	 * 业务单元变化监听器<br>
 	 *
@@ -186,7 +238,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
                 FilterMeta filterMeta = filter.getFilterMeta();
                 Component[] components = filter.getFieldValueEditor()
                 .getFieldValueEditorComponent().getComponents();
-                if (!ArrayUtil.isEmpty(components)) {
+                if (!ArrayUtils.isEmpty(components)) {
                     for (Component component : components) {
                         if (component instanceof UIRefPane) {
                             UIRefPane refPane = (UIRefPane) component;
@@ -196,6 +248,20 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
                                     excludeOrgChange(filterMeta.getFieldCode())) {
                                 if (refModel != null && !(refModel instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel)) {
                                     String[] orgArray = parseDataPowerOrgs(context.getPkorgs(), filterMeta.getFieldCode());
+                                    if (isPkOrgSameAssumeOrg() && 
+                                            getExcludeAssumeOrgRefList().contains(filterMeta.getFieldCode())) {
+                                        orgArray = insertHeadOneOrg(newPk_orgs[0], orgArray);
+                                    } else {
+                                        RefInitializeCondition[] conditions = refPane.getRefUIConfig().getRefFilterInitconds();
+                                        String defPkOrg = null;
+                                        if (conditions != null) {
+                                            for (RefInitializeCondition condition : conditions) {
+                                                defPkOrg = condition.getDefaultPk();
+                                                break;
+                                            }
+                                        }
+                                        orgArray = insertHeadOneOrg(defPkOrg, orgArray);
+                                    }
                                     configDataPowerRef(refPane, orgArray);
                                 }
                                 //费用账需要联动过滤费用承担单位区域字段
@@ -207,15 +273,17 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
                                         refPane.setMultiCorpRef(false);
                                         refModel.setPk_org(newPk_orgs[0]);
                                         if (refModel instanceof nc.ui.resa.refmodel.CostCenterTreeRefModel) {
-                                            refModel.setWherePart(" " + CostCenterVO.PK_FINANCEORG + "=" + "'"
-                                                    + newPk_orgs[0] + "'");
+                                            CostCenterTreeRefModel costModel = (CostCenterTreeRefModel)refModel;
+                                            costModel.setCurrentOrgCreated(false);
+                                            costModel.setOrgType(CostCenterVO.PK_PROFITCENTER);
                                         }
                                     }
                                 }
                             } else {
-                                refPane.setMultiCorpRef(false);
+//                                refPane.setMultiCorpRef(false);
                                 if (!ArrayUtils.isEmpty(newPk_orgs)) {
                                     refModel.setPk_org(newPk_orgs[0]);
+                                    configDataPowerRef(refPane, new String[] { newPk_orgs[0]});
                                 } else {
                                     refModel.setPk_org(null);
                                 }
@@ -249,12 +317,19 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 
     private boolean excludeOrgChange(String fieldCode) {
         boolean exclude = false;
-	    if (getExcludePayOrgRefList().contains(fieldCode) ||
-	            getExcludeAssumeOrgRefList().contains(fieldCode) ||
-	            getExcludeJkOrgRefList().contains(fieldCode) ||
-	            getExcludeBxOrgRefList().contains(fieldCode)) {
-	        exclude = true;
-	    }
+        if (isPkOrgSameAssumeOrg() && getExcludeAssumeOrgRefList().contains(fieldCode)) {
+            exclude = false;
+        } else {
+            if (getExcludePayOrgRefList().contains(fieldCode) ||
+                    getExcludeAssumeOrgRefList().contains(fieldCode) ||
+                    getExcludeJkOrgRefList().contains(fieldCode) ||
+                    getExcludeBxOrgRefList().contains(fieldCode) ||
+                    getExcludeCostCenterRefList().contains(fieldCode) ||
+                    getExcludeLiabilityCenterRefList().contains(fieldCode)) {
+                exclude = true;
+            }
+        }
+	    
 	    return exclude;
 	}
 	
@@ -283,7 +358,30 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 //	    }
 	    return excludePayOrgField;
 	}
-	   
+
+	private static List<String> excludeCostCenter = new ArrayList<String>();
+	
+	private static List<String> getExcludeCostCenterRefList() {
+        if (excludeCostCenter.isEmpty()) {
+            excludeCostCenter.add("pk_resacostcenter");
+//
+            excludeCostCenter.add("zb.pk_resacostcenter");
+        }
+
+        return excludeCostCenter;
+    }
+	
+    private static List<String> excludeLiabilityCenter = new ArrayList<String>();
+    
+    private static List<String> getExcludeLiabilityCenterRefList() {
+        if (excludeLiabilityCenter.isEmpty()) {
+            excludeLiabilityCenter.add("pk_pcorg");//利润中心
+            excludeLiabilityCenter.add("zb.pk_pcorg");
+        }
+
+        return excludeLiabilityCenter;
+    }	
+    
     private static List<String> excludeAssumeOrgRefField = new ArrayList<String>();
 
     private static List<String> getExcludeAssumeOrgRefList() {
@@ -292,17 +390,33 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
             excludeAssumeOrgRefField.add("assume_org");
             excludeAssumeOrgRefField.add("fydeptid");
             excludeAssumeOrgRefField.add("assume_dept");
-            excludeAssumeOrgRefField.add("pk_resacostcenter");
+//            excludeAssumeOrgRefField.add("pk_resacostcenter");
             excludeAssumeOrgRefField.add("szxmid");//收支项目
             excludeAssumeOrgRefField.add("pk_iobsclass");//收支项目
-
+            excludeAssumeOrgRefField.add("jobid");//项目
+            excludeAssumeOrgRefField.add("pk_project");//项目
+            excludeAssumeOrgRefField.add("projecttask");//项目任务
+            excludeAssumeOrgRefField.add("pk_wbs");//项目任务
+            excludeAssumeOrgRefField.add("hbbm");//供应商
+            excludeAssumeOrgRefField.add("pk_supplier");//供应商
+            excludeAssumeOrgRefField.add("customer");//客户
+            excludeAssumeOrgRefField.add("pk_customer");//客户
+            
             excludeAssumeOrgRefField.add("zb.fydwbm");
             excludeAssumeOrgRefField.add("zb.assume_org");
             excludeAssumeOrgRefField.add("zb.fydeptid");
             excludeAssumeOrgRefField.add("zb.assume_dept");
-            excludeAssumeOrgRefField.add("zb.pk_resacostcenter");
+//            excludeAssumeOrgRefField.add("zb.pk_resacostcenter");
             excludeAssumeOrgRefField.add("zb.szxmid");//收支项目
             excludeAssumeOrgRefField.add("zb.pk_iobsclass");//收支项目
+            excludeAssumeOrgRefField.add("zb.pk_wbs");//项目任务
+            excludeAssumeOrgRefField.add("zb.jobid");//项目
+            excludeAssumeOrgRefField.add("zb.pk_project");//项目
+            excludeAssumeOrgRefField.add("zb.projecttask");//项目任务
+            excludeAssumeOrgRefField.add("zb.hbbm");//供应商
+            excludeAssumeOrgRefField.add("zb.pk_supplier");//供应商
+            excludeAssumeOrgRefField.add("zb.customer");//客户
+            excludeAssumeOrgRefField.add("zb.pk_customer");//客户
         }
 //        if (excludeAssumeOrgRefM.isEmpty()) {
 //            excludeAssumeOrgRefM.add("nc.ui.org.ref.FinanceOrgDefaultRefTreeModel");//财务组织
@@ -321,17 +435,17 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
             excludeJkOrgRefField.add("deptid");
             excludeJkOrgRefField.add("jkbxr");
             excludeJkOrgRefField.add("skyhzh");
-            excludeJkOrgRefField.add("pk_project");
-            excludeJkOrgRefField.add("pk_wbs");
-            excludeJkOrgRefField.add("pk_supplier");
+//            excludeJkOrgRefField.add("pk_project");
+//            excludeJkOrgRefField.add("pk_wbs");
+//            excludeJkOrgRefField.add("pk_supplier");
 
             excludeJkOrgRefField.add("zb.dwbm");
             excludeJkOrgRefField.add("zb.deptid");
             excludeJkOrgRefField.add("zb.jkbxr");
             excludeJkOrgRefField.add("zb.skyhzh");
-            excludeJkOrgRefField.add("zb.pk_project");
-            excludeJkOrgRefField.add("zb.pk_wbs");
-            excludeJkOrgRefField.add("zb.pk_supplier");
+//            excludeJkOrgRefField.add("zb.pk_project");
+//            excludeJkOrgRefField.add("zb.pk_wbs");
+//            excludeJkOrgRefField.add("zb.pk_supplier");
         }
 //      excludeAssumeOrgRefM.add("nc.ui.org.ref.FinanceOrgDefaultRefTreeModel");//财务组织
 //      excludeAssumeOrgRefM.add("nc.ui.org.ref.DeptDefaultRefModel");//部门
@@ -364,8 +478,6 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
         return excludeBxOrgRefField;
     }
     
-    
-    
 	@Override
 	protected String doBusiCheck() {
 		// ①执行父类校验
@@ -376,7 +488,6 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 
 		try {
 			errMsg = "";
-
 	        ReportQueryCondVO queryCondVO = (ReportQueryCondVO) super.getReportQueryCondVO();
 	        String currencyType = queryCondVO.getLocalCurrencyType();
 			// ②财务组织不允许为空
@@ -413,7 +524,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 		return tempLabel;
 	}
 
-	public String convertQueryTemplateSql(String oriSql) {
+	public String convertQueryTemplateSql(Map<String, Object> fieldMap, String oriSql) {
 		if (StringUtils.isEmpty(oriSql)) {
 			return "";
 		}
@@ -439,8 +550,12 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 				tableAlas.put(entry.getKey(), entry.getValue());
 			}
 		}
-		if(tableAlas.isEmpty()){
-			throw new BusinessRuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011ermpub0316_0","02011ermpub0316-0015")/*@res "不支持别名"*/);
+		if(tableAlas.isEmpty() && !fieldMap.isEmpty()){
+		    Iterator<Entry<String, Object>> iter = fieldMap.entrySet().iterator();
+		    while (iter.hasNext()) {
+		        Entry<String, Object> entry = iter.next();
+		        oriSql = oriSql.replaceAll(entry.getKey(), "zb." + entry.getKey());
+		    }
 		}
 		for (Entry<String, String> entry : tableAlas.entrySet()) {
 			oriSql = StringUtils.replace(oriSql, entry.getKey(), entry.getValue());
@@ -452,7 +567,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 	public IReportQueryCond getReportQueryCondVO() throws BusinessException {
 		ReportQueryCondVO queryCondVO = (ReportQueryCondVO) super.getReportQueryCondVO();
 		try {
-			getQryCondEditor().setPowerEnable(false);
+//			getQryCondEditor().setPowerEnable(false);
 			String sqlWhere = null;
 			if(getSysCode()==ErmReportQryDlg.ERM_MATTERAPP){
 				sqlWhere = getQryCondEditor().getQueryScheme()
@@ -461,13 +576,25 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 				sqlWhere = getQryCondEditor().getQueryScheme()
 				.getTableListFromWhereSQL().getWhere();
 			}
-			queryCondVO.setWhereSql(convertQueryTemplateSql(sqlWhere));
+
+	        Map<String, Object> fieldMap = new HashMap<String, Object>();
+	        List<IFilterEditor> simpleEditorFilterEditors = getSimpleEditorFilterEditors();
+	        for(IFilterEditor editor: simpleEditorFilterEditors){
+	            DefaultFilterEditor filterEditor = (DefaultFilterEditor) editor;
+	            if (filterEditor.getFilter().getSqlString() != null) {
+	                fieldMap.put(filterEditor.getFilterMeta().getFieldCode(), 
+	                        filterEditor.getFilter().getSqlString());	                
+	            }
+	        }
+	        queryCondVO.getUserObject().put("fieldSqlMap", fieldMap);
+            queryCondVO.setWhereSql(convertQueryTemplateSql(fieldMap, sqlWhere));
+	        
 			setQueryCond(queryCondVO);
 		} catch (InvalidAccperiodExcetion e) {
 			Logger.error(e.getMessage(), e, this.getClass(), "getReportQueryCondVO");
 			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0022")/*@res "获取界面查询条件异常。"*/);
 		} finally{
-			getQryCondEditor().setPowerEnable(true);
+//			getQryCondEditor().setPowerEnable(true);
 		}
 
 		return queryCondVO;
@@ -507,14 +634,30 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
                             return;
                         }
                         if (!list.contains(itemVOs[i].getBd_mdid())) {
+                            String[] orgArray = null;
                             QryObj qryObj = qryObjList.get(i);
-                            String[] orgArray = parseDataPowerOrgs(pk_orgs, qryObj.getOriginFld());
+                            AbstractRefModel refModel = refPane.getRefModel();
+                            if (refModel instanceof nc.ui.bd.ref.busi.UserDefaultRefModel ||
+                                    (!"261X".equals(djlx) && refModel instanceof nc.ui.bd.ref.model.PsndocDefaultRefModel)) {
+                                orgArray = parseDataPowerOrgs(pk_orgs, qryObj.getOriginFld());
+                            } else if (pk_orgs != null && pk_orgs.length > 0){
+                                orgArray = pk_orgs;
+                            } else {
+                                orgArray = parseDataPowerOrgs(pk_orgs, qryObj.getOriginFld());
+                            }
                             configDataPowerRef(refPane, orgArray);
                             super.setPk_org(orgArray);
-
-                            AbstractRefModel refModel = refPane.getRefModel();
+                            
                             if (RefConstant.REF_NODENAME_COSTCENTER.equals(refModel.getRefNodeName())) {
                                 refModel.addWherePart(null);
+                            }
+                            
+                            if (refPane.getRefModel() instanceof nc.ui.bd.ref.model.PsndocDefaultRefModel) {
+                                String powerSql = refModel.getDataPowerSubSql(refModel.getTableName(),
+                                        refModel.getDataPowerColumn(), refModel.getResourceID());
+                                if (powerSql == null) {
+                                    refPane.setDataPowerOperation_code(null);
+                                }
                             }
                         } else {
                             refPane.setMultiCorpRef(false);
@@ -523,6 +666,29 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
                     }
                 }
             }
+
+//            private UIPanel qryObjPanel = null; // 查询对象面板
+//            
+//            @Override
+//            protected UIPanel getQryObjPanel() throws BusinessException {
+//                if (qryObjPanel == null) {
+//                    qryObjPanel = super.getQryObjPanel();
+//                    AggReportInitializeVO repInitVO = getRepInitVO();
+//                    // 设置表体数据
+//                    if (!ArrayUtils.isEmpty(repInitVO.getChildrenVO())) {
+//                        ReportInitializeItemVO[] bodyVos = (ReportInitializeItemVO[]) repInitVO.getChildrenVO();
+//                        for (int i = 0; i < bodyVos.length && i < qryObjTblRowCount; i++) {
+//                            String dspName = 
+//                                nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("arap", bodyVos[i].getResid());
+//                            if (!bodyVos[i].getResid().equals(dspName)) {
+//                                getQryObjTable().getModel().setValueAt(dspName, i, 0);
+//                            }
+//                        }
+//                    }
+//                }
+//                return qryObjPanel;
+//            }
+            
         };
 
         List<Component> componentList = getComponentList();
@@ -565,55 +731,123 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 	
 	private void configDataPowerRef(UIRefPane refPane, String[] pk_orgs) {
 	    AbstractRefModel model = refPane.getRefModel();
-	    if (model instanceof nc.ui.org.ref.LiabilityCenterDefaultRefModel) {
+	    if (model instanceof LiabilityCenterDefaultRefModel) {
 	        refPane.setMultiCorpRef(false);
+	    } else if (model instanceof CostCenterTreeRefModel) {
+	        model.setFilterRefNodeName(new String[]{"利润中心"/* -=notranslate=- */});
+	        CostCenterTreeRefModel costModel = (CostCenterTreeRefModel)model;
+            costModel.setCurrentOrgCreated(false);
+            costModel.setOrgType(CostCenterVO.PK_PROFITCENTER);
+	        refPane.setMultiCorpRef(true);
 	    } else {
 	        refPane.setMultiCorpRef(true);
 	    }
+	    boolean needMatch = false;
+	    if (model instanceof CostCenterTreeRefModel || 
+                model instanceof LiabilityCenterDefaultRefModel) {
+	        needMatch = true;
+        }
         refPane.setMultiOrgSelected(true);
         refPane.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
         refPane.setMultiRefFilterPKs(pk_orgs);
+        
         RefInitializeCondition[] conditions = refPane.getRefUIConfig().getRefFilterInitconds();
         if (conditions != null) {
             for (RefInitializeCondition condition : conditions) {
                 condition.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
-                if (pk_orgs != null && pk_orgs.length > 0) {
+                if (pk_orgs != null && pk_orgs.length > 0 && 
+                        (needMatch && matchedLiabilityCenter(pk_orgs[0]) || 
+                                !needMatch)) {
                     condition.setDefaultPk(pk_orgs[0]);
+                } else {
+                    condition.setDefaultPk(Long.toString(System.currentTimeMillis()));
                 }
             }
         }
 	}
 	
+//	private String[] setDefPkOrgFirst(String defPk, String[] pkOrgs) {
+//	    String[] results = null;
+//	    if (StringUtil.isEmpty(defPk) || pkOrgs == null || pkOrgs.length == 0) {
+//	        results = pkOrgs;
+//	    } else {
+//	        for (String pkOrg : pkOrgs) {
+//	            if (defPk.equals(pkOrg)) {
+//	                results = swap(pkOrg, pkOrgs);
+//	                break;
+//	            }
+//	        }
+//	        results = (results == null ? pkOrgs : results);
+//	    }
+//	    return results;
+//	}
+	
+	private boolean matchedLiabilityCenter(String pkOrg) {
+	    LiabilityCenterDefaultRefModel refModel = new LiabilityCenterDefaultRefModel();
+        refModel.setPk_org(pkOrg);
+        refModel.setMatchPkWithWherePart(true);
+        refModel.setPKMatch(true);
+        @SuppressWarnings("rawtypes")
+        Vector vec = refModel.matchPkData(pkOrg);
+        return !(vec == null || vec.isEmpty());
+	}
+	
 	private String[] parseDataPowerOrgs(String[] pk_orgs, String fieldCode) {
-	    nc.ui.org.ref.FinanceOrgDefaultRefTreeModel fiRefModel = new nc.ui.org.ref.FinanceOrgDefaultRefTreeModel();
-        fiRefModel.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
-//        String dataPower = fiRefModel.getDataPowerSubSql(fiRefModel.getTableName(),
-//                fiRefModel.getDataPowerColumn(), fiRefModel.getResourceID());
         LoginContext context = (LoginContext)getContext().getAttribute("key_private_context");
         Object[] pkOrgs = null;
-        if (isPkOrgSameAssumeOrg() && getExcludeAssumeOrgRefList().contains(fieldCode)) {
+        if (isPkOrgSameAssumeOrg() && !getExcludeCostCenterRefList().contains(fieldCode.toLowerCase()) 
+                && getExcludeAssumeOrgRefList().contains(fieldCode.toLowerCase())) {
             //走功能权限
             pkOrgs = context.getPkorgs();
+        } else if (getExcludeCostCenterRefList().contains(fieldCode.toLowerCase()) && filterByFunPermLiabilityCenter) {
+            pkOrgs = context.getPkorgs();
+        } else if (getExcludeLiabilityCenterRefList().contains(fieldCode.toLowerCase()) && filterByFunPermLiabilityCenter) {
+            pkOrgs = context.getPkorgs();
         } else {
-//            if (dataPower == null) {
-//                pkOrgs = context.getPkorgs();
-//            } else {
+            FinanceOrgDefaultRefTreeModel fiRefModel = new FinanceOrgDefaultRefTreeModel();
+            fiRefModel.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
+            String dataPower = fiRefModel.getDataPowerSubSql(fiRefModel.getTableName(),
+                    fiRefModel.getDataPowerColumn(), fiRefModel.getResourceID());
+            if (dataPower == null) {
+                pkOrgs = context.getPkorgs();
+            } else {
                 @SuppressWarnings("rawtypes")
                 Vector vecFiOrg = fiRefModel.getData();
                 fiRefModel.setSelectedData(vecFiOrg);
                 pkOrgs = fiRefModel.getValues("pk_financeorg", true);
-//            }
+            }
+        }
+        if (pkOrgs == null || pkOrgs.length == 0) {
+            pkOrgs = new Object[] { Long.toString(System.currentTimeMillis()) };
         }
         String[] orgArray = null;
         if (pk_orgs != null && pk_orgs.length > 0) {
-            orgArray = swap(pk_orgs[0], pkOrgs);
+            if (hasPerm(pk_orgs[0], pkOrgs)) {
+                orgArray = insertHeadOneOrg(pk_orgs[0], pkOrgs);
+            } else {
+                orgArray = swap(pkOrgs[0].toString(), pkOrgs);;
+            }
         } else if (pkOrgs != null && pkOrgs.length > 0) {
             orgArray = swap(pkOrgs[0].toString(), pkOrgs);
         }
         return orgArray;
 	}
+	
+	protected boolean hasPerm(String pkOrg, Object[] permOrgs) {
+	    boolean hasPerm = false;
+	    if (permOrgs != null && permOrgs.length > 0) {
+	        for (Object permOrg : permOrgs) {
+	            if (permOrg.equals(pkOrg)) {
+	                hasPerm = true;
+	                break;
+	            }
+	        }
+	    }
+	    return hasPerm;
+	}
+	
 
-    private String[] swap(String pkOrg, Object[] pkOrgs) {
+    protected String[] swap(String pkOrg, Object[] pkOrgs) {
         String[] pksOrg = null;
         if (pkOrgs != null) {
             pksOrg = new String[pkOrgs.length];
@@ -629,47 +863,90 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
         return pksOrg;
     }
     
+    private String[] insertHeadOneOrg(String pkOrg, Object[] pkOrgs) {
+        String[] pksOrg = null;
+        if (pkOrgs != null) {
+            pksOrg = new String[pkOrgs.length + 1];
+            pksOrg[0] = pkOrg;
+            for (int nPos = 0; nPos < pkOrgs.length; nPos++) {
+                pksOrg[nPos + 1] = (String)pkOrgs[nPos];
+            }
+        } else {
+            pksOrg = new String[] { pkOrg };
+        }
+        return pksOrg;
+    }
+    
 	@Override
 	protected void resetTemplateField(CriteriaChangedEvent evt) {
-		if(evt.getCriteriaEditor()!=null){
-		    List<UIRefPane> listRefPane = BXQryTplUtil.getRefPaneListByFieldCode(evt,
+	    if(evt.getCriteriaEditor()!=null){
+	        String key = PsnVoCall.FIORG_PK_ + ErUiUtil.getPk_psndoc() + ErUiUtil.getPK_group();
+            String fiorg = (String) WorkbenchEnvironment.getInstance().getClientCache(key); // 人员所属组织
+            String defPkOrg = StringUtils.isEmpty(ReportUiUtil.getDefaultOrgUnit()) ? fiorg : ReportUiUtil.getDefaultOrgUnit();
+            List<UIRefPane> listRefPane = BXQryTplUtil.getRefPaneListByFieldCode(evt,
                     evt.getFieldCode());
 		    if (listRefPane != null && listRefPane.size() > 0) {
 		        for (UIRefPane refPane : listRefPane) {
 		            String[] pkOrgs = getPk_org();
-	                
 	                AbstractRefModel refModel = refPane.getRefModel();
 	                if (refModel != null) {
 	                    LoginContext context = (LoginContext)getContext().getAttribute("key_private_context");
-	                    if (!ArrayUtils.isEmpty(pkOrgs)) {
+	                    if (excludeOrgChange(evt.getFieldCode())) {
+	                        //不与主组织联动
+                            pkOrgs = null;
+	                    } else if (!ArrayUtils.isEmpty(pkOrgs)) {
 	                        refModel.setPk_org(pkOrgs[0]);
 	                    }
 	                    if (refModel instanceof ErmTrantypeRefModel
 	                            && StringUtils.isNotEmpty(djlx)) {
-	                        String[] djlxArr = djlx.split(",");
-	                        try {
-	                            String billtypeWhere = SqlUtils.getInStr("parentbilltype", djlxArr);
-                                refModel.setWherePart(billtypeWhere);
-                            } catch (BusinessException e) {
-                                Logger.error(e.getMessage(), e);
-                            }
+	                        if (!isPkOrgSameAssumeOrg() && djlx.indexOf("264X") >= 0) {
+                                ((ErmTrantypeRefModel)refModel).setDjlx("264X");
+	                        } else {
+	                            ((ErmTrantypeRefModel)refModel).setDjlx(djlx);
+	                        }
 	                    }
 
-	                    String[] orgArray = parseDataPowerOrgs(pkOrgs, evt.getFieldCode());
-	                    configDataPowerRef(refPane, orgArray);
+                        String[] orgArray = parseDataPowerOrgs(pkOrgs, evt.getFieldCode());
+                        if (refModel instanceof nc.ui.bd.ref.busi.UserDefaultRefModel) {
+                            orgArray = insertHeadOneOrg(context.getPk_group(), orgArray);
+                        }
+
+                        if (evt.getEventtype() == CriteriaChangedEvent.FILTEREDITOR_INITIALIZED) {
+                            if (pkOrgs != null && pkOrgs.length > 0 && 
+                                    isPkOrgSameAssumeOrg() && 
+                                    getExcludeAssumeOrgRefList().contains(evt.getFieldCode().toLowerCase())) {
+                                orgArray = insertHeadOneOrg(pkOrgs[0], pkOrgs);
+                            } else {
+                                if (hasPerm(defPkOrg, getLoginContext().getPkorgs())) {
+                                    orgArray = insertHeadOneOrg(defPkOrg, orgArray);
+                                }                                
+                            }
+                        } else if (evt.getEventtype() == CriteriaChangedEvent.FILTER_CHANGED) {
+                            orgArray = insertHeadOneOrg(refModel.getPk_org(), orgArray);
+                        }
+                        configDataPowerRef(refPane, orgArray);
+                        if (!hasPerm(refModel.getPk_org(), orgArray)) {
+                            refModel.setPk_org(orgArray[0]);
+                        }
 	                    
-	                    if (refModel instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel &&
+	                    if ((refModel instanceof nc.ui.org.ref.FinanceOrgDefaultRefTreeModel ||
+	                            refModel instanceof LiabilityCenterDefaultRefModel) &&
 	                            evt.getEventtype() == CriteriaChangedEvent.FILTEREDITOR_INITIALIZED) {
-	                        if (isPkOrgSameAssumeOrg() && getExcludeAssumeOrgRefList().contains(evt.getFieldCode())) {
+	                        if (isPkOrgSameAssumeOrg() && getExcludeAssumeOrgRefList().contains(evt.getFieldCode().toLowerCase())) {
 	                            refModel.setFilterPks(context.getPkorgs());   
+	                        } else if (getExcludeLiabilityCenterRefList().contains(evt.getFieldCode().toLowerCase()) && 
+	                                filterByFunPermLiabilityCenter) {
+                                refModel.setFilterPks(context.getPkorgs());
+	                        } else {
+	                            refModel.setFilterPks(orgArray);
 	                        }
 	                        refPane.setMultiCorpRef(false);
 	                    }
-	                    refPane.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制,
+	                    refPane.setDataPowerOperation_code(IPubReportConstants.FI_REPORT_REF_POWER); // 数据权限控制
 	                }
 		        }
 		    }
-            
+		    
             if ("pk_payorg".equals(evt.getFieldCode())) {
                 //支付单位
                 BXQryTplUtil.orgCriteriaChanged(evt, getExcludePayOrgRefList());
@@ -689,7 +966,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
             } else if (getExcludeAssumeOrgRefList().contains(evt.getFieldCode())) {
                 //费用承担单位
                 String[] pkOrgs = getPk_org(evt, "fydwbm");
-                if (ArrayUtil.isEmpty(pkOrgs)) {
+                if (ArrayUtils.isEmpty(pkOrgs)) {
                     pkOrgs = getPk_org(evt, "assume_org");
                     BXQryTplUtil.orgRelFieldCriteriaChanged(evt, "assume_org", pkOrgs);
                 } else {
@@ -701,29 +978,105 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
             } else if (getExcludeBxOrgRefList().contains(evt.getFieldCode())) {
                 //报销人单位
                 BXQryTplUtil.orgRelFieldCriteriaChanged(evt, "bx_dwbm",getPk_org(evt, "bx_dwbm"));
+            } else if (getExcludeLiabilityCenterRefList().contains(evt.getFieldCode().toLowerCase())) {
+                //利润中心
+//                BXQryTplUtil.orgRelFieldCriteriaChanged(evt, "bx_dwbm",getPk_orgs(evt, "pk_pcorg"));
+                handleLiabilityCenterChange(evt);
+            } else if (getExcludeCostCenterRefList().contains(evt.getFieldCode().toLowerCase())) {
+                //成本中心
+                handleCostCenterChange(evt);
             }
-//            if (BX_PK_ORG.equals(evt.getFieldCode())) {
-//				//编辑报销单位时，其它与此组织相关的查询条件根据此过滤
-//				BXQryTplUtil.orgCriteriaChanged(evt, getBusTypeVO().getPayentity_billitems());
-//			}else if(BX_FYDWBM.equals(evt.getFieldCode())){
-//				//编辑费用承担单位时，其它与此组织相关的查询条件根据此过滤
-//				BXQryTplUtil.orgCriteriaChanged(evt, getBusTypeVO().getCostentity_billitems());
-//			}else if(BX_DWBM.equals(evt.getFieldCode())){
-//				//编辑借款报销人单位时，其它与此组织相关的查询条件根据此过滤
-//				BXQryTplUtil.orgCriteriaChanged(evt, getBusTypeVO().getUseentity_billitems());
-//			}else if (getBusTypeVO().getPayentity_billitems().contains(evt.getFieldCode())) {
-//				//编辑报销单位相关字段时，相关字段设置组织为借款报销单位
-//				BXQryTplUtil.orgRelFieldCriteriaChanged(evt,BX_PK_ORG,getPk_org());
-//			}else if (getBusTypeVO().getCostentity_billitems().contains(evt.getFieldCode())) {
-//				//编辑费用承担单位相关字段时，相关字段设置组织为费用承担单位
-//				BXQryTplUtil.orgRelFieldCriteriaChanged(evt,BX_FYDWBM,null);
-//			}else if (getBusTypeVO().getUseentity_billitems().contains(evt.getFieldCode())) {
-//				//编辑报销人单位相关字段时，相关字段设置组织为报销人单位
-//				BXQryTplUtil.orgRelFieldCriteriaChanged(evt,BX_DWBM,null);
-//            }
+            if (listRefPane != null && listRefPane.size() > 0) {
+                for (UIRefPane refPane : listRefPane) {
+                    AbstractRefModel refModel = refPane.getRefModel();
+                    if (refPane.getRefModel() instanceof nc.ui.bd.ref.model.PsndocDefaultRefModel) {
+                        String powerSql = refModel.getDataPowerSubSql(refModel.getTableName(),
+                                refModel.getDataPowerColumn(), refModel.getResourceID());
+                        if (powerSql == null) {
+                            refPane.setDataPowerOperation_code(null);
+                        }
+                    }
+                }
+            }
 		}
 	}
 
+	private void handleLiabilityCenterChange(CriteriaChangedEvent evt) {
+	    String[] pks = getRefPks(evt, evt.getFieldCode());
+        List<UIRefPane> refpanelList = BXQryTplUtil.getRefPaneListByFieldCode(evt, "pk_resacostcenter");
+        String costCenterFieldCode = "pk_resacostcenter";
+        if (refpanelList == null || refpanelList.size() == 0) {
+            refpanelList = BXQryTplUtil.getRefPaneListByFieldCode(evt, "zb.pk_resacostcenter");
+            costCenterFieldCode = "zb.pk_resacostcenter";
+        }
+        
+        if (refpanelList != null) {
+            if (evt.getEventtype() == CriteriaChangedEvent.FILTER_REMOVED) {
+                initCostshareRefPanel(evt, ExpenseBalVO.PK_RESACOSTCENTER);
+            } else {
+                setCostCenterRef(pks, refpanelList, costCenterFieldCode);
+            }
+        }
+	}
+	
+	private void initCostshareRefPanel(CriteriaChangedEvent evt, String fieldCode) {
+        String[] orgArray = parseDataPowerOrgs(null, fieldCode);
+        List<UIRefPane> listRefPane = BXQryTplUtil.getRefPaneListByFieldCode(evt,
+                fieldCode);
+        for (UIRefPane costshareRefPane : listRefPane) {
+            configDataPowerRef(costshareRefPane, orgArray);
+        }
+    }
+	
+	private void handleCostCenterChange(CriteriaChangedEvent evt) {
+	    if (evt.getEventtype() == CriteriaChangedEvent.FILTER_CHANGED || 
+	            evt.getEventtype() == CriteriaChangedEvent.FILTER_REMOVED) {
+	        return;
+	    }
+	    UIRefPane refpane = BXQryTplUtil.getRefPaneByFieldCode(this, "pk_pcorg");//利润中心
+        if (refpane == null) {
+            refpane = BXQryTplUtil.getRefPaneByFieldCode(evt, "zb.pk_pcorg");
+        }
+        if (refpane != null) {
+            //利润中心pk
+            String[] pkOrgs = null; 
+            String pkOrg = refpane.getRefPK(); 
+            if (pkOrg != null && pkOrg.length() > 0) {
+                pkOrgs = new String[] { refpane.getRefPK() }; 
+            }
+            List<UIRefPane> refPaneList = BXQryTplUtil.getRefPaneListByFieldCode(evt, evt.getFieldCode());
+            setCostCenterRef(pkOrgs, refPaneList, evt.getFieldCode());
+        }
+	}
+	
+	private void setCostCenterRef(String[] pkOrgs, List<UIRefPane> costCenterRefPaneList, String costCenterFieldCode) {
+	    if (costCenterRefPaneList != null && costCenterRefPaneList.size() > 0) {
+            for (UIRefPane refPaneCos : costCenterRefPaneList) {
+                CostCenterTreeRefModel costModel = (CostCenterTreeRefModel)refPaneCos.getRefModel();
+                costModel.setCurrentOrgCreated(false);
+//                boolean setNull = false;
+                costModel.setOrgType(CostCenterVO.PK_PROFITCENTER);
+                if (pkOrgs == null || pkOrgs.length == 0) {
+//                    setNull = true;
+                    costModel.setPk_org(null);
+//                    pkOrgs = new String[] {Long.toString(System.currentTimeMillis()) };
+                    String[] orgArray = parseDataPowerOrgs(pkOrgs, costCenterFieldCode);
+                    configDataPowerRef(refPaneCos, orgArray);
+                } else {
+//                    if (!pkOrgs[0].equals(costModel.getPk_org())) {
+//                        setNull = true;
+//                    }
+                    costModel.setPk_org(pkOrgs[0]);
+                    configDataPowerRef(refPaneCos, pkOrgs);
+                }
+//                if (setNull) {
+//                    refPaneCos.setPK(null);
+//                }
+//                refPaneCos.setMultiCorpRef(false);
+            }
+        }
+	}
+	
 	/**
 	 * 缓存根据组织字段过滤的字段[key=组织，value=关联字段]
 	 */
@@ -796,6 +1149,14 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
         return ((UIRefPane) getComponent(FINANCIAL_ORG_REF)).getRefPKs();
 	}
 
+    protected String[] getRefPks(CriteriaChangedEvent evt, String fieldOrg) {
+        UIRefPane refpanel = ((UIRefPane) BXQryTplUtil.getRefPaneByFieldCode(evt, fieldOrg));
+        if(refpanel==null){
+            return null;
+        }
+        return refpanel.getRefPKs();
+    }
+    
 	protected String getDefaultOrg() {
 		// 获得个性化中默认主组织
 		String defaultOrg = ErUiUtil.getBXDefaultOrgUnit();
@@ -819,7 +1180,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 	 */
 	@Override
     public void setPk_org(String[] pkOrgs) {
-		super.setPk_org(pkOrgs);
+		super.setPk_org(pkOrgs);  
 		String pk_org = null;
 		if (pkOrgs != null && pkOrgs.length > 0) {
 			pk_org = pkOrgs[0];
@@ -858,7 +1219,6 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 		list.add(IBDMetaDataIDConst.PSNDOC); // 人员
         list.add(IBDMetaDataIDConst.USER); // 用户
         list.add(IPubReportConstants.MDID_PROJECT); // 项目
-        
         
 		//v6.1新增成本中心
 //		list.add(IPubReportConstants.MDID_COSTCENTER);

@@ -32,4 +32,9 @@ public class ErmConst {
 	 */
 	public static final int YsControlType_AlarmNOCHECK_CONTROL = 4;
 	//--------------------------------------
+	
+	/**
+	 * 费用申请类型：报销费用
+	 */
+	public static final int MATTERAPP_BILLTYPE_BX = 1;
 }

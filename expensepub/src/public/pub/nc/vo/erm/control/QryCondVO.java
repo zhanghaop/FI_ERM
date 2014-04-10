@@ -202,16 +202,16 @@ public void validate() throws ValidationException {
 	// construct the exception message:
 	StringBuffer message = new StringBuffer();
 //	message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275")/*@res "下列字段不能为空："*/);
-	String msg = "";
+	StringBuilder msg = new StringBuilder();
 	if (errFields.size() > 0) {
 		String[] temp = (String[]) errFields.toArray(new String[0]);
 		message.append(temp[0]);
 		for ( int i= 1; i < temp.length; i++ ) {
-			msg+=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000276");
-			msg += temp[i];
+			msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000276"));
+			msg.append(temp[i]);
 		}
 		// throw the exception:
-		message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275",null,new String[]{msg})/*@res "下列字段不能为空："*/);
+		message.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("20060504","UPP20060504-000275",null,new String[]{msg.toString()})/*@res "下列字段不能为空："*/);
 		throw new NullFieldException(message.toString());
 	}
 }

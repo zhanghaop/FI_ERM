@@ -3,7 +3,6 @@ package nc.vo.er.check;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,13 +52,10 @@ import nc.vo.er.util.UFDoubleTool;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
-import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.erm.termendtransact.DataValidateException;
-import nc.vo.erm.util.VOUtils;
 import nc.vo.fipub.utils.KeyLock;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
@@ -247,7 +243,7 @@ public class VOChecker {
 		if (!vo.getParentVO().isInit()) {
 			
 			// 先补充拉单信息
-			fillMtapp(vo);
+//			fillMtapp(vo);
             //拉单申请单加锁
             addMtAppLock(vo);
             // 费用申请单版本校验
@@ -256,6 +252,10 @@ public class VOChecker {
             checkDate(vo);
             // 拉单的单据表体行金额不能<=0
             checkBillLineAmountFromMtapp(vo);
+            // 申请人与借款报销人是否必须一致
+            checkIsSamePerson(vo);
+            // 拉分摊申请单，分摊页签必须有值
+            checkCostSharePageNotNull(vo);
             //冲借款加锁
             addContrastLock(vo);
             //冲借款版本校验
@@ -288,6 +288,9 @@ public class VOChecker {
 				// 检查银行账号对应的币种和单据上的币种是否一致
 				chkBankAccountCurrency(vo);
 
+				// 检查个人银行账户和客商银行账户不能同时有值
+				checkBankAccount(vo);
+				
 				// 是否必须冲借款校验
 				chkIsMustContrast(vo);
 
@@ -295,9 +298,7 @@ public class VOChecker {
 				chkCustomerPayFreezeFlag(vo);
 
 				// 收款人和供应商不能同时有值
-				if (vo.getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
-					checkToPublicPay(vo);
-				}
+				checkToPublicPay(vo);
 
 				// v6.1新增 检查单位银行帐号和现金帐户不能同时有值
 				chkCashaccountAndFkyhzh(vo.getParentVO());
@@ -311,19 +312,67 @@ public class VOChecker {
 		}
 	}
 	
-	private void fillMtapp(JKBXVO vo) throws BusinessException {
-		if (vo.getParentVO().getPk_item() != null && vo.getMt_aggvos() == null) {
-			String pk_item = vo.getParentVO().getPk_item();
-			AggMatterAppVO aggvo = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class).queryBillByPK(pk_item);
-			if (aggvo == null) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
-						"0201107-0106")/*
-										 * @res "拉单关联的费用申请单已经被删除，不能保存"
+	private void checkCostSharePageNotNull(JKBXVO vo) throws BusinessException {
+		if (BXConstans.BX_DJDL.equals(vo.getParentVO().getDjdl()) && vo.getParentVO().getIsmashare() != null
+				&& vo.getParentVO().getIsmashare().booleanValue()) {
+			if (vo.getcShareDetailVo() == null || vo.getcShareDetailVo().length == 0) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0183")/*
+										 * @res "该报销单参照分摊的申请单生成，分摊明细页签不允许为空"
 										 */);
 			}
-			vo.setMt_aggvos(new AggMatterAppVO[] { aggvo });
 		}
 	}
+
+	private void checkIsSamePerson(JKBXVO vo) throws BusinessException {
+		if(vo.getParentVO().getPk_item() != null){
+			String billmaker = null;
+			if(vo.getMaheadvo() != null ){
+				billmaker = vo.getMaheadvo().getBillmaker();
+			}
+			String jkbxr = vo.getParentVO().getJkbxr();
+			UFBoolean para = SysInit.getParaBoolean(vo.getParentVO().getPk_org(), BXParamConstant.PARAM_IS_SMAE_PERSON);
+			if (para != null && para.booleanValue() && billmaker != null && !billmaker.equals(jkbxr)) {
+				if (BXConstans.BX_DJDL.equals(vo.getParentVO().getDjdl())) {
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+							"02011002-0181")/*
+											 * @res "报销人必须与申请人保持一致"
+											 */);
+				} else if (BXConstans.JK_DJDL.equals(vo.getParentVO().getDjdl())) {
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+							"02011002-0180")/*
+											 * @res "借款人必须与申请人保持一致"
+											 */);
+				}
+			}
+		}
+	}
+
+	private void checkBankAccount(JKBXVO vo) throws BusinessException {
+		String skyhzh = vo.getParentVO().getSkyhzh();
+		String custaccount = vo.getParentVO().getCustaccount();
+		if (skyhzh != null && skyhzh.trim() != null && custaccount != null && custaccount.trim() != null) {
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0179")/*
+									 * @res "个人银行账户和客商银行账户不能同时录入"
+									 */);
+
+		}
+	}
+
+//	private void fillMtapp(JKBXVO vo) throws BusinessException {
+//		if (vo.getParentVO().getPk_item() != null && vo.getMaheadvo() == null) {
+//			String pk_item = vo.getParentVO().getPk_item();
+//			AggMatterAppVO aggvo = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class).queryBillByPK(pk_item);
+//			if (aggvo == null) {
+//				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
+//						"0201107-0106")/*
+//										 * @res "拉单关联的费用申请单已经被删除，不能保存"
+//										 */);
+//			}
+//			vo.setMaheadvo(aggvo.getParentVO());
+//		}
+//	}
 
 	private void checkBillLineAmountFromMtapp(JKBXVO vo) throws BusinessException {
 		// 拉单的单据表体行金额不能为负数
@@ -342,15 +391,19 @@ public class VOChecker {
 
 	private void checkDate(JKBXVO vo) throws BusinessException {
 		// 有拉单时，校验业务日期和费用申请单日期
-		if(vo.getMt_aggvos() != null){
+		if (vo.getMaheadvo() != null) {
 			UFDate busiDate = vo.getParentVO().getDjrq();
-			for(AggMatterAppVO mtvo : vo.getMt_aggvos()){
-				if (mtvo.getParentVO().getApprovetime().afterDate(busiDate)) {
-					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-							"02011002-0168")/*
-											 * @res "单据日期不能早于申请单的生效日期"
-											 */);
-				}
+			if (vo.getMaheadvo().getApprovetime() == null) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0184")/*
+										 * @res "拉单关联的费用申请单未审批，请重新拉单"
+										 */);
+			}
+			if (vo.getMaheadvo().getApprovetime().afterDate(busiDate)) {
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0168")/*
+										 * @res "单据日期不能早于申请单的生效日期"
+										 */);
 			}
 		}
 	}
@@ -423,60 +476,40 @@ public class VOChecker {
 	}
 
 	/**
-	 * 费用申请单版本校验 校验主子表ts
+	 * 费用申请单版本校验 校验主表ts
 	 * 
 	 * @param vo
 	 * @throws BusinessException
 	 * @author: wangyhh@ufida.com.cn
 	 */
 	private void checkMtAppTs(JKBXVO vo) throws BusinessException {
-		AggMatterAppVO[] mt_aggvos = vo.getMt_aggvos();
-		if (ArrayUtils.isEmpty(mt_aggvos)) {
+		MatterAppVO maheadvo = vo.getMaheadvo();
+		if (maheadvo == null) {
 			return;
 		}
 
-		String[] pks = VOUtils.getAttributeValues(mt_aggvos, MatterAppVO.PK_MTAPP_BILL);
-		AggMatterAppVO[] newMtAppVos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class).queryBillByPKs(pks);
-		if (newMtAppVos == null || newMtAppVos.length != pks.length) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0106")/*
-																														 * @res
-																														 * "拉单关联的费用申请单已经被删除，不能保存"
-																														 */);
+		AggMatterAppVO newMtAppVo = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class).queryBillByPK(
+				maheadvo.getPk_mtapp_bill());
+		if (newMtAppVo == null) {
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
+					"0201107-0106")/*
+									 * @res "拉单关联的费用申请单已经被删除，不能保存"
+									 */);
+		}
+		if (!maheadvo.getTs().equals(newMtAppVo.getParentVO().getTs())) {
+
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
+					"0201107-0107")/*
+									 * @res "拉单关联的费用申请单:"
+									 */
+					+ maheadvo.getBillno()
+					+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0108")/*
+																										 * @res
+																										 * "已经被更新，请重新拉单"
+																										 */);
+
 		}
 
-		Map<String, List<AggMatterAppVO>> newMtAppMap = VOUtils.changeCollection2MapList(Arrays.asList(newMtAppVos),
-				new String[] { MatterAppVO.PK_MTAPP_BILL });
-		// 校验主子表ts
-		for (AggMatterAppVO oldMtAppVO : mt_aggvos) {
-			AggMatterAppVO newVo = newMtAppMap.get(oldMtAppVO.getParentVO().getPrimaryKey()).get(0);
-			if (!oldMtAppVO.getParentVO().getTs().equals(newVo.getParentVO().getTs())) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0107")/*
-																															 * @res
-																															 * "拉单关联的费用申请单:"
-																															 */
-						+ oldMtAppVO.getParentVO().getBillno()
-						+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0108")/*
-																											 * @res
-																											 * "已经被更新，请重新拉单"
-																											 */);
-			}
-
-			Map<String, List<CircularlyAccessibleValueObject>> newChildrenMap = VOUtils.changeArrayToMapList(newVo
-					.getChildrenVO(), new String[] { MtAppDetailVO.PK_MTAPP_DETAIL });
-			for (MtAppDetailVO oldChildVo : oldMtAppVO.getChildrenVO()) {
-				if (!oldChildVo.getTs().equals(newChildrenMap.get(oldChildVo.getPrimaryKey()).get(0).getAttributeValue("ts"))) {
-					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0107")/*
-																																 * @res
-																																 * "拉单关联的费用申请单:"
-																																 */
-							+ oldMtAppVO.getParentVO().getBillno()
-							+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0108")/*
-																												 * @res
-																												 * "已经被更新，请重新拉单"
-																												 */);
-				}
-			}
-		}
 	}
 
 	private void chkCustomerPayFreezeFlag(JKBXVO bxvo) throws ValidationException {
@@ -497,11 +530,13 @@ public class VOChecker {
 			for (SupFinanceVO vo : supfivos) {
 				flag = vo.getPayfreezeflag();
 				if (flag != null && flag.booleanValue()) {
-					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-							"02011002-0160")/*
-											 * @res
-											 * "单据录入的供应商付款已经冻结，不能进行借款报销单的录入！"
-											 */);
+					if (vo.getPk_supplier().equals(hbbm)) {
+						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+								.getStrByID("expensepub_0", "02011002-0160")/*
+																			 * @res
+																			 * "单据录入的供应商付款已经冻结，不能进行借款报销单的录入！"
+																			 */);
+					} 
 				}
 			}
 		}
@@ -819,23 +854,31 @@ public class VOChecker {
 																															 */);
 		}
 		JKBXHeaderVO headerVO = vo.getParentVO();
-		// 个人银行帐号
-		String pk_bankaccsub = headerVO.getSkyhzh();
-		if (pk_bankaccsub == null || pk_bankaccsub.trim().length() == 0) {
-			return;
-		}
-
-		// 币种编码
-		String pk_currtype = headerVO.getBzbm();
+		String skyhzh = headerVO.getSkyhzh();// 个人银行账号
+		String custaccount = headerVO.getCustaccount();// 客商银行账号
+		String pk_currtype = headerVO.getBzbm();// 币种
 
 		IBankAccSubInfoQueryService service = NCLocator.getInstance().lookup(IBankAccSubInfoQueryService.class);
-		BankAccSubVO[] vos = service.querySubInfosByPKs(new String[] { pk_bankaccsub });
-		if (vos == null || vos.length == 0 || !pk_currtype.equals(vos[0].getPk_currtype())) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0136")/*
-																															 * @res
-																															 * "!个人银行帐号对应的币种和单据币种不一致"
-																															 */);
+		BankAccSubVO[] vos = service.querySubInfosByPKs(new String[] { skyhzh,custaccount });
+		if (vos != null && vos.length > 0) {
+			
+			
+			for(BankAccSubVO subvo : vos){
+				if(subvo.getPk_bankaccsub().equals(skyhzh) && !subvo.getPk_currtype().equals(pk_currtype)){
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0136")/*
+					 * @res
+					 * "个人银行帐号对应的币种和单据币种不一致"
+					 */);
+				}
+				if(subvo.getPk_bankaccsub().equals(custaccount) && !subvo.getPk_currtype().equals(pk_currtype)){
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0182")/*
+							 * @res
+							 * "客商银行帐号对应的币种和单据币种不一致"
+							 */);
+				}
+			}
 		}
+		
 	}
 
 	// 交叉校验工具
@@ -883,20 +926,30 @@ public class VOChecker {
 
 	private void checkToPublicPay(JKBXVO bxvo) throws BusinessException {
 		String receiver = bxvo.getParentVO().getReceiver();
-		String hbbm = bxvo.getParentVO().getHbbm();
-		if (receiver != null && hbbm != null) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0137")/*
-																															 * @res
-																															 * "供应商与收款人不能同时输入！"
-																															 */);
+		String supplier = bxvo.getParentVO().getHbbm();
+		String customer = bxvo.getParentVO().getCustomer();
+		UFBoolean iscusupplier = bxvo.getParentVO().getIscusupplier();//对公支付
+		
+		if (supplier != null && customer != null) {
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0174")/*
+									 * @res "供应商、客户只能录入一个！"
+									 */);
 		}
-		if (receiver == null && hbbm == null) {
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0", "02011002-0138")/*
-																															 * @res
-																															 * "供应商与收款人必须输入一个！"
-																															 */);
+		if ((iscusupplier.equals(UFBoolean.FALSE) && receiver == null)
+				|| (iscusupplier.equals(UFBoolean.TRUE) && supplier == null && customer == null)) {
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0173")/*
+									 * @res "对方信息不能为空"
+									 */);
 		}
-
+		if (receiver == null && supplier == null && customer == null) {
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+					"02011002-0138")/*
+									 * @res "收款人、供应商、客户必须输入一个！"
+									 */);
+		}
+		
 	}
 
 	private void checkBillDate(JKBXHeaderVO parentVO) throws ValidationException {
@@ -1065,6 +1118,15 @@ public class VOChecker {
 			if (busItemVOs[0].getPk_resacostcenter() != null) {
 				bxvo.getParentVO().setPk_resacostcenter(busItemVOs[0].getPk_resacostcenter());
 			}
+			//产品线和品牌
+			if(busItemVOs[0].getPk_proline()!= null){
+				bxvo.getParentVO().setPk_proline(busItemVOs[0].getPk_proline());
+			}
+			
+			if(busItemVOs[0].getPk_brand()!= null){
+				bxvo.getParentVO().setPk_brand(busItemVOs[0].getPk_brand());
+			}
+			
 			
 			for (BXBusItemVO item : busItemVOs) {
 
@@ -1664,6 +1726,8 @@ public class VOChecker {
 			notRepeatFields.add(CShareDetailVO.PK_CHECKELE);
 			notRepeatFields.add(CShareDetailVO.CUSTOMER);
 			notRepeatFields.add(CShareDetailVO.HBBM);
+			notRepeatFields.add(CShareDetailVO.PK_PROLINE);
+			notRepeatFields.add(CShareDetailVO.PK_BRAND);
 		}
 		return notRepeatFields;
 	}

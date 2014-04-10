@@ -13,7 +13,6 @@ import nc.pub.smart.metadata.Field;
 import nc.pub.smart.metadata.MetaData;
 import nc.smart.fipub.AbsReportDataProvider;
 import nc.utils.fipub.SmartProcessor;
-import nc.vo.erm.expamortize.ExpamtinfoVO;
 
 /**
  * 摊销信息分析语义提供者
@@ -60,35 +59,35 @@ public class ExpamortizeDataProvider extends AbsReportDataProvider{
 
 	/** 字段编码 */
 	private static final String[] FLDNAMES = {
-			ExpamtinfoVO.PK_GROUP,//集团pk[1]
-			ExpamtinfoVO.PK_ORG,//财务组织pk[2]
-			ExpamtinfoVO.BX_PK_BILLTYPE,//单据类型[3]
-			ExpamtinfoVO.BX_BILLNO,//单据编号[4]
-			ExpamtinfoVO.BX_DJRQ,//单据日期[5]
-			ExpamtinfoVO.TOTAL_AMOUNT + "_ori",//总摊销金额[6]
-			ExpamtinfoVO.START_PERIOD,//开始摊销会计期[7]
-			ExpamtinfoVO.END_PERIOD,//摊销完成会计期[8]
-			ExpamtinfoVO.ACCU_AMOUNT + "_ori",//已摊销金额[9]
-			ExpamtinfoVO.RES_AMOUNT + "_ori",//未摊销金额[10]
-			ExpamtinfoVO.ACCU_PERIOD,//已摊销期间数[11]
-			ExpamtinfoVO.RES_PERIOD,//未摊销期间数[12]
-			ExpamtinfoVO.AMT_STATUS,//摊销完成[13]
-            "pk_currtype",   //币种主键
-            "currtype",      //币种
-			ExpamtinfoVO.CURR_AMOUNT + "_ori",//本期金额[15]
-			ExpamtinfoVO.CURR_ORGAMOUNT + "_loc",//本期金额[16]
-			"gr_" + ExpamtinfoVO.CURR_GROUPAMOUNT + "_loc",//本期金额[17]
-			"gl_" + ExpamtinfoVO.CURR_GLOBALAMOUNT + "_loc",//累计金额[18]
-			ExpamtinfoVO.ACCU_ORGAMOUNT + "_loc",//累计本币金额[19]
-			"gr_" + ExpamtinfoVO.ACCU_GROUPAMOUNT + "_loc",//累计集团本币金额[20]
-			"gl_" + ExpamtinfoVO.ACCU_GLOBALAMOUNT + "_loc",//累计全局本币金额[21]
-			ExpamtinfoVO.RES_ORGAMOUNT + "_loc",//剩余本币金额[22]
-			"gr_" + ExpamtinfoVO.RES_GROUPAMOUNT + "_loc",//剩余集团本币金额[23]
-			"gl_" + ExpamtinfoVO.RES_GLOBALAMOUNT + "_loc",//剩余全局本币金额[24]
-			ExpamtinfoVO.TOTAL_PERIOD,//总摊销期[25]
-			"billtype",//总摊销期[26]
-			"org",//财务组织[26]
-            IPubReportConstants.ORDER_MANAGE_VSEQ// 序号
+		"pk_group",//集团pk[1]
+		"pk_org",//财务组织pk[2]
+		"bx_pk_billtype",//单据类型[3]
+		"bx_billno",//单据编号[4]
+		"bx_djrq",//单据日期[5]
+		"total_amount_ori",//总摊销金额[6]
+		"start_period",//开始摊销会计期[7]
+		"end_period",//摊销完成会计期[8]
+		"accu_amount_ori",//已摊销金额[9]
+		"res_amount_ori",//未摊销金额[10]
+		"accu_period",//已摊销期间数[11]
+		"res_period",//未摊销期间数[12]
+		"amt_status",//摊销完成[13]
+		"pk_currtype",   //币种主键
+		"currtype",      //币种
+		"curr_amount_ori",//本期金额[15]
+		"curr_orgamount_loc",//本期金额[16]
+		"gr_curr_groupamount_loc",//本期金额[17]
+		"gl_curr_globalamount_loc",//累计金额[18]
+		"accu_orgamount_loc",//累计本币金额[19]
+		"gr_accu_groupamount_loc",//累计集团本币金额[20]
+		"gl_accu_globalamount_loc",//累计全局本币金额[21]
+		"res_orgamount_loc",//剩余本币金额[22]
+		"gr_res_groupamount_loc",//剩余集团本币金额[23]
+		"gl_res_globalamount_loc",//剩余全局本币金额[24]
+		"total_period",//总摊销期[25]
+		"billtype",//总摊销期[26]
+		"org",//财务组织[26]
+        IPubReportConstants.ORDER_MANAGE_VSEQ// 序号
 	};
 
 	/** 字段类型 */
@@ -105,7 +104,7 @@ public class ExpamortizeDataProvider extends AbsReportDataProvider{
 		Types.DECIMAL,
 		Types.INTEGER,//[11]
 		Types.INTEGER,
-		Types.BOOLEAN,
+		Types.VARCHAR,
 		Types.VARCHAR,//[14]
         Types.VARCHAR,//[14]
 		Types.DECIMAL,//[15]
@@ -128,7 +127,7 @@ public class ExpamortizeDataProvider extends AbsReportDataProvider{
 	private static final int[] PRECISIONS = {
 			30, 30, 30, 30, 15,
 			28, 30, 30, 28, 28,
-			19, 19, 1,  30,  50, 28,
+			19, 19, 30,  30,  50, 28,
 			28, 28, 28, 28, 28 ,
 			28, 28, 28, 28, 19,
 			30, 30, 20

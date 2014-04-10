@@ -7,16 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nc.bs.trade.billsource.BillTypeSetDataFinder;
 import nc.jdbc.framework.JdbcSession;
 import nc.jdbc.framework.PersistenceManager;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.exception.DbException;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.uif.pub.exception.UifRuntimeException;
+import nc.vo.arap.bx.util.ErmDataFinder;
 import nc.vo.trade.billsource.LightBillVO;
 
-public class ErmBxDataFinder extends BillTypeSetDataFinder{
+public class ErmBxDataFinder extends ErmDataFinder{
 
 	/**
 	 * AbstractBillFinder 构造子注解。

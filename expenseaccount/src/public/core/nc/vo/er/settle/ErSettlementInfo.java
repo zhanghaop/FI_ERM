@@ -11,8 +11,10 @@ import nc.itf.cmp.busi.ISettlementInfoFetcher;
 import nc.itf.uap.IUAPQueryBS;
 import nc.jdbc.framework.processor.ArrayProcessor;
 import nc.md.persist.framework.MDPersistenceService;
+import nc.pubitf.uapbd.ICustomerPubService;
 import nc.pubitf.uapbd.ISupplierPubService;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.bd.cust.CustomerVO;
 import nc.vo.bd.freecustom.FreeCustomVO;
 import nc.vo.bd.supplier.SupplierVO;
 import nc.vo.cmp.netpay.NetPayHelperVO;
@@ -23,12 +25,13 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDouble;
 /**
 *
 * nc.vo.er.settle.ErSettlementInfo
 *
-* 由业务页签向结算页签传递信息,业务涉及**对公支付**
+* 由业务页签向结算页签传递信息,业务涉及**对公支付**，有对公支付字段区分
 */
 public class ErSettlementInfo implements ISettlementInfoFetcher {
 	private JKBXVO bxvo = null;
@@ -36,8 +39,8 @@ public class ErSettlementInfo implements ISettlementInfoFetcher {
 	public SettlementBodyVO[] getSettleMetaInfo() throws BusinessException {
 		BXBusItemVO[] childrenVO = bxvo.getChildrenVO();
 		JKBXHeaderVO head =  bxvo.getParentVO();
-		//是否报销单据
-		final boolean isBXBill = BXConstans.BX_DJDL.equals(bxvo.getParentVO().getDjdl());
+		//是否报销单据  v631后 借款单也有收款信息
+//		final boolean isBXBill = BXConstans.BX_DJDL.equals(bxvo.getParentVO().getDjdl());l boolean isBXBill = BXConstans.BX_DJDL.equals(bxvo.getParentVO().getDjdl());
 		//借款报销人
 		String jkbxr = bxvo.getParentVO().getJkbxr();
 		if(childrenVO==null || childrenVO.length==0){
@@ -85,9 +88,10 @@ public class ErSettlementInfo implements ISettlementInfoFetcher {
 		//散户
 		FreeCustomVO freeCustVO = null;
 		//对方信息设置
-		if (isBXBill && head.getHbbm() != null) {
+		if (head.getIscusupplier().equals(UFBoolean.TRUE)) { // 对公支付
+
 			// 供应商与个人不能同时录入
-			if (head.getFreecust() != null) {// 散户优先级比供应商高
+			if (head.getFreecust() != null) {// 散户优先级最高
 				freeCustVO = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByPK(FreeCustomVO.class,
 						head.getFreecust(), false);
 
@@ -100,23 +104,33 @@ public class ErSettlementInfo implements ISettlementInfoFetcher {
 					pk_oopBank = freeCustVO.getBank();
 					accountType = freeCustVO.getAccountproperty();
 				}
-			} else {// 供应商
-				traderType = CmpConst.TradeObjType_SUPPLIER;
-				pk_trader = head.getHbbm();
-				pk_oppAccount = head.getCustaccount();
+			} else if (head.getHbbm() != null) {// 供应商
+				{
+					traderType = CmpConst.TradeObjType_SUPPLIER;
+					pk_trader = head.getHbbm();
+					pk_oppAccount = head.getCustaccount();
 
-				SupplierVO[] hbbmname = NCLocator.getInstance().lookup(ISupplierPubService.class)
-						.getSupplierVO(new String[] { head.getHbbm() }, new String[] { "name" });
-				traderName = hbbmname[0].getName();
+					SupplierVO[] hbbmname = NCLocator.getInstance().lookup(ISupplierPubService.class).getSupplierVO(
+							new String[] { head.getHbbm() }, new String[] { "name" });
+					traderName = hbbmname[0].getName();
+				}
+			} else if (head.getCustomer() != null) { // 客户
+				traderType = CmpConst.TradeObjType_CUSTOMER;
+				pk_trader = head.getCustomer();
+				pk_oppAccount = head.getCustaccount();
+				if (pk_oppAccount != null) {
+					NetPayHelperVO opphelperVO = NetPayHelper.instance.getNetPayVO(pk_oppAccount);
+					bankDocName = opphelperVO.getBankdocname();
+				}
+				CustomerVO[] customervos = NCLocator.getInstance().lookup(ICustomerPubService.class).getCustomerVO(
+						new String[] { head.getCustomer() }, new String[] { "name" });
+				traderName = customervos[0].getName();
+
 			}
-		} else {// 个人
+		}else {// 个人
 			traderType = CmpConst.TradeObjType_Person;
 			// 收款人
 			pk_trader = head.getReceiver();
-			
-			if(pk_trader == null){
-				pk_trader = head.getJkbxr();
-			}
 			
 			if (pk_trader != null) {
 				traderName = NCLocator.getInstance().lookup(IPsndocQueryService.class)
@@ -156,32 +170,17 @@ public class ErSettlementInfo implements ISettlementInfoFetcher {
 				continue;
 			}
 			SettlementBodyVO metavo = new SettlementBodyVO();
-			metavo.setBillcode(head.getDjbh());
-			metavo.setBilldate(head.getDjrq());
-			metavo.setLocalrate(head.getBbhl());
-			metavo.setMemo(head.getZy());
 			//收付方向(收0,付1)
 			final Integer direction = (item.getZfybje()!=null && !item.getZfybje().equals(ufZero))? SettleEnumCollection.Direction.PAY.VALUE: SettleEnumCollection.Direction.REC.VALUE;
+			metavo.setBillcode(head.getDjbh());
+			metavo.setBilldate(head.getDjrq());
 			metavo.setDirection(direction);
-			if(item.getAmount().getDouble() < 0){// 报销金额为负数时，将还款金额传给付款方（为解决guodl问题）有问题找twei@yonyou.com
-				metavo.setDirection(1);
-				metavo.setPay(UFDouble.ZERO_DBL.sub(item.getHkybje()));
-				metavo.setPaylocal(UFDouble.ZERO_DBL.sub(item.getHkbbje()));
-				UFDouble grouphkbbje = head.getGrouphkbbje() == null ? ufZero: item.getGrouphkbbje();
-				UFDouble globalhkbbje = head.getGlobalhkbbje() == null ? ufZero: item.getGlobalhkbbje();
-				metavo.setGrouppaylocal(UFDouble.ZERO_DBL.sub(grouphkbbje));
-				metavo.setGlobalpaylocal(UFDouble.ZERO_DBL.sub(globalhkbbje));
-			}else {
-				metavo.setPay(item.getZfybje());
-				metavo.setPaylocal(item.getZfbbje());
-				metavo.setGrouppaylocal(head.getGroupzfbbje() == null ? ufZero : item.getGroupzfbbje());
-				metavo.setGlobalpaylocal(head.getGlobalzfbbje() == null ? ufZero: item.getGlobalzfbbje());
-				metavo.setReceive(item.getHkybje());
-				metavo.setReceivelocal(item.getHkbbje());
-				metavo.setGroupreceivelocal(head.getGrouphkbbje() == null ? ufZero: item.getGrouphkbbje());
-				metavo.setGlobalreceivelocal(head.getGlobalhkbbje() == null ? ufZero: item.getGlobalhkbbje());
-			}
-			
+			metavo.setLocalrate(head.getBbhl());
+			metavo.setMemo(head.getZy());
+			metavo.setPay(item.getZfybje());
+			metavo.setPaylocal(item.getZfbbje());
+			metavo.setReceive(item.getHkybje());
+			metavo.setReceivelocal(item.getHkbbje());
 			
 //begin--modified by chendya 报销传结算的"归属系统"字段标识
 			metavo.setSystemcode(BXConstans.ERM_MD_NAMESPACE);
@@ -192,6 +191,10 @@ public class ErSettlementInfo implements ISettlementInfoFetcher {
 			metavo.setPk_org(head.getPk_payorg());
 			metavo.setPk_org_v(head.getPk_payorg_v());
 			metavo.setPk_group(head.getPk_group());
+			metavo.setGrouppaylocal(head.getGroupzfbbje() == null ? ufZero : item.getGroupzfbbje());
+			metavo.setGlobalpaylocal(head.getGlobalzfbbje() == null ? ufZero: item.getGlobalzfbbje());
+			metavo.setGroupreceivelocal(head.getGrouphkbbje() == null ? ufZero: item.getGrouphkbbje());
+			metavo.setGlobalreceivelocal(head.getGlobalhkbbje() == null ? ufZero: item.getGlobalhkbbje());
 			metavo.setGrouprate(head.getGroupbbhl() == null ? ufZero: head.getGroupbbhl());
 			metavo.setGlobalrate(head.getGlobalbbhl() == null ? ufZero: head.getGlobalbbhl());
 			metavo.setPk_rescenter(head.getFydeptid());
@@ -227,7 +230,13 @@ public class ErSettlementInfo implements ISettlementInfoFetcher {
 			metavo.setPk_cashflow(head.getCashitem());
 			metavo.setPk_deptdoc(head.getDeptid());			
 			metavo.setPk_busitype(head.getBusitype());
-			metavo.setPk_cubasdoc(head.getHbbm());
+//			metavo.setPk_cubasdoc(head.getHbbm());
+			// pk_cubasdoc 客商档案
+			if (head.getHbbm() != null) {
+				metavo.setPk_cubasdoc(head.getHbbm());
+			} else if (head.getCustomer() != null) {
+				metavo.setPk_cubasdoc(head.getCustomer());
+			}
 			metavo.setPk_jobphase(item.getProjecttask());
 			metavo.setPk_invbasdoc(null);
 			metavo.setPk_invcl(null);			

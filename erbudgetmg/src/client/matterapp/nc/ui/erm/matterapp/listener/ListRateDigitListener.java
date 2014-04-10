@@ -1,7 +1,7 @@
 package nc.ui.erm.matterapp.listener;
 
 import nc.itf.fi.pub.Currency;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.IBillModelDecimalListener2;
@@ -49,7 +49,7 @@ public class ListRateDigitListener implements IBillModelDecimalListener2 {
 				hlPrecision = Currency.getRateDigit(pk_org, pk_currtype, Currency
 						.getOrgLocalCurrPK(pk_org));
 			} else if (RATE_TYPE_GROUP.equals(rateType)) {
-				hlPrecision = Currency.getGroupRateDigit(pk_org, BXUiUtil.getPK_group(), pk_currtype);
+				hlPrecision = Currency.getGroupRateDigit(pk_org, ErUiUtil.getPK_group(), pk_currtype);
 			} else if (RATE_TYPE_GLOBAL.equals(rateType)) {
 				// 全局汇率精度
 				hlPrecision = Currency.getGlobalRateDigit(pk_org, pk_currtype);

@@ -13,6 +13,29 @@
             <basdoc>de9796b5-bccd-42a1-97dd-808847bfddbd</basdoc>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>
+        
+        <field desc="产品线">
+            <matchtag>pk_proline</matchtag>
+            <name>pk_proline</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>029c4c8f-39bb-4208-acc0-c3f66632f328</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="品牌">
+            <matchtag>pk_brand</matchtag>
+            <name>pk_brand</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>3ee53558-6398-4096-a91f-c7aa00e93701</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
         <field desc="现金账户">
             <matchtag>pk_cashaccount</matchtag>
             <name>pk_cashaccount</name>
@@ -498,6 +521,18 @@
             <maxLength>20</maxLength>
             <needexport>yes</needexport>
             <basdoc>720dcc7c-ff19-48f4-b9c5-b90906682f45</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <translatorParams>pk_org</translatorParams>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+         <field desc="收款人">
+            <matchtag>receiver</matchtag>
+            <name>receiver</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>40d39c26-a2b6-4f16-a018-45664cac1a1f</basdoc>
             <translator>1001Z01000000000XVWP</translator>
             <translatorParams>pk_org</translatorParams>
             <checkTranslatedPK>no</checkTranslatedPK>
@@ -1196,6 +1231,28 @@
             <maxLength>0</maxLength>
             <needexport>yes</needexport>
             <basdoc>b2caa3e7-d4c3-4439-9ea7-84ff4b1cc83b</basdoc>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="产品线">
+            <matchtag>pk_proline</matchtag>
+            <name>pk_proline</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>029c4c8f-39bb-4208-acc0-c3f66632f328</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="品牌">
+            <matchtag>pk_brand</matchtag>
+            <name>pk_brand</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>20</maxLength>
+            <needexport>yes</needexport>
+            <basdoc>3ee53558-6398-4096-a91f-c7aa00e93701</basdoc>
+            <translator>1001Z01000000000XVWP</translator>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>
         <field desc="借款单业务行标识">
@@ -2000,6 +2057,15 @@
             <type>String</type>
             <nullallowed>yes</nullallowed>
             <maxLength>50</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+         <field desc="对公支付">
+            <matchtag>iscusupplier</matchtag>
+            <name>iscusupplier</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>1</maxLength>
             <needexport>yes</needexport>
             <checkTranslatedPK>no</checkTranslatedPK>
         </field>

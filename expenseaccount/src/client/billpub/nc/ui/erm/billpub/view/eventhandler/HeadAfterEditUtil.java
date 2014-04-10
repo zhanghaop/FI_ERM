@@ -97,7 +97,6 @@ public class HeadAfterEditUtil {
 						boolean isInitGroup = false;
 						isInitGroup = ((ErmBillBillManageModel) editor.getModel()).getContext().getNodeCode()
 								.equals(BXConstans.BXINIT_NODECODE_G);
-						
 						if (!isInitGroup && (fyPkCorp == null || fyPkCorp.equals("")) || !headItem.isEnabled()) {
 							ref.setEnabled(false);
 							// 将组织所关联的字段设置为空
@@ -172,7 +171,6 @@ public class HeadAfterEditUtil {
 			}
 		}
 	}
-	
 	/**
 	 * 设置参照类型的Pk_org:(DWBM,FYDWBM,PK_ORG)
 	 * @param headItems
@@ -200,13 +198,11 @@ public class HeadAfterEditUtil {
 					if (pk_org == null && !isInitGroup) {
 						ref.setEnabled(false);
 						ref.setValue(null);
-					} else if (refModel.getPk_org() == null
-							|| !refModel.getPk_org().equals(pk_org)) {
+					} else if (ref.getPk_corp() == null
+							|| !ref.getPk_corp().equals(pk_org)) {
 						ref.setPk_org(pk_org);
 						ref.setValue(null);
-						if(!ref.isEnabled()){
-							ref.setEnabled(true);
-						}
+						ref.setEnabled(true);
 					}
 				} catch (ClassCastException e) {
 					ExceptionHandler.consume(e);
@@ -221,17 +217,11 @@ public class HeadAfterEditUtil {
 	public void editSkyhzh(boolean autotake, String pk_org)
 			throws BusinessException {
 		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.RECEIVER);
-		String jkbxr = getHeadItemStrValue(JKBXHeaderVO.JKBXR);
 		String receiver = headItem == null ? null : (String) headItem.getValueObject();
-		if (!StringUtils.isNullWithTrim(receiver)) {
-			jkbxr = receiver;
-		}
-		if (jkbxr == null)
-			return;
 		if (autotake) {
 			// 自动带出收款银行帐号
 			try {
-				String key = UserBankAccVoCall.USERBANKACC_VOCALL+ BXUiUtil.getPk_psndoc();
+				String key = UserBankAccVoCall.USERBANKACC_VOCALL+ receiver;
 				if (WorkbenchEnvironment.getInstance().getClientCache(key) != null) {
 					BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
 					if (vos != null && vos.length > 0 && vos[0] != null) {

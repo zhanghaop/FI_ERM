@@ -36,6 +36,23 @@ public class ErmMatterAppConst {
 	 */
 	public static final int CLOSESTATUS_N = 2;
 	
+	/**
+	 * 申请类型-使用于全部申请
+	 */
+	public static final int MATYPE_ALL = 0;
+	/**
+	 * 申请类型-报销费用
+	 */
+	public static final int MATYPE_BX = 1;
+	/**
+	 * 申请类型-客户费用
+	 */
+	public static final int MATYPE_Customer = 2;
+	/**
+	 * 申请类型-助促销品申请
+	 */
+	public static final int MATYPE_PromotionalItem = 3;
+	
 	
 	public static final int BILLSTATUS_TEMPSAVED = 0;  //单据状态——暂存
 	public static final int BILLSTATUS_SAVED = 1;	//单据状态——保存

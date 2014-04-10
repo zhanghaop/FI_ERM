@@ -13,7 +13,7 @@ import nc.bs.dao.DAOException;
 import nc.bs.logging.Logger;
 import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.erm.expenseaccount.ExpenseBalVO;
-import nc.vo.fip.pub.SqlTools;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.freevalue.util.MD5;
 import nc.vo.fipub.utils.ArrayUtil;
 import nc.vo.fipub.utils.KeyLock;
@@ -48,7 +48,7 @@ public class ExpenseAccountBalanceBO {
 			ExpenseBalVO.BX_FIORG, ExpenseBalVO.BX_CASHPROJ, ExpenseBalVO.BX_DWBM, ExpenseBalVO.BX_DEPTID,
 			ExpenseBalVO.BX_JSFS, ExpenseBalVO.BX_CASHITEM, ExpenseBalVO.BX_JKBXR, ExpenseBalVO.PK_CURRTYPE,
 			ExpenseBalVO.ISWRITEOFF, ExpenseBalVO.PAYMAN, ExpenseBalVO.PAYDATE, ExpenseBalVO.PAYFLAG,
-			ExpenseBalVO.PK_PAYORG };
+			ExpenseBalVO.PK_PAYORG, ExpenseBalVO.PK_BRAND, ExpenseBalVO.PK_PROLINE, ExpenseBalVO.BX_TRADETYPE};
 
 	private ExpenseAccountDAO dao;
 
@@ -83,7 +83,7 @@ public class ExpenseAccountBalanceBO {
 		try {
 			c = basedao.retrieveByClause(
 					ExpenseBalVO.class,
-					SqlTools.getInStr(ExpenseBalVO.MD5,
+					SqlUtils.getInStr(ExpenseBalVO.MD5,
 							map.keySet().toArray(new String[0]), true));
 		} catch (DAOException e) {
 			Logger.error("根据MD5查询费用余额表出错");

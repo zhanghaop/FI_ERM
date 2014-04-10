@@ -5,6 +5,7 @@ import java.util.Arrays;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.itf.arap.pub.IBXBillPublic;
+import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.pub.beans.MessageDialog;
@@ -18,7 +19,6 @@ import nc.vo.er.exception.ContrastBusinessException;
 import nc.vo.er.exception.ContrastBusinessException.ContrastBusinessExceptionType;
 import nc.vo.er.exception.CrossControlMsgException;
 import nc.vo.er.exception.ProjBudgetAlarmBusinessException;
-import nc.vo.er.util.StringUtils;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
@@ -69,17 +69,17 @@ public class ErmBillBillAppModelService implements IAppModelService, IPagination
 			}
 			JKBXVO[] bxvos = getBxvo(result);
 
-			// 显示预算，借款控制的提示信息
-			if (!StringUtils.isNullWithTrim(bxvos[0].getWarningMsg()) && bxvos[0].getWarningMsg().length() > 0) {
-				MessageDialog.showWarningDlg(getEditor(),
-						nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-																								 * @
-																								 * res
-																								 * "警告"
-																								 */,
-						bxvos[0].getWarningMsg());
-				bxvos[0].setWarningMsg(null);
-			}
+//			// 显示预算，借款控制的提示信息
+//			if (!StringUtils.isNullWithTrim(bxvos[0].getWarningMsg()) && bxvos[0].getWarningMsg().length() > 0) {
+//				MessageDialog.showWarningDlg(getEditor(),
+//						nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+//																								 * @
+//																								 * res
+//																								 * "警告"
+//																								 */,
+//						bxvos[0].getWarningMsg());
+//				bxvos[0].setWarningMsg(null);
+//			}
 
 			((ErmBillBillForm) getEditor()).setContrast(false);
 			bxvos[0].setHasCrossCheck(false);// 清空是否校验的标记
@@ -193,18 +193,35 @@ public class ErmBillBillAppModelService implements IAppModelService, IPagination
 		if (object instanceof JKBXVO) {
 			// 期初单据走后台保存
 			JKBXVO jkbxvo = (JKBXVO) object;
-			if (jkbxvo.getParentVO().getQcbz().booleanValue()) {//
+			if (jkbxvo.getParentVO().getQcbz().booleanValue()) {
 				JKBXVO[] jkvos = NCLocator.getInstance().lookup(IBXBillPublic.class)
 						.update(new JKBXVO[] { (JKBXVO) object });
 				return jkvos[0];
 			} else {
-				if (jkbxvo.getParentVO().getSpzt() == IBillStatus.CHECKGOING) {// 审批中单据修改，仅做更新即可
-					JKBXVO[] jkvos = NCLocator.getInstance().lookup(IBXBillPublic.class)
-							.update(new JKBXVO[] { (JKBXVO) object });
-					return jkvos[0];
+				String djlxbm = jkbxvo.getParentVO().getDjlxbm();
+				String billId = jkbxvo.getParentVO().getPrimaryKey();
+				String pk_user = BXUiUtil.getPk_user();
+				String pk_psn = BXUiUtil.getPk_psndoc();
+				Integer spzt = jkbxvo.getParentVO().getSpzt();
+				
+				boolean isBillMaker = pk_user.equals(jkbxvo.getParentVO().creator)
+						|| (pk_psn != null && jkbxvo.getParentVO().getJkbxr() != null && jkbxvo.getParentVO()
+								.getJkbxr().equals(pk_psn));
+				
+				if (spzt == IBillStatus.COMMIT && isBillMaker) {//提交态，并且是可修改人，则认为可修改，重新提交
+					return pfUtilSave(jkbxvo, "EDIT");
 				}
+
+				if (((IPFWorkflowQry) NCLocator.getInstance().lookup(IPFWorkflowQry.class.getName()))
+						.isApproveFlowStartup(billId, djlxbm)) {// 启动了审批流后,审批流中仅修改
+					if (NCLocator.getInstance().lookup(IPFWorkflowQry.class).isCheckman(billId, djlxbm, pk_user)) {
+						JKBXVO[] jkvos = NCLocator.getInstance().lookup(IBXBillPublic.class)
+								.update(new JKBXVO[] { (JKBXVO) object });
+						return jkvos[0];
+					}
+				}
+				return pfUtilSave(jkbxvo, "EDIT");
 			}
-			return pfUtilSave(jkbxvo, "EDIT");
 		}
 		return null;
 	}

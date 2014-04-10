@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.bs.erm.mactrlschema.MaCtrlSchemaChecker;
 import nc.bs.uif2.BusinessExceptionAdapter;
 import nc.ui.pub.bill.BillData;
 import nc.ui.uif2.actions.batch.BatchSaveAction;
@@ -22,7 +21,7 @@ public class SaveBilAction extends BatchSaveAction {
 	public void doAction(ActionEvent e) throws Exception {
 		getEditor().getBillCardPanel().stopEditing();
 		doNotNulValidate();// 必输项校验
-		MaCtrlSchemaChecker.checkCtrlBillOperation(getTreeModel(),getCheckCtrlBillList());
+//		MaCtrlSchemaChecker.checkCtrlBillOperation(getTreeModel(),getCheckCtrlBillList());
 		super.doAction(e);
 	}
 

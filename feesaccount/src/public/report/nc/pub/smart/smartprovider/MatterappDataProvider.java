@@ -62,6 +62,10 @@ public class MatterappDataProvider extends AbsReportDataProvider {
 
 			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common",
 					"UCMD1-000144")/* @res "单据编号" */,
+
+		    nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common",
+		                            "UC000-0002185")/* @res "摘要" */,
+		                    
 			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0064")/*@res "执行数"*/,
             nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0",
                     "0201109-0087")/* @res "执行数本币" */,
@@ -96,6 +100,7 @@ public class MatterappDataProvider extends AbsReportDataProvider {
 		MtAppDetailVO.PK_CURRTYPE, // 币种主键
 		"currtype", // 币种
 		MtAppDetailVO.BILLNO, // 单据编号
+		"reason", //摘要
 		MtAppDetailVO.EXE_AMOUNT+SUFFIX_ORI, // 执行数
 		MtAppDetailVO.ORG_EXE_AMOUNT+SUFFIX_LOC, // 金额本币
 		PREFIX_GR+MtAppDetailVO.GROUP_EXE_AMOUNT+SUFFIX_LOC, // 金额集团本币
@@ -116,7 +121,7 @@ public class MatterappDataProvider extends AbsReportDataProvider {
 	private static final int[] DBCOLUMNTYPES = { 
 	        Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
 			Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
-			Types.VARCHAR, Types.DECIMAL,Types.DECIMAL, Types.DECIMAL, Types.DECIMAL,
+			Types.VARCHAR, Types.VARCHAR, Types.DECIMAL,Types.DECIMAL, Types.DECIMAL, Types.DECIMAL,
 			Types.DECIMAL, Types.DECIMAL, Types.DECIMAL, Types.DECIMAL, Types.DECIMAL, 
 			Types.DECIMAL, Types.DECIMAL, Types.DECIMAL, Types.VARCHAR,Types.INTEGER 
 			};
@@ -125,7 +130,7 @@ public class MatterappDataProvider extends AbsReportDataProvider {
 	private static final int[] PRECISIONS = { 
 	        20,20, 20, 50, 50, 
 	        19, 20, 50, 20,50, 
-	        50, 28, 28, 28, 28, 
+	        50, 100, 28, 28, 28, 28, 
 	        28, 28, 28, 28, 28, 
 	        28, 28, 28, 20, 20 };
 
@@ -133,7 +138,7 @@ public class MatterappDataProvider extends AbsReportDataProvider {
 	private static final int[] SCALES = { 
 	        0, 0, 0, 0, 0, 
 	        0, 0, 0, 0, 0, 
-	        0, 8, 8, 8, 8, 
+	        0, 0, 8, 8, 8, 8, 
 	        8, 8, 8, 8, 8, 
 	        8, 8, 8, 0, 0 };
 

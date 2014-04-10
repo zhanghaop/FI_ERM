@@ -27,6 +27,7 @@ import nc.ui.querytemplate.valueeditor.IFieldValueElementEditor;
 import nc.ui.querytemplate.valueeditor.RefElementEditor;
 import nc.ui.querytemplate.valueeditor.ref.CompositeRefElementEditor;
 import nc.ui.querytemplate.valueeditor.ref.CompositeRefPanel;
+import nc.ui.resa.refmodel.CostCenterTreeRefModel;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.resa.costcenter.CostCenterVO;
@@ -151,9 +152,12 @@ class CostCenterSetFiOrgRefMOdelProcesser extends RefModelProcessor {
 		if (model == null)
 			return;
 		model.setPk_org(this.pk_org);
-		if (!StringUtil.isEmpty(pk_org)) {
-		      model.setWherePart(" " + CostCenterVO.PK_FINANCEORG + "=" + "'"
-		                + pk_org + "'");
+		if (!StringUtil.isEmpty(pk_org) && model instanceof CostCenterTreeRefModel) {
+//		      model.setWherePart(" " + CostCenterVO.PK_PROFITCENTER + "=" + "'"
+//		                + pk_org + "'");
+		      CostCenterTreeRefModel costModel = (CostCenterTreeRefModel)model;
+		      costModel.setCurrentOrgCreated(false);
+		      costModel.setOrgType(CostCenterVO.PK_PROFITCENTER);
 		}
 	}
 }

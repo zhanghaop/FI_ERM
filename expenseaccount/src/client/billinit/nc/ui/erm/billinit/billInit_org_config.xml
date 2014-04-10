@@ -95,6 +95,7 @@
 		<property name="userdefitemPreparator" ref="userdefitemCardPreparator"/>
 		<property name="tabSingleShow" value="false" />
 		<property name="contrastaction" ref="contrastaction" />
+		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">
 			<map>
 				<entry key="jk_busitem">

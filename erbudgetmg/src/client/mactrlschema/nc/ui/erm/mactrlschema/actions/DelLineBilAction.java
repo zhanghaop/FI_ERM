@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.bs.erm.mactrlschema.MaCtrlSchemaChecker;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.batch.BatchDelLineAction;
 import nc.ui.uif2.model.HierachicalDataAppModel;
@@ -25,7 +24,7 @@ public class DelLineBilAction extends BatchDelLineAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 
-		MaCtrlSchemaChecker.checkCtrlBillOperation(getTreeModel(), getCheckCtrlBillList());
+//		MaCtrlSchemaChecker.checkCtrlBillOperation(getTreeModel(), getCheckCtrlBillList());
 		super.doAction(e);
 	}
 

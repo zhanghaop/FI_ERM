@@ -34,21 +34,7 @@ public class UserdefitemContainerUtil {
 		
 		if (!ArrayUtils.isEmpty(billTabVOs)) {
 			for (BillTabVO singleVO : billTabVOs) {
-				UserdefQueryParam queryParam = new UserdefQueryParam();
-				queryParam.setMdfullname(singleVO.getMetadataclass());
-				Integer pos = singleVO.getPos();
-				queryParam.setPos(pos);
-				
-				//兼容借款报销单
-				if("zyx".equals(prefix) && pos==IBillItem.BODY){
-					queryParam.setPrefix("defitem");
-				}else{
-					queryParam.setPrefix(prefix);
-					
-				}
-				
-				queryParam.setTabcode(singleVO.getTabcode());
-				params.add(queryParam);
+				params.add(getTabUserdefQueryParam(singleVO,prefix));
 			}
 		}
 		return params;
@@ -64,17 +50,52 @@ public class UserdefitemContainerUtil {
 	public static List<QueryParam> getQueryParams(BillTempletVO billTempletVO) {
 		List<QueryParam> params = new ArrayList<QueryParam>();
 		// 得到所有的面签
-		BillStructVO strucvo = billTempletVO.getHeadVO().getStructvo();
-		if (strucvo != null) {
-			BillTabVO[] billTabVOs = strucvo.getBillTabVOs();
-			if (!ArrayUtils.isEmpty(billTabVOs)) {
-				for (BillTabVO singleVO : billTabVOs) {
-					QueryParam queryParam = new QueryParam();
-					queryParam.setMdfullname(singleVO.getMetadataclass());
-					params.add(queryParam);
+		if (billTempletVO != null && billTempletVO.getHeadVO() != null) {
+			BillStructVO strucvo = billTempletVO.getHeadVO().getStructvo();
+			if (strucvo != null) {
+				BillTabVO[] billTabVOs = strucvo.getBillTabVOs();
+				if (!ArrayUtils.isEmpty(billTabVOs)) {
+					for (BillTabVO singleVO : billTabVOs) {
+						params.add(getTabQueryParams(singleVO));
+					}
 				}
 			}
 		}
 		return params;
+	}
+	
+	/**
+	 * 通过BILLTABVO取得自定项更新参数vo，用于更新用户定义属性
+	 * 
+	 * @param billTabVO(不可为空)
+	 * @param prefix 
+	 * @return
+	 */
+	public static UserdefQueryParam getTabUserdefQueryParam(BillTabVO billTabVO,String prefix) {
+		UserdefQueryParam queryParam = new UserdefQueryParam();
+		queryParam.setMdfullname(billTabVO.getMetadataclass());
+		Integer pos = billTabVO.getPos();
+		queryParam.setPos(pos);
+		
+		//兼容借款报销单
+		if("zyx".equals(prefix) && pos==IBillItem.BODY){
+			queryParam.setPrefix("defitem");
+		}else{
+			queryParam.setPrefix(prefix);
+		}
+		queryParam.setTabcode(billTabVO.getTabcode());
+		return queryParam;
+	}
+	
+	/**
+	 * 通过BILLTABVO取得自定项查询参数vo，用户定义属性容器用到
+	 * 
+	 * @param billTabVO 不可空
+	 * @return
+	 */
+	public static QueryParam getTabQueryParams(BillTabVO billTabVO) {
+		QueryParam queryParam = new QueryParam();
+		queryParam.setMdfullname(billTabVO.getMetadataclass());
+		return queryParam;
 	}
 }

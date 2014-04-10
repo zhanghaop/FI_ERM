@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	
+	<bean id="BxCardHeadBeforeEditEventHandler" class="nc.ui.erm.bx.ext.eventlistener.BxCardHeadBeforeEditEventHandler">
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+	
+	<bean id="BxCardHeadAfterEditEventHandler" class=" nc.ui.erm.bx.ext.eventlistener.BxCardHeadAfterEditEventHandler">
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+	<bean id="BxOrgChangeEventHandler" class=" nc.ui.erm.bx.ext.eventlistener.BxOrgChangeEventHandler">
+		<property name="billform" ref="editor"></property>
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+
+	<!--
+		监听器(Mediator)(可选)###########################################################
+	-->
+	<bean id="AppEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
+		<property name="model" ref="manageAppModel" />
+		<property name="handlerMap">
+			<map>
+				<entry key="nc.ui.pubapp.uif2app.event.OrgChangedEvent">
+					<list>
+						<ref bean="BxOrgChangeEventHandler" />
+					</list>
+				</entry>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailAfterEditEvent">
+					<list>
+						<ref bean="BxCardHeadAfterEditEventHandler"></ref>
+					</list>
+				</entry>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailBeforeEditEvent">
+					<list>
+						<ref bean="BxCardHeadBeforeEditEventHandler"></ref>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>

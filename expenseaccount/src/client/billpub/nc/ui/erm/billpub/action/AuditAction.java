@@ -26,7 +26,6 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.BugetAlarmBusinessException;
 import nc.vo.er.exception.ProjBudgetAlarmBusinessException;
-import nc.vo.er.util.StringUtils;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
@@ -98,20 +97,20 @@ public class AuditAction extends ErmAuditAction {
 			ErUiUtil.showBatchResults(getModel().getContext(), msgs);
 		}
 
-		// 显示预算，借款控制的提示信息
-		if (!StringUtils.isNullWithTrim(jkbxVos[0].getWarningMsg()) && jkbxVos[0].getWarningMsg().length() > 0) {
-			MessageDialog.showWarningDlg(getEditor(),
-					nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-																							 * *
-																							 * 
-																							 * @
-																							 * res
-																							 * *
-																							 * "警告"
-																							 */,
-					jkbxVos[0].getWarningMsg());
-			jkbxVos[0].setWarningMsg(null);
-		}
+//		// 显示预算，借款控制的提示信息
+//		if (!StringUtils.isNullWithTrim(jkbxVos[0].getWarningMsg()) && jkbxVos[0].getWarningMsg().length() > 0) {
+//			MessageDialog.showWarningDlg(getEditor(),
+//					nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+//																							 * *
+//																							 * 
+//																							 * @
+//																							 * res
+//																							 * *
+//																							 * "警告"
+//																							 */,
+//					jkbxVos[0].getWarningMsg());
+//			jkbxVos[0].setWarningMsg(null);
+//		}
 	}
 
 	/**
@@ -188,28 +187,28 @@ public class AuditAction extends ErmAuditAction {
 															 */);
 			} else {
 				// 显示预算，借款控制的提示信息
-				String warningMsg = null;
+//				String warningMsg = null;
 				if(msgReturn instanceof MessageVO[]){
 					MessageVO[] msgVos = (MessageVO[])msgReturn;
 					JKBXVO jkbxvo = (JKBXVO) msgVos[0].getSuccessVO();
-					warningMsg = jkbxvo.getWarningMsg();
+//					warningMsg = jkbxvo.getWarningMsg();
 					jkbxvo.setWarningMsg(null);
 					result = msgVos[0];
 				}else if(msgReturn instanceof JKBXVO){//改签和加签的情况下会出现返回AggVo
-					warningMsg = ((JKBXVO)msgReturn).getWarningMsg();
+//					warningMsg = ((JKBXVO)msgReturn).getWarningMsg();
 					((JKBXVO)msgReturn).setWarningMsg(null);
 					result = new MessageVO((JKBXVO)msgReturn, ActionUtils.AUDIT);
 				}
 				
-				if (!StringUtils.isNullWithTrim(warningMsg)) {
-					MessageDialog.showWarningDlg(getEditor(),
-							nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-							 * @
-							 * res
-							 * "警告"
-							 */,
-							 warningMsg);
-				}
+//				if (!StringUtils.isNullWithTrim(warningMsg)) {
+//					MessageDialog.showWarningDlg(getEditor(),
+//							nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+//							 * @
+//							 * res
+//							 * "警告"
+//							 */,
+//							 warningMsg);
+//				}
 			}
 
 		} catch (BugetAlarmBusinessException e) {

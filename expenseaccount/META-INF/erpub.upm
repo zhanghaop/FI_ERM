@@ -17,6 +17,11 @@
             <implementation>nc.impl.arap.bx.ErUIControlImp</implementation>
         </component>
         
+      	<component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.itf.arap.pub.IErmBillUIPublic</interface>
+            <implementation>nc.impl.arap.bx.ErmBillUIImpl</implementation>
+        </component>
+        
         <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
      	    <interface>nc.itf.erm.service.IErmEJBService</interface>
      	    <implementation>nc.bs.erm.service.ErmEJBServiceImpl</implementation>
@@ -56,6 +61,11 @@
         <component priority="0" singleton="true" supportAlias="true" remote="true" tx="CMT">
      	    <interface>nc.itf.erm.ntb.IErmLinkBudgetService</interface>
      	    <implementation>nc.bs.erm.buget.ErmLinkBudgetServiceImpl</implementation>
+        </component>
+        
+        <component priority="0" remote="true" singleton="true" supportAlias="true" tx="CMT">
+            <interface>nc.itf.erm.pub.ICombineResultForME</interface>
+            <implementation>nc.impl.erm.bx.CombineResultForMEImpl</implementation>
         </component>
     </public>
 </module>

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import nc.bs.arap.util.SqlUtils;
 import nc.bs.businessevent.IBusinessEvent;
 import nc.bs.businessevent.IBusinessListener;
 import nc.bs.dao.BaseDAO;
@@ -20,6 +19,7 @@ import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.event.IArapBSEventType;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.expensetype.ExpenseTypeVO;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fip.billitem.BillItemVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
@@ -78,7 +78,7 @@ public class ErmBillTypeManaListener implements IBusinessListener {
 		List<?> existsBillType = null;
 		BaseDAO baseDAO = new BaseDAO();
 		try {
-			final String inSql = SqlUtils.getInStr("pk_billtype",billtypes.toArray(new String[0]));
+			final String inSql = SqlUtils.getInStr("pk_billtype", billtypes.toArray(new String[0]), true);
 			//查询是否已经复制过单据类型的结算信息
 			StringBuffer sql = new StringBuffer(" select distinct pk_billtype from fip_billitem where attrcode ='zb.settlenum' ");
 			if(inSql!=null && inSql.length()>0){
@@ -86,7 +86,7 @@ public class ErmBillTypeManaListener implements IBusinessListener {
 				sql.append(inSql);
 			}
 			existsBillType = (List<?>) baseDAO.executeQuery(sql.toString(),new ColumnListProcessor());
-		} catch (DAOException e) {
+		} catch (Exception e) {
 			ExceptionHandler.consume(e);
 		}
 		//待复制的单据类型

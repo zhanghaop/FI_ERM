@@ -39,24 +39,7 @@ public class CostShareLinkListener extends DefaultFuncNodeInitDataListener {
 	protected void doOther(int type) {
 		if (ILinkType.LINK_TYPE_QUERY == type) {
 			CostShareDataManager modelDataManager = (CostShareDataManager) getDatamanager();
-			String[] pks = null;
-			if (funcletInitData != null && funcletInitData.getInitData() instanceof LinkQuery) {
-				LinkQuery querydata = (LinkQuery) funcletInitData.getInitData();
-				if (querydata != null) {
-					if (querydata.getBillIDs().length != 0) {
-						pks = querydata.getBillIDs();
-					} else {
-						pks = new String[] { querydata.getBillID() };
-					}
-				}
-			} else if (funcletInitData != null && funcletInitData.getInitData() instanceof ILinkQueryData) {
-				if (funcletInitData.getInitData() instanceof ILinkQueryDataPlural) {
-					pks = ((DefaultLinkData) funcletInitData.getInitData()).getBillIDs();
-
-				} else {
-					pks = new String[] { ((ILinkQueryData) funcletInitData.getInitData()).getBillID() };
-				}
-			}
+			String[] pks = getBillIDs();
 			modelDataManager.initModelByPKs(pks);
 			if (pks != null && pks.length == 1) {
 				// 只有一条数据情况下，显示卡片
@@ -68,6 +51,28 @@ public class CostShareLinkListener extends DefaultFuncNodeInitDataListener {
 			initActions(editorActions.getActions(), funcletInitData);
 			editorActions.handleEvent(new AppEvent(AppEventConst.UISTATE_CHANGED));
 		}
+	}
+
+	protected String[] getBillIDs() {
+		String[] pks = null;
+		if (funcletInitData != null && funcletInitData.getInitData() instanceof LinkQuery) {
+			LinkQuery querydata = (LinkQuery) funcletInitData.getInitData();
+			if (querydata != null) {
+				if (querydata.getBillIDs().length != 0) {
+					pks = querydata.getBillIDs();
+				} else {
+					pks = new String[] { querydata.getBillID() };
+				}
+			}
+		} else if (funcletInitData != null && funcletInitData.getInitData() instanceof ILinkQueryData) {
+			if (funcletInitData.getInitData() instanceof ILinkQueryDataPlural) {
+				pks = ((DefaultLinkData) funcletInitData.getInitData()).getBillIDs();
+
+			} else {
+				pks = new String[] { ((ILinkQueryData) funcletInitData.getInitData()).getBillID() };
+			}
+		}
+		return pks;
 	}
 	
     private void initActions(List<Action> actionList,FuncletInitData data) {

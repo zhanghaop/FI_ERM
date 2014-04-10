@@ -8,6 +8,7 @@ import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBxUIControl;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.bd.psn.PsnjobVO;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -69,6 +70,7 @@ public class ErUIControlImp implements IBxUIControl{
 				 */
 				//sql+=" or  ( zb.pk_jkbx in (select pk_jkd from er_bxcontrast where pk_bxd='"+pkbxd+"' and (sxbz=0 or sxbz=2)))" ;
 				sql+=" or  ( zb.pk_jkbx in (select er_bxcontrast.pk_jkd from er_bxcontrast join er_bxzb  on  er_bxcontrast.pk_bxd=er_bxzb.pk_jkbx where er_bxcontrast.pk_bxd='"+pkbxd+"' and (er_bxcontrast.sxbz=0 or er_bxcontrast.sxbz=2) and er_bxzb.bzbm='"+bzbm+"'))" ;
+
 			}
 		}else{
 			sql = "  where zb.yjye>0 and zb.dr=0 and zb.djzt=3 and zb.djrq<='"+cxrq+"' and zb.ischeck='"+ischeck+"' and zb.bzbm='"+bzbm+"' and "+sampQuery ;
@@ -156,5 +158,17 @@ public class ErUIControlImp implements IBxUIControl{
 		return result;
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public PsnjobVO[] queryPsnjobVOByPsnPK(String psnPK)
+			throws BusinessException {
+		StringBuffer sql=new StringBuffer();
+		sql.append(" PK_PSNDOC='"+ psnPK +"'");
+		Collection<PsnjobVO> job =  MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(PsnjobVO.class, sql.toString(), false);
+		if(job == null || job.isEmpty()){
+			return null;
+		}
+		return job.toArray(new PsnjobVO[]{});
+	}
 
 }

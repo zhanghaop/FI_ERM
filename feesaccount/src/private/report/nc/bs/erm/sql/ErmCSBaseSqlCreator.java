@@ -2,6 +2,7 @@ package nc.bs.erm.sql;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import nc.bs.erm.util.ReportSqlUtils;
 import nc.itf.fipub.report.IPubReportConstants;
@@ -184,13 +185,27 @@ public abstract class ErmCSBaseSqlCreator {
 			}
 
 			// 处理查询数据权限
-			String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
-					.getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
-					IPubReportConstants.FI_REPORT_REF_POWER,dsp_objtablename);
-
-			if (!StringUtils.isEmpty(powerSql)) {
-				sqlBuffer.append(powerSql);
+//			String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
+//					.getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
+//					IPubReportConstants.FI_REPORT_REF_POWER,dsp_objtablename);
+//
+//			if (!StringUtils.isEmpty(powerSql)) {
+//				sqlBuffer.append(powerSql);
+//			}
+			
+			Map<String,String> qryObjMeta = nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID(dsp_objtablename); 
+			if (this instanceof MatterappSQLCreator) {
+			    qryObjMeta.remove("pk_proline");
+			    qryObjMeta.remove("pk_brand");
 			}
+            // 处理查询数据权限
+            String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
+                    .getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
+                    (String[])qryObjMeta.values().toArray(new String[0]), IPubReportConstants.FI_REPORT_REF_POWER);
+
+            if (!StringUtils.isEmpty(powerSql)) {
+                sqlBuffer.append(powerSql);
+            }
 
 			compositeWhereSql = sqlBuffer.toString();
 		}

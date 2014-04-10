@@ -39,6 +39,7 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 	public Object runComClass(PfParameterVO vo) throws BusinessException {
 		try {
 			super.m_tmpVo = vo;
+			
 			// ####本脚本必须含有返回值,返回DLG和PNL的组件不允许有返回值####
 			Object retObj = null;
 			// ####重要说明：生成的业务组件方法尽量不要进行修改####
@@ -50,6 +51,7 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 			List<MessageVO> fMsgs=new ArrayList<MessageVO>();
 			
 			BXVO bxvo = (BXVO) vo.m_preValueVo;
+			Integer spzt = bxvo.getParentVO().getSpzt();
 			
 //begin--added by chendya 报销单反审核数据权限校验			
 			//是否期初单据
@@ -68,7 +70,7 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 //--end			
 			boolean bflag = procUnApproveFlow(vo);
 			
-			if (bflag) {
+			if (bflag && spzt != 0) {
 				auditVOs.add(bxvo);
 			}else{
 				fMsgs.add(new MessageVO(bxvo, ActionUtils.UNAUDIT));

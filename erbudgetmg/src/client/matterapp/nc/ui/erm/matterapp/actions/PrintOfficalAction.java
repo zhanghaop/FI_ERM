@@ -31,7 +31,7 @@ public class PrintOfficalAction extends nc.ui.erm.matterapp.actions.PreViewActio
 	}
 
 	@Override
-	public void doAction(ActionEvent e) throws Exception{
+	public void doAction(ActionEvent e) throws Exception {
 		AggMatterAppVO aggVO = (AggMatterAppVO) getModel().getSelectedData();
 		// ºÏ≤ÈVO
 		checkOfficalPrint(aggVO);
@@ -42,8 +42,8 @@ public class PrintOfficalAction extends nc.ui.erm.matterapp.actions.PreViewActio
 		aggVO.getParentVO().setPrinter(ErUiUtil.getPk_user());
 		aggVO.getParentVO().setPrintdate(ErUiUtil.getBusiDate());
 
-		MatterAppVO parent = NCLocator.getInstance().lookup(IErmMatterAppBillManage.class)
-				.updatePrintInfo(aggVO.getParentVO());
+		MatterAppVO parent = NCLocator.getInstance().lookup(IErmMatterAppBillManage.class).updatePrintInfo(
+				aggVO.getParentVO());
 		aggVO.setParentVO(parent);
 		((BillManageModel) getModel()).directlyUpdate(aggVO);
 	}
@@ -74,7 +74,11 @@ public class PrintOfficalAction extends nc.ui.erm.matterapp.actions.PreViewActio
 	
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = this.getBtnName() + ErmActionConst.FAIL_MSG;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
+				"2011000_0", null, "02011000-0040", null,
+				new String[] { this.getBtnName() })/*
+													 * @ res "{0} ß∞‹£°"
+													 */;
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(null);

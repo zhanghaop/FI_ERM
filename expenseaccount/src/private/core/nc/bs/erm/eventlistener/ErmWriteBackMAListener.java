@@ -1,5 +1,6 @@
 package nc.bs.erm.eventlistener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.businessevent.IBusinessEvent;
@@ -11,11 +12,14 @@ import nc.bs.erm.event.ErmEventType;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IWriteBackPrivate;
 import nc.pubitf.erm.matterappctrl.IMatterAppCtrlService;
+import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.ep.bx.JKBXMtappCtrlBusiVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.matterappctrl.IMtappCtrlBusiVO;
 import nc.vo.erm.matterappctrl.MtappCtrlInfoVO;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -54,11 +58,48 @@ public class ErmWriteBackMAListener implements IBusinessListener {
 			if (mtBusiVoList.isEmpty()) {
 				return;
 			}
-
-			MtappCtrlInfoVO errMsgVo = NCLocator.getInstance().lookup(IMatterAppCtrlService.class).matterappControl(mtBusiVoList.toArray(new IMtappCtrlBusiVO[0]));
-			if (errMsgVo.getControlinfos() != null) {
-				throw new BusinessException(getErrMsg(errMsgVo));
+			
+			List<IMtappCtrlBusiVO> jkrowctrllist = new ArrayList<IMtappCtrlBusiVO>();// 借款单按行回写集合
+			List<IMtappCtrlBusiVO> jkmactrllist = new ArrayList<IMtappCtrlBusiVO>();// 借款单按整单调剂回写集合
+			List<IMtappCtrlBusiVO> mactrllist = new ArrayList<IMtappCtrlBusiVO>();// 报销单按规则回写集合
+			for (int i = 0; i < mtBusiVoList.size(); i++) {
+				JKBXMtappCtrlBusiVO busivo =  (JKBXMtappCtrlBusiVO) mtBusiVoList.get(i);
+				if(BXConstans.JK_DJLXBM.equals(busivo.getBillType())&&StringUtil.isEmpty(busivo.getSrcBusidetailPK())){
+					if(StringUtil.isEmpty(busivo.getMatterAppDetailPK())){
+						// 借款单整单控制回写申请单。
+						jkmactrllist.add(busivo);
+					}else{
+						// 借款单按行控制回写申请单。
+						jkrowctrllist.add(busivo);
+					}
+				}else{
+					mactrllist.add(busivo);
+				}
 			}
+			IMatterAppCtrlService mactrlservice = NCLocator.getInstance().lookup(IMatterAppCtrlService.class);
+			
+			if(!jkmactrllist.isEmpty()){
+				// 借款单整单控制回写申请单
+				MtappCtrlInfoVO errMsgVo = mactrlservice.matterappControlByAllAdjust(jkmactrllist.toArray(new IMtappCtrlBusiVO[0]));
+				if (errMsgVo.getControlinfos() != null) {
+					throw new BusinessException(getErrMsg(errMsgVo));
+				}
+			}
+			if(!jkrowctrllist.isEmpty()){
+				// 借款单按行控制回写申请单
+				MtappCtrlInfoVO errMsgVo = mactrlservice.matterappControlByDetail(jkrowctrllist.toArray(new IMtappCtrlBusiVO[0]));
+				if (errMsgVo.getControlinfos() != null) {
+					throw new BusinessException(getErrMsg(errMsgVo));
+				}
+			}
+			
+			if(!mactrllist.isEmpty()){
+				MtappCtrlInfoVO errMsgVo = mactrlservice.matterappControl(mtBusiVoList.toArray(new IMtappCtrlBusiVO[0]));
+				if (errMsgVo.getControlinfos() != null) {
+					throw new BusinessException(getErrMsg(errMsgVo));
+				}
+			}
+
 		}
 
 	}

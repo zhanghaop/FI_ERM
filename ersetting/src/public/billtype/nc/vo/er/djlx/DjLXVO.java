@@ -109,6 +109,28 @@ public class DjLXVO extends SuperVO {
 	 */
 	private BusiTypeVO busitypeVOe ;
 	
+	/**
+	 * 631-费用申请类型
+	 */
+	private java.lang.Integer matype;
+	/**
+	 * 631-费用申请允许报销比百分比
+	 */
+	private nc.vo.pub.lang.UFDouble bx_percentage;
+	/**
+	 * 631-是否必须申请
+	 */
+	private nc.vo.pub.lang.UFBoolean is_mactrl;
+	
+	private String parent_billtype;
+	
+	
+	public static final String PARENT_BILLTYPE = "parent_billtype";
+	public static final String MATYPE = "matype";
+	public static final String BX_PERCENTAGE = "bx_percentage";
+	public static final String IS_MACTRL = "is_mactrl";
+	
+	
 	public UFBoolean getCreatCashflows() {
 		return creatCashflows;
 	}
@@ -955,5 +977,59 @@ public class DjLXVO extends SuperVO {
 	public void setIsloadtemplate(UFBoolean isloadtemplate) {
 		this.isloadtemplate = isloadtemplate;
 	}
-
+	
+	/**
+	 * 属性matype的Getter方法.属性名：费用申请类型
+	 * 创建日期:
+	 * @return java.lang.Integer
+	 */
+	public java.lang.Integer getMatype () {
+		return matype;
+	}   
+	/**
+	 * 属性matype的Setter方法.属性名：费用申请类型
+	 * 创建日期:
+	 * @param newMatype java.lang.Integer
+	 */
+	public void setMatype (java.lang.Integer newMatype ) {
+	 	this.matype = newMatype;
+	} 	  
+	/**
+	 * 属性bx_percentage的Getter方法.属性名：允许报销百分比
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getBx_percentage () {
+		return bx_percentage;
+	}   
+	/**
+	 * 属性bx_percentage的Setter方法.属性名：允许报销百分比
+	 * 创建日期:
+	 * @param newBx_percentage nc.vo.pub.lang.UFDouble
+	 */
+	public void setBx_percentage (nc.vo.pub.lang.UFDouble newBx_percentage ) {
+	 	this.bx_percentage = newBx_percentage;
+	} 	  
+	/**
+	 * 属性is_mactrl的Getter方法.属性名：是否必须申请
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFBoolean
+	 */
+	public nc.vo.pub.lang.UFBoolean getIs_mactrl () {
+		return is_mactrl;
+	}   
+	/**
+	 * 属性is_mactrl的Setter方法.属性名：是否必须申请
+	 * 创建日期:
+	 * @param newIs_mactrl nc.vo.pub.lang.UFBoolean
+	 */
+	public void setIs_mactrl (nc.vo.pub.lang.UFBoolean newIs_mactrl ) {
+	 	this.is_mactrl = newIs_mactrl;
+	}
+	public String getParent_billtype() {
+		return parent_billtype;
+	}
+	public void setParent_billtype(String parent_billtype) {
+		this.parent_billtype = parent_billtype;
+	}
 }

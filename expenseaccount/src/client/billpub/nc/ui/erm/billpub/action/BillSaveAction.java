@@ -28,13 +28,15 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 
     @Override
     public void doAction(ActionEvent e) throws Exception {
+    	
     	BillCardPanel billCardPanel = ((ErmBillBillForm) getEditor()).getBillCardPanel();
 		String tableCode = (billCardPanel.getBillData().getBodyTableCodes())[0];
 //		boolean showing = billCardPanel.getBillTable(tableCode).isShowing();
 //    	if(!showing){
-//    		//单据的表体没有页签时，在修改保存时，将业务页签的值清空，在后台重新根据表头的值生成表体
+//    		//单据的表体没有页签时，在修改保存时，将业务页签的值清空，在后面重新根据表头的值生成表体
 //    		billCardPanel.getBillModel(tableCode).clearBodyData();
 //    	}
+		
 		if(!BXConstans.BXRB_CODE.equals(getModel().getContext().getNodeCode())){
 			delBlankLine(billCardPanel, tableCode);
 		}
@@ -52,7 +54,8 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 		// 校验
 		validate(value);
 
-		// 执行单据模板验证公式
+		// 执行单据模板验证公式，在表体存在校验公式时，表体过多，并且大多数行不符合校验规则的数据时
+		//公式解析器会记录日志，这是个很耗时的操作 千行会耗时1~2s
 		boolean execValidateFormulas = billCardPanel.getBillData().execValidateFormulas();
 		if (!execValidateFormulas) {
 			return;
@@ -60,7 +63,7 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 
 		if (((ErmBillBillForm) getEditor()).getResVO() != null) {
 			JKBXVO vo = (JKBXVO) ((ErmBillBillForm) getEditor()).getResVO().getBusiobj();
-			value.setMt_aggvos(vo.getMt_aggvos());
+			value.setMaheadvo(vo.getMaheadvo());
 		}
 
 		if (getModel().getUiState() == UIState.ADD) {

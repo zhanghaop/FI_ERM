@@ -15,12 +15,16 @@ import nc.bs.arap.bx.BXZbBO;
 import nc.bs.arap.bx.ContrastBO;
 import nc.bs.arap.bx.IBXBusItemBO;
 import nc.bs.arap.bx.VoucherRsChecker;
-import nc.bs.arap.util.SqlUtils;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
+import nc.bs.pub.pf.PfUtilTools;
+import nc.bs.trade.billsource.IBillDataFinder;
+import nc.bs.trade.billsource.IBillFinder;
+import nc.impl.pubapp.linkquery.BillTypeSetBillFinder;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.ISqdlrKeyword;
 import nc.itf.er.indauthorize.IIndAuthorizeQueryService;
@@ -29,7 +33,6 @@ import nc.itf.resa.costcenter.ICostCenterQueryOpt;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ArrayListProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
-import nc.md.model.MetaDataException;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.org.IOrgUnitPubService;
@@ -39,7 +42,6 @@ import nc.pubitf.rbac.IUserPubService;
 import nc.pubitf.resa.costcenter.ICostCenterPubService;
 import nc.pubitf.uapbd.IPsndocPubService;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.arap.bx.util.CurrencyControlBO;
 import nc.vo.bd.psn.PsndocVO;
 import nc.vo.ep.bx.BXBusItemVO;
@@ -63,7 +65,10 @@ import nc.vo.er.reimrule.ReimRuleVO;
 import nc.vo.er.util.StringUtils;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.costshare.CShareDetailVO;
+import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.util.VOUtils;
+import nc.vo.fi.pub.SqlUtils;
+import nc.vo.fipub.utils.VOUtil;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.org.DeptVO;
 import nc.vo.org.OrgVO;
@@ -77,6 +82,7 @@ import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.resa.costcenter.CostCenterVO;
 import nc.vo.sm.UserVO;
+import nc.vo.trade.billsource.LightBillVO;
 import nc.vo.uap.rbac.constant.IRoleConst;
 import nc.vo.uap.rbac.role.RoleVO;
 
@@ -208,7 +214,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		        list = queryJKBXHeadVOBypks(keys, djdl);
 		    }
 		}else{
-		    String inStr = SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, keys);
+		    String inStr = SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, keys, true);
 		    List<InitHeaderVO> headList = (List<InitHeaderVO>) new BaseDAO().retrieveByClause(InitHeaderVO.class, inStr);
 		    for (InitHeaderVO initHeaderVO : headList)
             {
@@ -289,12 +295,12 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 * 查询借款报销主表vo
 	 * 
 	 * @param keys
-	 * @throws MetaDataException
 	 * @author: wangyhh@ufida.com.cn
+	 * @throws BusinessException 
 	 */
 	@SuppressWarnings("unchecked")
-	private List<JKBXVO> queryJKBXHeadVOBypks(String[] keys,String djdl) throws MetaDataException {
-		String where = SqlUtils.getInStr("pk_jkbx", keys) + " and dr=0 order by djrq desc, djbh desc";
+	private List<JKBXVO> queryJKBXHeadVOBypks(String[] keys,String djdl) throws BusinessException {
+		String where = SqlUtils.getInStr("pk_jkbx", keys,true) + " and dr=0 order by djrq desc, djbh desc";
 		if(BXConstans.BX_DJDL.equals(djdl)){
 			return (List<JKBXVO>) MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(BXVO.class, where , true);
 		}else{
@@ -529,7 +535,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				agentDeptList.add(pk_dept);
 			}
 			if(agentDeptList.size() > 0){
-				String insql = SqlUtils.getInStr("PK_DEPT", agentDeptList.toArray(new String[0]));
+				String insql = SqlUtils.getInStr("PK_DEPT", agentDeptList.toArray(new String[0]),true);
 				String deptSql = "SELECT PK_PSNDOC FROM BD_PSNJOB WHERE ISMAINJOB = 'Y' AND " + insql;
 				
 				@SuppressWarnings("unchecked")
@@ -550,7 +556,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		}
 		
 		authPsnList.add(pk_psn);
-		String insql = SqlUtils.getInStr("JKBXR", authPsnList.toArray(new String[0]));
+		String insql = SqlUtils.getInStr("JKBXR", authPsnList.toArray(new String[0]),true);
 		
 		if(indAuthSql.length() != 0){
 			insql += indAuthSql;
@@ -580,7 +586,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			ExceptionHandler.handleException(e1);
 		}
 		
-		String inStr = SqlUtils.getInStr("PK_ROLER", roles.toArray(new String[0]));
+		String inStr = SqlUtils.getInStr("PK_ROLER", roles.toArray(new String[0]), true);
 		String date = new UFDate().toString();
 		StringBuffer sqlBuf = new StringBuffer();
 		sqlBuf.append(" PK_GROUP ='").append(pk_group).append("' ");
@@ -1038,11 +1044,11 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	@Override
 	public Map<String, SuperVO> getDeptRelCostCenterMap(String pk_group)
 			throws BusinessException {
-		boolean isResInstalled = BXUtil.isProductInstalled(pk_group,
-				BXConstans.FI_RES_FUNCODE);
-		if (!isResInstalled) {
-			return null;
-		}
+//		boolean isResInstalled = BXUtil.isProductInstalled(pk_group,
+//				BXConstans.FI_RES_FUNCODE);
+//		if (!isResInstalled) {
+//			return null;
+//		}
 		SQLParameter param = new SQLParameter();
 		param.addParam(pk_group);
 		Collection<DeptVO> voList = getBaseDAO().retrieveByClause(DeptVO.class,
@@ -1254,6 +1260,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		return baseDao;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isExistJKBXVOByMtappPks(String[] mtappPks, String[] billstatus) throws BusinessException {
 		if (mtappPks == null || mtappPks.length == 0) {
@@ -1264,24 +1271,70 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 
 		if (billstatus != null && billstatus.length > 0) {
 			sql.append(" and " + SqlUtil.buildInSql(JKBXHeaderVO.SXBZ, billstatus));
+
+			Collection<?> jkVos = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(JKVO.class,
+					sql.toString(), false);
+			
+			if (jkVos != null && jkVos.size() > 0) {
+				return true;
+			}
+			
+			Collection<?> bxVos = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(BXVO.class,
+					sql.toString(), false);
+			
+			if (bxVos != null && bxVos.size() > 0) {
+				return true;
+			}
+		}else{
+			Collection<MatterAppVO> matterVos = MDPersistenceService.lookupPersistenceQueryService()
+					.queryBillOfVOByPKs(MatterAppVO.class, mtappPks, false);
+
+			if (matterVos != null && matterVos.size() > 0) {
+				Map<String, List<MatterAppVO>> billtype2MatterVo = new HashMap<String, List<MatterAppVO>>();
+
+				for (MatterAppVO matterVo : matterVos) {
+					String billtype = matterVo.getPk_tradetype();
+
+					if (billtype2MatterVo.get(billtype) == null) {
+						List<MatterAppVO> matterList = new ArrayList<MatterAppVO>();
+						matterList.add(matterVo);
+						billtype2MatterVo.put(billtype, matterList);
+					} else {
+						billtype2MatterVo.get(billtype).add(matterVo);
+					}
+				}
+
+				for (Map.Entry<String, List<MatterAppVO>> entry : billtype2MatterVo.entrySet()) {
+					IBillFinder billFinder = (IBillFinder) PfUtilTools.findBizImplOfBilltype(entry.getKey(),
+							BillTypeSetBillFinder.class.getName());
+
+					String[] types = null;
+					try {
+						IBillDataFinder dataFinder = billFinder.createBillDataFinder(entry.getKey());
+						types = dataFinder.getForwardBillTypes(entry.getKey());// 下游单据类型
+					} catch (Exception ex) {
+						ExceptionHandler.handleException(ex);
+					}
+
+					if (types != null && types.length > 0) {
+						for (String type : types) {
+							LightBillVO[] lightVos = null;
+							try {
+								lightVos = ErUtil.queryForwardBills(entry.getKey(), new String[] { type }, VOUtil
+										.getAttributeValues(entry.getValue().toArray(new MatterAppVO[] {}),
+												MatterAppVO.PK_MTAPP_BILL));
+							} catch (Exception e) {
+								ExceptionHandler.handleException(e);
+							}
+
+							if (lightVos != null && lightVos.length > 0) {
+								return true;
+							}
+						}
+					}
+				}
+			}
 		}
-
-		@SuppressWarnings("rawtypes")
-		Collection jkVos = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(JKVO.class,
-				sql.toString(), false);
-
-		if (jkVos != null && jkVos.size() > 0) {
-			return true;
-		}
-
-		@SuppressWarnings("rawtypes")
-		Collection bxVos = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(BXVO.class,
-				sql.toString(), false);
-
-		if (bxVos != null && bxVos.size() > 0) {
-			return true;
-		}
-
 		return false;
 	}
 
@@ -1393,7 +1446,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	@Override
 	public List<JKBXVO> queryJKBXByWhereSql(String sql, boolean islazy)
 			throws BusinessException {
-		String whereSQL = sql+" and djlxbm <>'2647' "+" and pk_jkbx not in (select src_id from er_costshare) order by djrq desc";
+		String whereSQL = sql+" and djlxbm <>'2647' and ybje>0 "+" and pk_jkbx not in (select src_id from er_costshare) order by djrq desc";
 		 return (List<JKBXVO>) MDPersistenceService.lookupPersistenceQueryService().
 			queryBillOfVOByCond(BXVO.class, whereSQL , false);
 	}

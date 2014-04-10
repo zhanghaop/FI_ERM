@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.framework.common.NCLocator;
+import nc.bs.framework.common.RuntimeEnv;
 import nc.bs.logging.Logger;
+import nc.itf.uap.IUAPQueryBS;
 import nc.jdbc.framework.processor.BeanListProcessor;
 import nc.ui.dbcache.DBCacheQueryFacade;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.jcom.lang.StringUtil;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 
@@ -43,7 +45,23 @@ public class CacheUtil {
         T vo = getCache(clazz);
         if (vo == null)
             return null;
-        return getValueFromCache(vo, null, wherePart);
+        return getValueFromCache(vo, null, wherePart,true);
+    }
+    /**
+     * 根据where条件，批量获取指定class的VO
+     * @param <T>
+     * @param clazz
+     * @param wherePart 
+     * @param fromserverisnull 缓存中没有数据时，是否从服务器获得 
+     * @return 无记录时返回null
+     * @throws BusinessException
+     */
+    public static <T extends SuperVO> T[] getValueFromCacheByWherePart(
+    		Class<T> clazz, String wherePart,boolean fromserverisnull) throws BusinessException {
+    	T vo = getCache(clazz);
+    	if (vo == null)
+    		return null;
+    	return getValueFromCache(vo, null, wherePart,fromserverisnull);
     }
 
     /**
@@ -60,7 +78,7 @@ public class CacheUtil {
         T vo = getCache(clazz);
         if (vo == null)
             return null;
-        return getValueFromCache(vo, excludeSelectField, wherePart);
+        return getValueFromCache(vo, excludeSelectField, wherePart,true);
     }
     
     /**
@@ -122,11 +140,17 @@ public class CacheUtil {
             condition = StringUtils.EMPTY;
         else
             condition = " where " + condition;
-        String[] attArray = vo.getAttributeNames();
-        String sql = "select " + StringUtil.toString(attArray, ",") + " from "
-                + vo.getTableName() + condition;
-        List<T> result = (List<T>) DBCacheQueryFacade.runQuery(sql,
-                new BeanListProcessor(clazz));
+//        String[] attArray = vo.getAttributeNames();
+		String sql = "select *  from " + vo.getTableName() + condition;
+		
+		boolean isRunningInServer = RuntimeEnv.getInstance().isRunningInServer();
+		List<T> result = null;
+		if (isRunningInServer) {
+			result = (List<T>) NCLocator.getInstance().lookup(IUAPQueryBS.class).executeQuery(sql, new BeanListProcessor(clazz));
+		} else {
+			result = (List<T>) DBCacheQueryFacade.runQuery(sql, new BeanListProcessor(clazz));
+		}
+		
         if (CollectionUtils.isEmpty(result))
             return null;
         T[] tArray = (T[]) Array.newInstance(clazz,
@@ -136,7 +160,7 @@ public class CacheUtil {
     
     @SuppressWarnings({ "deprecation", "unchecked" })
     private static <T extends SuperVO> T[] getValueFromCache(T vo, 
-            String[] excludeSelectField, String wherePart) throws BusinessException {
+            String[] excludeSelectField, String wherePart,boolean fromserverisnull) throws BusinessException {
         String condition = StringUtils.EMPTY;
         if (StringUtils.isEmpty(wherePart)) {
             condition = " where 1 = 1";
@@ -156,18 +180,31 @@ public class CacheUtil {
             sql = "select " + StringUtil.toString(attArray, ",") + " from "
             + vo.getTableName() + condition;
         }
-        List<T> result = (List<T>) DBCacheQueryFacade.runQuery(sql,
-                new BeanListProcessor(vo.getClass()));
+        DBCacheQueryFacade.setFeature(DBCacheQueryFacade.FEATURE_FROM_SERVER_IFNULL, fromserverisnull);
+        
+        Class<? extends SuperVO> clazz = vo.getClass();
+        
+        //后台运行时，不走缓存
+        boolean isRunningInServer = RuntimeEnv.getInstance().isRunningInServer();
+		List<T> result = null;
+		if (isRunningInServer) {
+			result = (List<T>) NCLocator.getInstance().lookup(IUAPQueryBS.class).executeQuery(sql, new BeanListProcessor(clazz));
+		} else {
+			result = (List<T>) DBCacheQueryFacade.runQuery(sql, new BeanListProcessor(clazz));
+		}
+        
+//		List<T> result = (List<T>) DBCacheQueryFacade.runQuery(sql,
+//                new BeanListProcessor(clazz));
         if (CollectionUtils.isEmpty(result))
             return null;
-        T[] tArray = (T[]) Array.newInstance(vo.getClass(),
+        T[] tArray = (T[]) Array.newInstance(clazz,
                 result.size());
         return result.toArray(tArray);
     }
     
     private static String[] parseSelectField(SuperVO vo, String[] excludeShowField) {
         String[] attArray = vo.getAttributeNames();
-        if (!ArrayUtil.isEmpty(excludeShowField)) {
+        if (!ArrayUtils.isEmpty(excludeShowField)) {
             List<String> attList = new ArrayList<String>(attArray.length);
             for (String att : attArray) {
                 boolean bExclude = false;

@@ -3,12 +3,16 @@ package nc.ui.erm.costshare.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
+
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.itf.fi.pub.Currency;
 import nc.itf.resa.costcenter.ICostCenterQueryOpt;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.costshare.ui.CsBillManageModel;
+import nc.ui.fipub.crossrule.CrossCheckBeforeUtil;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.beans.constenum.IConstEnum;
@@ -18,9 +22,9 @@ import nc.ui.pub.bill.BillEditEvent;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.IBillItem;
+import nc.ui.uif2.editor.BillForm;
 import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -58,10 +62,18 @@ public class ErmForCShareUiUtil {
 		BillModel model = cardPanel.getBillModel(BXConstans.CSHARE_PAGE);
 
 		int count = model.getRowCount();
+		
+		int col = model.getBodyColByKey(CShareDetailVO.SHARE_RATIO);
+		
+		UFDouble ratio = (UFDouble) model.getTotalTableModel().getValueAt(0, col);
 
 		for (int i = 0; i < count; i++) {
 			if (i == (count - 1)) {
-				resetJeByRatio(i, cardPanel, true);
+				if(ratio.compareTo(new UFDouble(100))==0){
+					resetJeByRatio(i, cardPanel, true);
+				}else{
+					resetJeByRatio(i, cardPanel, false);
+				}
 				setJE(i, cardPanel);
 			} else {
 				resetJeByRatio(i, cardPanel, false);
@@ -164,9 +176,9 @@ public class ErmForCShareUiUtil {
 		if (amount == null) {
 			amount = UFDouble.ZERO_DBL;
 		}
-		amount = amount.setScale(digit, UFDouble.ROUND_HALF_UP);
-		
+
 		UFDouble avg = UFDouble.ZERO_DBL;
+
 		boolean isBalance = true;
 
 		// 当金额不大于0时，不进行分摊
@@ -263,6 +275,14 @@ public class ErmForCShareUiUtil {
 			model.setRowState(rowNum, BillModel.MODIFICATION);
 		}
 	}
+	
+	@SuppressWarnings("restriction")
+	public static void crossCheck(String itemKey, BillForm editor, String headOrBody) throws BusinessException {
+		String currentBillTypeCode = ((CsBillManageModel) editor.getModel()).getTrTypeCode();
+		CrossCheckBeforeUtil util = new CrossCheckBeforeUtil(editor.getBillCardPanel(), currentBillTypeCode);
+		util.handler(itemKey, CostShareVO.PK_ORG, headOrBody.equals("Y"));
+	}
+	 
 
 	/**
 	 * 分摊明细事前操作
@@ -295,8 +315,16 @@ public class ErmForCShareUiUtil {
 						.getValueObject().toString());
 			} else if (CShareDetailVO.PK_RESACOSTCENTER.equals(key)) {// 成本中心
 				UIRefPane refPane = (UIRefPane) item.getComponent();
-				String wherePart = CostCenterVO.PK_FINANCEORG + "=" + "'" + assumeOrg + "'";
-				addWherePart(refPane, assumeOrg, wherePart);
+				final String pk_pcorg = getBodyRefPk(model, eve.getRow(), CShareDetailVO.PK_PCORG);
+				if (pk_pcorg != null) {
+					refPane.setEnabled(true);
+					refPane.getRefModel().setPk_org(pk_pcorg);
+				} else {
+					refPane.setEnabled(false);
+					cardPanel.setBodyValueAt(null, eve.getRow(), CShareDetailVO.PK_PCORG);
+				}
+				String wherePart = CostCenterVO.PK_PROFITCENTER + "=" + "'" + pk_pcorg + "'";
+				addWherePart(refPane, pk_pcorg, wherePart);
 			} else if (CShareDetailVO.PROJECTTASK.equals(key)) {// 项目任务根据项目过滤
 				UIRefPane refPane = (UIRefPane) item.getComponent();
 				final String pk_project = getBodyRefPk(model, eve.getRow(), CShareDetailVO.JOBID);
@@ -350,6 +378,8 @@ public class ErmForCShareUiUtil {
 		if(eve.getPos() != BillItem.BODY){
 			return;
 		}
+		BillItem headItem = cardPanel.getHeadItem(CostShareVO.BZBM);
+		String bzbm = (String) headItem.getValueObject();
 		
 		boolean isChanged = !isNeedBalanceJe(cardPanel);
 		
@@ -391,10 +421,15 @@ public class ErmForCShareUiUtil {
 
 		} else if (eve.getKey().equals(CShareDetailVO.JOBID)) {
 			cardPanel.setBodyValueAt(null, eve.getRow(), CShareDetailVO.PROJECTTASK + "_ID");
-		} else if (refValues != null && refValues.length == 1 && eve.getKey().equals(CShareDetailVO.ASSUME_DEPT)) {
+		} else if ((refValues == null || refValues.length == 1) && eve.getKey().equals(CShareDetailVO.ASSUME_DEPT)) {
 			// 单独设置承担部门时，重新设置成本中心
 			try {
-				setCostCenter(eve.getRow(), cardPanel);
+				BillItem pcorgItem = cardPanel.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.PK_PCORG);
+				BillItem resaItem = cardPanel.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.PK_RESACOSTCENTER);
+				//只能利润中心和成本中心显示的时后，编辑表体承担部门才修改
+				if(pcorgItem!=null && resaItem!=null && resaItem.isShow() && pcorgItem.isShow()){
+					setCostCenter(eve.getRow(), cardPanel);
+				}
 			} catch (BusinessException e) {
 				ExceptionHandler.handleExceptionRuntime(e);
 			}
@@ -408,32 +443,64 @@ public class ErmForCShareUiUtil {
 			setJE(eve.getRow(), cardPanel);
 		} else if (eve.getKey().equals(CShareDetailVO.BBHL)) {
 			// 重新计算本币金额
-			UFDouble Assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
-					eve.getRow(), CShareDetailVO.ASSUME_AMOUNT);
-			UFDouble hl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(eve.getRow(),
-					CShareDetailVO.BBHL);
-			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-					Assume_amount.multiply(hl, UFDouble.ROUND_HALF_UP), eve.getRow(), CShareDetailVO.BBJE);
+			setAmountByHl(bzbm, eve, cardPanel);
+
 		} else if (eve.getKey().equals(CShareDetailVO.GROUPBBHL)) {
 			// 重新计算集团本币金额
-			UFDouble Assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
-					eve.getRow(), CShareDetailVO.ASSUME_AMOUNT);
-			UFDouble grouphl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(eve.getRow(),
-					CShareDetailVO.GROUPBBHL);
-			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-					Assume_amount.multiply(grouphl, UFDouble.ROUND_HALF_UP), eve.getRow(), CShareDetailVO.GROUPBBJE);
+			setAmountByHl(bzbm, eve, cardPanel);
+
 		} else if (eve.getKey().equals(CShareDetailVO.GLOBALBBHL)) {
 			// 重新计算全局本币金额
-			UFDouble Assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
-					eve.getRow(), CShareDetailVO.ASSUME_AMOUNT);
-			UFDouble globalhl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
-					eve.getRow(), CShareDetailVO.GLOBALBBHL);
-			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-					Assume_amount.multiply(globalhl, UFDouble.ROUND_HALF_UP), eve.getRow(), CShareDetailVO.GLOBALBBJE);
-		} else if (eve.getKey().equals(CShareDetailVO.PK_PCORG)) {// 利润中心
-			cardPanel.getBillData().getBillModel(BXConstans.CSHARE_PAGE)
-					.setValueAt(null, eve.getRow(), CShareDetailVO.PK_CHECKELE);
+			setAmountByHl(bzbm, eve, cardPanel);
 
+		} else if (eve.getKey().equals(CShareDetailVO.PK_PCORG)) {// 利润中心
+			AbstractRefModel refmodel = ((UIRefPane) cardPanel.getBodyItem(eve.getKey()).getComponent()).getRefModel();
+			String[] eveValues = refmodel.getPkValues();
+			if(eveValues==null || eveValues.length==1){
+				cardPanel.getBillData().getBillModel(BXConstans.CSHARE_PAGE).setValueAt(null, eve.getRow(), CShareDetailVO.PK_CHECKELE);
+				cardPanel.getBillData().getBillModel(BXConstans.CSHARE_PAGE).setValueAt(null, eve.getRow(), CShareDetailVO.PK_RESACOSTCENTER);
+			}
+			
+		}
+	}
+	/**
+	 * 修改分摊页签表体的汇率时，计算本币的金额
+	 * @param bzbm
+	 * @param eve
+	 * @param cardPanel
+	 */
+	public static void setAmountByHl(String bzbm,BillEditEvent eve ,BillCardPanel cardPanel){
+		
+		UFDouble assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
+				eve.getRow(), CShareDetailVO.ASSUME_AMOUNT);
+		DefaultConstEnum value = (DefaultConstEnum) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
+				eve.getRow(), CShareDetailVO.ASSUME_ORG);
+		if(assume_amount ==null || value==null || bzbm==null){
+			return;
+		}
+		try {
+			String assume_org =(String) value.getValue();
+			
+			UFDouble hl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(eve.getRow(),
+					CShareDetailVO.BBHL);
+			UFDouble grouphl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(eve.getRow(),
+					CShareDetailVO.GROUPBBHL);
+			UFDouble globalhl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(eve.getRow(),
+					CShareDetailVO.GLOBALBBHL);
+			UFDouble[] bbje = Currency.computeYFB(assume_org,
+					Currency.Change_YBCurr, bzbm, assume_amount, null, null, null, hl,
+					BXUiUtil.getSysdate());
+			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+					bbje[2], eve.getRow(), CShareDetailVO.BBJE);
+			UFDouble[] money = Currency.computeGroupGlobalAmount(bbje[0], bbje[2],
+					bzbm, BXUiUtil.getSysdate(), assume_org, cardPanel.getHeadItem(
+							JKBXHeaderVO.PK_GROUP).getValueObject().toString(),globalhl, grouphl);
+			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+					money[0], eve.getRow(), CShareDetailVO.GROUPBBJE);
+			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+					money[1], eve.getRow(), CShareDetailVO.GLOBALBBJE);
+		} catch (BusinessException e) {
+			ExceptionHandler.handleExceptionRuntime(e);
 		}
 	}
 
@@ -444,18 +511,17 @@ public class ErmForCShareUiUtil {
 	 * @throws ValidationException
 	 */
 	public static void setCostCenter(int row, BillCardPanel cardPanel) throws BusinessException {
-		boolean isResInstalled = BXUtil.isProductInstalled(BXUiUtil.getPK_group(), BXConstans.FI_RES_FUNCODE);
-		if (!isResInstalled) {
+		Object dept = cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(row, CShareDetailVO.ASSUME_DEPT);
+		if (dept == null)
+		{
+			cardPanel.setBodyValueAt(null,row, CShareDetailVO.PK_CHECKELE + "_ID");
+			cardPanel.setBodyValueAt(null,row, CShareDetailVO.PK_RESACOSTCENTER + "_ID");
+			cardPanel.setBodyValueAt(null,row, CShareDetailVO.PK_PCORG + "_ID");
 			return;
 		}
-		Object dept = cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(row, CShareDetailVO.ASSUME_DEPT);
-		Object dwbm = cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(row, CShareDetailVO.ASSUME_ORG);
-		if (dept == null || dwbm == null)
-			return;
-
+			
 		String pk_dept = ((DefaultConstEnum) dept).getValue().toString();
-		String pk_dwbm = ((DefaultConstEnum) dwbm).getValue().toString();
-		;
+		String pk_pcorg = null;
 
 		if (StringUtil.isEmpty(pk_dept)) {
 			return;
@@ -471,15 +537,22 @@ public class ErmForCShareUiUtil {
 		}
 		if (vos != null) {
 			for (CostCenterVO vo : vos) {
-				if (pk_dwbm.equals(vo.getPk_financeorg())) {
 					pk_costcenter = vo.getPk_costcenter();
+					pk_pcorg = vo.getPk_profitcenter();
 					break;
-				}
 			}
 		}
-		cardPanel.setBodyValueAt(pk_costcenter, row, CShareDetailVO.PK_RESACOSTCENTER + "_ID");
+		//关联利润中心时才重新设置
+		if(pk_pcorg != null){
+			cardPanel.setBodyValueAt(pk_costcenter, row, CShareDetailVO.PK_RESACOSTCENTER + "_ID");
+			cardPanel.setBodyValueAt(pk_pcorg, row, CShareDetailVO.PK_PCORG + "_ID");
+			cardPanel.setBodyValueAt(null,row, CShareDetailVO.PK_CHECKELE + "_ID");
+		}else{
+			cardPanel.setBodyValueAt(null, row, CShareDetailVO.PK_RESACOSTCENTER + "_ID");
+			cardPanel.setBodyValueAt(null, row, CShareDetailVO.PK_PCORG + "_ID");
+			cardPanel.setBodyValueAt(null,row, CShareDetailVO.PK_CHECKELE + "_ID");
+		}
 		cardPanel.getBillData().getBillModel(BXConstans.CSHARE_PAGE).loadLoadRelationItemValue();
-
 	}
 
 	/**
@@ -508,8 +581,11 @@ public class ErmForCShareUiUtil {
 		String assume_org = null;
 		if (tempValue instanceof IConstEnum) {
 			assume_org = (String) ((IConstEnum) tempValue).getValue();
+		}else if(tempValue == null){
+			//组织为空时，不计算汇率和本币金额
+			return;
 		}
-		UFDouble Assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
+		UFDouble assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
 				CShareDetailVO.ASSUME_AMOUNT);
 		try {
 			String localCurry = Currency.getLocalCurrPK(assume_org);
@@ -524,10 +600,10 @@ public class ErmForCShareUiUtil {
 		cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(hl, rowNum, CShareDetailVO.BBHL);
 		cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(grouphl, rowNum, CShareDetailVO.GROUPBBHL);
 		cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(globalhl, rowNum, CShareDetailVO.GLOBALBBHL);
-		if (Assume_amount != null) {
+		if (assume_amount != null) {
 			try {
 				UFDouble[] bbje = Currency.computeYFB(assume_org,
-						Currency.Change_YBCurr, bzbm, Assume_amount, null, null, null, hl,
+						Currency.Change_YBCurr, bzbm, assume_amount, null, null, null, hl,
 						BXUiUtil.getSysdate());
 				cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
 						bbje[2], rowNum, CShareDetailVO.BBJE);
@@ -557,26 +633,59 @@ public class ErmForCShareUiUtil {
 		}
 
 	}
-
+	
+	/**
+	 * 需要按照汇率方案重新计算
+	 * @param rowNum
+	 * @param cardPanel
+	 */
 	private static void setJE(int rowNum, BillCardPanel cardPanel) {
 		// 设置组织本币金额
 		UFDouble assume_amount = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
 				CShareDetailVO.ASSUME_AMOUNT);
-		UFDouble hl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
-				CShareDetailVO.BBHL);
-		if (assume_amount != null) {
-			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-					assume_amount.multiply(hl, UFDouble.ROUND_HALF_UP), rowNum, CShareDetailVO.BBJE);
-			UFDouble grouphl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
-					CShareDetailVO.GROUPBBHL);
-			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-					assume_amount.multiply(grouphl, UFDouble.ROUND_HALF_UP), rowNum, CShareDetailVO.GROUPBBJE);
+		
+		DefaultConstEnum value = (DefaultConstEnum) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(
+				rowNum, CShareDetailVO.ASSUME_ORG);
+		
+		String bzbm = cardPanel.getHeadItem("bzbm").getValueObject().toString();
+		try {
+			if (assume_amount != null && bzbm!=null && value!=null) {
+				
+				String assume_org = (String) value.getValue();
+				
+				UFDouble hl = (UFDouble) cardPanel.getBillModel(
+						BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
+								CShareDetailVO.BBHL);
+				
+				UFDouble[] bbje = Currency.computeYFB(assume_org,
+						Currency.Change_YBCurr, bzbm, assume_amount, null,
+						null, null, hl, BXUiUtil.getSysdate());
 
-			UFDouble globalhl = (UFDouble) cardPanel.getBillModel(BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
-					CShareDetailVO.GLOBALBBHL);
+				cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+						bbje[2], rowNum, CShareDetailVO.BBJE);
 
-			cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-					assume_amount.multiply(globalhl, UFDouble.ROUND_HALF_UP), rowNum, CShareDetailVO.GLOBALBBJE);
+				UFDouble grouphl = (UFDouble) cardPanel.getBillModel(
+						BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
+						CShareDetailVO.GROUPBBHL);
+
+				UFDouble globalhl = (UFDouble) cardPanel.getBillModel(
+						BXConstans.CSHARE_PAGE).getValueObjectAt(rowNum,
+						CShareDetailVO.GLOBALBBHL);
+				UFDouble[] money = Currency
+						.computeGroupGlobalAmount(bbje[0], bbje[2], bzbm,
+								BXUiUtil.getSysdate(), assume_org, cardPanel
+										.getHeadItem(JKBXHeaderVO.PK_GROUP)
+										.getValueObject().toString(), globalhl,
+								grouphl);
+
+				cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+						money[0], rowNum, CShareDetailVO.GROUPBBJE);
+
+				cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+						money[1], rowNum, CShareDetailVO.GLOBALBBJE);
+			}
+		} catch (BusinessException e) {
+		    Logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -588,16 +697,20 @@ public class ErmForCShareUiUtil {
 	 * @param ischanged
 	 */
 	private static void pasteLineByCondition(BillEditEvent eve, BillCardPanel cardPanel, boolean ischanged) {
+		JComponent component = cardPanel.getBodyItem(eve.getKey()).getComponent();
+		if(!(component instanceof UIRefPane)){//不是参照类型,不支持多选均摊操作
+			return;
+		}
 		eve.getOldValue();
-		AbstractRefModel refmodel = ((UIRefPane) cardPanel.getBodyItem(eve.getKey()).getComponent()).getRefModel();
+		AbstractRefModel refmodel = ((UIRefPane) component).getRefModel();
 		String[] refValues = refmodel.getPkValues();
 		if (refValues != null && refValues.length > 1) {
-			UIRefPane refPane = ((UIRefPane) cardPanel.getBodyItem(eve.getKey()).getComponent());
+			UIRefPane refPane = ((UIRefPane) component);
 			Object[] showValue = null;
 			if (refPane.isReturnCode()) {
 				showValue = refPane.getRefCodes();
 			} else {
-				String showNameField = ((UIRefPane) cardPanel.getBodyItem(eve.getKey()).getComponent()).getRefModel()
+				String showNameField = ((UIRefPane) component).getRefModel()
 						.getRefShowNameField();
 				showValue = refmodel.getValues(showNameField);
 			}
@@ -613,18 +726,30 @@ public class ErmForCShareUiUtil {
 				}
 
 				cardPanel.setBodyValueAt(new DefaultConstEnum(value, name), eve.getRow() + i, eve.getKey());
-
-				if (CShareDetailVO.ASSUME_ORG.equals(eve.getKey())) {// 费用单位在多选时，要将部门和项目、比例置空
-					if (!value.equals(eve.getOldValue())) {// 本单位不进行修改
-						clearBodyRowValue(eve.getRow() + i, cardPanel);
+				
+					if (CShareDetailVO.ASSUME_ORG.equals(eve.getKey())) {// 费用单位在多选时，要将部门和项目、比例置空
+						if (!value.equals(eve.getOldValue())) {// 本单位不进行修改
+							clearBodyRowValue(eve.getRow() + i, cardPanel);
+						}
+					} else if (CShareDetailVO.ASSUME_DEPT.equals(eve.getKey())) {
+						try {
+							BillItem pcorgItem = cardPanel.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.PK_PCORG);
+							BillItem resaItem = cardPanel.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.PK_RESACOSTCENTER);
+							if(pcorgItem!=null && resaItem!=null && resaItem.isShow() && pcorgItem.isShow()){
+								setCostCenter(eve.getRow() + i, cardPanel);
+							}
+						} catch (BusinessException e) {
+						    Logger.error(e.getMessage(), e);
+						}
+					} else if (CShareDetailVO.PK_PCORG.equals(eve.getKey())) {
+						if (!value.equals(eve.getOldValue())) {
+							cardPanel.setBodyValueAt(null, eve.getRow() + i,
+									CShareDetailVO.PK_RESACOSTCENTER + "_ID");
+							cardPanel.setBodyValueAt(null, eve.getRow() + i,
+									CShareDetailVO.PK_CHECKELE + "_ID");
+						}
 					}
-				} else if (CShareDetailVO.ASSUME_DEPT.equals(eve.getKey())) {
-					try {
-						setCostCenter(eve.getRow() + i, cardPanel);
-					} catch (BusinessException e) {
-						ExceptionHandler.handleExceptionRuntime(e);
-					}
-				}
+				
 			}
 
 			if (cardPanel.getBodyValueAt(eve.getRow(), CShareDetailVO.PK_CSHARE_DETAIL) != null) {
@@ -654,15 +779,27 @@ public class ErmForCShareUiUtil {
 				reComputeAllJeByAvg(cardPanel);
 			}
 		}
-
 	}
 
 	private static void clearBodyRowValue(int row, BillCardPanel cardPanel) {
 		String[] bodyItems = new String[] { CShareDetailVO.ASSUME_DEPT, CShareDetailVO.JOBID,
-				CShareDetailVO.PROJECTTASK, CShareDetailVO.PK_IOBSCLASS, CShareDetailVO.PK_RESACOSTCENTER,
-				CShareDetailVO.HBBM, CShareDetailVO.CUSTOMER };
+				CShareDetailVO.PROJECTTASK, CShareDetailVO.PK_IOBSCLASS,
+				CShareDetailVO.HBBM, CShareDetailVO.CUSTOMER, CShareDetailVO.PK_PCORG 
+				, CShareDetailVO.PK_RESACOSTCENTER , CShareDetailVO.PK_CHECKELE};
+		
 		for (String billItem : bodyItems) {
-			cardPanel.setBodyValueAt(null, row, billItem + "_ID");
+			if((billItem.equals(CShareDetailVO.PK_PCORG )
+					|| billItem.equals(CShareDetailVO.PK_RESACOSTCENTER)
+					|| billItem.equals(CShareDetailVO.PK_CHECKELE)
+					) && cardPanel.getBodyItem(BXConstans.CSHARE_PAGE, billItem).isShow()){
+				cardPanel.setBodyValueAt(null, row, billItem + "_ID");
+			}
+			if(!(billItem.equals(CShareDetailVO.PK_PCORG )
+					|| billItem.equals(CShareDetailVO.PK_RESACOSTCENTER)
+					|| billItem.equals(CShareDetailVO.PK_CHECKELE)
+					) ){
+				cardPanel.setBodyValueAt(null, row, billItem + "_ID");
+			}
 		}
 		
 		//处理自定义项清空
@@ -717,48 +854,72 @@ public class ErmForCShareUiUtil {
 	public static void afterAddOrInsertRowCsharePage(int rownum, BillCardPanel billCard) {
 		if (rownum >= 0 && billCard != null) {
 			// 将数据从表头联动到表体,
-			Object fydwbm = billCard.getHeadItem(JKBXHeaderVO.FYDWBM).getValueObject();
-			Object fydeptid = billCard.getHeadItem(JKBXHeaderVO.FYDEPTID).getValueObject();
-			Object szxmid = billCard.getHeadItem(JKBXHeaderVO.SZXMID).getValueObject();
-			Object jobid = billCard.getHeadItem(JKBXHeaderVO.JOBID).getValueObject();
-			Object project = billCard.getHeadItem(JKBXHeaderVO.PROJECTTASK).getValueObject();
+			Object fydwbm = getHeadValue(JKBXHeaderVO.FYDWBM, billCard);
+			Object fydeptid = getHeadValue(JKBXHeaderVO.FYDEPTID, billCard);
+			Object szxmid = getHeadValue(JKBXHeaderVO.SZXMID, billCard);
+			Object jobid = getHeadValue(JKBXHeaderVO.JOBID, billCard);
+			Object project = getHeadValue(JKBXHeaderVO.PROJECTTASK, billCard);
 
 			Object pcorg = null;
 			if (billCard.getHeadItem(JKBXHeaderVO.PK_PCORG) == null) {
-				pcorg = billCard.getHeadItem(CostShareVO.BX_PCORG).getValueObject();
+				pcorg = getHeadValue(CostShareVO.BX_PCORG, billCard);
 			} else {
-				pcorg = billCard.getHeadItem(JKBXHeaderVO.PK_PCORG).getValueObject();
+				pcorg = getHeadValue(JKBXHeaderVO.PK_PCORG, billCard);
 			}
 
-			Object checkele = billCard.getHeadItem(JKBXHeaderVO.PK_CHECKELE).getValueObject();
-			Object costcenter = billCard.getHeadItem(JKBXHeaderVO.PK_RESACOSTCENTER).getValueObject();
-			Object customer = billCard.getHeadItem(JKBXHeaderVO.CUSTOMER).getValueObject();
-			Object hbbm = billCard.getHeadItem(JKBXHeaderVO.HBBM).getValueObject();
+			Object checkele = getHeadValue(JKBXHeaderVO.PK_CHECKELE, billCard);
+			Object costcenter = getHeadValue(JKBXHeaderVO.PK_RESACOSTCENTER, billCard);
+			Object customer = getHeadValue(JKBXHeaderVO.CUSTOMER, billCard);
+			Object hbbm = getHeadValue(JKBXHeaderVO.HBBM, billCard);
+			Object pk_proline = getHeadValue(JKBXHeaderVO.PK_PROLINE, billCard);
+			Object pk_brand = getHeadValue(JKBXHeaderVO.PK_BRAND, billCard);
 
 			billCard.setBodyValueAt(fydwbm, rownum, CShareDetailVO.ASSUME_ORG);
 			billCard.setBodyValueAt(fydeptid, rownum, CShareDetailVO.ASSUME_DEPT);
+			billCard.setBodyValueAt(pcorg, rownum, CShareDetailVO.PK_PCORG);
+			billCard.setBodyValueAt(costcenter, rownum, CShareDetailVO.PK_RESACOSTCENTER);
+			
 			billCard.setBodyValueAt(szxmid, rownum, CShareDetailVO.PK_IOBSCLASS);
 			billCard.setBodyValueAt(jobid, rownum, CShareDetailVO.JOBID);
 			billCard.setBodyValueAt(project, rownum, CShareDetailVO.PROJECTTASK);
-			billCard.setBodyValueAt(pcorg, rownum, CShareDetailVO.PK_PCORG);
 			billCard.setBodyValueAt(checkele, rownum, CShareDetailVO.PK_CHECKELE);
-			billCard.setBodyValueAt(costcenter, rownum, CShareDetailVO.PK_RESACOSTCENTER);
 			billCard.setBodyValueAt(customer, rownum, CShareDetailVO.CUSTOMER);
 			billCard.setBodyValueAt(hbbm, rownum, CShareDetailVO.HBBM);
-
+			billCard.setBodyValueAt(pk_proline, rownum, CShareDetailVO.PK_PROLINE);
+			billCard.setBodyValueAt(pk_brand, rownum, CShareDetailVO.PK_BRAND);
+			
 			// 设置集团默认值（集团为必填项）
 			billCard.setBodyValueAt(billCard.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject(), rownum,
 					CShareDetailVO.PK_GROUP);
-			
+			try {
+				//增行和插行时
+				BillItem pcorgItem = billCard.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.PK_PCORG);
+				BillItem resaItem = billCard.getBodyItem(BXConstans.CSHARE_PAGE, CShareDetailVO.PK_RESACOSTCENTER);
+				if(pcorgItem!=null && resaItem!=null && resaItem.isShow() && pcorgItem.isShow()){
+					setCostCenter(rownum,billCard);
+				}
+			} catch (BusinessException e) {
+				ExceptionHandler.consume(e);
+			}
+
 			// 设置报销单自定义项冗余到结转单，30个自定义项
 			for (int i = 1; i <= 30; i++) {
 				if (billCard.getHeadItem("zyx" + i) == null) {
-					billCard.setBodyValueAt(billCard.getHeadItem("defitem" + i).getValueObject(), rownum, "defitem" + i);
+					billCard.setBodyValueAt(getHeadValue("defitem" + i, billCard), rownum, "defitem" + i);
 				} else {
-					billCard.setBodyValueAt(billCard.getHeadItem("zyx" + i).getValueObject(), rownum, "defitem" + i);
+					billCard.setBodyValueAt(getHeadValue("zyx" + i, billCard), rownum, "defitem" + i);
 				}
 			}
 		}
+	}
+	
+	private static Object getHeadValue(String key, BillCardPanel billCard) {
+		if (key != null && billCard != null) {
+			if (billCard.getHeadItem(key) != null) {
+				return billCard.getHeadItem(key).getValueObject();
+			}
+		}
+		return null;
 	}
 
 	/***
@@ -770,23 +931,46 @@ public class ErmForCShareUiUtil {
 	public static void afterEditHeadChangeCsharePageValue(BillCardPanel billCard, String eventKey) {
 		String bodyField = getCsPageOppositeFieldByHead().get(eventKey);
 		if (billCard.getBillModel(BXConstans.CSHARE_PAGE) == null
-				|| !billCard.getBodyPanel(BXConstans.CSHARE_PAGE).isVisible() || bodyField == null) {
+				|| bodyField == null) {
 			return;
 		}
 
 		int rowCount = billCard.getBillModel(BXConstans.CSHARE_PAGE).getRowCount();
 		Object headValue = billCard.getHeadItem(eventKey).getValueObject();
 		for (int i = 0; i < rowCount; i++) {
-			Object bodyAssumeOrgValue = billCard.getBodyValueAt(i, CShareDetailVO.ASSUME_ORG + IBillItem.ID_SUFFIX);
+			Object bodyAssumeOrgValue = billCard.getBillModel(BXConstans.CSHARE_PAGE).getValueAt(i, CShareDetailVO.ASSUME_ORG + IBillItem.ID_SUFFIX);
 			Object headFydwbm = billCard.getHeadItem(JKBXHeaderVO.FYDWBM).getValueObject();
-			// 表体承担单位与表头费用承担单位相同时，表体此字段显示且没有值或者此字段没有显示时，都将表头值带到表体。
-			if (bodyAssumeOrgValue != null && bodyAssumeOrgValue.equals(headFydwbm)) {
+			// 表体承担单位与表头费用承担单位相同时，
+			//表体此字段显示且没有值或者此字段没有显示时，都将表头值带到表体。
+			if (!CShareDetailVO.PK_PROLINE.equals(bodyField)
+					&& !CShareDetailVO.PK_BRAND.equals(bodyField)) {
+				if (bodyAssumeOrgValue != null&& bodyAssumeOrgValue.equals(headFydwbm)) {
+					if (billCard.getBodyItem(BXConstans.CSHARE_PAGE, bodyField).isShow()
+							&& billCard.getBillModel(BXConstans.CSHARE_PAGE).getValueAt(i, bodyField) != null) {
+						continue;
+					}
+
+					billCard.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+							headValue, i, bodyField + IBillItem.ID_SUFFIX);
+
+					int rowstatus = billCard.getBillModel(
+							BXConstans.CSHARE_PAGE).getRowState(i);
+					
+					if (rowstatus == BillModel.NORMAL) {
+						billCard.getBillModel(BXConstans.CSHARE_PAGE)
+								.setRowState(i, BillModel.MODIFICATION);
+					}
+				}
+			}	
+			else{
+				//产品线和品牌属于集团级档案，不与费用承担单位有关
 				if (billCard.getBodyItem(BXConstans.CSHARE_PAGE, bodyField).isShow()
-						&& billCard.getBodyValueAt(i, bodyField) != null) {
+						&& billCard.getBillModel(BXConstans.CSHARE_PAGE).getValueAt(i, bodyField) != null) {
 					continue;
 				}
 
-				billCard.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(headValue, i, bodyField + IBillItem.ID_SUFFIX);
+				billCard.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
+						headValue, i, bodyField + IBillItem.ID_SUFFIX);
 
 				int rowstatus = billCard.getBillModel(BXConstans.CSHARE_PAGE).getRowState(i);
 				if (rowstatus == BillModel.NORMAL) {
@@ -794,7 +978,7 @@ public class ErmForCShareUiUtil {
 				}
 			}
 		}
-		billCard.getBillModel().loadLoadRelationItemValue();
+		billCard.getBillModel(BXConstans.CSHARE_PAGE).loadLoadRelationItemValue();
 	}
 
 	private static Map<String, String> getCsPageOppositeFieldByHead() {
@@ -808,6 +992,8 @@ public class ErmForCShareUiUtil {
 		map.put(JKBXHeaderVO.CUSTOMER, CShareDetailVO.CUSTOMER);
 		map.put(JKBXHeaderVO.HBBM, CShareDetailVO.HBBM);
 		map.put(JKBXHeaderVO.FYDEPTID, CShareDetailVO.ASSUME_DEPT);
+		map.put(JKBXHeaderVO.PK_PROLINE, CShareDetailVO.PK_PROLINE);
+		map.put(JKBXHeaderVO.PK_BRAND, CShareDetailVO.PK_BRAND);
 		for(int i = 1; i <= 30; i ++){
 			map.put("zyx" + i, "defitem" + i);
 		}

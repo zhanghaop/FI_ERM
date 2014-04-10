@@ -140,6 +140,7 @@ public class ErmBillBillListView extends ERMBillListView {
 			billListPanel.getHeadBillModel().clearBodyData();
 			billListPanel.getBodyBillModel().clearBodyData();
 		} else {
+
 			JKBXHeaderVO[] headVos = new JKBXHeaderVO[datas.length];
 			for (int i = 0; i < datas.length; i++) {
 				headVos[i] = (JKBXHeaderVO) ((JKBXVO) datas[i]).getParentVO();

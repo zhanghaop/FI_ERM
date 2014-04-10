@@ -4,18 +4,13 @@
 \***************************************************************/
 package nc.vo.erm.matterapp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nc.bs.er.util.BXBsUtil;
-import nc.bs.erm.common.ErmBillConst;
 import nc.itf.fi.pub.SysInit;
 import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
-import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 /**
@@ -24,7 +19,7 @@ import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
  * 在此处添加此类的描述信息
  * </p>
  * 创建日期:
- *
+ * 
  * @author
  * @version NCPrj ??
  */
@@ -109,24 +104,23 @@ public class MatterAppVO extends SuperVO {
 	private java.lang.String defitem3;
 	private java.lang.String defitem2;
 	private java.lang.String defitem1;
+	private java.lang.String djdl = "ma";
+	private java.lang.String auditman;
+	private java.lang.String pk_org_v;
+	private java.lang.String pk_supplier;
+	private java.lang.String assume_dept;
+	private nc.vo.pub.lang.UFBoolean is_adjust = UFBoolean.TRUE;
+	private java.lang.String center_dept;
+	private nc.vo.pub.lang.UFDouble usable_amout;
+	private nc.vo.pub.lang.UFDouble max_amount;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
 
-	private java.lang.String pk_supplier;
+	public UFBoolean iscostshare = UFBoolean.FALSE;// 分摊标志
 
-	private String auditman;
+	private UFBoolean isignoreatpcheck = UFBoolean.FALSE;// 可用量是否跳过检查（营销费用）
 
-	private String pk_org_v;
-	
-	private String assume_dept;
-	
-	private UFBoolean is_adjust = UFBoolean.TRUE;//可调剂
-
-	private java.lang.String djdl = ErmBillConst.MatterApp_DJDL;
-	
-	
-	private UFDouble usable_amout;
-
+	public static final String ISCOSTSHARE = "iscostshare";
 	public static final String PK_MTAPP_BILL = "pk_mtapp_bill";
 	public static final String PK_BILLTYPE = "pk_billtype";
 	public static final String PK_TRADETYPE = "pk_tradetype";
@@ -207,22 +201,20 @@ public class MatterAppVO extends SuperVO {
 	public static final String DEFITEM2 = "defitem2";
 	public static final String DEFITEM1 = "defitem1";
 	public static final String DJDL = "djdl";
-	
-	public static final String USABLE_AMOUT = "usable_amout"; 
-	/**
-	 * 审批流起点人
-	 */
 	public static final String AUDITMAN = "auditman";
-	
-	public static final String PK_SUPPLIER = "pk_supplier";
 	public static final String PK_ORG_V = "pk_org_v";
+	public static final String PK_SUPPLIER = "pk_supplier";
 	public static final String ASSUME_DEPT = "assume_dept";
-	
 	public static final String IS_ADJUST = "is_adjust";
+	public static final String CENTER_DEPT = "center_dept";
+	public static final String USABLE_AMOUT = "usable_amout";
+	public static final String MAX_AMOUNT = "max_amount";
 	
+	public static final String ISIGNOREATPCHECK = "isignoreatpcheck";
+
 	/**
 	 * 属性pk_mtapp_bill的Getter方法.属性名：主键 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_mtapp_bill() {
@@ -231,7 +223,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_mtapp_bill的Setter方法.属性名：主键 创建日期:
-	 *
+	 * 
 	 * @param newPk_mtapp_bill
 	 *            java.lang.String
 	 */
@@ -241,7 +233,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_billtype的Getter方法.属性名：单据类型 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_billtype() {
@@ -250,7 +242,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_billtype的Setter方法.属性名：单据类型 创建日期:
-	 *
+	 * 
 	 * @param newPk_billtype
 	 *            java.lang.String
 	 */
@@ -260,7 +252,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_tradetype的Getter方法.属性名：交易类型 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_tradetype() {
@@ -269,7 +261,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_tradetype的Setter方法.属性名：交易类型 创建日期:
-	 *
+	 * 
 	 * @param newPk_tradetype
 	 *            java.lang.String
 	 */
@@ -279,7 +271,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billno的Getter方法.属性名：单据编号 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getBillno() {
@@ -288,7 +280,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billno的Setter方法.属性名：单据编号 创建日期:
-	 *
+	 * 
 	 * @param newBillno
 	 *            java.lang.String
 	 */
@@ -298,7 +290,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billmaker的Getter方法.属性名：申请人 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getBillmaker() {
@@ -307,7 +299,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billmaker的Setter方法.属性名：申请人 创建日期:
-	 *
+	 * 
 	 * @param newBillmaker
 	 *            java.lang.String
 	 */
@@ -317,7 +309,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billdate的Getter方法.属性名：制单日期 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDate
 	 */
 	public nc.vo.pub.lang.UFDate getBilldate() {
@@ -326,7 +318,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billdate的Setter方法.属性名：制单日期 创建日期:
-	 *
+	 * 
 	 * @param newBilldate
 	 *            nc.vo.pub.lang.UFDate
 	 */
@@ -336,7 +328,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billstatus的Getter方法.属性名：单据状态 创建日期:
-	 *
+	 * 
 	 * @return java.lang.Integer
 	 */
 	public java.lang.Integer getBillstatus() {
@@ -345,7 +337,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性billstatus的Setter方法.属性名：单据状态 创建日期:
-	 *
+	 * 
 	 * @param newBillstatus
 	 *            java.lang.Integer
 	 */
@@ -355,7 +347,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性apprstatus的Getter方法.属性名：审批状态 创建日期:
-	 *
+	 * 
 	 * @return java.lang.Integer
 	 */
 	public java.lang.Integer getApprstatus() {
@@ -364,7 +356,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性apprstatus的Setter方法.属性名：审批状态 创建日期:
-	 *
+	 * 
 	 * @param newApprstatus
 	 *            java.lang.Integer
 	 */
@@ -374,7 +366,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性effectstatus的Getter方法.属性名：生效状态 创建日期:
-	 *
+	 * 
 	 * @return java.lang.Integer
 	 */
 	public java.lang.Integer getEffectstatus() {
@@ -383,7 +375,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性effectstatus的Setter方法.属性名：生效状态 创建日期:
-	 *
+	 * 
 	 * @param newEffectstatus
 	 *            java.lang.Integer
 	 */
@@ -393,7 +385,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性close_status的Getter方法.属性名：关闭状态 创建日期:
-	 *
+	 * 
 	 * @return java.lang.Integer
 	 */
 	public java.lang.Integer getClose_status() {
@@ -402,7 +394,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性close_status的Setter方法.属性名：关闭状态 创建日期:
-	 *
+	 * 
 	 * @param newClose_status
 	 *            java.lang.Integer
 	 */
@@ -412,7 +404,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_currtype的Getter方法.属性名：币种 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_currtype() {
@@ -421,7 +413,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_currtype的Setter方法.属性名：币种 创建日期:
-	 *
+	 * 
 	 * @param newPk_currtype
 	 *            java.lang.String
 	 */
@@ -431,7 +423,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_currinfo的Getter方法.属性名：组织本币汇率 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getOrg_currinfo() {
@@ -440,7 +432,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_currinfo的Setter方法.属性名：组织本币汇率 创建日期:
-	 *
+	 * 
 	 * @param newOrg_currinfo
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -450,7 +442,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_currinfo的Getter方法.属性名：集团本币汇率 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGroup_currinfo() {
@@ -459,7 +451,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_currinfo的Setter方法.属性名：集团本币汇率 创建日期:
-	 *
+	 * 
 	 * @param newGroup_currinfo
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -469,7 +461,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_currinfo的Getter方法.属性名：全局本币汇率 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGlobal_currinfo() {
@@ -478,7 +470,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_currinfo的Setter方法.属性名：全局本币汇率 创建日期:
-	 *
+	 * 
 	 * @param newGlobal_currinfo
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -488,7 +480,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性orig_amount的Getter方法.属性名：金额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getOrig_amount() {
@@ -497,7 +489,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性orig_amount的Setter方法.属性名：金额 创建日期:
-	 *
+	 * 
 	 * @param newOrig_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -507,7 +499,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_amount的Getter方法.属性名：组织本币金额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getOrg_amount() {
@@ -516,7 +508,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_amount的Setter方法.属性名：组织本币金额 创建日期:
-	 *
+	 * 
 	 * @param newOrg_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -526,7 +518,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_amount的Getter方法.属性名：集团本币金额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGroup_amount() {
@@ -535,7 +527,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_amount的Setter方法.属性名：集团本币金额 创建日期:
-	 *
+	 * 
 	 * @param newGroup_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -545,7 +537,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_amount的Getter方法.属性名：全局本币金额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGlobal_amount() {
@@ -554,7 +546,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_amount的Setter方法.属性名：全局本币金额 创建日期:
-	 *
+	 * 
 	 * @param newGlobal_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -564,7 +556,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性reason的Getter方法.属性名：事由 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getReason() {
@@ -573,7 +565,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性reason的Setter方法.属性名：事由 创建日期:
-	 *
+	 * 
 	 * @param newReason
 	 *            java.lang.String
 	 */
@@ -583,7 +575,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性attach_amount的Getter方法.属性名：附件张数 创建日期:
-	 *
+	 * 
 	 * @return java.lang.Integer
 	 */
 	public java.lang.Integer getAttach_amount() {
@@ -592,7 +584,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性attach_amount的Setter方法.属性名：附件张数 创建日期:
-	 *
+	 * 
 	 * @param newAttach_amount
 	 *            java.lang.Integer
 	 */
@@ -602,7 +594,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性apply_dept的Getter方法.属性名：申请部门 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getApply_dept() {
@@ -611,7 +603,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性apply_dept的Setter方法.属性名：申请部门 创建日期:
-	 *
+	 * 
 	 * @param newApply_dept
 	 *            java.lang.String
 	 */
@@ -621,7 +613,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_customer的Getter方法.属性名：客户 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_customer() {
@@ -630,7 +622,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_customer的Setter方法.属性名：客户 创建日期:
-	 *
+	 * 
 	 * @param newPk_customer
 	 *            java.lang.String
 	 */
@@ -640,7 +632,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性closeman的Getter方法.属性名：关闭人 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getCloseman() {
@@ -649,7 +641,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性closeman的Setter方法.属性名：关闭人 创建日期:
-	 *
+	 * 
 	 * @param newCloseman
 	 *            java.lang.String
 	 */
@@ -659,7 +651,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性closedate的Getter方法.属性名：关闭日期 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDate
 	 */
 	public nc.vo.pub.lang.UFDate getClosedate() {
@@ -668,7 +660,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性closedate的Setter方法.属性名：关闭日期 创建日期:
-	 *
+	 * 
 	 * @param newClosedate
 	 *            nc.vo.pub.lang.UFDate
 	 */
@@ -678,7 +670,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性approver的Getter方法.属性名：审批人 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getApprover() {
@@ -687,7 +679,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性approver的Setter方法.属性名：审批人 创建日期:
-	 *
+	 * 
 	 * @param newApprover
 	 *            java.lang.String
 	 */
@@ -697,7 +689,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性approvetime的Getter方法.属性名：审批时间 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDateTime
 	 */
 	public nc.vo.pub.lang.UFDateTime getApprovetime() {
@@ -706,7 +698,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性approvetime的Setter方法.属性名：审批时间 创建日期:
-	 *
+	 * 
 	 * @param newApprovetime
 	 *            nc.vo.pub.lang.UFDateTime
 	 */
@@ -716,7 +708,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性creator的Getter方法.属性名：创建人 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getCreator() {
@@ -725,7 +717,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性creator的Setter方法.属性名：创建人 创建日期:
-	 *
+	 * 
 	 * @param newCreator
 	 *            java.lang.String
 	 */
@@ -735,7 +727,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性creationtime的Getter方法.属性名：创建时间 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDateTime
 	 */
 	public nc.vo.pub.lang.UFDateTime getCreationtime() {
@@ -744,7 +736,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性creationtime的Setter方法.属性名：创建时间 创建日期:
-	 *
+	 * 
 	 * @param newCreationtime
 	 *            nc.vo.pub.lang.UFDateTime
 	 */
@@ -754,7 +746,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性modifier的Getter方法.属性名：最后修改人 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getModifier() {
@@ -763,7 +755,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性modifier的Setter方法.属性名：最后修改人 创建日期:
-	 *
+	 * 
 	 * @param newModifier
 	 *            java.lang.String
 	 */
@@ -773,7 +765,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性modifiedtime的Getter方法.属性名：最后修改时间 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDateTime
 	 */
 	public nc.vo.pub.lang.UFDateTime getModifiedtime() {
@@ -782,7 +774,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性modifiedtime的Setter方法.属性名：最后修改时间 创建日期:
-	 *
+	 * 
 	 * @param newModifiedtime
 	 *            nc.vo.pub.lang.UFDateTime
 	 */
@@ -792,7 +784,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性printer的Getter方法.属性名：正式打印人 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPrinter() {
@@ -801,7 +793,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性printer的Setter方法.属性名：正式打印人 创建日期:
-	 *
+	 * 
 	 * @param newPrinter
 	 *            java.lang.String
 	 */
@@ -811,7 +803,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性printdate的Getter方法.属性名：正式打印日期 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDate
 	 */
 	public nc.vo.pub.lang.UFDate getPrintdate() {
@@ -820,7 +812,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性printdate的Setter方法.属性名：正式打印日期 创建日期:
-	 *
+	 * 
 	 * @param newPrintdate
 	 *            nc.vo.pub.lang.UFDate
 	 */
@@ -830,7 +822,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_org的Getter方法.属性名：所属组织 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_org() {
@@ -839,7 +831,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_org的Setter方法.属性名：所属组织 创建日期:
-	 *
+	 * 
 	 * @param newPk_org
 	 *            java.lang.String
 	 */
@@ -849,7 +841,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_group的Getter方法.属性名：所属集团 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPk_group() {
@@ -858,7 +850,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pk_group的Setter方法.属性名：所属集团 创建日期:
-	 *
+	 * 
 	 * @param newPk_group
 	 *            java.lang.String
 	 */
@@ -868,7 +860,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性hasntbcheck的Getter方法.属性名：是否预算再校验 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFBoolean
 	 */
 	public nc.vo.pub.lang.UFBoolean getHasntbcheck() {
@@ -877,7 +869,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性hasntbcheck的Setter方法.属性名：是否预算再校验 创建日期:
-	 *
+	 * 
 	 * @param newHasntbcheck
 	 *            nc.vo.pub.lang.UFBoolean
 	 */
@@ -887,7 +879,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性warningmsg的Getter方法.属性名：预算警告信息 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getWarningmsg() {
@@ -896,7 +888,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性warningmsg的Setter方法.属性名：预算警告信息 创建日期:
-	 *
+	 * 
 	 * @param newWarningmsg
 	 *            java.lang.String
 	 */
@@ -906,7 +898,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性rest_amount的Getter方法.属性名：余额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getRest_amount() {
@@ -915,7 +907,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性rest_amount的Setter方法.属性名：余额 创建日期:
-	 *
+	 * 
 	 * @param newRest_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -925,7 +917,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_rest_amount的Getter方法.属性名：组织本币余额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getOrg_rest_amount() {
@@ -934,7 +926,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_rest_amount的Setter方法.属性名：组织本币余额 创建日期:
-	 *
+	 * 
 	 * @param newOrg_rest_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -944,7 +936,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_rest_amount的Getter方法.属性名：集团本币余额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGroup_rest_amount() {
@@ -953,7 +945,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_rest_amount的Setter方法.属性名：集团本币余额 创建日期:
-	 *
+	 * 
 	 * @param newGroup_rest_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -963,7 +955,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_rest_amount的Getter方法.属性名：全局本币余额 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGlobal_rest_amount() {
@@ -972,7 +964,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_rest_amount的Setter方法.属性名：全局本币余额 创建日期:
-	 *
+	 * 
 	 * @param newGlobal_rest_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -982,7 +974,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性exe_amount的Getter方法.属性名：执行数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getExe_amount() {
@@ -991,7 +983,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性exe_amount的Setter方法.属性名：执行数 创建日期:
-	 *
+	 * 
 	 * @param newExe_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1001,7 +993,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_exe_amount的Getter方法.属性名：组织本币执行数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getOrg_exe_amount() {
@@ -1010,7 +1002,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_exe_amount的Setter方法.属性名：组织本币执行数 创建日期:
-	 *
+	 * 
 	 * @param newOrg_exe_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1020,7 +1012,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_exe_amount的Getter方法.属性名：集团本币执行数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGroup_exe_amount() {
@@ -1029,7 +1021,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_exe_amount的Setter方法.属性名：集团本币执行数 创建日期:
-	 *
+	 * 
 	 * @param newGroup_exe_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1039,7 +1031,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_exe_amount的Getter方法.属性名：全局本币执行数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGlobal_exe_amount() {
@@ -1048,7 +1040,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_exe_amount的Setter方法.属性名：全局本币执行数 创建日期:
-	 *
+	 * 
 	 * @param newGlobal_exe_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1058,7 +1050,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pre_amount的Getter方法.属性名：预占数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getPre_amount() {
@@ -1067,7 +1059,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性pre_amount的Setter方法.属性名：预占数 创建日期:
-	 *
+	 * 
 	 * @param newPre_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1077,7 +1069,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_pre_amount的Getter方法.属性名：组织本币预占数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getOrg_pre_amount() {
@@ -1086,7 +1078,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性org_pre_amount的Setter方法.属性名：组织本币预占数 创建日期:
-	 *
+	 * 
 	 * @param newOrg_pre_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1096,7 +1088,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_pre_amount的Getter方法.属性名：集团本币预占数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGroup_pre_amount() {
@@ -1105,7 +1097,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性group_pre_amount的Setter方法.属性名：集团本币预占数 创建日期:
-	 *
+	 * 
 	 * @param newGroup_pre_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1115,7 +1107,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_pre_amount的Getter方法.属性名：全局本币预占数 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
 	public nc.vo.pub.lang.UFDouble getGlobal_pre_amount() {
@@ -1124,7 +1116,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性global_pre_amount的Setter方法.属性名：全局本币预占数 创建日期:
-	 *
+	 * 
 	 * @param newGlobal_pre_amount
 	 *            nc.vo.pub.lang.UFDouble
 	 */
@@ -1134,7 +1126,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性autoclosedate的Getter方法.属性名：自动关闭日期 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDate
 	 */
 	public nc.vo.pub.lang.UFDate getAutoclosedate() {
@@ -1143,7 +1135,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性autoclosedate的Setter方法.属性名：自动关闭日期 创建日期:
-	 *
+	 * 
 	 * @param newAutoclosedate
 	 *            nc.vo.pub.lang.UFDate
 	 */
@@ -1153,7 +1145,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem30的Getter方法.属性名：自定义项30 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem30() {
@@ -1162,7 +1154,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem30的Setter方法.属性名：自定义项30 创建日期:
-	 *
+	 * 
 	 * @param newDefitem30
 	 *            java.lang.String
 	 */
@@ -1172,7 +1164,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem29的Getter方法.属性名：自定义项29 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem29() {
@@ -1181,7 +1173,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem29的Setter方法.属性名：自定义项29 创建日期:
-	 *
+	 * 
 	 * @param newDefitem29
 	 *            java.lang.String
 	 */
@@ -1191,7 +1183,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem28的Getter方法.属性名：自定义项28 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem28() {
@@ -1200,7 +1192,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem28的Setter方法.属性名：自定义项28 创建日期:
-	 *
+	 * 
 	 * @param newDefitem28
 	 *            java.lang.String
 	 */
@@ -1210,7 +1202,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem27的Getter方法.属性名：自定义项27 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem27() {
@@ -1219,7 +1211,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem27的Setter方法.属性名：自定义项27 创建日期:
-	 *
+	 * 
 	 * @param newDefitem27
 	 *            java.lang.String
 	 */
@@ -1229,7 +1221,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem26的Getter方法.属性名：自定义项26 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem26() {
@@ -1238,7 +1230,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem26的Setter方法.属性名：自定义项26 创建日期:
-	 *
+	 * 
 	 * @param newDefitem26
 	 *            java.lang.String
 	 */
@@ -1248,7 +1240,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem25的Getter方法.属性名：自定义项25 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem25() {
@@ -1257,7 +1249,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem25的Setter方法.属性名：自定义项25 创建日期:
-	 *
+	 * 
 	 * @param newDefitem25
 	 *            java.lang.String
 	 */
@@ -1267,7 +1259,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem24的Getter方法.属性名：自定义项24 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem24() {
@@ -1276,7 +1268,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem24的Setter方法.属性名：自定义项24 创建日期:
-	 *
+	 * 
 	 * @param newDefitem24
 	 *            java.lang.String
 	 */
@@ -1286,7 +1278,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem23的Getter方法.属性名：自定义项23 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem23() {
@@ -1295,7 +1287,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem23的Setter方法.属性名：自定义项23 创建日期:
-	 *
+	 * 
 	 * @param newDefitem23
 	 *            java.lang.String
 	 */
@@ -1305,7 +1297,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem22的Getter方法.属性名：自定义项22 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem22() {
@@ -1314,7 +1306,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem22的Setter方法.属性名：自定义项22 创建日期:
-	 *
+	 * 
 	 * @param newDefitem22
 	 *            java.lang.String
 	 */
@@ -1324,7 +1316,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem21的Getter方法.属性名：自定义项21 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem21() {
@@ -1333,7 +1325,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem21的Setter方法.属性名：自定义项21 创建日期:
-	 *
+	 * 
 	 * @param newDefitem21
 	 *            java.lang.String
 	 */
@@ -1343,7 +1335,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem20的Getter方法.属性名：自定义项20 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem20() {
@@ -1352,7 +1344,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem20的Setter方法.属性名：自定义项20 创建日期:
-	 *
+	 * 
 	 * @param newDefitem20
 	 *            java.lang.String
 	 */
@@ -1362,7 +1354,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem19的Getter方法.属性名：自定义项19 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem19() {
@@ -1371,7 +1363,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem19的Setter方法.属性名：自定义项19 创建日期:
-	 *
+	 * 
 	 * @param newDefitem19
 	 *            java.lang.String
 	 */
@@ -1381,7 +1373,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem18的Getter方法.属性名：自定义项18 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem18() {
@@ -1390,7 +1382,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem18的Setter方法.属性名：自定义项18 创建日期:
-	 *
+	 * 
 	 * @param newDefitem18
 	 *            java.lang.String
 	 */
@@ -1400,7 +1392,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem17的Getter方法.属性名：自定义项17 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem17() {
@@ -1409,7 +1401,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem17的Setter方法.属性名：自定义项17 创建日期:
-	 *
+	 * 
 	 * @param newDefitem17
 	 *            java.lang.String
 	 */
@@ -1419,7 +1411,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem16的Getter方法.属性名：自定义项16 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem16() {
@@ -1428,7 +1420,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem16的Setter方法.属性名：自定义项16 创建日期:
-	 *
+	 * 
 	 * @param newDefitem16
 	 *            java.lang.String
 	 */
@@ -1438,7 +1430,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem15的Getter方法.属性名：自定义项15 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem15() {
@@ -1447,7 +1439,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem15的Setter方法.属性名：自定义项15 创建日期:
-	 *
+	 * 
 	 * @param newDefitem15
 	 *            java.lang.String
 	 */
@@ -1457,7 +1449,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem14的Getter方法.属性名：自定义项14 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem14() {
@@ -1466,7 +1458,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem14的Setter方法.属性名：自定义项14 创建日期:
-	 *
+	 * 
 	 * @param newDefitem14
 	 *            java.lang.String
 	 */
@@ -1476,7 +1468,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem13的Getter方法.属性名：自定义项13 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem13() {
@@ -1485,7 +1477,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem13的Setter方法.属性名：自定义项13 创建日期:
-	 *
+	 * 
 	 * @param newDefitem13
 	 *            java.lang.String
 	 */
@@ -1495,7 +1487,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem12的Getter方法.属性名：自定义项12 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem12() {
@@ -1504,7 +1496,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem12的Setter方法.属性名：自定义项12 创建日期:
-	 *
+	 * 
 	 * @param newDefitem12
 	 *            java.lang.String
 	 */
@@ -1514,7 +1506,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem11的Getter方法.属性名：自定义项11 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem11() {
@@ -1523,7 +1515,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem11的Setter方法.属性名：自定义项11 创建日期:
-	 *
+	 * 
 	 * @param newDefitem11
 	 *            java.lang.String
 	 */
@@ -1533,7 +1525,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem10的Getter方法.属性名：自定义项10 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem10() {
@@ -1542,7 +1534,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem10的Setter方法.属性名：自定义项10 创建日期:
-	 *
+	 * 
 	 * @param newDefitem10
 	 *            java.lang.String
 	 */
@@ -1552,7 +1544,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem9的Getter方法.属性名：自定义项9 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem9() {
@@ -1561,7 +1553,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem9的Setter方法.属性名：自定义项9 创建日期:
-	 *
+	 * 
 	 * @param newDefitem9
 	 *            java.lang.String
 	 */
@@ -1571,7 +1563,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem8的Getter方法.属性名：自定义项8 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem8() {
@@ -1580,7 +1572,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem8的Setter方法.属性名：自定义项8 创建日期:
-	 *
+	 * 
 	 * @param newDefitem8
 	 *            java.lang.String
 	 */
@@ -1590,7 +1582,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem7的Getter方法.属性名：自定义项7 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem7() {
@@ -1599,7 +1591,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem7的Setter方法.属性名：自定义项7 创建日期:
-	 *
+	 * 
 	 * @param newDefitem7
 	 *            java.lang.String
 	 */
@@ -1609,7 +1601,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem6的Getter方法.属性名：自定义项6 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem6() {
@@ -1618,7 +1610,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem6的Setter方法.属性名：自定义项6 创建日期:
-	 *
+	 * 
 	 * @param newDefitem6
 	 *            java.lang.String
 	 */
@@ -1628,7 +1620,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem5的Getter方法.属性名：自定义项5 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem5() {
@@ -1637,7 +1629,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem5的Setter方法.属性名：自定义项5 创建日期:
-	 *
+	 * 
 	 * @param newDefitem5
 	 *            java.lang.String
 	 */
@@ -1647,7 +1639,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem4的Getter方法.属性名：自定义项4 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem4() {
@@ -1656,7 +1648,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem4的Setter方法.属性名：自定义项4 创建日期:
-	 *
+	 * 
 	 * @param newDefitem4
 	 *            java.lang.String
 	 */
@@ -1666,7 +1658,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem3的Getter方法.属性名：自定义项3 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem3() {
@@ -1675,7 +1667,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem3的Setter方法.属性名：自定义项3 创建日期:
-	 *
+	 * 
 	 * @param newDefitem3
 	 *            java.lang.String
 	 */
@@ -1685,7 +1677,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem2的Getter方法.属性名：自定义项2 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem2() {
@@ -1694,7 +1686,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem2的Setter方法.属性名：自定义项2 创建日期:
-	 *
+	 * 
 	 * @param newDefitem2
 	 *            java.lang.String
 	 */
@@ -1704,7 +1696,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem1的Getter方法.属性名：自定义项1 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getDefitem1() {
@@ -1713,7 +1705,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性defitem1的Setter方法.属性名：自定义项1 创建日期:
-	 *
+	 * 
 	 * @param newDefitem1
 	 *            java.lang.String
 	 */
@@ -1722,8 +1714,184 @@ public class MatterAppVO extends SuperVO {
 	}
 
 	/**
+	 * 属性djdl的Getter方法.属性名：单据大类 创建日期:
+	 * 
+	 * @return java.lang.String
+	 */
+	public java.lang.String getDjdl() {
+		return djdl;
+	}
+
+	/**
+	 * 属性djdl的Setter方法.属性名：单据大类 创建日期:
+	 * 
+	 * @param newDjdl
+	 *            java.lang.String
+	 */
+	public void setDjdl(java.lang.String newDjdl) {
+		this.djdl = newDjdl;
+	}
+
+	/**
+	 * 属性auditman的Getter方法.属性名：审批流发起人 创建日期:
+	 * 
+	 * @return java.lang.String
+	 */
+	public java.lang.String getAuditman() throws BusinessException {
+		if (BXParamConstant.ER_PF_STARTER_CREATOR.equals(SysInit.getParaString(this.getPk_group(),
+				BXParamConstant.PARAM_PF_STARTER))) {
+			return this.getCreator();
+		} else {
+			return BXBsUtil.getCuserIdByPK_psndoc(this.getBillmaker());
+		}
+	}
+
+	/**
+	 * 属性auditman的Setter方法.属性名：审批流发起人 创建日期:
+	 * 
+	 * @param newAuditman
+	 *            java.lang.String
+	 */
+	public void setAuditman(java.lang.String newAuditman) {
+		this.auditman = newAuditman;
+	}
+
+	/**
+	 * 属性pk_org_v的Getter方法.属性名：所属组织版本 创建日期:
+	 * 
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_org_v() {
+		return pk_org_v;
+	}
+
+	/**
+	 * 属性pk_org_v的Setter方法.属性名：所属组织版本 创建日期:
+	 * 
+	 * @param newPk_org_v
+	 *            java.lang.String
+	 */
+	public void setPk_org_v(java.lang.String newPk_org_v) {
+		this.pk_org_v = newPk_org_v;
+	}
+
+	/**
+	 * 属性pk_supplier的Getter方法.属性名：供应商 创建日期:
+	 * 
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_supplier() {
+		return pk_supplier;
+	}
+
+	/**
+	 * 属性pk_supplier的Setter方法.属性名：供应商 创建日期:
+	 * 
+	 * @param newPk_supplier
+	 *            java.lang.String
+	 */
+	public void setPk_supplier(java.lang.String newPk_supplier) {
+		this.pk_supplier = newPk_supplier;
+	}
+
+	/**
+	 * 属性assume_dept的Getter方法.属性名：费用承担部门 创建日期:
+	 * 
+	 * @return java.lang.String
+	 */
+	public java.lang.String getAssume_dept() {
+		return assume_dept;
+	}
+
+	/**
+	 * 属性assume_dept的Setter方法.属性名：费用承担部门 创建日期:
+	 * 
+	 * @param newAssume_dept
+	 *            java.lang.String
+	 */
+	public void setAssume_dept(java.lang.String newAssume_dept) {
+		this.assume_dept = newAssume_dept;
+	}
+
+	/**
+	 * 属性is_adjust的Getter方法.属性名：可调剂 创建日期:
+	 * 
+	 * @return nc.vo.pub.lang.UFBoolean
+	 */
+	public nc.vo.pub.lang.UFBoolean getIs_adjust() {
+		return is_adjust;
+	}
+
+	/**
+	 * 属性is_adjust的Setter方法.属性名：可调剂 创建日期:
+	 * 
+	 * @param newIs_adjust
+	 *            nc.vo.pub.lang.UFBoolean
+	 */
+	public void setIs_adjust(nc.vo.pub.lang.UFBoolean newIs_adjust) {
+		this.is_adjust = newIs_adjust;
+	}
+
+	/**
+	 * 属性center_dept的Getter方法.属性名：归口管理部门 创建日期:
+	 * 
+	 * @return java.lang.String
+	 */
+	public java.lang.String getCenter_dept() {
+		return center_dept;
+	}
+
+	/**
+	 * 属性center_dept的Setter方法.属性名：归口管理部门 创建日期:
+	 * 
+	 * @param newCenter_dept
+	 *            java.lang.String
+	 */
+	public void setCenter_dept(java.lang.String newCenter_dept) {
+		this.center_dept = newCenter_dept;
+	}
+
+	/**
+	 * 属性usable_amout的Getter方法.属性名：可用金额 创建日期:
+	 * 
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getUsable_amout() {
+		return usable_amout;
+	}
+
+	/**
+	 * 属性usable_amout的Setter方法.属性名：可用金额 创建日期:
+	 * 
+	 * @param newUsable_amout
+	 *            nc.vo.pub.lang.UFDouble
+	 */
+	public void setUsable_amout(nc.vo.pub.lang.UFDouble newUsable_amout) {
+		this.usable_amout = newUsable_amout;
+	}
+
+	/**
+	 * 属性max_amount的Getter方法.属性名：允许报销最大金额 创建日期:
+	 * 
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getMax_amount() {
+		return max_amount;
+	}
+
+	/**
+	 * 属性max_amount的Setter方法.属性名：允许报销最大金额 创建日期:
+	 * 
+	 * @param newMax_amount
+	 *            nc.vo.pub.lang.UFDouble
+	 */
+	public void setMax_amount(nc.vo.pub.lang.UFDouble newMax_amount) {
+		this.max_amount = newMax_amount;
+	}
+
+	/**
 	 * 属性dr的Getter方法.属性名：dr 创建日期:
-	 *
+	 * 
 	 * @return java.lang.Integer
 	 */
 	public java.lang.Integer getDr() {
@@ -1732,7 +1900,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性dr的Setter方法.属性名：dr 创建日期:
-	 *
+	 * 
 	 * @param newDr
 	 *            java.lang.Integer
 	 */
@@ -1742,7 +1910,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性ts的Getter方法.属性名：ts 创建日期:
-	 *
+	 * 
 	 * @return nc.vo.pub.lang.UFDateTime
 	 */
 	public nc.vo.pub.lang.UFDateTime getTs() {
@@ -1751,7 +1919,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 属性ts的Setter方法.属性名：ts 创建日期:
-	 *
+	 * 
 	 * @param newTs
 	 *            nc.vo.pub.lang.UFDateTime
 	 */
@@ -1764,7 +1932,7 @@ public class MatterAppVO extends SuperVO {
 	 * 取得父VO主键字段.
 	 * <p>
 	 * 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getParentPKFieldName() {
@@ -1776,7 +1944,7 @@ public class MatterAppVO extends SuperVO {
 	 * 取得表主键.
 	 * <p>
 	 * 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getPKFieldName() {
@@ -1788,7 +1956,7 @@ public class MatterAppVO extends SuperVO {
 	 * 返回表名称.
 	 * <p>
 	 * 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getTableName() {
@@ -1800,7 +1968,7 @@ public class MatterAppVO extends SuperVO {
 	 * 返回表名称.
 	 * <p>
 	 * 创建日期:
-	 *
+	 * 
 	 * @return java.lang.String
 	 */
 	public static java.lang.String getDefaultTableName() {
@@ -1809,7 +1977,7 @@ public class MatterAppVO extends SuperVO {
 
 	/**
 	 * 按照默认方式创建构造子.
-	 *
+	 * 
 	 * 创建日期:
 	 */
 	public MatterAppVO() {
@@ -1821,81 +1989,19 @@ public class MatterAppVO extends SuperVO {
 		return meta;
 	}
 
-	public java.lang.String getDjdl() {
-		return djdl;
+	public UFBoolean getIscostshare() {
+		return iscostshare;
 	}
 
-	public void setDjdl(java.lang.String djdl) {
-		this.djdl = djdl;
+	public void setIscostshare(UFBoolean iscostshare) {
+		this.iscostshare = iscostshare;
 	}
 
-	/*重写此方法的目的是为了clone的时候，不克隆auditman，因为getAuditman有多次远程调用*/
-	@Override
-	public String[] getAttributeNames() {
-		List<String> retValues = new ArrayList<String>();
-		final String[] names = super.getAttributeNames();
-		for (int i = 0; i < names.length; i++) {
-			if(AUDITMAN.equals(names[i])){
-				continue;
-			}
-			retValues.add(names[i]);
-		}
-		return retValues.toArray(new String[0]);
+	public UFBoolean getIsignoreatpcheck() {
+		return isignoreatpcheck;
 	}
 
-	/**
-	 *
-	 * 返回审批流起点人
-	 */
-	public String getAuditman() throws BusinessException {
-		if (BXParamConstant.ER_PF_STARTER_CREATOR.equals(SysInit.getParaString(this.getPk_group(), BXParamConstant.PARAM_PF_STARTER))) {
-			return this.getCreator();
-		} else {
-			return BXBsUtil.getCuserIdByPK_psndoc(this.getBillmaker());
-		}
-	}
-
-	public void setAuditman(String auditman) {
-		this.auditman = auditman;
-	}
-
-	public String getPk_org_v() {
-		return pk_org_v;
-	}
-
-	public void setPk_org_v(String pkOrgV) {
-		pk_org_v = pkOrgV;
-	}
-
-	public java.lang.String getPk_supplier() {
-		return pk_supplier;
-	}
-
-	public void setPk_supplier(java.lang.String pkSupplier) {
-		pk_supplier = pkSupplier;
-	}
-
-	public String getAssume_dept() {
-		return assume_dept;
-	}
-
-	public void setAssume_dept(String assume_dept) {
-		this.assume_dept = assume_dept;
-	}
-
-	public UFBoolean getIs_adjust() {
-		return is_adjust;
-	}
-
-	public void setIs_adjust(UFBoolean is_adjust) {
-		this.is_adjust = is_adjust;
-	}
-
-	public UFDouble getUsable_amout() {
-		return usable_amout;
-	}
-
-	public void setUsable_amout(UFDouble usable_amout) {
-		this.usable_amout = usable_amout;
+	public void setIsignoreatpcheck(UFBoolean isignoreatpcheck) {
+		this.isignoreatpcheck = isignoreatpcheck;
 	}
 }

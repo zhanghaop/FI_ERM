@@ -169,6 +169,7 @@
 		<property name="tabSingleShow" value="false" />
 		<property name="rapidShareAction" ref="rapidshareaction"/>
 		<property name="contrastaction" ref="contrastaction" />
+		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">
 			<map>
 				<entry key="jk_busitem">

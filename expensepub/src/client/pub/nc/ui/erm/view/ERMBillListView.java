@@ -1,6 +1,7 @@
 package nc.ui.erm.view;
 
 import nc.ui.pub.bill.BillItem;
+import nc.ui.pub.bill.BillListData;
 import nc.ui.pub.bill.UITabbedPaneUI;
 import nc.ui.uif2.components.AutoShowUpEventSource;
 import nc.ui.uif2.components.IAutoShowUpComponent;
@@ -9,6 +10,7 @@ import nc.ui.uif2.components.ITabbedPaneAwareComponent;
 import nc.ui.uif2.components.ITabbedPaneAwareComponentListener;
 import nc.ui.uif2.components.TabbedPaneAwareCompnonetDelegate;
 import nc.ui.uif2.editor.BillListView;
+import nc.vo.pub.bill.BillTempletVO;
 
 public class ERMBillListView extends BillListView implements
 		ITabbedPaneAwareComponent, IAutoShowUpComponent {
@@ -53,6 +55,23 @@ public class ERMBillListView extends BillListView implements
 			this.getBillListPanel().getBodyTabbedPane().setUI(new UITabbedPaneUI(this.tabSingleShow));
 		}
 	}
+
+	protected void processBillInfo(BillTempletVO template) {
+		
+		processTemplateVO(template);
+		BillListData bld = new BillListData(template, getBillStatus());
+		processErmBillListData(bld);
+		if(getUserdefitemListPreparator() != null)
+			getUserdefitemListPreparator().prepareBillListData(bld);
+		processBillListData(bld);
+		billListPanel.setListData(bld);
+	}
+	/**
+	 * 处理用户自定义属性前，扩展BillData
+	 * 
+	 * @param bld
+	 */
+	protected void processErmBillListData(BillListData bld) {}
 
 	public boolean isTabSingleShow() {
 		return this.tabSingleShow;

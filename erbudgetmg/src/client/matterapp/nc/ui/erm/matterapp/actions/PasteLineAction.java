@@ -35,6 +35,8 @@ public class PasteLineAction extends nc.ui.uif2.actions.PasteLineAction {
 		
 		MatterAppUiUtil.setHeadAmountByBodyAmounts(getBillCardPanel());//表体金额相加结果放入表头
 		((MatterAppMNBillForm)getCardpanel()).resetHeadAmounts();
+		MatterAppUiUtil.setBodyShareRatio(getCardpanel().getBillCardPanel());
+		MatterAppUiUtil.fillLastRowAmount(getCardpanel().getBillCardPanel());//最大金额补尾差
 	}
 
 	private BillCardPanel getBillCardPanel() {

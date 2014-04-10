@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+	<!--联查	-->
+	<bean id="InitDataListener" class=" nc.ui.erm.costshare.ext.config.CostShareLinkListenerExt">
+		<property name="datamanager" ref="modelDataManager" />
+		<property name="queryAction" ref="queryAction"/>
+		<property name="listViewActions" ref="listViewActions" />
+       	<property name="editorActions" ref="editorActions" />
+	</bean>
+	
+</beans>

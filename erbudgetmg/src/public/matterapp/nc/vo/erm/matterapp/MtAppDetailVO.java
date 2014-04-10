@@ -3,31 +3,42 @@
  * code generator for NC product. It is based on Velocity.     *
 \***************************************************************/
 package nc.vo.erm.matterapp;
-
+	
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 /**
  * <b> 在此处简要描述此类的功能 </b>
  * <p>
- * 在此处添加此类的描述信息
+ *     在此处添加此类的描述信息
  * </p>
  * 创建日期:
- * 
- * @author
+ * @author 
  * @version NCPrj ??
  */
 @SuppressWarnings("serial")
 public class MtAppDetailVO extends SuperVO {
+	/**
+	 * 刚性控制维度
+	 */
+	private String unAdjustKey;
+	/**
+	 * 所有控制维度
+	 */
+	private String allFieldKey;
+	
 	private java.lang.String pk_mtapp_bill;
 	private java.lang.String pk_mtapp_detail;
+	private java.lang.String assume_org;
+	private java.lang.String assume_dept;
+	private java.lang.String pk_iobsclass;
 	private java.lang.String pk_pcorg;
 	private java.lang.String pk_resacostcenter;
 	private java.lang.String pk_checkele;
+	private java.lang.String pk_proline;
+	private java.lang.String pk_brand;
 	private java.lang.String pk_salesman;
-	private java.lang.String pk_iobsclass;
 	private java.lang.String pk_project;
 	private java.lang.String pk_wbs;
 	private java.lang.String pk_customer;
@@ -98,16 +109,25 @@ public class MtAppDetailVO extends SuperVO {
 	private java.lang.String defitem3;
 	private java.lang.String defitem2;
 	private java.lang.String defitem1;
+	private nc.vo.pub.lang.UFDouble share_ratio;
+	private nc.vo.pub.lang.UFDouble usable_amout;
+	private nc.vo.pub.lang.UFDouble apply_amount;
+	private nc.vo.pub.lang.UFDouble customer_ratio;
+	private nc.vo.pub.lang.UFDouble max_amount;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
-	private UFDouble usable_amout;
 
 	public static final String PK_MTAPP_BILL = "pk_mtapp_bill";
 	public static final String PK_MTAPP_DETAIL = "pk_mtapp_detail";
+	public static final String ASSUME_ORG = "assume_org";
+	public static final String ASSUME_DEPT = "assume_dept";
+	public static final String PK_IOBSCLASS = "pk_iobsclass";
 	public static final String PK_PCORG = "pk_pcorg";
 	public static final String PK_RESACOSTCENTER = "pk_resacostcenter";
+	public static final String PK_CHECKELE = "pk_checkele";
+	public static final String PK_PROLINE = "pk_proline";
+	public static final String PK_BRAND = "pk_brand";
 	public static final String PK_SALESMAN = "pk_salesman";
-	public static final String PK_IOBSCLASS = "pk_iobsclass";
 	public static final String PK_PROJECT = "pk_project";
 	public static final String PK_WBS = "pk_wbs";
 	public static final String PK_CUSTOMER = "pk_customer";
@@ -178,1566 +198,1490 @@ public class MtAppDetailVO extends SuperVO {
 	public static final String DEFITEM3 = "defitem3";
 	public static final String DEFITEM2 = "defitem2";
 	public static final String DEFITEM1 = "defitem1";
-	public static final String PK_CHECKELE = "pk_checkele";
+	public static final String SHARE_RATIO = "share_ratio";
 	public static final String USABLE_AMOUT = "usable_amout";
+	public static final String APPLY_AMOUNT = "apply_amount";
+	public static final String CUSTOMER_RATIO = "customer_ratio";
+	public static final String MAX_AMOUNT = "max_amount";
+	
+
 	
 	/**
-	 * 属性pk_mtapp_bill的Getter方法.属性名：parentPK 创建日期:
-	 * 
+	 * 属性pk_mtapp_bill的Getter方法.属性名：parentPK
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_mtapp_bill() {
+	public java.lang.String getPk_mtapp_bill () {
 		return pk_mtapp_bill;
-	}
-
+	}   
 	/**
-	 * 属性pk_mtapp_bill的Setter方法.属性名：parentPK 创建日期:
-	 * 
-	 * @param newPk_mtapp_bill
-	 *            java.lang.String
+	 * 属性pk_mtapp_bill的Setter方法.属性名：parentPK
+	 * 创建日期:
+	 * @param newPk_mtapp_bill java.lang.String
 	 */
-	public void setPk_mtapp_bill(java.lang.String newPk_mtapp_bill) {
-		this.pk_mtapp_bill = newPk_mtapp_bill;
-	}
-
+	public void setPk_mtapp_bill (java.lang.String newPk_mtapp_bill ) {
+	 	this.pk_mtapp_bill = newPk_mtapp_bill;
+	} 	  
 	/**
-	 * 属性pk_mtapp_detail的Getter方法.属性名：主键 创建日期:
-	 * 
+	 * 属性pk_mtapp_detail的Getter方法.属性名：主键
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_mtapp_detail() {
+	public java.lang.String getPk_mtapp_detail () {
 		return pk_mtapp_detail;
-	}
-
+	}   
 	/**
-	 * 属性pk_mtapp_detail的Setter方法.属性名：主键 创建日期:
-	 * 
-	 * @param newPk_mtapp_detail
-	 *            java.lang.String
+	 * 属性pk_mtapp_detail的Setter方法.属性名：主键
+	 * 创建日期:
+	 * @param newPk_mtapp_detail java.lang.String
 	 */
-	public void setPk_mtapp_detail(java.lang.String newPk_mtapp_detail) {
-		this.pk_mtapp_detail = newPk_mtapp_detail;
-	}
-
+	public void setPk_mtapp_detail (java.lang.String newPk_mtapp_detail ) {
+	 	this.pk_mtapp_detail = newPk_mtapp_detail;
+	} 	  
 	/**
-	 * 属性pk_pcorg的Getter方法.属性名：利润中心 创建日期:
-	 * 
+	 * 属性assume_org的Getter方法.属性名：费用承担单位
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_pcorg() {
-		return pk_pcorg;
-	}
-
+	public java.lang.String getAssume_org () {
+		return assume_org;
+	}   
 	/**
-	 * 属性pk_pcorg的Setter方法.属性名：利润中心 创建日期:
-	 * 
-	 * @param newPk_pcorg
-	 *            java.lang.String
+	 * 属性assume_org的Setter方法.属性名：费用承担单位
+	 * 创建日期:
+	 * @param newAssume_org java.lang.String
 	 */
-	public void setPk_pcorg(java.lang.String newPk_pcorg) {
-		this.pk_pcorg = newPk_pcorg;
-	}
-
+	public void setAssume_org (java.lang.String newAssume_org ) {
+	 	this.assume_org = newAssume_org;
+	} 	  
 	/**
-	 * 属性pk_resacostcenter的Getter方法.属性名：成本中心 创建日期:
-	 * 
+	 * 属性assume_dept的Getter方法.属性名：费用承担部门
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_resacostcenter() {
-		return pk_resacostcenter;
-	}
-
+	public java.lang.String getAssume_dept () {
+		return assume_dept;
+	}   
 	/**
-	 * 属性pk_resacostcenter的Setter方法.属性名：成本中心 创建日期:
-	 * 
-	 * @param newPk_resacostcenter
-	 *            java.lang.String
+	 * 属性assume_dept的Setter方法.属性名：费用承担部门
+	 * 创建日期:
+	 * @param newAssume_dept java.lang.String
 	 */
-	public void setPk_resacostcenter(java.lang.String newPk_resacostcenter) {
-		this.pk_resacostcenter = newPk_resacostcenter;
-	}
-
+	public void setAssume_dept (java.lang.String newAssume_dept ) {
+	 	this.assume_dept = newAssume_dept;
+	} 	  
 	/**
-	 * 属性pk_salesman的Getter方法.属性名：业务员 创建日期:
-	 * 
+	 * 属性pk_iobsclass的Getter方法.属性名：收支项目
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_salesman() {
-		return pk_salesman;
-	}
-
-	/**
-	 * 属性pk_salesman的Setter方法.属性名：业务员 创建日期:
-	 * 
-	 * @param newPk_salesman
-	 *            java.lang.String
-	 */
-	public void setPk_salesman(java.lang.String newPk_salesman) {
-		this.pk_salesman = newPk_salesman;
-	}
-
-	/**
-	 * 属性pk_iobsclass的Getter方法.属性名：收支项目 创建日期:
-	 * 
-	 * @return java.lang.String
-	 */
-	public java.lang.String getPk_iobsclass() {
+	public java.lang.String getPk_iobsclass () {
 		return pk_iobsclass;
-	}
-
+	}   
 	/**
-	 * 属性pk_iobsclass的Setter方法.属性名：收支项目 创建日期:
-	 * 
-	 * @param newPk_iobsclass
-	 *            java.lang.String
+	 * 属性pk_iobsclass的Setter方法.属性名：收支项目
+	 * 创建日期:
+	 * @param newPk_iobsclass java.lang.String
 	 */
-	public void setPk_iobsclass(java.lang.String newPk_iobsclass) {
-		this.pk_iobsclass = newPk_iobsclass;
-	}
-
+	public void setPk_iobsclass (java.lang.String newPk_iobsclass ) {
+	 	this.pk_iobsclass = newPk_iobsclass;
+	} 	  
 	/**
-	 * 属性pk_project的Getter方法.属性名：项目 创建日期:
-	 * 
+	 * 属性pk_pcorg的Getter方法.属性名：利润中心
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_project() {
+	public java.lang.String getPk_pcorg () {
+		return pk_pcorg;
+	}   
+	/**
+	 * 属性pk_pcorg的Setter方法.属性名：利润中心
+	 * 创建日期:
+	 * @param newPk_pcorg java.lang.String
+	 */
+	public void setPk_pcorg (java.lang.String newPk_pcorg ) {
+	 	this.pk_pcorg = newPk_pcorg;
+	} 	  
+	/**
+	 * 属性pk_resacostcenter的Getter方法.属性名：成本中心
+	 * 创建日期:
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_resacostcenter () {
+		return pk_resacostcenter;
+	}   
+	/**
+	 * 属性pk_resacostcenter的Setter方法.属性名：成本中心
+	 * 创建日期:
+	 * @param newPk_resacostcenter java.lang.String
+	 */
+	public void setPk_resacostcenter (java.lang.String newPk_resacostcenter ) {
+	 	this.pk_resacostcenter = newPk_resacostcenter;
+	} 	  
+	/**
+	 * 属性pk_checkele的Getter方法.属性名：核算要素
+	 * 创建日期:
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_checkele () {
+		return pk_checkele;
+	}   
+	/**
+	 * 属性pk_checkele的Setter方法.属性名：核算要素
+	 * 创建日期:
+	 * @param newPk_checkele java.lang.String
+	 */
+	public void setPk_checkele (java.lang.String newPk_checkele ) {
+	 	this.pk_checkele = newPk_checkele;
+	} 	  
+	/**
+	 * 属性pk_proline的Getter方法.属性名：产品线
+	 * 创建日期:
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_proline () {
+		return pk_proline;
+	}   
+	/**
+	 * 属性pk_proline的Setter方法.属性名：产品线
+	 * 创建日期:
+	 * @param newPk_proline java.lang.String
+	 */
+	public void setPk_proline (java.lang.String newPk_proline ) {
+	 	this.pk_proline = newPk_proline;
+	} 	  
+	/**
+	 * 属性pk_brand的Getter方法.属性名：品牌
+	 * 创建日期:
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_brand () {
+		return pk_brand;
+	}   
+	/**
+	 * 属性pk_brand的Setter方法.属性名：品牌
+	 * 创建日期:
+	 * @param newPk_brand java.lang.String
+	 */
+	public void setPk_brand (java.lang.String newPk_brand ) {
+	 	this.pk_brand = newPk_brand;
+	} 	  
+	/**
+	 * 属性pk_salesman的Getter方法.属性名：业务员
+	 * 创建日期:
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_salesman () {
+		return pk_salesman;
+	}   
+	/**
+	 * 属性pk_salesman的Setter方法.属性名：业务员
+	 * 创建日期:
+	 * @param newPk_salesman java.lang.String
+	 */
+	public void setPk_salesman (java.lang.String newPk_salesman ) {
+	 	this.pk_salesman = newPk_salesman;
+	} 	  
+	/**
+	 * 属性pk_project的Getter方法.属性名：项目
+	 * 创建日期:
+	 * @return java.lang.String
+	 */
+	public java.lang.String getPk_project () {
 		return pk_project;
-	}
-
+	}   
 	/**
-	 * 属性pk_project的Setter方法.属性名：项目 创建日期:
-	 * 
-	 * @param newPk_project
-	 *            java.lang.String
+	 * 属性pk_project的Setter方法.属性名：项目
+	 * 创建日期:
+	 * @param newPk_project java.lang.String
 	 */
-	public void setPk_project(java.lang.String newPk_project) {
-		this.pk_project = newPk_project;
-	}
-
+	public void setPk_project (java.lang.String newPk_project ) {
+	 	this.pk_project = newPk_project;
+	} 	  
 	/**
-	 * 属性pk_wbs的Getter方法.属性名：项目任务 创建日期:
-	 * 
+	 * 属性pk_wbs的Getter方法.属性名：项目任务
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_wbs() {
+	public java.lang.String getPk_wbs () {
 		return pk_wbs;
-	}
-
+	}   
 	/**
-	 * 属性pk_wbs的Setter方法.属性名：项目任务 创建日期:
-	 * 
-	 * @param newPk_wbs
-	 *            java.lang.String
+	 * 属性pk_wbs的Setter方法.属性名：项目任务
+	 * 创建日期:
+	 * @param newPk_wbs java.lang.String
 	 */
-	public void setPk_wbs(java.lang.String newPk_wbs) {
-		this.pk_wbs = newPk_wbs;
-	}
-
+	public void setPk_wbs (java.lang.String newPk_wbs ) {
+	 	this.pk_wbs = newPk_wbs;
+	} 	  
 	/**
-	 * 属性pk_customer的Getter方法.属性名：客户 创建日期:
-	 * 
+	 * 属性pk_customer的Getter方法.属性名：客户
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_customer() {
+	public java.lang.String getPk_customer () {
 		return pk_customer;
-	}
-
+	}   
 	/**
-	 * 属性pk_customer的Setter方法.属性名：客户 创建日期:
-	 * 
-	 * @param newPk_customer
-	 *            java.lang.String
+	 * 属性pk_customer的Setter方法.属性名：客户
+	 * 创建日期:
+	 * @param newPk_customer java.lang.String
 	 */
-	public void setPk_customer(java.lang.String newPk_customer) {
-		this.pk_customer = newPk_customer;
-	}
-
+	public void setPk_customer (java.lang.String newPk_customer ) {
+	 	this.pk_customer = newPk_customer;
+	} 	  
 	/**
-	 * 属性pk_supplier的Getter方法.属性名：供应商 创建日期:
-	 * 
+	 * 属性pk_supplier的Getter方法.属性名：供应商
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_supplier() {
+	public java.lang.String getPk_supplier () {
 		return pk_supplier;
-	}
-
+	}   
 	/**
-	 * 属性pk_supplier的Setter方法.属性名：供应商 创建日期:
-	 * 
-	 * @param newPk_supplier
-	 *            java.lang.String
+	 * 属性pk_supplier的Setter方法.属性名：供应商
+	 * 创建日期:
+	 * @param newPk_supplier java.lang.String
 	 */
-	public void setPk_supplier(java.lang.String newPk_supplier) {
-		this.pk_supplier = newPk_supplier;
-	}
-
+	public void setPk_supplier (java.lang.String newPk_supplier ) {
+	 	this.pk_supplier = newPk_supplier;
+	} 	  
 	/**
-	 * 属性reason的Getter方法.属性名：事由 创建日期:
-	 * 
+	 * 属性reason的Getter方法.属性名：事由
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getReason() {
+	public java.lang.String getReason () {
 		return reason;
-	}
-
+	}   
 	/**
-	 * 属性reason的Setter方法.属性名：事由 创建日期:
-	 * 
-	 * @param newReason
-	 *            java.lang.String
+	 * 属性reason的Setter方法.属性名：事由
+	 * 创建日期:
+	 * @param newReason java.lang.String
 	 */
-	public void setReason(java.lang.String newReason) {
-		this.reason = newReason;
-	}
-
+	public void setReason (java.lang.String newReason ) {
+	 	this.reason = newReason;
+	} 	  
 	/**
-	 * 属性pk_currtype的Getter方法.属性名：币种 创建日期:
-	 * 
+	 * 属性pk_currtype的Getter方法.属性名：币种
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_currtype() {
+	public java.lang.String getPk_currtype () {
 		return pk_currtype;
-	}
-
+	}   
 	/**
-	 * 属性pk_currtype的Setter方法.属性名：币种 创建日期:
-	 * 
-	 * @param newPk_currtype
-	 *            java.lang.String
+	 * 属性pk_currtype的Setter方法.属性名：币种
+	 * 创建日期:
+	 * @param newPk_currtype java.lang.String
 	 */
-	public void setPk_currtype(java.lang.String newPk_currtype) {
-		this.pk_currtype = newPk_currtype;
-	}
-
+	public void setPk_currtype (java.lang.String newPk_currtype ) {
+	 	this.pk_currtype = newPk_currtype;
+	} 	  
 	/**
-	 * 属性orig_amount的Getter方法.属性名：金额 创建日期:
-	 * 
+	 * 属性orig_amount的Getter方法.属性名：金额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getOrig_amount() {
+	public nc.vo.pub.lang.UFDouble getOrig_amount () {
 		return orig_amount;
-	}
-
+	}   
 	/**
-	 * 属性orig_amount的Setter方法.属性名：金额 创建日期:
-	 * 
-	 * @param newOrig_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性orig_amount的Setter方法.属性名：金额
+	 * 创建日期:
+	 * @param newOrig_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setOrig_amount(nc.vo.pub.lang.UFDouble newOrig_amount) {
-		this.orig_amount = newOrig_amount;
-	}
-
+	public void setOrig_amount (nc.vo.pub.lang.UFDouble newOrig_amount ) {
+	 	this.orig_amount = newOrig_amount;
+	} 	  
 	/**
-	 * 属性billno的Getter方法.属性名：单据编号 创建日期:
-	 * 
+	 * 属性billno的Getter方法.属性名：单据编号
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getBillno() {
+	public java.lang.String getBillno () {
 		return billno;
-	}
-
+	}   
 	/**
-	 * 属性billno的Setter方法.属性名：单据编号 创建日期:
-	 * 
-	 * @param newBillno
-	 *            java.lang.String
+	 * 属性billno的Setter方法.属性名：单据编号
+	 * 创建日期:
+	 * @param newBillno java.lang.String
 	 */
-	public void setBillno(java.lang.String newBillno) {
-		this.billno = newBillno;
-	}
-
+	public void setBillno (java.lang.String newBillno ) {
+	 	this.billno = newBillno;
+	} 	  
 	/**
-	 * 属性pk_billtype的Getter方法.属性名：单据类型 创建日期:
-	 * 
+	 * 属性pk_billtype的Getter方法.属性名：单据类型
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_billtype() {
+	public java.lang.String getPk_billtype () {
 		return pk_billtype;
-	}
-
+	}   
 	/**
-	 * 属性pk_billtype的Setter方法.属性名：单据类型 创建日期:
-	 * 
-	 * @param newPk_billtype
-	 *            java.lang.String
+	 * 属性pk_billtype的Setter方法.属性名：单据类型
+	 * 创建日期:
+	 * @param newPk_billtype java.lang.String
 	 */
-	public void setPk_billtype(java.lang.String newPk_billtype) {
-		this.pk_billtype = newPk_billtype;
-	}
-
+	public void setPk_billtype (java.lang.String newPk_billtype ) {
+	 	this.pk_billtype = newPk_billtype;
+	} 	  
 	/**
-	 * 属性pk_tradetype的Getter方法.属性名：交易类型 创建日期:
-	 * 
+	 * 属性pk_tradetype的Getter方法.属性名：交易类型
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_tradetype() {
+	public java.lang.String getPk_tradetype () {
 		return pk_tradetype;
-	}
-
+	}   
 	/**
-	 * 属性pk_tradetype的Setter方法.属性名：交易类型 创建日期:
-	 * 
-	 * @param newPk_tradetype
-	 *            java.lang.String
+	 * 属性pk_tradetype的Setter方法.属性名：交易类型
+	 * 创建日期:
+	 * @param newPk_tradetype java.lang.String
 	 */
-	public void setPk_tradetype(java.lang.String newPk_tradetype) {
-		this.pk_tradetype = newPk_tradetype;
-	}
-
+	public void setPk_tradetype (java.lang.String newPk_tradetype ) {
+	 	this.pk_tradetype = newPk_tradetype;
+	} 	  
 	/**
-	 * 属性billdate的Getter方法.属性名：制单日期 创建日期:
-	 * 
+	 * 属性billdate的Getter方法.属性名：制单日期
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDate
 	 */
-	public nc.vo.pub.lang.UFDate getBilldate() {
+	public nc.vo.pub.lang.UFDate getBilldate () {
 		return billdate;
-	}
-
+	}   
 	/**
-	 * 属性billdate的Setter方法.属性名：制单日期 创建日期:
-	 * 
-	 * @param newBilldate
-	 *            nc.vo.pub.lang.UFDate
+	 * 属性billdate的Setter方法.属性名：制单日期
+	 * 创建日期:
+	 * @param newBilldate nc.vo.pub.lang.UFDate
 	 */
-	public void setBilldate(nc.vo.pub.lang.UFDate newBilldate) {
-		this.billdate = newBilldate;
-	}
-
+	public void setBilldate (nc.vo.pub.lang.UFDate newBilldate ) {
+	 	this.billdate = newBilldate;
+	} 	  
 	/**
-	 * 属性close_status的Getter方法.属性名：关闭状态 创建日期:
-	 * 
+	 * 属性close_status的Getter方法.属性名：关闭状态
+	 * 创建日期:
 	 * @return java.lang.Integer
 	 */
-	public java.lang.Integer getClose_status() {
+	public java.lang.Integer getClose_status () {
 		return close_status;
-	}
-
+	}   
 	/**
-	 * 属性close_status的Setter方法.属性名：关闭状态 创建日期:
-	 * 
-	 * @param newClose_status
-	 *            java.lang.Integer
+	 * 属性close_status的Setter方法.属性名：关闭状态
+	 * 创建日期:
+	 * @param newClose_status java.lang.Integer
 	 */
-	public void setClose_status(java.lang.Integer newClose_status) {
-		this.close_status = newClose_status;
-	}
-
+	public void setClose_status (java.lang.Integer newClose_status ) {
+	 	this.close_status = newClose_status;
+	} 	  
 	/**
-	 * 属性billstatus的Getter方法.属性名：单据状态 创建日期:
-	 * 
+	 * 属性billstatus的Getter方法.属性名：单据状态
+	 * 创建日期:
 	 * @return java.lang.Integer
 	 */
-	public java.lang.Integer getBillstatus() {
+	public java.lang.Integer getBillstatus () {
 		return billstatus;
-	}
-
+	}   
 	/**
-	 * 属性billstatus的Setter方法.属性名：单据状态 创建日期:
-	 * 
-	 * @param newBillstatus
-	 *            java.lang.Integer
+	 * 属性billstatus的Setter方法.属性名：单据状态
+	 * 创建日期:
+	 * @param newBillstatus java.lang.Integer
 	 */
-	public void setBillstatus(java.lang.Integer newBillstatus) {
-		this.billstatus = newBillstatus;
-	}
-
+	public void setBillstatus (java.lang.Integer newBillstatus ) {
+	 	this.billstatus = newBillstatus;
+	} 	  
 	/**
-	 * 属性effectstatus的Getter方法.属性名：生效状态 创建日期:
-	 * 
+	 * 属性effectstatus的Getter方法.属性名：生效状态
+	 * 创建日期:
 	 * @return java.lang.Integer
 	 */
-	public java.lang.Integer getEffectstatus() {
+	public java.lang.Integer getEffectstatus () {
 		return effectstatus;
-	}
-
+	}   
 	/**
-	 * 属性effectstatus的Setter方法.属性名：生效状态 创建日期:
-	 * 
-	 * @param newEffectstatus
-	 *            java.lang.Integer
+	 * 属性effectstatus的Setter方法.属性名：生效状态
+	 * 创建日期:
+	 * @param newEffectstatus java.lang.Integer
 	 */
-	public void setEffectstatus(java.lang.Integer newEffectstatus) {
-		this.effectstatus = newEffectstatus;
-	}
-
+	public void setEffectstatus (java.lang.Integer newEffectstatus ) {
+	 	this.effectstatus = newEffectstatus;
+	} 	  
 	/**
-	 * 属性closeman的Getter方法.属性名：关闭人 创建日期:
-	 * 
+	 * 属性closeman的Getter方法.属性名：关闭人
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getCloseman() {
+	public java.lang.String getCloseman () {
 		return closeman;
-	}
-
+	}   
 	/**
-	 * 属性closeman的Setter方法.属性名：关闭人 创建日期:
-	 * 
-	 * @param newCloseman
-	 *            java.lang.String
+	 * 属性closeman的Setter方法.属性名：关闭人
+	 * 创建日期:
+	 * @param newCloseman java.lang.String
 	 */
-	public void setCloseman(java.lang.String newCloseman) {
-		this.closeman = newCloseman;
-	}
-
+	public void setCloseman (java.lang.String newCloseman ) {
+	 	this.closeman = newCloseman;
+	} 	  
 	/**
-	 * 属性closedate的Getter方法.属性名：关闭日期 创建日期:
-	 * 
+	 * 属性closedate的Getter方法.属性名：关闭日期
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDate
 	 */
-	public nc.vo.pub.lang.UFDate getClosedate() {
+	public nc.vo.pub.lang.UFDate getClosedate () {
 		return closedate;
-	}
-
+	}   
 	/**
-	 * 属性closedate的Setter方法.属性名：关闭日期 创建日期:
-	 * 
-	 * @param newClosedate
-	 *            nc.vo.pub.lang.UFDate
+	 * 属性closedate的Setter方法.属性名：关闭日期
+	 * 创建日期:
+	 * @param newClosedate nc.vo.pub.lang.UFDate
 	 */
-	public void setClosedate(nc.vo.pub.lang.UFDate newClosedate) {
-		this.closedate = newClosedate;
-	}
-
+	public void setClosedate (nc.vo.pub.lang.UFDate newClosedate ) {
+	 	this.closedate = newClosedate;
+	} 	  
 	/**
-	 * 属性org_currinfo的Getter方法.属性名：组织本币汇率 创建日期:
-	 * 
+	 * 属性org_currinfo的Getter方法.属性名：组织本币汇率
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getOrg_currinfo() {
+	public nc.vo.pub.lang.UFDouble getOrg_currinfo () {
 		return org_currinfo;
-	}
-
+	}   
 	/**
-	 * 属性org_currinfo的Setter方法.属性名：组织本币汇率 创建日期:
-	 * 
-	 * @param newOrg_currinfo
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性org_currinfo的Setter方法.属性名：组织本币汇率
+	 * 创建日期:
+	 * @param newOrg_currinfo nc.vo.pub.lang.UFDouble
 	 */
-	public void setOrg_currinfo(nc.vo.pub.lang.UFDouble newOrg_currinfo) {
-		this.org_currinfo = newOrg_currinfo;
-	}
-
+	public void setOrg_currinfo (nc.vo.pub.lang.UFDouble newOrg_currinfo ) {
+	 	this.org_currinfo = newOrg_currinfo;
+	} 	  
 	/**
-	 * 属性group_currinfo的Getter方法.属性名：集团本币汇率 创建日期:
-	 * 
+	 * 属性group_currinfo的Getter方法.属性名：集团本币汇率
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGroup_currinfo() {
+	public nc.vo.pub.lang.UFDouble getGroup_currinfo () {
 		return group_currinfo;
-	}
-
+	}   
 	/**
-	 * 属性group_currinfo的Setter方法.属性名：集团本币汇率 创建日期:
-	 * 
-	 * @param newGroup_currinfo
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性group_currinfo的Setter方法.属性名：集团本币汇率
+	 * 创建日期:
+	 * @param newGroup_currinfo nc.vo.pub.lang.UFDouble
 	 */
-	public void setGroup_currinfo(nc.vo.pub.lang.UFDouble newGroup_currinfo) {
-		this.group_currinfo = newGroup_currinfo;
-	}
-
+	public void setGroup_currinfo (nc.vo.pub.lang.UFDouble newGroup_currinfo ) {
+	 	this.group_currinfo = newGroup_currinfo;
+	} 	  
 	/**
-	 * 属性global_currinfo的Getter方法.属性名：全局本币汇率 创建日期:
-	 * 
+	 * 属性global_currinfo的Getter方法.属性名：全局本币汇率
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGlobal_currinfo() {
+	public nc.vo.pub.lang.UFDouble getGlobal_currinfo () {
 		return global_currinfo;
-	}
-
+	}   
 	/**
-	 * 属性global_currinfo的Setter方法.属性名：全局本币汇率 创建日期:
-	 * 
-	 * @param newGlobal_currinfo
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性global_currinfo的Setter方法.属性名：全局本币汇率
+	 * 创建日期:
+	 * @param newGlobal_currinfo nc.vo.pub.lang.UFDouble
 	 */
-	public void setGlobal_currinfo(nc.vo.pub.lang.UFDouble newGlobal_currinfo) {
-		this.global_currinfo = newGlobal_currinfo;
-	}
-
+	public void setGlobal_currinfo (nc.vo.pub.lang.UFDouble newGlobal_currinfo ) {
+	 	this.global_currinfo = newGlobal_currinfo;
+	} 	  
 	/**
-	 * 属性org_amount的Getter方法.属性名：组织本币金额 创建日期:
-	 * 
+	 * 属性org_amount的Getter方法.属性名：组织本币金额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getOrg_amount() {
+	public nc.vo.pub.lang.UFDouble getOrg_amount () {
 		return org_amount;
-	}
-
+	}   
 	/**
-	 * 属性org_amount的Setter方法.属性名：组织本币金额 创建日期:
-	 * 
-	 * @param newOrg_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性org_amount的Setter方法.属性名：组织本币金额
+	 * 创建日期:
+	 * @param newOrg_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setOrg_amount(nc.vo.pub.lang.UFDouble newOrg_amount) {
-		this.org_amount = newOrg_amount;
-	}
-
+	public void setOrg_amount (nc.vo.pub.lang.UFDouble newOrg_amount ) {
+	 	this.org_amount = newOrg_amount;
+	} 	  
 	/**
-	 * 属性group_amount的Getter方法.属性名：集团本币金额 创建日期:
-	 * 
+	 * 属性group_amount的Getter方法.属性名：集团本币金额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGroup_amount() {
+	public nc.vo.pub.lang.UFDouble getGroup_amount () {
 		return group_amount;
-	}
-
+	}   
 	/**
-	 * 属性group_amount的Setter方法.属性名：集团本币金额 创建日期:
-	 * 
-	 * @param newGroup_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性group_amount的Setter方法.属性名：集团本币金额
+	 * 创建日期:
+	 * @param newGroup_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGroup_amount(nc.vo.pub.lang.UFDouble newGroup_amount) {
-		this.group_amount = newGroup_amount;
-	}
-
+	public void setGroup_amount (nc.vo.pub.lang.UFDouble newGroup_amount ) {
+	 	this.group_amount = newGroup_amount;
+	} 	  
 	/**
-	 * 属性global_amount的Getter方法.属性名：全局本币金额 创建日期:
-	 * 
+	 * 属性global_amount的Getter方法.属性名：全局本币金额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGlobal_amount() {
+	public nc.vo.pub.lang.UFDouble getGlobal_amount () {
 		return global_amount;
-	}
-
+	}   
 	/**
-	 * 属性global_amount的Setter方法.属性名：全局本币金额 创建日期:
-	 * 
-	 * @param newGlobal_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性global_amount的Setter方法.属性名：全局本币金额
+	 * 创建日期:
+	 * @param newGlobal_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGlobal_amount(nc.vo.pub.lang.UFDouble newGlobal_amount) {
-		this.global_amount = newGlobal_amount;
-	}
-
+	public void setGlobal_amount (nc.vo.pub.lang.UFDouble newGlobal_amount ) {
+	 	this.global_amount = newGlobal_amount;
+	} 	  
 	/**
-	 * 属性pk_org的Getter方法.属性名：所属组织 创建日期:
-	 * 
+	 * 属性pk_org的Getter方法.属性名：所属组织
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_org() {
+	public java.lang.String getPk_org () {
 		return pk_org;
-	}
-
+	}   
 	/**
-	 * 属性pk_org的Setter方法.属性名：所属组织 创建日期:
-	 * 
-	 * @param newPk_org
-	 *            java.lang.String
+	 * 属性pk_org的Setter方法.属性名：所属组织
+	 * 创建日期:
+	 * @param newPk_org java.lang.String
 	 */
-	public void setPk_org(java.lang.String newPk_org) {
-		this.pk_org = newPk_org;
-	}
-
+	public void setPk_org (java.lang.String newPk_org ) {
+	 	this.pk_org = newPk_org;
+	} 	  
 	/**
-	 * 属性pk_group的Getter方法.属性名：所属集团 创建日期:
-	 * 
+	 * 属性pk_group的Getter方法.属性名：所属集团
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_group() {
+	public java.lang.String getPk_group () {
 		return pk_group;
-	}
-
+	}   
 	/**
-	 * 属性pk_group的Setter方法.属性名：所属集团 创建日期:
-	 * 
-	 * @param newPk_group
-	 *            java.lang.String
+	 * 属性pk_group的Setter方法.属性名：所属集团
+	 * 创建日期:
+	 * @param newPk_group java.lang.String
 	 */
-	public void setPk_group(java.lang.String newPk_group) {
-		this.pk_group = newPk_group;
-	}
-
+	public void setPk_group (java.lang.String newPk_group ) {
+	 	this.pk_group = newPk_group;
+	} 	  
 	/**
-	 * 属性rest_amount的Getter方法.属性名：余额 创建日期:
-	 * 
+	 * 属性rest_amount的Getter方法.属性名：余额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getRest_amount() {
+	public nc.vo.pub.lang.UFDouble getRest_amount () {
 		return rest_amount;
-	}
-
+	}   
 	/**
-	 * 属性rest_amount的Setter方法.属性名：余额 创建日期:
-	 * 
-	 * @param newRest_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性rest_amount的Setter方法.属性名：余额
+	 * 创建日期:
+	 * @param newRest_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setRest_amount(nc.vo.pub.lang.UFDouble newRest_amount) {
-		this.rest_amount = newRest_amount;
-	}
-
+	public void setRest_amount (nc.vo.pub.lang.UFDouble newRest_amount ) {
+	 	this.rest_amount = newRest_amount;
+	} 	  
 	/**
-	 * 属性org_rest_amount的Getter方法.属性名：组织本币余额 创建日期:
-	 * 
+	 * 属性org_rest_amount的Getter方法.属性名：组织本币余额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getOrg_rest_amount() {
+	public nc.vo.pub.lang.UFDouble getOrg_rest_amount () {
 		return org_rest_amount;
-	}
-
+	}   
 	/**
-	 * 属性org_rest_amount的Setter方法.属性名：组织本币余额 创建日期:
-	 * 
-	 * @param newOrg_rest_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性org_rest_amount的Setter方法.属性名：组织本币余额
+	 * 创建日期:
+	 * @param newOrg_rest_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setOrg_rest_amount(nc.vo.pub.lang.UFDouble newOrg_rest_amount) {
-		this.org_rest_amount = newOrg_rest_amount;
-	}
-
+	public void setOrg_rest_amount (nc.vo.pub.lang.UFDouble newOrg_rest_amount ) {
+	 	this.org_rest_amount = newOrg_rest_amount;
+	} 	  
 	/**
-	 * 属性group_rest_amount的Getter方法.属性名：集团本币余额 创建日期:
-	 * 
+	 * 属性group_rest_amount的Getter方法.属性名：集团本币余额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGroup_rest_amount() {
+	public nc.vo.pub.lang.UFDouble getGroup_rest_amount () {
 		return group_rest_amount;
-	}
-
+	}   
 	/**
-	 * 属性group_rest_amount的Setter方法.属性名：集团本币余额 创建日期:
-	 * 
-	 * @param newGroup_rest_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性group_rest_amount的Setter方法.属性名：集团本币余额
+	 * 创建日期:
+	 * @param newGroup_rest_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGroup_rest_amount(nc.vo.pub.lang.UFDouble newGroup_rest_amount) {
-		this.group_rest_amount = newGroup_rest_amount;
-	}
-
+	public void setGroup_rest_amount (nc.vo.pub.lang.UFDouble newGroup_rest_amount ) {
+	 	this.group_rest_amount = newGroup_rest_amount;
+	} 	  
 	/**
-	 * 属性global_rest_amount的Getter方法.属性名：全局本币余额 创建日期:
-	 * 
+	 * 属性global_rest_amount的Getter方法.属性名：全局本币余额
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGlobal_rest_amount() {
+	public nc.vo.pub.lang.UFDouble getGlobal_rest_amount () {
 		return global_rest_amount;
-	}
-
+	}   
 	/**
-	 * 属性global_rest_amount的Setter方法.属性名：全局本币余额 创建日期:
-	 * 
-	 * @param newGlobal_rest_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性global_rest_amount的Setter方法.属性名：全局本币余额
+	 * 创建日期:
+	 * @param newGlobal_rest_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGlobal_rest_amount(nc.vo.pub.lang.UFDouble newGlobal_rest_amount) {
-		this.global_rest_amount = newGlobal_rest_amount;
-	}
-
+	public void setGlobal_rest_amount (nc.vo.pub.lang.UFDouble newGlobal_rest_amount ) {
+	 	this.global_rest_amount = newGlobal_rest_amount;
+	} 	  
 	/**
-	 * 属性exe_amount的Getter方法.属性名：执行数 创建日期:
-	 * 
+	 * 属性exe_amount的Getter方法.属性名：执行数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getExe_amount() {
+	public nc.vo.pub.lang.UFDouble getExe_amount () {
 		return exe_amount;
-	}
-
+	}   
 	/**
-	 * 属性exe_amount的Setter方法.属性名：执行数 创建日期:
-	 * 
-	 * @param newExe_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性exe_amount的Setter方法.属性名：执行数
+	 * 创建日期:
+	 * @param newExe_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setExe_amount(nc.vo.pub.lang.UFDouble newExe_amount) {
-		this.exe_amount = newExe_amount;
-	}
-
+	public void setExe_amount (nc.vo.pub.lang.UFDouble newExe_amount ) {
+	 	this.exe_amount = newExe_amount;
+	} 	  
 	/**
-	 * 属性org_exe_amount的Getter方法.属性名：组织本币执行数 创建日期:
-	 * 
+	 * 属性org_exe_amount的Getter方法.属性名：组织本币执行数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getOrg_exe_amount() {
+	public nc.vo.pub.lang.UFDouble getOrg_exe_amount () {
 		return org_exe_amount;
-	}
-
+	}   
 	/**
-	 * 属性org_exe_amount的Setter方法.属性名：组织本币执行数 创建日期:
-	 * 
-	 * @param newOrg_exe_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性org_exe_amount的Setter方法.属性名：组织本币执行数
+	 * 创建日期:
+	 * @param newOrg_exe_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setOrg_exe_amount(nc.vo.pub.lang.UFDouble newOrg_exe_amount) {
-		this.org_exe_amount = newOrg_exe_amount;
-	}
-
+	public void setOrg_exe_amount (nc.vo.pub.lang.UFDouble newOrg_exe_amount ) {
+	 	this.org_exe_amount = newOrg_exe_amount;
+	} 	  
 	/**
-	 * 属性group_exe_amount的Getter方法.属性名：集团本币执行数 创建日期:
-	 * 
+	 * 属性group_exe_amount的Getter方法.属性名：集团本币执行数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGroup_exe_amount() {
+	public nc.vo.pub.lang.UFDouble getGroup_exe_amount () {
 		return group_exe_amount;
-	}
-
+	}   
 	/**
-	 * 属性group_exe_amount的Setter方法.属性名：集团本币执行数 创建日期:
-	 * 
-	 * @param newGroup_exe_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性group_exe_amount的Setter方法.属性名：集团本币执行数
+	 * 创建日期:
+	 * @param newGroup_exe_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGroup_exe_amount(nc.vo.pub.lang.UFDouble newGroup_exe_amount) {
-		this.group_exe_amount = newGroup_exe_amount;
-	}
-
+	public void setGroup_exe_amount (nc.vo.pub.lang.UFDouble newGroup_exe_amount ) {
+	 	this.group_exe_amount = newGroup_exe_amount;
+	} 	  
 	/**
-	 * 属性global_exe_amount的Getter方法.属性名：全局本币执行数 创建日期:
-	 * 
+	 * 属性global_exe_amount的Getter方法.属性名：全局本币执行数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGlobal_exe_amount() {
+	public nc.vo.pub.lang.UFDouble getGlobal_exe_amount () {
 		return global_exe_amount;
-	}
-
+	}   
 	/**
-	 * 属性global_exe_amount的Setter方法.属性名：全局本币执行数 创建日期:
-	 * 
-	 * @param newGlobal_exe_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性global_exe_amount的Setter方法.属性名：全局本币执行数
+	 * 创建日期:
+	 * @param newGlobal_exe_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGlobal_exe_amount(nc.vo.pub.lang.UFDouble newGlobal_exe_amount) {
-		this.global_exe_amount = newGlobal_exe_amount;
-	}
-
+	public void setGlobal_exe_amount (nc.vo.pub.lang.UFDouble newGlobal_exe_amount ) {
+	 	this.global_exe_amount = newGlobal_exe_amount;
+	} 	  
 	/**
-	 * 属性rowno的Getter方法.属性名：行号 创建日期:
-	 * 
+	 * 属性rowno的Getter方法.属性名：行号
+	 * 创建日期:
 	 * @return java.lang.Integer
 	 */
-	public java.lang.Integer getRowno() {
+	public java.lang.Integer getRowno () {
 		return rowno;
-	}
-
+	}   
 	/**
-	 * 属性rowno的Setter方法.属性名：行号 创建日期:
-	 * 
-	 * @param newRowno
-	 *            java.lang.Integer
+	 * 属性rowno的Setter方法.属性名：行号
+	 * 创建日期:
+	 * @param newRowno java.lang.Integer
 	 */
-	public void setRowno(java.lang.Integer newRowno) {
-		this.rowno = newRowno;
-	}
-
+	public void setRowno (java.lang.Integer newRowno ) {
+	 	this.rowno = newRowno;
+	} 	  
 	/**
-	 * 属性pre_amount的Getter方法.属性名：预占数 创建日期:
-	 * 
+	 * 属性pre_amount的Getter方法.属性名：预占数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getPre_amount() {
+	public nc.vo.pub.lang.UFDouble getPre_amount () {
 		return pre_amount;
-	}
-
+	}   
 	/**
-	 * 属性pre_amount的Setter方法.属性名：预占数 创建日期:
-	 * 
-	 * @param newPre_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性pre_amount的Setter方法.属性名：预占数
+	 * 创建日期:
+	 * @param newPre_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setPre_amount(nc.vo.pub.lang.UFDouble newPre_amount) {
-		this.pre_amount = newPre_amount;
-	}
-
+	public void setPre_amount (nc.vo.pub.lang.UFDouble newPre_amount ) {
+	 	this.pre_amount = newPre_amount;
+	} 	  
 	/**
-	 * 属性org_pre_amount的Getter方法.属性名：组织本币预占数 创建日期:
-	 * 
+	 * 属性org_pre_amount的Getter方法.属性名：组织本币预占数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getOrg_pre_amount() {
+	public nc.vo.pub.lang.UFDouble getOrg_pre_amount () {
 		return org_pre_amount;
-	}
-
+	}   
 	/**
-	 * 属性org_pre_amount的Setter方法.属性名：组织本币预占数 创建日期:
-	 * 
-	 * @param newOrg_pre_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性org_pre_amount的Setter方法.属性名：组织本币预占数
+	 * 创建日期:
+	 * @param newOrg_pre_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setOrg_pre_amount(nc.vo.pub.lang.UFDouble newOrg_pre_amount) {
-		this.org_pre_amount = newOrg_pre_amount;
-	}
-
+	public void setOrg_pre_amount (nc.vo.pub.lang.UFDouble newOrg_pre_amount ) {
+	 	this.org_pre_amount = newOrg_pre_amount;
+	} 	  
 	/**
-	 * 属性group_pre_amount的Getter方法.属性名：集团本币预占数 创建日期:
-	 * 
+	 * 属性group_pre_amount的Getter方法.属性名：集团本币预占数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGroup_pre_amount() {
+	public nc.vo.pub.lang.UFDouble getGroup_pre_amount () {
 		return group_pre_amount;
-	}
-
+	}   
 	/**
-	 * 属性group_pre_amount的Setter方法.属性名：集团本币预占数 创建日期:
-	 * 
-	 * @param newGroup_pre_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性group_pre_amount的Setter方法.属性名：集团本币预占数
+	 * 创建日期:
+	 * @param newGroup_pre_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGroup_pre_amount(nc.vo.pub.lang.UFDouble newGroup_pre_amount) {
-		this.group_pre_amount = newGroup_pre_amount;
-	}
-
+	public void setGroup_pre_amount (nc.vo.pub.lang.UFDouble newGroup_pre_amount ) {
+	 	this.group_pre_amount = newGroup_pre_amount;
+	} 	  
 	/**
-	 * 属性global_pre_amount的Getter方法.属性名：全局本币预占数 创建日期:
-	 * 
+	 * 属性global_pre_amount的Getter方法.属性名：全局本币预占数
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDouble
 	 */
-	public nc.vo.pub.lang.UFDouble getGlobal_pre_amount() {
+	public nc.vo.pub.lang.UFDouble getGlobal_pre_amount () {
 		return global_pre_amount;
-	}
-
+	}   
 	/**
-	 * 属性global_pre_amount的Setter方法.属性名：全局本币预占数 创建日期:
-	 * 
-	 * @param newGlobal_pre_amount
-	 *            nc.vo.pub.lang.UFDouble
+	 * 属性global_pre_amount的Setter方法.属性名：全局本币预占数
+	 * 创建日期:
+	 * @param newGlobal_pre_amount nc.vo.pub.lang.UFDouble
 	 */
-	public void setGlobal_pre_amount(nc.vo.pub.lang.UFDouble newGlobal_pre_amount) {
-		this.global_pre_amount = newGlobal_pre_amount;
-	}
-
+	public void setGlobal_pre_amount (nc.vo.pub.lang.UFDouble newGlobal_pre_amount ) {
+	 	this.global_pre_amount = newGlobal_pre_amount;
+	} 	  
 	/**
-	 * 属性billmaker的Getter方法.属性名：申请人 创建日期:
-	 * 
+	 * 属性billmaker的Getter方法.属性名：申请人
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getBillmaker() {
+	public java.lang.String getBillmaker () {
 		return billmaker;
-	}
-
+	}   
 	/**
-	 * 属性billmaker的Setter方法.属性名：申请人 创建日期:
-	 * 
-	 * @param newBillmaker
-	 *            java.lang.String
+	 * 属性billmaker的Setter方法.属性名：申请人
+	 * 创建日期:
+	 * @param newBillmaker java.lang.String
 	 */
-	public void setBillmaker(java.lang.String newBillmaker) {
-		this.billmaker = newBillmaker;
-	}
-
+	public void setBillmaker (java.lang.String newBillmaker ) {
+	 	this.billmaker = newBillmaker;
+	} 	  
 	/**
-	 * 属性apply_dept的Getter方法.属性名：申请部门 创建日期:
-	 * 
+	 * 属性apply_dept的Getter方法.属性名：申请部门
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getApply_dept() {
+	public java.lang.String getApply_dept () {
 		return apply_dept;
-	}
-
+	}   
 	/**
-	 * 属性apply_dept的Setter方法.属性名：申请部门 创建日期:
-	 * 
-	 * @param newApply_dept
-	 *            java.lang.String
+	 * 属性apply_dept的Setter方法.属性名：申请部门
+	 * 创建日期:
+	 * @param newApply_dept java.lang.String
 	 */
-	public void setApply_dept(java.lang.String newApply_dept) {
-		this.apply_dept = newApply_dept;
-	}
-
+	public void setApply_dept (java.lang.String newApply_dept ) {
+	 	this.apply_dept = newApply_dept;
+	} 	  
 	/**
-	 * 属性approvetime的Getter方法.属性名：审批时间 创建日期:
-	 * 
+	 * 属性approvetime的Getter方法.属性名：审批时间
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDate
 	 */
-	public nc.vo.pub.lang.UFDate getApprovetime() {
+	public nc.vo.pub.lang.UFDate getApprovetime () {
 		return approvetime;
-	}
-
+	}   
 	/**
-	 * 属性approvetime的Setter方法.属性名：审批时间 创建日期:
-	 * 
-	 * @param newApprovetime
-	 *            nc.vo.pub.lang.UFDate
+	 * 属性approvetime的Setter方法.属性名：审批时间
+	 * 创建日期:
+	 * @param newApprovetime nc.vo.pub.lang.UFDate
 	 */
-	public void setApprovetime(nc.vo.pub.lang.UFDate newApprovetime) {
-		this.approvetime = newApprovetime;
-	}
-
+	public void setApprovetime (nc.vo.pub.lang.UFDate newApprovetime ) {
+	 	this.approvetime = newApprovetime;
+	} 	  
 	/**
-	 * 属性defitem30的Getter方法.属性名：自定义项30 创建日期:
-	 * 
+	 * 属性defitem30的Getter方法.属性名：自定义项30
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem30() {
+	public java.lang.String getDefitem30 () {
 		return defitem30;
-	}
-
+	}   
 	/**
-	 * 属性defitem30的Setter方法.属性名：自定义项30 创建日期:
-	 * 
-	 * @param newDefitem30
-	 *            java.lang.String
+	 * 属性defitem30的Setter方法.属性名：自定义项30
+	 * 创建日期:
+	 * @param newDefitem30 java.lang.String
 	 */
-	public void setDefitem30(java.lang.String newDefitem30) {
-		this.defitem30 = newDefitem30;
-	}
-
+	public void setDefitem30 (java.lang.String newDefitem30 ) {
+	 	this.defitem30 = newDefitem30;
+	} 	  
 	/**
-	 * 属性defitem29的Getter方法.属性名：自定义项29 创建日期:
-	 * 
+	 * 属性defitem29的Getter方法.属性名：自定义项29
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem29() {
+	public java.lang.String getDefitem29 () {
 		return defitem29;
-	}
-
+	}   
 	/**
-	 * 属性defitem29的Setter方法.属性名：自定义项29 创建日期:
-	 * 
-	 * @param newDefitem29
-	 *            java.lang.String
+	 * 属性defitem29的Setter方法.属性名：自定义项29
+	 * 创建日期:
+	 * @param newDefitem29 java.lang.String
 	 */
-	public void setDefitem29(java.lang.String newDefitem29) {
-		this.defitem29 = newDefitem29;
-	}
-
+	public void setDefitem29 (java.lang.String newDefitem29 ) {
+	 	this.defitem29 = newDefitem29;
+	} 	  
 	/**
-	 * 属性defitem28的Getter方法.属性名：自定义项28 创建日期:
-	 * 
+	 * 属性defitem28的Getter方法.属性名：自定义项28
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem28() {
+	public java.lang.String getDefitem28 () {
 		return defitem28;
-	}
-
+	}   
 	/**
-	 * 属性defitem28的Setter方法.属性名：自定义项28 创建日期:
-	 * 
-	 * @param newDefitem28
-	 *            java.lang.String
+	 * 属性defitem28的Setter方法.属性名：自定义项28
+	 * 创建日期:
+	 * @param newDefitem28 java.lang.String
 	 */
-	public void setDefitem28(java.lang.String newDefitem28) {
-		this.defitem28 = newDefitem28;
-	}
-
+	public void setDefitem28 (java.lang.String newDefitem28 ) {
+	 	this.defitem28 = newDefitem28;
+	} 	  
 	/**
-	 * 属性defitem27的Getter方法.属性名：自定义项27 创建日期:
-	 * 
+	 * 属性defitem27的Getter方法.属性名：自定义项27
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem27() {
+	public java.lang.String getDefitem27 () {
 		return defitem27;
-	}
-
+	}   
 	/**
-	 * 属性defitem27的Setter方法.属性名：自定义项27 创建日期:
-	 * 
-	 * @param newDefitem27
-	 *            java.lang.String
+	 * 属性defitem27的Setter方法.属性名：自定义项27
+	 * 创建日期:
+	 * @param newDefitem27 java.lang.String
 	 */
-	public void setDefitem27(java.lang.String newDefitem27) {
-		this.defitem27 = newDefitem27;
-	}
-
+	public void setDefitem27 (java.lang.String newDefitem27 ) {
+	 	this.defitem27 = newDefitem27;
+	} 	  
 	/**
-	 * 属性defitem26的Getter方法.属性名：自定义项26 创建日期:
-	 * 
+	 * 属性defitem26的Getter方法.属性名：自定义项26
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem26() {
+	public java.lang.String getDefitem26 () {
 		return defitem26;
-	}
-
+	}   
 	/**
-	 * 属性defitem26的Setter方法.属性名：自定义项26 创建日期:
-	 * 
-	 * @param newDefitem26
-	 *            java.lang.String
+	 * 属性defitem26的Setter方法.属性名：自定义项26
+	 * 创建日期:
+	 * @param newDefitem26 java.lang.String
 	 */
-	public void setDefitem26(java.lang.String newDefitem26) {
-		this.defitem26 = newDefitem26;
-	}
-
+	public void setDefitem26 (java.lang.String newDefitem26 ) {
+	 	this.defitem26 = newDefitem26;
+	} 	  
 	/**
-	 * 属性defitem25的Getter方法.属性名：自定义项25 创建日期:
-	 * 
+	 * 属性defitem25的Getter方法.属性名：自定义项25
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem25() {
+	public java.lang.String getDefitem25 () {
 		return defitem25;
-	}
-
+	}   
 	/**
-	 * 属性defitem25的Setter方法.属性名：自定义项25 创建日期:
-	 * 
-	 * @param newDefitem25
-	 *            java.lang.String
+	 * 属性defitem25的Setter方法.属性名：自定义项25
+	 * 创建日期:
+	 * @param newDefitem25 java.lang.String
 	 */
-	public void setDefitem25(java.lang.String newDefitem25) {
-		this.defitem25 = newDefitem25;
-	}
-
+	public void setDefitem25 (java.lang.String newDefitem25 ) {
+	 	this.defitem25 = newDefitem25;
+	} 	  
 	/**
-	 * 属性defitem24的Getter方法.属性名：自定义项24 创建日期:
-	 * 
+	 * 属性defitem24的Getter方法.属性名：自定义项24
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem24() {
+	public java.lang.String getDefitem24 () {
 		return defitem24;
-	}
-
+	}   
 	/**
-	 * 属性defitem24的Setter方法.属性名：自定义项24 创建日期:
-	 * 
-	 * @param newDefitem24
-	 *            java.lang.String
+	 * 属性defitem24的Setter方法.属性名：自定义项24
+	 * 创建日期:
+	 * @param newDefitem24 java.lang.String
 	 */
-	public void setDefitem24(java.lang.String newDefitem24) {
-		this.defitem24 = newDefitem24;
-	}
-
+	public void setDefitem24 (java.lang.String newDefitem24 ) {
+	 	this.defitem24 = newDefitem24;
+	} 	  
 	/**
-	 * 属性defitem23的Getter方法.属性名：自定义项23 创建日期:
-	 * 
+	 * 属性defitem23的Getter方法.属性名：自定义项23
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem23() {
+	public java.lang.String getDefitem23 () {
 		return defitem23;
-	}
-
+	}   
 	/**
-	 * 属性defitem23的Setter方法.属性名：自定义项23 创建日期:
-	 * 
-	 * @param newDefitem23
-	 *            java.lang.String
+	 * 属性defitem23的Setter方法.属性名：自定义项23
+	 * 创建日期:
+	 * @param newDefitem23 java.lang.String
 	 */
-	public void setDefitem23(java.lang.String newDefitem23) {
-		this.defitem23 = newDefitem23;
-	}
-
+	public void setDefitem23 (java.lang.String newDefitem23 ) {
+	 	this.defitem23 = newDefitem23;
+	} 	  
 	/**
-	 * 属性defitem22的Getter方法.属性名：自定义项22 创建日期:
-	 * 
+	 * 属性defitem22的Getter方法.属性名：自定义项22
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem22() {
+	public java.lang.String getDefitem22 () {
 		return defitem22;
-	}
-
+	}   
 	/**
-	 * 属性defitem22的Setter方法.属性名：自定义项22 创建日期:
-	 * 
-	 * @param newDefitem22
-	 *            java.lang.String
+	 * 属性defitem22的Setter方法.属性名：自定义项22
+	 * 创建日期:
+	 * @param newDefitem22 java.lang.String
 	 */
-	public void setDefitem22(java.lang.String newDefitem22) {
-		this.defitem22 = newDefitem22;
-	}
-
+	public void setDefitem22 (java.lang.String newDefitem22 ) {
+	 	this.defitem22 = newDefitem22;
+	} 	  
 	/**
-	 * 属性defitem21的Getter方法.属性名：自定义项21 创建日期:
-	 * 
+	 * 属性defitem21的Getter方法.属性名：自定义项21
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem21() {
+	public java.lang.String getDefitem21 () {
 		return defitem21;
-	}
-
+	}   
 	/**
-	 * 属性defitem21的Setter方法.属性名：自定义项21 创建日期:
-	 * 
-	 * @param newDefitem21
-	 *            java.lang.String
+	 * 属性defitem21的Setter方法.属性名：自定义项21
+	 * 创建日期:
+	 * @param newDefitem21 java.lang.String
 	 */
-	public void setDefitem21(java.lang.String newDefitem21) {
-		this.defitem21 = newDefitem21;
-	}
-
+	public void setDefitem21 (java.lang.String newDefitem21 ) {
+	 	this.defitem21 = newDefitem21;
+	} 	  
 	/**
-	 * 属性defitem20的Getter方法.属性名：自定义项20 创建日期:
-	 * 
+	 * 属性defitem20的Getter方法.属性名：自定义项20
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem20() {
+	public java.lang.String getDefitem20 () {
 		return defitem20;
-	}
-
+	}   
 	/**
-	 * 属性defitem20的Setter方法.属性名：自定义项20 创建日期:
-	 * 
-	 * @param newDefitem20
-	 *            java.lang.String
+	 * 属性defitem20的Setter方法.属性名：自定义项20
+	 * 创建日期:
+	 * @param newDefitem20 java.lang.String
 	 */
-	public void setDefitem20(java.lang.String newDefitem20) {
-		this.defitem20 = newDefitem20;
-	}
-
+	public void setDefitem20 (java.lang.String newDefitem20 ) {
+	 	this.defitem20 = newDefitem20;
+	} 	  
 	/**
-	 * 属性defitem19的Getter方法.属性名：自定义项19 创建日期:
-	 * 
+	 * 属性defitem19的Getter方法.属性名：自定义项19
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem19() {
+	public java.lang.String getDefitem19 () {
 		return defitem19;
-	}
-
+	}   
 	/**
-	 * 属性defitem19的Setter方法.属性名：自定义项19 创建日期:
-	 * 
-	 * @param newDefitem19
-	 *            java.lang.String
+	 * 属性defitem19的Setter方法.属性名：自定义项19
+	 * 创建日期:
+	 * @param newDefitem19 java.lang.String
 	 */
-	public void setDefitem19(java.lang.String newDefitem19) {
-		this.defitem19 = newDefitem19;
-	}
-
+	public void setDefitem19 (java.lang.String newDefitem19 ) {
+	 	this.defitem19 = newDefitem19;
+	} 	  
 	/**
-	 * 属性defitem18的Getter方法.属性名：自定义项18 创建日期:
-	 * 
+	 * 属性defitem18的Getter方法.属性名：自定义项18
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem18() {
+	public java.lang.String getDefitem18 () {
 		return defitem18;
-	}
-
+	}   
 	/**
-	 * 属性defitem18的Setter方法.属性名：自定义项18 创建日期:
-	 * 
-	 * @param newDefitem18
-	 *            java.lang.String
+	 * 属性defitem18的Setter方法.属性名：自定义项18
+	 * 创建日期:
+	 * @param newDefitem18 java.lang.String
 	 */
-	public void setDefitem18(java.lang.String newDefitem18) {
-		this.defitem18 = newDefitem18;
-	}
-
+	public void setDefitem18 (java.lang.String newDefitem18 ) {
+	 	this.defitem18 = newDefitem18;
+	} 	  
 	/**
-	 * 属性defitem17的Getter方法.属性名：自定义项17 创建日期:
-	 * 
+	 * 属性defitem17的Getter方法.属性名：自定义项17
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem17() {
+	public java.lang.String getDefitem17 () {
 		return defitem17;
-	}
-
+	}   
 	/**
-	 * 属性defitem17的Setter方法.属性名：自定义项17 创建日期:
-	 * 
-	 * @param newDefitem17
-	 *            java.lang.String
+	 * 属性defitem17的Setter方法.属性名：自定义项17
+	 * 创建日期:
+	 * @param newDefitem17 java.lang.String
 	 */
-	public void setDefitem17(java.lang.String newDefitem17) {
-		this.defitem17 = newDefitem17;
-	}
-
+	public void setDefitem17 (java.lang.String newDefitem17 ) {
+	 	this.defitem17 = newDefitem17;
+	} 	  
 	/**
-	 * 属性defitem16的Getter方法.属性名：自定义项16 创建日期:
-	 * 
+	 * 属性defitem16的Getter方法.属性名：自定义项16
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem16() {
+	public java.lang.String getDefitem16 () {
 		return defitem16;
-	}
-
+	}   
 	/**
-	 * 属性defitem16的Setter方法.属性名：自定义项16 创建日期:
-	 * 
-	 * @param newDefitem16
-	 *            java.lang.String
+	 * 属性defitem16的Setter方法.属性名：自定义项16
+	 * 创建日期:
+	 * @param newDefitem16 java.lang.String
 	 */
-	public void setDefitem16(java.lang.String newDefitem16) {
-		this.defitem16 = newDefitem16;
-	}
-
+	public void setDefitem16 (java.lang.String newDefitem16 ) {
+	 	this.defitem16 = newDefitem16;
+	} 	  
 	/**
-	 * 属性defitem15的Getter方法.属性名：自定义项15 创建日期:
-	 * 
+	 * 属性defitem15的Getter方法.属性名：自定义项15
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem15() {
+	public java.lang.String getDefitem15 () {
 		return defitem15;
-	}
-
+	}   
 	/**
-	 * 属性defitem15的Setter方法.属性名：自定义项15 创建日期:
-	 * 
-	 * @param newDefitem15
-	 *            java.lang.String
+	 * 属性defitem15的Setter方法.属性名：自定义项15
+	 * 创建日期:
+	 * @param newDefitem15 java.lang.String
 	 */
-	public void setDefitem15(java.lang.String newDefitem15) {
-		this.defitem15 = newDefitem15;
-	}
-
+	public void setDefitem15 (java.lang.String newDefitem15 ) {
+	 	this.defitem15 = newDefitem15;
+	} 	  
 	/**
-	 * 属性defitem14的Getter方法.属性名：自定义项14 创建日期:
-	 * 
+	 * 属性defitem14的Getter方法.属性名：自定义项14
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem14() {
+	public java.lang.String getDefitem14 () {
 		return defitem14;
-	}
-
+	}   
 	/**
-	 * 属性defitem14的Setter方法.属性名：自定义项14 创建日期:
-	 * 
-	 * @param newDefitem14
-	 *            java.lang.String
+	 * 属性defitem14的Setter方法.属性名：自定义项14
+	 * 创建日期:
+	 * @param newDefitem14 java.lang.String
 	 */
-	public void setDefitem14(java.lang.String newDefitem14) {
-		this.defitem14 = newDefitem14;
-	}
-
+	public void setDefitem14 (java.lang.String newDefitem14 ) {
+	 	this.defitem14 = newDefitem14;
+	} 	  
 	/**
-	 * 属性defitem13的Getter方法.属性名：自定义项13 创建日期:
-	 * 
+	 * 属性defitem13的Getter方法.属性名：自定义项13
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem13() {
+	public java.lang.String getDefitem13 () {
 		return defitem13;
-	}
-
+	}   
 	/**
-	 * 属性defitem13的Setter方法.属性名：自定义项13 创建日期:
-	 * 
-	 * @param newDefitem13
-	 *            java.lang.String
+	 * 属性defitem13的Setter方法.属性名：自定义项13
+	 * 创建日期:
+	 * @param newDefitem13 java.lang.String
 	 */
-	public void setDefitem13(java.lang.String newDefitem13) {
-		this.defitem13 = newDefitem13;
-	}
-
+	public void setDefitem13 (java.lang.String newDefitem13 ) {
+	 	this.defitem13 = newDefitem13;
+	} 	  
 	/**
-	 * 属性defitem12的Getter方法.属性名：自定义项12 创建日期:
-	 * 
+	 * 属性defitem12的Getter方法.属性名：自定义项12
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem12() {
+	public java.lang.String getDefitem12 () {
 		return defitem12;
-	}
-
+	}   
 	/**
-	 * 属性defitem12的Setter方法.属性名：自定义项12 创建日期:
-	 * 
-	 * @param newDefitem12
-	 *            java.lang.String
+	 * 属性defitem12的Setter方法.属性名：自定义项12
+	 * 创建日期:
+	 * @param newDefitem12 java.lang.String
 	 */
-	public void setDefitem12(java.lang.String newDefitem12) {
-		this.defitem12 = newDefitem12;
-	}
-
+	public void setDefitem12 (java.lang.String newDefitem12 ) {
+	 	this.defitem12 = newDefitem12;
+	} 	  
 	/**
-	 * 属性defitem11的Getter方法.属性名：自定义项11 创建日期:
-	 * 
+	 * 属性defitem11的Getter方法.属性名：自定义项11
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem11() {
+	public java.lang.String getDefitem11 () {
 		return defitem11;
-	}
-
+	}   
 	/**
-	 * 属性defitem11的Setter方法.属性名：自定义项11 创建日期:
-	 * 
-	 * @param newDefitem11
-	 *            java.lang.String
+	 * 属性defitem11的Setter方法.属性名：自定义项11
+	 * 创建日期:
+	 * @param newDefitem11 java.lang.String
 	 */
-	public void setDefitem11(java.lang.String newDefitem11) {
-		this.defitem11 = newDefitem11;
-	}
-
+	public void setDefitem11 (java.lang.String newDefitem11 ) {
+	 	this.defitem11 = newDefitem11;
+	} 	  
 	/**
-	 * 属性defitem10的Getter方法.属性名：自定义项10 创建日期:
-	 * 
+	 * 属性defitem10的Getter方法.属性名：自定义项10
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem10() {
+	public java.lang.String getDefitem10 () {
 		return defitem10;
-	}
-
+	}   
 	/**
-	 * 属性defitem10的Setter方法.属性名：自定义项10 创建日期:
-	 * 
-	 * @param newDefitem10
-	 *            java.lang.String
+	 * 属性defitem10的Setter方法.属性名：自定义项10
+	 * 创建日期:
+	 * @param newDefitem10 java.lang.String
 	 */
-	public void setDefitem10(java.lang.String newDefitem10) {
-		this.defitem10 = newDefitem10;
-	}
-
+	public void setDefitem10 (java.lang.String newDefitem10 ) {
+	 	this.defitem10 = newDefitem10;
+	} 	  
 	/**
-	 * 属性defitem9的Getter方法.属性名：自定义项9 创建日期:
-	 * 
+	 * 属性defitem9的Getter方法.属性名：自定义项9
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem9() {
+	public java.lang.String getDefitem9 () {
 		return defitem9;
-	}
-
+	}   
 	/**
-	 * 属性defitem9的Setter方法.属性名：自定义项9 创建日期:
-	 * 
-	 * @param newDefitem9
-	 *            java.lang.String
+	 * 属性defitem9的Setter方法.属性名：自定义项9
+	 * 创建日期:
+	 * @param newDefitem9 java.lang.String
 	 */
-	public void setDefitem9(java.lang.String newDefitem9) {
-		this.defitem9 = newDefitem9;
-	}
-
+	public void setDefitem9 (java.lang.String newDefitem9 ) {
+	 	this.defitem9 = newDefitem9;
+	} 	  
 	/**
-	 * 属性defitem8的Getter方法.属性名：自定义项8 创建日期:
-	 * 
+	 * 属性defitem8的Getter方法.属性名：自定义项8
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem8() {
+	public java.lang.String getDefitem8 () {
 		return defitem8;
-	}
-
+	}   
 	/**
-	 * 属性defitem8的Setter方法.属性名：自定义项8 创建日期:
-	 * 
-	 * @param newDefitem8
-	 *            java.lang.String
+	 * 属性defitem8的Setter方法.属性名：自定义项8
+	 * 创建日期:
+	 * @param newDefitem8 java.lang.String
 	 */
-	public void setDefitem8(java.lang.String newDefitem8) {
-		this.defitem8 = newDefitem8;
-	}
-
+	public void setDefitem8 (java.lang.String newDefitem8 ) {
+	 	this.defitem8 = newDefitem8;
+	} 	  
 	/**
-	 * 属性defitem7的Getter方法.属性名：自定义项7 创建日期:
-	 * 
+	 * 属性defitem7的Getter方法.属性名：自定义项7
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem7() {
+	public java.lang.String getDefitem7 () {
 		return defitem7;
-	}
-
+	}   
 	/**
-	 * 属性defitem7的Setter方法.属性名：自定义项7 创建日期:
-	 * 
-	 * @param newDefitem7
-	 *            java.lang.String
+	 * 属性defitem7的Setter方法.属性名：自定义项7
+	 * 创建日期:
+	 * @param newDefitem7 java.lang.String
 	 */
-	public void setDefitem7(java.lang.String newDefitem7) {
-		this.defitem7 = newDefitem7;
-	}
-
+	public void setDefitem7 (java.lang.String newDefitem7 ) {
+	 	this.defitem7 = newDefitem7;
+	} 	  
 	/**
-	 * 属性defitem6的Getter方法.属性名：自定义项6 创建日期:
-	 * 
+	 * 属性defitem6的Getter方法.属性名：自定义项6
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem6() {
+	public java.lang.String getDefitem6 () {
 		return defitem6;
-	}
-
+	}   
 	/**
-	 * 属性defitem6的Setter方法.属性名：自定义项6 创建日期:
-	 * 
-	 * @param newDefitem6
-	 *            java.lang.String
+	 * 属性defitem6的Setter方法.属性名：自定义项6
+	 * 创建日期:
+	 * @param newDefitem6 java.lang.String
 	 */
-	public void setDefitem6(java.lang.String newDefitem6) {
-		this.defitem6 = newDefitem6;
-	}
-
+	public void setDefitem6 (java.lang.String newDefitem6 ) {
+	 	this.defitem6 = newDefitem6;
+	} 	  
 	/**
-	 * 属性defitem5的Getter方法.属性名：自定义项5 创建日期:
-	 * 
+	 * 属性defitem5的Getter方法.属性名：自定义项5
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem5() {
+	public java.lang.String getDefitem5 () {
 		return defitem5;
-	}
-
+	}   
 	/**
-	 * 属性defitem5的Setter方法.属性名：自定义项5 创建日期:
-	 * 
-	 * @param newDefitem5
-	 *            java.lang.String
+	 * 属性defitem5的Setter方法.属性名：自定义项5
+	 * 创建日期:
+	 * @param newDefitem5 java.lang.String
 	 */
-	public void setDefitem5(java.lang.String newDefitem5) {
-		this.defitem5 = newDefitem5;
-	}
-
+	public void setDefitem5 (java.lang.String newDefitem5 ) {
+	 	this.defitem5 = newDefitem5;
+	} 	  
 	/**
-	 * 属性defitem4的Getter方法.属性名：自定义项4 创建日期:
-	 * 
+	 * 属性defitem4的Getter方法.属性名：自定义项4
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem4() {
+	public java.lang.String getDefitem4 () {
 		return defitem4;
-	}
-
+	}   
 	/**
-	 * 属性defitem4的Setter方法.属性名：自定义项4 创建日期:
-	 * 
-	 * @param newDefitem4
-	 *            java.lang.String
+	 * 属性defitem4的Setter方法.属性名：自定义项4
+	 * 创建日期:
+	 * @param newDefitem4 java.lang.String
 	 */
-	public void setDefitem4(java.lang.String newDefitem4) {
-		this.defitem4 = newDefitem4;
-	}
-
+	public void setDefitem4 (java.lang.String newDefitem4 ) {
+	 	this.defitem4 = newDefitem4;
+	} 	  
 	/**
-	 * 属性defitem3的Getter方法.属性名：自定义项3 创建日期:
-	 * 
+	 * 属性defitem3的Getter方法.属性名：自定义项3
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem3() {
+	public java.lang.String getDefitem3 () {
 		return defitem3;
-	}
-
+	}   
 	/**
-	 * 属性defitem3的Setter方法.属性名：自定义项3 创建日期:
-	 * 
-	 * @param newDefitem3
-	 *            java.lang.String
+	 * 属性defitem3的Setter方法.属性名：自定义项3
+	 * 创建日期:
+	 * @param newDefitem3 java.lang.String
 	 */
-	public void setDefitem3(java.lang.String newDefitem3) {
-		this.defitem3 = newDefitem3;
-	}
-
+	public void setDefitem3 (java.lang.String newDefitem3 ) {
+	 	this.defitem3 = newDefitem3;
+	} 	  
 	/**
-	 * 属性defitem2的Getter方法.属性名：自定义项2 创建日期:
-	 * 
+	 * 属性defitem2的Getter方法.属性名：自定义项2
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem2() {
+	public java.lang.String getDefitem2 () {
 		return defitem2;
-	}
-
+	}   
 	/**
-	 * 属性defitem2的Setter方法.属性名：自定义项2 创建日期:
-	 * 
-	 * @param newDefitem2
-	 *            java.lang.String
+	 * 属性defitem2的Setter方法.属性名：自定义项2
+	 * 创建日期:
+	 * @param newDefitem2 java.lang.String
 	 */
-	public void setDefitem2(java.lang.String newDefitem2) {
-		this.defitem2 = newDefitem2;
-	}
-
+	public void setDefitem2 (java.lang.String newDefitem2 ) {
+	 	this.defitem2 = newDefitem2;
+	} 	  
 	/**
-	 * 属性defitem1的Getter方法.属性名：自定义项1 创建日期:
-	 * 
+	 * 属性defitem1的Getter方法.属性名：自定义项1
+	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getDefitem1() {
+	public java.lang.String getDefitem1 () {
 		return defitem1;
-	}
-
+	}   
 	/**
-	 * 属性defitem1的Setter方法.属性名：自定义项1 创建日期:
-	 * 
-	 * @param newDefitem1
-	 *            java.lang.String
+	 * 属性defitem1的Setter方法.属性名：自定义项1
+	 * 创建日期:
+	 * @param newDefitem1 java.lang.String
 	 */
-	public void setDefitem1(java.lang.String newDefitem1) {
-		this.defitem1 = newDefitem1;
-	}
-
+	public void setDefitem1 (java.lang.String newDefitem1 ) {
+	 	this.defitem1 = newDefitem1;
+	} 	  
 	/**
-	 * 属性dr的Getter方法.属性名：dr 创建日期:
-	 * 
+	 * 属性share_ratio的Getter方法.属性名：分摊比例
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getShare_ratio () {
+		return share_ratio;
+	}   
+	/**
+	 * 属性share_ratio的Setter方法.属性名：分摊比例
+	 * 创建日期:
+	 * @param newShare_ratio nc.vo.pub.lang.UFDouble
+	 */
+	public void setShare_ratio (nc.vo.pub.lang.UFDouble newShare_ratio ) {
+	 	this.share_ratio = newShare_ratio;
+	} 	  
+	/**
+	 * 属性usable_amout的Getter方法.属性名：可用金额
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getUsable_amout () {
+		return usable_amout;
+	}   
+	/**
+	 * 属性usable_amout的Setter方法.属性名：可用金额
+	 * 创建日期:
+	 * @param newUsable_amout nc.vo.pub.lang.UFDouble
+	 */
+	public void setUsable_amout (nc.vo.pub.lang.UFDouble newUsable_amout ) {
+	 	this.usable_amout = newUsable_amout;
+	} 	  
+	/**
+	 * 属性apply_amount的Getter方法.属性名：费用申报金额
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getApply_amount () {
+		return apply_amount;
+	}   
+	/**
+	 * 属性apply_amount的Setter方法.属性名：费用申报金额
+	 * 创建日期:
+	 * @param newApply_amount nc.vo.pub.lang.UFDouble
+	 */
+	public void setApply_amount (nc.vo.pub.lang.UFDouble newApply_amount ) {
+	 	this.apply_amount = newApply_amount;
+	} 	  
+	/**
+	 * 属性customer_ratio的Getter方法.属性名：客户费用支持比例
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getCustomer_ratio () {
+		return customer_ratio;
+	}   
+	/**
+	 * 属性customer_ratio的Setter方法.属性名：客户费用支持比例
+	 * 创建日期:
+	 * @param newCustomer_ratio nc.vo.pub.lang.UFDouble
+	 */
+	public void setCustomer_ratio (nc.vo.pub.lang.UFDouble newCustomer_ratio ) {
+	 	this.customer_ratio = newCustomer_ratio;
+	} 	  
+	/**
+	 * 属性max_amount的Getter方法.属性名：允许报销最大金额
+	 * 创建日期:
+	 * @return nc.vo.pub.lang.UFDouble
+	 */
+	public nc.vo.pub.lang.UFDouble getMax_amount () {
+		return max_amount;
+	}   
+	/**
+	 * 属性max_amount的Setter方法.属性名：允许报销最大金额
+	 * 创建日期:
+	 * @param newMax_amount nc.vo.pub.lang.UFDouble
+	 */
+	public void setMax_amount (nc.vo.pub.lang.UFDouble newMax_amount ) {
+	 	this.max_amount = newMax_amount;
+	} 	  
+	/**
+	 * 属性dr的Getter方法.属性名：dr
+	 * 创建日期:
 	 * @return java.lang.Integer
 	 */
-	public java.lang.Integer getDr() {
+	public java.lang.Integer getDr () {
 		return dr;
-	}
-
+	}   
 	/**
-	 * 属性dr的Setter方法.属性名：dr 创建日期:
-	 * 
-	 * @param newDr
-	 *            java.lang.Integer
+	 * 属性dr的Setter方法.属性名：dr
+	 * 创建日期:
+	 * @param newDr java.lang.Integer
 	 */
-	public void setDr(java.lang.Integer newDr) {
-		this.dr = newDr;
-	}
-
+	public void setDr (java.lang.Integer newDr ) {
+	 	this.dr = newDr;
+	} 	  
 	/**
-	 * 属性ts的Getter方法.属性名：ts 创建日期:
-	 * 
+	 * 属性ts的Getter方法.属性名：ts
+	 * 创建日期:
 	 * @return nc.vo.pub.lang.UFDateTime
 	 */
-	public nc.vo.pub.lang.UFDateTime getTs() {
+	public nc.vo.pub.lang.UFDateTime getTs () {
 		return ts;
-	}
-
+	}   
 	/**
-	 * 属性ts的Setter方法.属性名：ts 创建日期:
-	 * 
-	 * @param newTs
-	 *            nc.vo.pub.lang.UFDateTime
-	 */
-	public void setTs(nc.vo.pub.lang.UFDateTime newTs) {
-		this.ts = newTs;
-	}
-
-	/**
-	 * <p>
-	 * 取得父VO主键字段.
-	 * <p>
+	 * 属性ts的Setter方法.属性名：ts
 	 * 创建日期:
-	 * 
-	 * @return java.lang.String
+	 * @param newTs nc.vo.pub.lang.UFDateTime
 	 */
+	public void setTs (nc.vo.pub.lang.UFDateTime newTs ) {
+	 	this.ts = newTs;
+	} 	  
+ 
+	/**
+	  * <p>取得父VO主键字段.
+	  * <p>
+	  * 创建日期:
+	  * @return java.lang.String
+	  */
 	public java.lang.String getParentPKFieldName() {
 		return "pk_mtapp_bill";
-	}
-
+	}   
+    
 	/**
-	 * <p>
-	 * 取得表主键.
-	 * <p>
-	 * 创建日期:
-	 * 
-	 * @return java.lang.String
-	 */
+	  * <p>取得表主键.
+	  * <p>
+	  * 创建日期:
+	  * @return java.lang.String
+	  */
 	public java.lang.String getPKFieldName() {
-		return "pk_mtapp_detail";
+	  return "pk_mtapp_detail";
 	}
-
+    
 	/**
-	 * <p>
-	 * 返回表名称.
+	 * <p>返回表名称.
 	 * <p>
 	 * 创建日期:
-	 * 
 	 * @return java.lang.String
 	 */
 	public java.lang.String getTableName() {
 		return "er_mtapp_detail";
-	}
-
+	}    
+	
 	/**
-	 * <p>
-	 * 返回表名称.
+	 * <p>返回表名称.
 	 * <p>
 	 * 创建日期:
-	 * 
 	 * @return java.lang.String
 	 */
 	public static java.lang.String getDefaultTableName() {
 		return "er_mtapp_detail";
-	}
-
-	/**
-	 * 按照默认方式创建构造子.
-	 * 
-	 * 创建日期:
-	 */
-	public MtAppDetailVO() {
-		super();
-	}
-
+	}    
+    
+    /**
+	  * 按照默认方式创建构造子.
+	  *
+	  * 创建日期:
+	  */
+     public MtAppDetailVO() {
+		super();	
+	}    
+	
 	public IVOMeta getMetaData() {
-		IVOMeta meta = VOMetaFactory.getInstance().getVOMeta("erm.mtapp_detail");
+		IVOMeta meta = VOMetaFactory.getInstance()
+				.getVOMeta("erm.mtapp_detail");
 		return meta;
 	}
-
-	public java.lang.String getPk_checkele() {
-		return pk_checkele;
+	public String getUnAdjustKey() {
+		return unAdjustKey;
+	}
+	public void setUnAdjustKey(String unAdjustKey) {
+		this.unAdjustKey = unAdjustKey;
+	}
+	public String getAllFieldKey() {
+		return allFieldKey;
+	}
+	public void setAllFieldKey(String allFieldKey) {
+		this.allFieldKey = allFieldKey;
 	}
 
-	public void setPk_checkele(java.lang.String pkCheckele) {
-		pk_checkele = pkCheckele;
-	}
+} 
 
-	public UFDouble getUsable_amout() {
-		return usable_amout;
-	}
 
-	public void setUsable_amout(UFDouble usable_amout) {
-		this.usable_amout = usable_amout;
-	}
-}

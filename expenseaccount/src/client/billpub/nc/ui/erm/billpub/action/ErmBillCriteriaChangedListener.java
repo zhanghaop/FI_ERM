@@ -29,7 +29,6 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.resa.costcenter.CostCenterVO;
 
 /**
  * <p>
@@ -79,27 +78,24 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 			} else if (key.equals(JKBXHeaderVO.PK_PCORG)) {
 				ERMQueryActionHelper.setPk(event, pk_org, false);
 			}else if (key.equals(JKBXHeaderVO.DJRQ)) {
+				UIRefPane leftDate = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
+				UIRefPane rightDate = (UIRefPane) ERMQueryActionHelper.getFiltRightComponentForInit(event);
 				try {
 					if (((ErmBillBillManageModel) getModel()).isInit()) {
-						UIRefPane leftDate = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
-						UIRefPane rightDate = (UIRefPane) ERMQueryActionHelper.getFiltRightComponentForInit(event);
 						if (pk_org == null) {
 							return;
 						}
 						UFDate dateStart = BXUiUtil.getStartDate(pk_org);
 						if (dateStart != null) {
-	                        UFDate dateBefore = BXUiUtil.getStartDate(pk_org).getDateBefore(1);
+	                        UFDate dateBefore = dateStart.getDateBefore(1);
 	                        leftDate.setValueObjFireValueChangeEvent(dateBefore.getDateBefore(30));
 	                        rightDate.setValueObjFireValueChangeEvent(dateBefore);						    
 						}
 					} else {
-						UIRefPane leftDate = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
-						UIRefPane rightDate = (UIRefPane) ERMQueryActionHelper.getFiltRightComponentForInit(event);
 						UFDate busiDate = WorkbenchEnvironment.getInstance().getBusiDate();
 						leftDate.setValueObjFireValueChangeEvent(busiDate.getDateBefore(30));
 						rightDate.setValueObjFireValueChangeEvent(busiDate);
 					}
-
 				} catch (BusinessException e) {
 					ExceptionHandler.handleExceptionRuntime(e);
 				}
@@ -112,30 +108,21 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 					refPane.setWhereString(" parentbilltype in ('263X','264X')");
 				}
 			} else {
-				if (key.equals(JKBXHeaderVO.PK_RESACOSTCENTER) || JKBXHeaderVO.FYDEPTID.equals(key)
+				if (JKBXHeaderVO.FYDEPTID.equals(key)
 						|| JKBXHeaderVO.FYDEPTID_V.equals(key) || JKBXHeaderVO.SZXMID.equals(key)
 						|| JKBXHeaderVO.HBBM.equals(key) || JKBXHeaderVO.CUSTOMER.equals(key)
 						|| (BUSITEM + BXBusItemVO.SZXMID).equals(event.getFieldCode())) {
 					setItemFilterByFydw(event);
-
-				} 
-//				else if (key.equals(JKBXHeaderVO.PK_CASHACCOUNT)) {
-//					UIRefPane ref = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
-//
-//					UIRefPane pk_orgRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
-//							JKBXHeaderVO.PK_ORG, false);
-//					if (pk_orgRefPane == null) {
-//						return;
-//					}
-//					if (ref != null && ref.getRefModel() != null) {
-//						ref.getRefModel().setPk_org(pk_orgRefPane.getRefPK());
-//					}
-//				} 
-				else if (key.equals(JKBXHeaderVO.PAYMAN) || key.equals(JKBXHeaderVO.OPERATOR)
+				} else if (key.equals(JKBXHeaderVO.CENTER_DEPT)) {//归口管理部门参照范围
+					UIRefPane center_dept = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
+					center_dept.setMultiCorpRef(true);
+					center_dept.setMultiOrgSelected(true);
+					center_dept.setMultiRefFilterPKs(null);
+					center_dept.setPk_org(null);
+				} else if (key.equals(JKBXHeaderVO.PAYMAN) || key.equals(JKBXHeaderVO.OPERATOR)
 						|| key.equals(JKBXHeaderVO.APPROVER) || key.equals(JKBXHeaderVO.JSR)
 						|| key.equals(JKBXHeaderVO.OFFICIALPRINTUSER)) {
 					UIRefPane ref = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
-
 					if (ref != null && ref.getRefModel() != null && ref.getRefModel() instanceof UserDefaultRefModel) {
 						ref.getRefModel().setPk_org(getModel().getContext().getPk_group());
 						((UserDefaultRefModel) ref.getRefModel()).setUserType(1);
@@ -147,7 +134,7 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 				} else if (JKBXHeaderVO.CASHPROJ.equals(key) || JKBXHeaderVO.CASHITEM.equals(key)
 						|| key.equals(JKBXHeaderVO.PK_CASHACCOUNT)) {
 					setItemFilterBypayorg(event);
-				} else if (JKBXHeaderVO.PK_CHECKELE.equals(key)) {
+				} else if (key.equals(JKBXHeaderVO.PK_RESACOSTCENTER) ||  JKBXHeaderVO.PK_CHECKELE.equals(key)) {
 					setItemFilterBypcorg(event);
 				}
 			}
@@ -357,7 +344,7 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 	}
 
 	private void setpcorgFilter(CriteriaChangedEvent pcorgevent) {
-		String[] headItems = new String[] { JKBXHeaderVO.PK_CHECKELE };
+		String[] headItems = new String[] { JKBXHeaderVO.PK_CHECKELE,JKBXHeaderVO.PK_RESACOSTCENTER };
 		UIRefPane pcorg = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(pcorgevent,
 				JKBXHeaderVO.PK_PCORG, false);
 		setItemByorg(pcorgevent, headItems, pcorg);
@@ -396,9 +383,9 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 		UIRefPane fydw = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(fydwevent,
 				JKBXHeaderVO.FYDWBM, false);
 
-		String[] headItems = new String[] { JKBXHeaderVO.PK_RESACOSTCENTER, JKBXHeaderVO.FYDEPTID,
+		String[] headItems = new String[] { JKBXHeaderVO.FYDEPTID,
 				JKBXHeaderVO.FYDEPTID_V, JKBXHeaderVO.SZXMID, JKBXHeaderVO.HBBM, JKBXHeaderVO.JOBID,
-				JKBXHeaderVO.CUSTOMER, BUSITEM + BXBusItemVO.SZXMID };
+				JKBXHeaderVO.CUSTOMER, BUSITEM + BXBusItemVO.SZXMID};
 		setItemByorg(fydwevent, headItems, fydw);
 	}
 
@@ -472,21 +459,15 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 			ref.setMultiCorpRef(false);
 			ref.setMultiSelectedEnabled(true);
 			ref.setPk_org(dwRefpane.getRefPK());
-			if (JKBXHeaderVO.PK_RESACOSTCENTER.equals(ref.getRefModel().getPkFieldCode())) {
-				String addWherePart = CostCenterVO.PK_FINANCEORG + "=" + "'" + dwRefpane.getRefPK() + "'";
-				ref.getRefModel().addWherePart(" and " + addWherePart);
-			} else if ("pk_fundplan".equals(ref.getRefModel().getPkFieldCode())) {
+			if ("pk_fundplan".equals(ref.getRefModel().getPkFieldCode())) {
 				ref.getRefModel().addWherePart(" and inoutdirect = '1' ", false);
 			}
 		} else if (dwRefpane != null && dwRefpane.getRefPKs() != null && dwRefpane.getRefPKs().length > 1) {
-			ref.setMultiOrgSelected(true);
 			ref.setMultiCorpRef(true);
+			ref.setMultiOrgSelected(true);
 			ref.setMultiRefFilterPKs(dwRefpane.getRefPKs());
 			ref.setPk_org(dwRefpane.getRefPKs()[0]);
-			if (JKBXHeaderVO.PK_RESACOSTCENTER.equals(ref.getRefModel().getPkFieldCode())) {
-				String addWherePart = CostCenterVO.PK_FINANCEORG + "=" + "'" + dwRefpane.getRefPKs()[0] + "'";
-				ref.getRefModel().addWherePart(" and " + addWherePart);
-			} else if ("pk_fundplan".equals(ref.getRefModel().getPkFieldCode())) {
+			if ("pk_fundplan".equals(ref.getRefModel().getPkFieldCode())) {
 				ref.getRefModel().addWherePart(" and inoutdirect = '1' ", false);
 			}
 		}

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import nc.bs.framework.common.NCLocator;
 import nc.itf.fipub.service.IArapEJBService;
-import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.fipub.service.IRemoteCallItem;
 import nc.vo.arap.service.ServiceVO;
 import nc.vo.pub.BusinessException;
@@ -19,9 +18,7 @@ import nc.vo.pub.BusinessException;
  * 
  */
 public class ErmRometCallProxy {
-	public static void callRemoteService(List<IRemoteCallItem> callitems,
-			ErmBillBillForm editor) throws BusinessException {
-
+	public static void callRemoteService(List<IRemoteCallItem> callitems) throws BusinessException {
 		List<ServiceVO> list = new ArrayList<ServiceVO>();
 		for (IRemoteCallItem item : callitems) {
 			if (item.getServiceVO() != null) {
@@ -29,9 +26,7 @@ public class ErmRometCallProxy {
 			}
 		}
 		if (list.size() > 0) {
-
-			Map<String, Object> datas = NCLocator.getInstance().lookup(
-					IArapEJBService.class).callBatchEJBService(
+			Map<String, Object> datas = NCLocator.getInstance().lookup(IArapEJBService.class).callBatchEJBService(
 					list.toArray(new ServiceVO[] {}));
 
 			for (IRemoteCallItem item : callitems) {

@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import nc.bs.erm.matterapp.common.ErmMtAppFlowCheckInfo;
+import nc.bs.erm.util.ErUtil;
 import nc.ui.pf.pub.PFClientBizRetObj;
 import nc.ui.pub.pf.IPFClientBizProcess;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
@@ -20,6 +18,8 @@ import nc.vo.pub.pf.PfClientBizProcessContext;
 import nc.vo.tb.control.NtbCtlInfoVO;
 import nc.vo.wfengine.core.data.BasicType;
 import nc.vo.wfengine.core.data.DataField;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 
@@ -109,7 +109,7 @@ public class ErmMatterAppPfClientBizProcess implements IPFClientBizProcess {
 	public DataField[] getApplicationArgs() {
 		List<DataField> dataFieldList = new ArrayList<DataField>();
 		//判断预算产品是否启用
-		boolean istbbused = BXUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
+		boolean istbbused = ErUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 		if(istbbused){
 			dataFieldList.add(new DataField(budgetControl_id, budgetControl_name, BasicType.BOOLEAN));
 		}

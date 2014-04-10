@@ -157,7 +157,22 @@ public class Er_bxzbVOMeta extends ArapBaseMappingMeta {
 		"total_period",/*129*/
 		// v63新增字段
 		"pk_payorg",/*130*/
-		"pk_payorg_v"/*131*/
+		"pk_payorg_v",/*131*/
+		//v631
+		/*对公支付*/
+		"iscusupplier",/*132*/
+		/*产品线*/
+		"pk_proline",/*133*/
+		/*品牌*/
+		"pk_brand",/*134*/
+		/*归口管理部门*/
+		"center_dept",/*135*/
+		/*来源单据交易类型*/
+		"srcbilltype",/*136*/
+		/*来源单据类型*/
+		"srctype",/*137*/
+		/*是否拉分摊申请单标志*/
+		"ismashare"/*138*/
 		};
     
     setTabName("er_bxzb");//表名
@@ -295,7 +310,15 @@ public class Er_bxzbVOMeta extends ArapBaseMappingMeta {
 	TYPE_INT,/*129*/
 //--end
 	TYPE_STRING,/*130*/
-	TYPE_STRING/*131*/
+	TYPE_STRING,/*131*/
+	TYPE_BOOLEAN,/*对公支付*/
+	TYPE_STRING,/*产品线*/
+	TYPE_STRING,/*品牌*/
+	
+	TYPE_STRING,/*归口管理部门*/
+	TYPE_STRING,/*来源单据交易类型*/
+	TYPE_STRING,/*来源单据类型*/
+	TYPE_BOOLEAN/*是否拉分摊申请单标志*/
 	});//数据类型
 }
 }

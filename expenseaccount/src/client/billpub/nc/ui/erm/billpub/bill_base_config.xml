@@ -2,7 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-
+ 	<import resource="classpath:/nc/ui/pubapp/plugin/pubapp_plugin_conifg.xml" />
 	<!-- 环境变量 -->
 	<bean id="context" class="nc.vo.uif2.LoginContext"></bean>
 
@@ -109,6 +109,7 @@
 					<property name="model" ref="manageAppModel" />
 					<property name="editor" ref="editor"/>
 				</bean>
+				<ref bean="actionsBarSeparator" />
 				<bean id="firstLineAction" class="nc.ui.uif2.actions.FirstLineAction">
 					<property name="model" ref="manageAppModel" />
 				</bean>
@@ -168,7 +169,7 @@
 	</bean>
 	<bean id="userdefitemListPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerListPreparator">
 		<property name="loginContext" ref="context"></property>
-		<property name="prefix" value="defitem"/>
+		<property name="prefix" value="zyx"/>
 		<property name="userDefitemContainer" ref="userDefitemContainer" />
 	</bean>
 
@@ -182,6 +183,7 @@
 		<property name="userdefitemPreparator" ref="userdefitemCardPreparator"/>
 		<property name="tabSingleShow" value="false" />
 		<property name="contrastaction" ref="contrastaction" />
+		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">
 			<map>
 				<entry key="jk_busitem">
@@ -449,7 +451,7 @@
 		<property name="cardpanel" ref="editor" />
 	</bean>
 	<!-- 费用分摊页签的复制行按钮 -->
-	<bean id="cscopylineaction" class="nc.ui.uif2.actions.CopyLineAction">
+	<bean id="cscopylineaction" class="nc.ui.erm.billpub.action.ERMCSCopyLineAction">
 		<property name="model" ref="manageAppModel" />
 		<property name="exceptionHandler" ref="execeptionHandler" />
 		<property name="cardpanel" ref="editor" />

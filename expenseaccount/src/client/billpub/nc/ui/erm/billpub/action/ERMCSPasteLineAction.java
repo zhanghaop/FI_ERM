@@ -14,8 +14,8 @@ public class ERMCSPasteLineAction extends ERMPasteLineAction {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected boolean isActionEnable() { 
-		return (getModel().getUiState()==UIState.ADD||getModel().getUiState()==UIState.EDIT);
+	protected boolean isActionEnable() {
+		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT);
 	}
 	
 	@Override

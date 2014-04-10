@@ -1,9 +1,14 @@
 package nc.ui.er.djlx;
 
+import nc.bs.logging.Logger;
 import nc.itf.org.IOrgConst;
 import nc.ui.bd.ref.AbstractRefModel;
+import nc.util.fi.pub.SqlUtils;
 import nc.vo.bd.ref.RefVO_mlang;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.pub.BusinessException;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 费用交易类型参照
@@ -13,7 +18,7 @@ import nc.vo.jcom.lang.StringUtil;
  */
 public class ErmTrantypeRefModel extends AbstractRefModel {
     // 要可以参照到封存的交易类型
-    final String wherePart = " systemcode = 'erm' and pk_billtypecode like '26%' and istransaction = 'Y' and (pk_group='"
+    private String wherePart = " systemcode = 'erm' and pk_billtypecode like '26%' and istransaction = 'Y' and (pk_group='"
             + getPk_group() + "' or pk_org = '" + IOrgConst.GLOBEORG + "')";
 
     public ErmTrantypeRefModel() {
@@ -145,6 +150,39 @@ public class ErmTrantypeRefModel extends AbstractRefModel {
             return wherePart;
         }
         return wherePart + " and " + super.getWherePart();
+    }
+    
+    public String getErmWherePart() {
+        return wherePart;
+    }
+    
+    public void setErmWherePart(String wherePart) {
+        this.wherePart = wherePart;
+    }
+    
+    public void setDjlx(String djlx) {
+        if (StringUtils.isNotEmpty(djlx)) {
+            String[] djlxArr = djlx.split(",");
+            try {
+                String billtypeWhere = SqlUtils.getInStr("parentbilltype", djlxArr);
+                if (djlx.indexOf("264X") >= 0) {
+                    billtypeWhere += " and pk_billtypecode <> '2647' ";
+                }
+                if ("261X".equals(djlx)) {
+                    billtypeWhere = billtypeWhere + " and pk_billtypecode in (select DJLXBM from er_djlx where djdl = 'ma' and matype = 1 and pk_group = '" + getPk_group() + "')";
+                    setWherePart(billtypeWhere);
+                } else if (djlx.indexOf("266X") >= 0) {
+                    wherePart = " systemcode = 'erm' and pk_billtypecode like '26%' and (pk_group='"
+                        + getPk_group() + "' or pk_org = '" + IOrgConst.GLOBEORG + "')";
+                    String sWhere = " ((istransaction = 'Y' and " +  billtypeWhere + ") or (istransaction = 'N' and pk_billtypecode = '266X')) ";
+                    setWherePart(sWhere);
+                } else {
+                    setWherePart(billtypeWhere);
+                }
+            } catch (BusinessException e) {
+                Logger.error(e.getMessage(), e);
+            }
+        }
     }
 
     @Override

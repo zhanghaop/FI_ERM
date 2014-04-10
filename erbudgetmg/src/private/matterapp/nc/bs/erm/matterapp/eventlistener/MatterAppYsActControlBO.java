@@ -46,13 +46,13 @@ public class MatterAppYsActControlBO {
 		MatterAppVO head = (MatterAppVO) vos[0].getParentVO();
 		boolean hascheck = head.getHasntbcheck() == null ? false : head.getHasntbcheck().booleanValue();
 
-		// 预算控制环节
-		IFYControl[] ysvos = MatterAppUtils.getMtAppYsControlVOs(vos);
-
-		if (ysvos != null && ysvos.length != 0) {
-			DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
-					.queryControlTactics(head.getPk_tradetype(), actionCode, isExistParent);
-			if (ruleVos != null && ruleVos.length > 0) {
+		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
+		.queryControlTactics(head.getPk_tradetype(), actionCode, isExistParent);
+		
+		if (ruleVos != null && ruleVos.length > 0) {
+			// 预算控制环节
+			IFYControl[] ysvos = MatterAppUtils.getMtAppYsControlVOs(vos);
+			if (ysvos != null && ysvos.length != 0) {
 				YsControlBO ysControlBO = new YsControlBO();
 				if(isContray && actionCode.equals(BXConstans.ERM_NTB_CLOSE_KEY)){
 					ysControlBO.setYsControlType(null);
@@ -100,19 +100,18 @@ public class MatterAppYsActControlBO {
 
 		String actionCode = BXConstans.ERM_NTB_SAVE_KEY;
 
-		// 公司预算控制环节
-		IFYControl[] ysvos = MatterAppUtils.getMtAppYsControlVOs(vos);
-		// 查询原保存的数据
-		IFYControl[] ysvos_old = MatterAppUtils.getMtAppYsControlVOs(oldvos);
+		// 查询预算控制规则
+		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
+		.queryControlTactics(billtype, actionCode, true);
+		if (ruleVos != null && ruleVos.length > 0) {
+			// 公司预算控制环节
+			IFYControl[] ysvos = MatterAppUtils.getMtAppYsControlVOs(vos);
+			// 查询原保存的数据
+			IFYControl[] ysvos_old = MatterAppUtils.getMtAppYsControlVOs(oldvos);
 
-		if (ysvos.length > 0) {
-			// 调用预算处理BO
-			YsControlBO ysControlBO = new YsControlBO();
-
-			// 查询预算控制规则
-			DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
-					.queryControlTactics(billtype, actionCode, true);
-			if (ruleVos != null && ruleVos.length > 0) {
+			if (ysvos.length > 0) {
+				// 调用预算处理BO
+				YsControlBO ysControlBO = new YsControlBO();
 				String warnMsg = ysControlBO.edit(ysvos, ysvos_old, hascheck, ruleVos);
 				if (warnMsg != null && warnMsg.length() > 0) {
 					for (AggMatterAppVO aggvo : vos) {
@@ -123,5 +122,6 @@ public class MatterAppYsActControlBO {
 				}
 			}
 		}
+		
 	}
 }

@@ -4,6 +4,9 @@
         <billhead>
             <!--报销单位,最大长度为20,类型为:String-->
             <pk_org>2012</pk_org>
+            <!-- 表头增加 产品线和品牌 -->
+            <pk_proline></pk_proline>
+            <pk_brand></pk_brand>
             <!--报销单位历史版本,最大长度为20,类型为:String-->
             <pk_org_v></pk_org_v>
             <!--集团,最大长度为20,类型为:String-->
@@ -200,6 +203,9 @@
                     <pk_reimtype></pk_reimtype>
                     <pk_busitem>
                     </pk_busitem>
+                     <!-- 表头增加 产品线和品牌 -->
+           			 <pk_proline></pk_proline>
+           			 <pk_brand></pk_brand>
                     <pk_jkbx>
                     </pk_jkbx>
                     <defitem50>

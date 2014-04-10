@@ -14,8 +14,6 @@ import nc.vo.pub.ValidationException;
 import nc.vo.pub.ValueObject;
 import nc.vo.pub.lang.UFBoolean;
 
-import org.apache.commons.lang.SerializationUtils;
-
 /**
  * 查询对象VO
  * 结构：[查询对象字段、字段来源标志,是否小计]
@@ -33,7 +31,7 @@ public class QryObjVO extends ValueObject implements PubConstData{
 	public String m_qryfld;//查询对象字段
 	public String m_fldorigin;//字段来源标志
 	public UFBoolean m_isSum;//是否小计
-	public Integer m_fldtype = new Integer(STRING);//字段类型编码
+	public Integer m_fldtype = Integer.valueOf(STRING);//字段类型编码
 	private String m_strDisplayName; //查询对象显示名称
 	private String m_fldCode;/*查询对象编码*/
 	private boolean m_isBhxj;/*是否包含下级，供查询分析使用*/

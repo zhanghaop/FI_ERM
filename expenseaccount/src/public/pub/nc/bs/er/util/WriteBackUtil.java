@@ -34,7 +34,7 @@ public class WriteBackUtil {
 			//设置回写方向
 			busiVo.setDirection(isAdd?IMtappCtrlBusiVO.Direction_positive:IMtappCtrlBusiVO.Direction_negative);
 			//计算回写数据
-			resetPre_ExeData(dataType,isAdd, isContrast, busiVo);
+			resetPre_ExeData(dataType,true, isContrast, busiVo);
 			mtBusiVoList.add(busiVo);
 		}
 	}

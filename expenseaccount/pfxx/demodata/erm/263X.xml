@@ -10,6 +10,10 @@
             <pk_fiorg></pk_fiorg>
             <pk_org_v>
             </pk_org_v>
+            <!-- 表头增加 产品线和品牌 -->
+            <pk_proline></pk_proline>
+            <pk_brand></pk_brand>
+            
             <!--集团,最大长度为20,类型为:String-->
             <pk_group></pk_group>
             <!--借款单位,最大长度为20,类型为:String-->
@@ -200,6 +204,9 @@
                 <item>
                     <pk_org>
                     </pk_org>
+                    <!-- 表体增加 产品线和品牌 -->
+            		<pk_proline></pk_proline>
+            		<pk_brand></pk_brand>
                     <pk_finitem>
                     </pk_finitem>
                     <pk_bxcontrast>

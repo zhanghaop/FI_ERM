@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.util.ErUtil;
+import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -44,6 +45,10 @@ public class CostShareVOChecker {
 			checkHeader(vo);
 			checkChildren(vo);
 			checkIsCloseAcc(vo);
+			
+			//Ωª≤Ê–£—È
+			new FipubCrossCheckRuleChecker()
+					.check(((CostShareVO)vo.getParentVO()).getPk_org(), ((CostShareVO)vo.getParentVO()).getPk_tradetype(), vo);
 		}
 	}
 	
@@ -320,6 +325,8 @@ public class CostShareVOChecker {
 			notRepeatFields.add(CShareDetailVO.PK_CHECKELE);
 			notRepeatFields.add(CShareDetailVO.CUSTOMER);
 			notRepeatFields.add(CShareDetailVO.HBBM);
+			notRepeatFields.add(CShareDetailVO.PK_BRAND);
+			notRepeatFields.add(CShareDetailVO.PK_PROLINE);
 		}
 		return notRepeatFields;
 	}

@@ -1,20 +1,21 @@
 package nc.ui.erm.billpub.action;
 
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 
+import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.uif2.actions.DelLineAction;
 import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXHeaderVO;
-import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
@@ -31,31 +32,39 @@ public class ERMDelLineAction extends DelLineAction {
 		if (getBillCardPanel().getBillModel().getRowCount() != 0) {
 
 			validateAddRow();
+			
 			boolean isNeed = isNeedContrast();
 
 			super.doAction(e);
 
-			if (isNeed) {
-				doContract();
-			}
 			// 删除，粘贴行后进行重设表头金额的操作.
 			((ErmBillBillForm) getCardpanel()).getbodyEventHandle().resetJeAfterModifyRow();
 
+			if (isNeed) {
+				doContract();
+			}
+
 			if (getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CSHARE_PAGE)) {
-				if (getBillCardPanel().getBillModel().getRowCount() == 0) {
-					int result = MessageDialog.showYesNoDlg(getCardpanel(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-							.getStrByID("upp2012v575_0", "0upp2012V575-0038")/*
-																			 * @
-																			 * res
-																			 * "确认取消"
-																			 */, NCLangRes4VoTransl.getNCLangRes()
-							.getStrByID("201107_0", "0201107-0006"));
-					if (result == MessageDialog.ID_YES) {
-						if (getBillCardPanel().getHeadItem(BXHeaderVO.ISCOSTSHARE) != null) {
-							getBillCardPanel().getHeadItem(BXHeaderVO.ISCOSTSHARE).setValue(UFBoolean.FALSE);
+				BillItem ismashare = getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE);
+				// 拉分摊申请单后，分摊标志位不允许取消
+				if (getBillCardPanel().getBillModel().getRowCount() == 0 && (ismashare == null || !(Boolean)ismashare.getValueObject())) {
+					JKBXVO jkbxvo = (JKBXVO) getCardpanel().getValue();
+					if(isCancelCostshareEnable(jkbxvo)){
+						
+						int result = MessageDialog.showYesNoDlg(getCardpanel(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+								.getStrByID("upp2012v575_0", "0upp2012V575-0038")/*
+								 * @
+								 * res
+								 * "确认取消"
+								 */, NCLangRes4VoTransl.getNCLangRes()
+								 .getStrByID("201107_0", "0201107-0006"));
+						if (result == MessageDialog.ID_YES) {
+							if (getBillCardPanel().getHeadItem(BXHeaderVO.ISCOSTSHARE) != null) {
+								getBillCardPanel().getHeadItem(BXHeaderVO.ISCOSTSHARE).setValue(UFBoolean.FALSE);
+							}
+							ErmForCShareUiUtil.setCostPageShow(this.getBillCardPanel(), false);
+							this.getBillCardPanel().getHeadItem(BXHeaderVO.FYDWBM_V).getComponent().setEnabled(true);
 						}
-						ErmForCShareUiUtil.setCostPageShow(this.getBillCardPanel(), false);
-						this.getBillCardPanel().getHeadItem(BXHeaderVO.FYDWBM_V).getComponent().setEnabled(true);
 					}
 				} else {
 					if (isNeedAvg) {
@@ -68,6 +77,10 @@ public class ERMDelLineAction extends DelLineAction {
 			}
 		}
 	}
+	
+	protected boolean isCancelCostshareEnable(JKBXVO jkbxvo){
+		return true;
+	}
 
 	/**
 	 * 冲销操作 add by wangle
@@ -76,17 +89,10 @@ public class ERMDelLineAction extends DelLineAction {
 	 * @throws BusinessException
 	 */
 	private void doContract() throws ValidationException, BusinessException {
-		// BxcontrastVO[] bxcontrastVO = (BxcontrastVO[])
-		// getBillCardPanel().getBillModel(BXConstans.CONST_PAGE).getBodyValueChangeVOs(BxcontrastVO.class.getName());
-		BxcontrastVO[] bxcontrastVO = (BxcontrastVO[]) getBillCardPanel().getBillModel(BXConstans.CONST_PAGE)
-				.getBodyValueVOs(BxcontrastVO.class.getName());
-
-		if (bxcontrastVO != null && bxcontrastVO.length > 0) {
-			ContrastAction.doContrastToUI(getBillCardPanel(),
-					((ErmBillBillForm) getCardpanel()).getHelper().getJKBXVO(getCardpanel()),
-					Arrays.asList(bxcontrastVO), ((ErmBillBillForm) getCardpanel()));
+		int rows = getBillCardPanel().getBillModel(BXConstans.CONST_PAGE).getRowCount();
+		if (rows > 0) {
+			BXUiUtil.doContract((ErmBillBillForm) getCardpanel());
 		}
-
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package nc.vo.erm.matterappctrl;
 
-import nc.vo.erm.matterapp.AggMatterAppVO;
 
 
 /**
@@ -22,14 +21,9 @@ public class MtappCtrlInfoVO implements Cloneable, java.io.Serializable{
 	private String[] controlinfos;
 	
 	/**
-	 * 回写预算使用：回写费用申请单前的备份
+	 * 执行数是否超出申请
 	 */
-	private AggMatterAppVO[] oldMatterAppVO;
-	
-	/**
-	 * 回写预算使用：回写后的费用申请单
-	 */
-	private AggMatterAppVO[] matterAppVO;
+	private boolean isExceed = false;
 	
 
 	public String[] getControlinfos() {
@@ -40,20 +34,12 @@ public class MtappCtrlInfoVO implements Cloneable, java.io.Serializable{
 		this.controlinfos = controlinfos;
 	}
 
-	public AggMatterAppVO[] getOldMatterAppVO() {
-		return oldMatterAppVO;
+	public boolean isExceed() {
+		return isExceed;
 	}
 
-	public void setOldMatterAppVO(AggMatterAppVO[] oldMatterAppVO) {
-		this.oldMatterAppVO = oldMatterAppVO;
+	public void setExceed(boolean isExceed) {
+		this.isExceed = isExceed;
 	}
 
-	public AggMatterAppVO[] getMatterAppVO() {
-		return matterAppVO;
-	}
-
-	public void setMatterAppVO(AggMatterAppVO[] matterAppVO) {
-		this.matterAppVO = matterAppVO;
-	}
-	
 }

@@ -56,7 +56,7 @@ public class TempSaveAction extends SaveAction {
 
 		if (((ErmBillBillForm) getEditor()).getResVO() != null) {
 			JKBXVO vo = (JKBXVO) ((ErmBillBillForm) getEditor()).getResVO().getBusiobj();
-			jkbxVO.setMt_aggvos(vo.getMt_aggvos());
+			jkbxVO.setMaheadvo(vo.getMaheadvo());
 		}
 		
 		// ·Ç¿ÕÐ£Ñé

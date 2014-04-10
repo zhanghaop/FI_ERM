@@ -18,6 +18,11 @@ import nc.vo.pub.lang.UFDouble;
 public interface BXConstans {
 	
 	/**
+	 * 数量的自定义字段
+	 */
+	public static final String DEFITEM_MOUNT = "defitemofmount";
+	
+	/**
 	 * 单据管理/单据查询节点列表界面通用单据模版标识
 	 */
 	public static final Integer SPECIAL_DR = Integer.valueOf(-99);
@@ -177,6 +182,7 @@ public interface BXConstans {
 	 */
 	public static String ER_BUSITEM = "er_busitem";
 	public static String JK_BUSITEM = "jk_busitem";
+	public static String COSTSHAREDETAIL = "costsharedetail";
 	/**
 	 * 预算控制动作
 	 */
@@ -276,6 +282,10 @@ public interface BXConstans {
 	public final String BXLR_QCCODE="20110BO";            //期初单据节点
 	public final String BXREPORT_USERCODE="20111BQB";     //借款人查询节点
 	public final String BXLR_QCCODE_NEW="20110BOII";      //新期初单据节点
+	public final String MACTRLSCHEMA_G = "20110MCSG";     // 费用申请单控制规则设置-集团级节点
+	public final String MACTRLSCHEMA_U = "20110MCS";      // 费用申请单控制规则设置-组织级节点
+	
+	
 	public final String[] JKBX_COMNODES=new String[]{BXMNG_NODECODE,BXBILL_QUERY,BXLR_QCCODE,BXINIT_NODECODE_G,BXINIT_NODECODE_G};
 
 	public final String BXCLFJK_CODE="20110ETLB";         //差旅费借款单据录入节点
@@ -451,6 +461,7 @@ public interface BXConstans {
 	public static String FI_AP_FUNCODE = "2008"; //ap  应付
 	public static String GL_FUNCODE = "2002"; //gl 总账
 	public static String PIM_FUNCODE = "48";//pim 项目预算
+	public static String ME_FUNCODE = "4038";   //营销费用模块
 	
 	/**
 	 * 责任会计v6.1新增

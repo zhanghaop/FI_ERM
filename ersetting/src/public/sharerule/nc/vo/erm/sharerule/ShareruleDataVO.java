@@ -70,6 +70,22 @@ public class ShareruleDataVO extends SuperVO {
 	private java.lang.String defitem1;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
+	private String pk_proline;
+	private String pk_brand;
+	
+
+	public String getPk_proline() {
+		return pk_proline;
+	}
+	public void setPk_proline(String pkProline) {
+		pk_proline = pkProline;
+	}
+	public String getPk_brand() {
+		return pk_brand;
+	}
+	public void setPk_brand(String pkBrand) {
+		pk_brand = pkBrand;
+	}
 
 	public static final String PK_SHARERULE = "pk_sharerule";
 	public static final String PK_CSHARE_DETAIL = "pk_cshare_detail";
@@ -122,6 +138,8 @@ public class ShareruleDataVO extends SuperVO {
 	public static final String DEFITEM3 = "defitem3";
 	public static final String DEFITEM2 = "defitem2";
 	public static final String DEFITEM1 = "defitem1";
+	public static final String PK_PROLINE = "pk_proline";//产品线
+	public static final String PK_BRAND = "pk_brand";//品牌
 			
 	/**
 	 * 属性pk_sharerule的Getter方法.属性名：parentPK

@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IFipubReportQryDlg;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.itf.fipub.report.IReportQueryCond;
@@ -22,11 +23,15 @@ import nc.ui.pub.beans.UIDialog;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.querytemplate.CriteriaChangedEvent;
 import nc.ui.querytemplate.ICriteriaChangedListener;
+import nc.ui.querytemplate.filtereditor.DefaultFilterEditor;
+import nc.ui.querytemplate.filtereditor.IFilterEditor;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.ui.resa.refmodel.CostCenterTreeRefModel;
 import nc.utils.fipub.FipubReportResource;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.erm.pub.ErmBaseQueryCondition;
 import nc.vo.erm.pub.IErmReportAnalyzeConstants;
+import nc.vo.fipub.report.FipubBaseQueryCondition;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.report.ReportQueryCondVO;
 import nc.vo.pub.lang.UFDate;
@@ -90,6 +95,18 @@ public class LoanAccountAgeAnalyzeAryAction extends AbsReportQueryAction {
 		return qryCondition;
 	}
 
+    protected FipubBaseQueryCondition createQueryCondition(boolean isContinue, IReportQueryCond qryCondVO) {
+        Map<String, Object> fieldMap = new HashMap<String, Object>();
+        List<IFilterEditor> simpleEditorFilterEditors = getQryDlg().getSimpleEditorFilterEditors();
+        for(IFilterEditor editor: simpleEditorFilterEditors){
+            DefaultFilterEditor filterEditor = (DefaultFilterEditor) editor;
+            fieldMap.put(filterEditor.getFilterMeta().getFieldCode(), 
+                    filterEditor.getFilter().getSqlString());
+        }
+        qryCondVO.getUserObject().put("fieldSqlMap", fieldMap);
+        return new ErmBaseQueryCondition(true, qryCondVO);
+    }
+    
     protected LoanAccountAgeAnalyzeQryDlg getQryDlg() {
         return (LoanAccountAgeAnalyzeQryDlg)dlg;
     }
@@ -217,7 +234,7 @@ public class LoanAccountAgeAnalyzeAryAction extends AbsReportQueryAction {
                 UIRefPane refPane = (UIRefPane) compent;
                 CostCenterTreeRefModel model = (CostCenterTreeRefModel)refPane.getRefModel();
                 model.setCurrentOrgCreated(false);
-                model.setOrgType("pk_financeorg");
+                model.setOrgType("pk_profitcenter");
             }
             if (compent instanceof UIRefPane) {
                 UIRefPane refPane = (UIRefPane)compent;
@@ -285,6 +302,7 @@ public class LoanAccountAgeAnalyzeAryAction extends AbsReportQueryAction {
                 }
             }
 
+            boolean isTotal = false;
             // 处理穿透时的币种
 //          ReportInitializeVO initHeadVO = (ReportInitializeVO) qryCondVO.getRepInitContext().getParentVO();
 //          if (IPubReportConstants.ACCOUNT_FORMAT_FOREIGN.equals(initHeadVO.getReportformat())) {
@@ -301,8 +319,18 @@ public class LoanAccountAgeAnalyzeAryAction extends AbsReportQueryAction {
                     if (drillItemVaule != null && !"".equals(drillItemVaule)) {
                         pkCurrTypeMap.put(drillItemVaule.toString(), null);
                     }
+
+                    String org = (String)traceData.getValue("org");
+                    if (IErmReportConstants.getCONST_ALL_TOTAL().equals(org)) {
+                        isTotal = true;
+                    }
                 }
-                qryCondVO.setPk_orgs(pkOrgs.keySet().toArray(new String[pkOrgs.size()]));
+
+                //非总计，设置财务组织
+                if (!isTotal) {
+                    qryCondVO.setPk_orgs(pkOrgs.keySet().toArray(new String[pkOrgs.size()]));
+                }
+                
                 StringBuilder sb = new StringBuilder();
                 for (String pkCurrType : pkCurrTypeMap.keySet()) {
                     sb.append(pkCurrType).append(",");

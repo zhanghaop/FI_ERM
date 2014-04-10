@@ -100,6 +100,10 @@ public class ExpamtDetailVO extends SuperVO {
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
 
+	// v631加入
+	private String pk_proline;// 产品线
+	private String pk_brand;// 品牌
+
 	public static final String PK_EXPAMTINFO = "pk_expamtinfo";
 	public static final String PK_EXPAMTDETAIL = "pk_expamtdetail";
 	public static final String PK_JKBX = "pk_jkbx";
@@ -179,6 +183,8 @@ public class ExpamtDetailVO extends SuperVO {
 	public static final String ACCU_GLOBALAMOUNT = "accu_globalamount";
 	public static final String BILLSTATUS = "billstatus";
 	public static final String CASHPROJ = "cashproj";
+	public static final String PK_PROLINE = "pk_proline";// 产品线
+	public static final String PK_BRAND = "pk_brand";// 品牌
 
 	/**
 	 * 属性pk_expamtinfo的Getter方法.属性名：parentPK 创建日期:
@@ -1752,5 +1758,21 @@ public class ExpamtDetailVO extends SuperVO {
 
 	public void setCashproj(java.lang.String cashproj) {
 		this.cashproj = cashproj;
+	}
+
+	public String getPk_proline() {
+		return pk_proline;
+	}
+
+	public void setPk_proline(String pkProline) {
+		pk_proline = pkProline;
+	}
+
+	public String getPk_brand() {
+		return pk_brand;
+	}
+
+	public void setPk_brand(String pkBrand) {
+		pk_brand = pkBrand;
 	}
 }

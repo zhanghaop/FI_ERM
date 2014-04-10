@@ -777,7 +777,7 @@ public class LoanAccAgeAnaSQLCreator extends ErmBaseSqlCreator {
 		for (; i < totalCnt; i++) {
 			sqlBuffer.append("grouping(").append(allQryobjList.get(i)).append(") + ");
 		}
-		sqlBuffer.append(SmartProcessor.MAX_ROW).append(" rn, ");
+		sqlBuffer.append(SmartProcessor.MAX_ROW + 1).append(" rn, ");
 
 		sqlBuffer.append("sum(accage_ori) accage_ori, sum(accage_loc) accage_loc, sum(gr_accage_loc) gr_accage_loc, sum(gl_accage_loc) gl_accage_loc ");
 

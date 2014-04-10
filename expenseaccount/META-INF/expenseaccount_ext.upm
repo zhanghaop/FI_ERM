@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+
+	<public>
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface> nc.itf.erm.costshare.ext.IErmCsExternalControlServiceExt</interface>
+			<implementation> nc.impl.erm.costshare.ext.ErmCsExternalControlServiceExtImpl</implementation>
+		</component>
+
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface> nc.itf.erm.costshare.ext.IErmCsMonthManageServiceExt</interface>
+			<implementation> nc.impl.erm.costshare.ext.ErmCsMonthManageServiceExtImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="NONE">
+			<interface> nc.itf.erm.costshare.ext.IErmCsMonthQueryServiceExt</interface>
+			<implementation> nc.impl.erm.costshare.ext.ErmCsMonthQueryServiceExtImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="NONE">
+			<interface>nc.itf.erm.jkbx.ext.IWriteBackPrivateExt</interface>
+			<implementation>nc.impl.erm.jkbx.ext.WriteBackPrivateExtImp</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.itf.erm.jkbx.ext.IBXYsControlServiceExt</interface>
+			<implementation>nc.impl.erm.jkbx.ext.BXYsControlServiceExtImpl</implementation>
+		</component>
+		
+	</public>
+</module>
+

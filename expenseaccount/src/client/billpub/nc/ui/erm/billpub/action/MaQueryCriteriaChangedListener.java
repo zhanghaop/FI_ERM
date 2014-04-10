@@ -9,6 +9,7 @@ import nc.ui.querytemplate.CriteriaChangedEvent;
 import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.MatterAppVO;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 
 /**
@@ -21,7 +22,7 @@ public class MaQueryCriteriaChangedListener extends MatterQueryActionListener {
 
 	
 	public MaQueryCriteriaChangedListener(AbstractUIAppModel model){
-		this.setModel(model);
+		setModel(model);
 	}
 	
 	@Override
@@ -38,7 +39,7 @@ public class MaQueryCriteriaChangedListener extends MatterQueryActionListener {
 				// 设置币种默认值
 				String pk_org = ErUiUtil.getDefaultPsnOrg();
 				String pk_currtype = null;
-				if (pk_org != null && pk_org.length() != 0) {
+				if (!StringUtil.isEmptyWithTrim(pk_org)) {
 					try {
 						pk_currtype = Currency.getOrgLocalCurrPK(pk_org);
 					} catch (BusinessException e) {
@@ -46,6 +47,22 @@ public class MaQueryCriteriaChangedListener extends MatterQueryActionListener {
 					}
 				} 
 				ERMQueryActionHelper.setPk(event, pk_currtype, false);
+				if (obj != null && obj instanceof UIRefPane) {
+					UIRefPane refPane = (UIRefPane)obj;
+					refPane.setMultiSelectedEnabled(false);
+				}
+			} 
+		}
+		
+		if (event.getEventtype() == CriteriaChangedEvent.FILTER_CHANGED) {
+			if (event.getFieldCode().equals(MatterAppVO.PK_ORG)) {
+				Object obj = ERMQueryActionHelper.getFiltComponentForValueChanged(event, MatterAppVO.PK_ORG, false);
+				if (obj != null && obj instanceof UIRefPane) {
+					UIRefPane refPane = (UIRefPane)obj;
+					refPane.setMultiSelectedEnabled(false);
+				}
+			} else if (event.getFieldCode().equals(MatterAppVO.PK_CURRTYPE)) {
+				Object obj = ERMQueryActionHelper.getFiltComponentForValueChanged(event, MatterAppVO.PK_CURRTYPE, false);
 				if (obj != null && obj instanceof UIRefPane) {
 					UIRefPane refPane = (UIRefPane)obj;
 					refPane.setMultiSelectedEnabled(false);

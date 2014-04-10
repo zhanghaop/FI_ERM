@@ -2,6 +2,7 @@ package nc.itf.arap.pub;
 
 import java.util.Map;
 
+import nc.itf.tb.control.IAccessableOrgsBusiVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.common.MessageVO;
@@ -115,4 +116,20 @@ public interface IBXBillPublic {
 	 * @return 报销聚合VO[]
 	 */
 	public JKBXVO[] queryBxBill4ProjBudget(String pk_group,String pk_project,String[] djlxbms) throws BusinessException;
+	
+	/**
+	 * 获取上游申请单预算控制VOs
+	 * <br>营销费用较特殊，仅支持审批、弃审、打开和关闭四个动作，
+	 * <br>保存时不占预占；这些动作仅对执行数进行操作
+	 * <br>ActionCode
+	 * <li>BXConstans.ERM_NTB_APPROVE_KEY 审核
+	 * <li>BXConstans.ERM_NTB_UNAPPROVE_KEY反审
+	 * <li>BXConstans.ERM_NTB_CLOSE_KEY 关闭
+	 * <li>BXConstans.ERM_NTB_UNCLOSE_KEY重启
+	 * @param details 业务行pks（拉单占申请的业务行pk集合）
+	 * @param actionCode （审批、弃审、打开、关闭）
+	 * @see 
+	 * @return
+	 */
+	public IAccessableOrgsBusiVO[] queryMaYsBusiVOsByDetailPks(String[] details, String actionCode) throws BusinessException;
 }

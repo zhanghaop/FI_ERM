@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.Action;
 
+import nc.bs.erm.util.ErmBillTypeUtil;
 import nc.bs.pf.pub.PfDataCache;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.beans.ValueChangedEvent;
@@ -11,6 +12,7 @@ import nc.ui.pub.beans.ValueChangedListener;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.uif2.components.IComponentWithActions;
 import nc.ui.uif2.editor.BatchBillTable;
+import nc.vo.ep.bx.BilltypeRuleVO;
 import nc.vo.erm.mactrlschema.MtappCtrlbillVO;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.billtype.BilltypeVO;
@@ -33,12 +35,16 @@ public class MaCtrlBillTable extends BatchBillTable implements IComponentWithAct
 	public void initUI() {
 		super.initUI();
 		UIRefPane ctrlBillRef = (UIRefPane) billCardPanel.getBodyItem(MtappCtrlbillVO.PK_SRC_TRADETYPE).getComponent();
-		String wherePart = " parentbilltype in ('263X','264X') and pk_billtypecode <> '2647' and istransaction = 'Y' and islock ='N' and  ( pk_group='"
+		BilltypeRuleVO rulevo = ErmBillTypeUtil.getBilltypeRuleVO(BilltypeRuleVO.MACTRLBILL);
+		String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(rulevo,false);
+		String wherePart = insql +" and istransaction = 'Y' and islock ='N' and  ( pk_group='"
 				+ getModel().getContext().getPk_group() + "')";
 		ctrlBillRef.getRefModel().setWherePart(wherePart);
 		ctrlBillRef.addValueChangedListener(this);
 		ctrlBillRef.setMultiSelectedEnabled(true);// 设置控制对象参照可以多选
 	}
+
+
 	
 	@Override
 	public void valueChanged(ValueChangedEvent e) {

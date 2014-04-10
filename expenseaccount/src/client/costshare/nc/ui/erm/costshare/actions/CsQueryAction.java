@@ -114,7 +114,6 @@ public class CsQueryAction extends QueryAction {
 
 							ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
 						}else if (CostShareVO.FYDEPTID.equals(event.getFieldCode())
-								||CostShareVO.PK_RESACOSTCENTER.equals(fieldCode)
 								||CostShareVO.SZXMID.equals(fieldCode)
 								||CostShareVO.HBBM.equals(fieldCode)
 								||CostShareVO.JOBID.equals(fieldCode)
@@ -122,7 +121,6 @@ public class CsQueryAction extends QueryAction {
 							setItemFilterByFydw(event);
 						} else if((CSField+CShareDetailVO.ASSUME_DEPT).equals(fieldCode)
 									|| (CSField+CShareDetailVO.PK_IOBSCLASS).equals(fieldCode)
-									|| (CSField+CShareDetailVO.PK_RESACOSTCENTER).equals(fieldCode)
 									||(CSField+CShareDetailVO.JOBID).equals(fieldCode)||
 									(CSField+CShareDetailVO.HBBM).equals(fieldCode)||
 									(CSField+CShareDetailVO.CUSTOMER).equals(fieldCode)){
@@ -134,11 +132,13 @@ public class CsQueryAction extends QueryAction {
 							setRefpaneFilter(ref,null);
 						}else if(CostShareVO.BX_PCORG.equals(event.getFieldCode())){
 							ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
-						}else if(CostShareVO.PK_CHECKELE.equals(event.getFieldCode())){
+						}else if(CostShareVO.PK_CHECKELE.equals(event.getFieldCode())
+								|| CostShareVO.PK_RESACOSTCENTER.equals(fieldCode)){
 							setItemFilterBypcorg(event);
 						}else if((CSField+CShareDetailVO.PK_PCORG).equals(event.getFieldCode())){
 							ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
-						}else if((CSField+CShareDetailVO.PK_CHECKELE).equals(event.getFieldCode())){
+						}else if((CSField+CShareDetailVO.PK_CHECKELE).equals(event.getFieldCode())
+								|| (CSField+CShareDetailVO.PK_RESACOSTCENTER).equals(event.getFieldCode())){
 							setItemFilterBycspcorg(event);
 						}
 						setUserdefItemFilter(event);
@@ -209,14 +209,14 @@ public class CsQueryAction extends QueryAction {
 	}
 
 	protected void setcspcorgFilter(CriteriaChangedEvent cspcorgevent) {
-		String[] headItems = new String[]{CSField+CShareDetailVO.PK_CHECKELE};
+		String[] headItems = new String[]{CSField+CShareDetailVO.PK_CHECKELE,CSField+CShareDetailVO.PK_RESACOSTCENTER};
 		UIRefPane pcorg = (UIRefPane)ERMQueryActionHelper.getFiltComponentForValueChanged(cspcorgevent, CSField+CShareDetailVO.PK_PCORG, false);
 		setItemByPk_org(cspcorgevent, headItems,pcorg);
 		
 	}
 
 	private void setpcorgFilter(CriteriaChangedEvent pcorgevent) {
-		String[] headItems = new String[]{CostShareVO.PK_CHECKELE};
+		String[] headItems = new String[]{CostShareVO.PK_CHECKELE,CostShareVO.PK_RESACOSTCENTER};
 		UIRefPane pcorg = (UIRefPane)ERMQueryActionHelper.getFiltComponentForValueChanged(pcorgevent, CostShareVO.BX_PCORG, false);
 		setItemByPk_org(pcorgevent, headItems,pcorg);
 		
@@ -271,7 +271,7 @@ public class CsQueryAction extends QueryAction {
 	private void setFydwFilter(CriteriaChangedEvent fydwevent) {
 		UIRefPane fydw = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(fydwevent,
 				CostShareVO.FYDWBM, false);
-		String[] headItems = new String[] { CostShareVO.PK_RESACOSTCENTER, CostShareVO.FYDEPTID,
+		String[] headItems = new String[] {CostShareVO.FYDEPTID,
 				CostShareVO.FYDEPTID_V, CostShareVO.SZXMID, CostShareVO.HBBM, CostShareVO.JOBID, CostShareVO.CUSTOMER };
 		setItemByPk_org(fydwevent, headItems, fydw);
 	}
@@ -280,7 +280,7 @@ public class CsQueryAction extends QueryAction {
 		UIRefPane assume = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(assumeevent, CSField
 				+ CShareDetailVO.ASSUME_ORG, false);
 		String[] headItems = new String[] { CSField + CShareDetailVO.ASSUME_DEPT,
-				CSField + CShareDetailVO.PK_IOBSCLASS, CSField + CShareDetailVO.PK_RESACOSTCENTER,
+				CSField + CShareDetailVO.PK_IOBSCLASS,
 				CSField + CShareDetailVO.JOBID, CSField + CShareDetailVO.HBBM, CSField + CShareDetailVO.CUSTOMER };
 		setItemByPk_org(assumeevent, headItems, assume);
 	}

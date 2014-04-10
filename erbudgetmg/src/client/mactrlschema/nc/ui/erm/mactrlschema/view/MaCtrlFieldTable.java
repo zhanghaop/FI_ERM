@@ -7,10 +7,13 @@ import java.util.Vector;
 import javax.swing.Action;
 
 import nc.bs.erm.util.MDPropertyRefPane;
+import nc.bs.logging.Logger;
+import nc.md.MDBaseQueryFacade;
+import nc.md.model.MetaDataException;
+import nc.md.util.MDUtil;
 import nc.ui.pub.bill.BillCellEditor;
 import nc.ui.pub.bill.BillEditEvent;
 import nc.ui.pub.bill.BillItem;
-import nc.ui.uif2.UIState;
 import nc.ui.uif2.components.IComponentWithActions;
 import nc.ui.uif2.editor.BatchBillTable;
 import nc.vo.erm.mactrlschema.MtappCtrlfieldVO;
@@ -100,13 +103,27 @@ public class MaCtrlFieldTable extends BatchBillTable implements IComponentWithAc
             	getRefPane().getDialog().getEntityTree().setSelectionPath(null);
             }
             
-			Integer status = (Integer) getBillCardPanel().getBillModel()
-					.getBodyValueRowVO(e.getRow(), MtappCtrlfieldVO.class.getName()).getAttributeValue("status");
-			if (getModel().getUiState() == UIState.EDIT && status != VOStatus.NEW) {
-				return false;
-			}
+//			Integer status = (Integer) getBillCardPanel().getBillModel()
+//					.getBodyValueRowVO(e.getRow(), MtappCtrlfieldVO.class.getName()).getAttributeValue("status");
+//			if (getModel().getUiState() == UIState.EDIT && status != VOStatus.NEW) {
+//				return false;
+//			}
 		}
 		return super.beforeEdit(e);
+	}
+	
+	public void setValue(Object object) {
+		super.setValue(object);
+		for (int i = 0; i < getBillCardPanel().getBillTable().getRowCount(); i++) {
+			String fieldcode = (String) getBillCardPanel().getBodyValueAt(i, MtappCtrlfieldVO.FIELDCODE);
+			String mul_fieldname = null;
+			try {
+				mul_fieldname = MDUtil.ConvertPathToDisplayName(MDBaseQueryFacade.getInstance().getBeanByID(entityid), fieldcode);
+			} catch (MetaDataException e) {
+				Logger.error(e.getMessage(), e);
+			}
+			getBillCardPanel().setBodyValueAt(mul_fieldname, i, MtappCtrlfieldVO.FIELDNAME);
+		}
 	}
 	
 	public List<Action> getActions() {

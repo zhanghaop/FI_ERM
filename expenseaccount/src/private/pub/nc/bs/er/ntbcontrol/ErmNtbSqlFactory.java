@@ -11,6 +11,8 @@ import nc.bs.erm.annotation.ErmBusinessDef;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.expamortize.ExpAmoritizeConst;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.erm.util.CacheUtil;
+import nc.bs.logging.Log;
 import nc.bs.pf.pub.PfDataCache;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.exception.ExceptionHandler;
@@ -134,7 +136,13 @@ public class ErmNtbSqlFactory {
 		if (billTypes != null && billTypes.length > 0) {
 			String parentBilltype = null;
 			for (int i = 0; i < billTypes.length; i++) {
-				BilltypeVO vo = PfDataCache.getBillType(billTypes[i]);
+				BilltypeVO vo = null;
+				try {
+					vo = getBilltypeVo(billTypes[i]);
+				} catch (BusinessException e) {
+					ExceptionHandler.consume(e);
+				}
+				
 				if (vo == null) {
 					continue;
 				}
@@ -159,5 +167,20 @@ public class ErmNtbSqlFactory {
 			factory = new ErmNtbSqlFactory();
 		}
 		return factory;
+	}
+	
+	private BilltypeVO getBilltypeVo(String tradeBilltype) throws BusinessException {
+		BilltypeVO billtypeVO = PfDataCache.getBillType(tradeBilltype);
+		if(billtypeVO == null){
+			StringBuffer sql = new StringBuffer();
+			sql.append(" pk_billtypecode = '" + tradeBilltype + "' ");
+			BilltypeVO[] billtypeVos = CacheUtil.getValueFromCacheByWherePart(BilltypeVO.class, sql.toString());
+			if(billtypeVos != null && billtypeVos.length > 0){
+				billtypeVO = billtypeVos[0];
+			}
+		}
+		
+		Log.getInstance(this.getClass()).error("交易类型查询：" + tradeBilltype + billtypeVO);
+		return billtypeVO;
 	}
 }

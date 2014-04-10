@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 分摊页签删除行按钮-->
+	<bean id="detaildellineaction" class="nc.ui.erm.bx.ext.action.BxDelLineActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+	
+		<!-- 预算执行情况 -->
+ 	<bean id="linkysaction" class="nc.ui.erm.bx.ext.action.BXLinkYsActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+	 	<!-- 联查凭证 -->
+ 	<bean id="linkvouaction" class="nc.ui.erm.bx.ext.action.BXLinkVoucherActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+	
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction" />
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="listRefreshAction" />
+				<ref bean="nullAction" />
+				<ref bean="auditGroupAction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="linkGroupAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="mergePfAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="listprintGroup"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="editor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addaction" />
+				<ref bean="editaction" />
+				<ref bean="deleteaction" />
+				<ref bean="copyaction" />
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="cardRefreshAction" />
+				<ref bean="nullAction"/>
+				<ref bean="auditGroupAction"/>
+				<ref bean="documentaction"/>
+				<ref bean="assistantAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="linkGroupAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="mergePfAction"/>
+				<ref bean="nullAction"/>
+				<ref bean="printActionGroup"/>
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveaction" />
+				<ref bean="tempsaveaction" />
+				<ref bean="nullAction" />
+				<ref bean="cancelaction" />
+				<ref bean="nullAction" />
+				<ref bean="rapidshareaction" />
+				<ref bean="nullAction" />
+				<ref bean="documentaction"/>
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="BxCardHeadAfterEditEventHandler" class=" nc.ui.erm.bx.ext.eventlistener.BxCardHeadAfterEditEventHandler">
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+	<bean id="BxOrgChangeEventHandler" class=" nc.ui.erm.bx.ext.eventlistener.BxOrgChangeEventHandler">
+		<property name="billform" ref="editor"></property>
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+
+	<!--
+		监听器(Mediator)(可选)###########################################################
+	-->
+	<bean id="AppEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
+		<property name="model" ref="manageAppModel" />
+		<property name="handlerMap">
+			<map>
+				<entry key="nc.ui.pubapp.uif2app.event.OrgChangedEvent">
+					<list>
+						<ref bean="BxOrgChangeEventHandler" />
+					</list>
+				</entry>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailAfterEditEvent">
+					<list>
+						<ref bean="BxCardHeadAfterEditEventHandler"></ref>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+</beans>

@@ -7,12 +7,14 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.ui.fipub.report.BaseReportNodeInitialize;
 import nc.ui.fipub.report.ReportReleaseFuncSelectComp;
 import nc.ui.fipub.report.ReportReleaseMenuSelectComp;
 import nc.ui.fipub.report.ReportReleaseSystemSetComp;
+import nc.ui.pub.beans.UIDialog;
 import nc.ui.pub.beans.wizard.IWizardStepListener;
 import nc.ui.pub.beans.wizard.IWizardStepValidator;
 import nc.ui.pub.beans.wizard.WizardModel;
@@ -119,6 +121,17 @@ public class ErmNodeReleaseInitialize extends BaseReportNodeInitialize {
         return false;
     }
 
+    @Override
+    protected boolean openReportInitializeDlg() {
+        getWizardDlg().getModel().gotoStepForwardNoValidate(0);
+        int result = getWizardDlg().showModal();
+        if (result != UIDialog.ID_OK) {
+            Logger.info("取消了账表初始化操作！");
+            return false;
+        }
+        return true;
+    }
+    
     @Override
     protected AggReportInitializeVO getRepInitVO() {
         AggReportInitializeVO repInitVO = new AggReportInitializeVO();

@@ -21,6 +21,8 @@ public class DelRowAction extends DelLineAction {
 		super.doAction(e);
 		MatterAppUiUtil.setHeadAmountByBodyAmounts(getBillCardPanel());// 表体金额相加结果放入表头
 		((MatterAppMNBillForm) getCardpanel()).resetHeadAmounts();
+		 MatterAppUiUtil.setBodyShareRatio(getCardpanel().getBillCardPanel());
+		 MatterAppUiUtil.fillLastRowAmount(getCardpanel().getBillCardPanel());
 	}
 
 	private BillCardPanel getBillCardPanel() {

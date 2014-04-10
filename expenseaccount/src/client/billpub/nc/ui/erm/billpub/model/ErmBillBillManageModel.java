@@ -4,20 +4,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nc.bs.arap.util.SqlUtils;
 import nc.bs.erm.util.CacheUtil;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.erm.model.ERMBillManageModel;
+import nc.ui.pub.beans.constenum.IConstEnum;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.dj.ERMDjCondVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.pub.lang.UFBoolean;
 
 import org.apache.commons.lang.ArrayUtils;
 
 public class ErmBillBillManageModel extends ERMBillManageModel {
+	
+	/**
+	 * 借款报销关联申请单的关联字段值缓存
+	 */
+	private Map<String, IConstEnum[]> marelationValueMap = new HashMap<String, IConstEnum[]>();
+	
+	public void addMaRelationValues(String maids,IConstEnum[] values){
+		marelationValueMap.put(maids, values);
+	}
+	public IConstEnum[] getMaReationValues(String maids){
+		return marelationValueMap.get(maids);
+	}
 
 	/**
 	 * 所有的单据类型
@@ -108,10 +121,10 @@ public class ErmBillBillManageModel extends ERMBillManageModel {
 		String group = WorkbenchEnvironment.getInstance().getGroupVO().getPrimaryKey();
 
 		DjLXVO[] djLXVOs = null;
-		String insql = SqlUtils.getInStr("djdl", billType);
 		try {
-			djLXVOs = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class," dr=0 and " + insql + "" +
-					" and pk_group='" + group + "' order by djlxbm ");//按单据编号排序
+			String insql = SqlUtils.getInStr("djdl", billType, true);
+			djLXVOs = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, " dr=0 and " + insql + ""
+					+ " and pk_group='" + group + "' order by djlxbm ");// 按单据编号排序
 		} catch (Exception e) {
 			ExceptionHandler.handleExceptionRuntime(e);
 		}

@@ -13,8 +13,8 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.AddLineAction;
 import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.er.util.StringUtils;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDouble;
@@ -27,13 +27,7 @@ public class ERMAddLineAction extends AddLineAction {
 		// 校验分摊页签，报销金额不能为0
 		validateAddRow();
 
-		// 拉单过来的借款报销单，不可以增行
-		Object valueObject = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject();
 		String currentBodyTableCode = getBillCardPanel().getCurrentBodyTableCode();
-		if (!currentBodyTableCode.equals(BXConstans.CSHARE_PAGE) && valueObject != null
-				&& !StringUtils.isNullWithTrim(valueObject.toString())) {
-			return;
-		}
 		
 		boolean isNeedAvg = ErmForCShareUiUtil.isNeedBalanceJe(getBillCardPanel());
 
@@ -42,8 +36,21 @@ public class ERMAddLineAction extends AddLineAction {
 		setItemDefaultValue(getBillCardPanel().getBillData().getBodyItemsForTable(currentBodyTableCode));
 
 		int rownum = getBillCardPanel().getRowCount() - 1;
+		
+        //拉单行操作自动带出表头费用申请单pk、来源单据类型、来源类型
+        Object pk_item = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject();
+        Object srcbilltype = getBillCardPanel().getHeadItem(JKBXHeaderVO.SRCBILLTYPE).getValueObject();
+        Object srctype = getBillCardPanel().getHeadItem(JKBXHeaderVO.SRCTYPE).getValueObject();
+
 
 		if (currentBodyTableCode.equals(BXConstans.CSHARE_PAGE)) {
+			// 拉分摊的申请单后，分摊明细页签与申请单关联，否则拉不分摊的申请单则与申请单无关
+			Boolean ismashare = getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE) == null ? false
+					: (Boolean) getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE).getValueObject();
+			if (ismashare) {
+				getBillCardPanel().setBodyValueAt(pk_item, rownum, BXBusItemVO.PK_ITEM);
+			}
+			
 			ErmForCShareUiUtil.afterAddOrInsertRowCsharePage(rownum, getBillCardPanel());
 
 			// 新增时自动算出表体的本币金额,如果修改过表体的金额就不重新平均分摊
@@ -58,6 +65,11 @@ public class ERMAddLineAction extends AddLineAction {
 				ErmForCShareUiUtil.setRateAndAmount(rownum, this.getBillCardPanel());
 			}
 		} else {
+			
+	        getBillCardPanel().setBodyValueAt(pk_item, rownum , BXBusItemVO.PK_ITEM);
+	        getBillCardPanel().setBodyValueAt(srcbilltype, rownum , BXBusItemVO.SRCBILLTYPE);
+	        getBillCardPanel().setBodyValueAt(srctype, rownum , BXBusItemVO.SRCTYPE);
+			
 			// 将数据从表头联动到表体
 			List<String> keyList = new ArrayList<String>();
 			keyList.add(JKBXHeaderVO.SZXMID);
@@ -69,6 +81,8 @@ public class ERMAddLineAction extends AddLineAction {
 			keyList.add(JKBXHeaderVO.PK_PCORG_V);
 			keyList.add(JKBXHeaderVO.PK_CHECKELE);
 			keyList.add(JKBXHeaderVO.PK_RESACOSTCENTER);
+			keyList.add(JKBXHeaderVO.PK_PROLINE);
+			keyList.add(JKBXHeaderVO.PK_BRAND);
 			doCoresp(rownum, keyList, currentBodyTableCode);
 
 			getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, rownum, JKBXHeaderVO.YBJE);
@@ -97,16 +111,17 @@ public class ERMAddLineAction extends AddLineAction {
 		if (headItem != null) {
 			mtAppPk = headItem.getValueObject();
 		}
-
+		String tradeType = null;
 		if (getModel() instanceof ErmBillBillManageModel) {
 			ErmBillBillManageModel model = (ErmBillBillManageModel) getModel();
-			String tradeType = model.getSelectBillTypeCode();
+			tradeType = model.getSelectBillTypeCode();
 			if (BXConstans.BILLTYPECODE_RETURNBILL.equals(tradeType)) {
 				return false;
 			}
 		}
-
-		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT) && mtAppPk == null;
+		// 当前单据类型是否是报销单
+		boolean isBX = tradeType != null? tradeType.startsWith(BXConstans.BX_PREFIX):false;
+		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT) && (mtAppPk == null || isBX );
 	}
 
 	private boolean validateAddRow() throws BusinessException {

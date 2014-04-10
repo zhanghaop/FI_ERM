@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<import resource="classpath:/nc/ui/org/batchcloseacc/batchcloseacc_config.xml" />
+	
+	<bean id="container" class="nc.ui.uif2.TangramContainer"
+		init-method="initUI">
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="conditioneditor"></property>
+					</bean>
+				</property>
+				<property name="down" ref="tabeditor"></property>
+				<property name="dividerLocation" value="0.058f"></property>	
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="batchcloseaccaction" />
+				<ref bean="sparatoraction" />
+				<ref bean="batchanticloseaction" />
+				<ref bean="sparatoraction" />
+				<ref bean="refreshaction" />
+				<ref bean="filteractiongroup" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="filteractiongroup" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="filter"></property>
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB">
+			  	<property name="resDir" value="org"></property>
+				<property name="resId" value="0org0167"></property>
+				<property name="defaultValue" value="过滤"></property>
+			</bean>
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="filterClosedaccAction" />
+				<ref bean="filterUnclosedaccAction" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="tabeditor" class="nc.ui.org.batchcloseacc.BatchCloseAccTabEditor"  init-method="initUI">
+	  <property name="batchCloseAccModelTemplate" ref="modelTemplate"></property>
+	  <property name="batchCloseAccResultEditor" ref="resulteditor"></property>
+	  <property name="batchCloseAccModelDataManager" ref="modelDataManager"></property>
+	  <property name="batchCloseAccResultEditorMapping">
+	   <map>
+	    <entry key="2011">
+	     <bean class="nc.ui.org.batchcloseacc.BatchCloseAccResultEditor">
+	      <property name="batchCloseAccModelDataManager" ref="modelDataManager"></property>
+	      <property name="nodekey" value="financeorg"></property>
+	      <property name="pos" value="head"></property>
+	      <property name="templateContainer" ref="templateContainer"></property>
+	     </bean>
+	    </entry>
+	   </map>
+	 </property>
+	 </bean>
+</beans>

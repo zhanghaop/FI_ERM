@@ -33,9 +33,9 @@ public class ErCorpUtil {
 	 */
 	public static String getBxCtlMan(IFYControl ify) throws BusinessException{
 
-		if(ify.getOperator()==null){
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0","02011002-0158")/*@res "单据录入人不能为空"*/);
-		}
+//		if(ify.getOperator()==null){
+//			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0","02011002-0158")/*@res "单据录入人不能为空"*/);
+//		}
 		
 		if(BXParamConstant.ER_PF_STARTER_CREATOR.equals(SysInit.getParaString(ify.getPk_group(), BXParamConstant.PARAM_PF_STARTER))){/*-=notranslate=-*/
 			return ify.getOperator();

@@ -88,7 +88,7 @@ public class FipUtil {
 			}
 
 		}
-		if (detailMap == null) {
+		if (detailMap == null || detailMap.size() == 0) {
 			return (JKBXVO) bxvo.clone();
 		}
 

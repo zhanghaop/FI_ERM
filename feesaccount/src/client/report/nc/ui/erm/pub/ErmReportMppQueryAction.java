@@ -15,12 +15,17 @@ import nc.ui.querytemplate.CriteriaChangedEvent;
 import nc.ui.querytemplate.ICriteriaChangedListener;
 import nc.ui.querytemplate.filtereditor.DefaultFilterEditor;
 import nc.ui.querytemplate.filtereditor.IFilterEditor;
+import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.utils.fipub.FipubReportResource;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.er.exception.ErmBusinessRuntimeException;
+import nc.vo.erm.pub.ErmBaseQueryCondition;
+import nc.vo.fipub.report.QryObj;
 import nc.vo.querytemplate.TemplateInfo;
 import nc.vo.uif2.LoginContext;
 
 import com.ufida.dataset.IContext;
+import com.ufida.report.anareport.model.AbsAnaReportModel;
 
 /**
  * 费用申请
@@ -48,6 +53,43 @@ public class ErmReportMppQueryAction extends ErmReportDefaultQueryAction {
         return condition;
     }
     
+    @Override
+    public IQueryCondition doQueryByScheme(Container parent, IContext context,
+            AbsAnaReportModel reportModel, IQueryScheme queryScheme) {
+        IQueryCondition qryCondition = super.doQueryByScheme(parent, context,
+                reportModel, queryScheme);
+        nodeValidate(qryCondition);
+        return qryCondition;
+    }
+
+    @Override
+    public IQueryCondition doQueryAction(Container parent, IContext context,
+            AbsAnaReportModel reportModel, IQueryCondition oldCondition) {
+        IQueryCondition qryCondition = super.doQueryAction(parent, context, reportModel, oldCondition);
+        nodeValidate(qryCondition);
+        return qryCondition;
+    }
+    
+    private void nodeValidate(IQueryCondition qryCondition) {
+        if (qryCondition instanceof ErmBaseQueryCondition) {
+            ErmBaseQueryCondition qryCon = (ErmBaseQueryCondition)qryCondition;
+            if (qryCon.getQryCondVO() != null && qryCon.getQryCondVO().getQryObjs() != null) {
+                List<QryObj> qryObjList = qryCon.getQryCondVO().getQryObjs();
+                boolean validate = true;
+                for (QryObj qryObj : qryObjList) {
+                    if (!IBDMetaDataIDConst.DEPT.equals(qryObj.getPk_bdinfo()) &&
+                            !IBDMetaDataIDConst.PSNDOC.equals(qryObj.getPk_bdinfo())) {
+                        validate = false;
+                        break;
+                    }
+                }
+                if (!validate) {
+                    throw new ErmBusinessRuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0122")/*@res "该自定义查询已不可用，请在费用管理-账表初始化中删除该查询节点！"*/);
+                }
+            }
+        }
+    }
+
     @SuppressWarnings("serial")
     @Override
     protected IFipubReportQryDlg getQryDlg(Container parent,
@@ -77,6 +119,15 @@ public class ErmReportMppQueryAction extends ErmReportDefaultQueryAction {
                 list.add(IBDMetaDataIDConst.USER); // 用户
                 //v6.1新增成本中心
 //                list.add(IPubReportConstants.MDID_COSTCENTER);
+                return list;
+            }
+
+            @Override
+            protected List<Integer> getPanelHeightList() {
+                List<Integer> list = new ArrayList<Integer>(3);
+                list.add(Integer.valueOf(305));
+                list.add(Integer.valueOf(145));
+                list.add(Integer.valueOf(120));
                 return list;
             }
 

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.arap.pub.IBxUIControl;
-import nc.itf.cmp.pub.Currency;
+import nc.itf.fi.pub.Currency;
 import nc.itf.fi.pub.SysInit;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.ui.arap.bx.BXBillListPanel;
@@ -1245,7 +1246,8 @@ public class ContrastDialog extends UIDialog implements java.awt.event.ActionLis
 	}
 
 	private List<JKBXHeaderVO> getJkdsByQuery() throws BusinessException {
-		List<JKBXHeaderVO> jkds = new ArrayList<JKBXHeaderVO>();
+//		List<JKBXHeaderVO> jkds = new ArrayList<JKBXHeaderVO>();
+	    List<JKBXHeaderVO> jkds = Collections.emptyList();
 		String usertext = getusertext().getRefPK();
 		UFDate fromtime = getfromtimetext().getDateBegin();
 		UFDate totime = gettotimetext().getDateEnd();

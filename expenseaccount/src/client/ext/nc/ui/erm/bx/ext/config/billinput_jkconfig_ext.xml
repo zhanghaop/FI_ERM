@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 来源于费用申请单 -->
+	<bean name="addfromMtappaction" class="nc.ui.erm.bx.ext.action.AddFromMtappActionExt">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="interceptor" ref="interceptor"/>
+	</bean>
+</beans>

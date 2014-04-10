@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.pub.ErmReportUtil;
 import nc.bs.erm.sql.ErmBaseSqlCreator;
 import nc.bs.erm.sql.LoanDetailSQLCreator;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.itf.erm.pub.ILoanDetailBO;
 import nc.itf.erm.report.IErmReportConstants;
@@ -17,6 +19,7 @@ import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.LoanDetailDataProvider;
 import nc.utils.fipub.FipubSqlExecuter;
 import nc.utils.fipub.ReportMultiVersionSetter;
@@ -62,6 +65,8 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
 		/****************************************************************/
 
 		try {
+	        PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+	        select.setWhere(null);
 			ErmBaseSqlCreator sqlCreator = new LoanDetailSQLCreator();
 
 			// 设置查询对象VO的内容
@@ -85,6 +90,9 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
 				executeUpdate(sql);
 			}
 
+            //转换币种
+			ErUtil.convertCurrtype(resultSet, queryVO);
+			
 			// 插入【币种】名称
 			PubCommonReportMethod.insertNameColumn(resultSet, IPubReportConstants.CURRTYPE, "pk_currtype", "currtype");
 			// 插入【交易类型】名称
@@ -105,6 +113,7 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
 
 			// 设置返回结果数据集
 			resultDataSet.setDatas(datas);
+			ErmReportUtil.processDataSet(context, resultDataSet);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0053")/*@res "明细账查询出错！"*/;
 			Logger.error(errMsg, e);
@@ -211,7 +220,7 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
 		int locIndex = mrs.getColumnIndex("bal_loc");
 		int grlocIndex = mrs.getColumnIndex("gr_bal_loc");
 		int gllocIndex = mrs.getColumnIndex("gl_bal_loc");
-		int briefIndex = mrs.getColumnIndex("zy");
+//		int briefIndex = mrs.getColumnIndex("zy");
 		for (int i = 0; i < queryVO.getQryObjs().size(); i++) {
 			qryObjIndex.add(mrs.getColumnIndex(IPubReportConstants.QRY_OBJ_PREFIX + i));
 			qryObjNameIndex.add(mrs.getColumnIndex(IPubReportConstants.QRY_OBJ_PREFIX + i + "code"));
@@ -231,6 +240,7 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
         }
 		
         Map<String, Map<String, String>> countMap = new HashMap<String, Map<String, String>>();
+        Map<String, String> totalCurrtype = new HashMap<String, String>();
         
 		Object[] dataRow = new Object[0];
 		int rn = -1;
@@ -256,7 +266,11 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
 	                currtypeMap.put(currtype, null);
 	            }
 	        }
-            
+
+            //记录币种个数
+            if (dataRow[currtypeIndex - 1] != null) {
+                totalCurrtype.put((String)dataRow[currtypeIndex - 1], null);
+            }
 			if (rn >= SmartProcessor.MAX_ROW) {
 				// 处理合计行
 				if (rn == SmartProcessor.MAX_ROW) {
@@ -314,17 +328,27 @@ public class LoanDetailBOImpl extends FipubSqlExecuter implements ILoanDetailBO 
 					}
 
 					if (!isObj&& isMultiOrg && (dataRow[orgIndex - 1] == null || dataRow[orgIndex - 1].toString().length() == 0)) {
-						dataRow[briefIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
-						dataRow[orgIndex - 1] = "";
-						// 多组织、多币种清空金额字段信息
+//						dataRow[briefIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
+						
 						if (!isCurrtype) {
-	                        // 多币种清空金额字段信息
-	                        for (int nPos = 0; nPos < amount_ori.length; nPos++) {
-	                            if (currtypeCount[nPos] > 1) {
-	                                dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
-	                            }
-	                        }
-	                    }
+                            // 多币种清空金额字段信息
+                            for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+                                if (totalCurrtype != null && totalCurrtype.keySet().size() > 1) {
+                                    dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
+                                }
+                            }
+                        }
+						
+						dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
+						// 多组织、多币种清空金额字段信息
+//						if (!isCurrtype) {
+//	                        // 多币种清空金额字段信息
+//	                        for (int nPos = 0; nPos < amount_ori.length; nPos++) {
+//	                            if (currtypeCount[nPos] > 1) {
+//	                                dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
+//	                            }
+//	                        }
+//	                    }
 					} else if (!isObj) {
 					    String org = (String)dataRow[orgIndex - 1];
 						dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.getCONST_AGG_TOTAL(); // 合计

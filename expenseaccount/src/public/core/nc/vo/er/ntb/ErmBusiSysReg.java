@@ -113,6 +113,7 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);//利润中心
 			}else if(ErmBillConst.MatterApp_DJDL.equals(djdl)){
 				// 费用申请单主组织
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);//费用承担单位
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_ORG);// 财务组织
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);//利润中心
 			}else if(IErmCostShareConst.COSTSHARE_DJDL.equals(djdl)||ExpAmoritizeConst.Expamoritize_DJDL.equals(djdl)){

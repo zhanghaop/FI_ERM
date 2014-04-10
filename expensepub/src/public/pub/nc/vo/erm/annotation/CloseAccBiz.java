@@ -28,4 +28,8 @@ public class CloseAccBiz {
     
     public static final String MaxMinPeriod = "查询最大结账期间和最小未结账期间"/* -=notranslate=- */;
     
+    public static final String PeriodOrgGroup = "将统一会计期间的组织结账信息为一组"/* -=notranslate=- */;
+    
+    public static final String CloseBook = "批量查询结账信息"/* -=notranslate=- */;
+    
 }

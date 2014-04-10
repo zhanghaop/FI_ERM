@@ -33,7 +33,7 @@ public class WfFyFilterCostcenter extends ErmBaseParticipantFilter {
 																												 */;
 	}
 
-	private ParticipantFilterContext pfc;
+	//private ParticipantFilterContext pfc;
 
 	public HashSet<String> filterUsers(ParticipantFilterContext pfc) throws BusinessException {
 		this.pfc = pfc;
@@ -98,7 +98,7 @@ public class WfFyFilterCostcenter extends ErmBaseParticipantFilter {
 		return userids;
 	}
 
-	private HashSet<String> retrUser(String[] psnIDs)
+	protected HashSet<String> retrUser(String[] psnIDs)
 			throws PFBusinessException, DAOException, BusinessException {
 		HashSet<String> userids = new HashSet<String>();
 		if (psnIDs == null || psnIDs.length == 0)
@@ -125,12 +125,12 @@ public class WfFyFilterCostcenter extends ErmBaseParticipantFilter {
 		return userids;
 	}
 
-	public ParticipantFilterContext getPfc() {
-		return pfc;
-	}
-
-	public void setPfc(ParticipantFilterContext pfc) {
-		this.pfc = pfc;
-	}
+//	public ParticipantFilterContext getPfc() {
+//		return pfc;
+//	}
+//
+//	public void setPfc(ParticipantFilterContext pfc) {
+//		this.pfc = pfc;
+//	}
 	
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.framework.common.NCLocator;
+import nc.itf.erm.extendconfig.ErmExtendconfigInterfaceCenter;
 import nc.pubitf.erm.billcontrast.IErmBillcontrastQueryService;
 import nc.pubitf.erm.costshare.IErmCostShareBillQuery;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -47,7 +48,7 @@ public class ErmForCShareUtil {
 				BXHeaderVO.CASHPROJ, BXHeaderVO.DJBH, BXHeaderVO.PK_ORG, BXHeaderVO.PK_ORG_V,
 				BXHeaderVO.ZY, BXHeaderVO.PK_GROUP , JKBXHeaderVO.ISEXPAMT, BXHeaderVO.GROUPBBHL,
 				BXHeaderVO.GLOBALBBHL, BXHeaderVO.PK_CHECKELE, BXHeaderVO.PK_RESACOSTCENTER,
-				BXHeaderVO.PROJECTTASK, BXHeaderVO.JSFS, BXHeaderVO.CUSTOMER};
+				BXHeaderVO.PROJECTTASK, BXHeaderVO.JSFS, BXHeaderVO.CUSTOMER,BXHeaderVO.GLOBALBBJE,BXHeaderVO.GROUPBBJE};
 	}
 
 	/**
@@ -79,7 +80,12 @@ public class ErmForCShareUtil {
 		((CostShareVO)result.getParentVO()).setHasntbcheck(UFBoolean.valueOf(bxvo.getHasNtbCheck()));
 
 		result.setChildrenVO(dealWithCShareDetailsStatus(bxvo, bxvo.getcShareDetailVo()));
-
+		
+		// 补充扩展页签信息
+		ErmExtendconfigInterfaceCenter.fillExtendTabVOs(head.getPk_group(), CostShareVO.PK_TRADETYPE, result);
+		// 将bx单信息设置到结转单上备用
+		result.setBxvo(bxvo);
+		
 		return result;
 	}
 
@@ -157,7 +163,7 @@ public class ErmForCShareUtil {
 		//将删除的分摊明细放入集合中
 		Collection<CShareDetailVO> delCollection = oldDetailMap.values();
 		for (Iterator<CShareDetailVO> iterator = delCollection.iterator(); iterator.hasNext();) {
-			CShareDetailVO object = iterator.next();
+			CShareDetailVO object = (CShareDetailVO) iterator.next().clone();
 			object.setStatus(VOStatus.DELETED);
 			resultList.add(object);
 		}
@@ -224,6 +230,9 @@ public class ErmForCShareUtil {
 		cShareVo.setBx_djrq(head.getDjrq());//单据日期
 		cShareVo.setDjlxbm(head.getDjlxbm());
 		cShareVo.setJkbxr(head.getJkbxr());
+		//增加产品线和品牌字段
+		cShareVo.setPk_brand(head.getPk_brand());
+		cShareVo.setPk_proline(head.getPk_proline());
 		
 		//设置报销单冗余字段
 		String[] fields = getFieldFromBxVo();

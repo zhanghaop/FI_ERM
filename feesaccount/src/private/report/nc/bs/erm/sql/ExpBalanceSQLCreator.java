@@ -18,9 +18,9 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.erm.expenseaccount.ExpenseBalVO;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.utils.SqlBuilder;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -82,7 +82,11 @@ public class ExpBalanceSQLCreator extends ErmCSBaseSqlCreator {
 
         }
 
-        sqlBuffer.append(", v.pk_currtype"); 
+        if (beForeignCurrency) {
+            sqlBuffer.append(", v.pk_currtype"); 
+        } else {
+            sqlBuffer.append(", null pk_currtype"); 
+        }
         sqlBuffer.append(", v.rn");
         sqlBuffer.append(", 0 ").append(IPubReportConstants.ORDER_MANAGE_VSEQ);
 
@@ -116,7 +120,10 @@ public class ExpBalanceSQLCreator extends ErmCSBaseSqlCreator {
                     .append(qryObjList.get(i).getBd_nameField()).append(", ").append(bdTable ).append( i).append(".")
                     .append(qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex());
         }
-        sqlBuffer.append(", v.").append(PK_CURR);
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", v.").append(PK_CURR);
+        }
         sqlBuffer.append(", rn ");
 
         sqlBuffer.append(" order by ");
@@ -154,7 +161,12 @@ public class ExpBalanceSQLCreator extends ErmCSBaseSqlCreator {
             sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, bxzbAlias));
         }
         sqlBuffer.append(", ").append(queryObjBaseExp);
-        sqlBuffer.append(", ").append(bxzbAlias + ".pk_currtype").append(" pk_currtype, 0 rn");
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", ").append(bxzbAlias + ".pk_currtype").append(" pk_currtype, 0 rn");
+        } else {
+            sqlBuffer.append(", null pk_currtype, 0 rn");
+        }
         
         sqlBuffer.append(", sum(").append("zb." ).append(ExpenseBalVO.ASSUME_AMOUNT).append(") " ).append(
                 ExpenseBalVO.ASSUME_AMOUNT).append(ExpBalanceDataProvider.SUFFIX_ORI);
@@ -222,7 +234,7 @@ public class ExpBalanceSQLCreator extends ErmCSBaseSqlCreator {
         
         String[] codes = (String[]) queryVO.getUserObject().get(
                 "src_tradetype");
-        if (!ArrayUtil.isEmpty(codes)) {
+        if (!ArrayUtils.isEmpty(codes)) {
             String sqlCode = SqlUtil.buildInSql("zb.src_tradetype", codes);
             sqlBuffer.append(" and ").append(sqlCode);
         }
@@ -252,9 +264,9 @@ public class ExpBalanceSQLCreator extends ErmCSBaseSqlCreator {
             sqlBuffer.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE, bxzbAlias));
         }
         sqlBuffer.append(", ").append(groupByBaseExp);
-//        if (beForeignCurrency) {
+        if (beForeignCurrency) {
             sqlBuffer.append(",").append(bxzbAlias).append(".pk_currtype");
-//        }
+        }
 
         return sqlBuffer.toString();
     }

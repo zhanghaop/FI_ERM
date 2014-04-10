@@ -1,9 +1,11 @@
 package nc.ui.erm.matterapp.listener;
 
+import nc.bs.erm.common.ErmConst;
 import nc.ui.bd.ref.AbstractRefTreeModel;
 import nc.ui.erm.matterapp.common.MatterAppUiUtil;
 import nc.ui.erm.matterapp.model.MAppModel;
 import nc.ui.erm.matterapp.view.MatterAppMNBillForm;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.bill.BillCardBeforeEditListener;
 import nc.ui.pub.bill.BillItem;
@@ -13,6 +15,7 @@ import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.org.DeptVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDate;
 
 public class BillCardHeadBeforeEditlistener implements BillCardBeforeEditListener{
 	private static final long serialVersionUID = 1L;
@@ -66,7 +69,8 @@ public class BillCardHeadBeforeEditlistener implements BillCardBeforeEditListene
 			ExceptionHandler.handleExceptionRuntime(e1);
 			return false;
 		}
-		return true;
+		// 事件转换，且发出事件 
+		return billForm.getEventTransformer().beforeEdit(evt);
 	}
 	
 	// 用申请单位过滤部门
@@ -75,20 +79,29 @@ public class BillCardHeadBeforeEditlistener implements BillCardBeforeEditListene
 		((UIRefPane) item.getComponent()).setPk_org(pk_org);
 	}
 	
-	//过滤申请人
+	// 过滤申请人
 	private void beforeEditBillMaker(BillItem item) {
 		String pk_org = billForm.getHeadItemStrValue(MatterAppVO.PK_ORG);
-		AbstractRefTreeModel model = (AbstractRefTreeModel)((UIRefPane) item.getComponent()).getRefModel();
-		model.setPk_org(pk_org);
-		
-		String applyDept = billForm.getHeadItemStrValue(MatterAppVO.APPLY_DEPT);
-		
-		if(applyDept != null){
-			model.setWherePart("pk_dept = '" + applyDept + "' ");
-			model.setClassWherePart(DeptVO.PK_DEPT  + "='" + applyDept + "'");
-		}else{
-			model.setWherePart(null);
-			model.setClassWherePart(null);
+		UFDate billDate = (UFDate) billForm.getBillCardPanel().getHeadItem(MatterAppVO.BILLDATE).getValueObject();
+
+		try {
+			if (getModel().getTradeTypeVo(getModel().getDjlxbm()).getMatype() == ErmConst.MATTERAPP_BILLTYPE_BX) {
+				ErUiUtil.initSqdlr(billForm, item, getModel().getDjlxbm(), pk_org, billDate);
+			} else {
+				AbstractRefTreeModel model = (AbstractRefTreeModel) ((UIRefPane) item.getComponent()).getRefModel();
+				model.setPk_org(pk_org);
+				String applyDept = billForm.getHeadItemStrValue(MatterAppVO.APPLY_DEPT);
+
+				if (applyDept != null) {
+					model.setWherePart("pk_dept = '" + applyDept + "' ");
+					model.setClassWherePart(DeptVO.PK_DEPT + "='" + applyDept + "'");
+				} else {
+					model.setWherePart(null);
+					model.setClassWherePart(null);
+				}
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
 		}
 	}
 

@@ -2,24 +2,24 @@ package nc.ui.erm.billpub.view.eventhandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
+
+import javax.swing.JComponent;
 
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
+import nc.desktop.ui.WorkbenchEnvironment;
+import nc.pubitf.uapbd.ICustomerPubService;
 import nc.pubitf.uapbd.ISupplierPubService_C;
-import nc.ui.bd.ref.AbstractRefGridTreeModel;
 import nc.ui.bd.ref.AbstractRefModel;
-import nc.ui.bd.ref.IFilterCommonDataVec;
 import nc.ui.bd.ref.model.CashAccountRefModel;
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.ui.bd.ref.model.FreeCustRefModel;
-import nc.ui.dbcache.DBCacheFacade;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
+import nc.ui.erm.billpub.remote.UserBankAccVoCall;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.UIRefPane;
@@ -32,6 +32,7 @@ import nc.vo.bd.bankaccount.BankAccSubVO;
 import nc.vo.bd.bankaccount.BankAccbasVO;
 import nc.vo.bd.bankaccount.IBankAccConstant;
 import nc.vo.bd.cashaccount.CashAccountVO;
+import nc.vo.bd.cust.CustomerVO;
 import nc.vo.bd.pub.IPubEnumConst;
 import nc.vo.bd.supplier.SupplierVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -70,15 +71,12 @@ public class HeadFieldHandleUtil {
 	}
 	
 	/**
-	 * 散户字段处理
+	 * 根据供应商处理散户字段
 	 * @param key
 	 */
-	public void initFreeCust() {
+	public void initFreeCustBySupplier() {
 		//散户
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.FREECUST);
-//		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST) != null) {
-//			getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setValue(null);
-//		}
 		//供应商
 		final String pk_supplier = getHeadItemStrValue(JKBXHeaderVO.HBBM);
 		
@@ -99,6 +97,39 @@ public class HeadFieldHandleUtil {
 			getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(false);
 		}
 	}
+	
+
+	/**
+	 * 根据客户处理散户字段
+	 */
+	public void initFreeCustByCustomer() {
+
+		// 散户
+		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.FREECUST);
+
+		final String customer = getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
+
+		if (customer != null && customer.trim().length() > 0) {
+			try {
+
+				CustomerVO[] customerVO = NCLocator.getInstance().lookup(ICustomerPubService.class).getCustomerVO(
+						new String[] { customer }, new String[] { CustomerVO.ISFREECUST });
+				if (customerVO != null && customerVO.length != 0
+						&& customerVO[0].getIsfreecust().equals(UFBoolean.TRUE)) {
+					getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(true);
+					((FreeCustRefModel) refPane.getRefModel()).setCustomSupplier(customer);
+				} else {
+					getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(false);
+				}
+			} catch (BusinessException e) {
+				ExceptionHandler.handleExceptionRuntime(e);
+			}
+		} else {
+			getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(false);
+		}
+
+	}
+	
 	/**
 	 * 资金计划项目字段处理
 	 */
@@ -213,8 +244,7 @@ public class HeadFieldHandleUtil {
 	}
 	
 	/**
-	 * 过滤借款报销人
-	 * 特殊处理
+	 * 过滤借款报销人 特殊处理
 	 * 
 	 * @param panel
 	 * @param headItem
@@ -224,70 +254,28 @@ public class HeadFieldHandleUtil {
 	 */
 	public static void initSqdlr(ErmBillBillForm editor, BillItem headItem, String billtype, BillItem headOrg)
 			throws BusinessException {
-		if (headItem == null)
-			return;
-		String refType = headItem.getRefType();
-		if (refType == null)
-			return;
-		String pk_org = "";
-		if (headOrg != null && headOrg.getValueObject() != null) {
-			pk_org = headOrg.getValueObject().toString();
-		}
-		final String wherePart = BXUiUtil.getAgentWhereString(billtype, BXUiUtil.getPk_user(), BXUiUtil.getSysdate().toString(),
-		pk_org);
-		String newWherePart = "1=1 " + wherePart;
-		UIRefPane refPane = (UIRefPane) editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.JKBXR).getComponent();
-		final AbstractRefGridTreeModel model = (AbstractRefGridTreeModel) refPane.getRefModel();
-		
-		model.setPk_org(pk_org);
-		model.setWherePart(newWherePart);
-		//处理常用数据
-		model.setFilterCommonDataVec(new IFilterCommonDataVec(){
-			@SuppressWarnings("unchecked")
-			@Override
-			public void filterCommonDataVec(Vector vec) {
-				if (vec == null || vec.isEmpty()) {
-					return;
-				}
-				String sql = model.getRefSql();
-				Vector<Vector<String>> vers = (Vector<Vector<String>>) DBCacheFacade
-						.getFromDBCache(sql);
-				if (vers == null || vers.isEmpty()) {
-					vec.removeAllElements();
-					return;
-				}
-
-				Set<String> jkbxrdata = new HashSet<String>();
-				for (Vector<String> ve : vers) {
-					jkbxrdata.add(ve.get(2));
-				}
-				Vector removed = new Vector();
-				for (Object data : vec) {
-					Vector<Object> ve = (Vector<Object>) data;
-					String pk_psndoc = (String) ve.get(2);
-					if (jkbxrdata.contains(pk_psndoc))
-						continue;
-					removed.addElement(ve);
-				}
-				if (removed.size() > 0) {
-					vec.removeAll(removed);
-				}
-			}
-		});
+		UFDate billDate = (UFDate) editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.DJRQ).getValueObject();
+		ErUiUtil.initSqdlr(editor, headItem, billtype, (String) headOrg.getValueObject(), billDate);
 	}
 	
 	
 	
 	/**
-	 * 成本中心根据费用承担单位过滤
+	 * 成本中心根据利润中心来过滤
 	 * @author wangle
 	 * @throws BusinessException
 	 */
 	public void initResaCostCenter(){
-		String pk_fydwbm = getHeadItemStrValue(JKBXHeaderVO.FYDWBM);
+		String pk_pcorg = getHeadItemStrValue(JKBXHeaderVO.PK_PCORG);
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.PK_RESACOSTCENTER);
-		String wherePart = CostCenterVO.PK_FINANCEORG+"="+"'"+pk_fydwbm+"'"; 
-		addWherePart2RefModel(refPane, pk_fydwbm, wherePart);
+		if(pk_pcorg == null){
+			refPane.setEnabled(false);
+			refPane.setPK(null);
+		}else{
+			refPane.setEnabled(true);
+			String wherePart = CostCenterVO.PK_PROFITCENTER+"="+"'"+pk_pcorg+"'"; 
+			addWherePart2RefModel(refPane, pk_pcorg, wherePart);
+		}
 	}
 	
 	/**
@@ -296,19 +284,13 @@ public class HeadFieldHandleUtil {
 	 */
 	public void initSkyhzh() {
 		// 收款银行帐号根据收款人过滤
-		String filterStr = null;
-		if (isJk()) {
-			// 借款人
-			filterStr = getHeadItemStrValue(JKBXHeaderVO.JKBXR);
-			getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
-		}
-		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
-		if (filterStr != null && filterStr.trim().length() > 0) {
-			UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
-			String wherepart = " pk_psndoc='" + filterStr + "'";
-			wherepart+=" and pk_currtype='"+pk_currtype+"'";
-			setWherePart2RefModel(refPane, getHeadItemStrValue(JKBXHeaderVO.DWBM), wherepart);
-		}
+		getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
+		String filterStr = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
+		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
+		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
+		String wherepart = " pk_psndoc='" + filterStr + "'";
+		wherepart += " and pk_currtype='" + pk_currtype + "'";
+		setWherePart2RefModel(refPane, getHeadItemStrValue(JKBXHeaderVO.DWBM), wherepart);
 	}
 	
 	/**
@@ -330,9 +312,29 @@ public class HeadFieldHandleUtil {
 		if (pk_psndoc != null && !pk_psndoc.equals(receiver)) {
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
 		}
-		
+		setDefaultSkyhzhByReceiver();
 	}
 	
+	/**
+	 * 收款人更换时，设置默认个人银行账户
+	 */
+	private void setDefaultSkyhzhByReceiver() {
+		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.RECEIVER);
+		String receiver = headItem == null ? null : (String) headItem.getValueObject();
+		// 自动带出收款银行帐号
+		try {
+			String key = UserBankAccVoCall.USERBANKACC_VOCALL + receiver;
+			if (WorkbenchEnvironment.getInstance().getClientCache(key) != null) {
+				BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
+				if (vos != null && vos.length > 0 && vos[0] != null) {
+					getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, vos[0].getPk_bankaccsub());
+				}
+			}
+		} catch (Exception e) {
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, "");
+		}
+	}
+
 	/**
 	 * 项目任务根据费用承担单位和项目来过滤
 	 * wangle
@@ -372,27 +374,10 @@ public class HeadFieldHandleUtil {
 		refPane.getRefModel().addWherePart(getBankWherePart());	
 	}
 	
-	/**
-	 * 客商银行帐号根据币种和客户过滤
-	 * wangle
-	 */
-	public void initCustomCustAccount(){
-		//客户
-		final String pk_supplier = getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
-		UIRefPane refPane =getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT);
-		CustBankaccDefaultRefModel refModel = (CustBankaccDefaultRefModel)refPane.getRefModel();
-		if(refModel!=null){
-			refModel.setPk_cust(pk_supplier);
-		}
-		refPane.getRefModel().setWherePart("accclass='"+IBankAccConstant.ACCCLASS_CUST+"'");
-		refPane.getRefModel().addWherePart(getBankWherePart());	
-	}
-	
-	
 	private String getBankWherePart() {
 		return getCurrencyWherePart() + getEnablestate();
 	}
-
+	
 	private String getCurrencyWherePart() {
 		StringBuffer appending = new StringBuffer();
 		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
@@ -400,7 +385,7 @@ public class HeadFieldHandleUtil {
 		appending.append(" = '").append(pk_currtype).append("'");
 		return appending.toString();
 	}
-
+	
 	private String getEnablestate() {
 		StringBuffer appending = new StringBuffer();
 		appending.append(" and ").append(BankAccbasVO.ENABLESTATE);
@@ -417,7 +402,6 @@ public class HeadFieldHandleUtil {
 		String pk_org = getHeadItemStrValue(JKBXHeaderVO.FYDWBM);
 		refPane.setPk_org(pk_org);
 	}
-	
 	
 	
 	/**
@@ -469,23 +453,6 @@ public class HeadFieldHandleUtil {
 					refPane.setPK(null);
 				}
 			}
-
-//			List<String> pkValueList = new ArrayList<String>();
-//            Vector vct = model.getRefData();
-//            if (vct == null) {
-//                return;
-//            }
-//            
-//			Iterator<Vector> it = vct.iterator();
-//			int index = model.getFieldIndex("bd_bankaccsub.pk_bankaccsub");
-//			while (it.hasNext()) {
-//				Vector next = it.next();
-//				pkValueList.add((String) next.get(index));
-//			}
-//			final String refPK = refPane.getRefPK();
-//			if (!pkValueList.contains(refPK)) {
-//				refPane.setPK(null);
-//			}
 		}
 
 	}
@@ -544,11 +511,13 @@ public class HeadFieldHandleUtil {
 	public static void filterRefModelWithWherePart(UIRefPane refPane, String pk_org, String wherePart,
 			String addWherePart) {
 		AbstractRefModel model = refPane.getRefModel();
-		model.setPk_org(pk_org);
-		model.setWherePart(wherePart);
-		if (addWherePart != null) {
+		if (model != null) {
 			model.setPk_org(pk_org);
-			model.addWherePart(" and " + addWherePart);
+			model.setWherePart(wherePart);
+			if (addWherePart != null) {
+				model.setPk_org(pk_org);
+				model.addWherePart(" and " + addWherePart);
+			}
 		}
 	}
 	
@@ -567,7 +536,8 @@ public class HeadFieldHandleUtil {
 	}
 	
 	public UIRefPane getHeadItemUIRefPane(final String key) {
-		return (UIRefPane) getBillCardPanel().getHeadItem(key).getComponent();
+		JComponent component = getBillCardPanel().getHeadItem(key).getComponent();
+		return component instanceof UIRefPane ? (UIRefPane) component : null;
 	}
 	
 	private BillCardPanel getBillCardPanel() {

@@ -1,6 +1,11 @@
 package nc.ui.erm.billpub.view.eventhandler;
 
+import javax.swing.JComponent;
+
+import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
+import nc.ui.bd.ref.model.FreeCustRefModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.erm.view.ERMBillForm;
 import nc.ui.org.ref.DeptDefaultRefModel;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.bill.BillCardBeforeEditListener;
@@ -8,8 +13,11 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillItemEvent;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.bd.bankaccount.IBankAccConstant;
+import nc.vo.bd.pub.IPubEnumConst;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 
 public class InitBillCardBeforeEditListener implements BillCardBeforeEditListener {
@@ -54,6 +62,12 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 				((ErmBillBillForm)editor).getEventHandle().getHeadFieldHandle().initJkbxr();
 			}else if (key != null && (key.startsWith(BXConstans.HEAD_USERDEF_PREFIX))) {//自定义项过滤
 				filterZyxField(key);
+			}else if (JKBXHeaderVO.CUSTACCOUNT.equals(key)) {// 客户银行账号
+				beforeEditCustaccount();
+			} else if (JKBXHeaderVO.FREECUST.equals(key)) {// 散户
+				beforeEditFreecust();
+			}else if (JKBXHeaderVO.SKYHZH.equals(key)) {// 个人银行账户
+				beforeEditSkyhzh();
 			}
 			
 			if (!JKBXHeaderVO.PK_ORG_V.equals(key) && !JKBXHeaderVO.PK_ORG.equals(key)) {
@@ -67,7 +81,75 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 			ExceptionHandler.handleExceptionRuntime(e1);
 			return false;
 		}
-		return true;
+		return ((ERMBillForm)editor).getEventTransformer().beforeEdit(e);
+	}
+	
+	private void beforeEditSkyhzh() {
+
+		// 收款人
+		String receiver = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
+		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
+		// 收款银行参照
+		UIRefPane refpane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
+		StringBuffer wherepart = new StringBuffer();
+		wherepart.append(" pk_psndoc='" +receiver+ "'");
+		wherepart.append(" and pk_currtype='" +pk_currtype+ "'");
+		HeadFieldHandleUtil.setWherePart2RefModel(refpane, getHeadItemStrValue(JKBXHeaderVO.DWBM), wherepart.toString());
+	}
+
+	/**
+	 * 散户根据客商档案中的散户属性做过滤
+	 */
+	private void beforeEditFreecust() {
+		// 散户
+		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.FREECUST);
+		// 散户设置供应商
+		((FreeCustRefModel) refPane.getRefModel()).setCustomSupplier(getCustomerSupplier());
+	}
+
+	/***
+	 * 客户银行账号根据客户档案+币种做过滤
+	 * 
+	 */
+	private void beforeEditCustaccount() {
+		// 客商档案
+		String pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.HBBM);
+		int accclass = IBankAccConstant.ACCCLASS_SUPPLIER;
+		if (StringUtil.isEmptyWithTrim(pk_custsup)) {
+			pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
+			accclass = IBankAccConstant.ACCCLASS_CUST;
+		}
+		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
+		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT);
+		StringBuffer wherepart = new StringBuffer();
+		wherepart.append(" pk_currtype='" + pk_currtype + "'");
+		wherepart.append(" and enablestate='" + IPubEnumConst.ENABLESTATE_ENABLE+"'");
+		wherepart.append(" and accclass='" + accclass + "'");
+		HeadFieldHandleUtil.setWherePart2RefModel(refPane, null, wherepart.toString());
+		if (refPane.getRefModel() != null && refPane.getRefModel() instanceof CustBankaccDefaultRefModel) {
+			CustBankaccDefaultRefModel refModel = (CustBankaccDefaultRefModel) refPane.getRefModel();
+			if (refModel != null) {
+				refModel.setPk_cust(pk_custsup);
+			}
+		}
+	}
+
+	private String getCustomerSupplier() {
+		String pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.HBBM);
+		if (StringUtil.isEmptyWithTrim(pk_custsup)) {
+			pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
+		}
+		return pk_custsup;
+	}
+
+	private String getHeadItemStrValue(String itemKey) {
+		BillItem headItem = editor.getBillCardPanel().getHeadItem(itemKey);
+		return headItem == null ? null : (String) headItem.getValueObject();
+	}
+
+	private UIRefPane getHeadItemUIRefPane(final String key) {
+		JComponent component = editor.getBillCardPanel().getHeadItem(key).getComponent();
+		return component instanceof UIRefPane ? (UIRefPane) component : null;
 	}
 	
 	/**

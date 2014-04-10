@@ -15,6 +15,7 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.verifynew.BusinessShowException;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.tb.obj.NtbParamVO;
 
 @SuppressWarnings("restriction")
@@ -46,7 +47,11 @@ public class LinkYsAction extends NCAction {
 		if (!istbbused) {
 			throw new BusinessShowException(getNoInstallMsg());
 		}
-
+		// 拉单的借款单不走预算，所以不用联查预算
+		if(BXConstans.JK_DJDL.equals(bxvo.getParentVO().getDjdl())&&!StringUtil.isEmpty(bxvo.getParentVO().getPk_item())){
+			throw new BusinessShowException(getNoResultMsg());
+		}
+		// 处理联查预算业务
 		String actionCode = getActionCode(bxvo);
 		try {
 			NtbParamVO[] vos = NCLocator.getInstance().lookup(IErmLinkBudgetService.class)

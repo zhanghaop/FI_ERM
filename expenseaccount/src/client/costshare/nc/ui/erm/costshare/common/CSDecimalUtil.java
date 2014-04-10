@@ -88,6 +88,7 @@ public class CSDecimalUtil {
 				BillModel model = panel.getBillModel(tableCode);
 				int rowCount = model.getRowCount();
 				if (bodyJeKeys != null && bodyJeKeys.length > 0) {
+					model.setNeedCalculate(false);
 					for (String key : bodyJeKeys) {
 						if (panel.getBodyItem(tableCode, key) != null) {
 							panel.getBodyItem(tableCode, key).setDecimalDigits(decimalDigits);
@@ -101,7 +102,9 @@ public class CSDecimalUtil {
 							}
 						}
 					}
+					model.setNeedCalculate(true);
 				}
+				
 			}
 		}
 	}

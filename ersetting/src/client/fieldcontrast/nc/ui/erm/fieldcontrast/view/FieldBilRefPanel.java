@@ -5,7 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-
+import nc.bs.erm.util.ErmBillTypeUtil;
 import nc.ui.pub.beans.RefEditEvent;
 import nc.ui.pub.beans.RefEditListener;
 import nc.ui.pub.beans.UIComboBox;
@@ -21,6 +21,7 @@ import nc.ui.uif2.UIStateChangeEvent;
 import nc.ui.uif2.model.AppEventConst;
 import nc.ui.uif2.model.BatchBillTableModel;
 import nc.vo.bx.pub.ref.BXBilltypeRefModel;
+import nc.vo.ep.bx.BilltypeRuleVO;
 
 
 public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,ItemListener ,AppEventListener{
@@ -33,8 +34,8 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 	private BatchBillTableModel model;
 	public final static String ITEMCHANGED="Item_Changed";
 	public final static String CTRLCHANGED="CtrlObj_Changed";
+	public final static int CTRLSTATE= -1;//控制维度
 	public final static int SHARESTATE= 0;//分摊对象
-	public final static int CTRLSTATE= 1;//控制维度
 
 	public void initUI(){
 		FlowLayout flowLayout1 = new FlowLayout();
@@ -47,7 +48,7 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
         bcombobox.addItem(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0009")/*@res "分摊对象"*/);
         bcombobox.addItemListener(this);
 		jLabel = new UILabel();
-		jLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0010")/*@res "分摊对象"*/);
+		jLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0010")/*@res "控制对象"*/);
 		setLayout(flowLayout1);
 		setName("contrastfieldpane");
 		add(bLabel);
@@ -73,13 +74,22 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 			@Override
 			public boolean beforeEdit(RefEditEvent event) {
 				if (getBcombobox().getSelectedIndex() == CTRLSTATE) {// 控制维度
-					djlxRef.getRefModel().setWherePart(
-							"  ncbrcode in ('bx','jk') and pk_billtypecode <> '2647' and isnull(islock,'N') ='N' and  ( pk_group='"
-									+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )");
+					String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(null,true);
+					String wherePart = insql +"and isnull(islock,'N') ='N' and  ( pk_group='"
+									+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
+					djlxRef.getRefModel().setWherePart(wherePart);
+//					djlxRef.getRefModel().setWherePart(
+//					"  ncbrcode in ('bx','jk') and pk_billtypecode <> '2647' and isnull(islock,'N') ='N' and  ( pk_group='"
+//							+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )");
 				} else if (getBcombobox().getSelectedIndex() == SHARESTATE) {// 分摊对象
-					djlxRef.getRefModel().setWherePart(
-							"  ncbrcode in ('bx', 'cs') and pk_billtypecode <> '2647' and isnull(islock,'N') ='N' and  ( pk_group='"
-									+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )");
+					BilltypeRuleVO rulevo = ErmBillTypeUtil.getBilltypeRuleVO(BilltypeRuleVO.FIELDCONTRAST_SHARESTATE);
+					String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(rulevo,true);
+					String wheresql = insql +"and isnull(islock,'N') ='N' and  ( pk_group='"
+					+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
+					djlxRef.getRefModel().setWherePart(wheresql);
+//					djlxRef.getRefModel().setWherePart(
+//							"  ncbrcode in ('bx','jk','cs') and pk_billtypecode <> '2647' and isnull(islock,'N') ='N' and  ( pk_group='"
+//									+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )");
 				}
 				return true;
 			}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- 转单参照单据信息 -->
+	<bean id="refInfo" class="nc.ui.pubapp.billref.src.RefInfo">
+		<property name="headVO">
+			<bean class="nc.vo.erm.matterapp.MatterAppVO" />
+		</property>
+		<property name="bodyVO">
+			<bean class="nc.vo.erm.matterapp.MtAppDetailVO" />
+		</property>
+		<property name="billVO">
+			<bean class="nc.vo.erm.matterapp.AggMatterAppVO" />
+		</property>
+		<property name="viewVO">
+			<bean class="nc.vo.erm.matterapp.MatterViewVO" />
+		</property>
+		<property name="sourcevoPkName" value="pk_mtapp_bill" />
+		<property name="sourcevoBillNOName" value="billno" />
+		<!-- 单据参照菜单扩展 -->
+		<!--<property name="menuActions">
+			<list>
+				<bean class="nc.ui.pubapp.billref.src.action.QueryAction" />
+				<bean class="nc.ui.pubapp.billref.src.action.RefreshAction" />
+			</list>
+		</property> -->
+
+		<!-- 单据查询服务 nc.ui.pubapp.uif2app.model.IQueryService -->
+		<property name="queryService" ref="queryService">
+		</property>
+
+		<!-- 单据参照UI面板初始化处理器，可以处理精度，显示或其它-->
+		<property name="refPanelInit">
+			<bean class="nc.ui.arap.bx.refbill.MatterRefPanelInit">
+			</bean>
+		</property>
+		<!-- 单据参照的值获取器 处理确认后的数据处理-->
+		<property name="billListValueGetter">
+			<bean class="nc.ui.pubapp.billref.src.value.DefaultValueGetter">
+			</bean>
+		</property>
+		<!-- 单据视图UI值设置器 处理显示前逻辑-->
+		<property name="billListPanelValueSetter">
+			<bean class="nc.ui.pubapp.billref.src.value.MDBillViewValueSetter">
+			</bean>
+		</property>
+	</bean>
+	<bean id="queryService" class="nc.ui.arap.bx.refbill.MtAppQueryService" />
+</beans>

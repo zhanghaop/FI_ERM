@@ -16,7 +16,9 @@ public class ErmExpenseaccountManageServiceImpl implements  IErmExpenseaccountMa
 	@Override
 	public void insertVOs(ExpenseAccountVO[] accountVOs) throws BusinessException {
 		ExpenseAccountBO bo = new ExpenseAccountBO();
-		bo.insertVOs(accountVOs);
+		if(accountVOs != null && accountVOs.length > 0){
+			bo.insertVOs(accountVOs);
+		}
 	}
 
 	@Override
@@ -30,7 +32,9 @@ public class ErmExpenseaccountManageServiceImpl implements  IErmExpenseaccountMa
 	@Override
 	public void deleteVOs(ExpenseAccountVO[] accountVOs) throws BusinessException {
 		ExpenseAccountBO bo = new ExpenseAccountBO();
-		bo.deleteVOs(accountVOs);
+		if(accountVOs != null && accountVOs.length > 0){
+			bo.deleteVOs(accountVOs);
+		}
 	}
 
 	

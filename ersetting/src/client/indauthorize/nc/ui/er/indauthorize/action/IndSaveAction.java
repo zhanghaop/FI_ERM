@@ -78,7 +78,7 @@ public class IndSaveAction extends BatchSaveAction {
 				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0016")/*@res "结束日期不能为空"*/);
 			}
 			if(billtype == null || "".equals(billtype)){
-				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0017")/*@res "单据类型不能为空"*/);
+				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0017")/*@res "交易类型不能为空"*/);
 			}
 			if(startDate.compareTo(endDate) > 0){
 				throw new Exception(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_0","02011001-0018")/*@res "开始日期不能大于结束日期，请重新输入!"*/);

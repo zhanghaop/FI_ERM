@@ -28,7 +28,7 @@ import nc.itf.bd.currtype.ICurrtypeQuery;
 import nc.itf.bd.psn.psndoc.IPsndocQueryService;
 import nc.itf.erm.prv.IArapCommonPrivate;
 import nc.itf.org.IDeptQryService;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIButton;
 import nc.ui.pub.beans.UIComboBox;
@@ -576,7 +576,7 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 							department = department.substring(0,department.lastIndexOf("."));
 						condDeptdocVO.setName(department);
 						if(condDeptdocVO != null && !condDeptdocVO.getName().equals("")){
-							DeptVO[] bookvo = NCLocator.getInstance().lookup(IDeptQryService.class).queryDeptVOSByGroupIDAndClause(BXUiUtil.getPK_group(), "name='" + department + "'");
+							DeptVO[] bookvo = NCLocator.getInstance().lookup(IDeptQryService.class).queryDeptVOSByGroupIDAndClause(ErUiUtil.getPK_group(), "name='" + department + "'");
 							if(bookvo!=null && bookvo.length>0 )
 							{
 								if(getRBUseName().isSelected()){

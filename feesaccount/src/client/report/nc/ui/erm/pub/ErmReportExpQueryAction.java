@@ -3,8 +3,6 @@ package nc.ui.erm.pub;
 import java.awt.Container;
 
 import nc.itf.fipub.report.IFipubReportQryDlg;
-import nc.itf.fipub.report.IReportQueryCond;
-import nc.vo.fipub.report.FipubBaseQueryCondition;
 
 import com.ufida.dataset.IContext;
 
@@ -14,10 +12,10 @@ public class ErmReportExpQueryAction extends ErmReportDefaultQueryAction {
 		return ErmReportQryDlg.ERM_EXPDETAIL;
 	}
 	
-	@Override
-	protected FipubBaseQueryCondition createQueryCondition(boolean isContinue, IReportQueryCond qryCondVO) {
-		return new FipubBaseQueryCondition(true, qryCondVO);
-	}
+//	@Override
+//	protected FipubBaseQueryCondition createQueryCondition(boolean isContinue, IReportQueryCond qryCondVO) {
+//		return new FipubBaseQueryCondition(true, qryCondVO);
+//	}
 	
     @SuppressWarnings("restriction")
     @Override

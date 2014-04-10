@@ -11,6 +11,7 @@ import nc.bs.er.util.SqlUtils;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
+import nc.itf.erm.extendconfig.ErmExtendconfigInterfaceCenter;
 import nc.itf.uif.pub.IUifService;
 import nc.jdbc.framework.SQLParameter;
 import nc.md.persist.framework.IMDPersistenceQueryService;
@@ -33,7 +34,14 @@ public class ErmCostShareBillQueryImpl implements IErmCostShareBillQuery {
 	
 	public AggCostShareVO queryBillByPK(String pk) throws BusinessException {
 		IMDPersistenceQueryService service = MDPersistenceService.lookupPersistenceQueryService();
-		return service.queryBillOfVOByPK(AggCostShareVO.class, pk, false);
+		AggCostShareVO aggvo = service.queryBillOfVOByPK(AggCostShareVO.class, pk, false);
+		if(aggvo != null){
+			// 补充扩展子表信息
+			String pk_group = ((CostShareVO)aggvo.getParentVO()).getPk_group();
+			ErmExtendconfigInterfaceCenter.fillExtendTabVOs(pk_group,
+					CostShareVO.PK_TRADETYPE,aggvo);
+		}
+		return aggvo;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -94,6 +102,13 @@ public class ErmCostShareBillQueryImpl implements IErmCostShareBillQuery {
 			Logger.error("根据pk批量查询费用结转单失败",e);
 			throw new BusinessException(e);
 		}
+		if(aggvo != null && aggvo.length > 0){
+			// 补充扩展子表信息
+			String pk_group = ((CostShareVO)aggvo[0].getParentVO()).getPk_group();
+			ErmExtendconfigInterfaceCenter.fillExtendTabVOs(pk_group,
+					CostShareVO.PK_TRADETYPE,aggvo);
+		}
+		
 		return aggvo;
 	}
 	

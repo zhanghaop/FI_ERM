@@ -155,7 +155,18 @@ public class Er_jkzbVOMeta extends ArapBaseMappingMeta {
 				"pk_pcorg_v",/*130*/
 				// v63新增字段 支付单位
 				"pk_payorg",/*131*/
-				"pk_payorg_v"/*132*/
+				"pk_payorg_v",/*132*/
+				
+				"receiver",/*收款人*/
+				//v631
+				"iscusupplier",/*对公支付*/
+				"pk_proline",/*产品线*/
+				"pk_brand",/*品牌*/
+				
+				"center_dept",/*归口管理部门*/
+				"srcbilltype",/*来源单据交易类型*/
+				"srctype",/*来源单据类型*/
+				"ismashare"/*是否拉分摊申请单标志*/
 				};
 		
 		
@@ -294,7 +305,16 @@ public class Er_jkzbVOMeta extends ArapBaseMappingMeta {
 		TYPE_STRING,/*130*/
 //--end	
 		TYPE_STRING,/*131*/
-		TYPE_STRING/*132*/
+		TYPE_STRING,/*132*/
+		
+		TYPE_STRING,/*收款人*/
+		TYPE_BOOLEAN,/*对公支付*/
+		TYPE_STRING,/*产品线*/
+		TYPE_STRING,/*品牌*/
+		TYPE_STRING,/*归口管理部门*/
+		TYPE_STRING,/*来源单据交易类型*/
+		TYPE_STRING,/*来源单据类型*/
+		TYPE_BOOLEAN/*是否拉分摊申请单标志*/
 		});// 数据类型
 	}
 }

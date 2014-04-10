@@ -313,6 +313,18 @@ public class ErmReleaseQryObjSelectComp extends UIPanel {
                             nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
                                     "feesaccount_0", "02011001-0042")/*@res "获取查询对象时发生错误！" */);
         }
+        if (IErmReportConstants.MATTERAPP_REP_NAME.equals(reportType)) {
+            if (qryObjVOList != null && qryObjVOList.size() > 0) {
+                List<QueryObjVO> qryObjVOLista = new ArrayList<QueryObjVO>();
+                for (QueryObjVO qryObj : qryObjVOList) {
+                    if ("billmaker".equals(qryObj.getDsp_objfieldname()) ||
+                            "apply_dept".equals(qryObj.getDsp_objfieldname())) {
+                        qryObjVOLista.add(qryObj);
+                    }
+                }
+                qryObjVOList = qryObjVOLista;
+            }
+        }
         // 设置可选查询对象的值
         setQryObjTableData();
     }

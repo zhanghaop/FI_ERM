@@ -47,6 +47,7 @@ import nc.vo.erm.sharerule.ShareruleVO;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
+import nc.vo.resa.costcenter.CostCenterVO;
 import nc.vo.uif2.LoginContext;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -121,12 +122,13 @@ public class ShareRuleBillForm extends BillForm implements BillEditListener, Bil
 				setRefWhere(orgObj == null ? getModel().getContext().getPk_org() : orgObj.getValue().toString());
 				clearColData(e.getRow());
 			} else if (ShareruleDataVO.PK_PCORG.equals(e.getKey())) {
-			    // 利润中心为空，需要清空核算要素
-                IConstEnum obj = (IConstEnum) billCardPanel.getBillModel().getValueObjectAt(e.getRow(),
-                        ShareruleDataVO.PK_PCORG);
-			    if (obj == null) {
+			    // 修改利润中心时，需要清空核算要素
+//                IConstEnum obj = (IConstEnum) billCardPanel.getBillModel().getValueObjectAt(e.getRow(),
+//                        ShareruleDataVO.PK_PCORG);
+//			    if (obj == null) {
 	                billCardPanel.getBillModel().setValueAt(null, e.getRow(), ShareruleDataVO.PK_CHECKELE);
-			    }
+	                billCardPanel.getBillModel().setValueAt(null, e.getRow(), ShareruleDataVO.PK_RESACOSTCENTER);
+//			    }
 			} else if (ShareruleDataVO.JOBID.equals(e.getKey())) {
                 // 项目，需要清空项目任务
                 IConstEnum obj = (IConstEnum) billCardPanel.getBillModel().getValueObjectAt(e.getRow(),
@@ -149,7 +151,10 @@ public class ShareRuleBillForm extends BillForm implements BillEditListener, Bil
                 // 核算要素
                 if (ShareruleDataVO.PK_CHECKELE.equals(e.getKey())) {
                     canEdit = handleCheckele(e);
-                } else if (ShareruleDataVO.PROJECTTASK.equals(e.getKey())) {
+                } else if(ShareruleDataVO.PK_RESACOSTCENTER.equals(e.getKey())){
+                	canEdit = handleResacostcenter(e);
+                }
+                else if (ShareruleDataVO.PROJECTTASK.equals(e.getKey())) {
                     // 项目任务
                     handleProjectTask(e);
                 } else {
@@ -224,6 +229,38 @@ public class ShareRuleBillForm extends BillForm implements BillEditListener, Bil
         } else {
             canEdit = false;
             ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0038")/*@res "没有利润中心不能参照核算要素，请选择利润中心作为分摊对象！"*/,
+                    getModel().getContext());
+            billCardPanel.getBillModel().setValueAt(null, e.getRow(),
+                    e.getKey());
+        }
+        return canEdit;
+    }
+    
+    private boolean handleResacostcenter(BillEditEvent e) {
+        boolean canEdit = true;
+        // 利润中心
+        BillItem pcOrgItem = billCardPanel.getBodyItem(ShareruleDataVO.PK_PCORG);
+        // 成本中心
+        BillItem pk_resacostcenter = billCardPanel.getBodyItem(ShareruleDataVO.PK_RESACOSTCENTER);
+        UIRefPane resacostcenterRef = (UIRefPane)pk_resacostcenter.getComponent();
+        if (pcOrgItem.isShow()) {
+            IConstEnum orgObj = (IConstEnum) billCardPanel.getBillModel()
+                    .getValueObjectAt(e.getRow(), ShareruleDataVO.PK_PCORG);
+            if (orgObj == null) {
+                canEdit = false;
+
+                ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0037")/*@res "请先选择利润中心！"*/,
+                        getModel().getContext());
+                billCardPanel.getBillModel().setValueAt(null, e.getRow(),
+                        e.getKey());
+            } else {
+            	String wherePart = CostCenterVO.PK_PROFITCENTER+"="+"'"+orgObj.getValue().toString()+"'";// 按成本中心所属利润中心过滤 
+            	resacostcenterRef.getRefModel().setPk_org(orgObj.getValue().toString());
+                resacostcenterRef.getRefModel().setWherePart(wherePart);
+            }
+        } else {
+            canEdit = false;
+            ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0042")/*@res "没有利润中心不能参照成本中心，请选择利润中心作为分摊对象！"*/,
                     getModel().getContext());
             billCardPanel.getBillModel().setValueAt(null, e.getRow(),
                     e.getKey());

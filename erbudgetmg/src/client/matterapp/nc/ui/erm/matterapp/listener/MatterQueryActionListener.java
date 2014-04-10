@@ -7,22 +7,20 @@ import javax.swing.JComponent;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.bd.ref.busi.UserDefaultRefModel;
-import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.action.util.ERMQueryActionHelper;
 import nc.ui.erm.matterapp.common.MultiVersionUtils;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.querytemplate.CriteriaChangedEvent;
 import nc.ui.querytemplate.ICriteriaChangedListener;
-import nc.ui.querytemplate.filtereditor.IFilterEditor;
 import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
-import nc.vo.fi.pub.SqlUtils;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.uap.rbac.FuncSubInfo;
 
 /**
  * 费用申请单查询框监听
@@ -32,31 +30,34 @@ import nc.vo.pub.lang.UFDate;
  */
 public class MatterQueryActionListener implements ICriteriaChangedListener {
 	private AbstractUIAppModel model = null;
-
-	private String[] pk_orgs = null;
+	private String key = null;
+	private FuncSubInfo funcSubInfo;
 
 	@Override
 	public void criteriaChanged(CriteriaChangedEvent event) {
-		String key = event.getFieldCode();
+		this.key = event.getFieldCode();
 		if (event.getEventtype() == CriteriaChangedEvent.FILTEREDITOR_INITIALIZED) {
 			if (key.equals(MatterAppVO.PK_ORG_V)) {
 				// 主组织权限过滤
-				String[] permissionOrgs = BXUiUtil.getPermissionOrgVs(getModel().getContext().getNodeCode());
+				String[] permissionOrgs = ErUiUtil.getPermissionOrgVs(getFuncSubInfo().getFuncode());
 				ERMQueryActionHelper.filtOrgsForQueryAction(event, permissionOrgs);
 
 				UIRefPane orgPanel = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
 				try {
 					// 设置默认值
-					String pk_org_v = MultiVersionUtils.getHeadOrgMultiVersion(ErUiUtil.getDefaultPsnOrg(),
-							ErUiUtil.getBusiDate(), orgPanel.getRefModel());
+					String pk_org_v = MultiVersionUtils.getHeadOrgMultiVersion(ErUiUtil.getDefaultPsnOrg(), ErUiUtil
+							.getBusiDate(), orgPanel.getRefModel());
 					ERMQueryActionHelper.setPk(event, pk_org_v, false);
 				} catch (BusinessException e) {
 					ExceptionHandler.consume(e);
 				}
 			} else if (key.equals(MatterAppVO.PK_ORG)) {
 				// 主组织权限过滤
-				String[] permissionOrgs = getModel().getContext().getPkorgs();
+				String[] permissionOrgs = getFuncSubInfo().getFuncPermissionPkorgs();
 				ERMQueryActionHelper.filtOrgsForQueryAction(event, permissionOrgs);
+				// 设置默认值
+				ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
+			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG)) {
 				// 设置默认值
 				ERMQueryActionHelper.setPk(event, ErUiUtil.getDefaultPsnOrg(), false);
 			} else if (key.equals(MatterAppVO.BILLDATE)) {
@@ -69,32 +70,35 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 				// 过滤交易类型参照,条件为当前集团下的费用结转单交易类型
 				UIRefPane refPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
 				refPane.getRefModel().setWherePart("parentbilltype = '" + ErmMatterAppConst.MatterApp_BILLTYPE + "'");
-			} else if (key != null && key.contains(MtAppDetailVO.PK_RESACOSTCENTER)) {// 成本中心过滤
-				UIRefPane refPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
-				try {
-					refPane.getRefModel().addWherePart(" and " + SqlUtils.getInStr("pk_financeorg", pk_orgs, false));
-					setRefpaneFilter((UIRefPane) refPane);
-				} catch (BusinessException e) {
-					ExceptionHandler.consume(e);
-				}
+			} else if (key != null && (key.contains(MtAppDetailVO.PK_RESACOSTCENTER) || key.contains(MtAppDetailVO.PK_CHECKELE))) {
+				// 成本中心过滤按利润中心
+				setItemFilterBypcorg(event);
 			} else if (MatterAppVO.CREATOR.equals(key) || MatterAppVO.APPROVER.equals(key)
 					|| MatterAppVO.PRINTER.equals(key) || MatterAppVO.CLOSEMAN.equals(key)
 					|| MatterAppVO.MODIFIER.equals(key) || (key != null && key.contains(MatterAppVO.CLOSEMAN))) {// 用户根据集团过滤，不按组织过滤
 				UIRefPane ref = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
 
 				if (ref != null && ref.getRefModel() != null && ref.getRefModel() instanceof UserDefaultRefModel) {
-					ref.getRefModel().setPk_org(getModel().getContext().getPk_group());
+					ref.getRefModel().setPk_org(ErUiUtil.getPK_group());
 					((UserDefaultRefModel) ref.getRefModel()).setUserType(1);
+				}
+			} else if ((ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG).equals(key)){
+				Object obj = ERMQueryActionHelper.getFiltComponentForInit(event);
+				if (obj != null && obj instanceof UIRefPane) {
+
+					UIRefPane refPane = (UIRefPane) obj;
+					if (refPane.getRefModel() != null) {
+						refPane.setMultiSelectedEnabled(false);
+					}
 				}
 			} else {
 				Object obj = ERMQueryActionHelper.getFiltComponentForInit(event);
 				if (obj != null && obj instanceof UIRefPane) {
 
 					UIRefPane refPane = (UIRefPane) obj;
-
 					if (refPane.getRefModel() != null) {
 						refPane.setMultiSelectedEnabled(true);
-						setRefpaneFilter((UIRefPane) refPane);
+						initRefpaneFilter(event, (UIRefPane) refPane);
 					}
 				}
 			}
@@ -103,7 +107,54 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 		if (event.getEventtype() == CriteriaChangedEvent.FILTER_CHANGED) {
 			if (key.equals(MatterAppVO.PK_ORG)) {// 设置组织过滤
 				setPkOrgFilter(event);
-				fiterCostCenter(event);
+			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG)) {
+				setPkPcorgFilter(event);
+			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG)) {
+				setBodyAssumeOrgFilter(event);
+			}
+		}
+
+		if (event.getEventtype() == CriteriaChangedEvent.FILTER_REMOVED) {
+			if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG)) {
+				setPkPcorgFilter(event);
+			} else if (key.equals(ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG)) {
+				setBodyAssumeOrgFilter(event);
+			}
+		}
+	}
+
+	private FuncSubInfo getFuncSubInfo() {
+		if (funcSubInfo != null) {
+			return funcSubInfo;
+		} else if (model != null) {
+			return getModel().getContext().getFuncInfo();
+		}
+		return null;
+	}
+	
+	public void setFuncSubInfo(FuncSubInfo funcSubInfo) {
+		this.funcSubInfo = funcSubInfo;
+	}
+
+	private void setBodyAssumeOrgFilter(CriteriaChangedEvent event) {
+		UIRefPane orgRef = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+				ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG, false);
+
+		if (orgRef == null) {
+			return;
+		}
+
+		// 表体明细过滤pk_org
+		List<String> bodyItems = AggMatterAppVO.getBodyAssumeOrgBodyIterms();
+		for (int i = 0; i < bodyItems.size(); i++) {
+			JComponent[] components = ERMQueryActionHelper.getFiltComponentsForValueChanged(event,
+					ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + bodyItems.get(i), false);
+			if (components != null && components.length > 0) {
+				for (JComponent component : components) {
+					if (component instanceof UIRefPane) {
+						setRefpaneFilter(((UIRefPane) component), orgRef);
+					}
+				}
 			}
 		}
 	}
@@ -113,24 +164,29 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 	 * 
 	 * @param event
 	 */
-	private void fiterCostCenter(CriteriaChangedEvent event) {
-		List<IFilterEditor> filterList = ERMQueryActionHelper.getIFilterEditorList(event,
-				ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_RESACOSTCENTER);// 成本中心
-		if (filterList != null) {
-			JComponent[] components = ERMQueryActionHelper.getComps(filterList, false);
+	private void setPkPcorgFilter(CriteriaChangedEvent event) {
+		UIRefPane pcorg = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+				ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG, false);
+		filterChildrenByOrg(event, pcorg, new String[] {
+				ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_RESACOSTCENTER,
+				ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_CHECKELE });
+	}
 
-			if (components != null && components.length > 0) {
-
-				for (JComponent commont : components) {
-					if (commont instanceof UIRefPane) {
-						UIRefPane refpane = (UIRefPane) commont;
-						if (refpane.getRefModel() != null) {
-							try {
-								refpane.getRefModel().addWherePart(
-										" and " + SqlUtils.getInStr("pk_financeorg", pk_orgs, false));
-							} catch (BusinessException e) {
-								ExceptionHandler.consume(e);
-							}
+	/**
+	 * 过滤关联档案的pk_org
+	 * 
+	 * @param event
+	 * @param orgRepane
+	 * @param childrenNames
+	 */
+	private void filterChildrenByOrg(CriteriaChangedEvent event, UIRefPane orgRepane, String[] childrenNames) {
+		if (childrenNames != null) {
+			for (String name : childrenNames) {
+				JComponent[] refs = ERMQueryActionHelper.getFiltComponentsForValueChanged(event, name, false);
+				if (refs != null && refs.length > 0) {
+					for (JComponent ref : refs) {
+						if (ref != null && ((UIRefPane) ref).getRefModel() != null) {
+							setRefpaneFilter(((UIRefPane) ref), orgRepane);
 						}
 					}
 				}
@@ -138,6 +194,61 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 		}
 	}
 
+	/**
+	 * 处理利润中心相关字段
+	 * 
+	 * @param event
+	 */
+	private void setItemFilterBypcorg(CriteriaChangedEvent event) {
+		UIRefPane ref = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
+		UIRefPane pk_fwdwRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+				ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG, false);
+		setRefpaneFilter(ref, pk_fwdwRefPane);
+
+	}
+	
+	/**
+	 * 设置pk_org及 pk_orgs
+	 * @param ref
+	 * @param orgRefPane
+	 */
+	private void setRefpaneFilter(UIRefPane ref, UIRefPane orgRefPane) {
+		if (orgRefPane == null || (orgRefPane != null && orgRefPane.getRefPKs() == null)) {
+			ref.setMultiOrgSelected(true);
+			ref.setMultiCorpRef(true);
+
+			if (key.indexOf(".") > 0) {
+				key = key.split("[.]")[1];
+			}
+
+			if (AggMatterAppVO.getApplyOrgHeadIterms().contains(key)) {
+				ref.setMultiRefFilterPKs(getFuncSubInfo().getFuncPermissionPkorgs());
+			}
+		} else if (orgRefPane != null && orgRefPane.getRefPKs() != null && orgRefPane.getRefPKs().length == 1) {
+			ref.setMultiOrgSelected(false);
+			ref.setMultiCorpRef(false);
+			ref.setMultiSelectedEnabled(true);
+			ref.setPk_org(orgRefPane.getRefPK());
+
+			if ("pk_fundplan".equals(ref.getRefModel().getPkFieldCode())) {
+				ref.getRefModel().addWherePart(" and inoutdirect = '1' ", false);
+			}
+		} else if (orgRefPane != null && orgRefPane.getRefPKs() != null && orgRefPane.getRefPKs().length > 1) {
+			ref.setMultiOrgSelected(true);
+			ref.setMultiCorpRef(true);
+			ref.setMultiRefFilterPKs(orgRefPane.getRefPKs());
+			ref.setPk_org(orgRefPane.getRefPK());
+
+			if ("pk_fundplan".equals(ref.getRefModel().getPkFieldCode())) {
+				ref.getRefModel().addWherePart(" and inoutdirect = '1' ", false);
+			}
+		}
+	}
+	
+	/**
+	 * 表头财务组织过滤
+	 * @param orgevent
+	 */
 	private void setPkOrgFilter(CriteriaChangedEvent orgevent) {
 		UIRefPane orgRef = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(orgevent,
 				MatterAppVO.PK_ORG, false);
@@ -149,70 +260,47 @@ public class MatterQueryActionListener implements ICriteriaChangedListener {
 		String[] pk_orgs = orgRef.getRefPKs();
 
 		if (pk_orgs == null || pk_orgs.length == 0) {// 如果没有选择主组织，则取用户分配组织的基本档案数据
-			pk_orgs = getModel().getContext().getPkorgs();
+			pk_orgs = getFuncSubInfo().getFuncPermissionPkorgs();
 		}
 
-		this.pk_orgs = pk_orgs;
-		setOrgFilter(orgevent);
-	}
-
-	private void setOrgFilter(CriteriaChangedEvent orgevent) {
 		String[] headItems = AggMatterAppVO.getApplyOrgHeadIterms().toArray(new String[] {});
-		for (int i = 0; i < headItems.length; i++) {
-			JComponent[] components = ERMQueryActionHelper.getFiltComponentsForValueChanged(orgevent, headItems[i],
-					false);
 
-			if (components != null && components.length > 0) {
-				for (JComponent component : components) {
-					if (component instanceof UIRefPane) {
-						setRefpaneFilter((UIRefPane) component);
-					}
-				}
-			}
-		}
-
-		// 表体明细过滤pk_org
-		List<String> bodyItems = AggMatterAppVO.getApplyOrgBodyIterms();
-		for (int i = 0; i < bodyItems.size(); i++) {
-			JComponent[] components = ERMQueryActionHelper.getFiltComponentsForValueChanged(orgevent,
-					ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + bodyItems.get(i), false);
-			if (components != null && components.length > 0) {
-				for (JComponent component : components) {
-					if (component instanceof UIRefPane) {
-						setRefpaneFilter((UIRefPane) component);
-					}
-				}
-			}
-		}
+		filterChildrenByOrg(orgevent, orgRef, headItems);
 	}
-
+	
 	/**
 	 * 设置
 	 * 
 	 * @param ref
 	 */
-	private void setRefpaneFilter(UIRefPane ref) {
-		if (ref == null) {
+	private void initRefpaneFilter(CriteriaChangedEvent event, UIRefPane ref) {
+		if (ref == null || event == null) {
 			return;
 		}
 
-		if (this.pk_orgs == null) {
-			this.pk_orgs = getModel().getContext().getPkorgs();
+		boolean isBody = false;
+		String key = event.getFieldCode();
+
+		if (key.indexOf(".") > 0) {
+			key = key.split("[.]")[1];
+			isBody = true;
 		}
 
-		if (pk_orgs == null || pk_orgs.length == 0) {
-			return;
-		}
+		UIRefPane orgRefPane = null;
+		if (AggMatterAppVO.getBodyAssumeOrgBodyIterms().contains(key) && isBody) {
+			orgRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+					ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.ASSUME_ORG, false);
 
-		if (pk_orgs != null && pk_orgs.length > 1) {
-			ref.setMultiOrgSelected(true);
-			ref.setMultiCorpRef(true);
-		} else {
-			ref.setMultiOrgSelected(false);
-			ref.setMultiCorpRef(false);
+		} else if (AggMatterAppVO.getApplyOrgHeadIterms().contains(key)) {
+			orgRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event, MatterAppVO.PK_ORG,
+					false);
+		} else if (key.equalsIgnoreCase(MtAppDetailVO.PK_CHECKELE)
+				|| key.equalsIgnoreCase(MtAppDetailVO.PK_RESACOSTCENTER)) {
+			orgRefPane = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(event,
+					ErmMatterAppConst.MatterApp_MDCODE_DETAIL + "." + MtAppDetailVO.PK_PCORG, false);
 		}
-		ref.setPk_org(pk_orgs[0]);
-		ref.setMultiRefFilterPKs(pk_orgs);
+		
+		setRefpaneFilter(ref, orgRefPane);
 	}
 
 	public AbstractUIAppModel getModel() {

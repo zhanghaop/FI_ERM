@@ -78,7 +78,6 @@ public class CsBillCriteriaChangedListener implements ICriteriaChangedListener {
 				ERMQueryActionHelper.setPk(event, pk_org, false);
 			} else if (JKBXHeaderVO.FYDEPTID.equals(event.getFieldCode())
 					|| JKBXHeaderVO.SZXMID.equals(event.getFieldCode())
-					|| JKBXHeaderVO.PK_RESACOSTCENTER.equals(event.getFieldCode())
 					|| JKBXHeaderVO.JOBID.equals(event.getFieldCode())
 					|| JKBXHeaderVO.HBBM.equals(event.getFieldCode())
 					|| JKBXHeaderVO.CUSTOMER.equals(event.getFieldCode())) {
@@ -98,7 +97,8 @@ public class CsBillCriteriaChangedListener implements ICriteriaChangedListener {
 				setItemFilterBypayorg(event);
 			} else if (JKBXHeaderVO.PK_PCORG.equals(event.getFieldCode())) {
 				ERMQueryActionHelper.setPk(event, pk_org, false);
-			} else if (JKBXHeaderVO.PK_CHECKELE.equals(event.getFieldCode())) {
+			} else if (JKBXHeaderVO.PK_CHECKELE.equals(event.getFieldCode())||
+					 JKBXHeaderVO.PK_RESACOSTCENTER.equals(event.getFieldCode())) {
 				setItemFilterBypcorg(event);
 			}
 			//处理自定义字段
@@ -234,7 +234,7 @@ public class CsBillCriteriaChangedListener implements ICriteriaChangedListener {
 	}
 
 	private void setpcorgFilter(CriteriaChangedEvent pcorgevent) {
-		String[] headItems = new String[] { JKBXHeaderVO.PK_CHECKELE };
+		String[] headItems = new String[] { JKBXHeaderVO.PK_RESACOSTCENTER,JKBXHeaderVO.PK_CHECKELE };
 		UIRefPane pcorg = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(pcorgevent,
 				JKBXHeaderVO.PK_PCORG, false);
 		setItemByorg(pcorgevent, headItems, pcorg);
@@ -260,7 +260,7 @@ public class CsBillCriteriaChangedListener implements ICriteriaChangedListener {
 	}
 
 	private void setFydwFilter(CriteriaChangedEvent fydwevent) {
-		String[] headItems = new String[] { JKBXHeaderVO.PK_RESACOSTCENTER, JKBXHeaderVO.FYDEPTID,
+		String[] headItems = new String[] {JKBXHeaderVO.FYDEPTID,
 				JKBXHeaderVO.FYDEPTID_V, JKBXHeaderVO.SZXMID, JKBXHeaderVO.HBBM, JKBXHeaderVO.JOBID,
 				JKBXHeaderVO.CUSTOMER };
 		UIRefPane fydw = (UIRefPane) ERMQueryActionHelper.getFiltComponentForValueChanged(fydwevent,

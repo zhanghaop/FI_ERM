@@ -6,6 +6,8 @@ import java.util.List;
 
 import nc.bs.erm.accountage.AccountAgeAnalyzerFactory;
 import nc.bs.erm.accountage.IAccountAgeAna;
+import nc.bs.erm.pub.ErmReportUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.itf.erm.accountageana.ILoanAccountAgeAnalyzeBO;
 import nc.itf.erm.report.IErmReportConstants;
@@ -13,6 +15,7 @@ import nc.itf.fipub.report.IPubReportConstants;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.LoanAgeAnalyzeDataProvider;
 import nc.utils.fipub.ReportMultiVersionSetter;
 import nc.utils.fipub.SmartProcessor;
@@ -49,8 +52,12 @@ public class LoanAccountAgeAnalyzeBOImpl implements ILoanAccountAgeAnalyzeBO {
 						.getRepInitContext().getParentVO()).getReporttype());
 
 		try {
+            PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+            select.setWhere(null);
 			MemoryResultSet resultSet = analyzer.getAccountAgeAnaResult(queryVO);
 
+            //转换币种
+            ErUtil.convertCurrtype(resultSet, queryVO);
 			// 插入【币种】名称
 			PubCommonReportMethod.insertNameColumn(resultSet, IPubReportConstants.CURRTYPE, "pk_currtype", "currtype");
 			// 插入【交易类型】名称
@@ -74,6 +81,7 @@ public class LoanAccountAgeAnalyzeBOImpl implements ILoanAccountAgeAnalyzeBO {
 			datas = PubCommonReportMethod.setVSeq(datas, resultDataSet.getMetaData().getIndex(IPubReportConstants.ORDER_MANAGE_VSEQ));
 
 			resultDataSet.setDatas(datas);
+            ErmReportUtil.processDataSet(context, resultDataSet, ErmReportUtil.REPEAT_STEP_TWO);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0051")/*@res "账龄分析查询出错："*/;
 			Logger.error(errMsg, e);
@@ -146,11 +154,11 @@ public class LoanAccountAgeAnalyzeBOImpl implements ILoanAccountAgeAnalyzeBO {
 						dataRow[qryObjIndex.get(j) - 1] = "";
 						dataRow[qryObjNameIndex.get(j) - 1] = "";
 					}
-					dataRow[orgIndex - 1] = "";
-				} else if (isMultiOrg && (dataRow[orgIndex - 1] != null && !"".equals(dataRow[orgIndex - 1]))) {
-					dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
-					isObj = true;
-                    dataRow[qryObjIndex.get(0)] = IErmReportConstants.getCONST_AGG_TOTAL(); // 合计
+//					dataRow[orgIndex - 1] = "";
+				} else if (isMultiOrg && (dataRow[orgIndex - 1] == null || "".equals(dataRow[orgIndex - 1]))) {
+//					dataRow[orgIndex - 1] = dataRow[orgIndex - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
+//					isObj = true;
+                    dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
 				} else{
 					dataRow[qryObjIndex.get(0)] = IErmReportConstants.getCONST_AGG_TOTAL(); // 合计
 				}

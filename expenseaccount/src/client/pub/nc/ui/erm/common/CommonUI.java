@@ -414,7 +414,14 @@ public abstract class CommonUI extends ToftPanel implements CommonModelListener 
 			} else if (bo == btnRef) {
 				initData();
 			}
-			showHintMessage(ButtonUtil.getButtonHintMsg(ButtonUtil.MSG_TYPE_SUCCESS,bo));
+			if (bo == btnCard) {
+				showHintMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000939")/*
+																												 * @res
+																												 * "ÇÐ»»³É¹¦"
+																												 */);
+			}else{
+				showHintMessage(ButtonUtil.getButtonHintMsg(ButtonUtil.MSG_TYPE_SUCCESS,bo));
+			}
 		} catch (Exception e) {
 			BXUiUtil.showUif2DetailMessage(this, ButtonUtil.getButtonHintMsg(-1,bo), e);
 		}

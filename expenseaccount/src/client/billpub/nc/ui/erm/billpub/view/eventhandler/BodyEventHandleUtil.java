@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import nc.itf.fi.pub.Currency;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.er.util.BXUiUtil;
@@ -27,7 +29,6 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
-import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 /**
@@ -40,7 +41,6 @@ public class BodyEventHandleUtil {
 	private ErmBillBillForm editor = null;
 
 	public BodyEventHandleUtil(ErmBillBillForm editor) {
-		super();
 		this.editor = editor;
 	}
 
@@ -92,7 +92,7 @@ public class BodyEventHandleUtil {
 			bzbm = getHeadValue(JKBXHeaderVO.BZBM).toString();
 		}
 		// 财务组织不为空时，再去根据原币计算本币，否则本币不计算。
-		if (getHeadValue(JKBXHeaderVO.PK_ORG) != null && bzbm != null) {
+		if (getHeadValue(JKBXHeaderVO.PK_ORG) != null) {
 			transFinYbjeToBbje(row, bzbm);
 		}
 	}
@@ -164,30 +164,45 @@ public class BodyEventHandleUtil {
 			 * @param amout: 原币金额 localAmount: 本币金额 currtype: 币种 data:日期  pk_org：组织
 			 * @return 全局或者集团的本币 money
 			 */
-			UFDouble[] je = Currency.computeYFB(getPk_org(),
-					Currency.Change_YBCurr, bzbm, ybje, null, null, null, hl,
+			// 需要将集团本币和全局本币设置到界面上
+			UFDouble[] je = Currency.computeYFB(getPk_org(),Currency.Change_YBCurr, bzbm, ybje, null, null, null, hl,
 					BXUiUtil.getSysdate());
-			UFDouble[] money = Currency.computeGroupGlobalAmount(je[0], je[2],
-					bzbm, BXUiUtil.getSysdate(), getBillCardPanel()
-							.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject()
-							.toString(), getBillCardPanel().getHeadItem(
+			UFDouble[] money = Currency.computeGroupGlobalAmount(je[0], je[2],bzbm, BXUiUtil.getSysdate(), getBillCardPanel()
+							.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel().getHeadItem(
 							JKBXHeaderVO.PK_GROUP).getValueObject().toString(),
 					globalhl, grouphl);
-			panel.getBillModel().setValueAt(money[0], row,
-					JKBXHeaderVO.GROUPBBJE);
-			panel.getBillModel().setValueAt(money[0], row,
-					JKBXHeaderVO.GROUPBBYE);
+			panel.getBillModel().setValueAt(money[0], row,JKBXHeaderVO.GROUPBBJE);
+			panel.getBillModel().setValueAt(money[1], row,JKBXHeaderVO.GLOBALBBJE);
+			panel.getBillModel().setValueAt(money[0], row,JKBXHeaderVO.GROUPBBYE);
+			panel.getBillModel().setValueAt(money[1], row,JKBXHeaderVO.GLOBALBBYE);
 			
-			panel.getBillModel().setValueAt(money[1], row,
-					JKBXHeaderVO.GLOBALBBJE);
-			panel.getBillModel().setValueAt(money[1], row,
-					JKBXHeaderVO.GLOBALBBYE);
-			//需要将集团支付本币和全局支付本币设置到界面上
-			panel.getBillModel().setValueAt(money[0], row,
-					JKBXHeaderVO.GROUPZFBBJE);
-			panel.getBillModel().setValueAt(money[1], row,
-					JKBXHeaderVO.GLOBALZFBBJE);
+			// 需要将集团支付本币和全局支付本币设置到界面上
+			je = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr, bzbm, zfybje, null, null, null, hl,
+					BXUiUtil.getSysdate());
+			money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+					getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel()
+							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
 
+			panel.getBillModel().setValueAt(money[0], row, JKBXHeaderVO.GROUPZFBBJE);
+			panel.getBillModel().setValueAt(money[1], row, JKBXHeaderVO.GLOBALZFBBJE);
+			// 需要将集团冲借款本币和全局冲借款本币设置到界面上
+			je = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr, bzbm, cjkybje, null, null, null, hl,
+					BXUiUtil.getSysdate());
+			money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+					getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel()
+							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
+
+			panel.getBillModel().setValueAt(money[0], row, JKBXHeaderVO.GROUPCJKBBJE);
+			panel.getBillModel().setValueAt(money[1], row, JKBXHeaderVO.GLOBALCJKBBJE);
+			// 需要将集团还款本币和全局还款本币设置到界面上
+			je = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr, bzbm, hkybje, null, null, null, hl,
+					BXUiUtil.getSysdate());
+			money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(),
+					getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel()
+							.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalhl, grouphl);
+
+			panel.getBillModel().setValueAt(money[0], row, JKBXHeaderVO.GROUPHKBBJE);
+			panel.getBillModel().setValueAt(money[1], row, JKBXHeaderVO.GLOBALHKBBJE);
 		} catch (BusinessException e) {
 			ExceptionHandler.handleExceptionRuntime(e);
 		}
@@ -246,27 +261,7 @@ public class BodyEventHandleUtil {
 	 * @return
 	 */
 	public String getUserdefine(int pos, String key, int def) {
-		if (getBillCardPanel().getBillData().getBillTempletVO() == null
-				|| getBillCardPanel().getBillData().getBillTempletVO()
-						.getChildrenVO() == null) {
-			return null;
-		}
-		BillTempletBodyVO[] tbodyvos = (BillTempletBodyVO[]) getBillCardPanel()
-				.getBillData().getBillTempletVO().getChildrenVO();
-		for (BillTempletBodyVO bodyvo : tbodyvos) {
-			if((pos==0 && bodyvo.getItemkey().equals(key))
-					||
-					(bodyvo.getPos() == pos && bodyvo.getItemkey().equals(key)
-					&& bodyvo.getTableCode().equals(getBillCardPanel().getCurrentBodyTableCode()))){
-				if (def == 1)
-					return bodyvo.getUserdefine1();
-				else if (def == 2)
-					return bodyvo.getUserdefine2();
-				else if (def == 3)
-					return bodyvo.getUserdefine3();
-			}
-		}
-		return null;
+		return BXUiUtil.getUserdefine(pos, key, def, getBillCardPanel());
 	}
 
 	public void doFormulaAction(String formula, String skey, int srow,
@@ -507,9 +502,9 @@ public class BodyEventHandleUtil {
 	}
 
 	public String getPk_org() {
-		if (!editor.isShowing()) {
+		if (!editor.isVisible()) {
 			return null;
-		} else if (editor.isShowing()) {
+		} else if (editor.isVisible()) {
 			// 卡片界面取表头组织
 			return (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG)
 					.getValueObject();
@@ -548,7 +543,8 @@ public class BodyEventHandleUtil {
 	}
 	
 	public UIRefPane getBodyItemUIRefPane(final String tableCode, final String key) {
-		return (UIRefPane) getBillCardPanel().getBodyItem(tableCode, key).getComponent();
+		JComponent component = getBillCardPanel().getBodyItem(tableCode, key).getComponent();
+		return component instanceof UIRefPane ?(UIRefPane) component : null;
 	}
 	
 	protected void setHeadValue(String key, Object value) {

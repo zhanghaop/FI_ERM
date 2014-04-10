@@ -6,6 +6,8 @@ import nc.ui.fipub.crossrule.CrossCheckBeforeUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.workflow.config.ConfigAgent;
 import nc.vo.ep.bx.BusiTypeVO;
+import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 /**
  * 交叉校验 
@@ -47,6 +49,10 @@ public class ERMCrossCheckUtil {
 			pk_orgField = orgFields[2];
 		} else {
 			pk_orgField = orgFields[3];
+		}
+		//对于集团级档案不关联组织时，需要特殊处理一下
+		if(StringUtil.isEmpty(pk_orgField.trim())){
+			pk_orgField = JKBXHeaderVO.PK_ORG;
 		}
 		
 		CrossCheckBeforeUtil util = new CrossCheckBeforeUtil(editor.getBillCardPanel(), currentBillTypeCode);

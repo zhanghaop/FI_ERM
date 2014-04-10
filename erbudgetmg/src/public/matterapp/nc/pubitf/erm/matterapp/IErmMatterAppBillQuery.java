@@ -45,6 +45,17 @@ public interface IErmMatterAppBillQuery {
 	public AggMatterAppVO[] queryBillFromMtapp(String condition,String djlxbm,String pk_org,String pk_psndoc) throws BusinessException;
 	
 	/**
+	 * 按照申请人过滤，查询可拉申请单
+	 * @param condition
+	 * @param djlxbm
+	 * @param pk_org
+	 * @param pk_psndoc
+	 * @return
+	 * @throws BusinessException
+	 */
+	public AggMatterAppVO[] queryBillFromMtappByPsn(String condition,String djlxbm,String pk_org,String pk_psndoc,String rolerSql) throws BusinessException;
+	
+	/**
 	 * 拉单查询VO集合
 	 * @param condition
 	 * @return

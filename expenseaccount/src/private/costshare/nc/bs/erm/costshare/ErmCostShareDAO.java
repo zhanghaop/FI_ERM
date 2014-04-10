@@ -3,7 +3,6 @@ package nc.bs.erm.costshare;
 import nc.bs.dao.BaseDAO;
 import nc.bs.erm.util.ErMdpersistUtil;
 import nc.md.data.access.NCObject;
-import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.IMDPersistenceService;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.vo.erm.costshare.AggCostShareVO;
@@ -28,14 +27,6 @@ public class ErmCostShareDAO {
 		}
 		return service;
 	}
-	private IMDPersistenceQueryService qryservice;
-	
-	private IMDPersistenceQueryService getQryService() {
-		if (qryservice == null) {
-			qryservice = MDPersistenceService.lookupPersistenceQueryService();
-		}
-		return qryservice;
-	}
 
 	private BaseDAO basedao;
 
@@ -48,8 +39,10 @@ public class ErmCostShareDAO {
 
 	public AggCostShareVO insertVO(AggCostShareVO vo) throws BusinessException {
 		vo.getParentVO().setStatus(VOStatus.NEW);
-		String pk = getService().saveBill(vo);
-		return getQryService().queryBillOfVOByPK(AggCostShareVO.class, pk, false);
+//		String pk = 
+			getService().saveBill(vo);
+//		return getQryService().queryBillOfVOByPK(AggCostShareVO.class, pk, false);
+		return vo;
 	}
 
 	public void deleteVOs(AggCostShareVO[] vos) throws BusinessException {
@@ -72,8 +65,10 @@ public class ErmCostShareDAO {
 	 */
 	public AggCostShareVO updateVO(AggCostShareVO vo) throws BusinessException {
 		vo.getParentVO().setStatus(VOStatus.UPDATED);
-		String pk = getService().saveBillWithRealDelete(vo);
-		return getQryService().queryBillOfVOByPK(AggCostShareVO.class, pk, false);
+//		String pk = 
+			getService().saveBillWithRealDelete(vo);
+//		return getQryService().queryBillOfVOByPK(AggCostShareVO.class, pk, false);
+		return vo;
 	}
 
 	/**

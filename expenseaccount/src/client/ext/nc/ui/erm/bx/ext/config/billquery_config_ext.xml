@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	
+	<!-- 预算执行情况 -->
+ 	<bean id="linkysaction" class="nc.ui.erm.bx.ext.action.BXLinkYsActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+		 	<!-- 联查凭证 -->
+ 	<bean id="linkvouaction" class="nc.ui.erm.bx.ext.action.BXLinkVoucherActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+</beans>

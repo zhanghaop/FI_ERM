@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="GBK"?>
+   <billtypes>
+    <billtype code="mactrlbill">
+    	<parentitems> 
+			<billitem itemkey="263X" />
+			<billitem itemkey="264X" />
+		</parentitems>
+		<excludeitems> 
+			<billitem itemkey="2647" />
+		</excludeitems>  
+		<items> 
+		</items>
+    </billtype>
+    <billtype code="fieldcontrast_sharestate">
+    	<parentitems> 
+			<billitem itemkey="264X" />
+			<billitem itemkey="265X" />
+			<billitem itemkey="261X" />
+		</parentitems>
+		<excludeitems> 
+			<billitem itemkey="2647" />
+		</excludeitems>  
+		<items> 
+		</items>
+    </billtype>
+    <billtype code="billcontrast_src">
+    	<parentitems> 
+			<billitem itemkey="264X" />
+		</parentitems>
+		<excludeitems> 
+			<billitem itemkey="2647" />
+		</excludeitems>  
+		<items> 
+		</items>
+    </billtype> 
+    <billtype code="billcontrast_des">
+    	<parentitems> 
+			<billitem itemkey="265X" />
+		</parentitems>
+		<excludeitems> 
+		</excludeitems>  
+		<items> 
+		</items>
+    </billtype>    
+ </billtypes>

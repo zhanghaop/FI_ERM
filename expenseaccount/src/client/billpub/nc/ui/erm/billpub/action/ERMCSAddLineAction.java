@@ -14,8 +14,7 @@ public class ERMCSAddLineAction extends ERMAddLineAction {
 
 	@Override
 	protected boolean isActionEnable() {
-		return (getModel().getUiState() == UIState.ADD || getModel()
-				.getUiState() == UIState.EDIT);
+		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT);
 	}
 
 	@Override

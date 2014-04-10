@@ -7,7 +7,6 @@ import java.util.List;
 
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.pub.IBXBillPublic;
-import nc.pubitf.erm.erminit.IErminitQueryService;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
@@ -23,7 +22,6 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.check.VOStatusChecker;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.termendtransact.DataValidateException;
-import nc.vo.erm.util.VOUtils;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
@@ -31,7 +29,11 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 
 import org.apache.commons.lang.ArrayUtils;
-
+/**
+ * 
+ * @author wangled
+ *
+ */
 public class ERMBillDeleteAction extends DeleteAction {
 	private static final long serialVersionUID = 1L;
 	private ErmBillBillForm editor;
@@ -54,8 +56,7 @@ public class ERMBillDeleteAction extends DeleteAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 
-		Object[] obj = (Object[]) ((BillManageModel) getModel())
-				.getSelectedOperaDatas();
+		Object[] obj = (Object[]) ((BillManageModel) getModel()).getSelectedOperaDatas();
 		if (ArrayUtils.isEmpty(obj))
 		    throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.
 		            getNCLangRes().getStrByID("201107_0","0201107-0137"));
@@ -67,20 +68,55 @@ public class ERMBillDeleteAction extends DeleteAction {
 			vo.setNCClient(true);//是从NC客户端
 		}
 		
+		// 对于常用单据处理
 		if (((ErmBillBillManageModel) getModel()).iscydj()) {
-			// 对于常用单据校验
+			
 			checkCommonBill(vos);
 			
 			MessageVO[] msgs = deleteVos(vos, msgStr, isSuccess);
 			ErUiUtil.showBatchResults(getModel().getContext(), msgs);
-//		}else if(((ErmBillBillManageModel) getModel()).isInit()){
-//			// 对于期初时要特殊处理在initdeleteAction
-//			handleQCBill(msgStr, isSuccess, vos);
-//		}
 		}else {
 		    //删除借款报销单
 			handleJKBXbill(msgStr, isSuccess, vos);
 		}
+	}
+	
+	
+	/**
+	 * 处理常用单据和暂存的单据
+	 * @param vos
+	 * @param msgStr
+	 * @param isSuccess
+	 * @return
+	 * @throws Exception
+	 */
+	private MessageVO[] deleteVos(JKBXVO[] vos, String msgStr, boolean isSuccess)
+			throws Exception {
+		MessageVO[] msgs = new MessageVO[vos.length];
+		for (int i = 0; i < vos.length; i++) {
+			msgs[i] = new MessageVO(vos[i], ActionUtils.DELETE);
+		}
+		try{
+			MessageVO[] returnMsg = NCLocator.getInstance().lookup(IBXBillPublic.class).deleteBills(vos);
+			for (int i = 0; i < returnMsg.length; i++) {
+				if (returnMsg[i].isSuccess()) {
+					((BillManageModel) getModel()).directlyDelete(returnMsg[i].getSuccessVO());
+				} 
+			}
+			ErUiUtil.combineMsgs(msgs, returnMsg);
+		}catch (Exception e) {
+			ExceptionHandler.consume(e);
+			List<MessageVO> failMesVO=new ArrayList<MessageVO>();
+			for (MessageVO messageVO : msgs) {
+				String errMsg = e.getMessage();
+				failMesVO.add(new MessageVO(messageVO.getSuccessVO(), ActionUtils.DELETE, false, errMsg));
+				
+			}
+			return failMesVO.toArray(new MessageVO[0]);
+		}
+
+		return msgs;
+
 	}
 
 	private void handleJKBXbill(String msgStr, boolean isSuccess, JKBXVO[] vos) throws Exception {
@@ -130,52 +166,7 @@ public class ERMBillDeleteAction extends DeleteAction {
 		}
 		return result.toArray(new MessageVO[0]);
 	}
-
-	@SuppressWarnings("unused")
-	private void handleQCBill(String msgStr, boolean isSuccess, JKBXVO[] vos)
-			throws BusinessException, Exception {
-		String[] orgs = VOUtils.getAttributeValues(vos,
-				JKBXHeaderVO.PK_ORG);
-
-		String[] closedOrgs = NCLocator.getInstance().lookup(
-				IErminitQueryService.class).queryStatusByOrgs(orgs);
-		if (ArrayUtils.isEmpty(closedOrgs)) {
-			closedOrgs = new String[0];
-		}
-		List<JKBXVO> handleVOList = new ArrayList<JKBXVO>();
-		StringBuffer msg = new StringBuffer();
-		for (JKBXVO vo : vos) {
-			
-			List<String> closedOrgList = Arrays.asList(closedOrgs);
-			if (closedOrgList.contains(vo.getParentVO().getPk_org())) {
-				// 组织关闭的处理
-				msg.append("[" + vo.getParentVO().djbh + "]");
-			} else {
-				handleVOList.add(vo);
-			}
-		}
-		if (msg.length() != 0) {
-			msgStr = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-					.getStrByID("201107_0", "0201107-0055")/** @res* "单据号:"*/
-					+ msg.toString()
-					+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-							.getStrByID("201107_0", "0201107-0056")/*
-																	 * @res
-																	 * " 组织关闭，不能删除 \n"
-																	 */;
-			isSuccess = false;
-		}
-
-		if (handleVOList.size() > 0) {
-			deleteVos(handleVOList.toArray(new JKBXVO[0]), msgStr,
-					isSuccess);
-		}
-		
-		if (!isSuccess) {
-	            throw new BusinessException(msgStr);
-	   }
-	}
-
+	
 	/**
 	 *  对于常用单据处理
 	 * @param vos
@@ -201,61 +192,8 @@ public class ERMBillDeleteAction extends DeleteAction {
 			}
 		}
 	}
-	/**
-	 * 处理常用单据和暂存的单据
-	 * @param vos
-	 * @param msgStr
-	 * @param isSuccess
-	 * @return
-	 * @throws Exception
-	 */
-	private MessageVO[] deleteVos(JKBXVO[] vos, String msgStr, boolean isSuccess)
-			throws Exception {
-		MessageVO[] msgs = new MessageVO[vos.length];
-		for (int i = 0; i < vos.length; i++) {
-			msgs[i] = new MessageVO(vos[i], ActionUtils.DELETE);
-		}
-		try{
-			MessageVO[] returnMsg = NCLocator.getInstance().lookup(
-					IBXBillPublic.class).deleteBills(vos);
-			for (int i = 0; i < returnMsg.length; i++) {
-				if (returnMsg[i].isSuccess()) {
-					((BillManageModel) getModel()).directlyDelete(returnMsg[i].getSuccessVO());
-				} 
-			}
-			ErUiUtil.combineMsgs(msgs, returnMsg);
-		}catch (Exception e) {
-			ExceptionHandler.consume(e);
-			List<MessageVO> failMesVO=new ArrayList<MessageVO>();
-			for (MessageVO messageVO : msgs) {
-				String errMsg = e.getMessage();
-				failMesVO.add(new MessageVO(messageVO.getSuccessVO(), ActionUtils.DELETE, false, errMsg));
-				
-			}
-			return failMesVO.toArray(new MessageVO[0]);
-		}
 
-		return msgs;
 
-	}
-
-	@SuppressWarnings("unused")
-	private boolean isQCClose(JKBXHeaderVO head) {
-		if (head != null && head.getPk_org() != null) {
-			try {
-				boolean flag = NCLocator.getInstance().lookup(
-						IErminitQueryService.class).queryStatusByOrg(
-						head.getPk_org());
-				if (flag == true) {
-					return true;
-				}
-			} catch (BusinessException e) {
-				ExceptionHandler.handleRuntimeException(e);
-			}
-
-		}
-		return false;
-	}
 	
 	@Override
     public void doAfterSuccess(ActionEvent actionEvent) {

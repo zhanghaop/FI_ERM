@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.erm.common.ErmBillConst;
+import nc.bs.erm.pub.ErmReportUtil;
 import nc.bs.erm.sql.ExpDetailSQLCreator;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.itf.erm.pub.IExpDetailBO;
 import nc.itf.erm.report.IErmReportConstants;
@@ -17,6 +19,7 @@ import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.ExpDetailDataProvider;
 import nc.utils.fipub.FipubSqlExecuter;
 import nc.utils.fipub.ReportMultiVersionSetter;
@@ -61,6 +64,8 @@ public class ExpDetailBOImpl extends FipubSqlExecuter implements IExpDetailBO {
 		/****************************************************************/
 
 		try {
+            PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+            select.setWhere(null);
 			ExpDetailSQLCreator sqlCreator = new ExpDetailSQLCreator();
 			// 设置查询对象VO的内容
 			sqlCreator.setParams(queryVO);
@@ -76,6 +81,8 @@ public class ExpDetailBOImpl extends FipubSqlExecuter implements IExpDetailBO {
 			// 从临时表取得结果
 			MemoryResultSet resultSet = (MemoryResultSet) executeQuery(resultSql, getResultProcessor());
 
+            //转换币种
+            ErUtil.convertCurrtype(resultSet, queryVO);
 			// 插入【币种】名称
 			PubCommonReportMethod.insertNameColumn(resultSet, IPubReportConstants.CURRTYPE, "pk_currtype", "currtype");
 			// 插入【交易类型】名称
@@ -95,6 +102,7 @@ public class ExpDetailBOImpl extends FipubSqlExecuter implements IExpDetailBO {
 
 			// 设置返回结果数据集
 			resultDataSet.setDatas(datas);
+			ErmReportUtil.processDataSet(context, resultDataSet);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0053")/*@res "明细账查询出错！"*/;
 			Logger.error(errMsg, e);
@@ -138,7 +146,7 @@ public class ExpDetailBOImpl extends FipubSqlExecuter implements IExpDetailBO {
 		
 		int tallydateIndex = mrs.getColumnIndex(ExpenseAccountVO.BILLDATE);
 		int accperiod = mrs.getColumnIndex(ExpenseAccountVO.ACCPERIOD);
-		int briefIndex = mrs.getColumnIndex(ExpenseAccountVO.REASON);
+//		int briefIndex = mrs.getColumnIndex(ExpenseAccountVO.REASON);
 		//单据编号
 		int src_billnoI = mrs.getColumnIndex(ExpenseAccountVO.SRC_BILLNO);
 		int src_billtypeI = mrs.getColumnIndex("pk_billtype");
@@ -236,8 +244,8 @@ public class ExpDetailBOImpl extends FipubSqlExecuter implements IExpDetailBO {
 
 					if (!isObj && isMultiOrg && (dataRow[orgIndex - 1] == null
 							|| dataRow[orgIndex - 1].toString().length() == 0)) {
-						dataRow[briefIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
-						dataRow[orgIndex - 1] = "";
+//						dataRow[briefIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
+						dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
 						// 多组织、多币种清空金额字段信息
 						if (!isCurrtype) {
                             // 多币种清空金额字段信息

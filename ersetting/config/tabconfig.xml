@@ -17,25 +17,7 @@
     <table name="er_billcontrast" strategy="FULL" primaryKey="pk_billcontrast">
         <filterSql><![CDATA[]]></filterSql>
     </table>
-    <table name="sm_user_ex" strategy="FULL" primaryKey="CUSEXID">
+   <table name="er_extendconfig" strategy="FULL" primaryKey="pk_extendconfig">
         <filterSql><![CDATA[]]></filterSql>
-    </table>
-    <table name="bd_accperiodmonth" strategy="FULL" primaryKey="pk_accperiodmonth">
-        <column system="false" name="pk_accperiodmonth"/>
-        <column system="false" name="yearmth"/>
-        <column system="false" name="accperiodmth"/>
-        <column system="false" name="begindate"/>
-        <column system="false" name="beginmonth"/>
-        <column system="false" name="dataoriginflag"/>
-        <column system="false" name="dr"/>
-        <column system="false" name="enddate"/>
-        <column system="false" name="endmonth"/>
-        <column system="false" name="isadj"/>
-        <column system="false" name="pk_accperiod"/>
-        <column system="false" name="pk_accperiodscheme"/>
-        <column system="false" name="pk_org"/>
-        <column system="false" name="ts"/>
-        <filterSql><![CDATA[
-        ]]></filterSql>
     </table>
 </ns2:dbCacheConfig>

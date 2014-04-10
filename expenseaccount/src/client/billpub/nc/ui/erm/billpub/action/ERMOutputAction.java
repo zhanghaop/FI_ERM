@@ -14,22 +14,30 @@ public class ERMOutputAction extends OutputAction{
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public void doAction(ActionEvent e) throws Exception {
+	public void doAction(ActionEvent e){
 		JKBXVO vo = (JKBXVO) getModel().getSelectedData();
-		List<String> funnodes = Arrays.asList(BXConstans.JKBX_COMNODES);
-		if( funnodes.contains(getModel().getContext().getNodeCode())){
-			setNodeKey(vo.getParentVO().getDjlxbm());
-		}else{
-			String djdl = vo.getParentVO().getDjdl();
-			if(BXConstans.JK_DJDL.equals(djdl)){
-				setNodeKey(BXConstans.BILLTYPECODE_CLFJK);
-			}else{
-				setNodeKey(BXConstans.BILLTYPECODE_CLFBX);
+		try {
+			List<String> funnodes = Arrays.asList(BXConstans.JKBX_COMNODES);
+			if (funnodes.contains(getModel().getContext().getNodeCode())) {
+				setNodeKey(vo.getParentVO().getDjlxbm());
+			} else {
+				String djdl = vo.getParentVO().getDjdl();
+				if (BXConstans.JK_DJDL.equals(djdl)) {
+					setNodeKey(BXConstans.BILLTYPECODE_CLFJK);
+				} else {
+					setNodeKey(BXConstans.BILLTYPECODE_CLFBX);
+				}
 			}
+			PrintEntry entry = createPrintentry();
+			if (entry.selectTemplate() == 1)
+				entry.output();
+		} catch (Exception e1) {
+			//对于升级上来的自定义交易类型特殊处理
+			setNodeKey(null);
+			PrintEntry entry = createPrintentry();
+			if (entry.selectTemplate() == 1)
+				entry.output();
+
 		}
-		
-		PrintEntry entry = createPrintentry();
-		if(entry.selectTemplate() == 1)
-			entry.output();
 	}
 }

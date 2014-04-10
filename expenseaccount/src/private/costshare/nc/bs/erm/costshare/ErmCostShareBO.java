@@ -2,6 +2,7 @@ package nc.bs.erm.costshare;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +23,7 @@ import nc.itf.fi.pub.Currency;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.md.model.MetaDataException;
-import nc.md.persist.framework.IMDPersistenceQueryService;
-import nc.md.persist.framework.MDPersistenceService;
+import nc.pubitf.erm.costshare.IErmCostShareBillQuery;
 import nc.pubitf.fip.service.IFipMessageService;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -31,12 +31,14 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.transaction.DataValidateException;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.ep.bx.MtappfUtil;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.er.util.ErmBillCalUtil;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
+import nc.vo.erm.matterappctrl.MtapppfVO;
+import nc.vo.erm.util.VOUtils;
 import nc.vo.fip.service.FipMessageVO;
 import nc.vo.fip.service.FipRelationInfoVO;
 import nc.vo.fipub.billcode.FinanceBillCodeInfo;
@@ -44,6 +46,7 @@ import nc.vo.fipub.billcode.FinanceBillCodeUtils;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
+import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFDate;
@@ -108,6 +111,9 @@ public class ErmCostShareBO {
 			returnBillno(new AggCostShareVO[] { vo });
 			ExceptionHandler.handleException(e);
 		}
+		// 查询返回结果
+		IErmCostShareBillQuery qryservice = NCLocator.getInstance().lookup(IErmCostShareBillQuery.class);
+		result = qryservice.queryBillByPK(vo.getParentVO().getPrimaryKey());
 //		// 记录业务日志
 //		ErmBusiLogUtils.insertSmartBusiLogs(new AggCostShareVO[]{vo}, null, IErmCostShareConst.CS_MD_INSERT_OPER);
 		// 返回
@@ -208,8 +214,15 @@ public class ErmCostShareBO {
 		// 设置审计信息
 		AuditInfoUtil.updateData(parentVO);
 		// 查询修改前的vo
-		IMDPersistenceQueryService qryservice = MDPersistenceService.lookupPersistenceQueryService();
-		AggCostShareVO oldvo = qryservice.queryBillOfVOByPK(AggCostShareVO.class, parentVO.getPrimaryKey(), false);
+		IErmCostShareBillQuery qryservice = NCLocator.getInstance().lookup(IErmCostShareBillQuery.class);
+		AggCostShareVO oldvo = null;
+		if(vo.getOldvo() != null){
+			oldvo = vo.getOldvo();
+		}else{
+			oldvo = qryservice.queryBillByPK(parentVO.getPrimaryKey());
+		}
+		// 补充查询事前分摊拉单执行情况
+		fillUpMapf(oldvo);
 		// 修改前事件处理
 		fireBeforeUpdateEvent(vo,oldvo);
 		// 更新保存
@@ -218,10 +231,35 @@ public class ErmCostShareBO {
 		fireAfterUpdateEvent(vo,oldvo);
 		// 记录业务日志
 		BusiLogUtil.insertSmartBusiLog(IErmCostShareConst.CS_MD_UPDATE_OPER,new AggCostShareVO[]{vo}, new AggCostShareVO[]{oldvo});
+		// 查询返回结果
+		vo = qryservice.queryBillByPK(parentVO.getPrimaryKey());
 		// 返回
 		return vo;
 	}
 	
+	/**
+	 * 补充事前分摊情况申请执行记录
+	 * 
+	 * @param aggvo
+	 * @throws BusinessException
+	 */
+	private void fillUpMapf(AggCostShareVO... aggvos) throws BusinessException {
+		if(aggvos.length == 1){
+			MtapppfVO[] pfVos = MtappfUtil.getMaPfVosByCsVo(aggvos[0]);
+			aggvos[0].setMaPfVos(pfVos);
+		}else{
+			MtapppfVO[] pfVos = MtappfUtil.getMaPfVosByCsVo(aggvos);
+			if(pfVos != null && pfVos.length > 0){
+				Map<String, List<SuperVO>> bxPfMap = VOUtils.changeCollectionToMapList(Arrays.asList(pfVos), MtapppfVO.BUSI_PK);
+				for (int i = 0; i < aggvos.length; i++) {
+					String bxPK = ((CostShareVO)aggvos[i].getParentVO()).getSrc_id();
+					aggvos[i].setMaPfVos(bxPfMap.get(bxPK)==null?null:bxPfMap.get(bxPK).toArray(new MtapppfVO[0]));
+				}
+			}
+		}
+		
+	}
+
 	/**
 	 * 删除费用结转单（假批量）
 	 * @param vos
@@ -256,6 +294,8 @@ public class ErmCostShareBO {
 		// vo校验
 		CostShareVOChecker vochecker = new CostShareVOChecker();
 		vochecker.checkDelete(vos);
+		// 补充事前分摊拉单执行记录
+		fillUpMapf(vos);
 		// 删除前事件处理
 		fireBeforeDeleteEvent(vos);
 		// 删除单据
@@ -304,6 +344,8 @@ public class ErmCostShareBO {
 		// vo校验
 		CostShareVOChecker vochecker = new CostShareVOChecker();
 		vochecker.checkApprove(vos,buDate);
+		// 补充事前分摊拉单执行记录
+		fillUpMapf(vos);
 		// 审核前事件处理
 		fireBeforeApproveEvent(vos);
 		// 设置审核状态
@@ -383,6 +425,8 @@ public class ErmCostShareBO {
 		// vo校验
 		CostShareVOChecker vochecker = new CostShareVOChecker();
 		vochecker.checkunApprove(vos);
+		// 补充事前分摊拉单执行记录
+		fillUpMapf(vos);
 		// 取消审核前事件处理
 		fireBeforeUnApproveEvent(vos);
 		// 设置审核状态
@@ -603,46 +647,47 @@ public class ErmCostShareBO {
 				//setRateAmount(csvo, cr, i);
 			}
 		}
-	}
-	/**
-	 * 有前台来计算出来，不再后台处理了。
-	 * @param csvo
-	 * @param cr
-	 * @param i
-	 */
-	private void setRateAmount(CostShareVO csvo, CShareDetailVO[] cr, int i) {
-		// 计算表体本币金额
-		UFDouble hl = UFDouble.ZERO_DBL;
-		UFDouble grouphl = UFDouble.ZERO_DBL;
-		UFDouble globalhl = UFDouble.ZERO_DBL;
-		try {
-			String localCurry = Currency.getLocalCurrPK(cr[i].getAssume_org());
-			UFDouble[] rates = ErmBillCalUtil.getRate(csvo.getBzbm(), cr[i].getAssume_org(),
-					csvo.getPk_group(), csvo.getBilldate(), localCurry);
-			 hl = rates[0];
-			 grouphl = rates[1];
-			 globalhl = rates[2];
-			
-//			ratevalue = Currency.getRate(cr[i].getAssume_org(), cr[i]
-//					.getBzbm(), localCurry, csvo.getBilldate());
-		} catch (BusinessException e) {
-			Logger.error(e.getMessage(), e);
-		}
-		cr[i].setBbhl(hl);
-		// 本币金额=原币*汇率
-		cr[i].setBbje(cr[i].getAssume_amount().multiply(
-				hl, UFDouble.ROUND_HALF_UP));
 		
-		cr[i].setGroupbbhl(grouphl);
-		// 集团金额=原币*汇率
-		cr[i].setGroupbbje(cr[i].getAssume_amount().multiply(
-				grouphl, UFDouble.ROUND_HALF_UP));
-		
-		cr[i].setGlobalbbhl(globalhl);
-		// 全局金额=原币*汇率
-		cr[i].setGlobalbbje(cr[i].getAssume_amount().multiply(
-				globalhl, UFDouble.ROUND_HALF_UP));
 	}
+//	/**
+//	 * 有前台来计算出来，不再后台处理了。
+//	 * @param csvo
+//	 * @param cr
+//	 * @param i
+//	 */
+//	private void setRateAmount(CostShareVO csvo, CShareDetailVO[] cr, int i) {
+//		// 计算表体本币金额
+//		UFDouble hl = UFDouble.ZERO_DBL;
+//		UFDouble grouphl = UFDouble.ZERO_DBL;
+//		UFDouble globalhl = UFDouble.ZERO_DBL;
+//		try {
+//			String localCurry = Currency.getLocalCurrPK(cr[i].getAssume_org());
+//			UFDouble[] rates = ErmBillCalUtil.getRate(csvo.getBzbm(), cr[i].getAssume_org(),
+//					csvo.getPk_group(), csvo.getBilldate(), localCurry);
+//			 hl = rates[0];
+//			 grouphl = rates[1];
+//			 globalhl = rates[2];
+//			
+////			ratevalue = Currency.getRate(cr[i].getAssume_org(), cr[i]
+////					.getBzbm(), localCurry, csvo.getBilldate());
+//		} catch (BusinessException e) {
+//			Logger.error(e.getMessage(), e);
+//		}
+//		cr[i].setBbhl(hl);
+//		// 本币金额=原币*汇率
+//		cr[i].setBbje(cr[i].getAssume_amount().multiply(
+//				hl, UFDouble.ROUND_HALF_UP));
+//		
+//		cr[i].setGroupbbhl(grouphl);
+//		// 集团金额=原币*汇率
+//		cr[i].setGroupbbje(cr[i].getAssume_amount().multiply(
+//				grouphl, UFDouble.ROUND_HALF_UP));
+//		
+//		cr[i].setGlobalbbhl(globalhl);
+//		// 全局金额=原币*汇率
+//		cr[i].setGlobalbbje(cr[i].getAssume_amount().multiply(
+//				globalhl, UFDouble.ROUND_HALF_UP));
+//	}
 	
 //	private void setGroupRateAmount(CostShareVO csvo, CShareDetailVO[] cr, int i) {
 //		// 计算表体集团金额

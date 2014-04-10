@@ -3,11 +3,12 @@ package nc.ui.erm.matterapp.actions;
 import java.awt.event.ActionEvent;
 
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
-import nc.bs.erm.util.action.ErmActionConst;
+import nc.ui.erm.matterapp.common.MatterAppCopyEvent;
 import nc.ui.erm.matterapp.common.MatterAppUiUtil;
 import nc.ui.erm.matterapp.model.MAppModel;
 import nc.ui.erm.matterapp.view.MatterAppMNBillForm;
 import nc.ui.pub.bill.BillModel;
+import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
@@ -20,6 +21,7 @@ import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
+import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.pub.IBillStatus;
 
@@ -83,22 +85,44 @@ public class CopyAction extends NCAction {
 			//设置VO值
 			getBillForm().setValue(aggNewVo);
 			
-			//设置表体状态
-			BillModel bodyModel = ((BillForm) getBillForm()).getBillCardPanel()
-					.getBillModel();
+			//在用户未关联人员，复制他做的其他人的单据时，需设置
+			billForm.setEditable(true);
 			
-			for (int i = 0; i < bodyModel.getRowCount(); i++){
-				bodyModel.setRowState(i, BillModel.ADD);
+			//设置表体状态
+			BillTabVO[] allTabVos = ((BillForm) getBillForm()).getBillCardPanel().getBillData().getAllTabVos();
+			
+			for (BillTabVO billTabVO : allTabVos) {
+				BillModel bodyModel = ((BillForm) getBillForm()).getBillCardPanel()
+				.getBillModel(billTabVO.getTabcode());
+				
+				if(bodyModel != null){
+					for (int i = 0; i < bodyModel.getRowCount(); i++){
+						bodyModel.setRowState(i, BillModel.ADD);
+					}
+				}
+				
 			}
 			
 			billForm.setCurrencyRate();//汇率重算
+			billForm.resetCardBodyRate();//重算表体汇率
 			billForm.resetOrgAmount();//本币重算
 			billForm.setHeadRateBillFormEnable();//汇率是否可编辑
+			billForm.resetBodyMaxAmount();//表体最大报销金额重算
+			billForm.filtBillCardItem();//过滤界面数据
+			
 			
 			((BillForm) getBillForm()).getBillCardPanel().getBillData().setBillstatus(VOStatus.NEW);
 			//设置焦点
 			getBillForm().getBillCardPanel().transferFocusTo(0);
 		}
+		
+		BillScrollPane bsp = getBillForm().getBillCardPanel().getBodyPanel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL);
+		if(bsp!=null && bsp.getTable()!=null){
+			bsp.getTable().requestFocus();
+		}
+		
+		MatterAppCopyEvent event = new MatterAppCopyEvent(getBillForm().getBillCardPanel(), e.getClass().getName());
+		getModel().fireExtEvent(event);
 	}
 	
 	/**
@@ -175,7 +199,8 @@ public class CopyAction extends NCAction {
 					MatterAppVO.CLOSEDATE, MatterAppVO.PRINTER, MatterAppVO.PRINTDATE, MatterAppVO.CREATOR,
 					MatterAppVO.CREATIONTIME, MatterAppVO.EXE_AMOUNT, MatterAppVO.ORG_EXE_AMOUNT,
 					MatterAppVO.GROUP_EXE_AMOUNT, MatterAppVO.GLOBAL_EXE_AMOUNT, MatterAppVO.PRE_AMOUNT,
-					MatterAppVO.ORG_PRE_AMOUNT, MatterAppVO.GROUP_PRE_AMOUNT, MatterAppVO.GLOBAL_PRE_AMOUNT};
+					MatterAppVO.ORG_PRE_AMOUNT, MatterAppVO.GROUP_PRE_AMOUNT, MatterAppVO.GLOBAL_PRE_AMOUNT,
+					"ts"};
 		}
 		return parentFieldNotCopy;
 	}
@@ -187,7 +212,8 @@ public class CopyAction extends NCAction {
 					MtAppDetailVO.CLOSEDATE, MtAppDetailVO.EXE_AMOUNT, MtAppDetailVO.ORG_EXE_AMOUNT,
 					MtAppDetailVO.GROUP_EXE_AMOUNT, MtAppDetailVO.GLOBAL_EXE_AMOUNT, MtAppDetailVO.PK_MTAPP_DETAIL,
 					MtAppDetailVO.PRE_AMOUNT, MtAppDetailVO.ORG_PRE_AMOUNT, MtAppDetailVO.GROUP_PRE_AMOUNT,
-					MtAppDetailVO.GLOBAL_PRE_AMOUNT ,MtAppDetailVO.CLOSEDATE, MtAppDetailVO.CLOSEMAN};
+					MtAppDetailVO.GLOBAL_PRE_AMOUNT ,MtAppDetailVO.CLOSEDATE, MtAppDetailVO.CLOSEMAN,
+					MtAppDetailVO.ROWNO};
 		}
 		return childFieldNotCopy;
 	}
@@ -212,7 +238,11 @@ public class CopyAction extends NCAction {
 	
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = this.getBtnName() + ErmActionConst.FAIL_MSG;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
+				"2011000_0", null, "02011000-0040", null,
+				new String[] { this.getBtnName() })/*
+													 * @ res "{0}失败！"
+													 */;
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(null);

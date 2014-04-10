@@ -18,8 +18,8 @@ import nc.vo.pub.BusinessException;
 @SuppressWarnings("serial")
 public class AccessoryAction extends NCAction{
 	private BillManageModel model;
+	
 	public  AccessoryAction(){
-		super();
 		ActionInitializer.initializeAction(this, IActionCode.FILE);
 	}
 	public void showDocument() throws BusinessException {

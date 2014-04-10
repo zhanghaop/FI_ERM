@@ -9,10 +9,13 @@ import javax.swing.Action;
 
 import nc.bs.uif2.IActionCode;
 import nc.funcnode.ui.action.INCAction;
+import nc.ui.erm.model.ERMBillManageModel;
+import nc.ui.pub.bill.BillData;
 import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.pub.bill.IBillItem;
 import nc.ui.pub.bill.UITabbedPaneUI;
 import nc.ui.pub.bill.action.BillTableLineAction;
+import nc.ui.pubapp.uif2app.event.card.CardPanelLoadEvent;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.IFunNodeClosingListener;
 import nc.ui.uif2.components.AutoShowUpEventSource;
@@ -24,9 +27,11 @@ import nc.ui.uif2.components.TabbedPaneAwareCompnonetDelegate;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.AppEventConst;
 import nc.vo.pub.bill.BillTabVO;
+import nc.vo.pub.bill.BillTempletVO;
 
 import org.apache.commons.lang.ArrayUtils;
 
+@SuppressWarnings("restriction")
 public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, IAutoShowUpComponent {
 
 	private static final long serialVersionUID = 1L;
@@ -68,6 +73,12 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		// #############
 	}
 
+	
+	/**
+	 * 卡片事件处理扩展处理类
+	 */
+	private ErmCardPanelEventTransformer eventTransformer;
+	
 	public ERMBillForm() {
 		tabbedPaneAwareComponent = new TabbedPaneAwareCompnonetDelegate();
 		autoShowComponent = new AutoShowUpEventSource(this);
@@ -85,8 +96,37 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		}
 		
 		processPopupMenu();
+		
+		// 参考pubapp处理扩展事件，为了不影响原产品实现，处理扩展事件的model使用ERMBillManageModel的getAppModelExDelegate
+		// 派发扩展事件使用model的方法fireExtEvent
+		ERMBillManageModel ermmodel = (ERMBillManageModel) this.getModel();
+		eventTransformer = new ErmCardPanelEventTransformer(this.getBillCardPanel(), ermmodel);
+//		eventTransformer.setOrgBillEditListener(this);
+//		eventTransformer.setBillTabbedPaneTabChangeListener(tabChangeHandler);
+
+		// 派发界面初始化事件
+		CardPanelLoadEvent e = new CardPanelLoadEvent(this.getBillCardPanel());
+		ermmodel.fireExtEvent(e);
 	}
 
+	protected void setBillData(BillTempletVO template) {
+		
+		processTemplateVO(template);
+		BillData billdata = new BillData(template, getBillStatus());
+		processErmBillData(billdata);
+		if(getUserdefitemPreparator() != null)
+			getUserdefitemPreparator().prepareBillData(billdata);
+		processBillData(billdata);
+		billCardPanel.setBillData(billdata);
+	}
+	
+	/**
+	 * 扩展BillData
+	 * 
+	 * @param data
+	 */
+	protected void processErmBillData(BillData data) {}
+	
 	public boolean isShowOrgPanel() {
 		return showOrgPanel;
 	}
@@ -117,6 +157,10 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		super.handleEvent(event);
 		if (AppEventConst.SHOW_EDITOR.equals(event.getType())) {
 			showMeUp();
+		}
+		
+		 if (AppEventConst.UISTATE_CHANGED == event.getType()) {
+		    eventTransformer.getOldValueMap().clear();
 		}
 	}
 
@@ -232,4 +276,9 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		this.closingListener = closingListener;
 	}
 
+	public ErmCardPanelEventTransformer getEventTransformer() {
+		return eventTransformer;
+	}
+
 }
+

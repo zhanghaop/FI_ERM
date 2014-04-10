@@ -14,6 +14,7 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.util.StringUtils;
+import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
@@ -153,6 +154,7 @@ public class ErVOUtils {
 				vos[i].setPk_jkbx(parentVO.getPk_jkbx());
 				
 				//主表记录子表业务行pk，回写费用申请单使用
+				vos[i].setPk_mtapp_detail(item.getPk_mtapp_detail());
 				vos[i].setPk_busitem(item.getPk_busitem());
 				vos[i].setBx_busitemPK(item.getBx_busitemPK());
 				vos[i].setJk_busitemPK(item.getJk_busitemPK());
@@ -165,6 +167,63 @@ public class ErVOUtils {
 				//因为是clone，所以这里不再设置回去
 				if(vos[i].getShrq() == null){//生效可以去生效日期
 					vos[i].setShrq(parentVO.getJsrq() == null ? null : new UFDateTime(parentVO.getJsrq().getMillis()));
+				}
+			}
+			return vos;
+		}
+	}
+
+	/**
+	 * 报销单分摊明细行转换为headvo
+	 * 
+	 * @param vo
+	 * @return
+	 */
+	public static JKBXHeaderVO[] prepareCsharedetailToHeaderClone(JKBXVO vo) {
+		if (vo == null || vo.getParentVO() == null)
+			return new JKBXHeaderVO[]{};
+		
+		CShareDetailVO[] childrenVO = vo.getcShareDetailVo();
+		JKBXHeaderVO parentVO = vo.getParentVO();
+		if (childrenVO == null || childrenVO.length == 0) {
+			return new JKBXHeaderVO[]{(JKBXHeaderVO)parentVO.clone()};
+		} else {
+			JKBXHeaderVO[] vos=new JKBXHeaderVO[childrenVO.length];
+			for (int i = 0; i < vos.length; i++) {
+				vos[i]=(JKBXHeaderVO) parentVO.clone();
+				CShareDetailVO item = childrenVO[i];
+				//事项审批 关联表 arap_item_clb
+				JKBXHeaderVO jkbxHeaderVO = vos[i];
+				jkbxHeaderVO.setPk_jkbx(parentVO.getPk_jkbx());
+				jkbxHeaderVO.setPk_busitem(item.getPrimaryKey());
+				jkbxHeaderVO.setPk_mtapp_detail(item.getPk_mtapp_detail());
+				jkbxHeaderVO.setPreItemJe(jkbxHeaderVO.getItemJe());
+				// 固定字段对照转换
+				jkbxHeaderVO.setPk_busitem(item.getPk_cshare_detail());
+				jkbxHeaderVO.setPk_mtapp_detail(item.getPk_mtapp_detail());
+				jkbxHeaderVO.setFydwbm(item.getAssume_org());
+				jkbxHeaderVO.setFydeptid(item.getAssume_dept());
+				jkbxHeaderVO.setPk_pcorg(item.getPk_pcorg());
+				jkbxHeaderVO.setPk_checkele(item.getPk_checkele());
+				jkbxHeaderVO.setPk_resacostcenter(item.getPk_resacostcenter());
+				jkbxHeaderVO.setSzxmid(item.getPk_iobsclass());
+				jkbxHeaderVO.setJobid(item.getJobid());
+				jkbxHeaderVO.setProjecttask(item.getProjecttask());
+				jkbxHeaderVO.setCustomer(item.getCustomer());
+				jkbxHeaderVO.setHbbm(item.getHbbm());
+				jkbxHeaderVO.setYbje(item.getAssume_amount());
+				jkbxHeaderVO.setBbje(item.getBbje());
+				jkbxHeaderVO.setGroupbbje(item.getGroupbbje());
+				jkbxHeaderVO.setGlobalbbje(item.getGlobalbbje());
+				
+				// 自定义项对照转换
+				for (int j = 0; j < 30; j++) {
+					jkbxHeaderVO.setAttributeValue("zyx"+j, item.getAttributeValue("defitem"+j));
+				}
+				
+				//因为是clone，所以这里不再设置回去
+				if(jkbxHeaderVO.getShrq() == null){//生效可以去生效日期
+					jkbxHeaderVO.setShrq(parentVO.getJsrq() == null ? null : new UFDateTime(parentVO.getJsrq().getMillis()));
 				}
 			}
 			return vos;
@@ -186,7 +245,7 @@ public class ErVOUtils {
 		for(BxcontrastVO vo:contrasts){
 			JKBXHeaderVO head = (JKBXHeaderVO) jkdMap.get(vo.getPk_jkd()).clone();
 			
-			if(head.getQcbz()!=null && head.getQcbz().booleanValue()){ //期初借款单不占用执行数，不需要进行回冲
+			if((head.getQcbz()!=null && head.getQcbz().booleanValue()) || (head.getPk_item() != null && head.getPk_item() != "~")){ //期初借款单不占用执行数，不需要进行回冲
 				continue;
 			}
 			BXBusItemVO busItem = (BXBusItemVO)busItemMap.get(vo.getPk_busitem()).clone();

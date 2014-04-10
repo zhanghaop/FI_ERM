@@ -5,33 +5,32 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
-import nc.bs.erm.util.ErBudgetUtil;
+import nc.bs.erm.event.ErmEventType;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.arap.prv.IWriteBackPrivate;
+import nc.itf.erm.ntb.IBXYsControlService;
 import nc.itf.pim.budget.pub.IbudgetExe4ExpenseBill;
-import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBudgetControl;
+import nc.pubitf.erm.costshare.IErmCostShareYsControlService;
+import nc.pubitf.erm.matterappctrl.IMatterAppCtrlService;
 import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXUtil;
-import nc.vo.er.pub.IFYControl;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
-import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.costshare.CostShareYsControlVO;
-import nc.vo.erm.util.ErVOUtils;
-import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
+import nc.vo.erm.matterappctrl.IMtappCtrlBusiVO;
+import nc.vo.erm.matterappctrl.MtappCtrlInfoVO;
+import nc.vo.erm.matterappctrl.MtapppfVO;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pm.budget.pub.BudgetEnum;
 import nc.vo.pm.budget.pub.BudgetReturnMSG;
 import nc.vo.pm.budget.pub.BudgetReturnVO;
-import nc.vo.pm.util.ListUtil;
-import nc.vo.pm.util.StringUtil;
 import nc.vo.pmbd.budgetctrl.BudgetCtrlTypeConst;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
@@ -41,8 +40,8 @@ import nc.vo.tb.control.NtbCtlInfoVO;
 
 /**
  * 审批流中检测，以及单据函数
- * @author twei
- *         nc.vo.ep.bx.ErmFlowCheckInfo
+ * 
+ * @author twei nc.vo.ep.bx.ErmFlowCheckInfo
  */
 public class ErmFlowCheckInfo {
 
@@ -64,30 +63,53 @@ public class ErmFlowCheckInfo {
 		return UFBoolean.valueOf(head.getDwbm().equals(head.getFydwbm()));
 	}
 
+	/**
+	 * 是否超申请
+	 * 
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 */
+	public UFBoolean checkMatter(JKBXVO vo) throws BusinessException {
+		UFBoolean isExceed = UFBoolean.FALSE;
+		IMatterAppCtrlService service = NCLocator.getInstance().lookup(IMatterAppCtrlService.class);
+
+		List<IMtappCtrlBusiVO> mtBusiVoList = NCLocator.getInstance().lookup(IWriteBackPrivate.class)
+				.construstBusiDataForWriteBack(new JKBXVO[] { vo }, ErmEventType.TYPE_SIGN_BEFORE);
+
+		try {
+			MtappCtrlInfoVO ctrlInfo = service.matterappValidate(mtBusiVoList.toArray(new JKBXMtappCtrlBusiVO[] {}));
+			isExceed = UFBoolean.valueOf(ctrlInfo.isExceed());
+		} catch (BusinessException e) {
+			ExceptionHandler.handleExceptionRuntime(e);
+		}
+
+		return isExceed;
+
+	}
+
 	/*
-	 * 是否跨组织分摊
-	 * (费用承担公司与分摊公司不同)
+	 * 是否跨组织分摊 (费用承担公司与分摊公司不同)
 	 */
 	public UFBoolean isSameAssumeOrg(JKBXVO vo) {
 		CShareDetailVO[] detailvos = vo.getcShareDetailVo();
 		if (detailvos == null || detailvos.length == 0) {
 			return UFBoolean.FALSE;
 		}
-		
+
 		return UFBoolean.valueOf(!isShareAssumeDept(vo).booleanValue());
 	}
-	
+
 	/*
-	 * 是否是跨部门分摊
-	 * (分摊公司和费用承担公司相同，分摊信息中分摊公司一致，部门不为null)
+	 * 是否是跨部门分摊 (分摊公司和费用承担公司相同，分摊信息中分摊公司一致，部门不为null) 不一致时返回TRUE 一致时返回FALSE
 	 */
 	public UFBoolean isSameAssumeDept(JKBXVO vo) {
 		CShareDetailVO[] detailvos = vo.getcShareDetailVo();
-		
+
 		if (detailvos == null || detailvos.length == 0 || !isShareAssumeDept(vo).booleanValue()) {
 			return UFBoolean.FALSE;
 		}
-		
+
 		Set<String> deptSet = new HashSet<String>();
 		for (int i = 0; i < detailvos.length; i++) {
 			// 部门为空时,返回false;
@@ -95,24 +117,23 @@ public class ErmFlowCheckInfo {
 				deptSet.add(detailvos[i].getAssume_dept());
 			}
 		}
-		
-		if(deptSet.size() == 1){//
-			if(deptSet.contains(vo.getParentVO().getFydeptid())){
+
+		if (deptSet.size() == 1) {//
+			if (deptSet.contains(vo.getParentVO().getFydeptid())) {
 				return UFBoolean.FALSE;
 			}
-		}else if(deptSet.size() == 0){
+		} else if (deptSet.size() == 0) {
 			return UFBoolean.FALSE;
 		}
-		
+
 		return UFBoolean.TRUE;
 	}
-	
+
 	/*
 	 * 是否跨成本中心分摊 (成本中心与分摊成本中心不同)
 	 */
 	public UFBoolean isSameCenter(JKBXVO vo) {
 		CShareDetailVO[] detailvos = vo.getcShareDetailVo();
-
 		if (detailvos == null || detailvos.length == 0 || !isShareAssumeDept(vo).booleanValue()) {
 			return UFBoolean.FALSE;
 		}
@@ -138,11 +159,11 @@ public class ErmFlowCheckInfo {
 		} else {
 
 			boolean istbbused = BXUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
-			if (!istbbused)
+			if (!istbbused) {
 				return UFBoolean.FALSE;
+			}
 
 			UFBoolean result = UFBoolean.FALSE;
-
 			NtbCtlInfoVO tpcontrolvo = doNtbCheck(vo);
 
 			if ((tpcontrolvo != null) && tpcontrolvo.isControl()) { // 控制
@@ -155,58 +176,6 @@ public class ErmFlowCheckInfo {
 
 			return result;
 		}
-	}
-
-	/**
-	 * 根据费用结转单包装预算控制vos
-	 * 
-	 * @param vos
-	 * @param isSave
-	 * @return
-	 * @throws BusinessException
-	 */
-	private static IFYControl[] getFyControlVOs(AggCostShareVO vo, JKBXVO bxVo) throws BusinessException {
-		List<IFYControl> resultList = new ArrayList<IFYControl>();
-		// 包装ys控制vo
-		CostShareVO headvo = (CostShareVO) vo.getParentVO();
-		CShareDetailVO[] dtailvos = (CShareDetailVO[]) vo.getChildrenVO();
-
-		List<String> depts = new ArrayList<String>();
-		List<String> corps = new ArrayList<String>();
-
-		for (int j = 0; j < dtailvos.length; j++) {
-			if (dtailvos[j].getAssume_dept() != null) {
-				depts.add(dtailvos[j].getAssume_dept());
-			}
-			corps.add(dtailvos[j].getAssume_org());
-		}
-
-		List<String> listCorp = getCorpsByPrincipal(corps);// 当前登录用户负责公司
-		List<String> listDept = getDeptsByPrincipal(depts);// 当前登录用户负责部门
-
-		for (int j = 0; j < dtailvos.length; j++) {
-			if (dtailvos[j].getStatus() == VOStatus.DELETED) {
-				continue;
-			}
-			// 转换生成controlvo
-			CostShareYsControlVO cscontrolvo = new CostShareYsControlVO(headvo, (CShareDetailVO) dtailvos[j]);
-
-			if(new ErmFlowCheckInfo().isSameAssumeDept(bxVo).booleanValue()){
-				if (listDept.contains(dtailvos[j].getAssume_dept())) {
-					// 联查负责部门的预算情况
-					resultList.add(cscontrolvo);
-				} 
-			}else if(new ErmFlowCheckInfo().isSameAssumeOrg(bxVo).booleanValue()){
-				if (listCorp.contains(dtailvos[j].getAssume_org())) {
-					// 联查负责单位的预算执行情况
-					resultList.add(cscontrolvo);
-				}
-			}else{
-				resultList.add(cscontrolvo);
-			}
-		}
-
-		return resultList.toArray(new IFYControl[resultList.size()]);
 	}
 
 	// 登陆用户是否为当前公司的费用单位负责人
@@ -246,42 +215,106 @@ public class ErmFlowCheckInfo {
 	 * @throws BusinessException
 	 */
 	public static NtbCtlInfoVO doNtbCheck(JKBXVO vo) throws BusinessException {
-		Vector<IAccessableBusiVO> iABusiVoVector = new Vector<IAccessableBusiVO>();
-		FiBillAccessableBusiVOProxy voProxyTemp = null;
-
-		String actionCode = BXConstans.ERM_NTB_APPROVE_KEY;
 		JKBXHeaderVO head = vo.getParentVO();
 		String billtype = head.getDjlxbm();
+		String actionCode = BXConstans.ERM_NTB_APPROVE_KEY;
 		boolean isExitParent = true;
 
-		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class).queryControlTactics(billtype, actionCode, isExitParent);
+		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
+				.queryControlTactics(billtype, actionCode, isExitParent);
 
-		YsControlVO[] ps = null;
-		if (!ErmForCShareUtil.isHasCShare(vo)) {// 无费用分摊，按报销单
-			JKBXHeaderVO[] items = ErVOUtils.prepareBxvoItemToHeaderClone(vo);
-			ps = ErBudgetUtil.getCtrlVOs(items, false, ruleVos);
-		} else {
-			AggCostShareVO csVo = ErmForCShareUtil.convertFromBXVO(vo);
-			IFYControl[] ysvos = getFyControlVOs(csVo, vo);
-			ps = ErBudgetUtil.getCtrlVOs(ysvos, false, ruleVos);
-		}
-
-		for (YsControlVO item : ps) {
-			voProxyTemp = new FiBillAccessableBusiVOProxy(item);
-			iABusiVoVector.addElement(voProxyTemp);
-		}
-
-		if (iABusiVoVector == null || iABusiVoVector.size() < 1)
+		if (ruleVos == null) {
 			return null;
+		}
 
-		FiBillAccessableBusiVO[] psinfo = new FiBillAccessableBusiVO[] {};
-		psinfo = iABusiVoVector.toArray(psinfo);
-		IBudgetControl bugetControl = NCLocator.getInstance().lookup(IBudgetControl.class);
-		// 预算接口BO
-		NtbCtlInfoVO tpcontrolvo = bugetControl.getCheckInfo(psinfo);
+		NtbCtlInfoVO tpcontrolvo = null;
+		fillUpMapf(vo);
+
+		if (!ErmForCShareUtil.isHasCShare(vo)) {// 无费用分摊，按报销单
+			IBXYsControlService service = NCLocator.getInstance().lookup(IBXYsControlService.class);
+			List<YsControlVO> ysControlVoList = service.getYsControlVos(new JKBXVO[] { vo }, false, actionCode);
+
+			if (ysControlVoList != null && ysControlVoList.size() > 0) {
+				IBudgetControl bugetControl = NCLocator.getInstance().lookup(IBudgetControl.class);
+				// 预算接口BO
+				tpcontrolvo = bugetControl.getCheckInfo(ysControlVoList.toArray(new YsControlVO[0]));
+			}
+		} else {
+			tpcontrolvo = dealCostYsControl(vo, actionCode);
+		}
 		return tpcontrolvo;
 	}
-	
+
+	private static NtbCtlInfoVO dealCostYsControl(JKBXVO vo, String actionCode) throws BusinessException {
+		if(vo == null){
+			return null;
+		}
+
+		AggCostShareVO csVo = ErmForCShareUtil.convertFromBXVO(vo);
+		if(csVo == null){
+			return null;
+		}
+		
+		// 按部门、单位负责人进行过滤
+		CShareDetailVO[] dtailvos = (CShareDetailVO[]) csVo.getChildrenVO();
+
+		List<String> depts = new ArrayList<String>();
+		List<String> corps = new ArrayList<String>();
+
+		for (int j = 0; j < dtailvos.length; j++) {
+			if (dtailvos[j].getAssume_dept() != null) {
+				depts.add(dtailvos[j].getAssume_dept());
+			}
+			corps.add(dtailvos[j].getAssume_org());
+		}
+
+		List<String> listCorp = getCorpsByPrincipal(corps);// 当前登录用户负责公司
+		List<String> listDept = getDeptsByPrincipal(depts);// 当前登录用户负责部门
+
+		boolean isNotSameAssumeOrg = new ErmFlowCheckInfo().isSameAssumeOrg(vo).booleanValue();
+		boolean isNotSameAssumeDept = new ErmFlowCheckInfo().isSameAssumeDept(vo).booleanValue();
+
+		List<CShareDetailVO> resultList = new ArrayList<CShareDetailVO>();
+		for (int j = 0; j < dtailvos.length; j++) {
+			if (dtailvos[j].getStatus() == VOStatus.DELETED) {
+				continue;
+			}
+
+			if (isNotSameAssumeOrg) {// 跨单位
+				if (listCorp.contains(dtailvos[j].getAssume_org())) {
+					// 联查负责单位的预算执行情况
+					resultList.add(dtailvos[j]);
+				}
+			} else if (isNotSameAssumeDept) {// 跨部门
+				if (listDept.contains(dtailvos[j].getAssume_dept())) {
+					// 联查负责部门的预算情况
+					resultList.add(dtailvos[j]);
+				}
+			} else {
+				resultList.add(dtailvos[j]);
+			}
+		}
+
+		csVo.setChildrenVO(resultList.toArray(new CShareDetailVO[] {}));
+
+		IErmCostShareYsControlService service = NCLocator.getInstance().lookup(IErmCostShareYsControlService.class);
+		List<YsControlVO> costYsVoList = service.getCostShareYsVOList(new AggCostShareVO[] { csVo }, false, actionCode);
+
+		if (costYsVoList != null && costYsVoList.size() > 0) {
+			// 这里处理报销单冲借款部分，分摊没有处理冲借款部分
+			IBXYsControlService bxYsservice = NCLocator.getInstance().lookup(IBXYsControlService.class);
+			List<YsControlVO> ysControlVoList = bxYsservice.getYsControlVos(new JKBXVO[] { vo }, false, actionCode);
+			if (ysControlVoList != null && ysControlVoList.size() > 0) {
+				costYsVoList.addAll(ysControlVoList);
+			}
+
+			IBudgetControl bugetControl = NCLocator.getInstance().lookup(IBudgetControl.class);
+			return bugetControl.getCheckInfo(costYsVoList.toArray(new YsControlVO[] {}));
+		}
+
+		return null;
+	}
+
 	/*
 	 * 超项目预算
 	 */
@@ -291,35 +324,36 @@ public class ErmFlowCheckInfo {
 		} else {
 
 			boolean isprojControlUsed = BXUtil.isProductTbbInstalled(BXConstans.PIM_FUNCODE);
-			if (!isprojControlUsed){
+			if (!isprojControlUsed) {
 				return UFBoolean.FALSE;
 			}
 			try {
-				BudgetReturnMSG control = doProjBudgetCheck(new JKBXVO[]{vo});
-				if (control != null && StringUtil.isNotEmpty(control.getErrorMSG())) {//柔性控制
+				BudgetReturnMSG control = doProjBudgetCheck(new JKBXVO[] { vo });
+				if (control != null && !StringUtil.isEmpty(control.getErrorMSG())) {// 柔性控制
 					return UFBoolean.TRUE;
 				}
-			} catch (BusinessException e) {//刚性控制
+			} catch (BusinessException e) {// 刚性控制
 				return UFBoolean.FALSE;
 			}
-			
+
 			return UFBoolean.FALSE;
 		}
 	}
-	
+
 	/**
 	 * 判断是否是同公司分摊，如果是同公司分摊，则返回true
+	 * 
 	 * @param vo
 	 * @return
 	 */
 	private UFBoolean isShareAssumeDept(JKBXVO vo) {
 		CShareDetailVO[] detailvos = vo.getcShareDetailVo();
 		String fydwbm = vo.getParentVO().getFydwbm();
-		
+
 		if (detailvos == null || detailvos.length == 0) {
 			return UFBoolean.FALSE;
 		}
-		
+
 		for (int i = 0; i < detailvos.length; i++) {
 			if (!fydwbm.equals(detailvos[i].getAssume_org())) {
 				return UFBoolean.FALSE;
@@ -327,21 +361,23 @@ public class ErmFlowCheckInfo {
 		}
 		return UFBoolean.TRUE;
 	}
-	
+
 	/**
 	 * 检测
+	 * 
 	 * @param vo
 	 * @throws BusinessException
 	 */
 	public static BudgetReturnMSG doProjBudgetCheck(JKBXVO[] vos) throws BusinessException {
-		BudgetReturnMSG resultMsg = NCLocator.getInstance().lookup(IbudgetExe4ExpenseBill.class).checkProjectBudget(vos);
-		if(resultMsg != null){
+		BudgetReturnMSG resultMsg = NCLocator.getInstance().lookup(IbudgetExe4ExpenseBill.class)
+				.checkProjectBudget(vos);
+		if (resultMsg != null) {
 			UFBoolean isOver = isOverBudget(resultMsg.getDetailList());
 			vos[0].getParentVO().setFlexible_flag(isOver);
 		}
 		return resultMsg;
 	}
-	
+
 	/**
 	 * 是否超出项目预算
 	 * 
@@ -351,7 +387,7 @@ public class ErmFlowCheckInfo {
 	 * @Date:2012-3-28
 	 */
 	public static UFBoolean isOverBudget(List<BudgetReturnVO> checkResult) {
-		if (!ListUtil.isEmpty(checkResult)) {
+		if (checkResult != null && checkResult.size() > 0) {
 			for (Iterator<BudgetReturnVO> iterator = checkResult.iterator(); iterator.hasNext();) {
 				BudgetReturnVO ctlInfoVO = iterator.next();
 				if (BudgetEnum.OVERBUDGET.equals(ctlInfoVO.getWbsBudget())
@@ -361,5 +397,22 @@ public class ErmFlowCheckInfo {
 			}
 		}
 		return UFBoolean.FALSE;
+	}
+
+	/**
+	 * 补充申请记录
+	 * 
+	 * @param bxVo
+	 * @throws BusinessException
+	 */
+	private static void fillUpMapf(JKBXVO bxVo) throws BusinessException {
+		// 申请单处理
+		MtapppfVO[] pfVos = MtappfUtil.getMaPfVosByJKBXVo(new JKBXVO[] { bxVo });
+		bxVo.setMaPfVos(pfVos);
+
+		if (bxVo instanceof BXVO) {
+			MtapppfVO[] contrastPfs = MtappfUtil.getContrastMaPfVos(new JKBXVO[] { bxVo });
+			bxVo.setContrastMaPfVos(contrastPfs);
+		}
 	}
 }

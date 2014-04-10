@@ -10,6 +10,10 @@ import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.model.ERMModelDataManager;
+import nc.ui.querytemplate.filter.IFilter;
+import nc.ui.querytemplate.querytree.IQueryScheme;
+import nc.ui.querytemplate.value.IFieldValueElement;
+import nc.ui.querytemplate.value.RefValueObject;
 import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.components.pagination.IPaginationQueryService;
@@ -89,4 +93,57 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
 		});
 	}
 
+	@Override
+	public void initModelByQueryScheme(IQueryScheme queryScheme) {
+		// 方案查询,快速查询
+		String schemeName = queryScheme.getName();
+		ModelDataDescriptor modelDataDescriptor = new ModelDataDescriptor(
+				schemeName);
+		
+		queryData2Model(getWhereSql(queryScheme), modelDataDescriptor);
+	}
+	
+	/**
+	 * 是否追加
+	 * 
+	 * @param scheme
+	 * @author: wangyhh@ufida.com.cn
+	 */
+	private String getWhereSql(IQueryScheme queryScheme) {
+		String whereCondition = queryScheme.getWhereSQLOnly();
+		StringBuffer sqlWhere = new StringBuffer();
+
+		if (whereCondition != null) {
+			sqlWhere.append(whereCondition);
+		}
+		
+		//单据查询，处理按表体查询处理
+		IFilter[] filters = (IFilter[]) queryScheme.get(IQueryScheme.KEY_FILTERS);
+		if (filters != null) {
+			for (IFilter iFilter : filters) {
+				String fieldCode = iFilter.getFilterMeta().getFieldCode();
+				if (fieldCode.indexOf(".") > 0) {// 是否追加显示
+					List<IFieldValueElement> fieldValues = iFilter.getFieldValue().getFieldValues();
+					String tableName = fieldCode.substring(0, fieldCode.indexOf("."));
+					String filed = fieldCode.substring(fieldCode.indexOf(".") + 1);
+					
+					for (IFieldValueElement value : fieldValues) {
+						if(value.getValueObject() instanceof RefValueObject){
+							RefValueObject refValue = (RefValueObject)value.getValueObject();
+							sqlWhere.append(" and pk_jkbx in (select pk_jkbx from ");
+							sqlWhere.append(tableName + " where ");
+							
+							try {
+								sqlWhere.append(SqlUtils.getInStr(filed, refValue.getPk().split(","),true) + ")");
+							} catch (BusinessException e) {
+								ExceptionHandler.handleExceptionRuntime(e);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return sqlWhere.toString();
+	}
 }

@@ -11,12 +11,17 @@ import nc.ui.uif2.model.BillManageModel;
 import nc.ui.uif2.model.IAppModelDataManagerEx;
 import nc.ui.uif2.model.IQueryAndRefreshManagerEx;
 import nc.ui.uif2.model.ModelDataDescriptor;
+import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.fi.pub.SqlUtils;
+import nc.vo.jcom.lang.StringUtil;
+import nc.vo.pub.BusinessException;
 import nc.vo.uif2.LoginContext;
 
 /** 
  * 通用ModelDataManger
  * <b>Date:</b>2012-12-6<br>
- * @author：wangyhh@ufida.com.cn
+ * @author：wangled@ufida.com.cn
  * @version $Revision$
  */ 
 @SuppressWarnings("restriction")
@@ -59,9 +64,10 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
 
 	@Override
 	public void refresh() {
-		// sqlWhere为null时未查询过,所以不查询数据
-		if (sqlWhere != null) {
+		if (!StringUtil.isEmpty(sqlWhere)) {
 			initModelBySqlWhere(sqlWhere);
+		}else{
+			initModelBySqlWhere(" 1=1 ");
 		}
 	}
 
@@ -106,9 +112,22 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
 		if (sqlWhere == null) {
 			sqlWhere = "1=1";
 		}
-		this.sqlWhere = sqlWhere;
-		
-		queryData(modelDataDescriptor);
+		//需要查询有权限的组织
+		String[] pkorgs = getModel().getContext().getPkorgs();
+		if(pkorgs!=null && pkorgs.length!=0){
+			String inStr1;
+			try {
+				inStr1 = SqlUtils.getInStr("pk_org", pkorgs, false);
+				
+				sqlWhere += " and " +inStr1; 
+				
+				this.sqlWhere = sqlWhere;
+				
+				queryData(modelDataDescriptor);
+			} catch (BusinessException e) {
+				ExceptionHandler.handleExceptionRuntime(e);
+			}
+		}
 	}
 	@Override
 	public void onDataReady() {

@@ -1,17 +1,20 @@
 package nc.bs.erm.matterapp.common;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import nc.bs.erm.util.ErBudgetUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBudgetControl;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
+import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
@@ -39,7 +42,7 @@ public class ErmMtAppFlowCheckInfo {
 			return UFBoolean.FALSE;
 		} else {
 
-			boolean istbbused = BXUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
+			boolean istbbused = ErUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 			if (!istbbused)
 				return UFBoolean.FALSE;
 
@@ -97,6 +100,86 @@ public class ErmMtAppFlowCheckInfo {
 		return tpcontrolvo;
 	}
 	
+	/**
+	 * 单据函数：是否是跨费用承担单位
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 * 
+	 * * TODO
+	 * wangle
+	 */
+	public UFBoolean isAssumeOrg(AggMatterAppVO vo) throws BusinessException{
+		UFBoolean flag = UFBoolean.FALSE;
+		if(vo!=null){
+			MtAppDetailVO[] childrenVO = vo.getChildrenVO();
+			String pkOrg = vo.getParentVO().getPk_org();
+			Set<String> voset=new LinkedHashSet<String>();
+			if(pkOrg != null ){
+				voset.add(pkOrg);//判断表头“财务组织”和表体“费用承担单位”是否一致
+			}
+			if(childrenVO!=null && childrenVO.length != 0){
+				for (MtAppDetailVO mtAppDetailVO : childrenVO) {
+					voset.add(mtAppDetailVO.getAssume_org());
+				}
+			}
+			if(voset.size()>1){
+				flag=UFBoolean.TRUE;
+			}
+		}
+		return flag;
+	}
+	
+	/**
+	 * 单据函数：是否是跨费用承担部门
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 * * TODO
+	 * wangle
+	 */
+	public UFBoolean isAssumeDept(AggMatterAppVO vo) throws BusinessException{
+		UFBoolean flag = UFBoolean.FALSE;
+		if(vo!=null){
+			MtAppDetailVO[] childrenVO = vo.getChildrenVO();
+			String assume_Dept = vo.getParentVO().getAssume_dept();
+			Set<String> voset=new LinkedHashSet<String>();
+			if(assume_Dept != null ){
+				voset.add(assume_Dept);//判断表头“费用承担部门”和表体“费用承担部门”是否一致
+			}
+			for (MtAppDetailVO mtAppDetailVO : childrenVO) {
+				voset.add(mtAppDetailVO.getAssume_dept());
+			}
+			if(voset.size()>1){
+				flag=UFBoolean.TRUE;
+			}
+		}
+		return flag;
+	}
+	
+	/**
+	 * 单据函数：是否是跨成本中心
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 * wangle
+	 * TODO
+	 */
+	public UFBoolean isCostcenter(AggMatterAppVO vo) throws BusinessException{
+		UFBoolean flag = UFBoolean.FALSE;
+		if(vo!=null && (vo.getChildrenVO()!=null && vo.getChildrenVO().length>1)){
+			MtAppDetailVO[] childrenVO = vo.getChildrenVO();
+			Set<String> voset=new LinkedHashSet<String>();
+			for (MtAppDetailVO mtAppDetailVO : childrenVO) {
+				voset.add(mtAppDetailVO.getPk_resacostcenter());
+			}
+			if(voset.size()>1){
+				flag=UFBoolean.TRUE;
+			}
+		}
+		return flag;
+	}
+
 	/**
 	 * 单据函数：申请部门是否等于费用承担部门
 	 * @param vo

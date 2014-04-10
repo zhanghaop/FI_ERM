@@ -4,13 +4,16 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
 
+import nc.bs.erm.ext.common.ErmConstExt;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.framework.common.NCLocator;
+import nc.desktop.ui.WorkbenchEnvironment;
+import nc.itf.arap.pub.IErmBillUIPublic;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
-import nc.pubitf.erm.matterappctrl.IMatterAppCtrlService;
 import nc.ui.arap.bx.BXQryTplUtil;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
+import nc.ui.erm.billpub.remote.RoleVoCall;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.billpub.view.MatterSourceRefDlg;
 import nc.ui.pub.beans.UIDialog;
@@ -20,11 +23,10 @@ import nc.ui.querytemplate.QueryConditionDLG;
 import nc.ui.uif2.actions.AddAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppConvResVO;
-import nc.vo.erm.matterapp.MatterAppConvVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.bill.BillTabVO;
@@ -46,29 +48,44 @@ public class AddFromMtappAction  extends AddAction{
 		checkAddFromMtapp();
 		
 		if (UIDialog.ID_OK == getQryDlg().showModal()) {
-			
 			UIRefPane orgRefPane = BXQryTplUtil.getRefPaneByFieldCode(getQryDlg(), MatterAppVO.PK_ORG);
-			UIRefPane currRefPane = BXQryTplUtil.getRefPaneByFieldCode(getQryDlg(), MatterAppVO.PK_CURRTYPE);
 			String pk_org = ((String[]) orgRefPane.getValueObj())[0];
-			String pk_currtype = ((String[]) currRefPane.getValueObj())[0];
-			// 查找符合条件的费用申请单
+			String djlxbm = ((ErmBillBillManageModel)getModel()).getCurrentBillTypeCode();
+			String pk_psndoc = BXUiUtil.getPk_psndoc();
+			if(ErmConstExt.Pay_JK_Tradetype.equals(djlxbm)){
+				// 一般市场费用支付单的借款单不做人员过滤
+				pk_psndoc = null;
+			}
+			String rolerSql = null;
+			if (WorkbenchEnvironment.getInstance().getClientCache(RoleVoCall.PK_ROLE_IN_SQL_BUSI + BXUiUtil.getPK_group()) != null) {
+				rolerSql = (String) WorkbenchEnvironment.getInstance().getClientCache(RoleVoCall.PK_ROLE_IN_SQL_BUSI + BXUiUtil.getPK_group());
+			}
+			// 根据人员过滤，普通借款及报销只能拉本人做的申请单
 			AggMatterAppVO[] aggMattervos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
-					.queryBillFromMtapp(getQryDlg().getWhereSQL(), ((ErmBillBillManageModel)getModel()).getCurrentBillTypeCode(), orgRefPane.getRefPK(),BXUiUtil.getPk_psndoc());
+					.queryBillFromMtappByPsn(getQryDlg().getWhereSQL(), djlxbm, pk_org,pk_psndoc,rolerSql);
 		
+			
+			
 			getMaSourceDlg().setAggMtappVOS(aggMattervos);
 			
 			if (getMaSourceDlg().showModal() == UIDialog.ID_OK) {
 				AggMatterAppVO retvo = getMaSourceDlg().getRetvo();
 				if ( retvo != null && retvo.getChildrenVO() != null && retvo.getChildrenVO().length > 0) {
-					String pk_group = BXUiUtil.getPK_group();
+//					String pk_group = BXUiUtil.getPK_group();
 
 					MatterAppConvResVO resVO = convertAggMattappVO(pk_org,  retvo);
-
-					JKBXVO vo = (JKBXVO) resVO.getBusiobj();
-					vo.setMt_aggvos(new AggMatterAppVO[]{retvo});				
-					vo.getParentVO().setBzbm(pk_currtype);
-					vo.getParentVO().setPk_org(pk_org);
-					vo.getParentVO().setPk_group(pk_group);
+					((JKBXVO) resVO.getBusiobj()).setMaheadvo(retvo.getParentVO());
+//					
+//					JKBXHeaderVO parentVO = vo.getParentVO();
+//					vo.getParentVO().setBzbm(pk_currtype);
+//					vo.getParentVO().setPk_org(pk_org);
+//					vo.getParentVO().setPk_group(pk_group);
+//					if(retvo.getParentVO().getIscostshare() == null || !retvo.getParentVO().getIscostshare().booleanValue()){
+//						// 申请单非分摊情况时，不向分摊页签转换数据
+//						parentVO.setIscostshare(UFBoolean.FALSE);
+//						vo.setcShareDetailVo(null);
+//					}
+//					
 					((ErmBillBillForm) getEditor()).setResVO(resVO);
 					super.doAction(e);
 
@@ -102,7 +119,6 @@ public class AddFromMtappAction  extends AddAction{
 	private void checkBodyTemplate() throws BusinessException {
 		BillTabVO[] billTabVOs = getEditor().getBillCardPanel().getBillData().getBillTabVOs(IBillItem.BODY);
 		boolean isEist = true;
-		
 		if (billTabVOs != null && billTabVOs.length > 0) {
 			if (billTabVOs[0].getMetadatapath() != null
 					&& !billTabVOs[0].getMetadatapath().equals(BXConstans.ER_BUSITEM)
@@ -142,41 +158,10 @@ public class AddFromMtappAction  extends AddAction{
 	 * @throws BusinessException
 	 */
 	protected MatterAppConvResVO convertAggMattappVO(String pk_org, AggMatterAppVO retvo) throws BusinessException {
-		String billTypeCode = ((ErmBillBillManageModel) getModel()).getCurrentBillTypeCode();
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel) getModel()).getCurrentDjLXVO();
 
-		IMatterAppCtrlService ctrlService = NCLocator.getInstance().lookup(IMatterAppCtrlService.class);
-		return ctrlService.getConvertBusiVOs(billTypeCode, pk_org, retvo);
-	}
-	
-	protected MatterAppConvVO getMatterAppConvVO(String pk_org, String pk_group,
-			AggMatterAppVO retvo) {
-		MatterAppConvVO mcvo = new MatterAppConvVO();
-		mcvo.setAggMapp(new AggMatterAppVO[]{retvo});
-		String selectBillTypeCode = ((ErmBillBillManageModel) getModel()).getSelectBillTypeCode();
-		mcvo.setBuBillType(selectBillTypeCode);
-		mcvo.setPk_org(pk_org);
-		mcvo.setPk_group(pk_group);
-		String beanId = BXConstans.ERM_MDID_BX;
-		String moneyField = BXConstans.ER_BUSITEM + "." + BXBusItemVO.AMOUNT;
-		String fkField = BXConstans.ER_BUSITEM + "." + BXBusItemVO.PK_ITEM;
-		String srcBillTypeField = BXConstans.ER_BUSITEM + "." + BXBusItemVO.SRCBILLTYPE;
-		String srcTypeField = BXConstans.ER_BUSITEM + "." + BXBusItemVO.SRCTYPE;
-
-		String djdl = ((ErmBillBillManageModel) getEditor().getModel()).getBillTypeMapCache().get(selectBillTypeCode)
-				.getDjdl();
-		if (BXConstans.JK_DJDL.equals(djdl)) {
-			beanId = BXConstans.ERM_MDID_JK;
-			moneyField = BXConstans.JK_BUSITEM + "." + BXBusItemVO.AMOUNT;
-			fkField = BXConstans.JK_BUSITEM + "." + BXBusItemVO.PK_ITEM;
-			srcBillTypeField = BXConstans.JK_BUSITEM + "." + BXBusItemVO.SRCBILLTYPE;
-			srcTypeField = BXConstans.JK_BUSITEM + "." + BXBusItemVO.SRCTYPE;
-		}
-		mcvo.setBeanId(beanId);
-		mcvo.setMoneyField(moneyField);
-		mcvo.setFkField(fkField);
-		mcvo.setSrcTradeTypeField(srcBillTypeField);
-		mcvo.setSrcTypeField(srcTypeField);
-		return mcvo;
+		IErmBillUIPublic service = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
+		return service.setBillVOtoUIByMtappVO(pk_org, retvo, currentDjLXVO, getModel().getContext().getNodeCode());
 	}
 	
 	protected MatterSourceRefDlg getMaSourceDlg() {

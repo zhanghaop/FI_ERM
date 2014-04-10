@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 快速分摊 -->
+	<bean id="rapidshareaction" class="nc.ui.erm.bx.ext.action.RapidShareBXActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+	<!-- 来源于费用申请单 -->
+	<bean name="addfromMtappaction" class="nc.ui.erm.bx.ext.action.AddFromMtappActionExt">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="interceptor" ref="interceptor"/>
+	</bean>
+	
+	<!-- 冲借款 -->
+	<bean id="contrastaction" class=" nc.ui.erm.bx.ext.action.BxContrastActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+	<bean id="BxCardHeadBeforeEditEventHandler" class="nc.ui.erm.bx.ext.eventlistener.BxCardHeadBeforeEditEventHandler">
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+	
+	<!--
+		监听器(Mediator)(可选)###########################################################
+	-->
+	<bean id="AppEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
+		<property name="model" ref="manageAppModel" />
+		<property name="handlerMap">
+			<map>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailBeforeEditEvent">
+					<list>
+						<ref bean="BxCardHeadBeforeEditEventHandler"></ref>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+</beans>

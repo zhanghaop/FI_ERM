@@ -108,6 +108,11 @@ public class LinkBudgetAction extends NCAction {
 				}
 			}
 
+			if(voProxys.size() == 0){
+				throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
+				"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+			}
+
 			try {
 				// list voProxys
 				NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName()))
@@ -134,7 +139,11 @@ public class LinkBudgetAction extends NCAction {
 	
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = ErmActionConst.getLinkBudgetName() + ErmActionConst.FAIL_MSG;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
+				"2011000_0", null, "02011000-0040", null,
+				new String[] { this.getBtnName() })/*
+													 * @ res "{0}失败！"
+													 */;
 		((DefaultExceptionHanler)getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler)getExceptionHandler()).setErrormsg(null);

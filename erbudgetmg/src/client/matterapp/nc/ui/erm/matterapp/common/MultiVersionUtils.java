@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import nc.ui.bd.ref.AbstractRefModel;
-import nc.ui.er.util.BXUiUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.vorg.ref.DeptVersionDefaultRefModel;
 import nc.ui.vorg.ref.FinanceOrgVersionDefaultRefTreeModel;
 import nc.ui.vorg.ref.LiabilityCenterVersionDefaultRefModel;
@@ -31,7 +31,7 @@ public class MultiVersionUtils {
 		}
 		
 		if (date == null || StringUtil.isEmpty(date.toString())) {
-			date = BXUiUtil.getBusiDate();
+			date = ErUiUtil.getBusiDate();
 		}
 		
 		return getBillHeadFinanceOrgVersion(pk_value, date, model);

@@ -105,7 +105,10 @@ public class LinkBudgetAction extends NCAction {
 			}
 		}
 		
-		
+		if(voProxys.size() == 0){
+			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
+			"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+		}
 
 		try {
 			NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName()))

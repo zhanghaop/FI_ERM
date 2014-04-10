@@ -94,9 +94,6 @@ public class SettleUtil {
 			msg.setLastauditedate(head.getShrq()!=null?head.getShrq().getDate():null);
 			
 			msg.setDirection(head.getZfybje()==null || head.getZfybje().equals(new UFDouble(0)) ? 0 : 1);
-			if (head.getTotal().getDouble() < 0) {
-				msg.setDirection(1);
-			}
 			msg.setFtsExec(false);
 			msg.setIspay(false);
 			msg.setBillOperator(head.getOperator());
@@ -117,13 +114,8 @@ public class SettleUtil {
 			msg.setBusiFlow(head.getBusitype());
 
 			if(head.getZfybje()!=null && head.getHkybje()!=null){
-				if (head.getYbje().getDouble() < 0 || head.getBbje().getDouble() < 0) {
-					msg.setPrimal(head.getZfybje().add(UFDouble.ZERO_DBL.sub(head.getHkybje())));
-					msg.setLocal(head.getZfbbje().add(UFDouble.ZERO_DBL.sub(head.getHkbbje())));
-				} else {
-					msg.setPrimal(head.getZfybje().add(head.getHkybje()));
-					msg.setLocal(head.getZfbbje().add(head.getHkbbje()));
-				}
+				msg.setPrimal(head.getZfybje().add(head.getHkybje()));
+				msg.setLocal(head.getZfbbje().add(head.getHkbbje()));
 			}else{
 				msg.setPrimal(head.getYbje());
 				msg.setLocal(head.getBbje());

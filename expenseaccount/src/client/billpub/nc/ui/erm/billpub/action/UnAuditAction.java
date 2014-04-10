@@ -32,12 +32,13 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.ml.NCLangRes4VoTransl;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.uap.pf.PFBusinessException;
 import nc.vo.uif2.LoginContext;
+
+import org.apache.commons.lang.ArrayUtils;
 
 public class UnAuditAction extends NCAsynAction {
 	private static final long serialVersionUID = 1L;
@@ -253,7 +254,7 @@ public class UnAuditAction extends NCAsynAction {
 	 * @throws BusinessException
 	 */
 	public void showBatchResults(LoginContext context, MessageVO[] messageVos) throws BusinessException {
-		if (ArrayUtil.isEmpty(messageVos))
+		if (ArrayUtils.isEmpty(messageVos))
 			return;
 
 		Vector<String> v = new Vector<String>();

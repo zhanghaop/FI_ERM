@@ -75,6 +75,7 @@ public class ShareRuleDataConvert {
             }//按比例分摊
             else if (ShareruleConst.SRuletype_Ratio  ==sr.getRule_type()) {
                 shareMoney= scvo.getShareMoney().multiply(sd[nsdPos].getShare_ratio().div(100));
+                shareMoney = shareMoney.setScale(scvo.getShareMoney().getPower(), BigDecimal.ROUND_HALF_UP);
             }
             if (ShareruleConst.SRuletype_Money  !=sr.getRule_type()) {
                 //从总金额减掉
@@ -101,7 +102,7 @@ public class ShareRuleDataConvert {
     public static String getSrcFieldCode(FieldcontrastVO qryVO, String shareObjFieldCode) throws BusinessException {
         qryVO.setDes_fieldcode("rule_data." + shareObjFieldCode);
         String objectField = ErmBillFieldContrastCache.getSrcField(qryVO);
-        if (objectField == null) {
+        if (objectField == null || (objectField !=null && !objectField.contains("."))) {
             IBean bean = MDBaseQueryFacade.getInstance().getBeanByID("cf21a746-807a-4cf8-911f-f397529ee06e");//元数据：费用分摊规则数据
             IAttribute att = bean.getAttributeByName(qryVO.getDes_fieldcode());
             String fieldName = null;
@@ -114,7 +115,6 @@ public class ShareRuleDataConvert {
             } else {
                 fieldName = att.getDisplayName();
             }
-
             throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("201100_0",null,"0201100-0030",null,new String[]{bean.getDisplayName() + "." + fieldName }));
             /*@res "请在维度对照中配置字段{0}的对照关系"*/
         }

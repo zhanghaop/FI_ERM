@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import nc.vo.bd.inoutbusiclass.InoutBusiClassVO;
 import nc.vo.erm.expenseaccount.ExpenseBalVO;
+import nc.vo.erm.pub.ErmBaseQueryCondition;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.org.DeptVO;
 import nc.vo.resa.costcenter.CostCenterVO;
@@ -14,9 +15,16 @@ public class ExpTrendQryVO implements Serializable{
 	private QryObj qryobj;
 	private String sqlWhere;
 	private nc.pub.smart.data.DataSet dataSet;
+	
+	private ErmBaseQueryCondition ermBaseQueryCondition;
 
-
-	public void setSqlWhere(String sqlWhere) {
+	public ErmBaseQueryCondition getErmBaseQueryCondition() {
+        return ermBaseQueryCondition;
+    }
+    public void setErmBaseQueryCondition(ErmBaseQueryCondition ermBaseQueryCondition) {
+        this.ermBaseQueryCondition = ermBaseQueryCondition;
+    }
+    public void setSqlWhere(String sqlWhere) {
 		this.sqlWhere = sqlWhere;
 	}
 	public String getSqlWhere() {

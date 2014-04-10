@@ -11,6 +11,7 @@ import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.er.djlx.ErmBilltypeRefModel;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.remote.QcDateCall;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.querytemplate.CriteriaChangedEvent;
 import nc.ui.querytemplate.ICriteriaChangedListener;
@@ -265,7 +266,7 @@ public class BxQueryDLG extends QueryConditionDLG {
 				pk_org = defaultOrg;
 			} else {
 				// 取当前登录人所属组织
-				pk_org = BXUiUtil.getPsnPk_org(BXUiUtil.getPk_psndoc());
+				pk_org = ErUiUtil.getPsnPk_org(ErUiUtil.getPk_psndoc());
 			}
 			if (pk_org != null && pk_org.length() > 0) {
 

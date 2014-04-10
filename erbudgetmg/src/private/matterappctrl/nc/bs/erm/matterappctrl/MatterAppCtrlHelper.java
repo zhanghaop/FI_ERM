@@ -14,6 +14,7 @@ import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.fi.pub.Currency;
 import nc.itf.uap.pf.IPFConfig;
+import nc.vo.er.exception.ErmMaCtrlException;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.mactrlschema.MtappCtrlfieldVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
@@ -40,10 +41,16 @@ public class MatterAppCtrlHelper {
 	
 	/**
 	 * 控制维度中在VO对照中的对照
-	 * Map<ma_tradetype+busi_tradetype+pk_org, Map<ctrlfield, busifield>>
+	 * Map<ma_tradetype+busi_tradetype+pk_org, Map<ctrlfield, List<busifield>>>
 	 */
-	private Map<String, Map<String, String>> ctrlFiledMap;
+	private Map<String, Map<String, List<String>>> ctrlFiledMap;
 
+	/**
+	 * 申请单刚性控制维度可用余额map，供预占数的执行记录费用金额计算使用
+	 */
+	private Map<String, UFDouble> appFieldSum;
+
+	
 	/**
 	 * 根据交易类型和组织分组形成key
 	 *
@@ -85,7 +92,7 @@ public class MatterAppCtrlHelper {
 	 * @param key
 	 * @author: wangyhh@ufida.com.cn
 	 */
-	public void calculateExeData(Map<String, UFDouble> fieldSum, MtappCtrlBusiVO busiVo, String key) {
+	public void calculateExeData(Map<String, UFDouble> fieldSum,MtappCtrlBusiVO busiVo, String key) {
 		UFDouble exeData = getDoubleValue(busiVo.getExeData());
 
 		if (fieldSum.containsKey(key)) {
@@ -114,6 +121,16 @@ public class MatterAppCtrlHelper {
 		sumData = sumData.add(getDoubleValue(mtAppDetailVO.getRest_amount()));
 		appFieldSum.put(key, sumData);
 	}
+	public void calculateMaxRestData(Map<String, UFDouble> appFieldSum, MtAppDetailVO mtAppDetailVO, String key) {
+		UFDouble sumData = appFieldSum.get(key);
+		if (sumData == null) {
+			sumData = UFDouble.ZERO_DBL;
+		}
+		UFDouble rest_amount = mtAppDetailVO.getMax_amount() == null?getDoubleValue(mtAppDetailVO.getRest_amount())
+				:mtAppDetailVO.getMax_amount().sub(getDoubleValue(mtAppDetailVO.getExe_amount()));
+		sumData = sumData.add(rest_amount);
+		appFieldSum.put(key, sumData);
+	}
 
 	public UFDouble getDoubleValue(Object d) {
 		return d == null ? UFDouble.ZERO_DBL : (UFDouble) d;
@@ -130,8 +147,9 @@ public class MatterAppCtrlHelper {
 	 * @param mattParanrVo兼容费用申请单表头字段维度控制;业务数据传null即可
 	 * @return
 	 * @author: wangyhh@ufida.com.cn
+	 * @throws BusinessException 
 	 */
-	public String getFieldKey(List<MtappCtrlfieldVO> ctrlFieldList, Object vo, boolean isAllFiled,MatterAppVO mattParanrVo) {
+	public String getFieldKey(List<MtappCtrlfieldVO> ctrlFieldList, Object vo, boolean isAllFiled,MatterAppVO mattParanrVo) throws BusinessException {
 		StringBuffer keybuf = new StringBuffer();
 		if (ctrlFieldList != null) {
 			for (MtappCtrlfieldVO mtappCtrlfieldVO : ctrlFieldList) {
@@ -157,22 +175,23 @@ public class MatterAppCtrlHelper {
 	 * @param attr
 	 * @param mattParanrVo
 	 * @author: wangyhh@ufida.com.cn
+	 * @throws BusinessException 
 	 */
-	private Object getAttributeValue(Object vo, String attr,MatterAppVO mattParanrVo) {
+	private Object getAttributeValue(Object vo, String attr,MatterAppVO mattParanrVo) throws BusinessException {
 		if (vo instanceof IMtappCtrlBusiVO) {
 			IMtappCtrlBusiVO busivo = (IMtappCtrlBusiVO) vo;
 			
-			String srcattr = null;
+			List<String> srcattr = null;
 			String ctrlFiledMapKey = getCtrlFiledMapKey(mattParanrVo, ((IMtappCtrlBusiVO) vo).getTradeType());
 			if (ctrlFiledMapKey != null) {
-				Map<String, String> voKeyMap = ctrlFiledMap.get(ctrlFiledMapKey);
+				Map<String, List<String>> voKeyMap = ctrlFiledMap.get(ctrlFiledMapKey);
 				srcattr = voKeyMap.get(attr);
 			}
 			
-			if(srcattr == null){
-				throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("upp2012v575_0","0upp2012V575-0118")/*@res ""控制维度设置的字段必须设置维度对照""*/);
+			if(srcattr == null || srcattr.isEmpty()){
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("upp2012v575_0","0upp2012V575-0118")/*@res ""控制维度设置的字段必须设置维度对照""*/);
 			}
-			return busivo.getAttributeValue(srcattr);
+			return busivo.getAttributeValue(srcattr.toArray(new String[0]));
 		} else if (vo instanceof MtAppDetailVO) {
 			String[] split = StringUtil.split(attr, ".");
 			if(split.length == 1 && mattParanrVo != null){
@@ -180,7 +199,7 @@ public class MatterAppCtrlHelper {
 			}
 			return ((MtAppDetailVO) vo).getAttributeValue(split[1]);
 		} else {
-			throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0039")/*@res "不支持的类型"*/);
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0039")/*@res "不支持的类型"*/);
 		}
 	}
 
@@ -195,12 +214,11 @@ public class MatterAppCtrlHelper {
 	 * @param busiList
 	 * @throws BusinessException
 	 * @author: wangyhh@ufida.com.cn
-	 * @param extraAmountMap 
 	 */
-	private void writeBackDetail_new(List<MtappCtrlfieldVO> ctrlFieldList,AggMatterAppVO aggMatterAppVO, Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, List<MtapppfVO>> appPfMap,List<MtAppDetailVO> unAdjustAppList, List<MtappCtrlBusiVO> busiList, Map<String, UFDouble> extraAmountMap) throws BusinessException {
+	private void writeBackDetail_new(AggMatterAppVO aggMatterAppVO, Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, List<MtapppfVO>> appPfMap,List<MtAppDetailVO> unAdjustAppList, List<MtappCtrlBusiVO> busiList) throws BusinessException {
 		//需要调剂的业务数据
 		List<MtappCtrlBusiVO> adjBusiList = new ArrayList<MtappCtrlBusiVO>(); 
-		MatterAppVO mtappvo = aggMatterAppVO.getParentVO();
+//		MatterAppVO mtappvo = aggMatterAppVO.getParentVO();
 		
 		for (MtappCtrlBusiVO busivo : busiList) {
 			// 业务金额      
@@ -210,7 +228,7 @@ public class MatterAppCtrlHelper {
 			UFDouble[] remaindAmount = new UFDouble[]{exe_amount,pre_amount,UFDouble.ZERO_DBL};
 			if (remaindAmount[0].compareTo(UFDouble.ZERO_DBL) != 0 || remaindAmount[1].compareTo(UFDouble.ZERO_DBL) != 0) {
 				// 全部维度匹配
-				String allFieldKey = getFieldKey(ctrlFieldList, busivo, true, mtappvo);
+				String allFieldKey = busivo.getAllFieldKey();
 				List<MtAppDetailVO> allFieldAppVoList = allAdjustAppVoMap.get(allFieldKey);
 				if (allFieldAppVoList != null) {
 					for (MtAppDetailVO appDetailVo : allFieldAppVoList) {
@@ -218,11 +236,11 @@ public class MatterAppCtrlHelper {
 							continue;
 						}
 
-						MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo,appPfMap,mtappvo.getPk_tradetype());
-						// 设置上游为本单据释放的金额
-						remaindAmount[2] = extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getDetailBusiPK());
+//						MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo,appPfMap,mtappvo.getPk_tradetype());
+//						// 设置上游为本单据释放的金额
+//						remaindAmount[2] = extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getDetailBusiPK());
 						// 回写明细行
-						remaindAmount = writeBackDetailAppVo(remaindAmount, appDetailVo, appPfVo, busivo, UFBoolean.FALSE);
+						remaindAmount = writeBackDetailAppVo(remaindAmount, appDetailVo, null,appPfMap, busivo, UFBoolean.FALSE);
 						if (UFDouble.ZERO_DBL.equals(remaindAmount[0]) && UFDouble.ZERO_DBL.equals(remaindAmount[1])) {
 							break;
 						}
@@ -252,23 +270,107 @@ public class MatterAppCtrlHelper {
 						continue;
 					}
 
-					MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
+//					MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
 					
-					// 设置上游为本单据释放的金额
-					remaindAmount[2] = extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getDetailBusiPK());
+//					// 设置上游为本单据释放的金额
+//					remaindAmount[2] = extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getDetailBusiPK());
 					// 回写明细行金额
-					remaindAmount = writeBackDetailAppVo(remaindAmount, appDetailVo, appPfVo,busivo,UFBoolean.TRUE);
+					remaindAmount = writeBackDetailAppVo(remaindAmount, appDetailVo,null,appPfMap,busivo,UFBoolean.TRUE);
 					if (UFDouble.ZERO_DBL.equals(remaindAmount[0]) && UFDouble.ZERO_DBL.equals(remaindAmount[1])) {
 						break;
 					}
 				}
-				//预占数不控制单据保存
+				if (busivo.isExceedEnable()&&(remaindAmount[0].compareTo(UFDouble.ZERO_DBL) != 0 || remaindAmount[1].compareTo(UFDouble.ZERO_DBL) != 0 )) {
+					// 超申请情况
+					busivo.setExceed(true);
+					busivo.setExe_data(remaindAmount[0]);
+					busivo.setPre_data(remaindAmount[1]);
+					
+					String allFieldKey = busivo.getAllFieldKey();
+					List<MtAppDetailVO> allFieldAppVoList = allAdjustAppVoMap.get(allFieldKey);
+					
+					remaindAmount = writeBackDetail_exceed(busivo, aggMatterAppVO, allFieldAppVoList, unAdjustAppList, appPfMap);
+				}
 				if (remaindAmount[0].compareTo(UFDouble.ZERO_DBL) != 0 || remaindAmount[1].compareTo(UFDouble.ZERO_DBL) != 0 ) {
-//					throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0036")/*@res "费用申请单"*/ + aggMatterAppVO.getParentVO().getBillno() + nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0040")/*@res ""此单据金额超过申请的费用余额，请修改金额或者重新申请""*/);
-					throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0038")/*@res "此单据金额超过申请的费用余额，请修改金额或者重新申请"*/);
+					throw new ErmMaCtrlException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0038")/*@res "此单据金额超过申请的费用余额，请修改金额或者重新申请"*/
+							,true);
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 超申请情况回写，按照允许报销最大金额回写，全部维度回写，最后调剂
+	 * 
+	 * @param busivo 业务数据
+	 * @param aggMatterAppVO 回写的申请单
+	 * @param allFieldAppVoList 完全匹配申请单行
+	 * @param unAdjustAppList 可调剂申请单行
+	 * @param appPfMap 执行记录
+	 * @throws BusinessException
+	 */
+	private UFDouble[] writeBackDetail_exceed(MtappCtrlBusiVO busivo,AggMatterAppVO aggMatterAppVO,
+			List<MtAppDetailVO> allFieldAppVoList,List<MtAppDetailVO> unAdjustAppList, 
+			Map<String, List<MtapppfVO>> appPfMap) throws BusinessException {
+		//需要调剂的业务数据
+//		MatterAppVO mtappvo = aggMatterAppVO.getParentVO();
+		// 超申请业务金额      
+		UFDouble exe_amount = getDoubleValue(busivo.getExeData());
+		UFDouble pre_amount = getDoubleValue(busivo.getPreData());
+		// 未处理业务金额
+		UFDouble[] remaindAmount = new UFDouble[]{exe_amount,pre_amount,UFDouble.ZERO_DBL};
+		if (remaindAmount[0].compareTo(UFDouble.ZERO_DBL) != 0 || remaindAmount[1].compareTo(UFDouble.ZERO_DBL) != 0) {
+			if (allFieldAppVoList != null) {
+				for (MtAppDetailVO appDetailVo : allFieldAppVoList) {
+					if (appDetailVo.getClose_status().intValue() == ErmMatterAppConst.CLOSESTATUS_Y && (!INCSystemUserConst.NC_USER_PK.equals(appDetailVo.getCloseman()))) {
+						continue;
+					}
+
+//					MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo,appPfMap,mtappvo.getPk_tradetype());
+					// 按允许报销最大金额回写明细行,不处理调剂标识位、费用金额
+					remaindAmount = writeBackDetailAppVo(remaindAmount, appDetailVo,null, appPfMap, busivo, UFBoolean.FALSE,UFBoolean.TRUE);
+				}
+			}
+		}
+
+		// 准备调剂数据
+		if (remaindAmount[0].compareTo(UFDouble.ZERO_DBL) != 0 || remaindAmount[1].compareTo(UFDouble.ZERO_DBL) != 0) {
+			// 顺序调剂刚性控制维度
+			if(unAdjustAppList != null){
+				for (MtAppDetailVO appDetailVo : unAdjustAppList) {
+					if (appDetailVo.getClose_status().intValue() == ErmMatterAppConst.CLOSESTATUS_Y && (!INCSystemUserConst.NC_USER_PK.equals(appDetailVo.getCloseman()))) {
+						continue;
+					}
+					
+//					MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
+					// 按允许报销最大金额回写明细行金额,不处理调剂标识位、费用金额
+					remaindAmount = writeBackDetailAppVo(remaindAmount, appDetailVo,null, appPfMap,busivo,UFBoolean.TRUE,UFBoolean.TRUE);
+				}
+			}
+		}
+		
+		return remaindAmount;
+	}
+	
+	/**
+	 * 非超申请回写费用审批单(预占；执行；余额=金额-执行) 包装费用审批单执行记录
+	 * 
+	 * 正向回写：业务执行数和费用申请单余额比较，余额不能为负
+	 * 反向回写：业务执行数和费用申请单执行数比较，执行数不能为负
+	 * 
+	 * @param exe_amount
+	 *            业务数据{执行金额,预占金额}
+	 * @param appDetailVo
+	 * @param appPfVo
+	 * @param iMtappCtrlBusiVO
+	 * @param isAdjust 调剂标志位
+	 * @return 业务数据剩余调剂金额
+	 * @throws BusinessException
+	 * @author: wangyhh@ufida.com.cn
+	 */
+	protected UFDouble[] writeBackDetailAppVo(UFDouble[] exe_amount, MtAppDetailVO appDetailVo,MtapppfVO appPfVo, Map<String, List<MtapppfVO>> appPfMap,
+			MtappCtrlBusiVO iMtappCtrlBusiVO, UFBoolean isAdjust) throws BusinessException {
+		return writeBackDetailAppVo(exe_amount, appDetailVo,appPfVo,appPfMap, iMtappCtrlBusiVO, isAdjust, UFBoolean.FALSE);
 	}
 	
 	/**
@@ -282,13 +384,16 @@ public class MatterAppCtrlHelper {
 	 * @param appDetailVo
 	 * @param appPfVo
 	 * @param iMtappCtrlBusiVO
+	 * @param isAdjust 调剂标志位
+	 * @param is_exceed 是否超申请回写
 	 * @return 业务数据剩余调剂金额
 	 * @throws BusinessException
 	 * @author: wangyhh@ufida.com.cn
 	 */
-	protected UFDouble[] writeBackDetailAppVo(UFDouble[] exe_amount, MtAppDetailVO appDetailVo, MtapppfVO appPfVo, IMtappCtrlBusiVO iMtappCtrlBusiVO, UFBoolean isAdjust) throws BusinessException {// 本次回写剩余金额
+	protected UFDouble[] writeBackDetailAppVo(UFDouble[] exe_amount, MtAppDetailVO appDetailVo,MtapppfVO appPfVo, Map<String, List<MtapppfVO>> appPfMap,
+			MtappCtrlBusiVO iMtappCtrlBusiVO, UFBoolean isAdjust,UFBoolean is_exceed) throws BusinessException {// 本次回写剩余金额
 		if (appDetailVo.getClose_status().intValue() == ErmMatterAppConst.CLOSESTATUS_Y && (!INCSystemUserConst.NC_USER_PK.equals(appDetailVo.getCloseman()))) {
-			throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
 	    			getStrByID("201212_0","0201212-0095")/*@res ""待回写的申请单明细行已经关闭，无法回写，请手工取消关闭""*/);
 		}
 	
@@ -317,11 +422,19 @@ public class MatterAppCtrlHelper {
 		// 费用申请单余额
 		UFDouble rest_amount = appDetailVo.getRest_amount();
 		UFDouble appRest_value = getDoubleValue(rest_amount);
+		if(is_exceed.booleanValue()&&appDetailVo.getMax_amount()!=null ){
+			// 超申请情况下，按照允许报销最大金额回写
+			appRest_value = appRest_value.add(appDetailVo.getMax_amount().sub(appDetailVo.getOrig_amount()));
+//			Logger.debug(appDetailVo.getOrig_amount()+"允许超出金额："+appRest_value);
+		}
+		// 余额小于0情况，按0处理
+		appRest_value = appRest_value.getDouble() < 0 ? UFDouble.ZERO_DBL : appRest_value;
 		// 费用申请单执行数
 		UFDouble appExe_value = getDoubleValue(appDetailVo.getExe_amount());
+		
 		// 业务执行数的金额
 		UFDouble busiAmount = exe_amount[0];
-		if(busiAmount.compareTo(UFDouble.ZERO_DBL) >= 0){
+		if(busiAmount.getDouble() >= 0){
 			//正向回写,余额不能为负
 			UFDouble detailexe_amount = busiAmount.compareTo(appRest_value) >0?appRest_value:busiAmount;
 			enableAmount[0] = detailexe_amount;
@@ -345,8 +458,31 @@ public class MatterAppCtrlHelper {
 		appDetailVo.setPre_amount(getDoubleValue(appDetailVo.getPre_amount()).add(enableAmount[1]));
 
 		// 多币种折算及包装执行记录
-		convertMutiAmount(appDetailVo, appPfVo, iMtappCtrlBusiVO, isAdjust, enableAmount);
+		if(appPfVo == null){
+			appPfVo = getMtapppfVO_new(iMtappCtrlBusiVO, appDetailVo,appPfMap,appDetailVo.getPk_tradetype());
+		}
 		
+		convertMutiAmount(appDetailVo, iMtappCtrlBusiVO,appPfVo, isAdjust, enableAmount);
+		// 处理刚性维度可用余额的数值
+		if(appFieldSum != null){
+			
+			if(IMtappCtrlBusiVO.DataType_pre.equals(iMtappCtrlBusiVO.getDataType())
+					&&IMtappCtrlBusiVO.Direction_negative == iMtappCtrlBusiVO.getDirection()
+					&&StringUtil.isEmpty(iMtappCtrlBusiVO.getSrcBusidetailPK())){
+				// 业务数据反向回写预占数情况，不影响可使用余额
+				// do nothing
+			}else if(IMtappCtrlBusiVO.DataType_pre.equals(iMtappCtrlBusiVO.getDataType())
+					&&IMtappCtrlBusiVO.Direction_positive == iMtappCtrlBusiVO.getDirection()
+					&&!StringUtil.isEmpty(iMtappCtrlBusiVO.getSrcBusidetailPK())){
+				// 中间表数据正向回写预占数情况（比如取消冲借款），不影响可使用余额
+				// do nothing
+			}else{
+				// 预占数、执行数都会直接影响业务数据费用金额的占用情况
+				UFDouble temp_amount = appFieldSum.get(appDetailVo.getUnAdjustKey());
+				temp_amount = temp_amount.sub(enableAmount[0]).sub(enableAmount[1]);
+				appFieldSum.put(appDetailVo.getUnAdjustKey(), temp_amount);
+			}
+		}
 		return exe_amount;
 	}
 
@@ -361,19 +497,33 @@ public class MatterAppCtrlHelper {
 	 * @throws BusinessException
 	 * @author: wangyhh@ufida.com.cn
 	 */
-	protected void convertMutiAmount(MtAppDetailVO appDetailVo, MtapppfVO appPfVo, IMtappCtrlBusiVO iMtappCtrlBusiVO, UFBoolean isAdjust, UFDouble[] enableAmount) throws BusinessException {
-		String pk_group = iMtappCtrlBusiVO.getPk_group();
-		String pk_org = iMtappCtrlBusiVO.getPk_org();
-		UFDate billDate = iMtappCtrlBusiVO.getBillDate();
-		String currency = iMtappCtrlBusiVO.getCurrency();
-		UFDouble[] currInfo = iMtappCtrlBusiVO.getCurrInfo();
+	protected void convertMutiAmount(MtAppDetailVO appDetailVo, MtappCtrlBusiVO iMtappCtrlBusiVO,MtapppfVO appPfVo,
+			UFBoolean isAdjust, UFDouble[] enableAmount) throws BusinessException {
+		
+		// 折算汇率计算，按照申请单本身处理
+		String pk_group = appDetailVo.getPk_group();
+		String pk_org = appDetailVo.getAssume_org();
+		UFDate billDate = appDetailVo.getBilldate();
+ 		String currency = appDetailVo.getPk_currtype();
+		UFDouble[] currInfo = new UFDouble[]{appDetailVo.getOrg_currinfo(),appDetailVo.getGroup_currinfo(),appDetailVo.getGlobal_currinfo()};
 		
 		// 计算执行记录总费用金额，且根据当前业务数据最新汇率进行折算本币
 		UFDouble totalExeamount = getDoubleValue(appPfVo.getExe_amount()).add(getDoubleValue(enableAmount[0]));
 		UFDouble totalPreamount = getDoubleValue(appPfVo.getPre_amount()).add(getDoubleValue(enableAmount[1]));
-		// 费用原币 = 单据总执行数  与 （单据当前余额+已经被执行的执行数+上游释放的金额） 的小值
 		UFDouble fy_amount = totalExeamount.add(totalPreamount);
-		UFDouble last_rest_amount = getDoubleValue(appDetailVo.getRest_amount()).add(getDoubleValue(appPfVo.getExe_amount())).add(getDoubleValue(enableAmount[2]));
+		// 费用原币 = 单据总执行数  与 （单据当前余额+已经被执行的执行数+上游释放的金额） 的小值
+		UFDouble last_rest_amount = null;
+		if(appFieldSum != null && IMtappCtrlBusiVO.DataType_pre.equals(iMtappCtrlBusiVO.getDataType())
+				&&IMtappCtrlBusiVO.Direction_positive == iMtappCtrlBusiVO.getDirection()
+				&&StringUtil.isEmpty(iMtappCtrlBusiVO.getSrcBusidetailPK())){
+			//业务单据根据规则回写、正向占用预占数情况，在刚性维度可用全部余额的范围内进行计算费用金额
+			UFDouble rest_amount = appFieldSum.get(appDetailVo.getUnAdjustKey());
+			last_rest_amount = rest_amount.compareTo(UFDouble.ZERO_DBL)<0?UFDouble.ZERO_DBL:rest_amount;
+		}else{
+			UFDouble rest_amount = getDoubleValue(appDetailVo.getRest_amount()).compareTo(UFDouble.ZERO_DBL)<0?UFDouble.ZERO_DBL:
+				getDoubleValue(appDetailVo.getRest_amount());
+			last_rest_amount = rest_amount.add(getDoubleValue(appPfVo.getFy_amount())).add(getDoubleValue(enableAmount[2]));
+		}
 		fy_amount = fy_amount.compareTo(last_rest_amount)>0?last_rest_amount:fy_amount;
 		appPfVo.setFy_amount(fy_amount);
 		UFDouble[] fyAmounts;
@@ -433,6 +583,7 @@ public class MatterAppCtrlHelper {
 		}
 		
 		if(isAdjust != null){
+			// 超申请情况不更改可调剂标识位
 			appPfVo.setIs_adjust(isAdjust);
 		}
 		
@@ -442,6 +593,7 @@ public class MatterAppCtrlHelper {
 			appPfVo.setStatus(VOStatus.UPDATED);
 		}
 	}
+	
 
 	/**
 	 * 构建执行记录map<申请单pk+业务数据明细pk,MtapppfVO>
@@ -673,22 +825,42 @@ public class MatterAppCtrlHelper {
 //			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0041")/*@res "同步执行记录异常，请联系管理员"*/);
 		}
 
-		Set<String[]> keySet = new HashSet<String[]>();
+//		Set<String[]> keySet = new HashSet<String[]>();
+//		for (MtapppfVO vo : appPfVos) {
+//			keySet.add(new String[]{vo.getPk_mtapp_detail(),vo.getPk_djdl()});
+//		}
+		
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		for (MtapppfVO vo : appPfVos) {
-			keySet.add(new String[]{vo.getPk_mtapp_detail(),vo.getPk_djdl()});
-		}
-
-		StringBuffer sqlBuf = new StringBuffer();
-		for (String[] param : keySet) {
-			if(param == null || param.length != 2 || param[0] == null || param[1] == null){
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0028")/*@res "参数不完整，请联系管理员"*/);
+			if(map.get(vo.getPk_djdl()) == null){
+				List<String> detailList = new ArrayList<String>();
+				detailList.add(vo.getPk_mtapp_detail());
+				map.put(vo.getPk_djdl(), detailList);
+			}else{
+				map.get(vo.getPk_djdl()).add(vo.getPk_mtapp_detail());
 			}
+		}
+		
+		StringBuffer sqlBuf = new StringBuffer();
+//		for (String[] param : keySet) {
+//			if(param == null || param.length != 2 || param[0] == null || param[1] == null){
+//				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0028")/*@res "参数不完整，请联系管理员"*/);
+//			}
+//			if (sqlBuf.length() != 0) {
+//				sqlBuf.append(" or ");
+//			}
+//			sqlBuf.append(" (" + MtappbillpfVO.PK_MTAPP_DETAIL + " = '" + param[0] + "' AND " + MtappbillpfVO.PK_DJDL  + " = '" + param[1] + "') ");
+//		}
+		
+		
+		for (Map.Entry<String, List<String>> entry : map.entrySet()) {
 			if (sqlBuf.length() != 0) {
 				sqlBuf.append(" or ");
 			}
-			sqlBuf.append(" (" + MtappbillpfVO.PK_MTAPP_DETAIL + " = '" + param[0] + "' AND " + MtappbillpfVO.PK_DJDL  + " = '" + param[1] + "') ");
-		}
 
+			sqlBuf.append(" (" + SqlUtils.getInStr(MtappbillpfVO.PK_MTAPP_DETAIL, entry.getValue(),true) + " AND "
+					+ MtappbillpfVO.PK_DJDL + " = '" + entry.getKey() + "') ");
+		}
 
 		String deleteSql = " DELETE FROM ER_MTAPP_BILLPF WHERE " + sqlBuf.toString();
 		String insertSql = " INSERT INTO ER_MTAPP_BILLPF(PK_MATTERAPP,PK_MTAPP_DETAIL,PK_DJDL,BUSISYS,PK_GROUP,PK_ORG,EXE_AMOUNT,PRE_AMOUNT) " +
@@ -716,23 +888,22 @@ public class MatterAppCtrlHelper {
 	public void writeBackAppVoExeData(List<MtappCtrlBusiVO>[] exeDataVOs,
 			Map<String, AggMatterAppVO> appPk2AppVoMap,
 			Map<String, MtAppDetailVO> appDetailPk2VoMap,
-			Map<String, List<MtappCtrlfieldVO>> key2CtrlFieldVosMap,
 			Map<String, List<MtapppfVO>> appPfMap,
 			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, List<MtappCtrlBusiVO>> unAdjustBusiVoMap, Map<String, List<MtAppDetailVO>> unAdjustAppVoMap)
 			throws BusinessException {
 	
-		/**
-		 * 下游单据额外可用的申请单明细行金额
-		 * Map<申请单明细行pk+下游单据明细pk，上游释放出的金额(负数)>
-		 */
-		Map<String, UFDouble> extraAmountMap = new HashMap<String, UFDouble>();
+//		/**
+//		 * 下游单据额外可用的申请单明细行金额
+//		 * Map<申请单明细行pk+下游单据明细pk，上游释放出的金额(负数)>
+//		 */
+//		Map<String, UFDouble> extraAmountMap = new HashMap<String, UFDouble>();
 		
 		// 3、中间表反向回写数据,按照与下游完全匹配行、上游回写顺序，释放上游金额
 		writeBackAppVoExeContrastPositive(exeDataVOs, appPk2AppVoMap,
-				key2CtrlFieldVosMap, appPfMap, allAdjustAppVoMap,appDetailPk2VoMap,extraAmountMap);
+				appPfMap, allAdjustAppVoMap,appDetailPk2VoMap);
 		// 4、正向回写数据，需要处理调剂情况
 		writeBackAppVoExePositive(unAdjustBusiVoMap,exeDataVOs[3], appPk2AppVoMap,
-				key2CtrlFieldVosMap, appPfMap, allAdjustAppVoMap,unAdjustAppVoMap,extraAmountMap);
+				 appPfMap, allAdjustAppVoMap,unAdjustAppVoMap);
 
 	}
 	
@@ -744,14 +915,12 @@ public class MatterAppCtrlHelper {
 	 * @param key2CtrlFieldVosMap
 	 * @param appPfMap
 	 * @param allAdjustAppVoMap
-	 * @param extraAmountMap 
 	 * @param appDetailPk2VoMap 
 	 * @throws BusinessException
 	 */
 	private void writeBackAppVoPreContrastPositive(List<MtappCtrlBusiVO>[] preDataVOs, Map<String, AggMatterAppVO> appPk2AppVoMap,
-			Map<String, List<MtappCtrlfieldVO>> key2CtrlFieldVosMap,
 			Map<String, List<MtapppfVO>> appPfMap,
-			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap,Map<String, UFDouble> extraAmountMap, Map<String, MtAppDetailVO> appDetailPk2VoMap)
+			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, MtAppDetailVO> appDetailPk2VoMap)
 			throws BusinessException {
 		
 		// 按照 申请单pk+业务数据明细pk，分组待正向回写的业务单据
@@ -761,7 +930,7 @@ public class MatterAppCtrlHelper {
 		}
 		for (MtappCtrlBusiVO busivo : preDataVOs[2]) {
 			// 获得中间表下游单据的完全匹配行记录
-			MatterAppVO mtappvo = appPk2AppVoMap.get(busivo.getMatterAppPK()).getParentVO();
+//			MatterAppVO mtappvo = appPk2AppVoMap.get(busivo.getMatterAppPK()).getParentVO();
 			MtappCtrlBusiVO forwardBusiVO = positiveBusiDataMap.get(busivo.getMatterAppPK()+ busivo.getForwardBusidetailPK());
 			List<MtAppDetailVO> mtAppDetailList = null;
 			UFDouble[] exe_amount = new UFDouble[]{UFDouble.ZERO_DBL,busivo.getPreData()};
@@ -776,12 +945,11 @@ public class MatterAppCtrlHelper {
 				}
 			}else{
 				// 获取下游单据 完全匹配维度对应的申请单明细行第一行
-				List<MtappCtrlfieldVO> ctrlFieldList = key2CtrlFieldVosMap.get(getMtappCtrlRuleKey(mtappvo));
 				// fieldcode+fieldValue+……+appPk+pk_org
-				String allFieldKey = getFieldKey(ctrlFieldList, forwardBusiVO,true,mtappvo);
+				String allFieldKey = forwardBusiVO.getAllFieldKey();
 			    mtAppDetailList = allAdjustAppVoMap.get(allFieldKey);
 			    if(mtAppDetailList == null || mtAppDetailList.isEmpty()){
-			    	throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
+			    	throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
 			    			getStrByID("201212_0","0201212-0090")/*@res ""业务单据与费用申请单控制维度对照字段值不一致，请修改业务单据""*/);
 			    }
 			}
@@ -791,17 +959,17 @@ public class MatterAppCtrlHelper {
 					continue;
 				}
 				// 获得本身的执行记录
-				MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
+//				MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
 				// 回写费用申请单明细行金额
-				exe_amount = writeBackDetailAppVo(exe_amount, appDetailVo, appPfVo, busivo, UFBoolean.FALSE);
-				// 记录为下游单据释放的金额
-				extraAmountMap.put(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK(),getDoubleValue(busivo.getPreData()).multiply(-1));
+				exe_amount = writeBackDetailAppVo(exe_amount, appDetailVo,null, appPfMap, busivo, UFBoolean.FALSE);
+//				// 记录为下游单据释放的金额
+//				extraAmountMap.put(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK(),getDoubleValue(busivo.getPreData()).multiply(-1));
 				// 预占数直接写到完全匹配行的第一行，写到就结束遍历
 				break;
 			}
 			
 			if(exe_amount[1].compareTo(UFDouble.ZERO_DBL) != 0){
-				throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
 		    			getStrByID("201212_0","0201212-0095")/*@res ""待回写的申请单明细行已经关闭，无法回写，请手工取消关闭""*/);
 			}
 		}
@@ -816,13 +984,11 @@ public class MatterAppCtrlHelper {
 	 * @param appPfMap
 	 * @param allAdjustAppVoMap
 	 * @param appDetailPk2VoMap 
-	 * @param extraAmountMap 
 	 * @throws BusinessException
 	 */
 	private void writeBackAppVoExeContrastPositive(List<MtappCtrlBusiVO>[] exeDataVOs, Map<String, AggMatterAppVO> appPk2AppVoMap,
-			Map<String, List<MtappCtrlfieldVO>> key2CtrlFieldVosMap,
 			Map<String, List<MtapppfVO>> appPfMap,
-			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, MtAppDetailVO> appDetailPk2VoMap, Map<String, UFDouble> extraAmountMap)
+			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, MtAppDetailVO> appDetailPk2VoMap)
 			throws BusinessException {
 		
 		// 按照 申请单pk+业务数据明细pk，分组待正向回写的业务单据
@@ -831,7 +997,8 @@ public class MatterAppCtrlHelper {
 			positiveBusiDataMap.put(busivo.getMatterAppPK()+busivo.getDetailBusiPK(), busivo);
 		}
 		// 包装中间表待使用的上游单据执行记录,为防止影响上游单据执行记录clone后使用
-		List<MtapppfVO> srcpflist = new ArrayList<MtapppfVO>();
+//		List<MtapppfVO> srcpflist = new ArrayList<MtapppfVO>();
+		Map<String, List<MtapppfVO>> srcpfListMap = new HashMap<String, List<MtapppfVO>>();
 		// 按费用申请单明细行分组上游单据执行记录
 		Map<String, MtapppfVO> srcpfMap = new HashMap<String, MtapppfVO>();
 		for (MtappCtrlBusiVO busivo : exeDataVOs[2]) {
@@ -839,25 +1006,31 @@ public class MatterAppCtrlHelper {
 			List<MtapppfVO> temp_srcpflist= appPfMap.get(busivo.getMatterAppPK()+ busivo.getSrcBusidetailPK());
 			// 按费用申请单明细行分组上游单据执行记录
 			for (MtapppfVO mtapppfVO : temp_srcpflist) {
-				String key = mtapppfVO.getPk_mtapp_detail()+mtapppfVO.getBusi_detail_pk();
+				String busi_detail_pk = mtapppfVO.getBusi_detail_pk();
+				String key = mtapppfVO.getPk_mtapp_detail()+busi_detail_pk;
 				if(srcpfMap.containsKey(key)){
 					continue;
 				}
 				MtapppfVO mtapppfVO_c = (MtapppfVO) mtapppfVO.clone();
-				srcpflist.add(mtapppfVO_c);
 				srcpfMap.put(key, mtapppfVO_c);
+				List<MtapppfVO> srcpflist = srcpfListMap.get(busi_detail_pk);
+				if(srcpflist == null){
+					srcpflist = new ArrayList<MtapppfVO>();
+					srcpfListMap.put(busi_detail_pk, srcpflist);
+				}
+				srcpflist.add(mtapppfVO_c);
 			}
 		}
 		for (MtappCtrlBusiVO busivo : exeDataVOs[2]) {
 
 			UFDouble remaindAmount = busivo.getExeData(); 
-			MatterAppVO mtappvo = appPk2AppVoMap.get(busivo.getMatterAppPK()).getParentVO();
+//			MatterAppVO mtappvo = appPk2AppVoMap.get(busivo.getMatterAppPK()).getParentVO();
 			// 获得中间表下游单据的完全匹配行记录
 			MtappCtrlBusiVO forwardBusiVO = positiveBusiDataMap.get(busivo.getMatterAppPK()+ busivo.getForwardBusidetailPK());
 			if(forwardBusiVO != null){
-				List<MtappCtrlfieldVO> ctrlFieldList = key2CtrlFieldVosMap.get(getMtappCtrlRuleKey(mtappvo));
+//				List<MtappCtrlfieldVO> ctrlFieldList =getMtappCtrlFields(mtappvo, key2CtrlFieldVosMap);
 				// fieldcode+fieldValue+……+appPk+pk_org
-				String allFieldKey = getFieldKey(ctrlFieldList, forwardBusiVO,true,mtappvo);
+				String allFieldKey = forwardBusiVO.getAllFieldKey();
 				List<MtAppDetailVO> mtAppDetailList = allAdjustAppVoMap.get(allFieldKey);
 //				List<String> matchDetailPks = new ArrayList<String>();
 				if(mtAppDetailList != null){
@@ -869,7 +1042,7 @@ public class MatterAppCtrlHelper {
 						if(srcmtapppfVO != null){
 //							matchDetailPks.add(appDetailVo.getPrimaryKey());
 							// 中间表的执行记录是独立的，不与上游或者下游混在一起
-							MtapppfVO mtapppfVO = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
+//							MtapppfVO mtapppfVO = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
 							// 计算回写金额。最大只允许回写上游占用的金额
 							UFDouble exe_amount = getDoubleValue(srcmtapppfVO.getExe_amount());
 							if(exe_amount.add(remaindAmount).compareTo(UFDouble.ZERO_DBL)>0){
@@ -881,14 +1054,14 @@ public class MatterAppCtrlHelper {
 							}
 							UFDouble[] exeAmounts = new UFDouble[]{exe_amount,UFDouble.ZERO_DBL}; 
 							// 释放上游单据占用的申请
-							exeAmounts = writeBackDetailAppVo(exeAmounts, appDetailVo, mtapppfVO, busivo, UFBoolean.FALSE);
-							// 记录释放的金额
-							extraAmountMap.put(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK(), (exe_amount.multiply(new UFDouble(-1))).add(
-									getDoubleValue(extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK()))));
+							exeAmounts = writeBackDetailAppVo(exeAmounts, appDetailVo,null, appPfMap, busivo, UFBoolean.FALSE);
+//							// 记录释放的金额
+//							extraAmountMap.put(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK(), (exe_amount.multiply(new UFDouble(-1))).add(
+//									getDoubleValue(extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK()))));
 							// 释放上游单据执行记录占用的执行数
 							srcmtapppfVO.setExe_amount(srcmtapppfVO.getExe_amount().add(exe_amount));
 							if(exeAmounts[0].compareTo(UFDouble.ZERO_DBL) != 0){
-								throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
+								throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
 										getStrByID("201212_0","0201212-0095")/*@res ""待回写的申请单明细行已经关闭，无法回写，请手工取消关闭""*/);
 							}
 							if(remaindAmount.compareTo(UFDouble.ZERO_DBL)==0){
@@ -903,13 +1076,13 @@ public class MatterAppCtrlHelper {
 			// 释放上游单据原占用的申请。优先释放下游单据需要占用的行，再按照上游占用申请的顺序进行释放；中间表本身金额是负数
 			if(remaindAmount.compareTo(UFDouble.ZERO_DBL) !=0 ){
 				// 按上游单据回写申请单顺序进行释放申请
-				for (MtapppfVO srcmtapppfVO : srcpflist) {
+				for (MtapppfVO srcmtapppfVO : srcpfListMap.get(busivo.getSrcBusidetailPK())) {
 					MtAppDetailVO appDetailVo = appDetailPk2VoMap.get(srcmtapppfVO.getPk_mtapp_detail());
 					if (appDetailVo.getClose_status().intValue() == ErmMatterAppConst.CLOSESTATUS_Y && (!INCSystemUserConst.NC_USER_PK.equals(appDetailVo.getCloseman()))) {
 						continue;
 					}
 					// 中间表的执行记录是独立的，不与上游或者下游混在一起
-					MtapppfVO mtapppfVO = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
+//					MtapppfVO mtapppfVO = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
 					// 计算回写金额。最大只允许回写上游占用的金额
 					UFDouble exe_amount = getDoubleValue(srcmtapppfVO.getExe_amount());
 					if(exe_amount.add(remaindAmount).compareTo(UFDouble.ZERO_DBL)>0){
@@ -921,14 +1094,14 @@ public class MatterAppCtrlHelper {
 					}
 					UFDouble[] exeAmounts = new UFDouble[]{exe_amount,UFDouble.ZERO_DBL}; 
 					// 释放上游单据占用的申请
-					exeAmounts = writeBackDetailAppVo(exeAmounts, appDetailVo, mtapppfVO, busivo, UFBoolean.FALSE);
-					// 记录释放的金额
-					extraAmountMap.put(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK(), (exe_amount.multiply(new UFDouble(-1))).add(
-							getDoubleValue(extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK()))));
+					exeAmounts = writeBackDetailAppVo(exeAmounts, appDetailVo, null,appPfMap, busivo, UFBoolean.FALSE);
+//					// 记录释放的金额
+//					extraAmountMap.put(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK(), (exe_amount.multiply(new UFDouble(-1))).add(
+//							getDoubleValue(extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getForwardBusidetailPK()))));
 					// 释放上游单据执行记录占用的执行数
 					srcmtapppfVO.setExe_amount(srcmtapppfVO.getExe_amount().add(exe_amount));					
 					if(exeAmounts[0].compareTo(UFDouble.ZERO_DBL) != 0){
-						throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
+						throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
 								getStrByID("201212_0","0201212-0095")/*@res ""待回写的申请单明细行已经关闭，无法回写，请手工取消关闭""*/);
 					}
 					if(remaindAmount.compareTo(UFDouble.ZERO_DBL)==0){
@@ -951,22 +1124,20 @@ public class MatterAppCtrlHelper {
 	 * @param appPfMap
 	 * @param allAdjustAppVoMap
 	 * @param unAdjustAppVoMap 
-	 * @param extraAmountMap 
 	 * @throws BusinessException
 	 */
 	private void writeBackAppVoExePositive(Map<String, List<MtappCtrlBusiVO>> unAdjustBusiVoMap, List<MtappCtrlBusiVO> exeDataVOs,
 			Map<String, AggMatterAppVO> appPk2AppVoMap,
-			Map<String, List<MtappCtrlfieldVO>> key2CtrlFieldVosMap,
 			Map<String, List<MtapppfVO>> appPfMap,
-			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, List<MtAppDetailVO>> unAdjustAppVoMap, Map<String, UFDouble> extraAmountMap)
+			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, List<MtAppDetailVO>> unAdjustAppVoMap)
 			throws BusinessException {
 		
 		for (Entry<String, List<MtappCtrlBusiVO>> unAdjustEntry : unAdjustBusiVoMap.entrySet()) {
 			List<MtAppDetailVO> unAdjustAppList = unAdjustAppVoMap.get(unAdjustEntry.getKey());
 			AggMatterAppVO aggMatterAppVO = appPk2AppVoMap.get(unAdjustAppList.get(0).getPk_mtapp_bill());
-			MatterAppVO mtappvo = aggMatterAppVO.getParentVO();
+//			MatterAppVO mtappvo = aggMatterAppVO.getParentVO();
 			
-			writeBackDetail_new(key2CtrlFieldVosMap.get(getMtappCtrlRuleKey(mtappvo)), aggMatterAppVO, allAdjustAppVoMap, appPfMap, unAdjustAppList, unAdjustEntry.getValue(),extraAmountMap);
+			writeBackDetail_new(aggMatterAppVO, allAdjustAppVoMap, appPfMap, unAdjustAppList, unAdjustEntry.getValue());
 		}
 	}
 
@@ -976,26 +1147,25 @@ public class MatterAppCtrlHelper {
 	 * @param preDataVOs 回写预占数的业务数据
 	 * @param appPk2AppVoMap 费用申请单vomap
 	 * @param appDetailPk2VoMap 申请单明细行vomap
-	 * @param key2CtrlFieldVosMap 费用申请单控制维度
 	 * @param appPfMap 业务数据执行记录信息
 	 * @param allAdjustAppVoMap 全部匹配维度的申请单明细map
 	 * @throws BusinessException 
 	 */
 	public void writeBackAppVoPreData(List<MtappCtrlBusiVO>[] preDataVOs,
 			Map<String, AggMatterAppVO> appPk2AppVoMap,
-			Map<String, MtAppDetailVO> appDetailPk2VoMap, Map<String, List<MtappCtrlfieldVO>> key2CtrlFieldVosMap, Map<String, List<MtapppfVO>> appPfMap, Map<String, List<MtAppDetailVO>> allAdjustAppVoMap) throws BusinessException {
-		/**
-		 * 下游单据额外可用的申请单明细行金额
-		 * Map<申请单明细行pk+下游单据明细pk，上游释放出的金额(负数)>
-		 */
-		Map<String, UFDouble> extraAmountMap = new HashMap<String, UFDouble>();
+			Map<String, MtAppDetailVO> appDetailPk2VoMap,Map<String, List<MtapppfVO>> appPfMap, Map<String, List<MtAppDetailVO>> allAdjustAppVoMap) throws BusinessException {
+//		/**
+//		 * 下游单据额外可用的申请单明细行金额
+//		 * Map<申请单明细行pk+下游单据明细pk，上游释放出的金额(负数)>
+//		 */
+//		Map<String, UFDouble> extraAmountMap = new HashMap<String, UFDouble>();
 		
 		// 3、中间表反向回写数据
 		writeBackAppVoPreContrastPositive(preDataVOs, appPk2AppVoMap,
-				key2CtrlFieldVosMap, appPfMap, allAdjustAppVoMap,extraAmountMap,appDetailPk2VoMap);
+				appPfMap, allAdjustAppVoMap,appDetailPk2VoMap);
 		// 4、正向回写数据
 		writeBackAppVoPrePositive(preDataVOs[3], appPk2AppVoMap,
-				key2CtrlFieldVosMap, appPfMap, allAdjustAppVoMap,extraAmountMap);
+				 appPfMap, allAdjustAppVoMap);
 	}
 
 	/**
@@ -1006,25 +1176,22 @@ public class MatterAppCtrlHelper {
 	 * @param key2CtrlFieldVosMap
 	 * @param appPfMap
 	 * @param allAdjustAppVoMap
-	 * @param extraAmountMap 
 	 * @throws BusinessException
 	 */
 	private void writeBackAppVoPrePositive(List<MtappCtrlBusiVO> preDataVOs,
 			Map<String, AggMatterAppVO> appPk2AppVoMap,
-			Map<String, List<MtappCtrlfieldVO>> key2CtrlFieldVosMap,
 			Map<String, List<MtapppfVO>> appPfMap,
-			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap, Map<String, UFDouble> extraAmountMap)
+			Map<String, List<MtAppDetailVO>> allAdjustAppVoMap)
 			throws BusinessException {
 		for (MtappCtrlBusiVO busivo : preDataVOs) {
 			// 获得业务数据全部控制维度key
-			MatterAppVO mtappvo = appPk2AppVoMap.get(busivo.getMatterAppPK()).getParentVO();
+//			MatterAppVO mtappvo = appPk2AppVoMap.get(busivo.getMatterAppPK()).getParentVO();
 			// fieldcode+fieldValue+……+appPk+pk_org
-			List<MtappCtrlfieldVO> ctrlFieldList = key2CtrlFieldVosMap.get(mtappvo.getPk_org() + mtappvo.getPk_tradetype());
-			String allFieldKey = getFieldKey(ctrlFieldList, busivo,true,mtappvo);
+			String allFieldKey = busivo.getAllFieldKey();
 			// 获取完全匹配维度对应的申请单明细行第一行
 			List<MtAppDetailVO> mtAppDetailList = allAdjustAppVoMap.get(allFieldKey);
 			if(mtAppDetailList == null || mtAppDetailList.isEmpty()){
-				throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().
 						getStrByID("201212_0","0201212-0090")/*@res ""业务单据与费用申请单控制维度对照字段值不一致，请修改业务单据""*/);
 			}
 			
@@ -1033,10 +1200,9 @@ public class MatterAppCtrlHelper {
 					continue;
 				}
 				// 获得本身的执行记录
-				MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
+//				MtapppfVO appPfVo = getMtapppfVO_new(busivo, appDetailVo, appPfMap,mtappvo.getPk_tradetype());
 				// 回写费用申请单明细行金额
-				UFDouble extraAmount = extraAmountMap.get(appDetailVo.getPrimaryKey()+busivo.getDetailBusiPK());
-				writeBackDetailAppVo(new UFDouble[]{UFDouble.ZERO_DBL,busivo.getPreData(),getDoubleValue(extraAmount)}, appDetailVo, appPfVo, busivo, UFBoolean.FALSE);
+				writeBackDetailAppVo(new UFDouble[]{UFDouble.ZERO_DBL,busivo.getPreData()}, appDetailVo, null,appPfMap, busivo, UFBoolean.FALSE);
 				// 预占数直接写到完全匹配行的第一行，写到就结束遍历
 				break;
 			}
@@ -1054,6 +1220,7 @@ public class MatterAppCtrlHelper {
 	 * @return
 	 */
 	protected MtapppfVO getMtapppfVO_new(MtappCtrlBusiVO busivo,MtAppDetailVO appDetailVo,Map<String, List<MtapppfVO>> appPfMap, String ma_tradetype){
+		String pk_mtapp_detail = appDetailVo.getPk_mtapp_detail();
 		MtapppfVO appPfVo = null;
 		String pfKey = busivo.getMatterAppPK()+busivo.getDetailBusiPK();
 		List<MtapppfVO> pflist = appPfMap.get(pfKey);
@@ -1062,7 +1229,7 @@ public class MatterAppCtrlHelper {
 			appPfMap.put(pfKey, pflist);
 		}
 		for (MtapppfVO mtapppfVO : pflist) {
-			if(mtapppfVO.getPk_mtapp_detail().equals(appDetailVo.getPrimaryKey())){
+			if(mtapppfVO.getPk_mtapp_detail().equals(pk_mtapp_detail)){
 				appPfVo = mtapppfVO;
 				break;
 			}
@@ -1073,6 +1240,7 @@ public class MatterAppCtrlHelper {
 		}
 		return appPfVo;
 	}
+			
 	/**
 	 * 反向回写申请单
 	 * 
@@ -1099,7 +1267,9 @@ public class MatterAppCtrlHelper {
 					}else{
 						pre_data = getDoubleValue(mtapppfVO.getPre_amount()).multiply(-1);
 					}
-					writeBackDetailAppVo(new UFDouble[]{exe_amount,pre_data}, detailvo, mtapppfVO, busivo, UFBoolean.FALSE);
+					
+					writeBackDetailAppVo(new UFDouble[]{exe_amount,pre_data}, 
+							detailvo, mtapppfVO,appPfMap, busivo, UFBoolean.FALSE);
 				}
 			}
 		}
@@ -1114,6 +1284,26 @@ public class MatterAppCtrlHelper {
 	public String getMtappCtrlRuleKey(MatterAppVO mtappvo) {
 		return mtappvo.getPk_org() + mtappvo.getPk_tradetype();
 	}
+	/**
+	 * 获得费用申请单控制字段
+	 * 
+	 * @param mtappvo
+	 * @return
+	 */
+	public List<MtappCtrlfieldVO> getMtappCtrlFields(MatterAppVO mtappvo,Map<String, List<MtappCtrlfieldVO>> fieldmap) {
+		return fieldmap.get(getMtappCtrlRuleKey(mtappvo));
+	}
+	
+	/**
+	 * 获得费用申请单控制对象
+	 * 
+	 * @param mtappvo
+	 * @return
+	 */
+	public List<String> getMtappCtrlBills(MatterAppVO mtappvo,Map<String, List<String>> billmap) {
+		return billmap.get(getMtappCtrlRuleKey(mtappvo));
+	}
+	
 	
 	/**
 	 * 初始化控制维度中在VO对照中的对照
@@ -1128,7 +1318,7 @@ public class MatterAppCtrlHelper {
 			return;
 		}
 
-		ctrlFiledMap = new HashMap<String, Map<String, String>>();
+		ctrlFiledMap = new HashMap<String, Map<String, List<String>>>();
 
 		for (Map.Entry<String, List<MtappCtrlBusiVO>> entry : apppk2MtappCtrlBusiVOMap.entrySet()) {
 			AggMatterAppVO appVo = getMatterAppVos(entry.getKey(), matterAppVOs);
@@ -1148,16 +1338,16 @@ public class MatterAppCtrlHelper {
 							busiVo.getTradeType());
 
 					if (ruleVoList == null || ruleVoList.isEmpty()) {
-						throw new RuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+						throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
 								"upp2012v575_0", "0upp2012V575-0129")/*
 																	 * @res
 																	 * "费用申请单控制维度未配置vo对照，请检查！"
 																	 */);
 					}
 
-					String orgTradeTypekey = getMtappCtrlRuleKey(appVo.getParentVO());
+//					String orgTradeTypekey = getMtappCtrlRuleKey(appVo.getParentVO());
 					// 校验控制对象。校验当前业务数据交易类型是否在申请单的控制对象内
-					List<MtappCtrlfieldVO> ctrlBillList = key2CtrlFieldVosMap.get(orgTradeTypekey);
+					List<MtappCtrlfieldVO> ctrlBillList = getMtappCtrlFields(appVo.getParentVO(), key2CtrlFieldVosMap);
 					List<String> ctrlFieldCodeList = new ArrayList<String>();
 					
 					if(ctrlBillList != null){
@@ -1166,11 +1356,16 @@ public class MatterAppCtrlHelper {
 						}
 					}
 					
-					Map<String, String> voKeyMap = new HashMap<String, String>();
+					Map<String, List<String>> voKeyMap = new HashMap<String, List<String>>();
 					for (ExchangeRuleVO ruleVo : ruleVoList) {
 						String ruleData = ruleVo.getRuleData();
 						if (ctrlFieldCodeList.contains(ruleData)) {
-							voKeyMap.put(ruleData, ruleVo.getDest_attr());
+							List<String> list = voKeyMap.get(ruleData);
+							if(list == null){
+								list = new ArrayList<String>();
+								voKeyMap.put(ruleData, list);
+							}
+							list.add(ruleVo.getDest_attr());
 						}
 					}
 					ctrlFiledMap.put(key, voKeyMap);
@@ -1216,5 +1411,9 @@ public class MatterAppCtrlHelper {
 				.lookup(IPFConfig.class)
 				.getMappingRelation(srcBilltypeOrTrantype, destBilltypeOrTrantype, null, pk_group);
 		return exchangeRuleVO;
+	}
+
+	public void setAppFieldSum(Map<String, UFDouble> appFieldSum) {
+		this.appFieldSum = appFieldSum;
 	}
 }

@@ -23,15 +23,17 @@ public class ERMCopyLineAction extends CopyLineAction {
 		if(headItem!=null){
 			 mtAppPk = headItem.getValueObject();
 		}
-		
+		String tradeType = null;
 		if(getModel() instanceof ErmBillBillManageModel){
 			ErmBillBillManageModel model = (ErmBillBillManageModel)getModel();
-			String tradeType = model.getSelectBillTypeCode();
+			tradeType = model.getSelectBillTypeCode();
 			if(BXConstans.BILLTYPECODE_RETURNBILL.equals(tradeType)){
 				return false;
 			}
 		}
-		return (getModel().getUiState()==UIState.ADD||getModel().getUiState()==UIState.EDIT)&&mtAppPk==null ;
+		// 当前单据类型是否是报销单
+		boolean isBX = tradeType != null? tradeType.startsWith(BXConstans.BX_PREFIX):false;
+		return (getModel().getUiState()==UIState.ADD||getModel().getUiState()==UIState.EDIT)&&(mtAppPk==null || isBX);
 	}
 
 }

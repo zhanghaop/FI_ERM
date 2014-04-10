@@ -35,6 +35,45 @@ public interface IMatterAppCtrlService {
 	 * @throws BusinessException
 	 */
 	public MtappCtrlInfoVO matterappValidate(IMtappCtrlBusiVO[] vos) throws BusinessException;
+	/**
+	 * 按费用申请单明细行，进行费用申请单控制及回写
+	 * 
+	 * @param vos
+	 *            业务单据
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MtappCtrlInfoVO matterappControlByDetail(IMtappCtrlBusiVO[] vos) throws BusinessException;
+
+	/**
+	 * 按费用申请单明细行，进行费用申请单控制校验
+	 * 
+	 * @param vos
+	 *            业务单据
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MtappCtrlInfoVO matterappValidateByDetail(IMtappCtrlBusiVO[] vos) throws BusinessException;
+	
+	/**
+	 * 整单调剂回写申请单，进行费用申请单控制及回写
+	 * 
+	 * @param vos
+	 *            业务单据
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MtappCtrlInfoVO matterappControlByAllAdjust(IMtappCtrlBusiVO[] vos) throws BusinessException;
+	
+	/**
+	 * 整单调剂回写申请单，进行费用申请单控制校验
+	 * 
+	 * @param vos
+	 *            业务单据
+	 * @return
+	 * @throws BusinessException
+	 */
+	public MtappCtrlInfoVO matterappValidateByAllAdjust(IMtappCtrlBusiVO[] vos) throws BusinessException;
 	
 	/**
 	 * 获取拉单转换VO

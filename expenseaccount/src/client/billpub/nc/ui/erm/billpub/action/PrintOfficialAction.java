@@ -13,6 +13,7 @@ import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.pub.print.PrintEntry;
 import nc.ui.uif2.actions.TemplatePrintAction;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -33,22 +34,32 @@ public class PrintOfficialAction extends TemplatePrintAction {
 	}
 
 	@Override
-	public void doAction(ActionEvent e) throws Exception {
+	public void doAction(ActionEvent e)  throws BusinessException {
 		JKBXVO selvo = (JKBXVO) getModel().getSelectedData();
-		List<String> funnodes = Arrays.asList(BXConstans.JKBX_COMNODES);
-		if( funnodes.contains(getModel().getContext().getNodeCode())){
-			setNodeKey(selvo.getParentVO().getDjlxbm());
-		}else{
-			String djdl = selvo.getParentVO().getDjdl();
-			if(BXConstans.JK_DJDL.equals(djdl)){
-				setNodeKey(BXConstans.BILLTYPECODE_CLFJK);
-			}else{
-				setNodeKey(BXConstans.BILLTYPECODE_CLFBX);
-			}
-		}
 		if (!checkOfficialPrint(selvo))
-				return;
-		super.doAction(e);
+			return;
+		try {
+			List<String> funnodes = Arrays.asList(BXConstans.JKBX_COMNODES);
+			if( funnodes.contains(getModel().getContext().getNodeCode())){
+				setNodeKey(selvo.getParentVO().getDjlxbm());
+			}else{
+				String djdl = selvo.getParentVO().getDjdl();
+				if(BXConstans.JK_DJDL.equals(djdl)){
+					setNodeKey(BXConstans.BILLTYPECODE_CLFJK);
+				}else{
+					setNodeKey(BXConstans.BILLTYPECODE_CLFBX);
+				}
+			}
+			PrintEntry entry = createPrintentry();
+			if(entry.selectTemplate() == 1)
+				entry.print();
+		} catch (Exception e1) {
+			//对于升级上来的自定义交易类型特殊处理
+			setNodeKey(null);
+			PrintEntry entry = createPrintentry();
+			if(entry.selectTemplate() == 1)
+				entry.print();
+		}
 	}
 
 

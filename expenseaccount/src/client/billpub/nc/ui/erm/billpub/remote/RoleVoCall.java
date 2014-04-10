@@ -49,9 +49,9 @@ public class RoleVoCall extends AbstractCall implements IRemoteCallItem {
 	 */
 	public static String PK_ROLE_IN_SQL_BUSI = "PK_ROLE_IN_SQL";
 
-	private String getWhereClause() {
-		return " dr=0 and pk_group='" + BXUiUtil.getPK_group() + "' and exists (select a.pk_role  from sm_user_role a where a.cuserid = '"+WorkbenchEnvironment.getInstance().getLoginUser().getCuserid()+"' and sm_role.pk_role = a.pk_role)";
-	}
+//	private String getWhereClause() {
+//		return " dr=0 and pk_group='" + BXUiUtil.getPK_group() + "' and exists (select a.pk_role  from sm_user_role a where a.cuserid = '"+WorkbenchEnvironment.getInstance().getLoginUser().getCuserid()+"' and sm_role.pk_role = a.pk_role)";
+//	}
 
 	public RoleVoCall() {
 		super();
@@ -61,9 +61,10 @@ public class RoleVoCall extends AbstractCall implements IRemoteCallItem {
 	public ServiceVO getServcallVO() {
 		callvo = new ServiceVO();
 		callvo.setClassname("nc.itf.uap.rbac.IRoleManageQuery");
-		callvo.setMethodname("queryRoleByWhereClause");
-		callvo.setParamtype(new Class[] { String.class });
-		callvo.setParam(new Object[] { getWhereClause() });
+		callvo.setMethodname("queryAllRoleOfUserInGroup");
+		callvo.setParamtype(new Class[] { String.class, String.class });
+		callvo.setParam(new Object[] { WorkbenchEnvironment.getInstance().getLoginUser().getCuserid(),
+				BXUiUtil.getPK_group() });
 		return callvo;
 	}
 

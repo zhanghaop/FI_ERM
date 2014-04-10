@@ -10,6 +10,7 @@ import nc.itf.erm.ntb.IErmLinkBudgetService;
 import nc.itf.erm.proxy.ErmProxy;
 import nc.itf.tb.control.IBudgetControl;
 import nc.pubitf.erm.costshare.IErmCostShareBillQuery;
+import nc.util.erm.costshare.ErCostBudgetUtil;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.pub.IFYControl;
@@ -45,7 +46,7 @@ public class ErmLinkBudgetServiceImpl implements IErmLinkBudgetService {
 			// 查询费用结转主vo
 			AggCostShareVO[] csVo = NCLocator.getInstance().lookup(IErmCostShareBillQuery.class)
 					.queryBillByWhere(CostShareVO.SRC_ID + "='" + vo.getParentVO().getPk_jkbx() + "'");
-			items = ErBudgetUtil.getCostControlVOByCSVO(csVo, AuditInfoUtil.getCurrentUser());
+			items = ErCostBudgetUtil.getCostControlVOByCSVO(csVo, AuditInfoUtil.getCurrentUser());
 		} else {
 			JKBXHeaderVO[] jkbxItems = ErVOUtils.prepareBxvoItemToHeaderClone(vo);
 			// 给财务报销,保存完以后,下一个可能发生的动作可能是审核,可能产生执行数,以前跟liangsg商量的,
@@ -60,7 +61,14 @@ public class ErmLinkBudgetServiceImpl implements IErmLinkBudgetService {
 		}
 		
 		if(items == null || items.length == 0){
-			return null;
+			throw new BusinessException(
+			nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+			.getStrByID("expensepub_0", "02011002-1001")/*
+														 * @
+														 * res
+														 * "当前用户没有权限查询本单据的相关预算，请检查"
+														 */
+			);
 		}
 
 		// 调用预算接口查询控制策略。如果返回值为空表示无控制策略，不控制。最后一个参数为false，这样就不会查找下游策略
@@ -78,6 +86,10 @@ public class ErmLinkBudgetServiceImpl implements IErmLinkBudgetService {
 			for (YsControlVO controlVo : controlVos) {
 				voProxys.add(getFiBillAccessableBusiVOProxy(controlVo, controlVo.getParentBillType()));
 			}
+		}
+		
+		if(voProxys.size() == 0){
+			return null;
 		}
 		
 		return ErmProxy.getILinkQuery().getLinkDatas(voProxys.toArray(new FiBillAccessableBusiVOProxy[] {}));

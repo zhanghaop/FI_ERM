@@ -18,9 +18,9 @@ import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.erm.expenseaccount.ExpenseBalVO;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.utils.SqlBuilder;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -74,7 +74,12 @@ public class ExpDetailSQLCreator extends ErmCSBaseSqlCreator {
 			.append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ")
 			.append(IPubReportConstants.QRY_OBJ_PREFIX).append(i);
 		}
-        sqlBuffer.append(", v.pk_currtype, ");
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", v.pk_currtype, ");
+        } else {
+            sqlBuffer.append(", null pk_currtype, ");
+        }
 		sqlBuffer.append(detailFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
 //		sqlBuffer.append(", v.rn, (case when v.rn = 0 then 0 else 1 end) as is_begin"); // is_begin
 		sqlBuffer.append(", v.rn");
@@ -150,7 +155,12 @@ public class ExpDetailSQLCreator extends ErmCSBaseSqlCreator {
         }
 		
 		sqlBuffer.append(", ").append(queryObjBaseExp);
-		sqlBuffer.append(", " ).append( "zb.").append(ExpenseAccountVO.PK_CURRTYPE);
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", zb." ).append(ExpenseAccountVO.PK_CURRTYPE);
+        } else {
+            sqlBuffer.append(", null " ).append(ExpenseAccountVO.PK_CURRTYPE);
+        }
 		
 		sqlBuffer.append(", " ).append( "zb.").append(ExpenseAccountVO.BILLDATE);
 		sqlBuffer.append(", " ).append( "zb.").append(ExpenseAccountVO.REASON);
@@ -221,7 +231,7 @@ public class ExpDetailSQLCreator extends ErmCSBaseSqlCreator {
 		
         String[] codes = (String[]) queryVO.getUserObject()
                 .get("src_tradetype");
-        if (!ArrayUtil.isEmpty(codes)) {
+        if (!ArrayUtils.isEmpty(codes)) {
             String sqlCode = SqlUtil.buildInSql("zb.src_tradetype", codes);
             sqlBuffer.append(" and ").append(sqlCode);
         }
@@ -245,7 +255,10 @@ public class ExpDetailSQLCreator extends ErmCSBaseSqlCreator {
         }
 		
 		sqlBuffer.append(", " ).append( groupByBaseExp);
-		sqlBuffer.append(", " ).append( "zb.").append(ExpenseAccountVO.PK_CURRTYPE);
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", zb." ).append(ExpenseAccountVO.PK_CURRTYPE);
+        }
 		sqlBuffer.append(", " ).append( "zb.").append(ExpenseAccountVO.BILLDATE);
 		sqlBuffer.append(", " ).append( "zb.").append(ExpenseAccountVO.REASON);
         sqlBuffer.append(", ").append("zb.")
@@ -286,7 +299,7 @@ public class ExpDetailSQLCreator extends ErmCSBaseSqlCreator {
 
 			total = new ComputeTotal();
 			total.field = "pk_currtype";
-			total.isDimension = true;
+			total.isDimension = beForeignCurrency;
 			allQryobjList.add(total);
 		}
 

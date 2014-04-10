@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.matterapp.check.VOStatusChecker;
-import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.MessageDialog;
@@ -179,7 +178,11 @@ public class CommitAction extends NCAction {
 	
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = this.getBtnName() + ErmActionConst.FAIL_MSG;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
+				"2011000_0", null, "02011000-0040", null,
+				new String[] { this.getBtnName() })/*
+													 * @ res "{0}Ê§°Ü£¡"
+													 */;
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(null);

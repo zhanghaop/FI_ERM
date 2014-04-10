@@ -1,15 +1,9 @@
 package nc.bs.er.control;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import nc.bs.erm.annotation.ErmBusinessDef;
 import nc.bs.erm.common.ErmConst;
-import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.util.ErBudgetUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
@@ -22,8 +16,6 @@ import nc.vo.arap.verifynew.BusinessShowException;
 import nc.vo.er.exception.BugetAlarmBusinessException;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.erm.control.YsControlVO;
-import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.costshare.CostShareYsControlVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.fipub.annotation.Business;
@@ -110,86 +102,81 @@ public class YsControlBO {
 			return null;
 		}
 
-		Map<String, List<YsControlVO>> map = new HashMap<String, List<YsControlVO>>();
-		for (YsControlVO vo : controlVos) {
-			String key = vo.getPKOrg();
-			if (map.containsKey(key)) {
-				List<YsControlVO> list = map.get(key);
-				list.add(vo);
-			} else {
-				ArrayList<YsControlVO> list = new ArrayList<YsControlVO>();
-				list.add(vo);
-				map.put(key, list);
-			}
-		}
-		Set<String> pkcorps = map.keySet();
+//		Map<String, List<YsControlVO>> map = new HashMap<String, List<YsControlVO>>();
+//		for (YsControlVO vo : controlVos) {
+//			String key = vo.getPKOrg();
+//			if (map.containsKey(key)) {
+//				List<YsControlVO> list = map.get(key);
+//				list.add(vo);
+//			} else {
+//				ArrayList<YsControlVO> list = new ArrayList<YsControlVO>();
+//				list.add(vo);
+//				map.put(key, list);
+//			}
+//		}
+//		Set<String> pkcorps = map.keySet();
 
 		// 用于判断抛出何种异常，如果为true:预警，false：刚性控制，null：柔性控制
 		Boolean isAlarm = null;
 		StringBuffer resultStr = new StringBuffer("");
 
-		for (String corp : pkcorps) {// 这里将多个公司的预算控制一起抛出
-			NtbCtlInfoVO ctrlInfoVO = ysControlCore(map.get(corp).toArray(new YsControlVO[] {}));
-			if (ctrlInfoVO == null) {
-				continue;
-			}
+//		for (String corp : pkcorps) {// 这里将多个公司的预算控制一起抛出
+//			NtbCtlInfoVO ctrlInfoVO = ysControlCore(map.get(corp).toArray(new YsControlVO[] {}));
+			NtbCtlInfoVO ctrlInfoVO = ysControlCore(controlVos);
+			if (ctrlInfoVO != null) {
+				StringBuffer controlMsg = new StringBuffer();
 
-			StringBuffer controlMsg = new StringBuffer();
-
-			if (ctrlInfoVO.isControl()) {// 刚性控制
-				isAlarm = Boolean.FALSE;
-				controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getControlInfos()));
-			} else if (ctrlInfoVO.isAlarm()) {// 预警控制
-				if (hascheck != null && Boolean.TRUE.equals(hascheck)) {
-					continue;
-				}
-				
-				if (isAlarm == null) {
-					isAlarm = Boolean.TRUE;
-				}
-				
-				controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getAlarmInfos()));
-			} else if (ctrlInfoVO.isMayBeControl()) {// 柔性控制, 无审批流时刚性控制
-				boolean isStartWorkFlow = false;
-				String bill_pk = controlVos[0].getItems()[0].getPk();
-				String djlxbm = controlVos[0].getItems()[0].getDjlxbm();
-				
-				if(controlVos[0].getItems()[0] instanceof CostShareYsControlVO){//事前结转，按报销单是否有审批流为准
-					Integer src_type = (Integer)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.SRC_TYPE);
-					if(src_type == IErmCostShareConst.CostShare_Bill_SCRTYPE_BX){
-						bill_pk = (String)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.SRC_ID);
-						djlxbm = (String)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.DJLXBM);
-					}
-				}
-				
-				isStartWorkFlow = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
-						.isApproveFlowStartup(bill_pk, djlxbm);
-
-				if (!isStartWorkFlow) {
-					if (controlVos[0].getItems()[0].getDjzt() <= BXStatusConst.DJZT_Saved) {
-						isStartWorkFlow = NCLocator
-								.getInstance()
-								.lookup(IPFWorkflowQry.class)
-								.isExistWorkflowDefinitionWithEmend(djlxbm,
-										controlVos[0].getItems()[0].getPk_org(), AuditInfoUtil.getCurrentUser(), -1,
-										WorkflowTypeEnum.Approveflow.getIntValue());
-					}
-				}
-
-				if (!isStartWorkFlow) {// 借款报销单存不存在审批流则刚性控制
+				if (ctrlInfoVO.isControl()) {// 刚性控制
 					isAlarm = Boolean.FALSE;
+					controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getControlInfos()));
+				} else if (ctrlInfoVO.isAlarm()) {// 预警控制
+					if (hascheck == null || Boolean.FALSE.equals(hascheck)) {
+						isAlarm = Boolean.TRUE;
+					}
+					controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getAlarmInfos()));
+				} else if (ctrlInfoVO.isMayBeControl()) {// 柔性控制, 无审批流时刚性控制
+					boolean isStartWorkFlow = false;
+					String bill_pk = controlVos[0].getItems()[0].getWorkFlowBillPk();
+					String djlxbm = controlVos[0].getItems()[0].getWorkFolwBillType();
+					
+//					if(controlVos[0].getItems()[0] instanceof CostShareYsControlVO){//事前结转，按报销单是否有审批流为准
+//						Integer src_type = (Integer)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.SRC_TYPE);
+//						if(src_type == IErmCostShareConst.CostShare_Bill_SCRTYPE_BX){
+//							bill_pk = (String)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.SRC_ID);
+//							djlxbm = (String)((CostShareYsControlVO)controlVos[0].getItems()[0]).getItemValue(CostShareVO.DJLXBM);
+//						}
+//					}
+					
+					isStartWorkFlow = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
+							.isApproveFlowStartup(bill_pk, djlxbm);
+
+					if (!isStartWorkFlow) {
+						if (controlVos[0].getItems()[0].getDjzt() <= BXStatusConst.DJZT_Saved) {
+							isStartWorkFlow = NCLocator
+									.getInstance()
+									.lookup(IPFWorkflowQry.class)
+									.isExistWorkflowDefinitionWithEmend(djlxbm,
+											controlVos[0].getItems()[0].getPk_org(), AuditInfoUtil.getCurrentUser(), -1,
+											WorkflowTypeEnum.Approveflow.getIntValue());
+						}
+					}
+
+					if (!isStartWorkFlow) {//借款报销单存不存在审批流则刚性控制
+						isAlarm = Boolean.FALSE;
+					}
+
+					// 柔性控制弹出警告提示信息
+					if(isAlarm != null){
+						controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getFlexibleControlInfos()));
+					}
 				}
 
-				// 柔性控制弹出警告提示信息
-				if (isAlarm != null) {
-					controlMsg.append(getStringFromArrayStr(ctrlInfoVO.getFlexibleControlInfos()));
+				if (controlMsg.length() != 0) {
+					resultStr.append(controlMsg).append("\n");
 				}
 			}
-
-			if (controlMsg.length() != 0) {
-				resultStr.append(controlMsg).append("\n");
-			}
-		}
+			
+//		}
 
 		if (isAlarm == null) {
 			if (resultStr.toString().length() == 0) {

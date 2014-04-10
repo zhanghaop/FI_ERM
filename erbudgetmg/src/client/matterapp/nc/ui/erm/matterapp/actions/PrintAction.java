@@ -29,13 +29,25 @@ public class PrintAction extends nc.ui.uif2.actions.PrintAction {
 	}
 
 	private void printInfo() {
-		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.getModel().getContext().getEntranceUI());
+		try {
+			printByNodeKey(null);
+		} catch (Exception e) {// 无打印模板的情况下，取默认模板
+			printByNodeKey(ErmMatterAppConst.MatterApp_TRADETYPE_Travel);
+		}
+	}
+	
+	private void printByNodeKey(String nodeKey) {
+		if (nodeKey == null) {
+			nodeKey = getNodeKey();
+		}
+
+		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.getModel().getContext()
+				.getEntranceUI());
 		PrintEntry entry = new PrintEntry(frame);
 		String pkUser = getModel().getContext().getPk_loginUser();
-		entry.setTemplateID(MatterAppUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, getNodeKey());
+		entry.setTemplateID(MatterAppUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, nodeKey);
 		entry.selectTemplate();
 		entry.setDataSource(getDataSource());
-
 		entry.print();
 	}
 

@@ -340,14 +340,13 @@ public abstract class RapidShareAbstractAction extends NCAction {
             UFDouble tmpSum = sum;
             tmpSum = tmpSum.setScale(2, BigDecimal.ROUND_HALF_UP);
             sum = sum.sub(tmpRatio);
-            //不够补齐
-            
-            if (sum.compareTo(UFDouble.ZERO_DBL) <= 0) {
-                sum = UFDouble.ZERO_DBL;
-                tmpRatio = tmpSum;
-            } 
             
             if (ShareruleConst.SRuletype_Money != shareruleVo.getRule_type().intValue()) {
+                //不够补齐
+                if (sum.compareTo(UFDouble.ZERO_DBL) <= 0) {
+                    sum = UFDouble.ZERO_DBL;
+                    tmpRatio = tmpSum;
+                }
                 //如果是最后一个，比例加上
                 if ((nPos == vos.length - 1)
                         && (UFDouble.ZERO_DBL.compareTo(sum) != 0)) {
@@ -389,9 +388,19 @@ public abstract class RapidShareAbstractAction extends NCAction {
 			        }
                 }
 			}
-			
             nPos++;
         }
+        // 报销单快速分摊后，如果是拉分摊申请单后，需要和申请单相关联
+        Boolean ismashare = getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE) == null ? false
+        		: (Boolean) getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE).getValueObject();
+		if (ismashare) {
+			Object pk_item = getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject();
+			for (SuperVO vo : vos) {
+				if (vo instanceof CShareDetailVO) {
+					vo.setAttributeValue(CShareDetailVO.PK_ITEM, pk_item);
+				}
+			}
+		}
         return vos;
     }
     
@@ -422,6 +431,9 @@ public abstract class RapidShareAbstractAction extends NCAction {
 		map.put(JKBXHeaderVO.PK_CHECKELE, CShareDetailVO.PK_CHECKELE);
 		map.put(JKBXHeaderVO.CUSTOMER, CShareDetailVO.CUSTOMER);
 		map.put(JKBXHeaderVO.HBBM, CShareDetailVO.HBBM);
+		//增加产品线和品牌
+		map.put(JKBXHeaderVO.PK_PROLINE, CShareDetailVO.PK_PROLINE);
+		map.put(JKBXHeaderVO.PK_BRAND, CShareDetailVO.PK_BRAND);
 		return map;
 	}
 

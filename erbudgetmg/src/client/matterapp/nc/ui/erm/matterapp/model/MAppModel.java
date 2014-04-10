@@ -10,9 +10,9 @@ import nc.vo.er.exception.ExceptionHandler;
 
 import org.apache.commons.lang.ArrayUtils;
 
-public class MAppModel extends ERMBillManageModel {
+public class MAppModel extends ERMBillManageModel{
 	/**
-	 * 单据类型别名
+	 * 当前交易类型编码
 	 */
 	private String djlxbm;
 	
@@ -66,7 +66,7 @@ public class MAppModel extends ERMBillManageModel {
 	public DjLXVO[] getAllDJLXVOs(){
 		String group = getContext().getPk_group();
 		try {
-			return CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, " dr=0  and djdl='ma' and pk_group='" + group
+			return CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, " djdl='ma' and pk_group='" + group
 					+ "' order by djlxbm ");
 		} catch (Exception e) {
 			ExceptionHandler.handleExceptionRuntime(e);
@@ -98,5 +98,13 @@ public class MAppModel extends ERMBillManageModel {
 
 	public void setSelectBillTypeCode(String selectBillTypeCode) {
 		this.selectBillTypeCode = selectBillTypeCode;
+	}
+
+	public Map<String, DjLXVO> getBillTypeMapCache() {
+		return billTypeMapCache;
+	}
+
+	public void setBillTypeMapCache(Map<String, DjLXVO> billTypeMapCache) {
+		this.billTypeMapCache = billTypeMapCache;
 	}
 }

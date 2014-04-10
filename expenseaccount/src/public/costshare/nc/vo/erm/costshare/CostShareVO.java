@@ -120,6 +120,25 @@ public class CostShareVO extends SuperVO {
 	private java.lang.String defitem1;
 	private nc.vo.pub.lang.UFBoolean hasntbcheck;
 	private java.lang.String warningmsg;
+	private String pk_proline;
+	private String pk_brand;
+	
+
+	public String getPk_proline() {
+		return pk_proline;
+	}
+
+	public void setPk_proline(String pkProline) {
+		pk_proline = pkProline;
+	}
+
+	public String getPk_brand() {
+		return pk_brand;
+	}
+
+	public void setPk_brand(String pkBrand) {
+		pk_brand = pkBrand;
+	}
 
 	private UFBoolean isexpamt;// 报销单冗余字段，是否待摊
 	private java.lang.Integer dr = 0;
@@ -128,7 +147,9 @@ public class CostShareVO extends SuperVO {
 	private String src_billtype = "264X";
 
 	private UFDate bx_djrq;// 报销单单据日期
-
+	
+	public static final String PK_PROLINE = "pk_proline";//产品线
+	public static final String PK_BRAND = "pk_brand";//品牌
 	public static final String PK_COSTSHARE = "pk_costshare";
 	public static final String PK_ORG = "pk_org";
 	public static final String PK_ORG_V = "pk_org_v";

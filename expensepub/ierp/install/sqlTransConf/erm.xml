@@ -7,5 +7,6 @@
     <table name="er_expensetype" pk="pk_expensetype" />
     <table name="er_fieldcontrast" pk="pk_fieldcontrast" />
     <table name="er_billcontrast" pk="pk_billcontrast" />
+    <table name="er_extendconfig" pk="pk_extendconfig" />
   </tables>
 </sqltransconf>

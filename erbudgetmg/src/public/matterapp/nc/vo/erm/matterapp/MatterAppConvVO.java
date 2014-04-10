@@ -1,6 +1,5 @@
 package nc.vo.erm.matterapp;
 
-import nc.bs.erm.matterapp.common.MatterAppDataConvert;
 import nc.vo.pub.SuperVO;
 
 /**

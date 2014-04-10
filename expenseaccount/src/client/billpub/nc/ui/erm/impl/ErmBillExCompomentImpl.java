@@ -1,5 +1,6 @@
 package nc.ui.erm.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Action;
@@ -15,7 +16,6 @@ import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.factory.UIF2BeanFactory;
 import nc.ui.uif2.model.IAppModelDataManager;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.utils.Lists;
 import nc.vo.cmp.settlement.NodeType;
 import nc.vo.uif2.LoginContext;
 
@@ -45,7 +45,7 @@ public class ErmBillExCompomentImpl implements ITabExComponent , IInitDataUsingD
 
 
 	public List<Action> getActions() {
-		List<Action> actions = Lists.newArrayList();
+		List<Action> actions = new ArrayList<Action>();;
 		actions.add((Action)factory.getBean("cardRefreshAction"));
 		return actions;
 	}

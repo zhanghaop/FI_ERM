@@ -159,4 +159,16 @@ public interface IFYControl {
 	 * @return
 	 */
 	public String getPk_payorg();
+	
+	/**
+	 * 审批流对应单据PK
+	 * @return
+	 */
+	public String getWorkFlowBillPk();
+	
+	/**
+	 * 审批流对应交易类型
+	 * @return
+	 */
+	public String getWorkFolwBillType();
 }

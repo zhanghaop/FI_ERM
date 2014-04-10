@@ -12,20 +12,14 @@ import nc.bs.erm.common.ErmBillConst;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.expamortize.ExpAmoritizeConst;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
 import nc.itf.tb.control.IBudgetControl;
 import nc.itf.tb.control.IFormulaFuncName;
 import nc.itf.tb.control.OutEnum;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.ep.bx.BXBusItemVO;
-import nc.vo.ep.bx.BXHeaderVO;
-import nc.vo.ep.bx.JKHeaderVO;
 import nc.vo.erm.control.TokenTools;
-import nc.vo.erm.costshare.CShareDetailVO;
-import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.matterapp.MatterAppVO;
-import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
 import nc.vo.pub.BusinessException;
@@ -126,29 +120,29 @@ public abstract class AbstractErmNtbSqlStrategy {
 		return sql.toString();
 	}
 
-	private void checkField(String field) throws BusinessException{
-		String billType = getBillType();
-		if(billType != null){
-			String headClassName = null;
-			String bodyClassName = null;
-			if(billType.startsWith("261")){
-				headClassName = MatterAppVO.class.getName();
-				bodyClassName = MtAppDetailVO.class.getName();
-			}else if(billType.startsWith("263")){
-				headClassName = JKHeaderVO.class.getName();
-				bodyClassName = BXBusItemVO.class.getName();
-			}else if(billType.startsWith("264")){
-				headClassName = BXHeaderVO.class.getName();
-				bodyClassName = BXBusItemVO.class.getName();
-			}else if(billType.startsWith("265")){
-				headClassName = CostShareVO.class.getName();
-				bodyClassName = CShareDetailVO.class.getName();
-			}else if(billType.startsWith("266")){
-				headClassName = MatterAppVO.class.getName();
-				bodyClassName = MtAppDetailVO.class.getName();
-			}
-		}
-	}
+//	private void checkField(String field) throws BusinessException{
+//		String billType = getBillType();
+//		if(billType != null){
+//			String headClassName = null;
+//			String bodyClassName = null;
+//			if(billType.startsWith("261")){
+//				headClassName = MatterAppVO.class.getName();
+//				bodyClassName = MtAppDetailVO.class.getName();
+//			}else if(billType.startsWith("263")){
+//				headClassName = JKHeaderVO.class.getName();
+//				bodyClassName = BXBusItemVO.class.getName();
+//			}else if(billType.startsWith("264")){
+//				headClassName = BXHeaderVO.class.getName();
+//				bodyClassName = BXBusItemVO.class.getName();
+//			}else if(billType.startsWith("265")){
+//				headClassName = CostShareVO.class.getName();
+//				bodyClassName = CShareDetailVO.class.getName();
+//			}else if(billType.startsWith("266")){
+//				headClassName = MatterAppVO.class.getName();
+//				bodyClassName = MtAppDetailVO.class.getName();
+//			}
+//		}
+//	}
 
 	/**
 	 * where条件中固定条件<br>
@@ -193,6 +187,7 @@ public abstract class AbstractErmNtbSqlStrategy {
 				dateTypeField = "proc1.amortize_date";
 			}
 		}
+		
 		if (ntbvo.getBegDate() != null && ntbvo.getBegDate().toString().trim().length() > 0) {
 			sql.append(" and " + dateTypeField + " >='" + ntbvo.getBegDate() + "' ");
 		}
@@ -239,31 +234,44 @@ public abstract class AbstractErmNtbSqlStrategy {
 			token = new TokenTools(billtypStr, ",", false);
 		}
 
-		String[] billtypes = token.getStringArray();
+		String[] billtypes = token.getStringArray();//例如[2611,2641,2642,266X]
 
 		if (billtypes.length > 0) {
 			for (int i = 0; i < billtypes.length; i++) {
 				String tradeBilltype = billtypes[i];
-				BilltypeVO billtypeVO = PfDataCache.getBillType(tradeBilltype);
-				if (getBillType().equals(billtypeVO.getPk_billtypecode())) {
+				BilltypeVO billtypeVO = getBilltypeVo(tradeBilltype);
+				if (billtypeVO == null) {
 					continue;
 				}
 
 				if (getBillType().equals(billtypeVO.getParentbilltype())) {
 					result.add(billtypeVO.getPk_billtypecode());
 				}
-
 			}
 		} else {
-			BilltypeVO billtypeVO = PfDataCache.getBillType(billtypStr);
-
-			if (!getBillType().equals(billtypeVO.getPk_billtypecode())
-					&& getBillType().equals(billtypeVO.getParentbilltype())) {
-				result.add(billtypeVO.getPk_billtypecode());
+			BilltypeVO billtypeVO = getBilltypeVo(billtypStr);
+			if (billtypeVO != null) {
+				if (!getBillType().equals(billtypeVO.getPk_billtypecode())
+						&& getBillType().equals(billtypeVO.getParentbilltype())) {
+					result.add(billtypeVO.getPk_billtypecode());
+				}
 			}
 		}
-
 		return result;
+	}
+
+	private BilltypeVO getBilltypeVo(String tradeBilltype) throws BusinessException {
+		BilltypeVO billtypeVO = PfDataCache.getBillType(tradeBilltype);
+		if(billtypeVO == null){
+			StringBuffer sql = new StringBuffer();
+			sql.append(" pk_billtypecode = '" + tradeBilltype + "' ");
+			BilltypeVO[] billtypeVos = CacheUtil.getValueFromCacheByWherePart(BilltypeVO.class, sql.toString());
+			if(billtypeVos != null && billtypeVos.length > 0){
+				billtypeVO = billtypeVos[0];
+			}
+		}
+//		Log.getInstance(this.getClass()).error("交易类型查询：" + tradeBilltype + billtypeVO);
+		return billtypeVO;
 	}
 
 	/**
@@ -274,16 +282,13 @@ public abstract class AbstractErmNtbSqlStrategy {
 	 */
 	protected Map<String, NtbObj> getActionCodeMap() throws Exception {
 		actionCodeMap = new HashMap<String, NtbObj>();
-
 		List<String> billtypesList = getSelfBillTypes();
 
 		String tradeBilltype = null;
 		if (billtypesList != null && billtypesList.size() > 0) {
 			tradeBilltype = billtypesList.get(0);
 		}
-
 		String parentBilltype = getBillType();
-		billtypesList.add(getBillType());
 
 		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
 				.queryControlTacticsBySysId(ERM_CTRL_ST_KEY);

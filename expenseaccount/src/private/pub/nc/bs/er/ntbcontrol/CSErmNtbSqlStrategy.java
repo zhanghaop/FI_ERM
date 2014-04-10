@@ -45,7 +45,7 @@ public class CSErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		sql.append(" select " + getSelectFields(isDetail));
 		sql.append(" from " + getFromSql());
 		sql.append(" where 1=1 " + getWhereSql());
-		sql.append(" and cs.isexpamt ='N' " + getWhereSql());
+		sql.append(" and cs.isexpamt ='N' ");
 		// µ¥¾Ý×´Ì¬
 		sql.append(getBillStatus());
 		return sql.toString();

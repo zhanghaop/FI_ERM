@@ -34,8 +34,13 @@ public class MaCtrlSchemaChecker {
 		String pk_org = treemodel.getContext().getPk_org();
 		// 根据交易类型查询费用申请单
 		String[] mtAppPks = null;
-		String whereSql = " pk_tradetype = '" + mtappTradeTypePk + "' and pk_org = '" + pk_org
-				+ "'  and CLOSE_STATUS = " + ErmMatterAppConst.CLOSESTATUS_N;// 未关闭的申请单
+		String whereSql = " pk_tradetype = '" + mtappTradeTypePk + "'  and CLOSE_STATUS = " + ErmMatterAppConst.CLOSESTATUS_N;// 未关闭的申请单
+		if (BXConstans.MACTRLSCHEMA_G.equals(treemodel.getContext().getNodeCode())) {
+			whereSql += " and pk_group = '" + treemodel.getContext().getPk_group() + "'";
+		}else{
+			whereSql += " and pk_org = '" + pk_org + "'";
+		}
+		
 		AggMatterAppVO[] aggMatterAppVOs = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
 				.queryBillByWhere(whereSql);
 		if (ArrayUtils.isEmpty(aggMatterAppVOs)) {
@@ -54,7 +59,7 @@ public class MaCtrlSchemaChecker {
 	
 	/***
 	 * 检查控制对象面板行操作动作的业务合理性
-	 * eg:新增、修改、删除的控制对象交易类型在该组织下的此类费用申请单已关联业务单据(JK、BX)则不可进行操作
+	 * eg:新增、修改、删除的控制对象交易类型在该组织或者集团下的此类费用申请单已关联业务单据(JK、BX)则不可进行操作
 	 * @param treemodel
 	 * @throws BusinessException
 	 */
@@ -63,8 +68,17 @@ public class MaCtrlSchemaChecker {
 		if(ctrlBillList.isEmpty() || ctrlBillList.get(0) == null){
 			return;
 		}
-		String pk_org = treemodel.getContext().getPk_org();
-		String wheresql = " where " + SqlUtils_Pub.getInStr(JKBXHeaderVO.DJLXBM, ctrlBillList.toArray(new String[]{})) + " and pk_org='" + pk_org + "'";
+		String pk_group_org = treemodel.getContext().getPk_org();
+		String wheresql = null;
+		if (BXConstans.MACTRLSCHEMA_G.equals(treemodel.getContext().getNodeCode())) {
+			wheresql = " where "
+					+ SqlUtils_Pub.getInStr(JKBXHeaderVO.DJLXBM, ctrlBillList.toArray(new String[ctrlBillList.size()]))
+					+ " and pk_group='" + pk_group_org + "'";
+		} else {
+			wheresql = " where "
+					+ SqlUtils_Pub.getInStr(JKBXHeaderVO.DJLXBM, ctrlBillList.toArray(new String[ctrlBillList.size()]))
+					+ " and pk_org='" + pk_group_org + "'";
+		}
 		
 		List<JKBXHeaderVO> bxHeaderVos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadersByWhereSql(wheresql, BXConstans.BX_DJDL);
 		List<JKBXHeaderVO> jkHeaderVos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadersByWhereSql(wheresql, BXConstans.JK_DJDL);

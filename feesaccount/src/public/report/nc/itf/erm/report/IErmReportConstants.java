@@ -172,7 +172,11 @@ public abstract class IErmReportConstants {
                                                                          */; // 合计
     }
 	public static final String getCONST_ALL_TOTAL() {
-	    return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0069")/*@res "总计"*/; // 总计
+//	    return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0069")/*@res "总计"*/; // 总计
+        return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0", "02011001-0120")/*
+                                                                         * @res
+                                                                         * "合计"
+                                                                         */; // 合计
 	}
 	
 	public static final String BILL_STATUS_COMMIT = "commit"; // 已提交

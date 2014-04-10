@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.pub.ErmReportUtil;
 import nc.bs.erm.sql.ExpBalanceSQLCreator;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.itf.erm.pub.IExpBalanceBO;
 import nc.itf.erm.report.IErmReportConstants;
@@ -17,6 +19,7 @@ import nc.jdbc.framework.util.DBConsts;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.ExpBalanceDataProvider;
 import nc.utils.fipub.FipubSqlExecuter;
 import nc.utils.fipub.ReportMultiVersionSetter;
@@ -60,6 +63,8 @@ public class ExpBalanceBOImpl extends FipubSqlExecuter implements IExpBalanceBO 
         }
         /****************************************************************/
         try {
+            PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+            select.setWhere(null);
             ExpBalanceSQLCreator sqlCreator = new ExpBalanceSQLCreator();
             // 设置查询对象VO的内容
             sqlCreator.setParams(queryVO);
@@ -81,6 +86,9 @@ public class ExpBalanceBOImpl extends FipubSqlExecuter implements IExpBalanceBO 
                 executeUpdate(sql);
             }
 
+            //转换币种
+            ErUtil.convertCurrtype(result, queryVO);
+            
             // 插入【币种】名称
             PubCommonReportMethod.insertNameColumn(result, IPubReportConstants.CURRTYPE, "pk_currtype", "currtype");
             
@@ -97,6 +105,7 @@ public class ExpBalanceBOImpl extends FipubSqlExecuter implements IExpBalanceBO 
 
             // 设置返回结果数据集
             resultDataSet.setDatas(datas);
+            ErmReportUtil.processDataSet(context, resultDataSet);
         } catch (Exception e) {
             String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0", "02011001-0052"); /* @res "费用汇总表查询出错！" */
             Logger.error(e.getMessage(), e);
@@ -143,8 +152,7 @@ public class ExpBalanceBOImpl extends FipubSqlExecuter implements IExpBalanceBO 
 
         Object datas[][] = new Object[dataRowList.size()][mrs.getMetaData().getColumnCount()];
 //////////////////////////////
-
-
+        
         List<Integer> qryObjIndex = new ArrayList<Integer>();
         List<Integer> qryObjNameIndex = new ArrayList<Integer>();
         List<Integer> totalCol = new ArrayList<Integer>(); // 小计列
@@ -242,7 +250,7 @@ public class ExpBalanceBOImpl extends FipubSqlExecuter implements IExpBalanceBO 
                             } else {
                                 // 查询对象小计
                                 dataRow[qryObjIndex.get(k) - 1] = dataRow[qryObjIndex.get(k) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
-//                              dataRow[qryObjNameIndex.get(k) - 1] = dataRow[qryObjNameIndex.get(k) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
+//                                  dataRow[qryObjNameIndex.get(k) - 1] = dataRow[qryObjNameIndex.get(k) - 1] + IErmReportConstants.getConst_Sub_Total(); // 小计
                                 curRowQryObjIndex = qryObjNameIndex.get(k);
                                 isCurrtype = false;
                             }
@@ -258,7 +266,7 @@ public class ExpBalanceBOImpl extends FipubSqlExecuter implements IExpBalanceBO 
 
                     if (!isObj&& isMultiOrg && (dataRow[orgIndex - 1] == null || dataRow[orgIndex - 1].toString().length() == 0)) {
 //                        dataRow[briefIndex - 1] = IErmReportConstants.CONST_ALL_TOTAL; // 总计
-                        dataRow[orgIndex - 1] = "";
+                        dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
                         String org = (String)dataRow[orgIndex - 1];
                         // 多组织、多币种清空金额字段信息
                         if (!isCurrtype) {

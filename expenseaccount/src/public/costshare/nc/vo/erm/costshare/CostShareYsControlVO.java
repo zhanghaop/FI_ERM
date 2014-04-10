@@ -1,6 +1,7 @@
 package nc.vo.erm.costshare;
 
 import nc.bs.erm.costshare.IErmCostShareConst;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.jcom.lang.StringUtil;
@@ -69,6 +70,9 @@ public class CostShareYsControlVO  implements IFYControl,java.io.Serializable {
 	public Object getItemValue(String key) {
 		if(StringUtil.isEmptyWithTrim(key)){
 			return null;
+		}
+		if(BXConstans.EFFECTDATE.equals(key)||BXConstans.APPROVEDATE.equals(key)){
+			key = CostShareVO.APPROVEDATE;
 		}
 		String[] tokens = StringUtil.split(key, ".");
 		if(tokens.length == 1){
@@ -214,5 +218,15 @@ public class CostShareYsControlVO  implements IFYControl,java.io.Serializable {
 	public String getPk_payorg() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String getWorkFlowBillPk() {
+		return parentvo.getSrc_id();
+	}
+
+	@Override
+	public String getWorkFolwBillType() {
+		return parentvo.getDjlxbm();
 	}
 }

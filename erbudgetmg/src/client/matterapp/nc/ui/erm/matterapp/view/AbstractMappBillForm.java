@@ -12,16 +12,19 @@ import nc.ui.pub.bill.BillEditListener2;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.BillTableMouseListener;
+import nc.ui.pubapp.uif2app.event.OrgChangedEvent;
 import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.IExceptionHandler;
 import nc.ui.uif2.ToftPanelAdaptor;
 import nc.ui.uif2.actions.CancelAction;
 import nc.ui.uif2.actions.SaveAction;
+import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.uif2.LoginContext;
 
+@SuppressWarnings("restriction")
 public class AbstractMappBillForm extends ERMBillForm{
 	private static final long serialVersionUID = 1L;
 	
@@ -43,13 +46,20 @@ public class AbstractMappBillForm extends ERMBillForm{
 	protected SaveAction saveAction;
 	protected CancelAction cancelAction;
 
+
+
 	private LoginContext context;
 	
 	public void initUI() {
 		setTabSingleShow(false);//单页签时不显示
 		super.initUI();
+
 		addBillCardListeners(this.getBillCardPanel());
 	}
+	
+	
+	
+	
 
 	@Override
 	public void handleEvent(AppEvent event) {
@@ -191,6 +201,15 @@ public class AbstractMappBillForm extends ERMBillForm{
 	public void setHeadValue(String key, Object value) {
 		if (getBillCardPanel().getHeadItem(key) != null) {
 			getBillCardPanel().getHeadItem(key).setValue(value);
+			if(MatterAppVO.PK_ORG.equals(key)){
+				UIRefPane orgpanel = getHeadItemUIRefPane(key);
+				orgpanel.setValueObjFireValueChangeEvent(value);
+				
+				String pk_org = (String) value;
+				OrgChangedEvent orgevent = new OrgChangedEvent(getModel().getContext().getPk_org(),pk_org);
+				getModel().getContext().setPk_org(pk_org);
+				getModel().fireEvent(orgevent);
+			}
 		}
 	}
 
@@ -236,7 +255,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 	 * @return
 	 */
 	public String getBodyItemStrValue(int row, String key) {
-		Object obj = getBillCardPanel().getBillModel().getValueObjectAt(row, key);
+		Object obj = getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).getValueObjectAt(row, key);
 
 		if (obj == null) {
 			return null;
@@ -264,11 +283,11 @@ public class AbstractMappBillForm extends ERMBillForm{
 	 *            字段key
 	 */
 	public void setBodyValue(Object value, int row, String key) {
-		BillModel model = getBillCardPanel().getBillModel();
+		BillModel model = getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL);
 		if(model.getRowState(row) == BillModel.NORMAL){
 			model.setRowState(row, BillModel.MODIFICATION);
 		}
-		getBillCardPanel().getBillModel().setValueAt(value, row, key);
+		getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).setValueAt(value, row, key);
 	}
 
 	/**
@@ -281,7 +300,7 @@ public class AbstractMappBillForm extends ERMBillForm{
 	 * @return
 	 */
 	public Object getBodyValue(int row, String key) {
-		return getBillCardPanel().getBillModel().getValueAt(row, key);
+		return getBillCardPanel().getBillModel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL).getValueAt(row, key);
 	}
 
 	/**

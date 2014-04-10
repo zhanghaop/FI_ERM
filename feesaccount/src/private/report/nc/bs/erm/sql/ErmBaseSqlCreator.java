@@ -1,8 +1,10 @@
 package nc.bs.erm.sql;
 
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import nc.bs.erm.util.ReportSqlUtils;
 import nc.itf.fipub.report.IPubReportConstants;
@@ -82,7 +84,7 @@ public abstract class ErmBaseSqlCreator {
 
 			String alias = null;
 			String aliasExp = null;
-			if (isQueryByDetail(qryObj.getOriginFld())) {
+			if (isDetailField(qryObj.getOriginFld())) {
                 // 收支项目需要走辅表
                 alias = "fb.";
                 aliasExp = "fb.";
@@ -201,11 +203,24 @@ public abstract class ErmBaseSqlCreator {
 
 			// 处理查询模板SQL
 			if (!StringUtils.isEmpty(queryVO.getWhereSql())) {
-				sqlBuffer.append(" and ").append(StringUtils.replace(queryVO.getWhereSql(), "zb.", tempAlias + "."));
+//				sqlBuffer.append(" and ").append(StringUtils.replace(queryVO.getWhereSql(), "zb.", tempAlias + "."));
+				String whereSql = queryVO.getWhereSql();
+				@SuppressWarnings("unchecked")
+                Map<String, Object> fieldSqlMap = (Map<String, Object>)queryVO.getUserObject().get("fieldSqlMap");
+                if (fieldSqlMap != null) {
+                    Iterator<Entry<String, Object>> iter = fieldSqlMap.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Entry<String, Object> entry = iter.next();
+                        if (isDetailField(entry.getKey())) {
+                            whereSql = whereSql.replaceAll("zb." + entry.getKey(), "fb." + entry.getKey());
+                        }
+                    }
+                }
+                sqlBuffer.append(" and ").append(StringUtils.replace(whereSql, "zb.", tempAlias + "."));
 			}
 
 			Map<String,String> qryObjMeta = nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID(); 
-			fileterQryObj(qryObjMeta);
+//			fileterQryObj(qryObjMeta);
 			// 处理查询数据权限
 			String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
 					.getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
@@ -222,23 +237,25 @@ public abstract class ErmBaseSqlCreator {
 		return compositeWhereSql;
 	}	
 	
-	private void fileterQryObj(Map<String,String> qryObjMeta) {
-        
-        for (String field : detailField) {
-            if (!qryObjShow(field)) {
-                qryObjMeta.remove(field);
-            }
-        }
-	    
-	}
+//	private void fileterQryObj(Map<String,String> qryObjMeta) {
+//        
+//        for (String field : detailField) {
+//            if (!qryObjShow(field) && !qryConShow(field)) {
+//                qryObjMeta.remove(field);
+//            }
+//        }
+//	    
+//	}
 	
 	private static String[] detailField = new String[] {
-	        "pk_project", "jobid", "szxmid", "pk_iobsclass", "PK_RESACOSTCENTER"
+	        "pk_project", "jobid", "szxmid", "pk_iobsclass", "PK_RESACOSTCENTER",
+	        "pk_proline", //产品线
+	        "pk_brand" //品牌
 	};
 
     protected String convertToDetailSql(String powerSql) {
         for (String field : detailField) {
-            if (qryObjShow(field)) {
+            if (qryObjShow(field) || qryConShow(field)) {
                 powerSql = powerSql.replaceAll("zb." + field, "fb." + field);
             }
         }
@@ -284,6 +301,23 @@ public abstract class ErmBaseSqlCreator {
 	    }
 	    return false;
 	}
+	
+	@SuppressWarnings("unchecked")
+    protected boolean qryConShow(String targetField) {
+	    boolean bFound = false;
+	    Map<String, Object> fieldMap = queryVO.getUserObject();
+	    if (fieldMap != null) {
+	        fieldMap = (Map<String, Object>)fieldMap.get("fieldSqlMap");
+	        if (fieldMap != null && !fieldMap.isEmpty()) {
+	            if (fieldMap.containsKey(targetField)) {
+	                bFound = true;
+	            } else {
+	                bFound = false;
+	            }
+	        }
+	    }
+	    return bFound;
+	}
 
 	static class ComputeTotal {
 		String field = null;
@@ -300,8 +334,10 @@ public abstract class ErmBaseSqlCreator {
         List<QryObj> qryObjList = queryVO.getQryObjs();
         StringBuffer sqlBuffer = new StringBuffer(" ");
         String jkzbAliasPoint = jkzbAlias + "\\.";
+//        boolean bNeedQryDetail = needQueryByDetail();
         for (QryObj qryObj : qryObjList) {
             if (qryObj.getOriginFld() != null && isDetailField(qryObj.getOriginFld())) {
+//            if (qryObj.getOriginFld() != null && bNeedQryDetail) {
                 sqlBuffer.append(" and ").append(qryObj.getSql().replaceAll(jkzbAliasPoint, "fb\\."));
                 continue;
             }
@@ -346,6 +382,19 @@ public abstract class ErmBaseSqlCreator {
 //                        queryByDetail = true;
 //                        break;
 //                    }
+                }
+            }
+            if (!queryByDetail) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> fieldSqlMap = (Map<String, Object>)queryVO.getUserObject().get("fieldSqlMap");
+                if (fieldSqlMap != null) {
+                    Iterator<Entry<String, Object>> iter = fieldSqlMap.entrySet().iterator();
+                    while (iter.hasNext()) {
+                        if (isDetailField(iter.next().getKey())) {
+                            queryByDetail = true;
+                            break;
+                        }
+                    }
                 }
             }
         }

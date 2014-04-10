@@ -33,7 +33,6 @@ import nc.ui.pub.bill.IBillItem;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.vorg.ref.DeptVersionDefaultRefModel;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.bd.cashaccount.CashAccountVO;
 import nc.vo.bd.period2.AccperiodmonthVO;
 import nc.vo.ep.bx.BXHeaderVO;
@@ -97,11 +96,11 @@ public class EventHandleUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void setCostCenter(final String pk_fydept, final String pk_fydwbm) {
-		boolean isResInstalled = BXUtil.isProductInstalled(BXUiUtil
-				.getPK_group(), BXConstans.FI_RES_FUNCODE);
-		if (!isResInstalled) {
-			return;
-		}
+//		boolean isResInstalled = BXUtil.isProductInstalled(BXUiUtil
+//				.getPK_group(), BXConstans.FI_RES_FUNCODE);
+//		if (!isResInstalled) {
+//			return;
+//		}
 		if (StringUtil.isEmpty(pk_fydept)) {
 			return;
 		}
@@ -142,7 +141,7 @@ public class EventHandleUtil {
 	/**
 	 * 过滤现金帐户
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	public void filterCashAccount(String pk_currtype) {
 		UIRefPane refPane = (UIRefPane) getBillCardPanel().getHeadItem(
 				JKBXHeaderVO.PK_CASHACCOUNT).getComponent();
@@ -374,6 +373,102 @@ public class EventHandleUtil {
 		}
 	}
 	
+	public void setHeadBbje() throws BusinessException{
+		
+		UFDouble total =UFDouble.ZERO_DBL;
+		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.TOTAL) != null) {
+			total = setHeadAmountValue(JKBXHeaderVO.TOTAL);
+		} else if (getBillCardPanel().getHeadItem(JKBXHeaderVO.YBJE) != null) {
+			total = setHeadAmountValue(JKBXHeaderVO.YBJE);  
+		}
+		String bzbm = null;
+		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.BZBM).getValueObject() != null) {
+			bzbm = getBillCardPanel().getHeadItem(JKBXHeaderVO.BZBM).getValueObject().toString();
+		}
+		UFDouble hl = getBodyAmountValue(JKBXHeaderVO.BBHL);
+		String pk_group = null;
+		if (getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject() != null) {
+			pk_group = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject().toString();
+		}
+		if (getPk_org() != null) {
+			//从表体上得到原币金额和本币金额
+			UFDouble ybje =UFDouble.ZERO_DBL;
+			UFDouble bbje =UFDouble.ZERO_DBL;
+			UFDouble groupbbje =UFDouble.ZERO_DBL;
+			UFDouble groupzfbbje =UFDouble.ZERO_DBL;
+			UFDouble globalbbje =UFDouble.ZERO_DBL;
+			UFDouble globalzfbbje =UFDouble.ZERO_DBL;
+			
+			//取到所有页签的VO
+			BillTabVO[] billTabVOs = getBillCardPanel().getBillData()
+					.getBillTabVOs(IBillItem.BODY);
+			for (BillTabVO billTabVO : billTabVOs) {
+				String metadatapath = billTabVO.getMetadatapath();
+				if(BXConstans.ER_BUSITEM.equals(metadatapath)|| BXConstans.JK_BUSITEM.equals(metadatapath)|| metadatapath == null){
+					String tabcode = billTabVO.getTabcode();
+					int ybjeCol = getBillCardPanel().getBodyColByKey(tabcode, JKBXHeaderVO.YBJE);
+					int bbjeCol = getBillCardPanel().getBodyColByKey(tabcode, JKBXHeaderVO.BBJE);
+					int groupbbjeCol = getBillCardPanel().getBodyColByKey(tabcode, JKBXHeaderVO.GROUPBBJE);
+					int groupzfbbjeCol= getBillCardPanel().getBodyColByKey(tabcode, JKBXHeaderVO.GROUPZFBBJE);
+					int globalbbjeCol = getBillCardPanel().getBodyColByKey(tabcode, JKBXHeaderVO.GLOBALBBJE);
+					int globalzfbbjeCol= getBillCardPanel().getBodyColByKey(tabcode, JKBXHeaderVO.GLOBALZFBBJE);					
+					
+					UFDouble ybjeValue = (UFDouble) getBillCardPanel().getBillData().getBillModel(tabcode).getTotalTableModel().getValueAt(0, ybjeCol);
+					UFDouble bbjeValue = (UFDouble) getBillCardPanel().getBillData().getBillModel(tabcode).getTotalTableModel().getValueAt(0, bbjeCol);
+					UFDouble groupbbjeValue = (UFDouble) getBillCardPanel().getBillData().getBillModel(tabcode).getTotalTableModel().getValueAt(0, groupbbjeCol);
+					UFDouble groupzfbbjeValue = (UFDouble) getBillCardPanel().getBillData().getBillModel(tabcode).getTotalTableModel().getValueAt(0, groupzfbbjeCol);
+					UFDouble globalbbjeValue = (UFDouble) getBillCardPanel().getBillData().getBillModel(tabcode).getTotalTableModel().getValueAt(0, globalbbjeCol);
+					UFDouble globalzfbbjeValue = (UFDouble) getBillCardPanel().getBillData().getBillModel(tabcode).getTotalTableModel().getValueAt(0, globalzfbbjeCol);
+
+					
+					if(ybjeValue!=null){
+						ybje=ybje.add(ybjeValue);
+					}
+					if(bbjeValue!=null){
+						bbje=bbje.add(bbjeValue);
+					}
+					if(groupbbjeValue!=null){
+						groupbbje=groupbbje.add(groupbbjeValue);
+					}
+					if(globalbbjeValue!=null){
+						globalbbje=globalbbje.add(globalbbjeValue);
+					}
+					if(groupzfbbjeValue!=null){
+						groupzfbbje=groupzfbbje.add(groupzfbbjeValue);
+					}
+					if(globalzfbbjeValue!=null){
+						globalzfbbje=globalzfbbje.add(globalzfbbjeValue);
+					}
+
+				}
+			}
+			
+			// 全局币种精度
+			int globalRateDigit = Currency.getCurrDigit(Currency.getGlobalCurrPk(getPk_org()));
+			if (globalRateDigit == 0) {
+				globalRateDigit = 2;
+			}
+			// 集团币种精度
+			int groupRateDigit = Currency.getCurrDigit(Currency.getGroupCurrpk(pk_group));
+			if (globalRateDigit == 0) {
+				globalRateDigit = 2;
+			}
+			// 借款报销表体金额和精度的设置
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.YBJE, ybje);
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.BBJE, bbje);
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.GROUPBBJE, groupbbje);
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.GROUPZFBBJE, groupzfbbje);
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.GLOBALBBJE, globalbbje);
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.GLOBALZFBBJE, globalzfbbje);
+			getBillCardPanel().getHeadItem(JKBXHeaderVO.GROUPBBJE).setDecimalDigits(groupRateDigit);
+			getBillCardPanel().getHeadItem(JKBXHeaderVO.GROUPZFBBJE).setDecimalDigits(groupRateDigit);
+			getBillCardPanel().getHeadItem(JKBXHeaderVO.GLOBALBBJE).setDecimalDigits(globalRateDigit);
+			getBillCardPanel().getHeadItem(JKBXHeaderVO.GLOBALZFBBJE).setDecimalDigits(globalRateDigit);
+		}
+		
+		resetCjkjeAndYe(total, bzbm, hl);
+	}
+	
 	/**
 	 * 根据表头total字段的值设置其他金额字段的值，若是借款单，因为没有total字段，所以取ybje字段的值
 	 * 
@@ -496,7 +591,6 @@ public class EventHandleUtil {
 					if(globalzfbbjeValue!=null){
 						globalzfbbje=globalzfbbje.add(globalzfbbjeValue);
 					}
-
 				}
 			}
 			
@@ -587,9 +681,13 @@ public class EventHandleUtil {
 			 */
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.CJKYBJE, je[0]);
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.CJKBBJE, je[2]);
+			UFDouble globalbbhl = (UFDouble) getBillCardPanel().getHeadItem(JKBXHeaderVO.GLOBALBBHL).getValueObject();
+			UFDouble groupbbhl = (UFDouble) getBillCardPanel().getHeadItem(JKBXHeaderVO.GROUPBBHL).getValueObject();
+
+			
 			UFDouble[] money = Currency.computeGroupGlobalAmount(je[0], je[2], bzbm, BXUiUtil.getSysdate(), getBillCardPanel()
 					.getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString(), getBillCardPanel().getHeadItem(
-					JKBXHeaderVO.PK_GROUP).getValueObject().toString(), null, null);
+					JKBXHeaderVO.PK_GROUP).getValueObject().toString(), globalbbhl, groupbbhl);
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.GROUPCJKBBJE, money[0]);
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.GLOBALCJKBBJE, money[1]);
 		}
@@ -641,14 +739,16 @@ public class EventHandleUtil {
 			}
 			setHeadValue(yfbKeys[0], newCjkybje);
 			if(getPk_org() != null && jkHead.getBzbm() != null){
-				yfbs = Currency.computeYFB(getPk_org(), Currency.Change_YBJE,
+				yfbs = Currency.computeYFB(getPk_org(), Currency.Change_YBCurr,
 						jkHead.getBzbm(), newCjkybje, null, null, null, jkHead
 								.getBbhl(), jkHead.getDjrq());
+				
 				UFDouble[] money = Currency.computeGroupGlobalAmount(newCjkybje,
 						yfbs[2], jkHead.getBzbm(), BXUiUtil.getSysdate(),
 						getPk_org(), getBillCardPanel()
 								.getHeadItem(JKBXHeaderVO.PK_GROUP)
-								.getValueObject().toString(), null, null);
+								.getValueObject().toString(), 
+								jkHead.getGlobalbbhl(), jkHead.getGroupbbhl());
 				setHeadValue(yfbKeys[1], yfbs[2]);
 				setHeadValue(yfbKeys[2], money[0]);
 				setHeadValue(yfbKeys[3], money[1]);

@@ -69,6 +69,10 @@ public class BXBusItemVO extends SuperVO {
 	 */
 	public static final String PK_ITEM = "pk_item";
 	/**
+	 * 费用申请单明细
+	 */
+	public static final String PK_MTAPP_DETAIL = "pk_mtapp_detail";
+	/**
 	 * 来源交易类型
 	 */
 	public static final String SRCBILLTYPE = "srcbilltype";
@@ -92,6 +96,7 @@ public class BXBusItemVO extends SuperVO {
 	}
 
 	private String pk_item;
+	private String pk_mtapp_detail;
 	/**
 	 * 来源单据类型
 	 */
@@ -179,6 +184,25 @@ public class BXBusItemVO extends SuperVO {
 	public String jkbxr;
 	public String jobid;
 	public String cashitem;
+	public String pk_proline;
+	
+	public String getPk_proline() {
+		return pk_proline;
+	}
+
+	public void setPk_proline(String pkProline) {
+		pk_proline = pkProline;
+	}
+
+	public String getPk_brand() {
+		return pk_brand;
+	}
+
+	public void setPk_brand(String pkBrand) {
+		pk_brand = pkBrand;
+	}
+
+	public String pk_brand;
 
 	public UFDouble hkbbje;
 	public UFDouble hkybje;
@@ -794,6 +818,11 @@ public class BXBusItemVO extends SuperVO {
 	public static final String SZXMID = "szxmid";
 
 	public static final String ROWNO = "rowno";
+	
+	public static final String PK_PROLINE = "pk_proline";
+	public static final String PK_BRAND = "pk_brand";
+	
+
 
 	public static final String SZXMMC = "szxmmc";
 	public static final String BZBM = "bzbm";
@@ -2086,15 +2115,8 @@ public class BXBusItemVO extends SuperVO {
 	 *                如果验证失败,抛出 ValidationException,对错误进行解释.
 	 */
 	public void validate() throws ValidationException {
-
 		ArrayList<String> notNullFieldNames = new ArrayList<String>(); // errFields
-		// record
-		// those
-		// null
 		ArrayList<String> notNullFieldKeys = new ArrayList<String>(); // errFields
-		// record
-		// those
-		// null
 		notNullFieldKeys.add(BXBusItemVO.AMOUNT);
 		notNullFieldKeys.add(BXBusItemVO.YBJE);
 
@@ -2103,10 +2125,9 @@ public class BXBusItemVO extends SuperVO {
 				notNullFieldNames.add(getFieldName(field));
 		}
 
-		StringBuffer errorMsg = new StringBuffer();
-		errorMsg.append(getErromsg());
-
 		if (notNullFieldNames.size() > 0) {
+			StringBuffer errorMsg = new StringBuffer();
+			errorMsg.append(getErromsg());//vaildate是长调用的方法，应避免耗时的代码
 			String[] temp = notNullFieldNames.toArray(new String[0]);
 			errorMsg.append(temp[0]);
 			for (int i = 1; i < temp.length; i++) {
@@ -2258,7 +2279,7 @@ public class BXBusItemVO extends SuperVO {
 	 * @return
 	 */
 	public static String[] getBodyOrgBbjeField() {
-		return new String[] { CJKBBJE, ZFBBJE, HKBBJE, BBJE };
+		return new String[] { CJKBBJE, ZFBBJE, HKBBJE, BBJE,BBYE};
 	}
 
 	/**
@@ -2267,7 +2288,7 @@ public class BXBusItemVO extends SuperVO {
 	 * @return
 	 */
 	public static String[] getYbjeField() {
-		return new String[] { CJKYBJE, ZFYBJE, HKYBJE, YBJE, YBYE, FYYBJE, AMOUNT };
+		return new String[] { CJKYBJE, ZFYBJE, HKYBJE, YBJE, YBYE, FYYBJE, AMOUNT,YJYE };
 	}
 
 	/**
@@ -2359,6 +2380,14 @@ public class BXBusItemVO extends SuperVO {
 
 	public void setBx_busitemPK(String bx_busitemPK) {
 		this.bx_busitemPK = bx_busitemPK;
+	}
+
+	public String getPk_mtapp_detail() {
+		return pk_mtapp_detail;
+	}
+
+	public void setPk_mtapp_detail(String pk_mtapp_detail) {
+		this.pk_mtapp_detail = pk_mtapp_detail;
 	}
 
 }

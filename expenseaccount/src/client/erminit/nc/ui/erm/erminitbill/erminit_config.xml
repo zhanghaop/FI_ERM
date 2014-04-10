@@ -58,7 +58,7 @@
 		<property name="templateContainer" ref="templateContainer" />
 		<property name="closingListener" ref="ClosingListener" />
 		<property name="tabSingleShow" value="false" />
-
+		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">
 			<map>
 				<entry key="jk_busitem">

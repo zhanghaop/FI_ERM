@@ -65,7 +65,14 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
 					IPubReportConstants.QRY_OBJ_PREFIX).append(i);
 		}
-		sqlBuffer.append(",  v.").append(PK_CURR).append(", v.rn");
+
+		if (beForeignCurrency) {
+		    sqlBuffer.append(",  v.").append(PK_CURR);
+		} else {
+            sqlBuffer.append(", null ").append(PK_CURR);
+		}
+//		sqlBuffer.append(",  v.").append(PK_CURR).append(", v.rn");
+        sqlBuffer.append(", v.rn");
 		sqlBuffer.append(", 0 ").append(IPubReportConstants.ORDER_MANAGE_VSEQ);
 
 		sqlBuffer.append(", sum(v.init_ori) init_ori, sum(v.init_loc) init_loc, sum(v.gr_init_loc) gr_init_loc, sum(v.gl_init_loc) gl_init_loc");
@@ -94,7 +101,12 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 					.append(qryObjList.get(i).getBd_nameField()).append(", ").append(bdTable ).append( i).append(".")
 					.append(qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex());
 		}
-		sqlBuffer.append(", v.").append(PK_CURR);
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", v.").append(PK_CURR);
+        } else {
+//            sqlBuffer.append(", null ").append(PK_CURR);
+        }
 		sqlBuffer.append(", rn ");
 
 //		sqlBuffer.append(" order by ");
@@ -166,15 +178,7 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 	}
 	
     protected boolean isQueryByDetail(String fieldCode) {
-        if ("pk_project".equalsIgnoreCase(fieldCode) ||
-                "jobid".equalsIgnoreCase(fieldCode) || 
-                "szxmid".equalsIgnoreCase(fieldCode) || 
-                "pk_iobsclass".equalsIgnoreCase(fieldCode) ||
-                "PK_RESACOSTCENTER".equalsIgnoreCase(fieldCode)) {
-            return true;
-        } else {
-            return false;
-        }
+        return isDetailField(fieldCode);
     }
 
 	/**
@@ -246,6 +250,7 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 
         // TODO byDetail
         if (needQueryByDetail()) {
+            sqlBuffer.append(" and fb.dr = 0 ");
             sqlBuffer.append(") ").append(jkzbAlias);
         }
         
@@ -413,7 +418,7 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 
 		// 日期单独处理，包括单据日期以及核销完成日期
 		if (queryVO.getBeginDate() != null) { // 查询开始日期
-			sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".djrq > '").append(queryVO.getBeginDate()).append("' ");
+			sqlBuffer.append(" and " ).append( jkzbAlias ).append( ".djrq >= '").append(queryVO.getBeginDate()).append("' ");
 		}
 
 		if (queryVO.getEndDate() != null) { // 查询截止日期

@@ -2,11 +2,12 @@ package nc.ui.erm.matterapp.actions;
 
 import java.awt.event.ActionEvent;
 
-import nc.bs.erm.util.action.ErmActionConst;
+import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
@@ -38,6 +39,12 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 		checkUpdate(parentVo);
 		
 		super.doAction(e);
+		
+		//设置一下焦点，否则修改后不正确
+		BillScrollPane bsp = ((BillForm)getEditor()).getBillCardPanel().getBodyPanel(ErmMatterAppConst.MatterApp_MDCODE_DETAIL);
+		if(bsp!=null && bsp.getTable()!=null){
+			bsp.getTable().requestFocus();
+		}
 	}
 
 	private void checkUpdate(MatterAppVO parentVo) throws BusinessException {
@@ -88,7 +95,11 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 	
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = this.getBtnName() + ErmActionConst.FAIL_MSG;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
+				"2011000_0", null, "02011000-0040", null,
+				new String[] { this.getBtnName() })/*
+													 * @ res "{0}失败！"
+													 */;
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(null);

@@ -54,9 +54,15 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 			refPane.getRefModel().setUseDataPower(true);
 			refPane.setPk_org(fydwbm);
 		}else if(BXBusItemVO.PK_RESACOSTCENTER.equals(key)){//成本中心
-			UIRefPane refPane = bodyEventHandleUtil.getBodyItemUIRefPane(e.getTableCode(), BXBusItemVO.PK_RESACOSTCENTER);
-			String wherePart = CostCenterVO.PK_FINANCEORG+"="+"'"+fydwbm+"'"; 
-			bodyEventHandleUtil.addWherePart2RefModel(refPane, fydwbm, wherePart);
+			UIRefPane refPane = bodyEventHandleUtil.getBodyItemUIRefPane(e.getTableCode(), key);
+			String pk_pcorg = (String)bodyEventHandleUtil.getBodyItemStrValue(e.getRow(), BXBusItemVO.PK_PCORG);
+			if(pk_pcorg==null){
+				refPane.setEnabled(false);
+			}else{
+				refPane.setEnabled(true);
+				String wherePart = CostCenterVO.PK_PROFITCENTER+"="+"'"+pk_pcorg+"'"; 
+				bodyEventHandleUtil.addWherePart2RefModel(refPane, pk_pcorg, wherePart);
+			}
 		}else if(BXBusItemVO.PK_CHECKELE.equals(key)){//核算要素
 			// 核算要素根据利润中心过滤
 			UIRefPane refPane = bodyEventHandleUtil.getBodyItemUIRefPane(e.getTableCode(), key);
@@ -98,7 +104,8 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 			ExceptionHandler.handleExceptionRuntime(e1);
 			return false;
 		}
-		return true;
+		// 事件扩展转出
+		return editor.getEventTransformer().beforeEdit(e);
 	}
 	
 	/**
@@ -224,10 +231,14 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 			//报销规则
 			bodyEventHandleUtil.doBodyReimAction();
 		}
+	// 事件扩展，转出
+		editor.getEventTransformer().afterEdit(e);
 	}
 
 	private void afterEditPk_corp(BillEditEvent e) {
 		getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.PK_CHECKELE);
+		getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.PK_RESACOSTCENTER);
+
 	}
 	
 	private boolean isAmoutField(BillItem bodyItem) {
@@ -360,6 +371,9 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 	       if(e.getOldrows() != null && e.getOldrows().length != e.getRows().length){
 	           // resetJeAfterModifyRow();
 	        }
+	       
+	       // 事件扩展转出
+	       editor.getEventTransformer().bodyRowChange(e);
 	}
 	   /**
      * 

@@ -10,7 +10,6 @@ import nc.funcnode.ui.AbstractFunclet;
 import nc.pub.smart.data.IRowData;
 import nc.pub.smart.tracedata.ITraceDataOperator;
 import nc.pub.smart.tracedata.TraceDataParam;
-import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.link.FipBillLinkQueryCenter;
 import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.fip.service.FipRelationInfoVO;
@@ -53,12 +52,15 @@ public class ExpenseLinkQueryVoucherOperator implements ITraceDataOperator{
 		Object tempValue = rowData.getData(ExpenseAccountVO.SRC_ID);
 		
         if (tempValue == null || StringUtil.isEmpty(tempValue.toString())) {
-            MessageDialog.showHintDlg(container, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
+//            MessageDialog.showHintDlg(container, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
+//                    nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0121")/*@res "请选择单据进行联查！"*/);
+            AbstractFunclet funclet = (AbstractFunclet)container.getParent();
+            funclet.showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0028")/*@res "提示"*/, 
                     nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0121")/*@res "请选择单据进行联查！"*/);
             return;
         }
         
-		String pk_bill = tempValue == null ? null : tempValue.toString();
+		String pk_bill = tempValue.toString();
 		
 		// 取得选中行单据类型
 		tempValue = rowData.getData("pk_billtype");

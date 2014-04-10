@@ -366,6 +366,12 @@ public class ExportExcelDialog extends UIDialog {
 			MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000456")/*@res "请选择目标Excel文件！"*/);
 		}
 		try{
+			is = new FileInputStream(excelfile);
+			if(excelfile.getPath().endsWith(OFFICE03)){
+				wb = new HSSFWorkbook(is);
+			}else if(excelfile.getPath().endsWith(OFFICE07)){
+				wb = new XSSFWorkbook(is);
+			}
 			Sheet sheet = null;
 			//getUICheckBox().isSelected() 为true 覆盖 否则 新建标签
 			if(getUICheckBox().isSelected())
@@ -444,12 +450,18 @@ public class ExportExcelDialog extends UIDialog {
 			}
 			os = new FileOutputStream(excelfile);
 			wb.write(os);
-			os.close();
-			is.close();
 			MessageDialog.showHintDlg(this, "",nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000458")/*@res "导出完成"*/);
 		} catch(IOException e) {
 			ExceptionHandler.consume(e);
 			MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000459")/*@res "导出失败，可能是文件格式错误或者目标文件正在被使用。"*/);
+		}finally{
+			try {
+				os.close();
+				is.close();
+			} catch (IOException e) {
+				ExceptionHandler.consume(e);
+				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000049")/*@res "提示"*/,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000459")/*@res "导出失败，可能是文件格式错误或者目标文件正在被使用。"*/);
+			}
 		}
 
 	}

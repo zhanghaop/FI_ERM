@@ -15,7 +15,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -110,6 +110,7 @@
 			<billitem itemkey="deptid" />
 			<billitem itemkey="deptid_v" />
 			<billitem itemkey="jkbxr" />
+			<billitem itemkey="receiver" />
 			<billitem itemkey="zyx26" />
 			<billitem itemkey="zyx27" />
 			<billitem itemkey="zyx28" />
@@ -138,7 +139,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -233,6 +234,7 @@
 			<billitem itemkey="deptid" />
 			<billitem itemkey="deptid_v" />
 			<billitem itemkey="jkbxr" />
+			<billitem itemkey="receiver" />
 			<billitem itemkey="zyx26" />
 			<billitem itemkey="zyx27" />
 			<billitem itemkey="zyx28" />
@@ -261,7 +263,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -356,6 +358,7 @@
 			<billitem itemkey="deptid" />
 			<billitem itemkey="deptid_v" />
 			<billitem itemkey="jkbxr" />
+			<billitem itemkey="receiver" />
 			<billitem itemkey="zyx26" />
 			<billitem itemkey="zyx27" />
 			<billitem itemkey="zyx28" />
@@ -384,7 +387,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -507,7 +510,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -631,7 +634,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -755,7 +758,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -879,7 +882,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -1003,7 +1006,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -1127,7 +1130,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -1251,7 +1254,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />
@@ -1373,7 +1376,7 @@
 			<billitem itemkey="szxmid" />
 			<billitem itemkey="hbbm" />
 			<billitem itemkey="customer" />
-			<billitem itemkey="pk_resacostcenter" />
+			<!-- billitem itemkey="pk_resacostcenter" /> -->
 			<billitem itemkey="zyx16" />
 			<billitem itemkey="zyx17" />
 			<billitem itemkey="zyx18" />

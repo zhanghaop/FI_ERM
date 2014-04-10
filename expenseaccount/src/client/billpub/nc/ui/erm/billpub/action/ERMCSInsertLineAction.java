@@ -15,8 +15,8 @@ public class ERMCSInsertLineAction extends ERMInsertLineAction {
 	
    
 	@Override
-	protected boolean isActionEnable() { 
-		return (getModel().getUiState()==UIState.ADD||getModel().getUiState()==UIState.EDIT);
+	protected boolean isActionEnable() {
+		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT);
 	}
 
 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- 分摊页签删除行按钮-->
+	<bean id="detaildellineaction" class="nc.ui.erm.bx.ext.action.BxDelLineActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="cardpanel" ref="editor" />
+	</bean>
+		<!-- 快速分摊 -->
+	<bean id="rapidshareaction" class="nc.ui.erm.bx.ext.action.RapidShareBXActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+	<!-- 预算执行情况 -->
+ 	<bean id="linkysaction" class="nc.ui.erm.bx.ext.action.BXLinkYsActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+		 	<!-- 联查凭证 -->
+ 	<bean id="linkvouaction" class="nc.ui.erm.bx.ext.action.BXLinkVoucherActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
+	
+	<!-- 冲借款 -->
+	<bean id="contrastaction" class=" nc.ui.erm.bx.ext.action.BxContrastActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+	</bean>
+	
+	<bean id="batchContrastAction" class="nc.ui.erm.bx.ext.action.BxBatchContrastActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+	</bean>
+	
+	<bean id="cancelbatchContrastAction" class="nc.ui.erm.bx.ext.action.BxCancelBatchContrastActionExt">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor" />
+	</bean>
+	
+	
+	<!-- 来源于费用申请单 -->
+	<bean name="addfromMtappaction" class="nc.ui.erm.bx.ext.action.AddFromMtappActionExt">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+		<property name="interceptor" ref="interceptor"/>
+	</bean>
+	
+	<bean id="BxCardHeadBeforeEditEventHandler" class="nc.ui.erm.bx.ext.eventlistener.BxCardHeadBeforeEditEventHandler">
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+	
+	<bean id="BxCardHeadAfterEditEventHandler" class=" nc.ui.erm.bx.ext.eventlistener.BxCardHeadAfterEditEventHandler">
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+	<bean id="BxOrgChangeEventHandler" class=" nc.ui.erm.bx.ext.eventlistener.BxOrgChangeEventHandler">
+		<property name="billform" ref="editor"></property>
+		<property name="exceptionHandler" ref="execeptionHandler"></property>
+	</bean>
+
+	<!--
+		监听器(Mediator)(可选)###########################################################
+	-->
+	<bean id="AppEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
+		<property name="model" ref="manageAppModel" />
+		<property name="handlerMap">
+			<map>
+				<entry key="nc.ui.pubapp.uif2app.event.OrgChangedEvent">
+					<list>
+						<ref bean="BxOrgChangeEventHandler" />
+					</list>
+				</entry>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailAfterEditEvent">
+					<list>
+						<ref bean="BxCardHeadAfterEditEventHandler"></ref>
+					</list>
+				</entry>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailBeforeEditEvent">
+					<list>
+						<ref bean="BxCardHeadBeforeEditEventHandler"></ref>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>

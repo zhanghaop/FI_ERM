@@ -62,6 +62,18 @@ public class BxITranstypeEditorImp implements ITranstypeEditor {
 			seteditable(false);
 			break;
 		}
+		
+		if(context.getTranstype() != null){
+			if(BXConstans.BILLTYPECODE_RETURNBILL.equals(context.getTranstype().getPk_billtypecode())){
+				getcardpanel().getBillCardPanelDj().getHeadItem("is_mactrl").setShow(false);
+				getcardpanel().getBillCardPanelDj().setBillData(getcardpanel().getBillCardPanelDj().getBillData());
+			}else{
+				getcardpanel().getBillCardPanelDj().getHeadItem("is_mactrl").setShow(true);
+				getcardpanel().getBillCardPanelDj().setBillData(getcardpanel().getBillCardPanelDj().getBillData());
+				
+			}
+		}
+		
 		DBCacheFacade.refreshTable(DjLXVO.getDefaultTableName());
 	}
 

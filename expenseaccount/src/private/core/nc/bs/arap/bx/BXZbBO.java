@@ -65,6 +65,7 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JsConstrasVO;
+import nc.vo.ep.bx.MtappfUtil;
 import nc.vo.ep.bx.SqdlrVO;
 import nc.vo.ep.bx.VOFactory;
 import nc.vo.ep.dj.DjCondVO;
@@ -489,7 +490,11 @@ public class BXZbBO {
 			}
 
 			afterActInf(vos, MESSAGE_UPDATE);
-
+			
+			//清空补齐的数据
+			for(JKBXVO vo : vos){
+				vo.setBxoldvo(null);
+			}
 		} catch (Exception e) {
 			for (JKBXVO bxvo : vos) {
 				returnBillCode(bxvo);
@@ -549,7 +554,6 @@ public class BXZbBO {
 	 */
 	private void fillUpChildren(JKBXVO vo, JKBXVO oldvo) {
 		List<BXBusItemVO> result = new ArrayList<BXBusItemVO>();
-		
 		oldvo = (JKBXVO)oldvo.clone();
 		List<String> pkList = new ArrayList<String>();
 		BXBusItemVO[] changedChildren = vo.getChildrenVO();

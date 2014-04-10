@@ -92,6 +92,7 @@ public class AmtPeriodDialog extends UIDialog implements ActionListener{
 			setSize(new Dimension(320,80));
 			add(getBaseBox(), BorderLayout.CENTER);
 			add(getBtnBox(), BorderLayout.SOUTH);
+			setResizable(true);
 		}catch(Exception e){
 			exceptionHandler.handlerExeption(e);
 		}

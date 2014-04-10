@@ -1,5 +1,6 @@
 package nc.vo.erm.matterappctrl;
 
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 
@@ -11,6 +12,14 @@ import nc.vo.pub.lang.UFDouble;
  */
 public class MtappCtrlBusiVO implements IMtappCtrlBusiVO {
 
+	/**
+	 * 是否超申请
+	 */
+	private boolean isExceed = false;
+	/**
+	 * 配置是否可以超申请
+	 */
+	private boolean isExceedEnable = false;
 	/**
 	 * 业务系统包装的回写数据
 	 */
@@ -27,24 +36,34 @@ public class MtappCtrlBusiVO implements IMtappCtrlBusiVO {
 	private UFDouble exe_data = UFDouble.ZERO_DBL;
 	
 	/**
-	 * 业务单据金额
+	 * 刚性控制维度
 	 */
-	private UFDouble amount = UFDouble.ZERO_DBL;
+	private String unAdjustKey;
+	/**
+	 * 所有控制维度
+	 */
+	private String allFieldKey;
+//	
+//	/**
+//	 * 业务单据金额
+//	 */
+//	private UFDouble amount = UFDouble.ZERO_DBL;
 	
 	public MtappCtrlBusiVO(IMtappCtrlBusiVO busivo) {
 		this.busivo = busivo;
 		// 设置当前执行数据
-		this.amount = busivo.getAmount();
+//		this.amount = busivo.getAmount();
 		if(DataType_pre.equals(getDataType())){
-			pre_data = amount;
+			pre_data = getAmount();
 		}else{
-			exe_data = amount;
+			exe_data = getAmount();
 		}
+		this.isExceedEnable = busivo.isExceedEnable();
 	}
 	
 	@Override
-	public String getAttributeValue(String attr) {
-		return busivo.getAttributeValue(attr);
+	public String getAttributeValue(String... attrs) {
+		return busivo.getAttributeValue(attrs);
 	}
 
 	@Override
@@ -64,7 +83,11 @@ public class MtappCtrlBusiVO implements IMtappCtrlBusiVO {
 
 	@Override
 	public String getpk_djdl() {
-		return busivo.getpk_djdl();
+		String pk_djdl = busivo.getpk_djdl();
+		if(StringUtil.isEmptyWithTrim(pk_djdl)){
+			return getBillType();
+		}
+		return pk_djdl;
 	}
 
 	@Override
@@ -129,7 +152,11 @@ public class MtappCtrlBusiVO implements IMtappCtrlBusiVO {
 
 	@Override
 	public UFDouble getAmount() {
-		return busivo.getAmount();
+		UFDouble busi_amount = busivo.getAmount();
+		if(Direction_negative == getDirection()){
+			busi_amount = busi_amount.multiply(new UFDouble(-1));
+		}
+		return busi_amount;
 	}
 	
 
@@ -149,8 +176,40 @@ public class MtappCtrlBusiVO implements IMtappCtrlBusiVO {
 		this.exe_data = exe_data;
 	}
 	
-	@Override
 	public boolean isExceedEnable() {
-		return busivo.isExceedEnable();
+		return this.isExceedEnable;
 	}
+
+	public String getMatterAppDetailPK() {
+		return busivo.getMatterAppDetailPK();
+	}
+
+	public boolean isExceed() {
+		return isExceed;
+	}
+
+	public void setExceed(boolean isExceed) {
+		this.isExceed = isExceed;
+	}
+
+	public String getUnAdjustKey() {
+		return unAdjustKey;
+	}
+
+	public void setUnAdjustKey(String unAdjustKey) {
+		this.unAdjustKey = unAdjustKey;
+	}
+
+	public String getAllFieldKey() {
+		return allFieldKey;
+	}
+
+	public void setAllFieldKey(String allFieldKey) {
+		this.allFieldKey = allFieldKey;
+	}
+	
+	public void setExceedEnable(boolean isExceedEnable){
+		this.isExceedEnable = isExceedEnable;
+	}
+	
 }

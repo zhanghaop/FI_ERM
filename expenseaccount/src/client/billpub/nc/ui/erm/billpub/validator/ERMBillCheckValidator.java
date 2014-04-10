@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.util.ErAccperiodUtil;
-import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.validation.ValidationFailure;
 import nc.bs.uif2.validation.Validator;
 import nc.itf.fi.pub.SysInit;
-import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.uif2.editor.BillForm;
@@ -25,12 +23,10 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.costshare.CShareDetailVO;
-import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 
 public class ERMBillCheckValidator implements Validator {
@@ -145,17 +141,17 @@ public class ERMBillCheckValidator implements Validator {
 
 		}
 
-		String pkItem = bxvo.getParentVO().getPk_item();// 单据日期不可以早于费用申请单的日期
-		if (pkItem != null) {
-			AggMatterAppVO aggMatterVO = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
-					.queryBillByPK(pkItem);
-			UFDateTime approvetime = aggMatterVO.getParentVO().getApprovetime();
-			// 存在并发问题，所以拉单完的申请单可能已被反审，所以需要判断approvetime != null
-			if (approvetime != null && approvetime.afterDate(bxdjrq)) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2006030102",
-						"UPP2006030102-001121"))/* 单据日期不可以早于费用申请单的日期* */;
-			}
-		}
+//		String pkItem = bxvo.getParentVO().getPk_item();// 单据日期不可以早于费用申请单的日期
+//		if (pkItem != null) {
+//			AggMatterAppVO aggMatterVO = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
+//					.queryBillByPK(pkItem);
+//			UFDateTime approvetime = aggMatterVO.getParentVO().getApprovetime();
+//			// 存在并发问题，所以拉单完的申请单可能已被反审，所以需要判断approvetime != null
+//			if (approvetime != null && approvetime.afterDate(bxdjrq)) {
+//				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2006030102",
+//						"UPP2006030102-001121"))/* 单据日期不可以早于费用申请单的日期* */;
+//			}
+//		}
 	}
 
 	/*
@@ -576,13 +572,13 @@ public class ERMBillCheckValidator implements Validator {
 			if(BXConstans.BX_DJDL.equals(currentDjLXVO.getDjdl())){
 				if(parentVO.getTotal().compareTo(UFDouble.ZERO_DBL)==0){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-					"02011002-0175")/* @res "报销单表头金额不可以等于0！" */);
+					"02011002-0178")/* @res "报销单表头金额不可以等于0！" */);
 				}
 			}else{
 				//借款单金额都要大于0
 				if(parentVO.getTotal().compareTo(UFDouble.ZERO_DBL)<=0){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-					"02011002-0174")/* @res "借款单表头金额要大于0！" */);
+					"02011002-0177")/* @res "借款单表头金额要大于0！" */);
 				}
 			}
 		}
@@ -614,13 +610,13 @@ public class ERMBillCheckValidator implements Validator {
 				if(BXConstans.BX_DJDL.equals(currentDjLXVO.getDjdl())){
 					if(child.getBbje().compareTo(UFDouble.ZERO_DBL)==0){
 						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-						"02011002-0173")/* @res "报销单表体页签的本币金额不可以等于0!" */);
+						"02011002-0176")/* @res "报销单表体页签的本币金额不可以等于0!" */);
 					}
 				}else{
 					//借款单金额都要大于0
 					if(child.getBbje().compareTo(UFDouble.ZERO_DBL)<=0){
 						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
-						"02011002-0172")/* @res "借款单表体页签的本币金额都要大于0!" */);
+						"02011002-0175")/* @res "借款单表体页签的本币金额都要大于0!" */);
 					}
 				}
 			}

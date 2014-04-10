@@ -14,6 +14,7 @@ import nc.vo.cmp.settlement.SettlementBodyVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterappctrl.MtapppfVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.CircularlyAccessibleValueObject;
@@ -41,9 +42,9 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 	protected JKBXHeaderVO parentVO;
 
 	/**
-	 * 拉单时拉到费用申请单vo
+	 * 拉单时拉到费用申请单表头vo
 	 */
-	protected AggMatterAppVO[] mt_aggvos;
+	protected MatterAppVO maheadvo;
 
 	protected JKBXVO bxoldvo;
 
@@ -305,12 +306,12 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 		this.contrastVO = contrastVO;
 	}
 
-	public AggMatterAppVO[] getMt_aggvos() {
-		return mt_aggvos;
+	public MatterAppVO getMaheadvo() {
+		return maheadvo;
 	}
 
-	public void setMt_aggvos(AggMatterAppVO[] mtAggvos) {
-		mt_aggvos = mtAggvos;
+	public void setMaheadvo(MatterAppVO maheadvo) {
+		this.maheadvo = maheadvo;
 	}
 
 	/**

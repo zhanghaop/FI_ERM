@@ -30,7 +30,7 @@ public class WfFyFilterCorp extends ErmBaseParticipantFilter {
 																												 */;
 	}
 
-	private ParticipantFilterContext pfc;
+	//private ParticipantFilterContext pfc;
 
 	public HashSet<String> filterUsers(ParticipantFilterContext pfc) throws BusinessException {
 		this.pfc = pfc;
@@ -75,7 +75,7 @@ public class WfFyFilterCorp extends ErmBaseParticipantFilter {
 	 * @param strCorp
 	 * @throws BusinessException
 	 */
-	private void findUserOfOrgunitByCorp(String participantId, String participantType, HashSet<String> hsId,
+	protected void findUserOfOrgunitByCorp(String participantId, String participantType, HashSet<String> hsId,
 			String[] strCorps) throws BusinessException {
 		HashSet<String> userList = getPfc().getUserList();
 		
@@ -100,7 +100,7 @@ public class WfFyFilterCorp extends ErmBaseParticipantFilter {
 		}
 	}
 
-	private String getOrgPrincipal(String strCorp) throws BusinessException {
+	protected String getOrgPrincipal(String strCorp) throws BusinessException {
 		IOrgUnitPubService og = NCLocator.getInstance().lookup(IOrgUnitPubService.class);
 		OrgVO[] orgs = og.getOrgs(new String[] { strCorp }, null);
 		String user = "";
@@ -127,11 +127,11 @@ public class WfFyFilterCorp extends ErmBaseParticipantFilter {
 		return "[U]Stakeholder";
 	}
 
-	public ParticipantFilterContext getPfc() {
-		return pfc;
-	}
-
-	public void setPfc(ParticipantFilterContext pfc) {
-		this.pfc = pfc;
-	}
+//	public ParticipantFilterContext getPfc() {
+//		return pfc;
+//	}
+//
+//	public void setPfc(ParticipantFilterContext pfc) {
+//		this.pfc = pfc;
+//	}
 }

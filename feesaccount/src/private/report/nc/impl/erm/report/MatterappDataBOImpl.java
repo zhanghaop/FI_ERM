@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.pub.ErmReportUtil;
 import nc.bs.erm.sql.MatterappSQLCreator;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.itf.erm.pub.IMatterappDataBO;
 import nc.itf.erm.report.IErmReportConstants;
@@ -16,6 +18,7 @@ import nc.jdbc.framework.util.DBConsts;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.MatterappDataProvider;
 import nc.utils.fipub.FipubSqlExecuter;
 import nc.utils.fipub.SmartProcessor;
@@ -58,6 +61,8 @@ public class MatterappDataBOImpl extends FipubSqlExecuter implements IMatterappD
 		/****************************************************************/
 
 		try {
+            PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+            select.setWhere(null);
 			MatterappSQLCreator sqlCreator = new MatterappSQLCreator();
 			// 设置查询对象VO的内容
 			sqlCreator.setParams(queryVO);
@@ -73,6 +78,8 @@ public class MatterappDataBOImpl extends FipubSqlExecuter implements IMatterappD
 			// 从临时表取得结果
 			MemoryResultSet resultSet = (MemoryResultSet) executeQuery(resultSql, getResultProcessor());
 
+            //转换币种
+            ErUtil.convertCurrtype(resultSet, queryVO);
 
 			// 插入【币种】名称
 			PubCommonReportMethod.insertNameColumn(resultSet, IPubReportConstants.CURRTYPE, "pk_currtype", "currtype");
@@ -97,6 +104,7 @@ public class MatterappDataBOImpl extends FipubSqlExecuter implements IMatterappD
 
 			// 设置返回结果数据集
 			resultDataSet.setDatas(datas);
+            ErmReportUtil.processDataSet(context, resultDataSet);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0029")/*@res "费用申请查询报错"*/;
 			Logger.error(errMsg, e);
@@ -258,7 +266,7 @@ public class MatterappDataBOImpl extends FipubSqlExecuter implements IMatterappD
                     if (!isObj && isMultiOrg && (dataRow[orgIndex - 1] == null
                             || dataRow[orgIndex - 1].toString().length() == 0)) {
 //                        dataRow[briefIndex - 1] = IErmReportConstants.CONST_ALL_TOTAL; // 总计
-                        dataRow[orgIndex - 1] = "";
+                        dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
                         // 多组织、多币种清空金额字段信息
                         if (!isCurrtype) {
                             // 多币种清空金额字段信息

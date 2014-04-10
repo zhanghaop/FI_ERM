@@ -21,6 +21,16 @@ public class RapidShareBXAction extends RapidShareAbstractAction {
     private static final long serialVersionUID = 1L;
 
     private JKBXHeaderVO headervo;
+
+    @Override
+    protected void initDataBefore() throws ValidationException {
+        ((BillForm) getEditor()).getBillCardPanel().stopEditing();
+        BillData data = ((BillForm) getEditor()).getBillCardPanel().getBillData();
+        data.dataNotNullValidate();
+        headervo =  ((JKBXVO)getEditor().getValue()).getParentVO();
+        setDjlx(headervo.getDjlxbm());
+        setParentDjlx(BXConstans.BX_DJLXBM);
+    }
     
     @Override
     protected boolean isActionEnable()
@@ -31,16 +41,6 @@ public class RapidShareBXAction extends RapidShareAbstractAction {
             return false;
         }
         return true;
-    }
-    
-    @Override
-    protected void initDataBefore() throws ValidationException {
-        ((BillForm) getEditor()).getBillCardPanel().stopEditing();
-        BillData data = ((BillForm) getEditor()).getBillCardPanel().getBillData();
-        data.dataNotNullValidate();
-        headervo =  ((JKBXVO)getEditor().getValue()).getParentVO();
-        setDjlx(headervo.getDjlxbm());
-        setParentDjlx(BXConstans.BX_DJLXBM);
     }
 
     @Override

@@ -43,6 +43,8 @@ import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.fipub.exception.ExceptionHandler;
+import nc.vo.jcom.lang.StringUtil;
+import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.bill.BillTempletVO;
 
@@ -70,10 +72,11 @@ public class CostShareEditor extends CSBillForm implements BillEditListener2,Bil
 		pkorgvItem.setEdit(false);
 		// 设置来源单据字段为 String类型，否则报销单无参照会导致数据丢失
 		BillItem src_id = data.getHeadItem(CostShareVO.SRC_ID);
-		if (src_id != null) {
+		if(src_id!=null){
 			src_id.setDataType(IBillItem.STRING);
 			src_id.setItemEditor(new StringBillItemEditor(src_id));
 		}
+		
 	}
 	
 	@Override
@@ -192,6 +195,16 @@ public class CostShareEditor extends CSBillForm implements BillEditListener2,Bil
 	
 	@Override
 	public void setValue(Object object) {
+		if(object !=null){
+			CostShareVO costShareVO = (CostShareVO)((AggCostShareVO)object).getParentVO();
+			BillItem headZyItem = getBillCardPanel().getHeadItem("zy");
+			if(headZyItem!=null){
+				String defaultValue = headZyItem.getDefaultValue();
+				if(StringUtil.isEmpty(costShareVO.getZy()) && !StringUtil.isEmpty(defaultValue)){
+					costShareVO.setZy(defaultValue);
+				}
+			}
+		}
 		super.setValue(object);
 		if (object!=null) {
 			String bzbm = (String)getHeadValue(CostShareVO.BZBM);
@@ -371,6 +384,11 @@ public class CostShareEditor extends CSBillForm implements BillEditListener2,Bil
 //				item.setValue(null);
 //			}
 //		}
+		try {
+			ErmForCShareUiUtil.crossCheck(e.getKey(), this, "N");
+		} catch (BusinessException e1) {
+			ExceptionHandler.handleRuntimeException(e1);
+		}
 		return true;
 	}
 	protected Object getHeadValue(String key) {
@@ -392,6 +410,11 @@ public class CostShareEditor extends CSBillForm implements BillEditListener2,Bil
 		if(CostShareVO.ZY.equals(key)){
 			String pk_org = getBillCardPanel().getHeadItem(CostShareVO.PK_ORG).getValueObject().toString();
 			((UIRefPane) e.getItem().getComponent()).setPk_org(pk_org);
+		}
+		try {
+			ErmForCShareUiUtil.crossCheck(e.getItem().getKey(), this, "Y");
+		} catch (BusinessException e1) {
+			ExceptionHandler.handleRuntimeException(e1);
 		}
 		return e.getItem().isEdit();
 	}

@@ -44,10 +44,9 @@ public class InitBillModelDataManager extends ERMModelDataManager{
                 getListView().showMeUp();
             }
 			
-			if (pks != null) {
-				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQuerySuccessInfo(pks.length), getModel()
-						.getContext());
-			} else {
+			if(pks != null){
+				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQuerySuccessInfo(pks.length), getModel().getContext());
+			}else{
 				ShowStatusBarMsgUtil.showStatusBarMsg(IShowMsgConstant.getQueryNullInfo(), getModel().getContext());
 			}
 		} catch (BusinessException e) {

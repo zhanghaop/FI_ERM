@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -51,12 +52,9 @@ public class BxUIControlUtil {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public static String getAgentWhereString(String jkbxr, String rolersql,
-			String billtype, String user, String date, String pk_org)
-			throws BusinessException {
-		return NCLocator.getInstance().lookup(IBXBillPrivate.class)
-				.getAgentWhereString(jkbxr, rolersql, billtype, user, date,
-						pk_org);
+	public static String getAgentWhereString(String jkbxr, String rolersql, String billtype, String user, String date,
+			String pk_org) throws BusinessException {
+		return ErUtil.getAgentWhereString(jkbxr, rolersql, billtype, user, date, pk_org);
 	}
 
 	/**
@@ -70,10 +68,9 @@ public class BxUIControlUtil {
 	 *             返回：处理后的报销单
 	 * 
 	 */
-	public JKBXVO doContrast(JKBXVO bxvo, List<BxcontrastVO> contrastsData)
-			throws BusinessException {
+	public JKBXVO doContrast(JKBXVO bxvo, List<BxcontrastVO> contrastsData) throws BusinessException {
 		JKBXHeaderVO head = bxvo.getParentVO();
-		UFDouble zero = new UFDouble(0);
+		UFDouble zero = UFDouble.ZERO_DBL;
 		if (contrastsData == null || contrastsData.size() == 0) {
 			// 取消借款单的冲销
 			head.setCjkybje(zero);
@@ -84,61 +81,119 @@ public class BxUIControlUtil {
 			head.setZfbbje(head.getBbje());
 		} else {
 			UFDouble cjkybje = zero;
-			for (Iterator<BxcontrastVO> iter = contrastsData.iterator(); iter
-					.hasNext();) {
-				BxcontrastVO contrast = iter.next();
+			for (BxcontrastVO contrast : contrastsData) {
 				cjkybje = cjkybje.add(contrast.getCjkybje());
 			}
-			// 计算冲借款,还款,支付本币, 取借款单汇率, 日期取借款单日期
-			setJeMul(contrastsData, head, new String[] { 
-					JKBXHeaderVO.CJKYBJE,
-					JKBXHeaderVO.CJKBBJE, 
-					JKBXHeaderVO.GROUPCJKBBJE,
-					JKBXHeaderVO.GLOBALCJKBBJE });
+
+			// 计算冲借款
+			setJeMul(contrastsData, head, new String[] { JKBXHeaderVO.CJKYBJE, JKBXHeaderVO.CJKBBJE,
+					JKBXHeaderVO.GROUPCJKBBJE, JKBXHeaderVO.GLOBALCJKBBJE });
+			
+			//表头还款,支付本币, 取借款单汇率, 日期取借款单日期
 			if (cjkybje.doubleValue() > head.getYbje().doubleValue()) {
-				//冲借款金额>报销金额，则有还款
-				setHeadJe(head, cjkybje.sub(head.getYbje()), new String[] {
-						JKBXHeaderVO.HKYBJE, 
-						JKBXHeaderVO.HKBBJE,
-						JKBXHeaderVO.GROUPHKBBJE, 
-						JKBXHeaderVO.GLOBALHKBBJE });
+				// 冲借款金额>报销金额，则有还款
+				setHeadJe(head, cjkybje.sub(head.getYbje()), new String[] { JKBXHeaderVO.HKYBJE, JKBXHeaderVO.HKBBJE,
+						JKBXHeaderVO.GROUPHKBBJE, JKBXHeaderVO.GLOBALHKBBJE });
 				head.setZfybje(zero);
 				head.setZfbbje(zero);
+				head.setGroupzfbbje(zero);
+				head.setGlobalzfbbje(zero);
 			} else if (cjkybje.doubleValue() < head.getYbje().doubleValue()) {
-				//冲借款金额<报销金额，则有支付
-				setHeadJe(head, head.getYbje().sub(cjkybje), new String[] {
-						JKBXHeaderVO.ZFYBJE, 
-						JKBXHeaderVO.ZFBBJE,
-						JKBXHeaderVO.GROUPZFBBJE, 
-						JKBXHeaderVO.GLOBALZFBBJE });
+				// 冲借款金额<报销金额，则有支付
+				setHeadJe(head, head.getYbje().sub(cjkybje), new String[] { JKBXHeaderVO.ZFYBJE, JKBXHeaderVO.ZFBBJE,
+						JKBXHeaderVO.GROUPZFBBJE, JKBXHeaderVO.GLOBALZFBBJE });
 				head.setHkybje(zero);
 				head.setHkbbje(zero);
-			}else if (cjkybje.doubleValue() == head.getYbje().doubleValue()) {
-				//冲借款金额==报销金额，则既无还款，又无支付
-				setHeadJe(head, head.getYbje().sub(cjkybje), new String[] {
-					JKBXHeaderVO.ZFYBJE, 
-					JKBXHeaderVO.ZFBBJE,
-					JKBXHeaderVO.GROUPZFBBJE, 
-					JKBXHeaderVO.GLOBALZFBBJE });
+				head.setGrouphkbbje(zero);
+				head.setGlobalhkbbje(zero);
+			} else if (cjkybje.doubleValue() == head.getYbje().doubleValue()) {
+				// 冲借款金额==报销金额，则既无还款，又无支付
+				setHeadJe(head, head.getYbje().sub(cjkybje), new String[] { JKBXHeaderVO.ZFYBJE, JKBXHeaderVO.ZFBBJE,
+						JKBXHeaderVO.GROUPZFBBJE, JKBXHeaderVO.GLOBALZFBBJE });
 				head.setHkybje(zero);
 				head.setHkbbje(zero);
-				
-				setHeadJe(head, cjkybje.sub(head.getYbje()), new String[] {
-					JKBXHeaderVO.HKYBJE, 
-					JKBXHeaderVO.HKBBJE,
-					JKBXHeaderVO.GROUPHKBBJE, 
-					JKBXHeaderVO.GLOBALHKBBJE });
+				head.setGrouphkbbje(zero);
+				head.setGlobalhkbbje(zero);
+
+				setHeadJe(head, cjkybje.sub(head.getYbje()), new String[] { JKBXHeaderVO.HKYBJE, JKBXHeaderVO.HKBBJE,
+						JKBXHeaderVO.GROUPHKBBJE, JKBXHeaderVO.GLOBALHKBBJE });
 				head.setZfybje(zero);
 				head.setZfbbje(zero);
+				head.setGroupzfbbje(zero);
+				head.setGlobalzfbbje(zero);
 			}
 		}
-		//折算表体冲借款金额
+
+		// 折算表体冲借款金额
 		caculateBodyCjkje(bxvo);
+		//折算冲借款页签中还款金额 add by chenshuaia
+		caculateContrastHkJe(bxvo, contrastsData);
 		return bxvo;
 	}
 
 	/**
+	 * 折算冲借款表体
+	 * 
+	 * @param bxvo
+	 * @param contrastsData
+	 * @author chenshuaia
+	 */
+	private void caculateContrastHkJe(JKBXVO bxvo, List<BxcontrastVO> contrastsData) {
+		if (contrastsData == null || contrastsData.size() == 0) {
+			return;
+		}
+		UFDouble hkybje = bxvo.getParentVO().getHkybje();
+		UFDouble sumHkJe = UFDouble.ZERO_DBL;
+		for (BxcontrastVO contrastVo : contrastsData) {
+			if (contrastVo.getHkybje() != null) {
+				sumHkJe = sumHkJe.add(contrastVo.getHkybje());
+			}
+		}
+
+		if (hkybje.compareTo(sumHkJe) != 0) {
+			UFDouble diffJe = hkybje.sub(sumHkJe);// 还款金额一般落在最后一行
+			UFDouble diffJeAbs = diffJe.abs();
+			boolean isMore = diffJe.compareTo(UFDouble.ZERO_DBL) > 0;
+
+			for (int i = contrastsData.size() - 1; i >= 0; i--) {
+				BxcontrastVO contrastVo = contrastsData.get(i);
+				UFDouble bodyHkJe = contrastVo.getHkybje() == null ? UFDouble.ZERO_DBL : contrastVo.getHkybje();
+				UFDouble bodyfyYbJe = contrastVo.getFyybje() == null ? UFDouble.ZERO_DBL : contrastVo.getFyybje();
+
+				if (isMore) {
+					if (bodyfyYbJe.compareTo(UFDouble.ZERO_DBL) > 0) {
+						if (diffJeAbs.compareTo(bodyfyYbJe) > 0) {
+							contrastVo.setFyybje(UFDouble.ZERO_DBL);
+							contrastVo.setHkybje(contrastVo.getCjkybje());
+							diffJeAbs = diffJeAbs.sub(bodyfyYbJe);
+							continue;
+						} else {
+							contrastVo.setFyybje(bodyfyYbJe.sub(diffJeAbs));
+							contrastVo.setHkybje(bodyHkJe.add(diffJeAbs));
+							break;
+						}
+					}
+				} else {
+					if (bodyHkJe.compareTo(UFDouble.ZERO_DBL) > 0) {
+						if (diffJeAbs.compareTo(bodyHkJe) > 0) {
+							contrastVo.setHkybje(UFDouble.ZERO_DBL);
+							contrastVo.setFyybje(contrastVo.getCjkybje());
+							diffJeAbs = diffJeAbs.sub(bodyHkJe);
+							continue;
+						} else {
+							contrastVo.setFyybje(bodyfyYbJe.add(diffJeAbs));
+							contrastVo.setHkybje(bodyHkJe.sub(diffJeAbs));
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * 折算表体冲借款金额(同时计算支付或还款金额)
+	 * 
 	 * @author chendya
 	 * @param bxvo
 	 */
@@ -147,25 +202,24 @@ public class BxUIControlUtil {
 		BXBusItemVO[] childrenVO = bxvo.getChildrenVO();
 		if (childrenVO == null || childrenVO.length == 0)
 			return;
-		
+
 		List<BXBusItemVO> noNullChildrenVoList = new ArrayList<BXBusItemVO>();
-		
-		for(int i = 0 ; i < childrenVO.length; i++){
-			if(!isJeNullRow(childrenVO[i])){
+
+		for (int i = 0; i < childrenVO.length; i++) {
+			if (!isJeNullRow(childrenVO[i])) {
 				noNullChildrenVoList.add(childrenVO[i]);
 			}
 		}
-		
-		// 取得表头币种编码和汇率值，根据汇率值换算本币的值，若币种与本位币相同，则忽略界面中自定的汇率
-		UFDouble cjkje = head.getCjkybje();
+
+		UFDouble cjkje = head.getCjkybje();//总冲借款金额，进行分配
 		for (int i = 0; i < noNullChildrenVoList.size(); i++) {
 			BXBusItemVO child = noNullChildrenVoList.get(i);
-			
+
 			if (cjkje != null) {
 				// 还有没分配完的冲借款金额
 				UFDouble ybje = child.getYbje();
-				//当前行是最后一行
-				if(i == noNullChildrenVoList.size() - 1){
+				// 当前行是最后一行
+				if (i == noNullChildrenVoList.size() - 1) {
 					child.setAttributeValue(BXBusItemVO.CJKYBJE, cjkje);
 					modifyValues(child);
 					transYbjeToBbje(head, child);
@@ -186,41 +240,41 @@ public class BxUIControlUtil {
 				}
 			} else {
 				// 冲借款金额都分配完了，剩余项都用0填补
-				child.setAttributeValue(BXBusItemVO.CJKYBJE,new UFDouble(0));
+				child.setAttributeValue(BXBusItemVO.CJKYBJE, new UFDouble(0));
 				modifyValues(child);
 				transYbjeToBbje(head, child);
 			}
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private BXBusItemVO[] filterJeNullRow(BXBusItemVO[] chilerenVO) {
-		//过滤掉没有金额的行
+		// 过滤掉没有金额的行
 		List<BXBusItemVO> voList = new ArrayList<BXBusItemVO>();
-		for(BXBusItemVO vo : chilerenVO){
+		for (BXBusItemVO vo : chilerenVO) {
 			UFDouble ybje = vo.getYbje();
-			if(ybje == null){
+			if (ybje == null) {
 				ybje = UFDouble.ZERO_DBL;
 			}
-			if(UFDouble.ZERO_DBL.equals(ybje)){
-				//没有原币金额的行不折算
+			if (UFDouble.ZERO_DBL.equals(ybje)) {
+				// 没有原币金额的行不折算
 				continue;
 			}
 			voList.add(vo);
 		}
 		return voList.toArray(new BXBusItemVO[0]);
 	}
-	
-	
+
 	private boolean isJeNullRow(BXBusItemVO vo) {
-		//判断是否是金额为空的行
+		// 判断是否是金额为空的行
 		UFDouble ybje = vo.getYbje() == null ? UFDouble.ZERO_DBL : vo.getYbje();
 		UFDouble cjkJe = vo.getCjkybje() == null ? UFDouble.ZERO_DBL : vo.getCjkybje();
-		
-		if(UFDouble.ZERO_DBL.equals(ybje) && UFDouble.ZERO_DBL.equals(cjkJe)){
-			//原币金额为空则表示为空行
+
+		if (UFDouble.ZERO_DBL.equals(ybje) && UFDouble.ZERO_DBL.equals(cjkJe)) {
+			// 原币金额为空则表示为空行
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -233,36 +287,40 @@ public class BxUIControlUtil {
 		UFDouble hkybje = itemVO.getHkybje();
 		UFDouble zfybje = itemVO.getZfybje();
 		try {
-			UFDouble[] bbje = Currency.computeYFB(pk_corp,
-					Currency.Change_YBCurr, bzbm, ybje, null, null, null, hl,
+			UFDouble[] bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm, ybje, null, null, null, hl,
 					head.getDjrq());
 			itemVO.setAttributeValue(JKBXHeaderVO.BBJE, bbje[2]);
 			itemVO.setAttributeValue(JKBXHeaderVO.BBYE, bbje[2]);
-			bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm,
-					cjkybje, null, null, null, hl, head.getDjrq());
+			bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm, cjkybje, null, null, null, hl,
+					head.getDjrq());
 			itemVO.setAttributeValue(JKBXHeaderVO.CJKBBJE, bbje[2]);
-			bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm,
-					hkybje, null, null, null, hl, head.getDjrq());
+			bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm, hkybje, null, null, null, hl,
+					head.getDjrq());
 			itemVO.setAttributeValue(JKBXHeaderVO.HKBBJE, bbje[2]);
-			bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm,
-					zfybje, null, null, null, hl, head.getDjrq());
+			bbje = Currency.computeYFB(pk_corp, Currency.Change_YBCurr, bzbm, zfybje, null, null, null, hl,
+					head.getDjrq());
 			itemVO.setAttributeValue(JKBXHeaderVO.ZFBBJE, bbje[2]);
-			
-			//折算冲借款集团、全局本币金额
-			caculateGroupAndGlobalBbje(head,itemVO,BXBusItemVO.CJKYBJE,BXBusItemVO.CJKYBJE,BXBusItemVO.GROUPCJKBBJE,BXBusItemVO.GLOBALCJKBBJE);
-			
-			//折算支付集团、全局本币金额
-			caculateGroupAndGlobalBbje(head,itemVO,BXBusItemVO.ZFYBJE,BXBusItemVO.ZFYBJE,BXBusItemVO.GROUPZFBBJE,BXBusItemVO.GLOBALZFBBJE);
-			
-			//折算还款集团、全局本币金额
-			caculateGroupAndGlobalBbje(head,itemVO,BXBusItemVO.HKYBJE,BXBusItemVO.HKYBJE,BXBusItemVO.GROUPHKBBJE,BXBusItemVO.GLOBALHKBBJE);
-			
+
+			// 折算冲借款集团、全局本币金额
+			caculateGroupAndGlobalBbje(head, itemVO, BXBusItemVO.CJKYBJE, BXBusItemVO.CJKYBJE,
+					BXBusItemVO.GROUPCJKBBJE, BXBusItemVO.GLOBALCJKBBJE);
+
+			// 折算支付集团、全局本币金额
+			caculateGroupAndGlobalBbje(head, itemVO, BXBusItemVO.ZFYBJE, BXBusItemVO.ZFYBJE, BXBusItemVO.GROUPZFBBJE,
+					BXBusItemVO.GLOBALZFBBJE);
+
+			// 折算还款集团、全局本币金额
+			caculateGroupAndGlobalBbje(head, itemVO, BXBusItemVO.HKYBJE, BXBusItemVO.HKYBJE, BXBusItemVO.GROUPHKBBJE,
+					BXBusItemVO.GLOBALHKBBJE);
+
 		} catch (BusinessException e) {
 			ExceptionHandler.consume(e);
 		}
 	}
+
 	/**
 	 * 折算集团和全局本币金额
+	 * 
 	 * @param ybje
 	 * @param bbje
 	 * @param pk_currtype
@@ -271,16 +329,16 @@ public class BxUIControlUtil {
 	 * @param pk_group
 	 * @param globalrate
 	 * @param grouprate
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
-	private static void caculateGroupAndGlobalBbje(JKBXHeaderVO head, BXBusItemVO itemVO, 
-			String ybjeField,String bbjeField,String groupbbjeField,String globalbbjeField) throws BusinessException{
-		UFDouble[] moneys = Currency.computeGroupGlobalAmount((UFDouble)itemVO.getAttributeValue(ybjeField), 
-				(UFDouble)itemVO.getAttributeValue(bbjeField), head.getBzbm(), head.getDjrq(), head.getPk_org(), head.getPk_group(), 
-				head.getGlobalbbhl(), head.getGroupbbhl());
-		//集团
+	private static void caculateGroupAndGlobalBbje(JKBXHeaderVO head, BXBusItemVO itemVO, String ybjeField,
+			String bbjeField, String groupbbjeField, String globalbbjeField) throws BusinessException {
+		UFDouble[] moneys = Currency.computeGroupGlobalAmount((UFDouble) itemVO.getAttributeValue(ybjeField),
+				(UFDouble) itemVO.getAttributeValue(bbjeField), head.getBzbm(), head.getDjrq(), head.getPk_org(),
+				head.getPk_group(), head.getGlobalbbhl(), head.getGroupbbhl());
+		// 集团
 		itemVO.setAttributeValue(groupbbjeField, moneys[0]);
-		//全局
+		// 全局
 		itemVO.setAttributeValue(globalbbjeField, moneys[1]);
 	}
 
@@ -294,39 +352,36 @@ public class BxUIControlUtil {
 		UFDouble cjkybje = vo.getCjkybje();
 		if (ybje.getDouble() > cjkybje.getDouble()) {// 如果原币金额大于冲借款金额
 			vo.setAttributeValue(BXBusItemVO.ZFYBJE, ybje.sub(cjkybje));// 支付金额=原币金额-冲借款金额
-			vo.setAttributeValue(BXBusItemVO.HKYBJE, new UFDouble(0));
+			vo.setAttributeValue(BXBusItemVO.HKYBJE, UFDouble.ZERO_DBL);
 		} else {
 			vo.setAttributeValue(BXBusItemVO.HKYBJE, cjkybje.sub(ybje));// 还款金额=冲借款金额-原币金额
-			vo.setAttributeValue(BXBusItemVO.ZFYBJE, new UFDouble(0));
+			vo.setAttributeValue(BXBusItemVO.ZFYBJE, UFDouble.ZERO_DBL);
 		}
 	}
 
 	/**
+	 * 冲销页签的冲借款金额本币计算<br>
+	 * 表头冲借款金额本币的计算
 	 * @param contrastsData
 	 * @param yfbKeys
-	 * 
-	 *            设置冲销金额
 	 * @throws BusinessException
 	 */
-	private void setJeMul(List<BxcontrastVO> contrastsData, JKBXHeaderVO head,
-			String[] yfbKeys) throws BusinessException {
+	private void setJeMul(List<BxcontrastVO> contrastsData, JKBXHeaderVO head, String[] yfbKeys)
+			throws BusinessException {
 		try {
 			UFDouble[] yfbs = null;
-			for (Iterator<BxcontrastVO> iter = contrastsData.iterator(); iter
-					.hasNext();) {
+			for (Iterator<BxcontrastVO> iter = contrastsData.iterator(); iter.hasNext();) {
 				BxcontrastVO vo = iter.next();
 				UFDouble cjkybje = vo.getCjkybje();
-				UFDouble[] values = Currency.computeYFB(head.getPk_org(),
-						Currency.Change_YBJE, head.getBzbm(), cjkybje, null,
-						null, null, head.getBbhl(), head.getDjrq());
+				UFDouble[] values = Currency.computeYFB(head.getPk_org(), Currency.Change_YBJE, head.getBzbm(),
+						cjkybje, null, null, null, head.getBbhl(), head.getDjrq());
 
 				vo.setCjkbbje(values[2]);
 				vo.setBbje(values[2]);
 
-				UFDouble[] money = Currency.computeGroupGlobalAmount(cjkybje,
-						values[2], head.getBzbm(), head.getDjrq(), head
-								.getPk_org(), head.getPk_group(), head
-								.getGlobalbbhl(), head.getGroupbbhl());
+				UFDouble[] money = Currency
+						.computeGroupGlobalAmount(cjkybje, values[2], head.getBzbm(), head.getDjrq(), head.getPk_org(),
+								head.getPk_group(), head.getGlobalbbhl(), head.getGroupbbhl());
 
 				vo.setGroupcjkbbje(money[0]);
 				vo.setGlobalcjkbbje(money[1]);
@@ -337,14 +392,12 @@ public class BxUIControlUtil {
 					yfbs = values;
 				} else {
 					for (int i = 0; i < 3; i++) {
-						yfbs[i] = yfbs[i].add(values[0]);
+						yfbs[i] = yfbs[i].add(values[i]);
 					}
 				}
 			}
-			UFDouble[] money2 = Currency.computeGroupGlobalAmount(yfbs[0],
-					yfbs[2], head.getBzbm(), head.getDjrq(), head.getPk_org(),
-					head.getPk_group(), head.getGlobalbbhl(), head
-							.getGroupbbhl());
+			UFDouble[] money2 = Currency.computeGroupGlobalAmount(yfbs[0], yfbs[2], head.getBzbm(), head.getDjrq(),
+					head.getPk_org(), head.getPk_group(), head.getGlobalbbhl(), head.getGroupbbhl());
 
 			head.setAttributeValue(yfbKeys[0], yfbs[0]);
 			head.setAttributeValue(yfbKeys[1], yfbs[2]);
@@ -354,32 +407,29 @@ public class BxUIControlUtil {
 		} catch (BusinessException e) {
 			// 设置本币错误.
 			Log.getInstance(this.getClass()).error(e.getMessage(), e);
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
-					.getNCLangRes().getStrByID("2011", "UPP2011-000009")/*
-																		 * @res
-																		 * "设置本币错误!"
-																		 */);
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000009")/*
+																														 * @
+																														 * res
+																														 * "设置本币错误!"
+																														 */);
 		}
 	}
 
 	/**
 	 * 折算表头金额字段
+	 * 
 	 * @param head
 	 * @param ybje
 	 * @param yfbKeys
 	 * @throws BusinessException
 	 */
-	private void setHeadJe(JKBXHeaderVO head, UFDouble ybje, String[] yfbKeys)
-			throws BusinessException {
+	private void setHeadJe(JKBXHeaderVO head, UFDouble ybje, String[] yfbKeys) throws BusinessException {
 		try {
 			head.setAttributeValue(yfbKeys[0], ybje);
-			UFDouble[] yfbs = Currency.computeYFB(head.getPk_org(), Currency.Change_YBJE,
-					head.getBzbm(), ybje, null, null, null, head.getBbhl(),
-					head.getDjrq());
-			UFDouble[] money = Currency.computeGroupGlobalAmount(ybje, yfbs[2],
-					head.getBzbm(), head.getDjrq(), head.getPk_org(), head
-							.getPk_group(), head.getGlobalbbhl(), head
-							.getGroupbbhl());
+			UFDouble[] yfbs = Currency.computeYFB(head.getPk_org(), Currency.Change_YBJE, head.getBzbm(), ybje, null,
+					null, null, head.getBbhl(), head.getDjrq());
+			UFDouble[] money = Currency.computeGroupGlobalAmount(ybje, yfbs[2], head.getBzbm(), head.getDjrq(),
+					head.getPk_org(), head.getPk_group(), head.getGlobalbbhl(), head.getGroupbbhl());
 
 			head.setAttributeValue(yfbKeys[1], yfbs[2]);
 			head.setAttributeValue(yfbKeys[2], money[0]);
@@ -388,11 +438,11 @@ public class BxUIControlUtil {
 		} catch (BusinessException e) {
 			// 设置本币错误.
 			Log.getInstance(this.getClass()).error(e.getMessage(), e);
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
-					.getNCLangRes().getStrByID("2011", "UPP2011-000009")/*
-																		 * @res
-																		 * "设置本币错误!"
-																		 */);
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000009")/*
+																														 * @
+																														 * res
+																														 * "设置本币错误!"
+																														 */);
 		}
 	}
 
@@ -407,21 +457,19 @@ public class BxUIControlUtil {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public static List<JKBXVO> getInitBill(String pk_org, String pk_group,
-			String djlxbm, boolean includeGroup) throws BusinessException {
+	public static List<JKBXVO> getInitBill(String pk_org, String pk_group, String djlxbm, boolean includeGroup)
+			throws BusinessException {
 
 		DjCondVO condVO = new DjCondVO();
 
 		condVO.isInit = true;
-		condVO.defWhereSQL = " zb.djlxbm='" + djlxbm
-				+ "' and zb.dr=0 and ((isinitgroup='N' and pk_org='" + pk_org
+		condVO.defWhereSQL = " zb.djlxbm='" + djlxbm + "' and zb.dr=0 and ((isinitgroup='N' and pk_org='" + pk_org
 				+ "') or isinitgroup='Y') ";
 		condVO.isCHz = false;
 		condVO.pk_group = new String[] { pk_group };
 		// 组织和集团的合并查询，减少远程调用次数，查询完后分组,优先返回组织级的VO
-		List<JKBXVO> all = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-				.queryVOs(0, -99, condVO);
-		
+		List<JKBXVO> all = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryVOs(0, -99, condVO);
+
 		if (all == null) {
 			return new ArrayList<JKBXVO>();
 		}
@@ -443,21 +491,18 @@ public class BxUIControlUtil {
 		return BXUtil.getBusTypeVO(djlxbm, djdl);
 	}
 
-	private static boolean doSimpleNoEquals(String reftype, String pk_corp,
-			Object ruleKey, Object voKey) {
+	private static boolean doSimpleNoEquals(String reftype, String pk_corp, Object ruleKey, Object voKey) {
 		IGeneralAccessor acc = null;
 
-		if (reftype.equals("地区分类")) {/*-=notranslate=-*/
-			acc = GeneralAccessorFactory
-					.getAccessor(IBDMetaDataIDConst.AREACLASS);
+		if (reftype.equals("地区分类")) {/* -=notranslate=- */
+			acc = GeneralAccessorFactory.getAccessor(IBDMetaDataIDConst.AREACLASS);
 		}
-		if (reftype.equals("部门")) {/*-=notranslate=-*/
+		if (reftype.equals("部门")) {/* -=notranslate=- */
 			acc = GeneralAccessorFactory.getAccessor(IBDMetaDataIDConst.DEPT);
 		}
 
 		if (acc != null) {
-			while (voKey != null && voKey.toString().trim().length() != 0
-					&& doSimpleNoEquals(voKey, ruleKey)) {
+			while (voKey != null && voKey.toString().trim().length() != 0 && doSimpleNoEquals(voKey, ruleKey)) {
 				IBDData doc = acc.getDocByPk(voKey.toString());
 				if (doc == null)
 					return doSimpleNoEquals(voKey, ruleKey);
@@ -477,36 +522,38 @@ public class BxUIControlUtil {
 		else
 			return !VOUtils.simpleEquals(ruleKey.toString(), voKey.toString());
 	}
-	
+
 	/**
 	 * 执行表体报销标准
-	 * @param bxvo 单据VO
-	 * @param reimRuleDataMap 报销标准Map
-	 * @param bodyReimRuleMap 表体报销标准Map
+	 * 
+	 * @param bxvo
+	 *            单据VO
+	 * @param reimRuleDataMap
+	 *            报销标准Map
+	 * @param bodyReimRuleMap
+	 *            表体报销标准Map
 	 * @return
 	 */
-	public static List<BodyEditVO> doBodyReimAction(JKBXVO bxvo,
-			Map<String, List<SuperVO>> reimRuleDataMap,
+	public static List<BodyEditVO> doBodyReimAction(JKBXVO bxvo, Map<String, List<SuperVO>> reimRuleDataMap,
 			HashMap<String, String> bodyReimRuleMap) {
 
 		List<BodyEditVO> result = new ArrayList<BodyEditVO>();
-		if (bxvo == null || bxvo.getParentVO() == null
-				|| bxvo.getParentVO().getDjlxbm() == null)
+		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null)
 			return result;
 
 		String djlxbm = bxvo.getParentVO().getDjlxbm();
 		List<ReimRuleVO> matchReimRule = getMatchReimRuleByHead(djlxbm, bxvo, reimRuleDataMap);
 
-		for (String key : bodyReimRuleMap.keySet()) {//表体报销标准Map<tablecode@itemkey,费用类型pk>循环
-			String expenseKey = bodyReimRuleMap.get(key);//费用类型key
+		for (String key : bodyReimRuleMap.keySet()) {// 表体报销标准Map<tablecode@itemkey,费用类型pk>循环
+			String expenseKey = bodyReimRuleMap.get(key);// 费用类型key
 			String[] keys = key.split(ReimRuleVO.REMRULE_SPLITER);
 			String tableCode = keys[0];
 			String itemkey = keys[1];
 			CircularlyAccessibleValueObject[] bodyValueVOs = bxvo.getTableVO(tableCode);
-			
+
 			if (bodyValueVOs != null) {
 				int row = -1;
-				for (CircularlyAccessibleValueObject body : bodyValueVOs) {//对对应tableCode下的所有数据行进行遍历
+				for (CircularlyAccessibleValueObject body : bodyValueVOs) {// 对对应tableCode下的所有数据行进行遍历
 					row++;
 
 					BodyEditVO bodyEditVO2 = new BodyEditVO();
@@ -518,25 +565,24 @@ public class BxUIControlUtil {
 
 					for (ReimRuleVO rule : matchReimRule) {
 						if (doSimpleNoEquals(rule.getPk_reimtype(), body.getAttributeValue(BXBusItemVO.PK_REIMTYPE))) {
-							//报销类型
+							// 报销类型
 							continue;
 						}
-						if (doSimpleNoEquals(rule.getPk_expensetype(),expenseKey)) {//费用类型
+						if (doSimpleNoEquals(rule.getPk_expensetype(), expenseKey)) {// 费用类型
 							continue;
 						}
 						boolean match = true;
 						ReimRuleDefVO reimRuleDefvo = BXUtil.getReimRuleDefvo(djlxbm);
-						for (ReimRuleDef def : reimRuleDefvo.getReimRuleDefList()) {//报销标准自定义项
-							
+						for (ReimRuleDef def : reimRuleDefvo.getReimRuleDefList()) {// 报销标准自定义项
+
 							if (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key)) {
-								
+
 								String itemkey2 = def.getItemkey();
 								String itemvalue = def.getItemvalue();
 								String[] itemvalues = itemvalue.split(ReimRuleVO.REMRULE_SPLITER);
 								String bodyCol = itemvalues[1];
 								if (doSimpleNoEquals(def.getReftype(), bxvo.getParentVO().getPk_group(),
-										rule.getAttributeValue(itemkey2), 
-										body.getAttributeValue(bodyCol))) {//自定义与表体中对应字段值不同
+										rule.getAttributeValue(itemkey2), body.getAttributeValue(bodyCol))) {// 自定义与表体中对应字段值不同
 									match = false;
 									break;
 								}
@@ -557,26 +603,29 @@ public class BxUIControlUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 表头报销标准
-	 * @param bxvo 单据VO
-	 * @param reimRuleDataMap 报销标准Map
-	 * @param expenseType 费用类型
-	 * @param reimtypeMap 报销类型
+	 * 
+	 * @param bxvo
+	 *            单据VO
+	 * @param reimRuleDataMap
+	 *            报销标准Map
+	 * @param expenseType
+	 *            费用类型
+	 * @param reimtypeMap
+	 *            报销类型
 	 * @return
 	 */
-	public static String doHeadReimAction(JKBXVO bxvo,
-			Map<String, List<SuperVO>> reimRuleDataMap,
+	public static String doHeadReimAction(JKBXVO bxvo, Map<String, List<SuperVO>> reimRuleDataMap,
 			Map<String, SuperVO> expenseType, Map<String, SuperVO> reimtypeMap) {
 		StringBuffer reimrule = new StringBuffer("");
 
-		if (bxvo == null || bxvo.getParentVO() == null
-				|| bxvo.getParentVO().getDjlxbm() == null)
+		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null)
 			return reimrule.toString();
 
 		String djlxbm = bxvo.getParentVO().getDjlxbm();
-		//根据单据类型获取自定义报销标准
+		// 根据单据类型获取自定义报销标准
 		List<ReimRuleVO> matchReimRule = getMatchReimRuleByHead(djlxbm, bxvo, reimRuleDataMap);
 
 		String langIndex = PubCommonReportMethod.getMultiLangIndex();
@@ -591,7 +640,7 @@ public class BxUIControlUtil {
 					reimrule.append(reimtypeMap.get(pk_reimtype).getAttributeValue("name" + langIndex));
 				}
 			}
-			
+
 			ReimRuleDefVO reimRuleDefvo = BXUtil.getReimRuleDefvo(djlxbm);
 			for (ReimRuleDef def : reimRuleDefvo.getReimRuleDefList()) {
 				if (def.getItemvalue().startsWith(ReimRuleVO.Reim_body_key)) {
@@ -614,8 +663,7 @@ public class BxUIControlUtil {
 		List<SuperVO> dataList = reimRuleDataMap.get(djlxbm);
 		List<ReimRuleVO> matchedRule = new ArrayList<ReimRuleVO>();
 
-		if (dataList == null || dataList.size() == 0 || bxvo == null
-				|| bxvo.getParentVO() == null)
+		if (dataList == null || dataList.size() == 0 || bxvo == null || bxvo.getParentVO() == null)
 			return matchedRule;
 
 		ReimRuleVO[] ruleVOs = dataList.toArray(new ReimRuleVO[] {});
@@ -629,8 +677,7 @@ public class BxUIControlUtil {
 			bodykey.append(rule.getPk_reimtype());
 
 			String deptid = bxvo.getParentVO().getDeptid();
-			while (deptid != null
-					&& doSimpleNoEquals(rule.getPk_deptid(), deptid)) {
+			while (deptid != null && doSimpleNoEquals(rule.getPk_deptid(), deptid)) {
 				deptid = getFatherDept(deptid);
 			}
 
@@ -638,12 +685,10 @@ public class BxUIControlUtil {
 				continue;
 			}
 
-			if (doSimpleNoEquals(rule.getPk_psn(), bxvo.getParentVO()
-					.getJkbxr())) {
+			if (doSimpleNoEquals(rule.getPk_psn(), bxvo.getParentVO().getJkbxr())) {
 				continue;
 			}
-			if (doSimpleNoEquals(rule.getPk_currtype(), bxvo.getParentVO()
-					.getBzbm())) {
+			if (doSimpleNoEquals(rule.getPk_currtype(), bxvo.getParentVO().getBzbm())) {
 				continue;
 			}
 
@@ -657,28 +702,23 @@ public class BxUIControlUtil {
 					String typeString = keys[0];
 					String keyString = keys[1];
 					if (itemvalue.startsWith(ReimRuleVO.Reim_head_key)) {
-						headvalue = bxvo.getParentVO().getAttributeValue(
-								keyString);
+						headvalue = bxvo.getParentVO().getAttributeValue(keyString);
 					} else {
 						if (itemvalue.startsWith(ReimRuleVO.Reim_jkbxr_key)
-								|| itemvalue
-										.startsWith(ReimRuleVO.Reim_receiver_key)) {
-							headvalue = getPsnDef1((String) bxvo.getParentVO()
-									.getAttributeValue(typeString), keyString);
-						} else if (itemvalue
-								.startsWith(ReimRuleVO.Reim_deptid_key)
-								|| itemvalue
-										.startsWith(ReimRuleVO.Reim_fydeptid_key)) {
+								|| itemvalue.startsWith(ReimRuleVO.Reim_receiver_key)) {
+							headvalue = getPsnDef1((String) bxvo.getParentVO().getAttributeValue(typeString), keyString);
+						} else if (itemvalue.startsWith(ReimRuleVO.Reim_deptid_key)
+								|| itemvalue.startsWith(ReimRuleVO.Reim_fydeptid_key)) {
 							try {
-								headvalue = getDeptDef1((String) bxvo.getParentVO().getAttributeValue(typeString), keyString);
+								headvalue = getDeptDef1((String) bxvo.getParentVO().getAttributeValue(typeString),
+										keyString);
 							} catch (BusinessException e) {
 								ExceptionHandler.consume(e);
 							}
 						}
 					}
-					if (doSimpleNoEquals(def.getReftype(), bxvo.getParentVO()
-							.getPk_group(), rule.getAttributeValue(def
-							.getItemkey()), headvalue)) {//当表头有中有一个条件与标准不同，则跳出，表示不符合
+					if (doSimpleNoEquals(def.getReftype(), bxvo.getParentVO().getPk_group(),
+							rule.getAttributeValue(def.getItemkey()), headvalue)) {// 当表头有中有一个条件与标准不同，则跳出，表示不符合
 						notmatch = true;
 						break;
 					}
@@ -699,8 +739,7 @@ public class BxUIControlUtil {
 				} catch (Exception e) {
 					ExceptionHandler.consume(e);
 				}
-				rule.setAmount(rule.getAmount().setScale(scale,
-						UFDouble.ROUND_HALF_UP));
+				rule.setAmount(rule.getAmount().setScale(scale, UFDouble.ROUND_HALF_UP));
 			}
 
 			if (rulemap.get(bodykey.toString()) == null) {
@@ -718,8 +757,7 @@ public class BxUIControlUtil {
 
 		DeptVO deptdocVOs = null;
 		try {
-			deptdocVOs = NCLocator.getInstance().lookup(IDeptQryService.class)
-					.queryDeptVOByID(dept);
+			deptdocVOs = NCLocator.getInstance().lookup(IDeptQryService.class).queryDeptVOByID(dept);
 		} catch (BusinessException e) {
 			nc.bs.logging.Log.getInstance("ermExceptionLog").error(e);
 		}
@@ -730,15 +768,13 @@ public class BxUIControlUtil {
 		return deptdocVOs.getPk_fatherorg();
 	}
 
-	private static String getDeptDef1(String dept, String keyString)
-			throws BusinessException {
+	private static String getDeptDef1(String dept, String keyString) throws BusinessException {
 		if (dept == null)
 			return null;
 
 		DeptVO deptdocVO = new DeptVO();
 		deptdocVO.setPk_dept(dept);
-		DeptVO deptdocVOs = NCLocator.getInstance().lookup(
-				IDeptQryService.class).queryDeptVOByID(dept);
+		DeptVO deptdocVOs = NCLocator.getInstance().lookup(IDeptQryService.class).queryDeptVOByID(dept);
 
 		if (deptdocVOs == null)
 			return null;

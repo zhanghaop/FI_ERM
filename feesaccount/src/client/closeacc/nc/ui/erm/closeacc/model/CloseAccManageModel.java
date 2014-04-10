@@ -10,6 +10,7 @@ public class CloseAccManageModel extends BillManageModel{
 	private String orgType;//当前选择模块的组织类型
 	private String minNotAcc;//最小未结账
 	private String maxAcc;//最大已结账
+	private String pk_accperiodmonth;//当前选择的期间月
 	
 
 	public String getMinNotAcc() {
@@ -67,5 +68,15 @@ public class CloseAccManageModel extends BillManageModel{
 	public void setOrgType(String orgType) {
 		this.orgType = orgType;
 	}
+
+	public String getPk_accperiodmonth() {
+		return pk_accperiodmonth;
+	}
+
+	public void setPk_accperiodmonth(String pkAccperiodmonth) {
+		pk_accperiodmonth = pkAccperiodmonth;
+	}
+	
+	
 
 }

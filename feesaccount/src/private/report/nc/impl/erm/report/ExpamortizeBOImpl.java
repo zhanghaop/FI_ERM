@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.pub.ErmReportUtil;
 import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.erm.util.ErmReportSqlUtils;
 import nc.bs.erm.util.TmpTableCreator;
@@ -22,11 +23,11 @@ import nc.md.persist.framework.MDPersistenceService;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.ExpamortizeDataProvider;
 import nc.pubitf.erm.expamortize.IExpAmortizeprocQuery;
 import nc.utils.fipub.FipubSqlExecuter;
 import nc.utils.fipub.SmartProcessor;
-import nc.vo.arap.utils.StringUtil;
 import nc.vo.bd.period2.AccperiodmonthVO;
 import nc.vo.erm.expamortize.AggExpamtinfoVO;
 import nc.vo.erm.expamortize.ExpamtDetailVO;
@@ -70,6 +71,8 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 		/****************************************************************/
 
 		try {
+            PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+            select.setWhere(null);
 		    tmpTblName = null;
 			String whereSql = queryVO.getWhereSql();//where条件
 
@@ -135,6 +138,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 
 			// 设置返回结果数据集
 			resultDataSet.setDatas(datas);
+            ErmReportUtil.processDataSet(context, resultDataSet);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0026")/*@res "待摊帐表查询报错!"*/;
 			throw new SmartException(errMsg, e);
@@ -480,7 +484,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
                     if (!isObj && isMultiOrg && (dataRow[orgIndex - 1] == null
                             || dataRow[orgIndex - 1].toString().length() == 0)) {
 //                      dataRow[briefIndex - 1] = IErmReportConstants.CONST_ALL_TOTAL; // 总计
-                        dataRow[orgIndex - 1] = "";
+                        dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
                         // 多组织、多币种清空金额字段信息
                         if (!isCurrtype) {
                             // 多币种清空金额字段信息
@@ -550,7 +554,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 				.append(", 'N' amt_status ")// 摊销状态
 				.append(" from er_expamtinfo ");
 
-		if (!StringUtil.isEmpty(whereSql)) {
+		if (!StringUtils.isEmpty(whereSql)) {
 			resultSql.append(" where ");
 			resultSql.append(whereSql);
 		}
@@ -558,7 +562,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 		if(currAccMonth != null){
 			String accSql = "'" + currAccMonth +  "' between start_period and end_period";
 
-			if(!StringUtil.isEmpty(whereSql)){
+			if(!StringUtils.isEmpty(whereSql)){
 				resultSql.append(" and ").append(accSql);
 			}else{
 				resultSql.append(" where ");
@@ -566,7 +570,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 			}
 		} else {
 		    // 会计期间不存在，查不出数据
-		    if(!StringUtil.isEmpty(whereSql)){
+		    if(!StringUtils.isEmpty(whereSql)){
                 resultSql.append(" and 1 = 2 ");
             }else{
                 resultSql.append(" where 1 = 2 ");
@@ -576,7 +580,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 		if (startAccMonth != null) {
             String accSql = " start_period = '" + startAccMonth + "' ";
 
-            if(!StringUtil.isEmpty(whereSql)){
+            if(!StringUtils.isEmpty(whereSql)){
                 resultSql.append(" and ").append(accSql);
             }else{
                 resultSql.append(" where ");
@@ -587,7 +591,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 		if (endAccMonth != null) {
 		    String accSql = " end_period = '" + endAccMonth + "' ";
 
-            if(!StringUtil.isEmpty(whereSql)){
+            if(!StringUtils.isEmpty(whereSql)){
                 resultSql.append(" and ").append(accSql);
             }else{
                 resultSql.append(" where ");

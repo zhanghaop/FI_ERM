@@ -133,7 +133,7 @@ public class IndAuthorizeEditor extends BatchBillTable implements
 					"pk_billtypeid").getComponent();
 			TranstypeRefModel refmodel = (TranstypeRefModel) ref.getRefModel();
 			refmodel.setPkFieldCode("pk_billtypecode");
-			final String filterStr = " and parentbilltype in ('263X','264X') and isnull(canextendtransaction,'~')='~' and pk_group='"
+			final String filterStr = " and parentbilltype in ('263X','264X','261X') and isnull(canextendtransaction,'~')='~' and pk_group='"
 					+ getModel().getContext().getPk_group() + "'";
 			String addWherePart = refmodel.getAddWherePart();
 			if (addWherePart == null || addWherePart.trim().length() == 0) {

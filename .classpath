@@ -3,6 +3,8 @@
 	<classpathentry kind="src" path="expensepub/src/public/pub"/>
 	<classpathentry kind="src" path="expensepub/src/private/pub"/>
 	<classpathentry kind="src" path="expensepub/src/client/pub"/>
+	<classpathentry kind="src" path="ersetting/src/client/billextend"/>
+	<classpathentry kind="src" path="ersetting/src/public/billextend"/>
 	<classpathentry kind="src" path="ersetting/src/client/fieldcontrast"/>
 	<classpathentry kind="src" path="ersetting/src/private/fieldcontrast"/>
 	<classpathentry kind="src" path="ersetting/src/public/fieldcontrast"/>
@@ -33,6 +35,10 @@
 	<classpathentry kind="src" path="erbudgetmg/src/client/mactrlschema"/>
 	<classpathentry kind="src" path="erbudgetmg/src/public/matterappctrl"/>
 	<classpathentry kind="src" path="erbudgetmg/src/private/matterappctrl"/>
+	<classpathentry kind="src" path="erbudgetmg/src/client/matterappctrl"/>
+	<classpathentry kind="src" path="erbudgetmg/src/public/ext"/>
+	<classpathentry kind="src" path="erbudgetmg/src/client/ext"/>
+	<classpathentry kind="src" path="erbudgetmg/src/private/ext"/>
 	<classpathentry kind="src" path="feesaccount/src/public/expenseaccount"/>
 	<classpathentry kind="src" path="feesaccount/src/private/expenseaccount"/>
 	<classpathentry kind="src" path="feesaccount/src/public/closeacc"/>
@@ -44,33 +50,34 @@
 	<classpathentry kind="src" path="feesaccount/src/public/expensetrend"/>
 	<classpathentry kind="src" path="feesaccount/src/client/expensetrend"/>
 	<classpathentry kind="src" path="feesaccount/src/private/expensetrend"/>
-	<classpathentry kind="src" path="expenseaccount/src/public/cmp"/>
-	<classpathentry kind="src" path="expenseaccount/src/public/core"/>
-	<classpathentry kind="src" path="expenseaccount/src/public/costshare"/>
 	<classpathentry kind="src" path="expenseaccount/src/public/pub"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/billtype"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/core"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/costshare"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/linkarap"/>
 	<classpathentry kind="src" path="expenseaccount/src/private/pub"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/report"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/core"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/costshare"/>
 	<classpathentry kind="src" path="expenseaccount/src/client/pub"/>
-	<classpathentry kind="src" path="expenseaccount/src/public/expamortize"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/expamortize"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/expamortize"/>
+	<classpathentry kind="src" path="expenseaccount/src/public/core"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/core"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/core"/>
+	<classpathentry kind="src" path="expenseaccount/src/public/cmp"/>
+	<classpathentry kind="src" path="expenseaccount/src/public/erminit"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/erminit"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/billtype"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/linkarap"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/report"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/erminit"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/billinit"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/billinput"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/billmanage"/>
 	<classpathentry kind="src" path="expenseaccount/src/client/billpub"/>
 	<classpathentry kind="src" path="expenseaccount/src/client/billquery"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/billmanage"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/erminit"/>
-	<classpathentry kind="src" path="expenseaccount/src/private/erminit"/>
-	<classpathentry kind="src" path="expenseaccount/src/public/erminit"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/billinput"/>
-	<classpathentry kind="src" path="expenseaccount/src/client/billinit"/>
-	<classpathentry kind="src" path="expenseaccount/src/test"/>
-	<classpathentry kind="src" path="ersetting/config"/>
-	<classpathentry kind="src" output="out/resources" path="resources"/>
+	<classpathentry kind="src" path="expenseaccount/src/public/costshare"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/costshare"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/costshare"/>
+	<classpathentry kind="src" path="expenseaccount/src/public/expamortize"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/expamortize"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/expamortize"/>
+	<classpathentry kind="src" path="expenseaccount/src/public/ext"/>
+	<classpathentry kind="src" path="expenseaccount/src/private/ext"/>
+	<classpathentry kind="src" path="expenseaccount/src/client/ext"/>
+	<classpathentry kind="src" path="expensepub/src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Ant_Library"/>
 	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Product_Common_Library"/>

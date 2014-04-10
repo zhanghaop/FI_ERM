@@ -30,4 +30,16 @@ public interface IErmMappCtrlBillQuery {
 	 * @author: wangyhh@ufida.com.cn
 	 */
 	public Map<String,List<String>> queryCtrlBillVos(List<String[]> paramList) throws BusinessException;
+	
+	
+	/**
+	 * 根据组织pk与交易类型查询出费用申请单中控制对象及控制维度
+	 * 
+	 * @param paramList 不可为空
+	 * @param pk_group 不可为空
+	 * @return map[0]是控制对象、map[1]为控制维度；map的key为vo.getPk_org() + vo.getPk_tradetype()
+	 * @throws BusinessException
+	 */
+	@SuppressWarnings("rawtypes")
+	public Map[] queryCtrlShema(List<String[]> paramList,String pk_group) throws BusinessException;
 }

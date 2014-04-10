@@ -17,9 +17,9 @@ import nc.utils.fipub.SmartProcessor;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.utils.SqlBuilder;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -47,7 +47,8 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 	@Override
 	public String[] getArrangeSqls() throws SQLException, BusinessException {
 		List<String> sqlList = new ArrayList<String>();
-		sqlList.add(getMatterappDetail()); // 计算费用明细
+//		sqlList.add(getMatterappDetail()); // 计算费用明细
+		sqlList.add(getMatterappDetailByZb());//计算费用明细
 		sqlList.add(getSubTotalSql()); // 计算小计合计
 
 		return sqlList.toArray(new String[0]);
@@ -72,11 +73,16 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 					qryObjList.get(i).getBd_nameField()).append(getMultiLangIndex()).append(", ").append(
 					bdTable ).append( i).append(".").append(qryObjList.get(i).getBd_nameField()).append(") ").append(
 					IPubReportConstants.QRY_OBJ_PREFIX).append(i);
-
 		}
-		sqlBuffer.append(" , v.pk_currtype "); 
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(" , v.pk_currtype "); 
+        } else {
+            sqlBuffer.append(" , null pk_currtype "); 
+        }
 		sqlBuffer.append(", ").append(detailFields.replace(IErmReportConstants.REPLACE_TABLE, "v"));
-		//执行数 
+//		sqlBuffer.append(" , v.reason "); 
+        //执行数 
 		sqlBuffer.append(", v." ).append(MtAppDetailVO.EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI).append(
 		", v." ).append(MtAppDetailVO.ORG_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC).append(
 		", v." ).append(MatterappDataProvider.PREFIX_GR).append(MtAppDetailVO.GROUP_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC).append(
@@ -92,7 +98,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 				", v." ).append(MatterappDataProvider.PREFIX_GR).append(MtAppDetailVO.GROUP_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC).append(
 				", v." ).append(MatterappDataProvider.PREFIX_GL).append(MtAppDetailVO.GLOBAL_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
         sqlBuffer.append(", 0 ").append(IPubReportConstants.ORDER_MANAGE_VSEQ);
-        sqlBuffer.append(", v.rn ");
+        sqlBuffer.append(", v.rn, v.reason ");
 		
 		sqlBuffer.append(" from ").append(getTmpTblName()).append(" v ");
 		sqlBuffer.append(" left outer join org_orgs on v.pk_org = org_orgs.pk_org ");
@@ -132,7 +138,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 	public String[] getDropTableSqls() throws SQLException, BusinessException {
 		return new String[0];
 	}
-
+	
 	/**
 	 * new 报销管理：查询费用明细记录<br>
 	 * 
@@ -141,83 +147,228 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 	 * @throws SQLException<br>
 	 * @throws BusinessException
 	 */
-	private String getMatterappDetail() throws SQLException, BusinessException{
+//	protected String getMatterappDetail() throws SQLException, BusinessException{
+//        String origAmountSqlWhere = (String)queryVO.getUserObject().get("zb.orig_amount");
+//        
+//		StringBuffer sqlBuffer = new StringBuffer(" insert into ").append(getTmpTblName());
+//		
+//		//主表的事由
+//	    sqlBuffer.append(" select lb.*, rb.reason from (");
+//		
+//		if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
+//	        sqlBuffer.append(" select * from (");
+//        }
+//		
+//		sqlBuffer.append(" select ");
+//		sqlBuffer.append("zb." ).append( MtAppDetailVO.PK_GROUP ).append( ", " ).append( "zb." ).append( MtAppDetailVO.PK_ORG);
+//		sqlBuffer.append(", " ).append( queryObjBaseExp);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_CURRTYPE);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_MTAPP_BILL);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLDATE);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_TRADETYPE).append(" pk_billtype");
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLNO);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.CLOSE_STATUS);
+//		
+//        sqlBuffer.append(", 0 rn " );
+//        
+//		 // 查询费用申请执行数
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.EXE_AMOUNT).append(") " ).append(
+//				MtAppDetailVO.EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORG_EXE_AMOUNT).append(
+//		") " ).append(
+//				MtAppDetailVO.ORG_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GROUP_EXE_AMOUNT).append(
+//		") " ).append(MatterappDataProvider.PREFIX_GR).append(
+//				MtAppDetailVO.GROUP_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GLOBAL_EXE_AMOUNT).append(
+//		") " ).append(MatterappDataProvider.PREFIX_GL).append(
+//				MtAppDetailVO.GLOBAL_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//	 // 查询费用申请金额
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORIG_AMOUNT).append(") " ).append(
+//				MtAppDetailVO.ORIG_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORG_AMOUNT).append(
+//		") " ).append(
+//				MtAppDetailVO.ORG_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GROUP_AMOUNT).append(
+//		") " ).append(MatterappDataProvider.PREFIX_GR).append(
+//				MtAppDetailVO.GROUP_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GLOBAL_AMOUNT).append(
+//		") " ).append(MatterappDataProvider.PREFIX_GL).append(
+//				MtAppDetailVO.GLOBAL_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		// 查询费用申请余额
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.REST_AMOUNT).append(") " ).append(
+//				MtAppDetailVO.REST_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
+//		
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORG_REST_AMOUNT).append(
+//				") " ).append(
+//				MtAppDetailVO.ORG_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GROUP_REST_AMOUNT).append(
+//				") " ).append(MatterappDataProvider.PREFIX_GR).append(
+//				MtAppDetailVO.GROUP_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GLOBAL_REST_AMOUNT).append(
+//				") " ).append(MatterappDataProvider.PREFIX_GL).append(
+//				MtAppDetailVO.GLOBAL_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+//		
+//		sqlBuffer.append(" from er_mtapp_detail zb ");
+//		// 设置查询条件固定值
+//		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
+//		sqlBuffer.append(getCompositeWhereSql("zb",MtAppDetailVO.getDefaultTableName()));
+//		String[] codes = (String[])queryVO.getUserObject().get("zb.pk_tradetype");
+//		if (!ArrayUtil.isEmpty(codes)) {
+//		    String sqlCode = SqlUtil.buildInSql("zb.pk_tradetype", codes);
+//		    sqlBuffer.append(" and ").append(sqlCode);
+//		}
+//		if (queryVO.getBeginDate() != null) { // 查询开始日期
+//			sqlBuffer.append(" and " ).append( "zb." ).append(MtAppDetailVO.BILLDATE).append(
+//					" >= '").append(queryVO.getBeginDate().toString()).append("' ");
+//		}
+//		
+//		if (queryVO.getEndDate() != null) { // 查询结束日期
+//			sqlBuffer.append(" and " ).append( "zb." ).append(MtAppDetailVO.BILLDATE).append(
+//					" <= '").append(queryVO.getEndDate().toString()).append("' ");
+//		}
+//
+//        // 单据状态
+//        sqlBuffer.append(" and zb.").append(MtAppDetailVO.BILLSTATUS);
+//        if (IPubReportConstants.BILL_STATUS_ALL.equals(queryVO.getBillState())) {
+//            sqlBuffer.append(" >= ").append(ErmMatterAppConst.BILLSTATUS_SAVED);
+//        } else if (IPubReportConstants.BILL_STATUS_SAVE.equals(queryVO
+//                .getBillState())) {
+//            sqlBuffer.append(" >= ").append(ErmMatterAppConst.BILLSTATUS_SAVED);
+//        } else if (IErmReportConstants.BILL_STATUS_COMMIT.equals(queryVO
+//                .getBillState())) {
+//            sqlBuffer.append(" >= ").append(
+//                    ErmMatterAppConst.BILLSTATUS_COMMITED);
+//        } else if (IPubReportConstants.BILL_STATUS_CONFIRM.equals(queryVO
+//                .getBillState())) {
+//            sqlBuffer.append(" >= ").append(
+//                    ErmMatterAppConst.BILLSTATUS_APPROVED);
+//        }
+//
+//        sqlBuffer.append(getQueryObjSql()); // 查询对象
+//        
+//		if (queryVO.getPk_currency() !=null) {
+//			sqlBuffer.append(" and zb." ).append( MtAppDetailVO.PK_CURRTYPE ).append(" ='").append( queryVO.getPk_currency() ).append( "' "); // 币种
+//			
+//		}
+//		
+//		sqlBuffer.append(" and ").append(SqlUtils.getInStr("zb." + PK_ORG, queryVO.getPk_orgs())); // 业务单元
+//		sqlBuffer.append(" and " ).append( "zb." ).append( PK_GROUP).append(" = '").append(queryVO.getPk_group()).append("' ");
+//		sqlBuffer.append(" group by ");
+//		sqlBuffer.append("zb." ).append( MtAppDetailVO.PK_GROUP ).append( ", " ).append( "zb." ).append( MtAppDetailVO.PK_ORG);
+//		sqlBuffer.append(", " ).append( groupByBaseExp);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_CURRTYPE);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLDATE);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_TRADETYPE);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLNO);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.CLOSE_STATUS);
+//		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_MTAPP_BILL);
+//		
+//		if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
+//		    origAmountSqlWhere = origAmountSqlWhere.replace("zb.orig_amount", "zbb.orig_amount_ori");
+//            sqlBuffer.append(") zbb where ").append(origAmountSqlWhere);
+//        }
+//
+//        //主表的事由
+//        sqlBuffer.append(") lb left join er_mtapp_bill rb on lb.pk_mtapp_bill = rb.pk_mtapp_bill");
+//		return sqlBuffer.toString();
+//	}
+	
+	/**
+     * new 报销管理：查询费用明细记录<br>
+     * 
+     * @return String<br>
+     * @throws BusinessException<br>
+     * @throws SQLException<br>
+     * @throws BusinessException
+     */
+    private String getMatterappDetailByZb() throws SQLException, BusinessException{
         String origAmountSqlWhere = (String)queryVO.getUserObject().get("zb.orig_amount");
         
-		StringBuffer sqlBuffer = new StringBuffer(" insert into ").append(getTmpTblName());
-		
-		if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
-	        sqlBuffer.append(" select * from (");
+        StringBuffer sqlBuffer = new StringBuffer(" insert into ").append(getTmpTblName());
+        
+        //主表的事由
+//        sqlBuffer.append(" select lb.*, rb.reason from (");
+        
+//        if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
+//            sqlBuffer.append(" select * from (");
+//        }
+        
+        sqlBuffer.append(" select ");
+        sqlBuffer.append("zb." ).append( MtAppDetailVO.PK_GROUP ).append( ", " ).append( "zb." ).append( MtAppDetailVO.PK_ORG);
+        sqlBuffer.append(", " ).append( queryObjBaseExp);
+
+        if (beForeignCurrency) {
+            sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_CURRTYPE);
+        } else {
+            sqlBuffer.append(", null " ).append(MtAppDetailVO.PK_CURRTYPE);
         }
-		
-		sqlBuffer.append(" select ");
-		sqlBuffer.append("zb." ).append( MtAppDetailVO.PK_GROUP ).append( ", " ).append( "zb." ).append( MtAppDetailVO.PK_ORG);
-		sqlBuffer.append(", " ).append( queryObjBaseExp);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_CURRTYPE);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_MTAPP_BILL);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLDATE);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_TRADETYPE).append(" pk_billtype");
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLNO);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.CLOSE_STATUS);
-		
+        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_MTAPP_BILL);
+        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLDATE);
+        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_TRADETYPE).append(" pk_billtype");
+        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLNO);
+        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.CLOSE_STATUS);
+        
         sqlBuffer.append(", 0 rn " );
         
-		 // 查询费用申请执行数
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.EXE_AMOUNT).append(") " ).append(
-				MtAppDetailVO.EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORG_EXE_AMOUNT).append(
-		") " ).append(
-				MtAppDetailVO.ORG_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GROUP_EXE_AMOUNT).append(
-		") " ).append(MatterappDataProvider.PREFIX_GR).append(
-				MtAppDetailVO.GROUP_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GLOBAL_EXE_AMOUNT).append(
-		") " ).append(MatterappDataProvider.PREFIX_GL).append(
-				MtAppDetailVO.GLOBAL_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-	 // 查询费用申请金额
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORIG_AMOUNT).append(") " ).append(
-				MtAppDetailVO.ORIG_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORG_AMOUNT).append(
-		") " ).append(
-				MtAppDetailVO.ORG_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GROUP_AMOUNT).append(
-		") " ).append(MatterappDataProvider.PREFIX_GR).append(
-				MtAppDetailVO.GROUP_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GLOBAL_AMOUNT).append(
-		") " ).append(MatterappDataProvider.PREFIX_GL).append(
-				MtAppDetailVO.GLOBAL_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		// 查询费用申请余额
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.REST_AMOUNT).append(") " ).append(
-				MtAppDetailVO.REST_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
-		
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.ORG_REST_AMOUNT).append(
-				") " ).append(
-				MtAppDetailVO.ORG_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GROUP_REST_AMOUNT).append(
-				") " ).append(MatterappDataProvider.PREFIX_GR).append(
-				MtAppDetailVO.GROUP_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		sqlBuffer.append(", sum(").append("zb." ).append(MtAppDetailVO.GLOBAL_REST_AMOUNT).append(
-				") " ).append(MatterappDataProvider.PREFIX_GL).append(
-				MtAppDetailVO.GLOBAL_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
-		
-		sqlBuffer.append(" from er_mtapp_detail zb ");
-		// 设置查询条件固定值
-		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
-		sqlBuffer.append(getCompositeWhereSql("zb",MtAppDetailVO.getDefaultTableName()));
-		String[] codes = (String[])queryVO.getUserObject().get("zb.pk_tradetype");
-		if (!ArrayUtil.isEmpty(codes)) {
-		    String sqlCode = SqlUtil.buildInSql("zb.pk_tradetype", codes);
-		    sqlBuffer.append(" and ").append(sqlCode);
-		}
-		if (queryVO.getBeginDate() != null) { // 查询开始日期
-			sqlBuffer.append(" and " ).append( "zb." ).append(MtAppDetailVO.BILLDATE).append(
-					" >= '").append(queryVO.getBeginDate().toString()).append("' ");
-		}
-		
-		if (queryVO.getEndDate() != null) { // 查询结束日期
-			sqlBuffer.append(" and " ).append( "zb." ).append(MtAppDetailVO.BILLDATE).append(
-					" <= '").append(queryVO.getEndDate().toString()).append("' ");
-		}
+         // 查询费用申请执行数
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.EXE_AMOUNT).append(" " ).append(
+                MtAppDetailVO.EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.ORG_EXE_AMOUNT).append(
+        " " ).append(
+                MtAppDetailVO.ORG_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.GROUP_EXE_AMOUNT).append(
+        " " ).append(MatterappDataProvider.PREFIX_GR).append(
+                MtAppDetailVO.GROUP_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.GLOBAL_EXE_AMOUNT).append(
+        " " ).append(MatterappDataProvider.PREFIX_GL).append(
+                MtAppDetailVO.GLOBAL_EXE_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+     // 查询费用申请金额
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.ORIG_AMOUNT).append(" " ).append(
+                MtAppDetailVO.ORIG_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.ORG_AMOUNT).append(
+        " " ).append(
+                MtAppDetailVO.ORG_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.GROUP_AMOUNT).append(
+        " " ).append(MatterappDataProvider.PREFIX_GR).append(
+                MtAppDetailVO.GROUP_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.GLOBAL_AMOUNT).append(
+        " " ).append(MatterappDataProvider.PREFIX_GL).append(
+                MtAppDetailVO.GLOBAL_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        // 查询费用申请余额
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.REST_AMOUNT).append(" " ).append(
+                MtAppDetailVO.REST_AMOUNT).append(MatterappDataProvider.SUFFIX_ORI);
+        
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.ORG_REST_AMOUNT).append(
+                " " ).append(
+                MtAppDetailVO.ORG_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.GROUP_REST_AMOUNT).append(
+                " " ).append(MatterappDataProvider.PREFIX_GR).append(
+                MtAppDetailVO.GROUP_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        sqlBuffer.append(", ").append("zb." ).append(MtAppDetailVO.GLOBAL_REST_AMOUNT).append(
+                " " ).append(MatterappDataProvider.PREFIX_GL).append(
+                MtAppDetailVO.GLOBAL_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);
+        
+        sqlBuffer.append(", zb.reason");
+        
+        sqlBuffer.append(" from er_mtapp_bill zb ");
+        // 设置查询条件固定值
+        sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
+        sqlBuffer.append(getCompositeWhereSql("zb",MtAppDetailVO.getDefaultTableName()));
+        String[] codes = (String[])queryVO.getUserObject().get("zb.pk_tradetype");
+        if (!ArrayUtils.isEmpty(codes)) {
+            String sqlCode = SqlUtil.buildInSql("zb.pk_tradetype", codes);
+            sqlBuffer.append(" and ").append(sqlCode);
+        }
+        if (queryVO.getBeginDate() != null) { // 查询开始日期
+            sqlBuffer.append(" and " ).append( "zb." ).append(MtAppDetailVO.BILLDATE).append(
+                    " >= '").append(queryVO.getBeginDate().toString()).append("' ");
+        }
+        
+        if (queryVO.getEndDate() != null) { // 查询结束日期
+            sqlBuffer.append(" and " ).append( "zb." ).append(MtAppDetailVO.BILLDATE).append(
+                    " <= '").append(queryVO.getEndDate().toString()).append("' ");
+        }
 
         // 单据状态
         sqlBuffer.append(" and zb.").append(MtAppDetailVO.BILLSTATUS);
@@ -238,29 +389,39 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 
         sqlBuffer.append(getQueryObjSql()); // 查询对象
         
-		if (queryVO.getPk_currency() !=null) {
-			sqlBuffer.append(" and zb." ).append( MtAppDetailVO.PK_CURRTYPE ).append(" ='").append( queryVO.getPk_currency() ).append( "' "); // 币种
-			
-		}
-		
-		sqlBuffer.append(" and ").append(SqlUtils.getInStr("zb." + PK_ORG, queryVO.getPk_orgs())); // 业务单元
-		sqlBuffer.append(" and " ).append( "zb." ).append( PK_GROUP).append(" = '").append(queryVO.getPk_group()).append("' ");
-		sqlBuffer.append(" group by ");
-		sqlBuffer.append("zb." ).append( MtAppDetailVO.PK_GROUP ).append( ", " ).append( "zb." ).append( MtAppDetailVO.PK_ORG);
-		sqlBuffer.append(", " ).append( groupByBaseExp);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_CURRTYPE);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLDATE);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_TRADETYPE);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLNO);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.CLOSE_STATUS);
-		sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_MTAPP_BILL);
-		
-		if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
-		    origAmountSqlWhere = origAmountSqlWhere.replace("zb.orig_amount", "zbb.orig_amount_ori");
-            sqlBuffer.append(") zbb where ").append(origAmountSqlWhere);
+        if (queryVO.getPk_currency() !=null) {
+            sqlBuffer.append(" and zb." ).append( MtAppDetailVO.PK_CURRTYPE ).append(" ='").append( queryVO.getPk_currency() ).append( "' "); // 币种
+            
         }
-		return sqlBuffer.toString();
-	}
+        
+        sqlBuffer.append(" and ").append(SqlUtils.getInStr("zb." + PK_ORG, queryVO.getPk_orgs())); // 业务单元
+        sqlBuffer.append(" and " ).append( "zb." ).append( PK_GROUP).append(" = '").append(queryVO.getPk_group()).append("' ");
+
+        sqlBuffer.append(" and zb.pk_tradetype in (select DJLXBM from er_djlx where djdl = 'ma' and matype = 1 and pk_group = '");
+        sqlBuffer.append(queryVO.getPk_group()).append("') ");
+        //金额字段
+        if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
+            sqlBuffer.append(" and ").append(origAmountSqlWhere);
+        }
+//        sqlBuffer.append(" group by ");
+//        sqlBuffer.append("zb." ).append( MtAppDetailVO.PK_GROUP ).append( ", " ).append( "zb." ).append( MtAppDetailVO.PK_ORG);
+//        sqlBuffer.append(", " ).append( groupByBaseExp);
+//        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_CURRTYPE);
+//        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLDATE);
+//        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_TRADETYPE);
+//        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.BILLNO);
+//        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.CLOSE_STATUS);
+//        sqlBuffer.append(", " ).append( "zb.").append(MtAppDetailVO.PK_MTAPP_BILL);
+        
+//        if (StringUtils.isNotEmpty(origAmountSqlWhere)) {
+//            origAmountSqlWhere = origAmountSqlWhere.replace("zb.orig_amount", "zbb.orig_amount_ori");
+//            sqlBuffer.append(") zbb where ").append(origAmountSqlWhere);
+//        }
+
+        //主表的事由
+//        sqlBuffer.append(") lb left join er_mtapp_bill rb on lb.pk_mtapp_bill = rb.pk_mtapp_bill");
+        return sqlBuffer.toString();
+    }
 
 
 	/**
@@ -292,7 +453,8 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 
 			total = new ComputeTotal();
 			total.field = "pk_currtype";
-			total.isDimension = true;
+			total.isDimension = beForeignCurrency;
+//			total.isDimension = true;
 			allQryobjList.add(total);
 		}
 
@@ -307,7 +469,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 	 */
 	private String getTmpTblName() throws SQLException {
 		if (StringUtils.isEmpty(tmpTblName)) {
-			tmpTblName = TmpTableCreator.createTmpTable("tmp_erm_matterapp1" + qryObjLen,
+			tmpTblName = TmpTableCreator.createTmpTable("tmp_erm_matterapp21" + qryObjLen,
 					getTmpTblColNames(), getTmpTblColTypes());
 		}
 
@@ -324,6 +486,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 			int qryObjLen = queryVO.getQryObjs().size();
 
 			StringBuffer otherColNameBuf = new StringBuffer();
+//			otherColNameBuf.append("reason, ");
 			otherColNameBuf.append(fixedFields.replace(IErmReportConstants.REPLACE_TABLE + ".", ""));
 			otherColNameBuf.append(",").append(PK_CURR);
 
@@ -346,7 +509,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 					"," ).append(MtAppDetailVO.ORG_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC).append(// 金额本币
 					"," ).append(MatterappDataProvider.PREFIX_GR).append(MtAppDetailVO.GROUP_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC).append(// 金额集团本币
 					"," ).append(MatterappDataProvider.PREFIX_GL).append(MtAppDetailVO.GLOBAL_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC);// 金额全局本币
-			
+			otherColNameBuf.append(", reason");
 			String[] otherColNames = otherColNameBuf.toString().split(",");
 
 			tmpTblColNames = new String[qryObjLen + otherColNames.length];
@@ -373,15 +536,16 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 		if (tmpTblColTypes == null || tmpTblColTypes.length == 0) {
 			tmpTblColTypes = new Integer[getTmpTblColNames().length];
 			int i = 0;
-			for (; i < tmpTblColTypes.length - 13; i++) {
+			for (; i < tmpTblColTypes.length - 14; i++) {
 				tmpTblColTypes[i] = Types.VARCHAR;
 			}
 			
 			tmpTblColTypes[i++] = Types.INTEGER;
 			
-			for (; i < tmpTblColTypes.length; i++) {
+			for (; i < tmpTblColTypes.length - 1; i++) {
 				tmpTblColTypes[i] = Types.DECIMAL;
 			}
+			tmpTblColTypes[i] = Types.VARCHAR;
 		}
 		return tmpTblColTypes;
 	}
@@ -421,6 +585,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 				", null " ).append("pk_billtype").append(
 				", null " ).append(MtAppDetailVO.BILLNO).append(
 				", null " ).append(MtAppDetailVO.PK_MTAPP_BILL).append(
+//				", null " ).append(MtAppDetailVO.REASON).append(
 				", ");
         i = 0;
         for (; i < computed.size(); i++) {
@@ -466,7 +631,7 @@ public class MatterappSQLCreator extends ErmCSBaseSqlCreator {
 		sqlBuffer.append(", sum(").append(MatterappDataProvider.PREFIX_GL).append(
 				MtAppDetailVO.GLOBAL_REST_AMOUNT).append(MatterappDataProvider.SUFFIX_LOC).append(
 		") " );
-		
+		sqlBuffer.append(", null ").append(MtAppDetailVO.REASON);
 
 		sqlBuffer.append(" from ");
 		sqlBuffer.append(getTmpTblName());

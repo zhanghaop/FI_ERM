@@ -12,6 +12,7 @@ import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.remote.QcDateCall;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.billpub.view.eventhandler.HeadFieldHandleUtil;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
@@ -36,7 +37,6 @@ public class CopyAction extends NCAction{
 	private ErmBillBillForm editor;
 
 	public CopyAction() {
-		super();
 		setCode("Copy");
 		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0053")/*@res "复制"*/);
 
@@ -77,7 +77,7 @@ public class CopyAction extends NCAction{
 			header.setAttributeValue(fieldNotCopy[i], null);
 		}
 		
-		header.setShrq_show(null);
+		//header.setShrq_show(null);
 		
 		if(currentDjlx.getDjlxbm().equals(BXConstans.BILLTYPECODE_RETURNBILL)){
 			copyJkbxVO.setChildrenVO(null);
@@ -86,7 +86,6 @@ public class CopyAction extends NCAction{
 		if(copyJkbxVO.getBxBusItemVOS()!=null){
 			for(BXBusItemVO itm:copyJkbxVO.getBxBusItemVOS()){
 				itm.setPk_jkbx(null);
-				setNullForMtappField(itm);
 			}
 		}
 		//初始化
@@ -111,13 +110,13 @@ public class CopyAction extends NCAction{
 		if(!((ErmBillBillManageModel)getModel()).isInit()){
 			HeadFieldHandleUtil.initSqdlr(getEditor(),getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.JKBXR),((ErmBillBillManageModel)getModel()).getCurrentBillTypeCode(),getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.DWBM));
 		}
+		
 		//复制单据时重新设置汇率信息
 		getEditor().getHelper().setCurrencyInfo(header.getPk_org());
-		
-		// 根据表头total字段的值设置其他金额字段的值
-		getEditor().getEventHandle().getEventHandleUtil().setHeadYFB();
 		// 计算表体相关金额字段数值
 		getEditor().getEventHandle().resetBodyFinYFB();
+		// 根据表头total字段的值设置其他金额字段的值
+		getEditor().getEventHandle().getEventHandleUtil().setHeadBbje();
 
 		//设置分摊页签中的汇率值和本币金额
 		getEditor().getEventHandle().resetBodyCShare();
@@ -156,6 +155,7 @@ public class CopyAction extends NCAction{
 	 * 清空拉单过来字段值
 	 * @param itm
 	 */
+	@SuppressWarnings("unused")
 	private void setNullForMtappField(BXBusItemVO itm){
 		itm.setPk_item(null);
 		itm.setSrcbilltype(null);
@@ -168,9 +168,9 @@ public class CopyAction extends NCAction{
 	 * @since V6.0
 	 */
 	private void beforeAction() throws BusinessException{
-		if(getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM)!=null){
-			getEditor().getBillCardPanel().setHeadItem(JKBXHeaderVO.PK_ITEM,null);
-		}
+//		if(getEditor().getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM)!=null){
+//			getEditor().getBillCardPanel().setHeadItem(JKBXHeaderVO.PK_ITEM,null);
+//		}
 		getModel().removeAppEventListener(getEditor());
 		getModel().setUiState(UIState.ADD);
 		getEditor().showMeUp();
@@ -198,7 +198,7 @@ public class CopyAction extends NCAction{
 		return true;
 	}
 
-	private void initVO(JKBXVO bxvo) {
+	private void initVO(JKBXVO bxvo) throws BusinessException {
 		JKBXHeaderVO header=bxvo.getParentVO();
 
 		String cuserid = WorkbenchEnvironment.getInstance().getLoginUser().getCuserid();
@@ -228,7 +228,7 @@ public class CopyAction extends NCAction{
 					pk_org = BXUiUtil.getBXDefaultOrgUnit();
 				} else {
 					// 取当前登录人所属组织
-					pk_org = BXUiUtil.getPsnPk_org(BXUiUtil.getPk_psndoc());
+					pk_org = ErUiUtil.getPsnPk_org(BXUiUtil.getPk_psndoc());
 				}
 				if (pk_org != null && pk_org.length() > 0) {
 					try {

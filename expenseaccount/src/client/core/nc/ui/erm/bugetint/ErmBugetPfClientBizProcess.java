@@ -7,10 +7,12 @@ import java.util.List;
 
 import nc.bs.er.util.WriteBackUtil;
 import nc.bs.framework.common.NCLocator;
+import nc.itf.uap.busibean.SysinitAccessor;
 import nc.pubitf.erm.matterappctrl.IMatterAppCtrlService;
 import nc.ui.pf.pub.PFClientBizRetObj;
 import nc.ui.pub.pf.IPFClientBizProcess;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.ep.bx.ErmFlowCheckInfo;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -140,15 +142,20 @@ public class ErmBugetPfClientBizProcess implements IPFClientBizProcess {
 	}
 
 	private void checkMatterBudget(PFClientBizRetObj result, Object billvo, StringBuffer controlMsg) {
-		IMatterAppCtrlService service = NCLocator.getInstance().lookup(IMatterAppCtrlService.class);
-
-		JKBXHeaderVO[] headers = ErVOUtils.prepareBxvoItemToHeaderClone((JKBXVO) billvo);
-
-		List<IMtappCtrlBusiVO> mtBusiVoList = new ArrayList<IMtappCtrlBusiVO>();
-
-		WriteBackUtil.fillBusiVo(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, true, false, headers);
-
 		try {
+			String param = SysinitAccessor.getInstance().getParaString(((JKBXVO)billvo).getParentVO().getPk_org(), BXParamConstant.PARAM_MTAPP_CTRL);
+			if (BXParamConstant.getMTAPP_CTRL_SAVE().equals(param)) {
+				return ;
+			}
+		
+			IMatterAppCtrlService service = NCLocator.getInstance().lookup(IMatterAppCtrlService.class);
+
+			JKBXHeaderVO[] headers = ErVOUtils.prepareBxvoItemToHeaderClone((JKBXVO) billvo);
+
+			List<IMtappCtrlBusiVO> mtBusiVoList = new ArrayList<IMtappCtrlBusiVO>();
+			
+			WriteBackUtil.fillBusiVo(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, true, false, headers);
+
 
 			MtappCtrlInfoVO ctrlInfo = service.matterappValidate(mtBusiVoList.toArray(new JKBXMtappCtrlBusiVO[] {}));
 

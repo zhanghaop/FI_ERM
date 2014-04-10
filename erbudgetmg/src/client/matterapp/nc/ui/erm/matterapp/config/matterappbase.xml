@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
+	<import resource="classpath:/nc/ui/pubapp/plugin/pubapp_plugin_conifg.xml" />
+
 	<!-- 环境变量 -->
 	<bean id="context" class="nc.vo.uif2.LoginContext">
 	</bean>
@@ -53,6 +55,7 @@
 		<property name="model" ref="manageAppModel" />
 		<property name="cardpanel" ref="billFormEditor" />
 		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="billForm" ref="billFormEditor" />
 	</bean>
 
 	<bean id="insertLineAction" class="nc.ui.erm.matterapp.actions.InsertLineAction">
@@ -97,6 +100,7 @@
 	<!-- Actions -->
 	<bean id="addAction" class="nc.ui.erm.matterapp.actions.MaAddAction">
 		<property name="model" ref="manageAppModel" />
+		<property name="billform" ref="billFormEditor" />
 		<property name="addLineAction" ref="addLineAction" />
 		<property name="exceptionHandler" ref="exceptionHandler" />
 	</bean>
@@ -287,6 +291,7 @@
 		<property name="actions">
 			<list>
 				<ref bean="linkBudgetAction" />
+				<ref bean="linkVoucherAction" />
 				<ref bean="linkBillAction" />
 			</list>
 		</property>
@@ -536,16 +541,81 @@
 	</bean>
 	
 	<!-- 自定义项处理,container用于减少流量 -->
-	<bean id="userDefitemContainer" class="nc.ui.uif2.userdefitem.UserDefItemContainer" />
-	<bean id="userdefitemListPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerListPreparator">
-		<property name="loginContext" ref="context"></property>
-		<property name="prefix" value="defitem" />
-		<property name="userDefitemContainer" ref="userDefitemContainer" />
+	<bean id="userdefitemContainer" class="nc.ui.uif2.userdefitem.UserDefItemContainer">
+		<property name="context" ref="context" />
+		<property name="params">
+			<list> 
+				<bean class="nc.ui.uif2.userdefitem.QueryParam">
+					<property name="mdfullname" value="erm.mtapp_bill" />
+				</bean>
+				<bean class="nc.ui.uif2.userdefitem.QueryParam">
+					<property name="mdfullname" value="erm.mtapp_detail" />
+				</bean>				
+			</list>
+		</property>
 	</bean>
-	<bean id="userdefitemCardPreparator" class="nc.ui.erm.view.ERMUserdefitemContainerPreparator">
-		<property name="loginContext" ref="context"></property>
-		<property name="prefix" value="defitem" />
-		<property name="userDefitemContainer" ref="userDefitemContainer" />
+			
+	<bean id="userdefitemListPreparator" class="nc.ui.pubapp.uif2app.view.CompositeBillListDataPrepare">
+		<property name="billListDataPrepares">
+			<list>
+				<bean class="nc.ui.uif2.editor.UserdefitemContainerListPreparator">
+					<property name="container" ref="userdefitemContainer" />
+					<property name="params">				
+						<list>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.mtapp_bill" />
+								<property name="pos" value="0" />
+								<property name="prefix" value="defitem" />
+							</bean>	
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.mtapp_detail" />
+								<property name="pos" value="1" />
+								<property name="prefix" value="defitem" />
+							</bean>									
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
 	</bean>
+	
+	<bean id="userdefitemCardPreparator" class="nc.ui.pubapp.uif2app.view.CompositeBillDataPrepare">
+		<property name="billDataPrepares">
+			<list>
+				<bean class="nc.ui.uif2.editor.UserdefitemContainerPreparator">
+					<property name="container" ref="userdefitemContainer" />
+					<property name="params">				
+						<list>
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.mtapp_bill" />
+								<property name="pos" value="0" />
+								<property name="prefix" value="defitem" />
+							</bean>	
+							<bean class="nc.ui.uif2.editor.UserdefQueryParam">
+								<property name="mdfullname" value="erm.mtapp_detail" />
+								<property name="pos" value="1" />
+								<property name="prefix" value="defitem" />
+							</bean>									
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+			
+	<!--快速分摊 -->
+	<bean id="rapidShareAction" class="nc.ui.erm.matterapp.actions.RapidShareMattAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="exceptionHandler" ref="exceptionHandler" />
+	</bean>
+	
+	<!--联查凭证-->
+	<bean id="linkVoucherAction" class=" nc.ui.erm.matterapp.actions.LinkVoucherAction">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+	</bean>
+	
 </beans>
 

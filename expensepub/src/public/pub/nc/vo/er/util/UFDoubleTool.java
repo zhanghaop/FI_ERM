@@ -108,4 +108,34 @@ public class UFDoubleTool {
 		return sum;
 	}
 
+	public static UFDouble getDoubleValue(Object d) {
+		return d == null ? UFDouble.ZERO_DBL : (UFDouble) d;
+	}
+	
+	/**
+	 * 判断UFDouble是否大于0
+	 * @param uf
+	 * @return true表示不为大于0
+	 */
+	public static boolean isUFDoubleGreaterThanZero(UFDouble uf){
+		if(uf == null || uf.compareTo(UFDouble.ZERO_DBL) <= 0){
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 格式化金额
+	 * @param uf
+	 * @param power 精度，小于0时不计算
+	 */
+	public static UFDouble formatUFDouble(UFDouble uf, int power){
+		uf = (uf == null) ? UFDouble.ZERO_DBL :uf;
+		if(power > 0){
+			uf = uf.setScale(power, UFDouble.ROUND_HALF_UP);
+		}
+
+		return uf;
+	}
+
 }

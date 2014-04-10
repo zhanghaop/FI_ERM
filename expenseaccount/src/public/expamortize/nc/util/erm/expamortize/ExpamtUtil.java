@@ -52,7 +52,7 @@ public class ExpamtUtil {
 				CShareDetailVO.ASSUME_DEPT, CShareDetailVO.PK_PCORG, CShareDetailVO.PK_IOBSCLASS, CShareDetailVO.PK_RESACOSTCENTER,
 				CShareDetailVO.JOBID, CShareDetailVO.PROJECTTASK, CShareDetailVO.PK_CHECKELE, CShareDetailVO.CUSTOMER, CShareDetailVO.HBBM,
 				CShareDetailVO.BZBM, CShareDetailVO.BBJE, CShareDetailVO.GROUPBBJE, CShareDetailVO.GLOBALBBJE, CShareDetailVO.BBHL,
-				CShareDetailVO.GROUPBBHL, CShareDetailVO.GLOBALBBHL, CShareDetailVO.PK_GROUP };
+				CShareDetailVO.GROUPBBHL, CShareDetailVO.GLOBALBBHL, CShareDetailVO.PK_GROUP , CShareDetailVO.PK_PROLINE, CShareDetailVO.PK_BRAND};
 	}
 
 	public static String[] getBodyFieldsFromBusBody() {
@@ -121,7 +121,7 @@ public class ExpamtUtil {
 				detail.setPk_org(head.getPk_org());
 				detail.setBzbm(head.getBzbm());
 				detail.setCashproj(bxHead.getCashproj());
-
+				
 				setExpamtDetailResAmount(detail);
 
 				// 金额累加
@@ -232,6 +232,9 @@ public class ExpamtUtil {
 		detail.setProjecttask(busIetmVo.getProjecttask());
 		detail.setPk_checkele(busIetmVo.getPk_checkele());
 		detail.setTotal_amount(busIetmVo.getYbje());
+		
+		detail.setPk_proline(busIetmVo.getPk_proline());//产品线
+		detail.setPk_brand(busIetmVo.getPk_brand());//品牌
 		//自定义项
 		String[] attrNames = busIetmVo.getAttributeNames();
 
@@ -250,6 +253,7 @@ public class ExpamtUtil {
 		detail.setHbbm(bxHead.getHbbm());
 		detail.setCashproj(bxHead.getCashproj());
 		detail.setPk_group(bxHead.getPk_group());
+		
 
 		// 本币汇率、汇率 ，金额
 		detail.setBbhl(bxHead.getBbhl());

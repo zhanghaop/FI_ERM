@@ -56,6 +56,8 @@ public class BXParamConstant {
 	 * 费用申请单控制环节
 	 */
 	public static String PARAM_MTAPP_CTRL = "ER11";  
+	
+	public static String PARAM_IS_SMAE_PERSON = "ER14";// 申请人与借款报销人是否必须一致
 
 	/**
 	 * 费用申请单控制环节——保存

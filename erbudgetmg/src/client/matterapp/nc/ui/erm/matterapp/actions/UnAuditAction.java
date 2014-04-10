@@ -49,8 +49,9 @@ public class UnAuditAction extends NCAsynAction {
 	private String resourceCode = null; // 业务实体资源编码
 	
 	private IProgressMonitor monitor = null;
-	
+
 	private TPAProgressUtil tpaProgressUtil;
+
 
 	public UnAuditAction() {
 		super();
@@ -61,9 +62,6 @@ public class UnAuditAction extends NCAsynAction {
 	public void doAction(ActionEvent e) throws Exception {
 
 		try {
-			if (!checkDataPermission()) {
-				throw new BusinessException(IShowMsgConstant.getDataPermissionInfo());
-			}
 			Object objs[] = getModel().getSelectedOperaDatas();
 
 			if (objs == null || objs.length == 0) {
@@ -111,6 +109,10 @@ public class UnAuditAction extends NCAsynAction {
 	private MessageVO unApproveSingle(AggMatterAppVO appVO) throws Exception {
 		MessageVO result = null;
 		try {
+			if (!checkDataPermission(appVO)) {//权限校验
+				throw new BusinessException(IShowMsgConstant.getDataPermissionInfo());
+			}
+			
 			Object returnObj = (MessageVO[]) PfUtilClient.runAction(getBillForm().getParent(), "UNAPPROVE", appVO
 					.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
 			
@@ -183,20 +185,36 @@ public class UnAuditAction extends NCAsynAction {
 		return false;
 	}
 
-	protected boolean checkDataPermission()
-	{
-		if(StringUtil.isEmptyWithTrim(getOperateCode()) && StringUtil.isEmptyWithTrim(getMdOperateCode()) || StringUtil.isEmptyWithTrim(getResourceCode()))
+	protected boolean checkDataPermission(AggMatterAppVO appVO) throws BusinessException {
+		if (StringUtil.isEmptyWithTrim(getOperateCode()) && StringUtil.isEmptyWithTrim(getMdOperateCode())
+				|| StringUtil.isEmptyWithTrim(getResourceCode()))
 			return true;
 		
 		LoginContext context = getModel().getContext();
 		String userId = context.getPk_loginUser();
 		String pkgroup = context.getPk_group();
-		Object data = getModel().getSelectedData();
+		Object data = appVO;
 		boolean hasp = true;
-		if(!StringUtil.isEmptyWithTrim(getMdOperateCode()))
-			hasp = DataPermissionFacade.isUserHasPermissionByMetaDataOperation(userId, getResourceCode(), getMdOperateCode(), pkgroup,data);
+		if (!StringUtil.isEmptyWithTrim(getMdOperateCode()))
+			hasp = DataPermissionFacade.isUserHasPermissionByMetaDataOperation(userId, getResourceCode(),
+					getMdOperateCode(), pkgroup, data);
 		else
 			hasp = DataPermissionFacade.isUserHasPermission(userId, getResourceCode(), getOperateCode(), pkgroup, data);
+		
+		if (hasp) {//审核者权限
+			boolean isEnable = DataPermissionFacade.isEnableApproverPerm(userId, getResourceCode(), pkgroup, true);
+
+			if (isEnable) {
+				String approver = appVO.getParentVO().getApprover();
+				if (!userId.equals(approver)) {
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+							"02011002-0153")/*
+											 * @res "该集团启用了审核者权限，反审核人必须是审核人!"
+											 */);
+				}
+			}
+		}
+		
 		return hasp;
 	}
 	

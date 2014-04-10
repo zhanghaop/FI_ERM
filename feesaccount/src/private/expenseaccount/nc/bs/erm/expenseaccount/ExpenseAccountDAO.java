@@ -1,6 +1,9 @@
 package nc.bs.erm.expenseaccount;
 
+import java.util.Collection;
+
 import nc.bs.dao.BaseDAO;
+import nc.md.persist.framework.MDPersistenceService;
 import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.erm.expenseaccount.ExpenseBalVO;
 import nc.vo.pub.BusinessException;
@@ -22,16 +25,17 @@ public class ExpenseAccountDAO {
 		return basedao;
 	}
 
-	public String[] insertAccountVO(ExpenseAccountVO[] vos) throws BusinessException {
-//		String[] pks = ;
-//		@SuppressWarnings("unchecked")
-//		Collection<ExpenseAccountVO> c = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByPKs(
-//				ExpenseAccountVO.class, pks, true);
-//
-//		if (c == null || c.isEmpty()) {
-//			return null;
-//		}
-		return getBaseDAO().insertVOArray(vos);
+	public ExpenseAccountVO[] insertAccountVO(ExpenseAccountVO[] vos) throws BusinessException {
+		String[] pks = getBaseDAO().insertVOArray(vos);
+
+		@SuppressWarnings("unchecked")
+		Collection<ExpenseAccountVO> c = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByPKs(
+				ExpenseAccountVO.class, pks, true);
+
+		if (c == null || c.isEmpty()) {
+			return null;
+		}
+		return c.toArray(new ExpenseAccountVO[c.size()]);
 	}
 
 	public String[] insertAccountBalanceVO(ExpenseBalVO[] vos) throws BusinessException {

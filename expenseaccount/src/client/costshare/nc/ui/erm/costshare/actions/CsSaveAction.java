@@ -6,10 +6,11 @@ import java.util.List;
 
 import nc.bs.uif2.BusinessExceptionAdapter;
 import nc.ui.pub.bill.BillData;
+import nc.ui.pub.bill.BillModel;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.SaveAction;
 import nc.ui.uif2.editor.BillForm;
-import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.costshare.CostShareVO;
@@ -23,6 +24,7 @@ public class CsSaveAction extends SaveAction {
 	
 
 	public void doAction(ActionEvent e) throws Exception {
+		dealBodyRowNum();
 		
 		Object value = getEditor().getValue();
 		
@@ -56,6 +58,29 @@ public class CsSaveAction extends SaveAction {
 		}
 		showSuccessInfo();
 		getModel().setUiState(UIState.NOT_EDIT);
+	}
+	
+	/**
+	 * 处理重置行号
+	 */
+	private void dealBodyRowNum() {
+		AggCostShareVO aggCostShareVo = (AggCostShareVO)getEditor().getValue();
+		if(aggCostShareVo.getChildrenVO() != null){
+			// 清空表体中的值
+			BillModel billModel = ((BillForm) getEditor()).getBillCardPanel().getBillModel(BXConstans.CSHARE_PAGE);
+			int rowCount = billModel.getRowCount();
+			if (rowCount > 0) {
+				for (int row = 0; row < rowCount; row++) {
+					Integer currNum = (Integer)billModel.getValueAt(rowCount,  CShareDetailVO.ROWNO);
+					if(currNum == null || currNum != (row + 1)){
+						billModel.setValueAt(row + 1, row, CShareDetailVO.ROWNO);
+						if(billModel.getRowState(row) == BillModel.NORMAL){
+							billModel.setRowState(row, BillModel.MODIFICATION);
+						}
+					}
+				}
+			}
+		}
 	}
 
 

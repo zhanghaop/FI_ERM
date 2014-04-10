@@ -37,6 +37,16 @@ import nc.vo.pub.pf.IPfRetCheckInfo;
 public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 
 	private static final long serialVersionUID = -936531187472578799L;
+	
+	/**
+	 * 是否加载了常用单据
+	 */
+	private boolean isLoadInitBill = false;
+	
+	/**
+	 * 按行回写费用申请单使用，记录回写申请单的明细行pk
+	 */
+	private String pk_mtapp_detail = null;
 
 	/**
 	 * 回写费用申请单使用，记录业务行pk
@@ -127,9 +137,9 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	 * @return
 	 */
 	public static String[] getFieldNotCopy() {
-		return new String[] { ZHRQ, PK_ITEM, SXBZ, JSH, DJZT, SPZT, TS, DR, MODIFIER, OPERATOR, APPROVER, MODIFIEDTIME,VOUCHER,
+		return new String[] { ZHRQ, SXBZ, JSH, DJZT, SPZT, TS, DR, MODIFIER, OPERATOR, APPROVER, MODIFIEDTIME,VOUCHER,
 				PK_JKBX, DJBH, DJRQ, KJND, KJQJ, JSRQ, SHRQ, JSR, CONTRASTENDDATE, PAYMAN, PAYDATE, PAYFLAG ,BBHL,GROUPBBHL,GLOBALBBHL,
-				PK_ITEM,START_PERIOD};
+				START_PERIOD,SHRQ_SHOW};
 	}
 
 	/**
@@ -722,6 +732,8 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public String pk_org_v; // 业务单元版本
 
 	// begin-- added by chendya@ufida.com.cn 组织和部门新增版本化信息
+	
+
 	/**
 	 * 利润中心版本化
 	 */
@@ -797,6 +809,15 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public java.lang.Integer total_period;// 总摊销期
 
 	public UFBoolean flexible_flag = UFBoolean.FALSE;// 项目预算-是否柔性控制
+	
+	public UFBoolean iscusupplier = UFBoolean.FALSE;//对公支付
+	public static final String ISCUSUPPLIER = "iscusupplier";
+	//v631加入
+	public String pk_proline;//产品线
+	public String pk_brand;//品牌
+	
+	public static final String PK_PROLINE = "pk_proline";//产品线
+	public static final String PK_BRAND = "pk_brand";//品牌
 
 	// v6新增
 
@@ -1040,11 +1061,41 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public static final String START_PERIOD = "start_period";
 	public static final String TOTAL_PERIOD = "total_period";
 	public static final String FLEXIBLE_FLAG = "flexible_flag";
+	public static final String CENTER_DEPT = "center_dept";
+	
+	/**
+	 * 来源交易类型
+	 */
+	public static final String SRCBILLTYPE = "srcbilltype";
+	/**
+	 * 来源类型，默认为费用申请单
+	 */
+	public static final String SRCTYPE = "srctype";
+	/**
+	 * 是否拉单的申请单分摊，从费用申请单上拉过来
+	 */
+	public static final String ISMASHARE = "ismashare";
 
 	/**
 	 * 审批流起点人
 	 */
 	public static final String AUDITMAN = "auditman";
+	
+	/**
+	 * 归口管理部门
+	 */
+	private java.lang.String center_dept;
+	
+	/**
+	 * 来源单据类型
+	 */
+	private String srcbilltype;
+	private String srctype;
+	
+	/**
+	 * 是否申请单分摊拉单
+	 */
+	private UFBoolean ismashare;
 
 	public UFDate getOfficialprintdate() {
 		return officialprintdate;
@@ -3790,6 +3841,17 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public void setIsexpamt(UFBoolean isexpamt) {
 		this.isexpamt = isexpamt;
 	}
+	
+	public UFBoolean getIscusupplier() {
+		if (iscusupplier == null){
+			return UFBoolean.FALSE;
+		}
+		return iscusupplier;
+	}
+
+	public void setIscusupplier(UFBoolean iscusupplier) {
+		this.iscusupplier = iscusupplier;
+	}
 
 	public String getStart_period() {
 		return start_period;
@@ -3939,4 +4001,104 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public void setBx_busitemPK(String bx_busitemPK) {
 		this.bx_busitemPK = bx_busitemPK;
 	}
+
+	public java.lang.String getCenter_dept() {
+		return center_dept;
+	}
+
+	public void setCenter_dept(java.lang.String center_dept) {
+		this.center_dept = center_dept;
+	}
+
+	public String getSrcbilltype() {
+		return srcbilltype;
+	}
+
+	public void setSrcbilltype(String srcbilltype) {
+		this.srcbilltype = srcbilltype;
+	}
+
+	public String getSrctype() {
+		return srctype;
+	}
+
+	public void setSrctype(String srctype) {
+		this.srctype = srctype;
+	}
+
+	public String getPk_mtapp_detail() {
+		return pk_mtapp_detail;
+	}
+
+	public void setPk_mtapp_detail(String pk_mtapp_detail) {
+		this.pk_mtapp_detail = pk_mtapp_detail;
+	}
+
+	public UFBoolean getIsmashare() {
+		return ismashare;
+	}
+
+	public void setIsmashare(UFBoolean ismashare) {
+		this.ismashare = ismashare;
+	}
+
+	public String getPk_proline() {
+		return pk_proline;
+	}
+
+	public void setPk_proline(String pkProline) {
+		pk_proline = pkProline;
+	}
+
+	public String getPk_brand() {
+		return pk_brand;
+	}
+
+	public void setPk_brand(String pkBrand) {
+		pk_brand = pkBrand;
+	}
+	
+	@Override
+	public String getWorkFlowBillPk() {
+		return getPk();
+	}
+
+	@Override
+	public String getWorkFolwBillType() {
+		return getDjlxbm();
+	}
+	
+	public void combineVO(JKBXHeaderVO vo){
+		if(this.pk_item == null && this.isLoadInitBill == false){
+			// 非拉单且不加载常用单据情况，根据单据模板的设置冲掉vo中的默认值
+				if(!this.getIscostshare().booleanValue()){
+					setIscostshare(vo.getIscostshare());
+				}
+				if(!this.getIsexpamt().booleanValue()){
+					setIsexpamt(vo.getIsexpamt());
+				}
+				if(!this.getIscusupplier().booleanValue()){
+					setIscusupplier(vo.getIscusupplier());
+				}
+		}
+		String[] attributeNames = this.getAttributeNames();
+		for (String attribute : attributeNames) {
+			// 初始值中未设置的值，根据单据模板默认值设置
+			if (this.getAttributeValue(attribute) == null) {
+				Object newValue = vo.getAttributeValue(attribute);
+				if (newValue != null) {
+					setAttributeValue(attribute,newValue);
+				}
+			}
+		}
+	}
+
+	public boolean isLoadInitBill() {
+		return isLoadInitBill;
+	}
+
+	public void setLoadInitBill(boolean isLoadInitBill) {
+		this.isLoadInitBill = isLoadInitBill;
+	}
+
 }

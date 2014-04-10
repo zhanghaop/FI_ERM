@@ -10,6 +10,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDouble;
 
 /**
  * 事项审批单动作-预算业务实现插件
@@ -67,8 +68,24 @@ public class ErmMatterAppYsControlListener implements IBusinessListener {
 			//根据减掉余额
 			for (int i = 0; i < cloneVos.length; i++) {
 				for (int j = 0; j < cloneVos[i].getChildrenVO().length; j++) {
-					cloneVos[i].getChildrenVO()[j].setOrig_amount(cloneVos[i].getChildrenVO()[j].getRest_amount());
-					cloneVos[i].getChildrenVO()[j].setOrg_amount(cloneVos[i].getChildrenVO()[j].getOrg_rest_amount());
+					
+					UFDouble rest_amount = cloneVos[i].getChildrenVO()[j].getRest_amount();
+					UFDouble org_rest_amount = cloneVos[i].getChildrenVO()[j].getOrg_rest_amount();
+					UFDouble group_rest_amount = cloneVos[i].getChildrenVO()[j].getGroup_rest_amount();
+					UFDouble global_rest_amount = cloneVos[i].getChildrenVO()[j].getGlobal_rest_amount();
+					
+					if(rest_amount.compareTo(UFDouble.ZERO_DBL)<0){
+						// 余额小于0情况，按0处理
+						rest_amount = UFDouble.ZERO_DBL;
+						org_rest_amount = UFDouble.ZERO_DBL;
+						group_rest_amount = UFDouble.ZERO_DBL;
+						global_rest_amount = UFDouble.ZERO_DBL;
+					}
+					
+					cloneVos[i].getChildrenVO()[j].setOrig_amount(rest_amount);
+					cloneVos[i].getChildrenVO()[j].setOrg_amount(org_rest_amount);
+					cloneVos[i].getChildrenVO()[j].setGroup_amount(group_rest_amount);
+					cloneVos[i].getChildrenVO()[j].setGlobal_amount(global_rest_amount);
 				}
 			}
 		}else if(ErmEventType.TYPE_UNCLOSE_AFTER.equalsIgnoreCase(eventType)){
@@ -78,8 +95,22 @@ public class ErmMatterAppYsControlListener implements IBusinessListener {
 			//根据回退余额
 			for (int i = 0; i < cloneVos.length; i++) {
 				for (int j = 0; j < cloneVos[i].getChildrenVO().length; j++) {
-					cloneVos[i].getChildrenVO()[j].setOrig_amount(cloneVos[i].getChildrenVO()[j].getRest_amount());
-					cloneVos[i].getChildrenVO()[j].setOrg_amount(cloneVos[i].getChildrenVO()[j].getOrg_rest_amount());
+					UFDouble rest_amount = cloneVos[i].getChildrenVO()[j].getRest_amount();
+					UFDouble org_rest_amount = cloneVos[i].getChildrenVO()[j].getOrg_rest_amount();
+					UFDouble group_rest_amount = cloneVos[i].getChildrenVO()[j].getGroup_rest_amount();
+					UFDouble global_rest_amount = cloneVos[i].getChildrenVO()[j].getGlobal_rest_amount();
+					if(rest_amount.compareTo(UFDouble.ZERO_DBL)<0){
+						// 余额小于0情况，按0处理
+						rest_amount = UFDouble.ZERO_DBL;
+						org_rest_amount = UFDouble.ZERO_DBL;
+						group_rest_amount = UFDouble.ZERO_DBL;
+						global_rest_amount = UFDouble.ZERO_DBL;
+					}
+					
+					cloneVos[i].getChildrenVO()[j].setOrig_amount(rest_amount);
+					cloneVos[i].getChildrenVO()[j].setOrg_amount(org_rest_amount);
+					cloneVos[i].getChildrenVO()[j].setGroup_amount(group_rest_amount);
+					cloneVos[i].getChildrenVO()[j].setGlobal_amount(global_rest_amount);
 				}
 			}
 		}

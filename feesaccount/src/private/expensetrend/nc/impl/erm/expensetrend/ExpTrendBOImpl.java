@@ -157,6 +157,20 @@ public class ExpTrendBOImpl extends FipubSqlExecuter implements IExpenseTrendBO 
 			return new Object[0][0];
 		}
 
+		String localCurrtype = queryVO.getErmBaseQueryCondition().getQryCondVO().getLocalCurrencyType();
+		if (!IPubReportConstants.ORG_LOCAL_CURRENCY.equals(localCurrtype)) {
+            String[] targetFields = new String[] { "ORG_AMOUNT_LOC" };
+            String[] formulas = null;
+            if (IPubReportConstants.GROUP_LOCAL_CURRENCY.equals(localCurrtype)) {
+                // 集团本币
+                formulas = new String[] { "ORG_AMOUNT_LOC->GR_GROUP_AMOUNT_LOC" };
+            } else if (IPubReportConstants.GLOBLE_LOCAL_CURRENCY.equals(localCurrtype)) {
+                // 全局本币
+                formulas = new String[] { "ORG_AMOUNT_LOC->GL_GLOBAL_AMOUNT_LOC" };
+            }
+            mrs.setColumnByFormulate_type(targetFields, formulas);
+        }
+		
 		Object datas[][] = new Object[dataRowList.size()][mrs.getMetaData().getColumnCount()];
 		int accmonthIndex = mrs.getColumnIndex(ExpenseAccountVO.ACCMONTH);
         int month;

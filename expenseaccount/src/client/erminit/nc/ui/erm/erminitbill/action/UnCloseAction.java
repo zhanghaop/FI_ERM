@@ -18,7 +18,6 @@ public class UnCloseAction extends NCAction {
 	private BillManageModel model;
 
 	public UnCloseAction() {
-		super();
 		setCode(ErmActionConst.INITUNCLOSE);
 		setBtnName(ErmActionConst.getInitUnCLose());
 		putValue(SHORT_DESCRIPTION, ErmActionConst.getInitUnCLose());

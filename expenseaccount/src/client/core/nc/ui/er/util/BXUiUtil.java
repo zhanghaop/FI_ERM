@@ -15,11 +15,12 @@ import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.fi.pub.Currency;
 import nc.pubitf.accperiod.AccountCalendar;
-import nc.pubitf.uapbd.IPsndocPubService;
 import nc.ui.arap.bx.listeners.BxYbjeDecimalListener;
 import nc.ui.arap.bx.remote.PsnVoCall;
+import nc.ui.erm.billpub.action.ContrastAction;
 import nc.ui.erm.billpub.remote.QcDateCall;
 import nc.ui.erm.billpub.remote.RoleVoCall;
+import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.billpub.view.eventhandler.ERMCurrencyDecimalListener;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.UIRefPane;
@@ -30,8 +31,6 @@ import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BxUIControlUtil;
-import nc.vo.bd.psn.PsndocVO;
-import nc.vo.bd.psn.PsnjobVO;
 import nc.vo.bd.pub.BDCacheQueryUtil;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BxcontrastVO;
@@ -41,13 +40,13 @@ import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.fipub.report.PubCommonReportMethod;
 import nc.vo.fipub.summary.SummaryVO;
-import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.ValidationException;
+import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
-import nc.vo.sm.enumfactory.UserIdentityTypeEnumFactory;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -108,120 +107,120 @@ public class BXUiUtil {
 		return ErUiUtil.getPermissionOrgVs(nodeCode);
 	}
 
-	/**
-	 * 返回用户所关联的人员信息(array[0]=
-	 * 人员主键，array[1]=人员所属部门,array[2]=人员所属组织,array[3]=人员所在集团)
-	 * 
-	 * @param cuserid
-	 *            用户id
-	 * @return
-	 */
-	public static String[] getPsnDocInfo(String cuserid) {
-		String[] retValues = new String[4];
-		// 人员主键
-		final String value = getPk_psndoc(cuserid);
-		if (value == null || value.length() == 0) {
-			return retValues;
-		}
-		return getPsnDocInfoById(value);
-	}
+//	/**
+//	 * 返回用户所关联的人员信息(array[0]=
+//	 * 人员主键，array[1]=人员所属部门,array[2]=人员所属组织,array[3]=人员所在集团)
+//	 * 
+//	 * @param cuserid
+//	 *            用户id
+//	 * @return
+//	 */
+//	public static String[] getPsnDocInfo(String cuserid) {
+//		String[] retValues = new String[4];
+//		// 人员主键
+//		final String value = getPk_psndoc(cuserid);
+//		if (value == null || value.length() == 0) {
+//			return retValues;
+//		}
+//		return ErUiUtil.getPsnDocInfoById(value);
+//	}
 
-	/**
-	 * 返回人员信息(array[0]= 人员主键，array[1]=人员所属部门,array[2]=人员所属组织,array[3]=人员所在集团)
-	 * 
-	 * @param pk_psndoc
-	 *            人员组件
-	 * @return
-	 */
-	public static String[] getPsnDocInfoById(String pk_psndoc) {
-		String[] retValues = new String[4];
-		// 人员
-		retValues[0] = pk_psndoc;
-		// 部门
-		retValues[1] = getPsnPk_dept(pk_psndoc);
-		// 组织
-		retValues[2] = getPsnPk_org(pk_psndoc);
-		// 集团
-		retValues[3] = getPsnPk_group(pk_psndoc);
+//	/**
+//	 * 返回人员信息(array[0]= 人员主键，array[1]=人员所属部门,array[2]=人员所属组织,array[3]=人员所在集团)
+//	 * 
+//	 * @param pk_psndoc
+//	 *            人员组件
+//	 * @return
+//	 */
+//	public static String[] getPsnDocInfoById(String pk_psndoc) {
+//		String[] retValues = new String[4];
+//		// 人员
+//		retValues[0] = pk_psndoc;
+//		// 部门
+//		retValues[1] = getPsnPk_dept(pk_psndoc);
+//		// 组织
+//		retValues[2] = getPsnPk_org(pk_psndoc);
+//		// 集团
+//		retValues[3] = getPsnPk_group(pk_psndoc);
+//
+//		return retValues;
+//	}
 
-		return retValues;
-	}
-
-	/**
-	 * 人员所在集团，连带缓存组织
-	 * 
-	 * @param pk_psndoc
-	 *            人员主键
-	 * @return
-	 */
-	public static String getPsnPk_group(String pk_psndoc) {
-		if (StringUtil.isEmpty(pk_psndoc)) {
-			return null;
-		}
-		
-		WorkbenchEnvironment instance = WorkbenchEnvironment.getInstance();
-		String pk_psngroup = (String) instance.getClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group());
-		if (pk_psngroup == null) {
-			try {
-				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(new String[] { pk_psndoc },
-						new String[] { PsndocVO.PK_ORG ,PsndocVO.PK_GROUP});
-				// 人员所属组织
-				pk_psngroup = persons[0].getPk_group();
-				instance.putClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group(), pk_psngroup);
-				instance.putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), persons[0].getPk_org());
-			} catch (BusinessException e) {
-				ExceptionHandler.consume(e);
-			}
-		}
-		return pk_psngroup;
-	}
-
-	/**
-	 * 人员所属组织，连带缓存组织
-	 * 
-	 * @param pk_psndoc
-	 *            人员主键
-	 * @return
-	 */
-	public static String getPsnPk_org(String pk_psndoc) {
-//		return ErUiUtil.getPsnPk_org(pk_psndoc);
-		if (StringUtil.isEmpty(pk_psndoc)) {
-			return null;
-		}
-		
-		WorkbenchEnvironment instance = WorkbenchEnvironment.getInstance();
-		String pk_org = (String) instance.getClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group());
-		if (pk_org == null) {
-			try {
-				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(new String[] { pk_psndoc },
-						new String[] { PsndocVO.PK_ORG ,PsndocVO.PK_GROUP});
-				// 人员所属组织
-				pk_org = persons[0].getPk_org();
-				instance.putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), pk_org);
-				instance.putClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group(), persons[0].getPk_group());
-			} catch (Exception e) {
-				ExceptionHandler.consume(e);
-			}
-		}
-		return pk_org;
-	
-	}
-
-	/**
-	 * 返回人员所在部门
-	 * 
-	 * @author chendya
-	 * @param pk_psndoc
-	 *            人员主键
-	 * @return
-	 */
-	public static String getPsnPk_dept(String pk_psndoc) {
-		if (WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group()) == null) {
-			final String pk_psndept = getColValue2("bd_psnjob", PsnjobVO.PK_DEPT, PsnjobVO.PK_PSNDOC, pk_psndoc, PsnjobVO.ISMAINJOB, "Y");
-			WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group(), pk_psndept);
-		}
-		return (String) WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group());
-	}
+//	/**
+//	 * 人员所在集团，连带缓存组织
+//	 * 
+//	 * @param pk_psndoc
+//	 *            人员主键
+//	 * @return
+//	 */
+//	public static String getPsnPk_group(String pk_psndoc) {
+//		if (StringUtil.isEmpty(pk_psndoc)) {
+//			return null;
+//		}
+//		
+//		WorkbenchEnvironment instance = WorkbenchEnvironment.getInstance();
+//		String pk_psngroup = (String) instance.getClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group());
+//		if (pk_psngroup == null) {
+//			try {
+//				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(new String[] { pk_psndoc },
+//						new String[] { PsndocVO.PK_ORG ,PsndocVO.PK_GROUP});
+//				// 人员所属组织
+//				pk_psngroup = persons[0].getPk_group();
+//				instance.putClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group(), pk_psngroup);
+//				instance.putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), persons[0].getPk_org());
+//			} catch (BusinessException e) {
+//				ExceptionHandler.consume(e);
+//			}
+//		}
+//		return pk_psngroup;
+//	}
+//
+//	/**
+//	 * 人员所属组织，连带缓存组织
+//	 * 
+//	 * @param pk_psndoc
+//	 *            人员主键
+//	 * @return
+//	 */
+//	public static String getPsnPk_org(String pk_psndoc) {
+////		return ErUiUtil.getPsnPk_org(pk_psndoc);
+//		if (StringUtil.isEmpty(pk_psndoc)) {
+//			return null;
+//		}
+//		
+//		WorkbenchEnvironment instance = WorkbenchEnvironment.getInstance();
+//		String pk_org = (String) instance.getClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group());
+//		if (pk_org == null) {
+//			try {
+//				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(new String[] { pk_psndoc },
+//						new String[] { PsndocVO.PK_ORG ,PsndocVO.PK_GROUP});
+//				// 人员所属组织
+//				pk_org = persons[0].getPk_org();
+//				instance.putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), pk_org);
+//				instance.putClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group(), persons[0].getPk_group());
+//			} catch (Exception e) {
+//				ExceptionHandler.consume(e);
+//			}
+//		}
+//		return pk_org;
+//	
+//	}
+//
+//	/**
+//	 * 返回人员所在部门
+//	 * 
+//	 * @author chendya
+//	 * @param pk_psndoc
+//	 *            人员主键
+//	 * @return
+//	 */
+//	public static String getPsnPk_dept(String pk_psndoc) {
+//		if (WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group()) == null) {
+//			final String pk_psndept = getColValue2("bd_psnjob", PsnjobVO.PK_DEPT, PsnjobVO.PK_PSNDOC, pk_psndoc, PsnjobVO.ISMAINJOB, "Y");
+//			WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group(), pk_psndept);
+//		}
+//		return (String) WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group());
+//	}
 
 	/**
 	 * 授权代理人设置
@@ -366,19 +365,19 @@ public class BXUiUtil {
 //		return WorkbenchEnvironment.getInstance().getLoginUser().getCuserid();
 	}
 
-	/**
-	 * 返回指定用户所对应的业务员
-	 * 
-	 * @return
-	 */
-	public static String getPk_psndoc(String cuserid) {
-		final String pk_psn = getColValue2("sm_user", "pk_psndoc", "pk_base_doc", cuserid, "base_doc_type",
-				UserIdentityTypeEnumFactory.TYPE_PERSON);
-		if (pk_psn != null) {
-			WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.PSN_PK_ + pk_psn + getPK_group(), pk_psn);
-		}
-		return pk_psn;
-	}
+//	/**
+//	 * 返回指定用户所对应的业务员
+//	 * 
+//	 * @return
+//	 */
+//	public static String getPk_psndoc(String cuserid) {
+//		final String pk_psn = getColValue2("sm_user", "pk_psndoc", "pk_base_doc", cuserid, "base_doc_type",
+//				UserIdentityTypeEnumFactory.TYPE_PERSON);
+//		if (pk_psn != null) {
+//			WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.PSN_PK_ + pk_psn + getPK_group(), pk_psn);
+//		}
+//		return pk_psn;
+//	}
 
 	/**
 	 * 返回当前登陆用户所对应的业务员
@@ -600,6 +599,7 @@ public class BXUiUtil {
 			// 重设表体业务页签全局本币精度
 			resetCardDecimalDigit(panel, globalByDecimalDigit, JKBXHeaderVO.getHeadGlobalBbjeField(), BXBusItemVO.getBodyGlobalBbjeField());
 
+			/**  自定义不再处理精度*/
 			String[] tableCodes = panel.getBillData().getBodyTableCodes();
 			if (tableCodes != null && tableCodes.length > 0) {
 				for (String tableCode : tableCodes) {
@@ -716,21 +716,23 @@ public class BXUiUtil {
 		String[] tableCodes = panel.getBillData().getBodyTableCodes();
 		if (tableCodes != null && tableCodes.length > 0) {
 			for (String tableCode : tableCodes) {
-//				BillModel model = panel.getBillModel(tableCode);
-//				int rowCount = model.getRowCount();
+				BillModel model = panel.getBillModel(tableCode);
+				int rowCount = model.getRowCount();
 				if (bodyJeKeys != null && bodyJeKeys.length > 0) {
+					model.setNeedCalculate(false);
 					for (String key : bodyJeKeys) {
 						if (panel.getBodyItem(tableCode, key) != null) {
 							panel.getBodyItem(tableCode, key).setDecimalDigits(decimalDigits);
-//							for (int i = 0; i < rowCount; i++) {//这里在表体行多时，极其耗时，因为要计算合计值，效率很低
-//								Object valueAt = model.getValueAt(i, key);
-//								if (valueAt != null) {
-//									UFDouble value = new UFDouble(valueAt.toString());
-//									model.setValueAt(value, i, key);
-//								}
-//							}
+							for (int i = 0; i < rowCount; i++) {//这里在表体行多时，极其耗时，因为要计算合计值，效率很低
+								Object valueAt = model.getValueAt(i, key);
+								if (valueAt != null) {
+									UFDouble value = new UFDouble(valueAt.toString());
+									model.setValueAt(value, i, key);
+								}
+							}
 						}
 					}
+					model.setNeedCalculate(true);
 				}
 			}
 		}
@@ -750,16 +752,15 @@ public class BXUiUtil {
 	 *            表体金额key集合
 	 */
 	private static void resetCardBodyDecimalDigit(BillCardPanel panel, int decimalDigits, String tableCode, String[] bodyJeKeys) {
-
 		// 表体精度
 		BillModel model = panel.getBillModel(tableCode);
 		if(model==null)return;
 		int rowCount = model.getRowCount();
 		if (bodyJeKeys != null && bodyJeKeys.length > 0) {
+			model.setNeedCalculate(false);
 			for (String key : bodyJeKeys) {
 				if (panel.getBodyItem(tableCode, key) != null) {
 					panel.getBodyItem(tableCode, key).setDecimalDigits(decimalDigits);
-
 					for (int i = 0; i < rowCount; i++) {
 						Object valueAt = model.getValueAt(i, key);
 						if (valueAt != null) {
@@ -769,6 +770,7 @@ public class BXUiUtil {
 					}
 				}
 			}
+			model.setNeedCalculate(true);
 		}
 	}
 
@@ -789,12 +791,16 @@ public class BXUiUtil {
 			// 数值类型都控制
 			/* && item.getIDColName().toLowerCase().equalsIgnoreCase("amount") */) {
 				// 如果用户不控制，可以自行调整模版,换成其它类型
-
 				defItems[num++] = item.getKey().toString();
 			}
 		}
 		if (null != defItems && defItems.length > 0) {
 			for (String key : defItems) {
+				String userdefine = getUserdefine(IBillItem.BODY, key, 1 ,panel);
+				//数量的自定义字段,不重新设置精度
+				if(userdefine !=null && BXConstans.DEFITEM_MOUNT.equals(userdefine)){
+					continue;
+				}
 				if (null != key) {
 					if (panel.getBodyItem(tableCode, key) != null) {
 						panel.getBodyItem(tableCode, key).setDecimalDigits(decimalDigits);
@@ -813,7 +819,39 @@ public class BXUiUtil {
 		}
 		// --end 处理自定义项
 	}
-
+	
+	
+	/**
+	 * 用户自定义
+	 * 
+	 * @param pos
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public static String getUserdefine(int pos, String key, int def,BillCardPanel panel) {
+		if (panel.getBillData().getBillTempletVO() == null
+				|| panel.getBillData().getBillTempletVO()
+						.getChildrenVO() == null) {
+			return null;
+		}
+		BillTempletBodyVO[] tbodyvos = (BillTempletBodyVO[]) panel
+				.getBillData().getBillTempletVO().getChildrenVO();
+		for (BillTempletBodyVO bodyvo : tbodyvos) {
+			if((pos==0 && bodyvo.getItemkey().equals(key))
+					||
+					(bodyvo.getPos() == pos && bodyvo.getItemkey().equals(key)
+					&& bodyvo.getTableCode().equals(panel.getCurrentBodyTableCode()))){
+				if (def == 1)
+					return bodyvo.getUserdefine1();
+				else if (def == 2)
+					return bodyvo.getUserdefine2();
+				else if (def == 3)
+					return bodyvo.getUserdefine3();
+			}
+		}
+		return null;
+	}
 	/**
 	 * 根据vo设置列表界面本币汇率精度
 	 * 
@@ -909,7 +947,8 @@ public class BXUiUtil {
 	 */
 	public static UFDate getStartDate(String pk_org) throws BusinessException {
 		final String key = QcDateCall.QcDate_Date_PK_ + pk_org;
-		if (WorkbenchEnvironment.getInstance().getClientCache(key) == null) {
+		Object clientCache = WorkbenchEnvironment.getInstance().getClientCache(key);
+		if (clientCache == null) {
 			UFDate startDate = null;
             try {
                 startDate = NCLocator.getInstance()
@@ -919,7 +958,7 @@ public class BXUiUtil {
             }
 			WorkbenchEnvironment.getInstance().putClientCache(key, startDate);
 		}
-		return (UFDate) WorkbenchEnvironment.getInstance().getClientCache(key);
+		return (UFDate) clientCache;
 
 	}
 
@@ -1073,5 +1112,21 @@ public class BXUiUtil {
 			billItem.setLoadFormula(loadFormulas);
 		}
 	}
+	
+	/**
+	 * 冲借款页签设置
+	 * @param billForm
+	 * @throws ValidationException
+	 * @throws BusinessException
+	 */
+	public static void doContract(ErmBillBillForm billForm) throws ValidationException, BusinessException {
+		BillCardPanel billCardPanel = billForm.getBillCardPanel();
+		BxcontrastVO[] bxcontrastVO = (BxcontrastVO[]) billCardPanel.getBillModel(BXConstans.CONST_PAGE)
+				.getBodyValueVOs(BxcontrastVO.class.getName());
 
+		if (bxcontrastVO != null && bxcontrastVO.length > 0) {
+			ContrastAction.doContrastToUI(billCardPanel, billForm.getHelper().getJKBXVO(billForm),
+					Arrays.asList(bxcontrastVO), billForm);
+		}
+	}
 }

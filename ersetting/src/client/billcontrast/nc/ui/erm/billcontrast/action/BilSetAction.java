@@ -5,9 +5,9 @@ import java.awt.event.ActionEvent;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.billcontrast.IErmBillcontrastManage;
 import nc.itf.erm.billcontrast.IErmBillcontrastQuery;
-import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billcontrast.model.BillcontrastModelDataManager;
 import nc.ui.erm.billcontrast.view.BillContrastBatchBillTable;
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.model.BatchBillTableModel;
@@ -36,7 +36,7 @@ public class BilSetAction extends NCAction {
 					.setErrormsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0003")/*@res "生成预置数据失败"*/);
 			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0004")/*@res "请选择一个财务组织"*/);
 		}
-		String pk_group = BXUiUtil.getPK_group();
+		String pk_group = ErUiUtil.getPK_group();
 		BillcontrastVO[] vos = getSevice().queryAllByGloble().clone();
 		for (BillcontrastVO vo : vos) {
 			vo.setPk_group(pk_group);

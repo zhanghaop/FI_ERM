@@ -1,6 +1,7 @@
 package nc.ui.erm.pub;
 
 import java.awt.Container;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.funcnode.ui.AbstractFunclet;
+import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IFipubReportQryDlg;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.itf.fipub.report.IReportQueryCond;
@@ -30,6 +32,8 @@ import nc.ui.resa.refmodel.CostCenterTreeRefModel;
 import nc.utils.fipub.FipubReportResource;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.pub.PubConstData;
+import nc.vo.erm.pub.ErmBaseQueryCondition;
+import nc.vo.fipub.report.FipubBaseQueryCondition;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.report.ReportQueryCondVO;
 import nc.vo.pub.lang.UFDate;
@@ -67,7 +71,6 @@ import com.ufida.report.anareport.model.AbsAnaReportModel;
 public class ErmReportDefaultQueryAction extends AbsReportQueryAction implements
 		PubConstData, UIDialogListener {
 
-
     protected IQueryCondition createQueryCondition(IContext context, IReportQueryCond qryCondVO) {
         IQueryCondition condition = super.createQueryCondition(context, qryCondVO);
         
@@ -84,10 +87,26 @@ public class ErmReportDefaultQueryAction extends AbsReportQueryAction implements
                 qryCondVO.getUserObject().put(fieldCode, codes);
             }
         }
+//        Map<String, Object> fieldMap = new HashMap<String, Object>();
+//        List<IFilterEditor> simpleEditorFilterEditors = getQryDlg().getSimpleEditorFilterEditors();
+//        for(IFilterEditor editor: simpleEditorFilterEditors){
+//            DefaultFilterEditor filterEditor = (DefaultFilterEditor) editor;
+//            if (filterEditor.getFilter().getSqlString() != null) {
+//                fieldMap.put(filterEditor.getFilterMeta().getFieldCode(), 
+//                        filterEditor.getFilter().getSqlString());                   
+//            }
+//        }
+//        qryCondVO.getUserObject().put("fieldSqlMap", fieldMap);
         
         return condition;
     }
     
+    @Override
+    protected FipubBaseQueryCondition createQueryCondition(boolean isContinue,
+            IReportQueryCond qryCondVO) {
+        return new ErmBaseQueryCondition(true, qryCondVO);
+    }
+
     private void filterWhere(ReportQueryCondVO qryCondVO, String targetField) {
         if (qryCondVO.getWhereSql().indexOf(targetField) >= 0) {
             String sWhere = qryCondVO.getWhereSql();
@@ -151,6 +170,7 @@ public class ErmReportDefaultQueryAction extends AbsReportQueryAction implements
 				}
 			}
 
+			boolean isTotal = false;
 			// 处理穿透时的币种
 //			ReportInitializeVO initHeadVO = (ReportInitializeVO) qryCondVO.getRepInitContext().getParentVO();
 //			if (IPubReportConstants.ACCOUNT_FORMAT_FOREIGN.equals(initHeadVO.getReportformat())) {
@@ -167,8 +187,17 @@ public class ErmReportDefaultQueryAction extends AbsReportQueryAction implements
 					if (drillItemVaule != null && !"".equals(drillItemVaule)) {
 					    pkCurrTypeMap.put(drillItemVaule.toString(), null);
 					}
+					
+					String org = (String)traceData.getValue("org");
+					if (IErmReportConstants.getCONST_ALL_TOTAL().equals(org)) {
+					    isTotal = true;
+					}
 				}
-				qryCondVO.setPk_orgs(pkOrgs.keySet().toArray(new String[pkOrgs.size()]));
+				//非总计，设置财务组织
+				if (!isTotal) {
+	                qryCondVO.setPk_orgs(pkOrgs.keySet().toArray(new String[pkOrgs.size()]));
+				}
+				
 				StringBuilder sb = new StringBuilder();
 				for (String pkCurrType : pkCurrTypeMap.keySet()) {
 				    sb.append(pkCurrType).append(",");
@@ -264,7 +293,20 @@ public class ErmReportDefaultQueryAction extends AbsReportQueryAction implements
         ErmReportQryDlg ermReportQryDlg = new ErmReportQryDlg(parent,
                 context, nodeCode, iSysCode, tempinfo,
                 FipubReportResource.getQryCondSetLbl(),
-                funclet.getParameter("djlx"));
+                funclet.getParameter("djlx")) {
+
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected List<Integer> getPanelHeightList() {
+                        List<Integer> list = new ArrayList<Integer>(3);
+                        list.add(Integer.valueOf(305));
+                        list.add(Integer.valueOf(145));
+                        list.add(Integer.valueOf(120));
+                        return list;
+                    }
+            
+        };
         ermReportQryDlg.setSize(BXConstans.WINDOW_WIDTH, BXConstans.WINDOW_HEIGHT);
         ermReportQryDlg.addUIDialogListener(this);
         ermReportQryDlg
@@ -310,7 +352,7 @@ public class ErmReportDefaultQueryAction extends AbsReportQueryAction implements
                 UIRefPane refPane = (UIRefPane) compent;
                 CostCenterTreeRefModel model = (CostCenterTreeRefModel)refPane.getRefModel();
                 model.setCurrentOrgCreated(false);
-                model.setOrgType("pk_financeorg");
+                model.setOrgType("pk_profitcenter");
             } else {
                 JComponent compent = ERMQueryActionHelper.getFiltComponentForInit(event);
                 if (compent instanceof UIRefPane) {

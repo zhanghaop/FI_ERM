@@ -3,6 +3,7 @@ package nc.vo.erm.matterapp;
 import java.io.Serializable;
 
 import nc.bs.erm.common.ErmBillConst;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.jcom.lang.StringUtil;
@@ -54,6 +55,9 @@ public class MatterAppYsControlVO implements IFYControl,Serializable {
 	public Object getItemValue(String key) {
 		if(StringUtil.isEmptyWithTrim(key)){
 			return null;
+		}
+		if(BXConstans.EFFECTDATE.equals(key)||BXConstans.APPROVEDATE.equals(key)){
+			key = MatterAppVO.APPROVETIME;
 		}
 		String[] tokens = StringUtil.split(key, ".");
 		if(tokens.length == 1){
@@ -109,7 +113,8 @@ public class MatterAppYsControlVO implements IFYControl,Serializable {
 
 	@Override
 	public String getFydwbm() {
-		return parentvo.getPk_org();
+		// 根据分摊情况修改，返回表体费用承担单位
+		return detailvo.getAssume_org();
 	}
 
 	@Override
@@ -208,5 +213,15 @@ public class MatterAppYsControlVO implements IFYControl,Serializable {
 
 	public void setPreItemJe(UFDouble[] preItemJe) {
 		this.preItemJe = preItemJe;
+	}
+	
+	@Override
+	public String getWorkFlowBillPk() {
+		return getPk();
+	}
+
+	@Override
+	public String getWorkFolwBillType() {
+		return getDjlxbm();
 	}
 }

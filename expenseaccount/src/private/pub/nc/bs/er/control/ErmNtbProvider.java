@@ -11,6 +11,7 @@ import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBusiSysExecDataProvider;
 import nc.itf.uap.IUAPQueryBS;
 import nc.jdbc.framework.processor.ArrayListProcessor;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
 import nc.vo.pub.BusinessException;
@@ -38,8 +39,7 @@ public class ErmNtbProvider implements IBusiSysExecDataProvider {
 				values[i] = getExecData(param[i]);
 			}
 		} catch (Exception e) {
-			Logger.error(e.getMessage(), e);
-			throw new BusinessException(e.getMessage());
+			ExceptionHandler.handleException(e);
 		}
 		return values;
 	}

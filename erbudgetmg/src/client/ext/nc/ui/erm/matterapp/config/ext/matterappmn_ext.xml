@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	
+	<bean id="InitDataListener" class="nc.ui.erm.matterapp.listener.ext.MatterAppLinkListenerExt">
+		<property name="pageModel" ref="paginationModel" />
+		<property name="listViewActions" ref="listViewActions" />
+		<property name="editorActions" ref="editorActions" />
+		<property name="editor" ref="billFormEditor" />
+		<property name="listView" ref="listView" />
+		<property name="model" ref="manageAppModel" />
+		<property name="datamanager" ref="modelDataManager" />
+		<property name="queryAction" ref="queryAction"/>
+	</bean>
+	
+	
+	<bean id="linkVoucherAction" class="nc.ui.erm.matterapp.actions.ext.LinkVoucherActionExt">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor" />
+	</bean>
+	
+	
+	<bean id="linkBudgetActionExt" class="nc.ui.erm.matterapp.actions.ext.LinkBudgetActionExt">
+		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean class="nc.ui.pubapp.plugin.action.ReplaceActionInfo">
+		  <property name="action" ref="linkBudgetActionExt"/>
+		  <property name="target" ref="linkBudgetAction"/>
+		  <property name="actionContainer"  ref="listViewActions"/>
+		  <property name="actionType" value="notedit"/>
+	</bean>
+	<bean class="nc.ui.pubapp.plugin.action.ReplaceActionInfo">
+		  <property name="action" ref="linkBudgetActionExt"/>
+		  <property name="target" ref="linkBudgetAction"/>
+		  <property name="actionContainer"  ref="editorActions"/>
+		  <property name="actionType" value="notedit"/>
+	</bean>
+	
+	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="listView" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="updateAction" />
+				<ref bean="deleteAction" />
+				<ref bean="copyAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="refreshAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="tradeTypeAction" />
+				<ref bean="commitGroupAction" />
+				<ref bean="auditGroupAction" />
+				<ref bean="closeBillAction" />
+				<ref bean="documentaction" />
+				<ref bean="nullAction" />
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="printListGroupAction" />
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+
+	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
+		<constructor-arg>
+			<ref bean="billFormEditor" />
+		</constructor-arg>
+		<property name="actions">
+			<list>
+				<ref bean="addAction" />
+				<ref bean="updateAction" />
+				<ref bean="deleteAction" />
+				<ref bean="copyAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="queryAction" />
+				<ref bean="refreshSingleAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="tradeTypeAction" />
+				<ref bean="commitGroupAction" />
+				<ref bean="auditGroupAction" />
+				<ref bean="closeBillAction" />
+				<ref bean="documentaction" />
+				<ref bean="nullAction" />
+				<ref bean="linkGroupAction" />
+				<ref bean="nullAction" />
+				<ref bean="printCardGroupAction" />
+			</list>
+		</property>
+		<property name="editActions">
+			<list>
+				<ref bean="saveAction" />
+				<ref bean="saveAndCommitAction" />
+				<ref bean="tempSaveAction" />
+
+				<ref bean="nullAction" />
+				<ref bean="cancelAction" />
+				<ref bean="nullAction" />
+				<ref bean="rapidShareAction" />
+				<ref bean="nullAction" />
+				<ref bean="documentaction"/>
+			</list>
+		</property>
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+		<!--卡控件-->
+	<bean id="billFormEditor" class="nc.ui.erm.matterapp.view.MatterAppMNBillForm"
+		init-method="initUI">
+		<property name="context" ref="context" />
+		<property name="model" ref="manageAppModel" />
+		<property name="nodekey" value="20110MTAMN" />
+		<property name="showTotalLine" value="true" />
+		<property name="templateContainer" ref="templateContainer" />
+		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
+		<property name="bodyActionMap">
+			<map>
+				<entry key="mtapp_detail">
+					<list>
+						<ref bean="addLineAction" />
+						<ref bean="deleteLineAction" />
+						<ref bean="insertLineAction" />
+						<ref bean="copyLineAction" />
+						<ref bean="pasteLineAction" />
+						<ref bean="pasteLineToTailAction" />
+						<ref bean="actionsBarSeparator"/>
+						<ref bean="displayaction" />
+					</list>
+				</entry>
+			</map>
+		</property>
+		<property name="saveAction" ref="saveAction" />
+		<property name="cancelAction" ref="cancelAction" />
+		<property name="closingListener" ref="ClosingListener" />
+		<property name="billCardBodyAfterEditlistener" ref="billCardBodyAfterEditlistener" />
+		<property name="billCardBodyBeforeEditlistener" ref="billCardBodyBeforeEditlistener" />
+		<property name="billCardHeadAfterEditlistener" ref="billCardHeadAfterEditlistener" />
+		<property name="billCardHeadBeforeEditlistener" ref="billCardHeadBeforeEditlistener" />
+	</bean>
+	
+	<bean id="OrgChangeEventHandler" class="nc.ui.erm.matterapp.listener.ext.MaOrgChangeEventHandler">
+		<property name="billForm" ref="billFormEditor"></property>
+		<property name="exceptionHandler" ref="exceptionHandler"></property>
+	</bean>
+	
+	<bean id="BillCardHeadAfterEditHandler" class=" nc.ui.erm.matterapp.listener.ext.BillCardHeadAfterEditlistenerExt">
+		<property name="billForm" ref="billFormEditor"></property>
+		<property name="exceptionHandler" ref="exceptionHandler"></property>
+	</bean>
+
+	
+	<!--
+		扩展事件监听，注册类###########################################################
+	-->
+	<bean id="AppEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
+		<property name="model" ref="manageAppModel" />
+		<property name="handlerMap">
+			<map>
+				<entry key="nc.ui.pubapp.uif2app.event.OrgChangedEvent">
+					<list>
+						<ref bean="OrgChangeEventHandler" />
+					</list>
+				</entry>
+				<entry key="nc.ui.pubapp.uif2app.event.card.CardHeadTailAfterEditEvent">
+					<list>
+						<ref bean="BillCardHeadAfterEditHandler"></ref>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>
+

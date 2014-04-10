@@ -210,6 +210,12 @@ public class ReportSqlUtils {
 			}
 			map.put(vo.getQry_objfieldname(), vo.getBd_mdid());
 		}
+		if (!map.containsKey("pk_proline")) {
+		    map.put("pk_proline", "029c4c8f-39bb-4208-acc0-c3f66632f328");//产品线
+		}
+		if (!map.containsKey("pk_brand")) {
+            map.put("pk_brand", "3ee53558-6398-4096-a91f-c7aa00e93701");//品牌
+        }
 		return map;
 	}
 	
@@ -229,6 +235,13 @@ public class ReportSqlUtils {
 			}
 			map.put(vo.getQry_objfieldname(), vo.getBd_mdid());
 		}
+
+        if (!map.containsKey("pk_proline")) {
+            map.put("pk_proline", "029c4c8f-39bb-4208-acc0-c3f66632f328");//产品线
+        }
+        if (!map.containsKey("pk_brand")) {
+            map.put("pk_brand", "3ee53558-6398-4096-a91f-c7aa00e93701");//品牌
+        }
 		return map;
 	}
 

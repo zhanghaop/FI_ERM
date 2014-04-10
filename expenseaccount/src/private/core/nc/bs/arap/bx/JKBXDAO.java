@@ -176,7 +176,7 @@ public class JKBXDAO extends BXSuperDAO implements ICheckStatusCallback {
 			bxvo.setCmpIdMap(idMap);
 
 		}
-		
+
 		new ContrastBO().saveContrast(contrasts, null);
 
 		addTsToBXVOs(parentList.toArray(new JKBXHeaderVO[parentList.size()]));

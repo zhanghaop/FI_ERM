@@ -8,18 +8,6 @@ import nc.vo.ml.NCLangRes4VoTransl;
  *
  */
 public abstract class ErmActionConst {
-	public static final String FAIL_MSG = nc.ui.ml.NCLangRes.getInstance().getStrByID("2011000_0", "02011000-0040")/*
-																													 * @
-																													 * res
-																													 * "失败！"
-																													 */;
-
-	public static final String SUCCESS_MSG = nc.ui.ml.NCLangRes.getInstance().getStrByID("2011000_0", "02011000-0039")/*
-																													 * @
-																													 * res
-																													 * "成功！"
-																													 */;
-
 	public static final String BILLTYE  = "BillType";//交易类型
 	public static String getBillTypeName() {
 		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0000")/*@res "交易类型"*/;

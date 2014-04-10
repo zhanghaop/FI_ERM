@@ -32,8 +32,21 @@ public class ERMInsertLineAction extends InsertLineAction {
 		String currentBodyTableCode = getBillCardPanel().getCurrentBodyTableCode();
 		boolean isNeedAvg = ErmForCShareUiUtil.isNeedBalanceJe(getBillCardPanel());
 
+        //拉单新增行自动带出表头费用申请单pk、来源单据类型、来源类型
+        Object pk_item = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject();
+        Object srcbilltype = getBillCardPanel().getHeadItem(JKBXHeaderVO.SRCBILLTYPE).getValueObject();
+        Object srctype = getBillCardPanel().getHeadItem(JKBXHeaderVO.SRCTYPE).getValueObject();
+		
 		super.doAction(e);
 		if (getBillCardPanel().getCurrentBodyTableCode().equals(BXConstans.CSHARE_PAGE) && selectedRow >= 0) {
+			
+			// 拉分摊的申请单后，分摊明细页签与申请单关联，否则拉不分摊的申请单则与申请单无关
+			Boolean ismashare = getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE) == null ? false
+					: (Boolean) getBillCardPanel().getHeadItem(JKBXHeaderVO.ISMASHARE).getValueObject();
+			if (ismashare) {
+				getBillCardPanel().setBodyValueAt(pk_item, selectedRow, BXBusItemVO.PK_ITEM);
+			}
+			
 			ErmForCShareUiUtil.afterAddOrInsertRowCsharePage(selectedRow, getBillCardPanel());// 带入默认值
 
 			if (getBillCardPanel().getBillModel(BXConstans.CSHARE_PAGE).getRowCount() != 0) {
@@ -50,6 +63,10 @@ public class ERMInsertLineAction extends InsertLineAction {
 				}
 			}
 		} else {
+	        getBillCardPanel().setBodyValueAt(pk_item, selectedRow , BXBusItemVO.PK_ITEM);
+	        getBillCardPanel().setBodyValueAt(srcbilltype, selectedRow , BXBusItemVO.SRCBILLTYPE);
+	        getBillCardPanel().setBodyValueAt(srctype, selectedRow , BXBusItemVO.SRCTYPE);
+			
 			// 将数据从表头联动到表体
 			List<String> keyList = new ArrayList<String>();
 			keyList.add(JKBXHeaderVO.SZXMID);
@@ -61,6 +78,8 @@ public class ERMInsertLineAction extends InsertLineAction {
 			keyList.add(JKBXHeaderVO.PK_PCORG_V);
 			keyList.add(JKBXHeaderVO.PK_CHECKELE);
 			keyList.add(JKBXHeaderVO.PK_RESACOSTCENTER);
+			keyList.add(JKBXHeaderVO.PK_PROLINE);
+			keyList.add(JKBXHeaderVO.PK_BRAND);
 			doCoresp(selectedRow, keyList, currentBodyTableCode);
 
 			getBillCardPanel().setBodyValueAt(UFDouble.ZERO_DBL, selectedRow, JKBXHeaderVO.YBJE);
@@ -111,15 +130,17 @@ public class ERMInsertLineAction extends InsertLineAction {
 		if (headItem != null) {
 			mtAppPk = headItem.getValueObject();
 		}
-
+		String tradeType = null;
 		if (getModel() instanceof ErmBillBillManageModel) {
 			ErmBillBillManageModel model = (ErmBillBillManageModel) getModel();
-			String tradeType = model.getSelectBillTypeCode();
+			tradeType = model.getSelectBillTypeCode();
 			if (BXConstans.BILLTYPECODE_RETURNBILL.equals(tradeType)) {
 				return false;
 			}
 		}
-		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT) && mtAppPk == null;
+		// 当前单据类型是否是报销单
+		boolean isBX = tradeType != null? tradeType.startsWith(BXConstans.BX_PREFIX):false;
+		return (getModel().getUiState() == UIState.ADD || getModel().getUiState() == UIState.EDIT) && (mtAppPk == null || isBX);
 	}
 
 	private boolean validateAddRow() throws BusinessException {

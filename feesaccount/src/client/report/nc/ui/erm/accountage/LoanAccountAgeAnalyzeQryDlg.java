@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.desktop.ui.WorkbenchEnvironment;
@@ -146,16 +147,14 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		financialOrgRefV.setPK(pk_org);
 		financialOrgRefV.addValueChangedListener(new OrgChangedListener());
 		financialOrgRefV.setMultiSelectedEnabled(true);
-		if (getAllPermissionOrgs() != null && getAllPermissionOrgs().length != 0) {
-			if(financialOrgRefV.getRefModel()!=null){
-				financialOrgRefV.getRefModel().setFilterPks(getAllPermissionOrgs(),IFilterStrategy.INSECTION);
-				financialOrgRefV.getRefModel().setUseDataPower(false);
-			}
-		}
+		if(financialOrgRefV.getRefModel()!=null){
+            financialOrgRefV.getRefModel().setFilterPks(getAllPermissionOrgs(),IFilterStrategy.INSECTION);
+            financialOrgRefV.getRefModel().setUseDataPower(false);
+        }
 		financialOrgRefV.setDisabledDataButtonShow(true);
-
-		normalCondCompList.add(financialOrgRefV);
-		addComponent(FINANCIAL_ORG_REF, financialOrgRefV);
+		
+        normalCondCompList.add(financialOrgRefV);
+        addComponent(FINANCIAL_ORG_REF, financialOrgRefV);
 
 		// 设置查询对象可参照组织
 		if (pk_org != null) {
@@ -177,7 +176,16 @@ public class LoanAccountAgeAnalyzeQryDlg extends ErmAbstractReportBaseDlg {
 		return normalCondCompList;
 	}
 
-	/**
+    @Override
+    protected List<Integer> getPanelHeightList() {
+	    List<Integer> list = new ArrayList<Integer>(3);
+        list.add(Integer.valueOf(325));
+        list.add(Integer.valueOf(145));
+        list.add(Integer.valueOf(140));
+        return list;
+    }
+
+    /**
 	 * 覆写父类方法，执行必要的业务校验
 	 */
 	@Override

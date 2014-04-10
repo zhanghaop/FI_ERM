@@ -471,8 +471,7 @@ public class ErmNewInstallAdjust extends AbstractUpdateAccount {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void updateBillAction() throws BusinessException {
-		// v63到v631只增加委托办理动作，先删，后增，删除时候应该删除不到数据。
+	private void updateBillAction() throws BusinessException {
 		String[] delActionType = new String[]{"TRANSFERFTS"};
 		String[] addActionType = new String[]{"TRANSFERFTS"};
 		String sql = "select distinct pk_billtypecode from bd_billtype where systemcode='erm' and ncbrcode='bx' and istransaction='Y'";
@@ -497,7 +496,7 @@ public class ErmNewInstallAdjust extends AbstractUpdateAccount {
 			workflowUpgrade.updateBillactionByGlobal(billorTranstype, delActionType, addActionType);
 		}
 	}
-
+	
 	private void deleteBusinessPlugin() throws DAOException {
 	    String sqlER1 = "delete from PUB_EVENTLISTENER where IMPLCLASSNAME = 'nc.vo.erm.closeacc.ErmGLCloseAccListener' and owner = '2011'";
 
@@ -568,7 +567,7 @@ public class ErmNewInstallAdjust extends AbstractUpdateAccount {
 
 		@SuppressWarnings("unchecked")
 		List<JKBXVO> vos = (List<JKBXVO>) MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(
-				BXVO.class, "1=1", false);
+				BXVO.class, "dr = 0", false);
 		ExpenseAccountVO[] expaccvo = ErmBillCostConver.getExpAccVOS(vos.toArray(new JKBXVO[0]));
 		NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).insertVOs(expaccvo);
 	}
@@ -878,7 +877,8 @@ public class ErmNewInstallAdjust extends AbstractUpdateAccount {
 				+ " and pub_systemplate.templateid = pub_systemplate_base.templateid "
 				+ " and pub_systemplate.moduleid = '2011')";
 
-		Collection<SystemplateVO> templateVos = getBaseDAO().retrieveByClause(SystemplateVO.class, selectSql);
+		@SuppressWarnings("unchecked")
+        Collection<SystemplateVO> templateVos = getBaseDAO().retrieveByClause(SystemplateVO.class, selectSql);
 
 		if (templateVos != null) {
 			for (SystemplateVO vo : templateVos) {
@@ -931,12 +931,16 @@ public class ErmNewInstallAdjust extends AbstractUpdateAccount {
 
 		List<DjLXVO> result = new ArrayList<DjLXVO>();
 		// 增加对应集团的交易类型
-		for (DjLXVO sysvo : sourcevos) {
-			for (int i = 0; i < pk_groups.length; i++) {
-				DjLXVO djlx = (DjLXVO) sysvo.clone();
-				djlx.setPk_group(pk_groups[i]);
-				djlx.setPrimaryKey(null);
-				result.add(djlx);
+		for (int i = 0; i < pk_groups.length; i++) {
+			//63升级程序没有处理，这里加入
+			boolean isErmInstall = ErUtil.isProductInstalled(pk_groups[i], BXConstans.ERM_MODULEID);
+			if(isErmInstall){
+				for (DjLXVO sysvo : sourcevos) {
+					DjLXVO djlx = (DjLXVO) sysvo.clone();
+					djlx.setPk_group(pk_groups[i]);
+					djlx.setPrimaryKey(null);
+					result.add(djlx);
+				}
 			}
 		}
 

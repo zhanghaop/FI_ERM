@@ -5,7 +5,7 @@ import java.util.Collection;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountQueryService;
 import nc.vo.erm.expenseaccount.ExpenseAccountVO;
-import nc.vo.fip.pub.SqlTools;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.pub.BusinessException;
 
 /**
@@ -24,12 +24,12 @@ public class ErmExpenseaccountQueryServiceImpl implements IErmExpenseaccountQuer
 
 	@Override
 	public ExpenseAccountVO[] queryByPKs(String[] pks) throws BusinessException {
-		return queryBySqlWhere(SqlTools.getInStr(ExpenseAccountVO.PK_EXPENSEACCOUNT, pks, false));
+		return queryBySqlWhere(SqlUtils.getInStr(ExpenseAccountVO.PK_EXPENSEACCOUNT, pks, false));
 	}
 
 	@Override
 	public ExpenseAccountVO[] queryBySrcID(String[] srcIDS) throws BusinessException {
-		return queryBySqlWhere(SqlTools.getInStr(ExpenseAccountVO.SRC_ID, srcIDS, false));
+		return queryBySqlWhere(SqlUtils.getInStr(ExpenseAccountVO.SRC_ID, srcIDS, false));
 	}
 
 	@SuppressWarnings("unchecked")

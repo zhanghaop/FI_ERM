@@ -32,6 +32,10 @@
 	<bean id="modelDataManager" class="nc.ui.erm.closeacc.model.CloseAccDataManager">
 		<property name="model" ref="manageAppModel" />
 		<property name="rightView" ref="rightView" />
+		<property name="listView"  ref="listView"/>
+		<property name="toporgpane" ref="toporgpane"></property>
+		<property name="topperiodpane" ref="topperiodpane"></property>
+		<property name="toppane" ref="toppane"></property>
 		<property name="exceptionHandler" ref="execeptionHandler" />
 	</bean>
 
@@ -40,6 +44,10 @@
 		init-method="initUI">
 		<property name="toporgpane" ref="toporgpane"></property>
 		<property name="topperiodpane" ref="topperiodpane"></property>
+		<property name="modelmanager" ref="modelDataManager"></property>
+				<property name="model">
+			<ref bean="manageAppModel" />
+		</property>
 	</bean>
 
 	<bean id="toporgpane" class="nc.ui.erm.closeacc.view.CloseAccFinOrgPanel"
@@ -61,8 +69,7 @@
 	<bean id="topperiodpane" class="nc.ui.erm.closeacc.view.CloseAccPeriodPanel"
 		init-method="initUI">
 		<property name="modelmanager" ref="modelDataManager"></property>
-		<property name="model">
-			<ref bean="manageAppModel" />
+		<property name="model"><ref bean="manageAppModel" />
 		</property>
 	</bean>
 
@@ -71,8 +78,10 @@
 		init-method="initUI">
 		<property name="model" ref="manageAppModel" />
 		<property name="nodekey" value="201110"></property>
-
+		<property name="rightView" ref="rightView"/>
+		<property name="multiSelectionMode" value="1"/>
 	</bean>
+	
 	<!--提示信息面板  -->
 	<bean id="rightView" class="nc.ui.erm.closeacc.view.CloseaccDesInfoPanel"
 		init-method="initUI">
@@ -85,7 +94,7 @@
 	</bean>
 
 	<bean id="nullAction" class="nc.funcnode.ui.action.SeparatorAction" />
-
+	<!-- 
 	<bean id="closeValidationService" class="nc.bs.uif2.validation.DefaultValidationService">
 		<property name="validators">
 			<list>
@@ -93,11 +102,13 @@
 			</list>
 		</property>
 	</bean>
-
+ 	-->
+ 	
 	<bean id="closeAction" class="nc.ui.erm.closeacc.action.CloseAction">
 		<property name="model" ref="manageAppModel" />
 		<property name="dataManager" ref="modelDataManager" />
 		<property name="listView" ref="listView" />
+		<property name="toppane" ref="toppane"></property>
 		<property name="exceptionHandler">
 			<bean class="nc.ui.uif2.DefaultExceptionHanler">
 				<property name="context" ref="context"></property>
@@ -110,13 +121,13 @@
                 </property>
 			</bean>
 		</property>
-		<property name="validationService" ref="closeValidationService" />
 	</bean>
 
 	<bean id="uncloseAction" class="nc.ui.erm.closeacc.action.UnCloseAction">
 		<property name="listView" ref="listView" />
 		<property name="model" ref="manageAppModel" />
 		<property name="dataManager" ref="modelDataManager" />
+		<property name="toppane" ref="toppane"></property>
 		<property name="exceptionHandler">
 			<bean class="nc.ui.uif2.DefaultExceptionHanler">
 				<property name="context" ref="context"></property>
@@ -129,9 +140,9 @@
                 </property>
 			</bean>
 		</property>
-		<property name="validationService" ref="uncloseValidationService" />
 	</bean>
 
+	<!-- 
 	<bean id="uncloseValidationService" class="nc.bs.uif2.validation.DefaultValidationService">
 		<property name="validators">
 			<list>
@@ -139,32 +150,34 @@
 			</list>
 		</property>
 	</bean>
-
+	 -->
+	
 	<bean id="container" class="nc.ui.uif2.TangramContainer"
 		init-method="initUI">
 		<property name="tangramLayoutRoot">
-			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
-				<property name="up">
-					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-						<property name="component" ref="toppane"></property>
-					</bean>
-				</property>
-				<property name="down">
-					<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
-						<property name="left">
+			<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+				<property name="left">
+					<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+						<property name="up">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="component" ref="toppane"></property>
+							</bean>
+						</property>
+						<property name="down">
 							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
 								<property name="component" ref="listView"></property>
 							</bean>
 						</property>
-						<property name="right">
-							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-								<property name="component" ref="rightView"></property>
-							</bean>
-						</property>
-						<property name="dividerLocation" value="0.7"></property>
+						<property name="showMode" value="NoDivider"></property>
+						<property name="dividerLocation" value="40"></property>
 					</bean>
 				</property>
-				<property name="dividerLocation" value="0.06"></property>
+				<property name="right">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="rightView"></property>
+					</bean>
+				</property>
+				<property name="dividerLocation" value="0.78f"></property>
 			</bean>
 		</property>
 		<property name="actions">

@@ -151,11 +151,7 @@ public class BXUtil {
 
 			tempBusitemVo.setYbje(headVo.getYbje());
 			tempBusitemVo.setAmount(headVo.getYbje());
-			tempBusitemVo.setPk_busitem(headVo.getPk_item());
-			if (jkbxvo.getMt_aggvos() != null && jkbxvo.getMt_aggvos().length > 0) {
-				tempBusitemVo.setSrcbilltype(jkbxvo.getMt_aggvos()[0].getParentVO().getPk_tradetype());
-				tempBusitemVo.setSrctype(jkbxvo.getMt_aggvos()[0].getParentVO().getPk_billtype());
-			}
+
 			if (headVo instanceof JKHeaderVO) {
 				tempBusitemVo.setTablecode(BXConstans.BUS_PAGE_JK);
 			} else {

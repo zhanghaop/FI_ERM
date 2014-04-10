@@ -2,6 +2,7 @@ package nc.impl.erm.matterapp;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,21 +11,27 @@ import java.util.Map;
 import java.util.Set;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtils;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.erm.matterapp.common.MatterAppQueryCondition;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
+import nc.itf.erm.extendconfig.ErmExtendconfigInterfaceCenter;
+import nc.itf.erm.mactrlschema.IErmMappCtrlBillQuery;
 import nc.itf.erm.matterapp.IErmMatterAppBillQueryPrivate;
+import nc.itf.erm.prv.IErmBsCommonService;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ResultSetProcessor;
+import nc.md.model.MetaDataException;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.pubitf.rbac.IUserPubService;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.er.util.SqlUtils_Pub;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
@@ -33,6 +40,8 @@ import nc.vo.erm.util.VOUtils;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.uap.rbac.constant.IRoleConst;
+import nc.vo.uap.rbac.role.RoleVO;
 
 public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 		IErmMatterAppBillQueryPrivate {
@@ -52,6 +61,12 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 		}
 		StringBuffer whereSql = new StringBuffer(" 1 = 1 ");
 		
+		//功能权限
+		Map<String, String> map = NCLocator.getInstance().lookup(IErmBsCommonService.class)
+				.getPermissonOrgMapCall(condVo.getPk_user(), condVo.getNodeCode(), condVo.getPk_group());
+		String[] permissionOrgs = map.values().toArray(new String[0]);
+		whereSql.append(" and " + nc.vo.fi.pub.SqlUtils.getInStr(Mtapptable_alis + MatterAppVO.PK_ORG, permissionOrgs, true));
+
 		if(condVo.getPk_group() != null){
 			whereSql.append(" and ").append(Mtapptable_alis+MatterAppVO.PK_GROUP + "='" + condVo.getPk_group() + "'");
 		}
@@ -111,12 +126,13 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 
 	@Override
 	public AggMatterAppVO queryBillByPK(String pk) throws BusinessException {
-//		return (AggMatterAppVO) getService().queryBillOfVOByPK(AggMatterAppVO.class, pk, false);
+		AggMatterAppVO[] aggVos = queryBillByPKs(new String[]{pk},false);
 		
-		@SuppressWarnings("rawtypes")
-		Collection res = getService().queryBillOfVOByCond(AggMatterAppVO.class, Mtapptable_alis+MatterAppVO.PK_MTAPP_BILL+" = '"+pk+"'", false);
-		return (AggMatterAppVO) (res == null||res.isEmpty()?null:res.iterator().next());
+		if(aggVos != null && aggVos.length > 0){
+			return aggVos[0];
+		}
 		
+		return null;
 	}
 
 	public AggMatterAppVO[] queryBillByPKs(String[] pks) throws BusinessException {
@@ -162,24 +178,34 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 			fixedCon += " )";
 		}
 		fixedCon += " and effectstatus=1 and close_status=2 ";
-		fixedCon += " and dr = 0  order by rowno ";//增加排序，是为和单据录入节点顺序保持一致
+		fixedCon += " and dr = 0  order by rowno ";
 		String whereSql = StringUtil.isEmpty(condition) ? fixedCon : condition + fixedCon;
 
+		return queryBillFromMtappByWhere(djlxbm, whereSql);
+	}
+
+	private AggMatterAppVO[] queryBillFromMtappByWhere(String djlxbm,
+			String whereSql) throws MetaDataException, BusinessException {
 		// 查询符合条件的费用申请单子表,并得到费用申请单主表为key的map。
 		@SuppressWarnings("unchecked")
-		Collection<MtAppDetailVO> detailList = getService().queryBillOfVOByCond(MtAppDetailVO.class, whereSql, false);
+		Collection<MtAppDetailVO> detailList = getService().queryBillOfVOByCond(MtAppDetailVO.class, whereSql, true);
 		if(detailList.isEmpty()){
 			return null;
 		}
 		// 修改申请单明细中的余额(仅用于显示)
+		boolean isJkDjlx = djlxbm.startsWith(BXConstans.JK_PREFIX);
+		boolean isBxDjlx = djlxbm.startsWith(BXConstans.BX_PREFIX);
+
 		for(MtAppDetailVO detailvo : detailList){
 			UFDouble pf = UFDouble.ZERO_DBL;
-			if (djlxbm.startsWith(BXConstans.JK_PREFIX)) {
+			if (isJkDjlx) {
 				// 对借款单拉单：余额=MA总金额-总执行（JK+BX）-总预占（JK+BX）
 				pf = getPfByMtappdetail(detailvo.getPk_mtapp_detail(), new String[]{BXConstans.BX_DJDL,BXConstans.JK_DJDL});
-			} else if (djlxbm.startsWith(BXConstans.BX_PREFIX)) {
-				// 对报销单拉单：余额=MA总金额-BX总执行-BX总预占
-				pf = getPfByMtappdetail(detailvo.getPk_mtapp_detail(), new String[]{BXConstans.BX_DJDL});
+			} else {
+				if (isBxDjlx) {
+					// 对报销单拉单：余额=MA总金额-BX总执行-BX总预占
+					pf = getPfByMtappdetail(detailvo.getPk_mtapp_detail(), new String[]{BXConstans.BX_DJDL});
+				}
 			}
 			detailvo.setUsable_amout(detailvo.getOrig_amount().sub(pf));
 		}
@@ -203,6 +229,7 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 		}
 		return results;
 	}
+
 	/**
 	 * 
 	 * @param pk_mtapp_detail
@@ -219,7 +246,7 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 			sqlBuf.append(pk_mtapp_detail);
 			sqlBuf.append("' and  ");
 			sqlBuf.append(insql);
-			sqlBuf.append("group by pk_mtapp_detail");
+//			sqlBuf.append("group by pk_mtapp_detail");
 			return  (UFDouble)new BaseDAO().executeQuery(sqlBuf.toString(), getResultSetProcessor());
 		} catch (SQLException e) {
 			ExceptionHandler.handleException(e);
@@ -257,13 +284,24 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 	public AggMatterAppVO[] queryBillByPKs(String[] pks, boolean lazyLoad) throws BusinessException {
 		Collection<AggMatterAppVO> resultList = null;
 		try {
-			String whereSql = SqlUtils.getInStr(Mtapptable_alis+MatterAppVO.PK_MTAPP_BILL, pks, false);
-			resultList = getService().queryBillOfVOByCond(AggMatterAppVO.class, whereSql, lazyLoad);
+			String whereSql = SqlUtils.getInStr(Mtapptable_alis + MatterAppVO.PK_MTAPP_BILL, pks, false);
+
+			whereSql = whereSql + " order by " + Mtapptable_alis + MatterAppVO.BILLDATE + " desc, " + Mtapptable_alis
+					+ MatterAppVO.BILLNO + " desc ";
+
+			resultList = getService().queryBillOfVOByCondWithOrder(AggMatterAppVO.class, whereSql, false, lazyLoad,
+					new String[] { "mtapp_detail.rowno" });//表体排序，元数据编码（表体） + 属性名
 		} catch (SQLException e) {
 			Logger.error("根据pk批量查询费用申请单失败", e);
 			ExceptionHandler.handleException(e);
 		}
-		return resultList.toArray(new AggMatterAppVO[] {});
+		AggMatterAppVO[] aggvos = resultList.toArray(new AggMatterAppVO[0]);
+		if(aggvos.length > 0){
+			// 补充个扩展页签信息
+			String pk_group = aggvos[0].getParentVO().getPk_group();
+			ErmExtendconfigInterfaceCenter.fillExtendTabVOs(pk_group,MatterAppVO.PK_TRADETYPE,aggvos);
+		}
+		return aggvos;
 	}
 
 	@Override
@@ -271,7 +309,7 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 		
 		try {
 			String sql = SqlUtils.getInStr(Mtapptable_alis+MatterAppVO.PK_MTAPP_BILL, pks);
-			sql += " order by "+Mtapptable_alis+"billdate desc";
+			sql += " order by " + Mtapptable_alis+MatterAppVO.BILLDATE + " desc, " + Mtapptable_alis+MatterAppVO.BILLNO + " desc ";
 			@SuppressWarnings("unchecked")
 			Collection<MatterAppVO> result = new BaseDAO().retrieveByClause(MatterAppVO.class, sql);
 			if (result == null || result.isEmpty()) {
@@ -300,4 +338,116 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery,
 		}
 		return null;
 	}
+
+	@Override
+	public AggMatterAppVO[] queryBillFromMtappByPsn(String condition, String djlxbm, String pk_org, String pk_psndoc, String rolerSql)
+			throws BusinessException {
+		String fixedCon = "";
+		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+		if (djlxbm.startsWith(BXConstans.JK_PREFIX)) {
+			// 借款单拉单条件：总额 > 总的执行数 + 总的预占数 （Total > totalExe + totalPre）
+			fixedCon += " and orig_amount > isnull(( SELECT sum(p.exe_amount+p.pre_amount) FROM er_mtapp_billpf p WHERE p.pk_mtapp_detail=er_mtapp_detail.pk_mtapp_detail GROUP BY p.pk_mtapp_detail ),0 ) ";
+		} else if (djlxbm.startsWith(BXConstans.BX_PREFIX)) {
+			// 报销单拉单条件：总额>报销的执行数+报销的预占数 （Total > bxExe + bxPre）
+			fixedCon += " and orig_amount > isnull(( SELECT sum(p.exe_amount+p.pre_amount) FROM er_mtapp_billpf p WHERE p.pk_mtapp_detail=er_mtapp_detail.pk_mtapp_detail and p.pk_djdl='bx' GROUP BY p.pk_mtapp_detail ),0 ) ";
+		}
+		
+		if (!StringUtil.isEmpty(pk_psndoc)) {
+			fixedCon += " and " + MatterAppVO.BILLMAKER + " in  " + getAgentPsnDocSQL(pk_psndoc, rolerSql) ;
+		}
+
+		//仅能拉单报销类型的申请单（交易类型中的申请类型）
+		fixedCon += " and pk_tradetype in (select djlxbm from er_djlx where djdl='ma'  and matype is null or matype in( 0, 1) and pk_group='"
+					+ pk_group + "')";
+
+		fixedCon += " and effectstatus=1 and close_status=2 ";
+		fixedCon += " and dr = 0  order by rowno";
+		String whereSql = StringUtil.isEmpty(condition) ? fixedCon : condition + fixedCon;
+		AggMatterAppVO[] aggvos = queryBillFromMtappByWhere(djlxbm, whereSql);
+		
+		return filtMatterBillByCtrlSchema(aggvos, djlxbm);
+	}
+	
+	private String getAgentPsnDocSQL(String pk_psndoc, String rolersql) throws BusinessException {
+		String sql = "";
+
+		if (rolersql == null || rolersql.length() == 0) {
+			// 前台传过来的rolersql为空时，后台再重新查一遍
+			rolersql = getRoleInStrByPsndoc(IRoleConst.BUSINESS_TYPE);
+		}
+		String dept = null;
+		if (pk_psndoc != null && pk_psndoc.length() != 0) {
+			dept = BXBsUtil.getPsnPk_dept(pk_psndoc);
+		}
+		sql += " (select distinct bd_psndoc.pk_psndoc from bd_psndoc,bd_psnjob where bd_psndoc.pk_psndoc=bd_psnjob.pk_psndoc and " +
+				"(bd_psndoc.pk_psndoc='" + pk_psndoc+ "' "
+				+ " or ( bd_psndoc.pk_psndoc in(select pk_user from er_indauthorize where type=0 and keyword = 'busiuser' and "
+				+ rolersql
+				+ ") ) "
+				+ " or ( bd_psnjob.pk_dept in(select pk_user from er_indauthorize where type=0 and keyword = 'pk_deptdoc' and "
+				+ rolersql
+				+ ") )"
+				+ " or ((select count(pk_user) from er_indauthorize where type=0 and keyword = 'isall' and pk_user like 'true%' and "
+				+ rolersql
+				+ ") > 0) "
+				+ " or ((select count(pk_user) from er_indauthorize where type=0 and keyword = 'issamedept' and pk_user like 'true%' and "
+				+ rolersql + ") > 0 and bd_psnjob.pk_dept ='" + dept + "' ) ))";
+		return sql;
+	}
+	
+	/**
+	 * 后台返回当前集团下登录用户的角色InSql
+	 * @param type if type==null 查询所有角色
+	 * @return
+	 */
+	private static String getRoleInStrByPsndoc(Integer type) {
+		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+		StringBuffer condition = new StringBuffer();
+		condition.append(" isnull(dr,0)=0 ");
+		condition.append(" and pk_group='"+pk_group+"'");
+		if(type!=null){
+			condition.append("and role_type="+type.intValue());
+		}
+		condition.append(" and exists (select a.pk_role  from sm_user_role a where a.cuserid = '"+InvocationInfoProxy.getInstance().getUserId()+"' and sm_role.pk_role = a.pk_role)");
+		List<String> pk_roleList = new ArrayList<String>();
+		try {
+			RoleVO[] vos =NCLocator.getInstance().lookup(nc.itf.uap.rbac.IRoleManageQuery.class).queryRoleByWhereClause(condition.toString());
+			if(vos!=null&&vos.length>0){
+				for(RoleVO vo : vos){
+					pk_roleList.add(vo.getPk_role());
+				}
+			}
+			return SqlUtils_Pub.getInStr("pk_roler",pk_roleList.toArray(new String[0]));
+		} catch (BusinessException e) {
+			Logger.error(e.getMessage());
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private AggMatterAppVO[] filtMatterBillByCtrlSchema(AggMatterAppVO[] aggvos, String djlxbm)
+			throws BusinessException {
+		if (aggvos == null || aggvos.length < 0 || djlxbm == null || djlxbm.trim() == null) {
+			return null;
+		}
+		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+		List<String[]> paramList = new ArrayList<String[]>();
+		for (AggMatterAppVO aggvo : aggvos) {
+			paramList.add(new String[] { aggvo.getParentVO().getPk_org(), aggvo.getParentVO().getPk_tradetype() });
+		}
+		Map[] ctrlmap = NCLocator.getInstance().lookup(IErmMappCtrlBillQuery.class).queryCtrlShema(paramList, pk_group);
+		Map<String, List<String>> key2CtrlBillVosMap = ctrlmap[0];
+		List<AggMatterAppVO> result = new ArrayList<AggMatterAppVO>();
+		if (key2CtrlBillVosMap != null) {
+			for (AggMatterAppVO aggvo : aggvos) {
+				List<String> srcTradetype = key2CtrlBillVosMap.get(aggvo.getParentVO().getPk_org()
+						+ aggvo.getParentVO().getPk_tradetype());
+				if (srcTradetype != null && srcTradetype.contains(djlxbm)) {
+					result.add(aggvo);
+				}
+			}
+		}
+		return result == null ? null : result.toArray(new AggMatterAppVO[result.size()]);
+	}
+
 }

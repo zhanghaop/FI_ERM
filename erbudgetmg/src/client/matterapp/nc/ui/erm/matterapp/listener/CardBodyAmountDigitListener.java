@@ -54,7 +54,7 @@ public class CardBodyAmountDigitListener implements IBillModelDecimalListener2 {
 	 * 该值不能随便返回，如果返回的值对应的字段没有值，则不会设置该字段的精度
 	 */
 	public String getSource() {
-		return MtAppDetailVO.PK_ORG;
+		return MtAppDetailVO.ASSUME_ORG;
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class CardBodyAmountDigitListener implements IBillModelDecimalListener2 {
 			if (RATE_TYPE_YB.equals(rateType)) {
 				return Currency.getCurrDigit(getHeadItemStrValue(MatterAppVO.PK_CURRTYPE));
 			}else if (RATE_TYPE_LOCAL.equals(rateType)) {
-				return Currency.getCurrDigit(Currency.getOrgLocalCurrPK(getHeadItemStrValue(MatterAppVO.PK_ORG)));
+				return Currency.getCurrDigit(Currency.getOrgLocalCurrPK((String)okValue));
 			} else if (RATE_TYPE_GROUP.equals(rateType)) {
 				return Currency.getCurrDigit(Currency.getGroupCurrpk(MatterAppUiUtil.getPK_group()));// 集团本币精度
 			} else if (RATE_TYPE_GLOBAL.equals(rateType)) {

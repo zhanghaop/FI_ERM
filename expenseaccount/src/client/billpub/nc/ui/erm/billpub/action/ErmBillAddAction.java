@@ -6,8 +6,11 @@ import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.erm.util.TransTypeUtil;
 import nc.ui.uif2.actions.AddAction;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFBoolean;
 
 public class ErmBillAddAction extends AddAction {
 
@@ -52,6 +55,26 @@ public class ErmBillAddAction extends AddAction {
 			 */
 			);
 		}
+		
+		//检查是否必须申请：不是期初和常用单据时才校验
+		String nodeCode = getModel().getContext().getNodeCode();
+		if(!nodeCode.equals(BXConstans.BXLR_QCCODE)&&  
+		        !nodeCode.equals(BXConstans.BXINIT_NODECODE_G) 
+		        && !nodeCode.equals(BXConstans.BXINIT_NODECODE_U)&& 
+		        !nodeCode.equals(BXConstans.BXRB_CODE)){
+			UFBoolean isMactrl = ((ErmBillBillManageModel) getModel()).getCurrentDjlx(
+					selectBillTypeCode).getIs_mactrl();
+			if(isMactrl!=null && isMactrl.booleanValue()){
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011", "UPP2011-000925")/**
+						 * @res*
+						 *"该交易类型要求必须先申请，请参照申请单填制单据。"
+						 */
+				);
+			}
+		}
+		
+		
 	}
 	
 	/**

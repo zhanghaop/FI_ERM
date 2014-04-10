@@ -42,13 +42,14 @@ import nc.vo.bd.period2.AccperiodmonthVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.expamortize.ExpamtinfoVO;
-import nc.vo.fipub.report.CustomizeReportQryCondition;
+import nc.vo.erm.pub.ErmBaseQueryCondition;
 import nc.vo.fipub.report.FipubBaseQueryCondition;
+import nc.vo.fipub.report.ReportQueryCondVO;
 import nc.vo.jcom.lang.StringUtil;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.query.IQueryConstants;
+import nc.vo.pub.query.QueryTempletTotalVO;
 import nc.vo.querytemplate.TemplateInfo;
 import nc.vo.querytemplate.queryscheme.QuerySchemeObject;
 import nc.vo.querytemplate.queryscheme.QuerySchemeVO;
@@ -74,7 +75,16 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
 	private final Map<String, String[]> varMap = new HashMap<String, String[]>();
 	private List<ReportVariable> vars;
 	private IReportQueryCond reportQueryCond;
+	
 	@Override
+    protected IQueryCondition createQueryCondition(IContext context) {
+	    IReportQueryCond reportQueryCond = getReportQueryCond();
+        BaseQueryCondition condition = new ErmBaseQueryCondition(true, reportQueryCond);
+        condition.setUserObject(reportQueryCond);
+        return condition;
+    }
+	
+    @Override
     protected IQueryCondition showQueryDialog(Container parent,
 			IContext context, AbsAnaReportModel reportModel,
 			TemplateInfo tempinfo, IQueryCondition oldCondition) {
@@ -116,19 +126,42 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
             obj = queryScheme.get(IPubReportConstants.QRY_COND_VO);
         }
 
+        IQueryCondition condition = null;
         if (obj != null && obj instanceof FipubBaseQueryCondition) {
             FipubBaseQueryCondition repQryCon = (FipubBaseQueryCondition)obj;
             fillDateBeginEnd(repQryCon);
+        } else if (obj == null) {
+            getQryDlg().checkCondition();
+            condition = createQueryCondition(context);
+            fillDateBeginEnd((FipubBaseQueryCondition)condition);
+            
+        } else {
+          condition = super.doQueryByScheme(parent, context, reportModel, queryScheme);
         }
-        
-		IQueryCondition condition = super.doQueryByScheme(parent, context, reportModel, queryScheme);
-		reportQueryCond = (IReportQueryCond) ((BaseQueryCondition)condition).getUserObject();
+        if (condition != null) {
+            reportQueryCond = (IReportQueryCond) ((BaseQueryCondition)condition).getUserObject();
+        }
 		try {
 			getQuerySchemeMap((QueryScheme) queryScheme);
 		} catch (BusinessException e) {
 			ExceptionHandler.consume(e);
 		}
 		setReportHeadVas(context, reportModel);
+		
+		ReportVariables varPool = ReportVariables.getInstance(reportModel.getFormatModel());
+        ReportVariable var = varPool.getVariable("accperiod");
+        AccountCalendar calendar = AccountCalendar.getInstanceByPk_org(getValPKString("pk_org"));
+        UFDate curDate = WorkbenchEnvironment.getInstance().getBusiDate();
+        AccperiodmonthVO accperiodVO = null;
+        try {
+            calendar.setDate(curDate);
+            accperiodVO = calendar.getMonthVO();
+        } catch (InvalidAccperiodExcetion e) {
+            Logger.error(e.getMessage(), e);
+        }
+        if (accperiodVO != null) {
+            var.setValue(accperiodVO.getYearmth());
+        }
 		return condition;
 	}
 
@@ -137,15 +170,15 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
         if (repQryCon == null) {
             return null;
         }
-        
-        CustomizeReportQryCondition con = (CustomizeReportQryCondition)repQryCon.getQryCondVO();
-        String where = con.getWhereSql();
+        IReportQueryCond reportQueryCond = repQryCon.getQryCondVO();
+//        CustomizeReportQryCondition con = (CustomizeReportQryCondition)repQryCon.getQryCondVO();
+        String where = reportQueryCond.getWhereSql();
         int nPos = where.indexOf("pk_org");
         String pkOrg = where.substring(nPos + 10, nPos + 30);
         AccountCalendar calendar = StringUtil.isEmpty(pkOrg) ? 
                 AccountCalendar.getInstance() : 
                     AccountCalendar.getInstanceByPk_org(pkOrg);
-        Map data = (Map)con.getUserObject();
+        Map data = (Map)reportQueryCond.getUserObject();
         UFDate curDate = WorkbenchEnvironment.getInstance().getBusiDate();
         try {
             calendar.setDate(curDate);
@@ -161,7 +194,16 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
 	 */
     @Override
 	protected IReportQueryCond getReportQueryCond() {
-		reportQueryCond = super.getReportQueryCond();
+        reportQueryCond = new ReportQueryCondVO();
+        try {
+            getQryDlg().getQryCondEditor().setPowerEnable(userDataPermission());
+            String whereSql = getQryDlg().getQryCondEditor().getQueryScheme()
+                    .getTableListFromWhereSQL().getWhere();
+            reportQueryCond.setWhereSql(whereSql);
+        } finally {
+            getQryDlg().getQryCondEditor().setPowerEnable(true);
+        }
+        
 		String[] accperiods = getFieldValuesByCode("accperiod");
 		String[] period_start = getFieldValuesByCode("start_period");
         String[] period_end = getFieldValuesByCode("end_period");
@@ -333,7 +375,14 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
 		}
 		return null;
 	}
-
+	
+	public String getValPKString(String key){
+        if(varMap.get(key)!=null){
+            return ((String[])varMap.get(key))[1];
+        }
+        return null;
+    }
+	
 	private void initDlgListener(final IQueryConditionDLG dlg, final IContext context) {
 
 		// 查询条件控件处理，只修改一次
@@ -387,7 +436,7 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
 		                UIRefPane refPane = (UIRefPane) compent;
 		                CostCenterTreeRefModel model = (CostCenterTreeRefModel)refPane.getRefModel();
 		                model.setCurrentOrgCreated(false);
-		                model.setOrgType("pk_financeorg");
+		                model.setOrgType("pk_profitcenter");
 		            } else if ("start_period".equals(fieldCode) || 
 		                    "end_period".equals(fieldCode)) {
                         UIRefPane refPane = (UIRefPane) ERMQueryActionHelper
@@ -395,7 +444,7 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
                         UIRefPane pk_orgRefPane = BXQryTplUtil.getRefPaneByFieldCode((QueryConditionDLG)dlg, ExpamtinfoVO.PK_ORG);
                         if (pk_orgRefPane != null) {
                             String[] pkOrgs = ((String[])pk_orgRefPane.getValueObj());
-                            if (ArrayUtil.isNotEmpty(pkOrgs)) {
+                            if (!ArrayUtils.isEmpty(pkOrgs)) {
                                 initAccPeriod(refPane, pkOrgs[0]);
                             }
                         } else {
@@ -450,11 +499,21 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
 
             @Override
             public void unserialize(QuerySchemeObject qsobject) {
-                UIRefPane refPaneOrg = BXQryTplUtil.getRefPaneByFieldCode((QueryConditionDLG)dlg, "pk_org");
-                String pk_org = refPaneOrg.getRefPK();
-                AccountCalendar calendar = AccountCalendar
-                        .getInstanceByPk_org(pk_org);
-                
+                        UIRefPane refPaneOrg = BXQryTplUtil
+                                .getRefPaneByFieldCode((QueryConditionDLG) dlg,
+                                        "pk_org");
+                        String pk_org = refPaneOrg.getRefPK();
+                        AccountCalendar calendar = AccountCalendar
+                                .getInstanceByPk_org(pk_org);
+
+                        // 获取当前业务日期
+                        UFDate currBusiDate = WorkbenchEnvironment
+                                .getInstance().getBusiDate();
+                        try {
+                            calendar.setDate(currBusiDate);
+                        } catch (Exception e) {
+                            Logger.error(e.getMessage(), e);
+                        }
                         AccperiodmonthVO accperiodmonthVO = calendar
                                 .getMonthVO();
                         if (accperiodmonthVO == null)
@@ -489,14 +548,59 @@ public class ExpamortizeAnalyzeAction extends CustomizeReportQryAction implement
         refPane.setValueObjFireValueChangeEvent(calendar.getMonthVO().getPk_accperiodmonth());
 	}
 	
+//	@Override
+//	protected QueryConditionDLG createQueryDlg(Container parent, TemplateInfo ti, IContext context,
+//			IQueryCondition oldCondition) {
+//		QueryConditionDLG dlg = super.createQueryDlg(parent, ti, context, oldCondition);
+//		initDlgListener(dlg,context);
+//				return dlg;
+//
+//	}
+
 	@Override
-	protected QueryConditionDLG createQueryDlg(Container parent, TemplateInfo ti, IContext context,
-			IQueryCondition oldCondition) {
-		QueryConditionDLG dlg = super.createQueryDlg(parent, ti, context, oldCondition);
-		initDlgListener(dlg,context);
-				return dlg;
+    protected QueryConditionDLG createQueryDlg(Container parent, TemplateInfo ti, final IContext context,
+            IQueryCondition oldCondition) {
 
-}
+        QueryConditionDLG dlg = new QueryConditionDLG(parent, ti,
+                getTitle(context)) {
 
+            private static final long serialVersionUID = 5297678620252168612L;
 
+            public String checkCondition() {
+                // 执行父类校验
+                String condition = null;
+                String beanId = null;
+                QueryTempletTotalVO totalVo = null;
+                try {
+                    totalVo = getQryCondEditor().getTotalVO();
+                    if (totalVo != null && totalVo.getTempletVO() != null) {
+                        beanId = totalVo.getTempletVO().getMetaclass(); 
+                        totalVo.getTempletVO().setMetaclass(null);
+                    }
+                } catch (BusinessException e) {
+                    Logger.error(e.getMessage(), e);
+                }
+                condition =  super.checkCondition();
+                if (beanId != null && totalVo != null) {
+//                    totalVo.getTempletVO().setMetaclass(beanId);
+                }
+                return condition;
+            }
+            
+        };
+        
+        dlg.getQryCondEditor().getQueryContext().setMultiTB(true);
+        
+        initDlgListener(dlg,context);
+        qryDlg = dlg;
+        return dlg;
+    }
+    
+    private QueryConditionDLG qryDlg;
+
+    @Override
+    protected QueryConditionDLG getQryDlg() {
+        return qryDlg;
+    }
+	
 }

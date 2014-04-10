@@ -186,5 +186,14 @@ public class ExpamortizeYsControlVO implements IFYControl,Serializable {
 	public UFDouble[] getPreItemJe() {
 		return getItemJe();
 	}
+	
+	@Override
+	public String getWorkFlowBillPk() {
+		return getPk();
+	}
 
+	@Override
+	public String getWorkFolwBillType() {
+		return getDjlxbm();
+	}
 }

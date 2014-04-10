@@ -11,6 +11,8 @@
 package nc.impl.er.djlx;
 
 import java.lang.reflect.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -25,16 +27,24 @@ import nc.bs.dao.DAOException;
 import nc.bs.er.djlx.DjLXBO;
 import nc.bs.er.djlx.DjLXDMO;
 import nc.bs.erm.common.ErmBillConst;
+import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Log;
 import nc.bs.pf.pub.PfDataCache;
 import nc.bs.pub.SystemException;
+import nc.bs.pub.pf.PfUtilTools;
+import nc.bs.trade.billsource.IBillDataFinder;
+import nc.bs.trade.billsource.IBillFinder;
+import nc.impl.pubapp.linkquery.BillTypeSetBillFinder;
 import nc.itf.er.prv.IArapBillTypePrivate;
 import nc.itf.er.pub.IArapBillTypePublic;
+import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.djlx.BillTypeVO;
 import nc.vo.er.djlx.DjLXVO;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fi.pub.SqlUtils;
@@ -46,6 +56,7 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.pftemplate.SystemplateBaseVO;
 import nc.vo.pub.pftemplate.SystemplateVO;
 import nc.vo.sm.funcreg.ParamRegVO;
+import nc.vo.trade.billsource.LightBillVO;
 
 /**
  * <p>
@@ -83,11 +94,68 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 		//
 		DjLXVO djlx = (DjLXVO) billtypevo.getParentVO();
 		
+		try {
+			checkUpdate(djlx);
+			checkMatypeNotNull(djlx);
+		} catch (Exception e) {
+			ExceptionHandler.handleException(e);
+		}
+		
 		checkUnique(djlx);
 		BaseDAO dao = new BaseDAO();
 		dao.updateVO(djlx);
 		CacheProxy.fireDataUpdated(djlx.getTableName());
 		return billtypevo;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void checkUpdate(DjLXVO billtypevo) throws Exception {
+		String djlxbm = billtypevo.getDjlxbm();// 校验申请单
+		if (billtypevo != null && djlxbm.startsWith("261")) {
+			DjLXVO[] djlxVos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "djlxbm = '" + djlxbm
+					+ "' and pk_group = '" + billtypevo.getPk_group() + "'");
+
+			if (djlxVos != null && djlxVos.length > 0) {
+				Integer newMatype = billtypevo.getMatype() == null ? Integer.valueOf(0) : billtypevo.getMatype();
+				Integer oldMatype = djlxVos[0].getMatype() == null ? Integer.valueOf(0) : djlxVos[0].getMatype();
+
+				if (!newMatype.equals(oldMatype)) {
+					BaseDAO baseDao = new BaseDAO();
+
+					List<String> result = (List<String>) baseDao.executeQuery(
+							" select pk_mtapp_bill from er_mtapp_bill where pk_tradetype = '" + djlxbm
+									+ "' and billstatus = 3 ", new BaseProcessor() {
+								private static final long serialVersionUID = -4702438982530122614L;
+
+								@Override
+								public Object processResultSet(ResultSet rs) throws SQLException {
+									List<String> tempResult = new ArrayList<String>();
+									while (rs.next()) {
+										tempResult.add(rs.getString("pk_mtapp_bill"));
+									}
+									return tempResult;
+								}
+							});
+					
+					IBillFinder billFinder = (IBillFinder) PfUtilTools.findBizImplOfBilltype(djlxbm, BillTypeSetBillFinder.class
+							.getName());
+
+					IBillDataFinder dataFinder = billFinder.createBillDataFinder(djlxbm);
+					String[] types = dataFinder.getForwardBillTypes(djlxbm);//下游单据类型
+					
+					if(types != null && types.length > 0 && result != null && result.size() > 0){
+						for (String type : types) {
+							LightBillVO[] lightVos = ErUtil.queryForwardBills(djlxbm, new String[]{type}, result.toArray(new String[0]));
+
+							if (lightVos != null && lightVos.length > 0) {
+								//TODO 提多语
+								throw new BusinessException("该申请单交易类型的单据已被下游单据拉单，不可修改费用申请类型");
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -416,6 +484,7 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 	}
 
 	private void insertDjlx(DjLXVO djlx) throws DAOException, BusinessException {
+		checkMatypeNotNull(djlx);
 		BaseDAO dao = new BaseDAO();
 		dao.insertVO(djlx);
 		CacheProxy.fireDataInserted(djlx.getTableName());
@@ -476,6 +545,16 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 		}
 	}
 
+	private void checkMatypeNotNull(DjLXVO vo) throws BusinessException{
+		if(vo != null && ErmBillConst.MatterApp_DJDL.equals(vo.getDjdl())){
+			if(vo.getMatype() == null){
+				//TODO 提多语
+				throw new BusinessException("新增费用申请单交易类型，【费用申请类型】不能为空");
+			}
+		}
+		
+	}
+	
 	// 检查要插入的单据类型该公司是否已经存在 2004-8-3 xhb
 	private Hashtable checkDjLX(DjLXVO djlx, String[] corps)
 			throws BusinessException {

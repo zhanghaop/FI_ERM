@@ -2,12 +2,12 @@ package nc.itf.arap.pub;
 
 import java.util.List;
 
+import nc.vo.bd.psn.PsnjobVO;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.pub.lang.UFDouble;
 
 /**
  * @author twei
@@ -33,5 +33,13 @@ public interface IBxUIControl {
 	 * 参数：表头主键
 	 */
 	public BXBusItemVO[] queryByPk(String pk_jk,String pk_Bx) throws BusinessException ;
+	
+	/**
+	 * 根据人员档案得到对应所有公司
+	 * @param psnPK
+	 * @return
+	 * @throws BusinessException
+	 */
+	public PsnjobVO[] queryPsnjobVOByPsnPK(String psnPK)throws BusinessException ;
 	
 }

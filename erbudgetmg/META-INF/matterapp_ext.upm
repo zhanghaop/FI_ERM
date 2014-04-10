@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="erm_EJB">
+
+	<public>
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.itf.erm.matterapp.ext.IErmMatterAppYsControlServiceExt</interface>
+			<implementation>nc.impl.erm.matterapp.ext.ErmMatterAppYsControlServiceExtImpl</implementation>
+		</component>
+
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.itf.erm.matterapp.ext.IErmMtAppMonthManageServiceExt</interface>
+			<implementation>nc.impl.erm.matterapp.ext.ErmMtAppMonthManageServiceExtImpl</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="NONE">
+			<interface>nc.itf.erm.matterapp.ext.IErmMtAppMonthQueryServiceExt</interface>
+			<implementation>nc.impl.erm.matterapp.ext.ErmMtAppMonthQueryServiceExtImpl</implementation>
+		</component>
+		
+	  	<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.pubitf.erm.matterappctrl.ext.IMatterAppCtrlServiceExt</interface>
+			<implementation>nc.bs.erm.matterappctrl.ext.MatterAppCtrlServiceExtImp</implementation>
+		</component>
+		
+		<component priority="0" remote="true" singleton="true"
+			supportAlias="true" tx="CMT">
+			<interface>nc.pubitf.erm.matterapp.IErmMatterAppBillCloseService</interface>
+			<implementation>nc.impl.erm.matterapp.ErmMatterAppBillCloseServiceImpl</implementation>
+		</component>
+	</public>
+</module>
+

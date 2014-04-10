@@ -3,7 +3,9 @@ package nc.ui.erm.matterapp.listener;
 import javax.swing.Action;
 
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.erm.util.ERMDealForJeAndRatioUtil;
 import nc.bs.erm.util.action.ErmActionConst;
+import nc.ui.erm.matterapp.common.ErmForMatterAppUtil;
 import nc.ui.erm.matterapp.common.MatterAppUiUtil;
 import nc.ui.erm.matterapp.model.MAppModel;
 import nc.ui.erm.matterapp.view.AbstractMappBillForm;
@@ -15,11 +17,15 @@ import nc.ui.uif2.IExceptionHandler;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
 import nc.uitheme.ui.ThemeResourceCenter;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.uap.rbac.constant.INCSystemUserConst;
+
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * 卡片表体编辑后listener
@@ -44,29 +50,109 @@ public class BillCardBodyAfterEditlistener implements BillEditListener {
 		if(bodyItem==null)
 			return;
 		
-		if(bodyItem.getKey().equals(MtAppDetailVO.ORIG_AMOUNT) || isAmoutField(bodyItem)){//金额变化
-			try {
-				afterEditAmount(eve);
-			} catch (BusinessException e) {
-				ExceptionHandler.consume(e);
+		
+		if(ErmMatterAppConst.MatterApp_MDCODE_DETAIL.endsWith(eve.getTableCode())){
+			// 多选后自动进行复制行实现
+			int[] changRow = null;
+			if (ArrayUtils.indexOf(AggMatterAppVO.getBodyMultiSelectedItems(), eve.getKey(), 0) >= 0) {
+				changRow = ERMDealForJeAndRatioUtil.pasteLineForMultiSelected(eve.getRow(), MtAppDetailVO.ORIG_AMOUNT,
+						MatterAppVO.ORIG_AMOUNT, MtAppDetailVO.SHARE_RATIO, eve.getKey(), getBillForm()
+								.getBillCardPanel(), MtAppDetailVO.PK_MTAPP_DETAIL);
+
+				// 根据多选变化的行，选择相关的参照字段，余额，和最大金额
+				if (changRow != null && (changRow.length > 1 || eve.getKey().equals(MtAppDetailVO.ASSUME_ORG))) {
+					//设置余额
+					ErmForMatterAppUtil.resetOtherJe(changRow, getBillForm().getBillCardPanel());
+					
+					try {
+						//重算表体汇率
+						if(eve.getKey().equals(MtAppDetailVO.ASSUME_ORG)){
+							resetBodyRate((String)eve.getOldValue(), changRow);
+						}
+						
+						// 计算本币等联动金额
+						afterEditAmount(changRow);
+						MatterAppUiUtil.setBodyShareRatio(billForm.getBillCardPanel());//比例重算
+					} catch (BusinessException e) {
+						ExceptionHandler.consume(e);
+					}
+				}
+				
+				//基本档案编辑后
+				afterEditBdDoc(eve, changRow);
+				
+				// 档案变化，清空相关档案
+				ErmForMatterAppUtil.resetFieldValue(changRow, getBillForm().getBillCardPanel(), eve.getKey(), eve
+						.getOldValue());
 			}
-		} else if(bodyItem.getKey().equals(MtAppDetailVO.PK_PCORG)){//利润中心变化，核算要素清空
-			billForm.setBodyValue(null, eve.getRow(), MtAppDetailVO.PK_CHECKELE);
-		} else if(bodyItem.getKey().equals(MtAppDetailVO.PK_PROJECT)){//项目变化清空项目任务
-			billForm.setBodyValue(null, eve.getRow(), MtAppDetailVO.PK_WBS);
+			
+			if (bodyItem.getKey().equals(MtAppDetailVO.ORIG_AMOUNT) || isAmoutField(bodyItem)) {// 金额变化
+				try {
+					MatterAppUiUtil.setHeadAmountByBodyAmounts(billForm.getBillCardPanel());//表体金额相加结果放入表头
+					// 计算本币等联动金额
+					MatterAppUiUtil.setBodyShareRatio(billForm.getBillCardPanel());
+					afterEditAmount(eve.getRow());
+				} catch (BusinessException e) {
+					ExceptionHandler.consume(e);
+				}
+				// 计算比例
+			} else if (bodyItem.getKey().equals(MtAppDetailVO.SHARE_RATIO)) {
+				// 比例后重新计算金额
+				ErmForMatterAppUtil.resetJeByRatio(eve.getRow(), billForm.getBillCardPanel(), false);
+				try {
+					// 计算本币等联动金额
+					afterEditAmount(eve.getRow());
+				} catch (BusinessException e) {
+					ExceptionHandler.consume(e);
+				}
+			} else if(bodyItem.getKey().equals(MtAppDetailVO.ORG_CURRINFO)
+					|| bodyItem.getKey().equals(MtAppDetailVO.GROUP_CURRINFO)
+					|| bodyItem.getKey().equals(MtAppDetailVO.GLOBAL_CURRINFO)){
+				billForm.resetCardBodyAmount(eve.getRow());
+			}
+		}
+		
+		// 事件转换，且发出事件 
+		billForm.getEventTransformer().afterEdit(eve);
+	}
+	
+	//切换基本档案后，
+	private void afterEditBdDoc(BillEditEvent eve, int[] changRow) {
+		BillItem bodyItem = billForm.getBillCardPanel().getBodyItem(eve.getTableCode(),eve.getKey());
+		if (bodyItem.getKey().equals(MtAppDetailVO.ASSUME_DEPT)) {//费用承担部门
+			for (int row : changRow) {
+				ErmForMatterAppUtil.setCostCenter(row, billForm.getBillCardPanel());
+			}
 		}
 	}
 
-	private void afterEditAmount(BillEditEvent eve) throws BusinessException {
-		MatterAppUiUtil.setHeadAmountByBodyAmounts(billForm.getBillCardPanel());//表体金额相加结果放入表头
+	private void afterEditAmount(int... changRow) throws BusinessException {
 		billForm.resetHeadAmounts();
-		billForm.resetCardBodyAmount(eve.getRow());
+		MAppModel model = (MAppModel)getModel();
+		DjLXVO djlxVo = model.getTradeTypeVo(model.getDjlxbm());
+		
+		for (int i = 0; i < changRow.length; i++) {
+			billForm.resetCardBodyAmount(changRow[i]);
+			billForm.resetBodyMaxAmount(changRow[i], djlxVo);
+		}
+		
+		MatterAppUiUtil.fillLastRowAmount(billForm.getBillCardPanel());
 	}
 
-
+	private void resetBodyRate(String oldPk_org, int... changRow) throws BusinessException {
+		for (int i = 0; i < changRow.length; i++) {
+			String assume_org = billForm.getBodyItemStrValue(changRow[i], MtAppDetailVO.ASSUME_ORG);
+			if (oldPk_org == null || assume_org == null || !assume_org.equals(oldPk_org)) {
+				billForm.resetCardBodyRate(changRow[i]);
+			}
+		}
+	}
+	
 	@Override
 	public void bodyRowChange(BillEditEvent e) {
 		updateLineCloseActionStatus();
+		// 事件转换，且发出事件 
+		billForm.getEventTransformer().bodyRowChange(e);
 	}
 	
 	/**

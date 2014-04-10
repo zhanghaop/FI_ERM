@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.pub.ErmReportUtil;
 import nc.bs.erm.sql.ErmBaseSqlCreator;
 import nc.bs.erm.sql.LoanBalanceSQLCreator;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.itf.erm.pub.ILoanBalanceBO;
 import nc.itf.erm.report.IErmReportConstants;
@@ -18,6 +20,7 @@ import nc.jdbc.framework.util.DBConsts;
 import nc.pub.smart.context.SmartContext;
 import nc.pub.smart.data.DataSet;
 import nc.pub.smart.exception.SmartException;
+import nc.pub.smart.script.statement.select.PlainSelect;
 import nc.pub.smart.smartprovider.LoanBalanceDataProvider;
 import nc.utils.fipub.FipubSqlExecuter;
 import nc.utils.fipub.ReportMultiVersionSetter;
@@ -65,7 +68,9 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
 		/****************************************************************/
 
 		try {
-			ErmBaseSqlCreator sqlCreator = new LoanBalanceSQLCreator();
+	        PlainSelect select = (PlainSelect)context.getAttribute("key_current_plain_select");
+	        select.setWhere(null);
+	        ErmBaseSqlCreator sqlCreator = new LoanBalanceSQLCreator();
 
 			// 设置查询对象VO的内容
 			sqlCreator.setParams(queryVO);
@@ -87,6 +92,9 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
 				executeUpdate(sql);
 			}
 
+			//转换币种
+            ErUtil.convertCurrtype(result, queryVO);
+
 			// 插入【币种】名称
 			PubCommonReportMethod.insertNameColumn(result, IPubReportConstants.CURRTYPE, "pk_currtype", "currtype");
 
@@ -107,6 +115,7 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
             PubCommonReportMethod.setVSeq(datas, resultDataSet.getMetaData().getIndex(IPubReportConstants.ORDER_MANAGE_VSEQ));
 			// 设置返回结果数据集
 			resultDataSet.setDatas(datas);
+            ErmReportUtil.processDataSet(context, resultDataSet);
 		} catch (Exception e) {
 			String errMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("feesaccount_0","02011001-0054"); /*@res "借款余额表查询出错！"*/
 			Logger.error(errMsg, e);
@@ -173,7 +182,7 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
         }
         
         Map<String, Map<String, String>> countMap = new HashMap<String, Map<String, String>>();
-        
+        Map<String, String> totalCurrtype = new HashMap<String, String>();
         Object[] dataRow = null;
         int rn = -1;
         boolean isObj = false;
@@ -201,7 +210,11 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
                     currtypeMap.put(currtype, null);
                 }
             }
-		    
+
+            //记录币种个数
+            if (dataRow[currtypeIndex - 1] != null) {
+                totalCurrtype.put((String)dataRow[currtypeIndex - 1], null);
+            }
 			if (rn >= SmartProcessor.MAX_ROW) {
                 // 处理合计行
 //                if (rn == SmartProcessor.MAX_ROW) {
@@ -259,27 +272,13 @@ public class LoanBalanceBOImpl extends FipubSqlExecuter implements ILoanBalanceB
                     }
 
                     if (!isObj&& isMultiOrg && (dataRow[orgIndex - 1] == null || dataRow[orgIndex - 1].toString().length() == 0)) {
-//                        dataRow[briefIndex - 1] = IErmReportConstants.CONST_ALL_TOTAL; // 总计
-                        dataRow[orgIndex - 1] = "";
-                        // 多组织、多币种清空金额字段信息
-//                        if (!isCurrtype) {
-//                            // 多币种清空金额字段信息
-//                            for (int nPos = 0; nPos < amount_ori.length; nPos++) {
-//                                if (currtypeCount[nPos] > 1) {
-//                                    dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
-//                                }
-//                            }
-//                        }
-
-                        String org = (String)dataRow[orgIndex - 1];
+                        dataRow[orgIndex - 1] = IErmReportConstants.getCONST_ALL_TOTAL(); // 总计
                         if (!isCurrtype) {
                             // 多币种清空金额字段信息
-                            Map<String, String> currtypeMap = countMap.get(org); 
                             for (int nPos = 0; nPos < amount_ori.length; nPos++) {
-                                if (currtypeMap != null && currtypeMap.keySet().size() > 1) {
+                                if (totalCurrtype != null && totalCurrtype.keySet().size() > 1) {
                                     dataRow[amount_ori_pos[nPos] - 1] = BigDecimal.ZERO;
                                 }
-                                orgCurrtypeCount[nPos] = 0;
                             }
                         }
                     } else if (!isObj) {

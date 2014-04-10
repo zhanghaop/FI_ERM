@@ -31,7 +31,6 @@ import nc.ui.arap.bx.BillItemCloneTool;
 import nc.ui.arap.bx.ButtonUtil;
 import nc.ui.arap.bx.print.FIPrintEntry_BX;
 import nc.ui.bill.tools.ColorConstants;
-import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.org.ref.FinanceOrgDefaultRefTreeModel;
 import nc.ui.pub.ButtonObject;
@@ -1569,7 +1568,7 @@ public class ReimRuleUI extends ToftPanel implements ValueChangedListener {
 			ivjtOrg.setRefModel(new FinanceOrgDefaultRefTreeModel());
 			ivjtOrg.setPreferredSize(new Dimension(200, ivjtOrg.getHeight()));	
 			ivjtOrg.addValueChangedListener(this);
-			ivjtOrg.getRefModel().setFilterPks(BXUiUtil.getPermissionOrgs(null));
+			ivjtOrg.getRefModel().setFilterPks(ErUiUtil.getPermissionOrgs(null));
 			ivjtOrg.getUITextField().setShowMustInputHint(true);
 		}
 		return ivjtOrg;

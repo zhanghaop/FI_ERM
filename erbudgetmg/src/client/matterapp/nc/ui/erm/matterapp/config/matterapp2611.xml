@@ -18,6 +18,7 @@
 		<property name="actions">
 			<list>
 				<ref bean="addAction" />
+				
 				<ref bean="updateAction" />
 				<ref bean="deleteAction" />
 				<ref bean="copyAction" />
@@ -74,6 +75,8 @@
 				
 				<ref bean="nullAction" />
 				<ref bean="cancelAction" />
+				<ref bean="nullAction" />
+				<ref bean="rapidShareAction" />
 				
 				<ref bean="nullAction" />
 				<ref bean="documentaction"/>
@@ -101,10 +104,11 @@
 		<property name="nodekey" value="2611"/>
 		<property name="showTotalLine" value="true" />
 		<property name="templateContainer" ref="templateContainer"/>
-		<property name="userdefitemPreparator" ref="userdefitemCardPreparator"/>
+		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
 		<property name="saveAction" ref="saveAction" />
 		<property name="cancelAction" ref="cancelAction" />
 		<property name="closingListener" ref="ClosingListener" />
+		<property name="rapidShareAction" ref="rapidShareAction"/>
 		<property name="billCardBodyAfterEditlistener" ref="billCardBodyAfterEditlistener" />
 		<property name="billCardBodyBeforeEditlistener" ref="billCardBodyBeforeEditlistener" />
 		<property name="billCardHeadAfterEditlistener" ref="billCardHeadAfterEditlistener" />

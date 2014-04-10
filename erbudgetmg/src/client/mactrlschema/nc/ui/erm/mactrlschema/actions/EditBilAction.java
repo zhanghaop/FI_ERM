@@ -20,6 +20,7 @@ public class EditBilAction extends BatchEditAction {
 	 * 调整action的错误提示信息
 	 */
 	protected void processExceptionHandler(Exception ex) {
+
 		if (!(exceptionHandler instanceof AbstractShowMsgExceptionHandler))
 			exceptionHandler.handlerExeption(ex);
 		else {

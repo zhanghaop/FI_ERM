@@ -13,6 +13,7 @@ import nc.bs.framework.common.InvocationInfoProxy;
 import nc.itf.erm.mactrlschema.IErmMappCtrlFieldQuery;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.persist.framework.MDPersistenceService;
+import nc.vo.erm.mactrlschema.MtappCtrlbillVO;
 import nc.vo.erm.mactrlschema.MtappCtrlfieldVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.fi.pub.SqlUtils;
@@ -27,10 +28,8 @@ public class ErmMappCtrlFieldQueryImpl implements IErmMappCtrlFieldQuery {
 		if(pkOrg == null || tradeType == null){
 			return null;
 		}
-		
-
-		String whereCond = getOrgSqlWhere(pkOrg) +
-				" and " + MtappCtrlfieldVO.PK_TRADETYPE  + " = '" + tradeType + "'";
+		String whereCond = MtappCtrlbillVO.PK_ORG + " = '" + pkOrg  +
+				"' and " + MtappCtrlfieldVO.PK_TRADETYPE  + " = '" + tradeType + "'";
 
 		@SuppressWarnings("unchecked")
 		Collection<MtappCtrlfieldVO> result = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(MtappCtrlfieldVO.class, whereCond, false);
@@ -66,29 +65,53 @@ public class ErmMappCtrlFieldQueryImpl implements IErmMappCtrlFieldQuery {
 	}
 
 	@Override
-	public Map<String, List<String>> queryCtrlFields(String pk_org,
-			String[] trade_type) throws BusinessException {
+	public Map<String, List<String>> queryCtrlFields(String pk_org, String[] trade_type) throws BusinessException {
 		final Map<String, List<String>> rusultMap = new HashMap<String, List<String>>();
+		final String[] tradeTypes = trade_type;
+
 		StringBuffer sbf = new StringBuffer();
 		sbf.append("select ").append(MtappCtrlfieldVO.PK_TRADETYPE).append(",");
+		sbf.append(MtappCtrlfieldVO.PK_ORG).append(",");
 		sbf.append(MtappCtrlfieldVO.FIELDCODE).append(" from ").append(MtappCtrlfieldVO.getDefaultTableName());
 		sbf.append(" where ").append(getOrgSqlWhere(pk_org)).append(" and ");
 		sbf.append(SqlUtils.getInStr(MtappCtrlfieldVO.PK_TRADETYPE, trade_type, false));
-		getBaseDao().executeQuery(sbf.toString(), new ResultSetProcessor(){
+		getBaseDao().executeQuery(sbf.toString(), new ResultSetProcessor() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Object handleResultSet(ResultSet rs) throws SQLException {
+				String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+				final Map<String, List<String>> orgResutMap = new HashMap<String, List<String>>();
+				final Map<String, List<String>> groupResutMap = new HashMap<String, List<String>>();
+
 				while (rs.next()) {
 					String pk_tradeType = rs.getString(MtappCtrlfieldVO.PK_TRADETYPE);
 					String fieldcodeval = rs.getString(MtappCtrlfieldVO.FIELDCODE);
-					if(rusultMap.get(pk_tradeType)==null){
-						rusultMap.put(pk_tradeType, new ArrayList<String>());
-					}
-					rusultMap.get(pk_tradeType).add(fieldcodeval);
+					String pk_org = rs.getString(MtappCtrlfieldVO.PK_ORG);
 
+					if (pk_group.equals(pk_org)) {
+						if (groupResutMap.get(pk_tradeType) == null) {
+							groupResutMap.put(pk_tradeType, new ArrayList<String>());
+						}
+						groupResutMap.get(pk_tradeType).add(fieldcodeval);
+					} else {
+						if (orgResutMap.get(pk_tradeType) == null) {
+							orgResutMap.put(pk_tradeType, new ArrayList<String>());
+						}
+						orgResutMap.get(pk_tradeType).add(fieldcodeval);
+					}
+				}
+
+				for (String tradeType : tradeTypes) {
+					if (orgResutMap.get(tradeType) != null) {
+						rusultMap.put(tradeType, orgResutMap.get(tradeType));
+					} else {
+						rusultMap.put(tradeType, groupResutMap.get(tradeType));
+					}
 				}
 				return null;
-			}});
+			}
+		});
 		return rusultMap;
 	}
 	

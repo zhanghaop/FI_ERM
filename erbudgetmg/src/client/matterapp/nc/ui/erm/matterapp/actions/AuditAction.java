@@ -7,7 +7,7 @@ import java.util.List;
 import nc.bs.ml.NCLangResOnserver;
 import nc.itf.uap.pf.metadata.IFlowBizItf;
 import nc.md.data.access.NCObject;
-import nc.ui.er.util.BXUiUtil;
+import nc.uap.rbac.core.dataperm.DataPermissionFacade;
 import nc.ui.erm.action.ErmAuditAction;
 import nc.ui.erm.matterapp.view.MatterAppMNBillForm;
 import nc.ui.erm.util.ErUiUtil;
@@ -18,17 +18,18 @@ import nc.ui.uif2.IShowMsgConstant;
 import nc.ui.uif2.UIState;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.er.exception.BugetAlarmBusinessException;
-import nc.vo.er.util.StringUtils;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fipub.exception.ExceptionHandler;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PFBusinessException;
+import nc.vo.uif2.LoginContext;
 
 /**
  * 审核
@@ -44,10 +45,6 @@ public class AuditAction extends ErmAuditAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		try {
-			if (!checkDataPermission()) {
-				throw new BusinessException(IShowMsgConstant.getDataPermissionInfo());
-			}
-				
 			Object objs[] = getModel().getSelectedOperaDatas();
 
 			if(objs == null || objs.length == 0){
@@ -69,18 +66,20 @@ public class AuditAction extends ErmAuditAction {
 			}
 
 			if (!auditList.isEmpty()) {
-				
-				if(auditList.size() > 1){
+				if (auditList.size() > 1) {
 					final DefaultProgressMonitor mon = getTpaProgressUtil().getTPAProgressMonitor();
 					mon.beginTask(getBtnName(), auditList.size());
-					ListApproveSwingWork lpsw = new ListApproveSwingWork(auditList.toArray(new AggregatedValueObject[0]), mon);
+					ListApproveSwingWork lpsw = new ListApproveSwingWork(auditList
+							.toArray(new AggregatedValueObject[0]), mon);
 					lpsw.execute();
-				}else{
-					MessageVO[] returnMsgs = new MessageVO[]{approveSingle(auditList.get(0))};
+				} else {
+					MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditList.get(0)) };
 					List<AggregatedValueObject> auditedVos = ErUiUtil.combineMsgs(msgs, returnMsgs);
 					getModel().directlyUpdate(auditedVos.toArray(new AggregatedValueObject[auditedVos.size()]));
 					ErUiUtil.showBatchResults(getModel().getContext(), msgs);
 				}
+			}else{
+				ErUiUtil.showBatchResults(getModel().getContext(), msgs);
 			}
 		} catch (Exception e2) {
 			exceptionHandler.handlerExeption(e2);
@@ -96,7 +95,7 @@ public class AuditAction extends ErmAuditAction {
 		MessageVO msgVO = new MessageVO(billvo, ActionUtils.AUDIT);
 		
 		//审核日期校验
-		UFDate shrq = BXUiUtil.getBusiDate();
+		UFDate shrq = ErUiUtil.getBusiDate();
 		if (billvo.getParentVO().getBilldate().afterDate(shrq)) {
 			msgVO.setSuccess(false);
 			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000336")/*@res "审核日期不能早于单据录入日期"*/);
@@ -121,6 +120,10 @@ public class AuditAction extends ErmAuditAction {
 		AggMatterAppVO aggMaVo = (AggMatterAppVO)appVO;
 		MessageVO result = null;
 		try {
+			if (!checkDataPermission(appVO)) {//数据权限校验
+				throw new BusinessException(IShowMsgConstant.getDataPermissionInfo());
+			}
+			
 			Object returnObj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), "APPROVE", aggMaVo
 					.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
 			if(returnObj ==null){//在审批过程中，弹出审核界面，然后直接点右上角的关闭
@@ -128,25 +131,16 @@ public class AuditAction extends ErmAuditAction {
 				result.setSuccess(false);
 				result.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000339")/*@res "用户取消操作"*/);	
 			}else{
-				String warnMsg = null;
 				if (returnObj instanceof MessageVO[]) {
 					MessageVO[] msgVos = (MessageVO[]) returnObj;
 					MatterAppVO parentVO = (MatterAppVO) msgVos[0].getSuccessVO().getParentVO();
-					warnMsg = parentVO.getWarningmsg();
 					parentVO.setWarningmsg(null);
 					result = msgVos[0];
 				} else if (returnObj instanceof AggMatterAppVO) {// 改签和加签的情况下会出现返回AggVo
-					warnMsg = ((AggMatterAppVO) returnObj).getParentVO().getWarningmsg();
 					((AggMatterAppVO) returnObj).getParentVO().setWarningmsg(null);
 					result = new MessageVO((AggMatterAppVO) returnObj, ActionUtils.AUDIT);
 				}
-
-				if (!StringUtils.isNullWithTrim(warnMsg)) {
-					MessageDialog.showWarningDlg(getBillForm().getParent(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-							.getStrByID("201212_0", "0201212-0000")/* @res "提示" */, warnMsg);
-				}
 			}
-
 		} catch (BugetAlarmBusinessException e) {
 			if (MessageDialog.showYesNoDlg(getBillForm().getParent(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
 					.getStrByID("2011", "UPP2011-000049")/*
@@ -206,6 +200,24 @@ public class AuditAction extends ErmAuditAction {
 		}
 
 		return false;
+	}
+	
+	protected boolean checkDataPermission(AggregatedValueObject appVO) {
+		if (StringUtil.isEmptyWithTrim(getOperateCode()) && StringUtil.isEmptyWithTrim(getMdOperateCode())
+				|| StringUtil.isEmptyWithTrim(getResourceCode()))
+			return true;
+
+		LoginContext context = getModel().getContext();
+		String userId = context.getPk_loginUser();
+		String pkgroup = context.getPk_group();
+		Object data = appVO;
+		boolean hasp = true;
+		if (!StringUtil.isEmptyWithTrim(getMdOperateCode()))
+			hasp = DataPermissionFacade.isUserHasPermissionByMetaDataOperation(userId, getResourceCode(),
+					getMdOperateCode(), pkgroup, data);
+		else
+			hasp = DataPermissionFacade.isUserHasPermission(userId, getResourceCode(), getOperateCode(), pkgroup, data);
+		return hasp;
 	}
 	
 	public MatterAppMNBillForm getBillForm() {

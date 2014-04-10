@@ -3,26 +3,30 @@ package nc.bs.er.ntbcontrol;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
-import nc.bs.er.util.SqlUtil;
-import nc.bs.er.util.SqlUtils;
 import nc.bs.erm.annotation.ErmBusinessDef;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.erm.util.ErBudgetUtil;
+import nc.bs.framework.common.NCLocator;
+import nc.bs.framework.core.util.ObjectCreator;
+import nc.itf.arap.pub.IErmMaSubBudgetSql;
+import nc.itf.tb.control.IBudgetControl;
 import nc.itf.tb.control.IFormulaFuncName;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXStatusConst;
-import nc.vo.ep.bx.BxcontrastVO;
+import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.ep.bx.JKBXHeaderVO;
+import nc.vo.erm.control.TokenTools;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterappctrl.MtapppfVO;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
+import nc.vo.tb.control.DataRuleVO;
 import nc.vo.tb.obj.NtbParamVO;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -81,59 +85,52 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 	 * @throws Exception
 	 */
 	private String[] getSqlFromMa(boolean isDetail) throws Exception {
-		Map<String, List<String>> effectPkMap = getEffectPfPks();
+		Map<String, List<String>> effectPkMap = getEffectPfPksMap();
+		List<String> sqlList = new ArrayList<String>();
 
-		if (effectPkMap.get("bx").size() == 0) {
-			return null;
+		List<String> bxDetailList = effectPkMap.get("bx");
+		if(bxDetailList != null && bxDetailList.size() > 0){
+			String bxSql = getFromSal(isDetail, bxDetailList.toArray(new String[0]), "er_bxzb");
+			if(bxSql != null){
+				sqlList.add(bxSql);
+			}
 		}
-
-		String[] result = new String[3];
 		
-		result[0] = getFromSal(isDetail, effectPkMap.get("bx").toArray(new String[0]), "er_jkzb");
-		result[1] = getFromSal(isDetail, effectPkMap.get("bx").toArray(new String[0]), "er_bxzb");
-		
-		Map<String, NtbObj> actionCodeMap = getActionCodeMap();
-		NtbObj obj = null;
-		if (IFormulaFuncName.PREFIND.equals(getNtbParam().getMethodCode())) {// 预占用
-			if (actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY) != null) {
-				obj = actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY);
-				if (obj != null && obj.type == NtbType.PREVIOUS && obj.dic == NtbDic.INC) {
-					result[2] = getFromContrastSal(isDetail, effectPkMap.get("cjk1").toArray(new String[0]));
-				}
-			}
-			if (actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY) != null) {
-				obj = actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY);
-				if (obj != null && obj.type == NtbType.PREVIOUS && obj.dic == NtbDic.INC) {
-					result[2] = getFromContrastSal(isDetail, effectPkMap.get("cjk2").toArray(new String[0]));
-				}
-			}
+		List<String> meDetaillist = effectPkMap.get("35");
+		if (meDetaillist != null && meDetaillist.size() > 0) {// 营销费用单
+			boolean isInstallMe = BXUtil.isProductTbbInstalled(BXConstans.ME_FUNCODE);
+			if (isInstallMe) {
+				// TODO根据接口查询
+				IErmMaSubBudgetSql subService = (IErmMaSubBudgetSql) ObjectCreator.newInstance("me", "nc.vo.so.m35meext.pub.ErmMaSubBudgetSqlImpl");
+				String[] effectPks = subService.getMaBudgetSubBillEffectDetailPks(meDetaillist.toArray(new String[0]), ntbParam);
+				String meSql = getFromSubSql(isDetail, effectPks);
 
-		} else { // 执行
-			if (actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY) != null) {
-				obj = actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY);
-				if (obj != null && obj.type == NtbType.EXE && obj.dic == NtbDic.INC) {
-					result[2] = getFromContrastSal(isDetail, effectPkMap.get("cjk1").toArray(new String[0]));
-				}
-			}
-			if (actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY) != null) {
-				obj = actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY);
-				if (obj != null && obj.type == NtbType.EXE && obj.dic == NtbDic.INC) {
-					result[2] = getFromContrastSal(isDetail, effectPkMap.get("cjk2").toArray(new String[0]));
+				if (meSql != null) {
+					sqlList.add(meSql);
 				}
 			}
 		}
 
-		return result;
+		return sqlList.toArray(new String[]{});
 	}
 	
-	private String getFromContrastSal(boolean isDetail, String[] effectPks) throws SQLException {
-		if(effectPks == null || effectPks.length == 0 ){
+	/**
+	 * 外系统获取sql
+	 * @param isDetail
+	 * @param effectPks 有效业务行pk集合
+	 * @return
+	 * @throws Exception
+	 */
+	private String getFromSubSql(boolean isDetail, String[] effectPks) throws Exception {
+		if (effectPks == null || effectPks.length == 0) {
 			return null;
 		}
+		
 		StringBuffer sql = new StringBuffer();
 		sql.append("select " + getFromMaSelectFields(isDetail));
-		sql.append(" from  er_mtapp_pf pf inner join er_jkzb zb on pf.busi_pk = zb.pk_jkbx  ");
-		sql.append(" where 1=1 and " + SqlUtils.getInStr("pf.pk_mtapp_pf", effectPks));
+		sql.append(" from  er_mtapp_pf pf ");
+		sql.append("  inner join er_mtapp_bill ma on pf.pk_matterapp = ma.pk_mtapp_bill  ");
+		sql.append(" where 1=1 and " + SqlUtils.getInStr("pf.busi_detail_pk", effectPks, true));
 		return sql.toString();
 	}
 
@@ -145,65 +142,109 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		StringBuffer sql = new StringBuffer();
 		sql.append("select " + getFromMaSelectFields(isDetail));
 		sql.append(" from  er_mtapp_pf pf inner join " + tableName + " zb on pf.busi_pk = zb.pk_jkbx  ");
-		sql.append(" where 1=1 and " + SqlUtils.getInStr("pf.pk_mtapp_pf", effectPks));
+		sql.append("  inner join er_mtapp_bill ma on pf.pk_matterapp = ma.pk_mtapp_bill  ");
+		sql.append(" where 1=1 and " + nc.vo.fi.pub.SqlUtils.getInStr("pf.busi_detail_pk", effectPks, true));
 		sql.append(" and " + getFromMaBillStatus());
 		return sql.toString();
 	}
-
+	
 	private Object getFromMaBillStatus() throws Exception {
 		StringBuffer sql = new StringBuffer();
-		Map<String, NtbObj> actionCodeMap = getActionCodeMap();
-		NtbObj obj = null;
+		//ma最终策略
+		DataRuleVO srcFinalDataRule = ErBudgetUtil.getBillYsExeDataRule(getSelfBillTypes().get(0));
+		if(srcFinalDataRule == null){
+			return " 1=0 ";
+		}
+		
+		String[] forwordBilltypes = getBXBillTypes();
+		
+		String bxBiltype = null;
+		if(forwordBilltypes == null || forwordBilltypes.length == 0){
+			bxBiltype = BXConstans.BX_DJLXBM;
+		}else{
+			bxBiltype = forwordBilltypes[0];
+		}
+		//报销单最终策略
+		DataRuleVO forwordFinalDataRule = ErBudgetUtil.getBillYsExeDataRule(bxBiltype);
+		if(forwordFinalDataRule == null){//下游没有控制策略
+			return " 1=0 ";
+		}
+		
 		if (IFormulaFuncName.PREFIND.equals(getNtbParam().getMethodCode())) {// 预占用
-			if (actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY) != null) {
-				obj = actionCodeMap.get(BXConstans.ERM_NTB_SAVE_KEY);
-				if (obj != null && obj.type == NtbType.PREVIOUS && obj.dic == NtbDic.INC) {
+			if(srcFinalDataRule.getDataType().equals(IFormulaFuncName.PREFIND)){//最终策略
+				sql.append(" zb.").append(JKBXHeaderVO.DJZT).append(" in (1,2,3) ");
+			}else{
+				DataRuleVO[] saveRuleVo = NCLocator.getInstance().lookup(IBudgetControl.class).queryControlTactics(
+						bxBiltype, BXConstans.ERM_NTB_SAVE_KEY, false);
+				
+				if(saveRuleVo != null){
 					sql.append(" zb.").append(JKBXHeaderVO.DJZT).append(" in (1,2) ");
 				}
 			}
-			if (actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY) != null) {
-				obj = actionCodeMap.get(BXConstans.ERM_NTB_APPROVE_KEY);
-				if (obj != null && obj.type == NtbType.PREVIOUS && obj.dic == NtbDic.INC) {
-					sql.append(" zb.").append(JKBXHeaderVO.DJZT).append(" in (3) ");
+		} else { // 执行
+			if(srcFinalDataRule.getDataType().equals(IFormulaFuncName.PREFIND)){//最终策略
+				return " 1=0 ";
+			}else {
+				if(forwordFinalDataRule.getActionCode().equals(BXConstans.ERM_NTB_APPROVE_KEY)){
+					sql.append(" zb.").append(JKBXHeaderVO.DJZT).append(" in (3) ");//审核占执行数
+				}else if(forwordFinalDataRule.getActionCode().equals(BXConstans.ERM_NTB_SAVE_KEY)){
+					sql.append(" zb.").append(JKBXHeaderVO.DJZT).append(" in (1,2,3) ");//保存即占执行数
+				}else{
+					return " 1=0 ";//无策略
 				}
 			}
-
-		} else { // 执行
-			sql.append(" zb.").append(JKBXHeaderVO.DJZT).append(" in (3) ");
 		}
+		
 		return sql.toString();
+	}
+	
+	/**
+	 * 获取报销单交易类型
+	 * @return
+	 */
+	private String[] getBXBillTypes(){
+		List<String> result = new ArrayList<String>();
+		
+		String billtypStr = getNtbParam().getBill_type();
+		TokenTools token = null;
+		if (billtypStr.indexOf("#") != -1) {
+			token = new TokenTools(billtypStr, "#", false);
+		} else {
+			token = new TokenTools(billtypStr, ",", false);
+		}
+
+		String[] billtypes = token.getStringArray();
+		
+		for(String billType : billtypes){
+			if(billType.startsWith("264")){
+				result.add(billType);
+			}
+		}
+		
+		return result.toArray(new String[0]);
 	}
 
 	private String getFromMaSelectFields(boolean isDetail) {
 		StringBuffer sql = new StringBuffer();
 		if (isDetail) {
-			sql.append("zb.djlxbm djlxbm, zb.bzbm bzbm, zb.djrq djrq, zb.shrq  shrq, zb.jsrq jsrq, zb.zy zy, zb.djbh djbh, zb.pk_group pk_group,zb.pk_org pk_org,");
-			if (IFormulaFuncName.PREFIND.equals(getNtbParam().getMethodCode())) {// 预占用
-				sql.append(" -pf.global_fy_amount globalbbje,-pf.group_fy_amount groupbbje, -pf.org_fy_amount bbje,-pf.fy_amount ybje ");
-			} else {
-				sql.append(" -pf.global_exe_amount globalbbje,-pf.group_exe_amount groupbbje, -pf.org_exe_amount bbje,-pf.exe_amount ybje ");
-			}
+			sql.append("ma.pk_tradetype djlxbm, ma.pk_currtype bzbm,ma.billdate djrq,ma.approvetime shrq," +
+						"ma.approvetime jsrq, ma.reason zy, ma.billno djbh,ma.pk_group pk_group,ma.pk_org pk_org,");
+			sql.append(" -pf.global_fy_amount globalbbje,-pf.group_fy_amount groupbbje, -pf.org_fy_amount bbje,-pf.fy_amount ybje ");
 		} else {
-			if (IFormulaFuncName.PREFIND.equals(getNtbParam().getMethodCode())) {// 预占用
-				sql.append(" sum(-pf.global_fy_amount) globalbbje,sum(-pf.group_fy_amount) groupbbje, sum(-pf.org_fy_amount) bbje,sum(-pf.fy_amount) ybje ");
-			} else {
-				sql.append(" sum(-pf.global_exe_amount) globalbbje,sum(-pf.group_exe_amount) groupbbje, sum(-pf.org_exe_amount) bbje,sum(-pf.exe_amount) ybje ");
-			}
+			// 631不处理借款单、冲借款占用申请单的预算，且费用金额定位为下游单据执行数与费用申请单余额的小值，所以不管预占还是执行都应该按照费用金额查询
+			sql.append(" sum(-pf.global_fy_amount) globalbbje,sum(-pf.group_fy_amount) groupbbje, sum(-pf.org_fy_amount) bbje,sum(-pf.fy_amount) ybje ");
 		}
 		return sql.toString();
 	}
 	
 	/**
-	 * bx,cjk1,cjk2
+	 * 获取申请记录Map<单据大类,业务行pk集合>
 	 * @return
 	 * @throws Exception
 	 */
-	private Map<String, List<String>> getEffectPfPks() throws Exception {
-		
+	private Map<String, List<String>> getEffectPfPksMap() throws Exception {
+		// TODO 需要处理其他下游的预算取数情况
 		final Map<String, List<String>> result = new HashMap<String, List<String>>();
-		result.put("bx", new ArrayList<String>());
-		result.put("cjk1", new ArrayList<String>());//未生效冲借款对应的申请记录行
-		result.put("cjk2", new ArrayList<String>());//生效冲借款对应的申请记录行
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select distinct pf.pk_mtapp_detail, pf.pk_mtapp_pf,pf.pk_djdl, pf.busi_detail_pk from ");
 		sql.append(" er_mtapp_detail mad inner join er_mtapp_bill ma on ma.pk_mtapp_bill=mad.pk_mtapp_bill");
@@ -211,45 +252,25 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		sql.append(" where 1=1 " + getWhereSql());
 		sql.append(" and ma." + MatterAppVO.BILLSTATUS + " = " + ErmMatterAppConst.BILLSTATUS_APPROVED);
 		
-		final List<String> jkDetailList = new ArrayList<String>();
-		final List<String> jkBxPfPkList = new ArrayList<String>();
-		final Map<String, String> map = new HashMap<String, String>();
 		new BaseDAO().executeQuery(sql.toString(), new BaseProcessor(){
 			private static final long serialVersionUID = 1L;
-
 			@Override
 			public Object processResultSet(ResultSet rs) throws SQLException {
 				while (rs.next()) {
-					if(!rs.getString(MtapppfVO.PK_DJDL).equals("bx")){
-						jkDetailList.add(rs.getString(MtapppfVO.BUSI_DETAIL_PK));
-						map.put(rs.getString(MtapppfVO.BUSI_DETAIL_PK), rs.getString(MtapppfVO.PK_MTAPP_PF));
+					String djdl = rs.getString(MtapppfVO.PK_DJDL);
+					if(result.get(djdl) == null){
+						List<String> pkList = new ArrayList<String>();
+						pkList.add(rs.getString(MtapppfVO.BUSI_DETAIL_PK ));
+						result.put(djdl, pkList);
+					}else{
+						result.get(djdl).add(rs.getString(MtapppfVO.BUSI_DETAIL_PK ));
 					}
-					
-					jkBxPfPkList.add(rs.getString(MtapppfVO.PK_MTAPP_PF));
 				}
 				return null;
 			}
 			
 		});
 		
-		if (jkDetailList.size() > 0) {
-			@SuppressWarnings("unchecked")
-			Collection<BxcontrastVO> contrastVos = new BaseDAO().retrieveByClause(BxcontrastVO.class,
-					SqlUtil.buildInSql(BxcontrastVO.PK_BXCONTRAST, jkDetailList));
-			
-			if(contrastVos != null && contrastVos.size() > 0){
-				for (BxcontrastVO contrast : contrastVos) {
-					if (BXStatusConst.SXBZ_VALID == contrast.getSxbz()) {
-						result.get("cjk2").add(map.get(contrast.getPk_bxcontrast()));
-					} else {
-						result.get("cjk1").add(map.get(contrast.getPk_bxcontrast()));
-					}
-					jkBxPfPkList.remove(map.get(contrast.getPk_bxcontrast()));
-				}
-			}
-		}
-
-		result.get("bx").addAll(jkBxPfPkList);
 		return result;
 	}
 
@@ -315,15 +336,32 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			
 			sql.append(" ma.pk_tradetype djlxbm, ma.pk_currtype bzbm, ma.billdate djrq, ma.approvetime shrq,");
 			sql.append(" ma.approvetime jsrq, ma.reason zy, ma.billno djbh, ma.pk_group pk_group,");
-			sql.append(" (case when ma.close_status = 1 then (mad.global_amount - mad.global_rest_amount) else mad.global_amount end) globalbbje,");
-			sql.append(" (case when ma.close_status = 1 then (mad.group_amount - mad.group_rest_amount) else mad.group_amount end) groupbbje, ");
-			sql.append(" (case when ma.close_status = 1 then (mad.org_amount - mad.org_rest_amount) else mad.org_amount end) bbje,");
-			sql.append(" (case when ma.close_status = 1 then (mad.orig_amount - mad.rest_amount) else mad.orig_amount end) ybje ");
+			
+			sql.append(" (case when ma.close_status = 1 and mad.global_rest_amount > 0 then (mad.global_amount - mad.global_rest_amount) ");
+			sql.append(" else mad.global_amount end) globalbbje,");
+			
+			
+			sql.append(" (case when ma.close_status = 1 and mad.group_rest_amount > 0 then (mad.group_amount - mad.group_rest_amount) " );
+			sql.append(" else mad.group_amount end) groupbbje, ");
+			
+			sql.append(" (case when ma.close_status = 1 and mad.org_rest_amount > 0 then (mad.org_amount - mad.org_rest_amount) " );
+			sql.append(" else mad.org_amount end) bbje,");
+			
+			sql.append(" (case when ma.close_status = 1 and mad.rest_amount > 0 then (mad.orig_amount - mad.rest_amount)");
+			sql.append(" else mad.orig_amount end) ybje ");
 		} else {
-			sql.append(" sum(case when ma.close_status = 1 then (mad.global_amount - mad.global_rest_amount) else mad.global_amount end) globalbbje,");
-			sql.append(" sum(case when ma.close_status = 1 then (mad.group_amount - mad.group_rest_amount) else mad.group_amount end) groupbbje, ");
-			sql.append(" sum(case when ma.close_status = 1 then (mad.org_amount - mad.org_rest_amount) else mad.org_amount end) bbje,");
-			sql.append(" sum(case when ma.close_status = 1 then (mad.orig_amount - mad.rest_amount) else mad.orig_amount end) ybje ");
+			sql.append(" sum(case when ma.close_status = 1 and mad.global_rest_amount > 0 then (mad.global_amount - mad.global_rest_amount) ");
+			sql.append(" else mad.global_amount end )globalbbje,");
+			
+			sql.append(" sum(case when ma.close_status = 1 and mad.group_rest_amount > 0 then (mad.group_amount - mad.group_rest_amount) ");
+			sql.append(" else mad.group_amount end) groupbbje, ");
+			
+			
+			sql.append(" sum(case when ma.close_status = 1 and mad.org_rest_amount > 0 then (mad.org_amount - mad.org_rest_amount)" );
+			sql.append(" else mad.org_amount end) bbje,");
+			
+			sql.append(" sum(case when ma.close_status = 1 and mad.rest_amount > 0 then (mad.orig_amount - mad.rest_amount)");
+			sql.append(" else mad.orig_amount end) ybje ");
 		}
 		return sql.toString();
 	}

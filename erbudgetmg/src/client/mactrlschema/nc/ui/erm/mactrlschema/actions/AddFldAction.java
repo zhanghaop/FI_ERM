@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import nc.bs.erm.mactrlschema.MaCtrlSchemaChecker;
 import nc.bs.uif2.IActionCode;
 import nc.ui.ml.NCLangRes;
 import nc.ui.uif2.AbstractShowMsgExceptionHandler;
@@ -50,7 +49,7 @@ public class AddFldAction extends BatchAddLineAction {
 
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		MaCtrlSchemaChecker.checkOperation(getTreeModel());
+//		MaCtrlSchemaChecker.checkOperation(getTreeModel());
 		super.doAction(e);
 	}
 

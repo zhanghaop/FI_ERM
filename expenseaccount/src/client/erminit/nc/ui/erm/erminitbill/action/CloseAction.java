@@ -18,7 +18,6 @@ public class CloseAction extends NCAction{
 	private BillManageModel model;
 
 	public CloseAction() {
-		super();
 		setCode("Cancel");
 		this.setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0049")/*@res "¹Ø±Õ"*/);
 	}
@@ -26,7 +25,6 @@ public class CloseAction extends NCAction{
 	public void doAction(ActionEvent e) throws Exception {
 		UIDialog ermInitDialog = getErmInitDialog();
 		((ErmInitDialog) ermInitDialog).getRefOrg().setPK(ErUiUtil.getDefaultOrgUnit());
-//		((ErmInitDialog) ermInitDialog).getRefOrg().setRefValue();
 		if (ermInitDialog.showModal() == UIDialog.ID_OK) { 
 			String pk_org = ((ErmInitDialog) ermInitDialog).getRefOrg()
 					.getRefPK();

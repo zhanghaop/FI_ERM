@@ -23,13 +23,10 @@ import nc.ui.pub.beans.constenum.IConstEnum;
 import nc.vo.bd.accessor.IBDData;
 import nc.vo.bd.meta.BDObjectAdpaterFactory;
 import nc.vo.bd.meta.IBDObject;
-import nc.vo.ep.bx.JKBXVO;
-import nc.vo.erm.costshare.AggCostShareVO;
-import nc.vo.erm.costshare.CostShareVO;
-import nc.vo.erm.expamortize.ExpamtprocVO;
-import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.sm.funcreg.ModuleVO;
@@ -275,15 +272,18 @@ public class BusiLogUtil {
 
 	private static String getBillNo(Object newvo) {
 		String billno = "";
-		if(newvo instanceof JKBXVO){
-			billno = ((JKBXVO)newvo).getParentVO().getDjbh();
-		}else if(newvo instanceof AggMatterAppVO){
-			billno = ((AggMatterAppVO)newvo).getParentVO().getBillno();
-		}else if(newvo instanceof AggCostShareVO){
-			billno = (String)((AggCostShareVO)newvo).getParentVO().getAttributeValue(CostShareVO.BILLNO);
-		}else if(newvo instanceof ExpamtprocVO){
+
+		if (newvo instanceof AggregatedValueObject) {
+			billno = (String) ((AggregatedValueObject) newvo).getParentVO().getAttributeValue("djbh");
+			if (billno == null) {
+				billno = (String) ((AggregatedValueObject) newvo).getParentVO().getAttributeValue("billno");
+			}
+		} else if (newvo instanceof SuperVO) {
+			billno = (String) ((SuperVO) newvo).getAttributeValue("djbh");
+			if (billno == null) {
+				billno = (String) ((SuperVO) newvo).getAttributeValue("billno");
+			}
 		}
-		
 		return billno;
 	}
 
@@ -339,7 +339,7 @@ public class BusiLogUtil {
 			return null;
 		}
 
-		String docPk = attributeValue == null ? "" : attributeValue.toString();
+		String docPk = attributeValue.toString();
 		Object value = null;
 		if (attr.getDataType().getTypeType() == IType.REF) {
 

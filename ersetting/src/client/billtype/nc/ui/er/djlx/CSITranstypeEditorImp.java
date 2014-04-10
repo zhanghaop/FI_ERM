@@ -4,9 +4,10 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.bs.erm.costshare.IErmCostShareConst;
+import nc.bs.erm.common.ErmBillConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.er.prv.IArapBillTypePrivate;
+import nc.ui.dbcache.DBCacheFacade;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
@@ -61,6 +62,8 @@ public class CSITranstypeEditorImp extends AbstractTranstypeEditor implements IT
 		default:
 			break;
 		}
+		
+		DBCacheFacade.refreshTable(DjLXVO.getDefaultTableName());
 	}
 
 	private void qryTransobj(EditorContext ec) throws BusinessException {
@@ -133,7 +136,7 @@ public class CSITranstypeEditorImp extends AbstractTranstypeEditor implements IT
 			head.setPk_group(pk_group);
 			head.setFcbz(transtype.getIsLock());
 			// head.setDjdl(BXConstans.BX_DJDL);
-			head.setDjdl(IErmCostShareConst.COSTSHARE_DJDL);
+			head.setDjdl(ErmBillConst.CostShare_DJDL);
 			head.setDwbm(BXConstans.GLOBAL_CODE);
 			break;
 		case EditorContext.TYPE_EDIT:
@@ -154,7 +157,7 @@ public class CSITranstypeEditorImp extends AbstractTranstypeEditor implements IT
 			// head.setPk_group("@@@@");
 			head.setPk_group(pk_group);
 			head.setFcbz(transtype.getIsLock());
-			head.setDjdl(IErmCostShareConst.COSTSHARE_DJDL);
+			head.setDjdl(ErmBillConst.CostShare_DJDL);
 			break;
 		default:
 			vo = (BillTypeVO) getCsBillCard().getBillValueVO("nc.vo.er.djlx.BillTypeVO", "nc.vo.er.djlx.DjLXVO",
@@ -168,7 +171,7 @@ public class CSITranstypeEditorImp extends AbstractTranstypeEditor implements IT
 			// head.setPk_group("@@@@");
 			head.setPk_group(pk_group);
 			head.setFcbz(transtype.getIsLock());
-			head.setDjdl(IErmCostShareConst.COSTSHARE_DJDL);
+			head.setDjdl(ErmBillConst.CostShare_DJDL);
 		}
 		setEditable(false);
 		return vo;

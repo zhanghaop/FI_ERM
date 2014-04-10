@@ -284,6 +284,7 @@ public class AuthorizeUI extends ToftPanel {
 	 */
 	private void afterEditOrg() {
 		createBillTree();
+		clearBillData();
 	}
 
 	/**

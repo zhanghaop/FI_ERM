@@ -42,7 +42,11 @@ public class LinkApproveResultAction extends NCAction {
 	
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = getBtnName() + ErmActionConst.FAIL_MSG;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
+				"2011000_0", null, "02011000-0040", null,
+				new String[] { this.getBtnName() })/*
+													 * @ res "{0}Ê§°Ü£¡"
+													 */;
 		((DefaultExceptionHanler)getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler)getExceptionHandler()).setErrormsg(null);

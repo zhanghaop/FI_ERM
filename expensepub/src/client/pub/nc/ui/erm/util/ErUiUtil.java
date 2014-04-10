@@ -3,12 +3,17 @@ package nc.ui.erm.util;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
+import nc.bs.bd.service.ValueObjWithErrLog;
+import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
 import nc.desktop.ui.WorkbenchEnvironment;
@@ -19,21 +24,27 @@ import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.org.cache.IOrgUnitPubService_C;
 import nc.pubitf.setting.defaultdata.OrgSettingAccessor;
-import nc.pubitf.uapbd.IPsndocPubService;
 import nc.ui.arap.bx.remote.IPermissionOrgVoCallConst;
 import nc.ui.arap.bx.remote.PsnVoCall;
+import nc.ui.bd.ref.AbstractRefGridTreeModel;
 import nc.ui.bd.ref.AbstractRefModel;
+import nc.ui.bd.ref.IFilterCommonDataVec;
+import nc.ui.dbcache.DBCacheFacade;
+import nc.ui.erm.billpub.remote.RoleVoCall;
+import nc.ui.pub.beans.UIRefPane;
+import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.formulaparse.FormulaParse;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
+import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.bd.psn.PsndocVO;
+import nc.vo.bd.psn.PsnjobVO;
 import nc.vo.bd.ref.IFilterStrategy;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.fipub.utils.uif2.FiUif2MsgUtil;
 import nc.vo.jcom.lang.StringUtil;
-import nc.vo.pm.util.ArrayUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.billtype.BilltypeVO;
@@ -76,15 +87,12 @@ public class ErUiUtil {
         setRefFilterPks(refModel, pk_vids, IFilterStrategy.INSECTION);
     }
 
-    public static void setRefFilterPks(AbstractRefModel refModel,
-            String[] pk_vids, int filterStrategy) {
-        @SuppressWarnings("rawtypes")
-        Vector vector = refModel.getSelectedData();
-        refModel.setSelectedData(null);
-        refModel.setFilterPks(pk_vids);
-        refModel.setSelectedData(vector);
-        refModel.fireChange();
-    }
+	public static void setRefFilterPks(AbstractRefModel refModel, String[] pk_vids, int filterStrategy) {
+		refModel.setSelectedData(null);
+		refModel.setFilterPks(pk_vids);
+		refModel.setSelectedData(refModel.getSelectedData());
+		refModel.fireChange();
+	}
 
 	/**
 	 * 返回当前登录用户的功能节点的权限
@@ -151,6 +159,10 @@ public class ErUiUtil {
 		if(nodeCode .equals(BXConstans.BXINIT_NODECODE_G)){
 			nodeCode = BXConstans.BXINIT_NODECODE_U;
 		}
+		
+		if(date == null){
+			date = getSysdate();
+		}
         final String cacheKey = nodeCode + date.toStdString()
                 + IPermissionOrgVoCallConst.PERMISSION_PK_ORG_V
                 + ErUiUtil.getPk_user() + ErUiUtil.getPK_group();
@@ -200,7 +212,6 @@ public class ErUiUtil {
 		return strByID;
 	}
 	
-
 	/**
 	 * 返回个性化中心设置的业务单元,没有设置，返回null
 	 * 
@@ -494,32 +505,7 @@ public class ErUiUtil {
 	public static String getDefaultPsnOrg(){
 		return getPsnPk_org(getPk_psndoc());
 	}
-	/**
-	 * 人员所属组织
-	 * 
-	 * @param pk_psndoc
-	 *            人员主键
-	 * @return
-	 */
-	public static String getPsnPk_org(String pk_psndoc) {
-		if (StringUtil.isEmpty(pk_psndoc)) {
-			return null;
-		}
-		if (WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group()) == null) {
-			try {
-				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(new String[] { pk_psndoc },
-						new String[] { PsndocVO.PK_ORG });
-				// 人员所属组织
-				String pk_org = persons[0].getPk_org();
-				WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), pk_org);
-			} catch (Exception e) {
-				ExceptionHandler.consume(e);
-			}
-		}
-		return (String) WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group());
-	}
 	
-
 	/**
 	 * 反射调用，显示类似Uif2类似的错误消息
 	 * 
@@ -537,7 +523,62 @@ public class ErUiUtil {
 	public static void showUif2DetailMessage(Component comp, String statusBarErrMsg, String msg) {
 		FiUif2MsgUtil.showUif2DetailMessage(comp, statusBarErrMsg, msg);
 	}
+	
+	
+	
+	/**
+	 * 结账和取消结账的批量结果显示
+	 * @param context
+     * @param messageVos
+     * @throws BusinessException  
+	 */
+    public static void showBatchBookAccResults(LoginContext context, ValueObjWithErrLog[] ObjWithErrLog,String ActionCommand) throws BusinessException {
+		if(ArrayUtils.isEmpty(ObjWithErrLog))
+			return;
+		
+		boolean existSuccess = false;
+        boolean existFail = false;
+        StringBuffer sbValue = new StringBuffer();
+        for (ValueObjWithErrLog valueObjWithErrLog : ObjWithErrLog) {
+			if(valueObjWithErrLog==null || valueObjWithErrLog.getErrLogList()==null){
+				existSuccess = true;
+			}
+			else if(valueObjWithErrLog.getErrLogList()!=null){
+				existFail = true;
+				 String errorMsg =(String)valueObjWithErrLog.getErrLogList().get(0).getErrReason();
+	             sbValue.append(errorMsg).append("\r");
+			}
+		}
+        
+        String title=null;
+        if("EndAcc"/* -=notranslate=- */.equals(ActionCommand)){
+        	if(existSuccess && !existFail){
+        		title=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0002");//结账成功
+        	}else if(existSuccess && existFail){
+        		title = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0158");//部分结账失败
+        	}else if(!existSuccess && existFail){
+        		title = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0159");//结账失败
+        	}
+        }else{
+        	if(existSuccess && !existFail){
+        		title=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0093");//取消结账成功
+        	}else if(existSuccess && existFail){
+        		title = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0160");//部分取消结账失败
+        	}else if(!existSuccess && existFail){
+        		title = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0161");//取消结账失败
+        	}
+        }
+        
+        
+        if (!existFail && existSuccess) {//全部成功
+            ShowStatusBarMsgUtil.showStatusBarMsg(title, context);
+        } else {
+            ShowStatusBarMsgUtil.showErrorMsg(title, sbValue.toString(), context);
+        }
+    }
 
+	
+	
     /**
      * 批处理结果显示
      * @param context
@@ -545,7 +586,7 @@ public class ErUiUtil {
      * @throws BusinessException 
      */
     public static void showBatchResults(LoginContext context, MessageVO[] messageVos) throws BusinessException {
-        if (ArrayUtil.isEmpty(messageVos))
+        if (ArrayUtils.isEmpty(messageVos))
             return;
         
         boolean bHasSuccess = false;
@@ -569,17 +610,15 @@ public class ErUiUtil {
         String operationName = ActionUtils.getOperationName(messageVos[0].getMessageType());
         String title = null;
 		if (bHasSuccess) {
-			title = operationName + nc.ui.ml.NCLangRes.getInstance().getStrByID("2011000_0", "02011000-0039")/*
-																											 * @
-																											 * res
-																											 * "成功！"
-																											 */;
+			title =nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("2011000_0", null,
+					"02011000-0039", null, new String[] {operationName});/** @* res* "成功！"*/;
+
+			//title = operationName + nc.ui.ml.NCLangRes.getInstance().getStrByID("2011000_0", "02011000-0039")
 		} else {
-			title = operationName + nc.ui.ml.NCLangRes.getInstance().getStrByID("2011000_0", "02011000-0040")/*
-																											 * @
-																											 * res
-																											 * "失败！"
-																											 */;
+			title =nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("2011000_0", null,
+					"02011000-0040", null, new String[] {operationName});/** @* res* ""失败！"*/;
+			//title = operationName + nc.ui.ml.NCLangRes.getInstance().getStrByID("2011000_0", "02011000-0040")
+					/*																		 */
 		}
         if (!bHasFail && bHasSuccess) {//全部成功
             ShowStatusBarMsgUtil.showStatusBarMsg(title, context);
@@ -621,4 +660,225 @@ public class ErUiUtil {
             model.setPk_org(pkOrg);
         }
     }
+    
+	/**
+	 * 返回人员信息(array[0]= 人员主键，array[1]=人员所属部门,array[2]=人员所属组织,array[3]=人员所在集团)
+	 * 
+	 * @param pk_psndoc
+	 *            人员组件
+	 * @return
+	 */
+	public static String[] getPsnDocInfoById(String pk_psndoc) {
+		String[] retValues = new String[4];
+		// 人员
+		retValues[0] = pk_psndoc;
+		// 部门
+		retValues[1] = getPsnPk_dept(pk_psndoc);
+		// 组织
+		retValues[2] = getPsnPk_org(pk_psndoc);
+		// 集团
+		retValues[3] = getPsnPk_group(pk_psndoc);
+
+		return retValues;
+	}
+
+	/**
+	 * 人员所在集团，连带缓存组织
+	 * 
+	 * @param pk_psndoc
+	 *            人员主键
+	 * @return
+	 */
+	public static String getPsnPk_group(String pk_psndoc) {
+		if (StringUtil.isEmpty(pk_psndoc)) {
+			return null;
+		}
+
+		WorkbenchEnvironment instance = WorkbenchEnvironment.getInstance();
+		String pk_psngroup = (String) instance.getClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group());
+		if (pk_psngroup == null) {
+			try {
+//				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(
+//						new String[] { pk_psndoc }, new String[] { PsndocVO.PK_ORG, PsndocVO.PK_GROUP });
+				PsndocVO person = CacheUtil.getVOByPk(PsndocVO.class, pk_psndoc);
+				// 人员所属组织
+				if(person != null){
+					pk_psngroup = person.getPk_group();
+					instance.putClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group(), pk_psngroup);
+					instance.putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), person.getPk_org());
+				}
+			} catch (BusinessException e) {
+				ExceptionHandler.consume(e);
+			}
+		}
+		return pk_psngroup;
+	}
+
+	/**
+	 * 人员所属组织，连带缓存组织
+	 * 
+	 * @param pk_psndoc
+	 *            人员主键
+	 * @return
+	 */
+	public static String getPsnPk_org(String pk_psndoc) {
+		if (StringUtil.isEmpty(pk_psndoc)) {
+			return null;
+		}
+
+		WorkbenchEnvironment instance = WorkbenchEnvironment.getInstance();
+		String pk_org = (String) instance.getClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group());
+		if (pk_org == null) {
+			try {
+//				PsndocVO[] persons = NCLocator.getInstance().lookup(IPsndocPubService.class).queryPsndocByPks(
+//						new String[] { pk_psndoc }, new String[] { PsndocVO.PK_ORG, PsndocVO.PK_GROUP });
+				PsndocVO person = CacheUtil.getVOByPk(PsndocVO.class, pk_psndoc);
+				if(person != null){
+					// 人员所属组织
+					pk_org = person.getPk_org();
+					instance.putClientCache(PsnVoCall.FIORG_PK_ + pk_psndoc + getPK_group(), pk_org);
+					instance.putClientCache(PsnVoCall.GROUP_PK_ + pk_psndoc + getPK_group(), person.getPk_group());
+				}
+			} catch (Exception e) {
+				ExceptionHandler.consume(e);
+			}
+		}
+		return pk_org;
+
+	}
+
+	/**
+	 * 返回人员所在部门
+	 * 
+	 * @author chendya
+	 * @param pk_psndoc
+	 *            人员主键
+	 * @return
+	 */
+	public static String getPsnPk_dept(String pk_psndoc) {
+		if (WorkbenchEnvironment.getInstance().getClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group()) == null) {
+			final String pk_psndept = getColValue2("bd_psnjob", PsnjobVO.PK_DEPT, PsnjobVO.PK_PSNDOC, pk_psndoc,
+					PsnjobVO.ISMAINJOB, "Y");
+			WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group(),
+					pk_psndept);
+		}
+		return (String) WorkbenchEnvironment.getInstance().getClientCache(
+				PsnVoCall.DEPT_PK_ + pk_psndoc + getPK_group());
+	}
+	
+	/**
+	 * 返回用户所关联的人员信息(array[0]=
+	 * 人员主键，array[1]=人员所属部门,array[2]=人员所属组织,array[3]=人员所在集团)
+	 * 
+	 * @param cuserid
+	 *            用户id
+	 * @return
+	 */
+	public static String[] getPsnDocInfo(String cuserid) {
+		String[] retValues = new String[4];
+		// 人员主键
+		final String value = getPk_psndoc(cuserid);
+		if (value == null || value.length() == 0) {
+			return retValues;
+		}
+		return ErUiUtil.getPsnDocInfoById(value);
+	}
+	
+	/**
+	 * 返回指定用户所对应的业务员
+	 * 
+	 * @return
+	 */
+	public static String getPk_psndoc(String cuserid) {
+		final String pk_psn = getColValue2("sm_user", "pk_psndoc", "pk_base_doc", cuserid, "base_doc_type",
+				UserIdentityTypeEnumFactory.TYPE_PERSON);
+		if (pk_psn != null) {
+			WorkbenchEnvironment.getInstance().putClientCache(PsnVoCall.PSN_PK_ + pk_psn + getPK_group(), pk_psn);
+		}
+		return pk_psn;
+	}
+	
+	
+	
+	/**
+	 * 过滤借款报销人
+	 * 特殊处理
+	 * 
+	 * @param panel
+	 * @param headItem
+	 * @param billtype
+	 * @param headOrg
+	 * @throws BusinessException
+	 */
+	public static void initSqdlr(BillForm editor, BillItem headItem, String billtype, String headOrg, UFDate billDate)
+			throws BusinessException {
+		String refType = headItem.getRefType();
+		if (refType == null){
+			return;
+		}
+		
+		UIRefPane refPane = (UIRefPane) headItem.getComponent();
+		final AbstractRefGridTreeModel model = (AbstractRefGridTreeModel) refPane.getRefModel();
+		
+		if (headItem == null || headOrg == null){
+			model.setWherePart("1=0");
+			return;
+		}
+		
+		String pk_psndoc = getPk_psndoc(ErUiUtil.getPk_user());
+		if(pk_psndoc == null){
+			model.setWherePart("1=0");
+			return;
+		}
+		
+		if(billDate == null){
+			billDate = ErUiUtil.getSysdate();
+		}
+		
+		String roleSql = null;
+		if (WorkbenchEnvironment.getInstance().getClientCache(RoleVoCall.PK_ROLE_IN_SQL_BUSI + getPK_group()) != null) {
+			roleSql = (String) WorkbenchEnvironment.getInstance().getClientCache(RoleVoCall.PK_ROLE_IN_SQL_BUSI + getPK_group());
+		}
+		
+		final String wherePart = ErUtil.getAgentWhereString(pk_psndoc, roleSql, billtype, ErUiUtil.getPk_user(),
+				billDate.toString(), headOrg);
+		
+		String newWherePart = "1=1 " + wherePart;
+		
+		model.setPk_org(headOrg);
+		model.setWherePart(newWherePart);
+		//处理常用数据
+		model.setFilterCommonDataVec(new IFilterCommonDataVec(){
+			@SuppressWarnings("unchecked")
+			@Override
+			public void filterCommonDataVec(Vector vec) {
+				if (vec == null || vec.isEmpty()) {
+					return;
+				}
+				String sql = model.getRefSql();
+				Vector<Vector<String>> vers = (Vector<Vector<String>>) DBCacheFacade
+						.getFromDBCache(sql);
+				if (vers == null || vers.isEmpty()) {
+					vec.removeAllElements();
+					return;
+				}
+
+				Set<String> jkbxrdata = new HashSet<String>();
+				for (Vector<String> ve : vers) {
+					jkbxrdata.add(ve.get(2));
+				}
+				Vector removed = new Vector();
+				for (Object data : vec) {
+					Vector<Object> ve = (Vector<Object>) data;
+					String pk_psndoc = (String) ve.get(2);
+					if (jkbxrdata.contains(pk_psndoc))
+						continue;
+					removed.addElement(ve);
+				}
+				if (removed.size() > 0) {
+					vec.removeAll(removed);
+				}
+			}
+		});
+	}
 }

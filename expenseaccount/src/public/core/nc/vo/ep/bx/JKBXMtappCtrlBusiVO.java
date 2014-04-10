@@ -73,12 +73,21 @@ public class JKBXMtappCtrlBusiVO implements IMtappCtrlBusiVO,Serializable {
 	}
 
 	@Override
-	public String getAttributeValue(String attr) {
+	public String getAttributeValue(String... attrs) {
 		
-		String[] split = StringUtil.split(attr, ".");
-		String key = split[0];
-		if(split.length == 2){
-			key = split[1];
+		// 从属性中过滤有效的目标字段，从主表或者业务行获得
+		String key = null;
+		for (int i = 0; i < attrs.length; i++) {
+			String[] split = StringUtil.split(attrs[i], ".");
+			if(split.length ==1){
+				key = split[0];
+			}else if(BXConstans.ER_BUSITEM.equals(split[0])||BXConstans.JK_BUSITEM.equals(split[0])){
+				key = split[1];
+				break;
+			}
+		}
+		if(key == null){
+			return null;
 		}
 		return (String) parentVO.getAttributeValue(key);
 	}
@@ -115,7 +124,7 @@ public class JKBXMtappCtrlBusiVO implements IMtappCtrlBusiVO,Serializable {
 
 	@Override
 	public String getPk_org() {
-		return parentVO.getPk_org();
+		return parentVO.getFydwbm();
 	}
 
 	@Override
@@ -198,9 +207,22 @@ public class JKBXMtappCtrlBusiVO implements IMtappCtrlBusiVO,Serializable {
 	
 	@Override
 	public boolean isExceedEnable() {
-		// 借款单本身回写申请单时，不可超申请
-		return !(BXConstans.JK_DJDL.equals(getpk_djdl())&&
-				StringUtil.isEmptyWithTrim(getForwardBusidetailPK()));
+		// 报销单、冲借款，可按超申请处理
+		return BXConstans.BX_DJDL.equals(getpk_djdl())||!StringUtil.isEmpty(getSrcBusidetailPK());
+	}
+
+	@Override
+	public String getMatterAppDetailPK() {
+		return parentVO.getPk_mtapp_detail();
+	}
+	
+	/**
+	 * 是否上游申请单分摊
+	 * 
+	 * @return
+	 */
+	public boolean getIsmashare(){
+		return parentVO.getIsmashare() == null? false:parentVO.getIsmashare().booleanValue();
 	}
 	
 }

@@ -1,5 +1,8 @@
 package nc.pubitf.erm.costshare;
 
+import java.util.List;
+
+import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.pub.BusinessException;
 
@@ -36,5 +39,15 @@ public interface IErmCostShareYsControlService {
 	 * @throws BusinessException
 	 */
 	public void ysControlUpdate(AggCostShareVO[] vos, AggCostShareVO[] oldvos) throws BusinessException ;
-
+	
+	/**
+	 * 查询结转单预算VO集合
+	 * @param vos 结转单VO
+	 * @param isContray
+	 * @param actionCode
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<YsControlVO> getCostShareYsVOList(AggCostShareVO[] vos, boolean isContray, String actionCode)
+			throws BusinessException;
 }

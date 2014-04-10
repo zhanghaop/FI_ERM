@@ -4,9 +4,11 @@
 \***************************************************************/
 package nc.vo.erm.expenseaccount;
 
+import nc.vo.pub.IVOMeta;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 /**
  * <b> 在此处简要描述此类的功能 </b>
@@ -105,7 +107,12 @@ public class ExpenseAccountVO extends SuperVO {
 	private Integer payflag;
 	private UFDate paydate;
 	private String pk_payorg;
-
+	
+	//v631加入
+	private String pk_proline;//产品线
+	private String pk_brand;//品牌
+	private String bx_tradetype;//报销单交易类型
+	
 	public static final String PK_EXPENSEACCOUNT = "pk_expenseaccount";
 	public static final String BILLDATE = "billdate";
 	public static final String BILLMAKER = "billmaker";
@@ -188,6 +195,9 @@ public class ExpenseAccountVO extends SuperVO {
 	public static final String PAYFLAG = "payflag";
 	public static final String PAYDATE = "paydate";
 	public static final String PK_PAYORG = "pk_payorg";
+	public static final String PK_PROLINE = "pk_proline";//产品线
+	public static final String PK_BRAND = "pk_brand";//品牌
+	public static final String BX_TRADETYPE = "bx_tradetype";//报销单交易类型
 
 	/**
 	 * 属性pk_expenseaccount的Getter方法.属性名：主键 创建日期:
@@ -1797,4 +1807,35 @@ public class ExpenseAccountVO extends SuperVO {
 	public ExpenseAccountVO() {
 		super();
 	}
+
+	public String getPk_proline() {
+		return pk_proline;
+	}
+
+	public void setPk_proline(String pkProline) {
+		pk_proline = pkProline;
+	}
+
+	public String getPk_brand() {
+		return pk_brand;
+	}
+
+	public void setPk_brand(String pkBrand) {
+		pk_brand = pkBrand;
+	}
+
+	public String getBx_tradetype() {
+		return bx_tradetype;
+	}
+
+	public void setBx_tradetype(String bxTradetype) {
+		bx_tradetype = bxTradetype;
+	}
+
+	@Override
+	public IVOMeta getMetaData() {
+		return VOMetaFactory.getInstance().getVOMeta("erm.expenseaccount");
+	}
+	
+	
 }

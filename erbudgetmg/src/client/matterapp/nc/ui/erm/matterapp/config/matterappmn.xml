@@ -30,6 +30,7 @@
 
 				<ref bean="nullAction" />
 				<ref bean="tradeTypeAction" />
+				<ref bean="nullAction" />
 				<ref bean="commitGroupAction" />
 				<ref bean="auditGroupAction" />
 				<ref bean="closeGroupAction" />
@@ -60,6 +61,7 @@
 
 				<ref bean="nullAction" />
 				<ref bean="tradeTypeAction" />
+				<ref bean="nullAction" />
 				<ref bean="commitGroupAction" />
 				<ref bean="auditGroupAction" />
 				<ref bean="closeGroupAction" />
@@ -78,7 +80,8 @@
 
 				<ref bean="nullAction" />
 				<ref bean="cancelAction" />
-				
+				<ref bean="nullAction" />
+				<ref bean="rapidShareAction" />
 				<ref bean="nullAction" />
 				<ref bean="documentaction"/>
 			</list>
@@ -95,9 +98,7 @@
 			<value>true</value>
 		</property>
 		<property name="nodekey" value="20110MTAMN" />
-		<!-- 
 		<property name="templateContainer" ref="templateContainer"></property>
-		-->
 		<property name="linklistener" ref="linklistener" />
 		<property name="userdefitemListPreparator" ref="userdefitemListPreparator" />
 		<property name="north" ref="listInfoPanel" />

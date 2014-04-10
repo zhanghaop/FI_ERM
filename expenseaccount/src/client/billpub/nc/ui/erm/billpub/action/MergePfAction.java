@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nc.bs.framework.common.NCLocator;
+import nc.bs.logging.Logger;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.ui.erm.view.ErmToftPanel;
@@ -31,11 +32,15 @@ public class MergePfAction extends NCAction {
 
 	private BillManageModel model;
 	private BillForm editor;
-	
+
 	public MergePfAction() {
 		super();
 		setCode("Bill");
-	    setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0076")/*@res "制单"*/);
+		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0076")/*
+																									 * @
+																									 * res
+																									 * "制单"
+																									 */);
 
 	}
 
@@ -97,15 +102,14 @@ public class MergePfAction extends NCAction {
 			m.invoke(o, new Object[] { toftPanel, datas, null });
 
 		} catch (Exception ex) {
-			if(ex instanceof java.lang.reflect.InvocationTargetException){
-				ExceptionHandler.handleException((Exception)((java.lang.reflect.InvocationTargetException) ex).getTargetException());
-			}else{
-				throw ExceptionHandler.handleException(ex);
+			if (ex instanceof java.lang.reflect.InvocationTargetException) {
+				ExceptionHandler.handleException((Exception) ((java.lang.reflect.InvocationTargetException) ex)
+						.getTargetException());
 			}
+			Logger.error(ex.getMessage(), ex);
 		}
 	}
-	
-	
+
 	private void checkTs(JKBXVO[] selectedvos) throws BusinessException {
 		HashMap<String, List<JKBXVO>> map = new HashMap<String, List<JKBXVO>>();
 		for (JKBXVO vo : selectedvos) {
@@ -129,32 +133,33 @@ public class MergePfAction extends NCAction {
 			}
 			Map<String, String> ts = null;
 			try {
-				ts = NCLocator.getInstance().lookup(IBXBillPrivate.class).getTsByPrimaryKey(
-						selectedPK.toArray(new String[] {}),
-						djdl.equals(BXConstans.BX_DJDL) ? BXConstans.BX_TABLENAME
-								: BXConstans.JK_TABLENAME,
-						new BXHeaderVO().getPKFieldName());
+				ts = NCLocator
+						.getInstance()
+						.lookup(IBXBillPrivate.class)
+						.getTsByPrimaryKey(selectedPK.toArray(new String[] {}),
+								djdl.equals(BXConstans.BX_DJDL) ? BXConstans.BX_TABLENAME : BXConstans.JK_TABLENAME,
+								new BXHeaderVO().getPKFieldName());
 			} catch (Exception e2) {
-				throw ExceptionHandler.createException(nc.vo.ml.NCLangRes4VoTransl
-						.getNCLangRes().getStrByID("2011", "UPP2011-000359")/*
-																			 * @res
-																			 * "并发异常，数据已经更新，请重新查询数据后操作"
-																			 */, e2);
+				throw ExceptionHandler.createException(
+						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000359")/*
+																										 * @
+																										 * res
+																										 * "并发异常，数据已经更新，请重新查询数据后操作"
+																										 */, e2);
 			}
 
 			for (JKBXVO vo : map.get(djdl)) {
-				if (!vo.getParentVO().getTs().toString().equals(
-						ts.get(vo.getParentVO().getPk_jkbx()))) {
-					throw ExceptionHandler.createException(nc.vo.ml.NCLangRes4VoTransl
-							.getNCLangRes().getStrByID("2011", "UPP2011-000359")/*
-																				 * @res
-																				 * "并发异常，数据已经更新，请重新查询数据后操作"
-																				 */);
+				if (!vo.getParentVO().getTs().toString().equals(ts.get(vo.getParentVO().getPk_jkbx()))) {
+					throw ExceptionHandler.createException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+							"2011", "UPP2011-000359")/*
+													 * @res
+													 * "并发异常，数据已经更新，请重新查询数据后操作"
+													 */);
 				}
 			}
 		}
 	}
-	
+
 	private void validate(JKBXVO[] selectedvos) throws BusinessException {
 		// 校验单据是否是审核状态
 		// 币种一致
@@ -163,52 +168,50 @@ public class MergePfAction extends NCAction {
 		for (JKBXVO vo : selectedvos) {
 
 			JKBXHeaderVO parentVO = vo.getParentVO();
-			
-			//为生效的单据不能进行制单
-			if ((parentVO.getDjzt() != BXStatusConst.DJZT_Sign
-					&& parentVO.getDjzt() != BXStatusConst.DJZT_Verified) 
+
+			// 为生效的单据不能进行制单
+			if ((parentVO.getDjzt() != BXStatusConst.DJZT_Sign && parentVO.getDjzt() != BXStatusConst.DJZT_Verified)
 					|| !Integer.valueOf(BXStatusConst.SXBZ_VALID).equals(parentVO.getSxbz()))
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-						.getStrByID("2011", "UPP2011-000356")/*
-															 * @res
-															 * "选中的单据未生效，不能进行制单的操作!"
-															 */);
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+						"UPP2011-000356")/*
+										 * @res "选中的单据未生效，不能进行制单的操作!"
+										 */);
 			if (bzbm != null && !bzbm.equals(parentVO.getBzbm()))
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-						.getStrByID("2011", "UPP2011-000357")/*
-															 * @res
-															 * "选中的单据包括不同的币种，不能进行制单的操作!"
-															 */);
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+						"UPP2011-000357")/*
+										 * @res "选中的单据包括不同的币种，不能进行制单的操作!"
+										 */);
 			if (bzbm == null)
 				bzbm = parentVO.getBzbm();
 		}
 
 	}
+
 	public BillManageModel getModel() {
 		return model;
 	}
+
 	public void setModel(BillManageModel model) {
 		this.model = model;
 		this.model.addAppEventListener(this);
 	}
-	
+
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if ((selectedData != null && (selectedData.getParentVO()
-						.getDjzt()).equals(BXStatusConst.DJZT_Sign))) {
+		if ((selectedData != null && (selectedData.getParentVO().getDjzt()).equals(BXStatusConst.DJZT_Sign))) {
 			return true;
 		}
 
 		return false;
 	}
+
 	public BillForm getEditor() {
 		return editor;
 	}
+
 	public void setEditor(BillForm editor) {
 		this.editor = editor;
 	}
-	
-	
 
 }
