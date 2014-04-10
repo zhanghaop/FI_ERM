@@ -81,7 +81,6 @@
 	<classpathentry kind="src" path="expenseaccount/src/private/ext"/>
 	<classpathentry kind="src" path="expenseaccount/src/client/ext"/>
 	<classpathentry kind="src" path="expensepub/src/test"/>
-	<classpathentry kind="src" output="out/resources" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Ant_Library"/>
 	<classpathentry kind="con" path="com.yonyou.ria.g2.container/Product_Common_Library"/>
