@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nc.bs.er.util.SqlUtil;
 import nc.bs.erm.annotation.ErmBusinessDef;
 import nc.bs.erm.cache.ErmBillFieldContrastCache;
 import nc.bs.erm.common.ErmBillConst;
@@ -20,6 +19,7 @@ import nc.itf.tb.control.IFormulaFuncName;
 import nc.itf.tb.control.OutEnum;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.erm.control.TokenTools;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
 import nc.vo.pub.BusinessException;
@@ -122,17 +122,18 @@ public abstract class AbstractErmNtbSqlStrategy {
 			boolean isIncludelower = ntbvo.getIncludelower()[i];// 是否包含下级
 
 			List<String> bddata = new ArrayList<String>();
-
 			if (!(item_pk.indexOf("|") >= 0) && !item_pk.equals(OutEnum.NOSUCHBASEPKATSUBCORP)) {
 				if (isIncludelower) {
-					String[] childDocs = ntbvo.getLowerArrays().get(names[i]);
-					for (String data : childDocs) {
-						bddata.add(data);
+					HashMap<String, String[]> lowerArrays = ntbvo.getLowerArrays();
+					if (lowerArrays != null && lowerArrays.get(names[i]) != null) {
+						for (String data : lowerArrays.get(names[i])) {
+							bddata.add(data);
+						}
 					}
 				}
 				bddata.add(item_pk);
 			}
-
+			
 			String nameField = getSrcField(getBillType(), names[i]);
 			if (nameField == null) {
 				nameField = names[i];
@@ -140,7 +141,7 @@ public abstract class AbstractErmNtbSqlStrategy {
 
 			// checkField(nameField);
 
-			sql.append(" and " + SqlUtil.buildInSql(nameField, bddata.toArray(new String[] {})));
+			sql.append(" and " + SqlUtils.getInStr(nameField, bddata.toArray(new String[] {}), true));
 		}
 
 		return sql.toString();
@@ -218,7 +219,7 @@ public abstract class AbstractErmNtbSqlStrategy {
 				billTypeField = "pk_billtype";
 			}
 
-			sql.append(" and " + SqlUtil.buildInSql(billTypeField, billTypes));
+			sql.append(" and " + SqlUtils.getInStr(billTypeField, billTypes, true ));
 		}
 
 		return sql.toString();
