@@ -18,7 +18,10 @@ import nc.ui.uif2.model.AbstractAppModel;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.sm.UserVO;
-
+/**
+ *	CAÈÏÖ¤°´Å¥À¹½ØÆ÷ 
+ *
+ */
 public class CaActionInterceptor  implements ActionInterceptor{
 
 	private AbstractAppModel model;
