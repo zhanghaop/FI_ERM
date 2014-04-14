@@ -25,7 +25,7 @@ public class CaActionInterceptor  implements ActionInterceptor{
 	
 	private static final String ADDFROMMTAPP_CODE="AddFromMtapp";
 	
-	private List<String> cardodes = Arrays.asList(new String[]{IActionCode.EDIT,IActionCode.COPY, IActionCode.ADD, ADDFROMMTAPP_CODE});
+	private List<String> cardodes = Arrays.asList(new String[]{IActionCode.EDIT,IActionCode.COPY, IActionCode.ADD, ADDFROMMTAPP_CODE,IActionCode.APPROVE});
 
 	@Override
 	public boolean afterDoActionFailed(Action action, ActionEvent e, Throwable ex) {
@@ -69,8 +69,10 @@ public class CaActionInterceptor  implements ActionInterceptor{
 
 		boolean checked = true;
 
-		if (null != djlx.getIsidvalidated() && djlx.getIsidvalidated().booleanValue()) {
-				checked = !(NCAuthenticatorFactory.getBusiAuthenticator(ErUiUtil.getPk_user()).sign("ERM_SIGN") == null);
+		if (null != djlx.getIsidvalidated()
+				&& djlx.getIsidvalidated().booleanValue()) {
+			checked = !(NCAuthenticatorFactory.getBusiAuthenticator(
+					ErUiUtil.getPk_user()).sign("ERM_SIGN") == null);
 		}
 
 		if (!checked) {

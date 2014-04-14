@@ -710,6 +710,7 @@
 	<bean id="auditAction" class="nc.ui.erm.billpub.action.AuditAction">
 		<property name="model" ref="manageAppModel" />
 		<property name="editor" ref="editor"/>
+		<property name="interceptor" ref="interceptor"/>
 		<property name="auditstausListener" ref="auditstausListener"/>
 	</bean>
 
