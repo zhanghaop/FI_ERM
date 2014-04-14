@@ -1,0 +1,36 @@
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z310000000007TV7','~',0,'20110BMLB','N','N','N','N','Y','Y','Y','erm','快速查询',null,null,null,null,null,'~','~','1001Z3100000000121MW',null,5,'2014-01-07 09:11:30')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001KKA3','~',0,'20110BMLB','N','Y','N','N','Y','Y',null,'erm','本季单据',null,null,null,null,null,'~','~','1001Z3100000000121MW',null,2,'2014-01-07 09:11:30')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001KKA1','~',0,'20110BMLB','N','Y','N','N','Y','Y',null,'erm','本周单据',null,null,null,null,null,'~','~','1001Z3100000000121MW',null,0,'2014-01-07 09:11:30')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001KKA2','~',0,'20110BMLB','N','Y','N','N','Y','Y',null,'erm','本月单据',null,null,null,null,null,'~','~','1001Z3100000000121MW',null,1,'2014-01-07 09:11:30')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001MD3E','~',0,'20110BMLB','N','Y','N','N','N','Y',null,'erm','待审批单据',null,null,null,null,null,'~','~','1001Z3100000000121MW',null,3,'2014-01-21 10:08:10')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001H5T2','~',0,'20110BMLB','N','Y','N','N','N','Y',null,'erm','已审批单据',null,null,null,null,null,'~','~','1001Z3100000000121MW',null,4,'2014-01-21 10:08:25')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001Y36K','1001Z310000000000DWQ',0,'20110BMLB','N','Y','N','N','Y','N',null,'erm','本周单据',null,null,null,null,null,'1001Z31000000001KKA1','0001Z310000000000NX9','1001Z3100000000121MW',null,0,'2014-02-25 11:25:26')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001Y36L','1001Z310000000000DWQ',0,'20110BMLB','N','Y','N','N','Y','N',null,'erm','本月单据',null,null,null,null,null,'1001Z31000000001KKA2','0001Z310000000000NX9','1001Z3100000000121MW',null,1,'2014-02-25 11:25:26')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001Y36M','1001Z310000000000DWQ',0,'20110BMLB','N','Y','N','N','Y','N',null,'erm','本季单据',null,null,null,null,null,'1001Z31000000001KKA3','0001Z310000000000NX9','1001Z3100000000121MW',null,2,'2014-02-25 11:25:26')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001Y36N','1001Z310000000000DWQ',0,'20110BMLB','N','Y','N','N','Y','N',null,'erm','待审批单据',null,null,null,null,null,'1001Z31000000001MD3E','0001Z310000000000NX9','1001Z3100000000121MW',null,3,'2014-02-25 11:25:26')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001Y36O','1001Z310000000000DWQ',0,'20110BMLB','N','Y','N','N','Y','N',null,'erm','已审批单据',null,null,null,null,null,'1001Z31000000001H5T2','0001Z310000000000NX9','1001Z3100000000121MW',null,4,'2014-02-25 11:25:26')
+go
+
+insert into pub_queryscheme(pk_queryscheme,cuserid,dr,funcode,isautorun,iscomplete,isdefault,isdeleted,ismodified,isprepared,isquickqs,modulename,name,name2,name3,name4,name5,name6,parentid,pk_org,pk_template,qsobject,sequenc,ts) values('1001Z31000000001Y36P','1001Z310000000000DWQ',0,'20110BMLB','N','N','N','N','Y','N','Y','erm','快速查询',null,null,null,null,null,'1001Z310000000007TV7','0001Z310000000000NX9','1001Z3100000000121MW',null,5,'2014-02-25 11:25:26')
+go
+
