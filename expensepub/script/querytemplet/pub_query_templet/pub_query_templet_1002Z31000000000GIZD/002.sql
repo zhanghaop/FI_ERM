@@ -1,0 +1,3 @@
+insert into pub_query_condition(id,consult_code,data_type,disp_sequence,disp_type,disp_value,dr,field_code,field_name,guideline,if_attrrefused,if_autocheck,if_datapower,if_default,if_desc,if_group,if_immobility,if_multicorpref,if_must,if_notmdcondition,if_order,if_subincluded,if_sum,if_sysfuncrefused,if_used,instrumentsql,iscondition,limits,max_length,opera_code,opera_name,order_sequence,pk_corp,pk_templet,prerestrict,resid,return_type,table_code,table_name,ts,userdefflag,value) values('0001Z3FTSPAY0000591N','是',4,100,0,'0',null,'zb.ybye','是否已两清',null,'N','N','N','Y','N','N','N',null,'N','N','N','N','N','N','Y',null,'Y',9999,2,'=@','等于@',0,'@@@@','1002Z31000000000GIZD',null,'120111LBB0001',3,null,null,'2013-09-23 13:40:05','N','true')
+go
+

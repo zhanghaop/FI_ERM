@@ -93,7 +93,7 @@ public class BXBsUtil {
 			return null;
 		}
 	}
-
+///DDAAA
 	public static String getPK_group() {
 		return InvocationInfoProxy.getInstance().getGroupId();
 	}
