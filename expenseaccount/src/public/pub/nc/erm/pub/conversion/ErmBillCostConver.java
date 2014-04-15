@@ -294,7 +294,14 @@ public class ErmBillCostConver {
 				if(isRedBack){
 					expaccVO.setBillstatus(BXStatusConst.DJZT_Sign);
 				}
-
+				
+				//操作人员信息
+				expaccVO.setBx_dwbm(parentVO.getOperator_org());
+				expaccVO.setBx_deptid(parentVO.getOperator_dept());
+				expaccVO.setBx_jkbxr(parentVO.getOperator());
+				expaccVO.setBx_group(parentVO.getPk_group());
+				expaccVO.setBx_org(parentVO.getPk_org());
+				
 				expaccVO.setPk_group(parentVO.getPk_group());
 				expaccVO.setPk_org(detailItem.getAssume_org());// 费用帐主组织取费用承担单位
 				expaccVO.setAssume_org(detailItem.getAssume_org());
