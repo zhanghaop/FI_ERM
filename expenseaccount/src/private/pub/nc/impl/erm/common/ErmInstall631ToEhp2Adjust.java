@@ -538,7 +538,7 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 	 */
 	public void doUpdateReimRule() throws DAOException{
 		//给现有集团和组织都设置默认维度
-		doSetGroupOrgReimDimension();
+//		doSetGroupOrgReimDimension();//界面处理
 		//读配置文件配置组织级
 		doSetXmlToDimension();
 		//将旧标准迁移到新的表中
