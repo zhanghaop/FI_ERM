@@ -25,7 +25,6 @@ import nc.vo.uap.rbac.role.RoleVO;
  * 
  */
 public class BXBsUtil {
-	// 需要打回来
 	public static String getPk_psndoc(String cuserid) throws BusinessException {
 		IUserPubService service = NCLocator.getInstance().lookup(IUserPubService.class);
 		return service.queryPsndocByUserid(cuserid);

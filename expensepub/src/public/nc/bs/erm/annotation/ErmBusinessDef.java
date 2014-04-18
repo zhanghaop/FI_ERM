@@ -1,7 +1,7 @@
 package nc.bs.erm.annotation;
 
 public interface ErmBusinessDef {
-// 需要打回来
+
 	public static final String RAPID_SHARE = "快速分摊"/* -=notranslate=- */;
 
 	public static final String COSTSHARE = "费用结转"/* -=notranslate=- */;
