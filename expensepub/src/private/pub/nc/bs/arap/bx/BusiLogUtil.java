@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * <b>Date:</b>2012-7-13<br>
- * 
+ * git
  * @author£ºwangyhh@ufida.com.cn
  */
 public class BusiLogUtil {
