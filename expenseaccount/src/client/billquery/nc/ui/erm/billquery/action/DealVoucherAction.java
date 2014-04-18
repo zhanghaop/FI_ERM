@@ -125,7 +125,7 @@ public class DealVoucherAction extends NCAction {
 		
 		for (int i = 0; i < jkbxVos.length; i++) {
 			String param = SysinitAccessor.getInstance().getParaString(jkbxVos[i].getParentVO().getPk_org(), "CMP37");
-			if(param.equals(BXStatusConst.VounterCondition_ZF)){
+			if(BXStatusConst.VounterCondition_ZF.equals(param)){
 				//对于单据的并发校验
 				if(!ExistBill.containsKey(jkbxVos[i].getParentVO().getPk_jkbx())){
 					existSuccess = false;
