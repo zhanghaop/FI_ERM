@@ -41,7 +41,7 @@
 		<property name="orgPanel" ref="orgPanel" />
 		<property name="exceptionHandler" ref="exceptionHandler" />
 	</bean>
-	<bean id="treeService" class="nc.ui.erm.sharerule.model.ShareRuleTreeService" />
+
 	<!-- 功能管理树型模型 -->
 	<bean id="treeModel" class="nc.ui.uif2.model.HierachicalDataAppModel">
 		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />

@@ -24,10 +24,7 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 
 import nc.bs.framework.common.NCLocator;
-import nc.itf.bd.currtype.ICurrtypeQuery;
 import nc.itf.erm.prv.IArapCommonPrivate;
-import nc.itf.org.IDeptQryService;
-import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIButton;
 import nc.ui.pub.beans.UIComboBox;
@@ -39,13 +36,11 @@ import nc.ui.pub.beans.UIRadioButton;
 import nc.ui.pub.beans.UITextField;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
-import nc.vo.bd.currtype.CurrtypeVO;
-import nc.vo.er.expensetype.ExpenseTypeVO;
+import nc.ui.pub.bill.IBillItem;
 import nc.vo.er.reimrule.ReimRulerVO;
-import nc.vo.er.reimtype.ReimTypeHeaderVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.logging.Debug;
-import nc.vo.org.DeptVO;
+import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFDouble;
 
@@ -115,10 +110,17 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 	private Workbook wb = null;
 
 	private InputStream is = null;
+	
+	IArapCommonPrivate service = null;
+	Map<String,Collection<SuperVO>> valuesMap = null;
+	
 	private static String OFFICE03 = ".xls";
 	private static String OFFICE07 = ".xlsx";
-
-	private static Map<Integer,String> colsMap=new HashMap<Integer,String>();
+	class ColumnAttr{
+		String name;
+		String type;
+	}
+	private static Map<Integer,ColumnAttr> colsMap=new HashMap<Integer,ColumnAttr>();
 
 
 	private final BillCardPanel panel ;
@@ -480,9 +482,14 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 		if(sheet == null)
 		sheet = wb.getSheet(String.valueOf(getUIComboBox().getSelectdItemValue()));
 		int rowNum = sheet.getLastRowNum();
+		
 		//判断EXCEL表头标题是否满足规定的格式
 		Row row = sheet.getRow(0);
 		BillItem[] headShowItems = panel.getBodyShowItems();
+		if(headShowItems==null){
+			MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, "没有可以导入的列！");
+			return null;
+		}
 		for(int j= 0 ; j < row.getLastCellNum();j++){
 			Cell cell = row.getCell((short) j);
 			if(cell == null){
@@ -490,11 +497,27 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 				return null;
 			}
 			for(BillItem item:headShowItems){
-				if(cell.toString().equals(item.getName().toString()))
-					colsMap.put(j, item.getName().toString());
+				//自定义项列名后会加@def1...，需要去掉后缀再判断
+				String columnName = cell.toString();
+				String splitname = columnName;
+				if(columnName.contains("@"))
+					splitname = columnName.substring(0,columnName.indexOf('@'));
+				ColumnAttr ca = new ColumnAttr();
+				if(splitname.equals(item.getName())){
+					ca.name = item.getKey();
+					if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
+						ca.type = "Money";
+					}
+					else if (item.getDataType() != IBillItem.UFREF || item.getMetaDataProperty() == null
+						 ||item.getMetaDataProperty().isRefAttribute())
+						ca.type = "String";
+					else
+						ca.type = item.getMetaDataProperty().getRefBusinessEntity().getFullClassName();
+					colsMap.put(j, ca);
+					break;
+				}
 			}
 		}
-
 		reimrules = new ArrayList<ReimRulerVO>(rowNum);
 		for(int i=1;i<=rowNum;i++){
 			row = sheet.getRow(i);
@@ -502,154 +525,87 @@ public class ImportExcelDialog extends UIDialog implements ActionListener{
 				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000473")/*@res "警告"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000474")/*@res "数据在："*/+(i+1)+nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000475")/*@res "行为空，跳过"*/);
 				continue;
 			}
-			ReimRulerVO reimrule = new ReimRulerVO();
-			for(int j=0;j<row.getLastCellNum();j++){
-				Cell cell = row.getCell((short) j);
-
-				if(cell == null)continue;
-				try {
-					Object cellValue = null;
-					cellValue = parseValue(cell,cellValue);
-					if(colsMap.get(j)==null)
-						continue;
-					if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPTcommon-000156")/*@res "费用类型"*/)){
-						Collection<SuperVO> expenseType = NCLocator.getInstance().lookup(IArapCommonPrivate.class).getVOs(ExpenseTypeVO.class, "", false);
-						if(expenseType!=null){
-							Iterator<SuperVO> itExpense = expenseType.iterator();
-							while (itExpense.hasNext()) {
-								ExpenseTypeVO voexpense = (ExpenseTypeVO) itExpense.next();
-								if (getRBUseName().isSelected()) {
-									if (voexpense.getName().equals(cellValue)){
-										reimrule.setPk_expensetype_name(cellValue.toString());
-										reimrule.setPk_expensetype(voexpense.getPk_expensetype());
-									}
-
-								} else if (voexpense.getCode().equals(cellValue)) {
-									reimrule.setPk_expensetype_name(cellValue.toString());
-									reimrule.setPk_expensetype(voexpense.getPk_expensetype());
-								}
-							}
-						}else
-							reimrule.setPk_expensetype("");
-
-					} else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000476")/*@res "报销类型"*/)){
-						Collection<SuperVO> reimType = NCLocator.getInstance().lookup(IArapCommonPrivate.class).getVOs(ReimTypeHeaderVO.class, "", false);
-						if(reimType!=null){
-							Iterator<SuperVO> itReimtype = reimType.iterator();
-								while(itReimtype.hasNext()){
-									ReimTypeHeaderVO voReimtype = (ReimTypeHeaderVO) itReimtype.next();
-									if(getRBUseName().isSelected()){
-										if(voReimtype.getName().equals(cellValue)){
-											reimrule.setPk_reimtype(voReimtype.getPk_reimtype());
-											reimrule.setPk_reimtype_name(cellValue.toString());
-										}
-
-									} else if(voReimtype.getCode().equals(cellValue)){
-											reimrule.setPk_reimtype(voReimtype.getPk_reimtype());
-											reimrule.setPk_reimtype_name(cellValue.toString());
-									}
-								}
-						}else reimrule.setPk_reimtype("");
-					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPTcommon-000007")/*@res "部门"*/)){
-						//部门导入目前采用默认集团
-						DeptVO condDeptdocVO = new DeptVO();
-						String department = cell.toString();
-						if(department.contains("."))
-							department = department.substring(0,department.lastIndexOf("."));
-						condDeptdocVO.setName(department);
-						if(condDeptdocVO != null && !condDeptdocVO.getName().equals("")){
-							DeptVO[] bookvo = NCLocator.getInstance().lookup(IDeptQryService.class).queryDeptVOSByGroupIDAndClause(ErUiUtil.getPK_group(), "name='" + department + "'");
-							if(bookvo!=null && bookvo.length>0 )
-							{
-								if(getRBUseName().isSelected()){
-									if(bookvo[0].getName().equals(department)){
-										reimrule.setPk_deptid(bookvo[0].getPk_dept());
-										reimrule.setPk_deptid_name(department);
-									}
-									else
-										reimrule.setPk_deptid("");
-								} else if(bookvo[0].getName().equals(cellValue.toString())){
-										reimrule.setPk_deptid(bookvo[0].getPk_dept());
-										reimrule.setPk_deptid_name(department);
-								}
-							} else reimrule.setPk_deptid("");
-						} else reimrule.setPk_deptid("");
-
-					} else if(colsMap.get(j).equals("职位")){
-						String memo = cell.toString();
-						reimrule.setPk_position(memo);
-						reimrule.setPk_position_name(memo);
-					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000046")/*@res "币种"*/)){
-						String strCurrtype = cellValue.toString().trim();
-						if(!"".equals(strCurrtype)&& strCurrtype!=null){
-							CurrtypeVO[] currtypevoByName = NCLocator.getInstance().lookup(ICurrtypeQuery.class).queryAllCurrtypeVO();
-							if(getRBUseName().isSelected()){							
-								if(currtypevoByName!=null){
-									for(CurrtypeVO vo:currtypevoByName){
-										if(vo.getName().equals(strCurrtype)){
-											reimrule.setPk_currtype(vo.getPk_currtype());
-										}
-									}
-								}else{
-									reimrule.setPk_currtype("");
-								} 
-										
-							} else 
-							{	
-								if(currtypevoByName!=null){
-									for(CurrtypeVO vo:currtypevoByName){
-										if(vo.getCode().equals(strCurrtype)){
-											reimrule.setPk_currtype(vo.getPk_currtype());
-											reimrule.setPk_currtype_name(strCurrtype);
-										}
-									}
-								}
-								else 
-									reimrule.setPk_currtype("");
-							}
-						}																																											
-					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000478")/*@res "金额"*/)){
-						if(!cell.toString().equals("")){
-							UFDouble amount = new UFDouble(Double.parseDouble(cell.toString()));
-							reimrule.setAmount(amount);
-							reimrule.setAmount_name(amount.toString());
-						} else{
-							reimrule.setAmount(UFDouble.ZERO_DBL);
-							reimrule.setAmount_name(UFDouble.ZERO_DBL.toString());
-						}
-					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPTcommon-000199")/*@res "备注"*/)){
-						String memo = cell.toString();
-						reimrule.setMemo(memo);
-						reimrule.setMemo_name(memo);
-					}else if(colsMap.get(j).equals(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000479")/*@res "优先级"*/)){
-						String priority = cell.toString();
-						if (priority.contains("."))
-							priority = priority.substring(0,priority.lastIndexOf("."));
-						reimrule.setPriority(Integer.valueOf(priority));
-					}else if(colsMap.get(j).contains("def")){ // 部门自定义@def?
-						String key=colsMap.get(j);
-						String defcode=key.substring(key.indexOf("def"));
-//						String bdpk = null;
-//						if(getRBUseName().isSelected())
-//							bdpk = ruleUI.getDefValueByKey(cell.toString(), defcode, true);
-//						else
-//							bdpk = ruleUI.getDefValueByKey(cell.toString(), defcode, false);
-						String bdpk = cell.toString();
-						reimrule.setAttributeValue(defcode, bdpk);
-						reimrule.setAttributeValue(defcode+"_name", cell.toString());
-					}
-
-				} catch (Exception e) {
-					Debug.error(e.getMessage(),e);
-					MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000480",null,new String[]{String.valueOf((i+1)),String.valueOf((j+1))})/*@res "EXCEL数据格式在：i行,j列有问题：\n"*/+e.getMessage());
-					return null;
-				}
-			}
-			reimrules.add(reimrule);
+			ReimRulerVO reimrule = getReimRulerVO(i,row);
+			if(reimrule != null)
+				reimrules.add(reimrule);
 		}
 		return reimrules.toArray(new ReimRulerVO[reimrules.size()]);
 	}
+	
+	
+	private IArapCommonPrivate getService(){
+		if(service ==  null)
+			service = NCLocator.getInstance().lookup(IArapCommonPrivate.class);
+		return service;
+	}
+	
+	private Collection<SuperVO> getValuesMap(String name,@SuppressWarnings("rawtypes") Class claz) throws BusinessException{
+		if(valuesMap ==  null)
+			valuesMap = new HashMap<String,Collection<SuperVO>>();
+		if(valuesMap.get(name) == null){
+			valuesMap.put(name, getService().getVOs(claz, "", false));
+		}
+		return valuesMap.get(name);
+	}
+	
+	//根据第i行的值设置报销VO
+	@SuppressWarnings("rawtypes")
+	private ReimRulerVO getReimRulerVO(int i,Row row){
+		ReimRulerVO reimrule = new ReimRulerVO();
+		for(int j=0;j<row.getLastCellNum();j++){
+			Cell cell = row.getCell((short) j);
+			if(cell == null)
+				continue;
+			Object cellValue = null;
+			cellValue = parseValue(cell,cellValue);
+			if(colsMap.get(j)==null)
+				continue;
+			String defcode = colsMap.get(j).name;
+			try {
+				if(colsMap.get(j).type.equals("Money")){
+					UFDouble amount = UFDouble.ZERO_DBL;
+					if(!cellValue.toString().trim().equals("")){
+						amount = new UFDouble(Double.parseDouble(cellValue.toString().trim()));
+					} 
+					reimrule.setAttributeValue(defcode, amount);
+					reimrule.setAttributeValue(defcode+"_name", amount.toString());
+				}
+				//String类型直接赋值即可
+				else if(colsMap.get(j).type.equals("String")){
+					reimrule.setAttributeValue(defcode, cellValue.toString().trim());
+					reimrule.setAttributeValue(defcode+"_name", cellValue.toString().trim());
+				}
+				else{
+					//引用类型需要从数据库中搜索pk
+					Class claz = Class.forName(colsMap.get(j).type);
+					String bdpk = null;
+					Collection<SuperVO> vos = getValuesMap(defcode,claz);
+					if(vos!=null){
+						Iterator<SuperVO> itVos = vos.iterator();
+							while(itVos.hasNext()){
+								SuperVO currVO = itVos.next();
+								if(getRBUseName().isSelected()){
+									if(currVO.getAttributeValue("name").equals(cellValue.toString().trim())){
+										bdpk = currVO.getPrimaryKey();
+									}
 
+								} else if(currVO.getAttributeValue("code").equals(cellValue.toString().trim())){
+									bdpk = currVO.getPrimaryKey();
+								}
+							}
+					}
+					reimrule.setAttributeValue(defcode, bdpk);
+					reimrule.setAttributeValue(defcode+"_name", cellValue.toString().trim());
+				}
+			} catch (Exception e) {
+				Debug.error(e.getMessage(),e);
+				MessageDialog.showErrorDlg(this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000380")/*@res "错误"*/, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000480",null,new String[]{String.valueOf((i+1)),String.valueOf((j+1))})/*@res "EXCEL数据格式在：i行,j列有问题：\n"*/+e.getMessage());
+			}
+		}
+		return reimrule;
+	}
+	
+	
 	private Object parseValue(Cell cell, Object reimtype) {
 		switch (cell.getCellType()) {
 			case Cell.CELL_TYPE_NUMERIC : {

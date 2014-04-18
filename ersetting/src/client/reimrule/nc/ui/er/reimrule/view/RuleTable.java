@@ -21,6 +21,7 @@ import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.ui.uif2.model.AppEventConst;
 import nc.vo.bill.pub.BillUtil;
 import nc.vo.er.djlx.DjLXVO;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.reimrule.ReimRuleDimVO;
 import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.pub.BusinessException;
@@ -71,6 +72,33 @@ public class RuleTable extends BatchBillTable implements IComponentWithActions {
 		}
 		BillData billData = ReimRuleUtil.getTemplateInitBillData(djlxbm,getNodekey());
 		List<SuperVO> reimruledim=ReimRuleUtil.getDataMapDim().get(djlxbm);
+		//如果未设置维度，则用预置数据进行初始化
+		if(reimruledim == null || reimruledim.size() == 0){
+			if(reimruledim==null)
+				reimruledim = new ArrayList<SuperVO>();
+			try {
+				String pk_group = getModel().getContext().getPk_group();
+				String pk_org = getModel().getContext().getPk_org();
+				List<ReimRuleDimVO> vodims = NCLocator.getInstance().lookup(IReimTypeService.class)
+						.queryReimDim("2631", "GLOBLE00000000000000", "~");
+				for(ReimRuleDimVO dimvo:vodims){
+					dimvo.setPk_billtype(djlxbm);
+					dimvo.setPk_group(pk_group);
+					dimvo.setPk_org(pk_org);
+					reimruledim.add(dimvo);
+				}
+				//保存
+				List<ReimRuleDimVO> returnVos = NCLocator.getInstance().lookup(
+						IReimTypeService.class).saveReimDim(djlxbm, pk_group,pk_org,
+								reimruledim.toArray(new ReimRuleDimVO[0]));
+				List<SuperVO> list = new ArrayList<SuperVO>();
+				list.addAll(returnVos);
+				ReimRuleUtil.putDim(djlxbm, list);
+			}catch (BusinessException ex) {
+				ExceptionHandler.consume(ex);
+			}
+		}
+		//展示界面
 		if (reimruledim!=null && reimruledim.size()>0) {
 			getBillCardPanel().setVisible(true);
 			BillItem[] bodyItems = billData.getBillItemsByPos(IBillItem.BODY);
