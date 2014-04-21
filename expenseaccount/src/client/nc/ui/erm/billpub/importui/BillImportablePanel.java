@@ -252,7 +252,8 @@ public class BillImportablePanel extends ErmImportablePanel {
 	
 
 	private String getBillTypeCode() {
-		return getUiBillCardPanel().getBillData().getBillTempletVO().getHeadVO().getPkBillTypeCode();
+		Object selectedData = ((BillManageModel)getUiEditor().getModel()).getSelectedData();
+		return selectedData!=null ? ((JKBXVO)selectedData).getParentVO().getDjlxbm() : ((ErmBillBillManageModel)getUiEditor().getModel()).getCurrentBillTypeCode();
 	}
 	
 	@Override
