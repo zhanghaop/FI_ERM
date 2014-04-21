@@ -134,6 +134,18 @@ public class DjLXVO extends SuperVO {
 	public static final String IS_MACTRL = "is_mactrl";
 	public static final String BXTYPE = "bxtype";
 	
+	/**
+	 * V65-×Ô¶¯½áËã
+	 * @return
+	 */
+	private UFBoolean autosettle;
+	public UFBoolean getAutosettle() {
+		return autosettle;
+	}
+	public void setAutosettle(UFBoolean autosettle) {
+		this.autosettle = autosettle;
+	}
+	public static final String AUTOSETTLE="autosettle";
 	
 	public UFBoolean getCreatCashflows() {
 		return creatCashflows;
