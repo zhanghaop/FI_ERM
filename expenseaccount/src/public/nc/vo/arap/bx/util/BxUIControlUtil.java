@@ -544,7 +544,8 @@ public class BxUIControlUtil {
 			BillTempletBodyVO[] billtempletbodyvos, Map<String, List<SuperVO>> reimDimDataMap) {
 		List<BodyEditVO> result = new ArrayList<BodyEditVO>();
 		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null
-				|| billtempletbodyvos==null || billtempletbodyvos.length==0)
+				|| billtempletbodyvos==null || billtempletbodyvos.length==0
+				|| reimDimDataMap==null || reimRuleDataMap==null)
 			return result;
 
 		String djlxbm = bxvo.getParentVO().getDjlxbm();
