@@ -751,7 +751,8 @@ public class BxUIControlUtil {
 			Map<String, List<SuperVO>> reimDimDataMap) {//,Map<String, SuperVO> expenseType, Map<String, SuperVO> reimtypeMap
 		List<String> reimrule = new ArrayList<String>();
 
-		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null)
+		if (bxvo == null || bxvo.getParentVO() == null || bxvo.getParentVO().getDjlxbm() == null
+				|| reimRuleDataMap==null || reimDimDataMap==null)
 			return reimrule;
 
 		String djlxbm = bxvo.getParentVO().getDjlxbm();
