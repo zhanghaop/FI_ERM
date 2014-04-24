@@ -16,7 +16,7 @@ import nc.vo.pub.*;
  * @version NCPrj ??
  */
 @SuppressWarnings("serial")
-public class BXTbbDetailVO extends SuperVO {
+public class ERMTbbDetailVO extends SuperVO {
 	private java.lang.String pk_jkbx;
 	private java.lang.String pk_tbb_detail;
 	private java.lang.String tbb_year;
@@ -207,7 +207,7 @@ public class BXTbbDetailVO extends SuperVO {
 	  *
 	  * 创建日期:
 	  */
-     public BXTbbDetailVO() {
+     public ERMTbbDetailVO() {
 		super();	
 	}    
 	

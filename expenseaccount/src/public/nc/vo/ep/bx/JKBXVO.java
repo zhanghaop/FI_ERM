@@ -41,7 +41,7 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 	
 	protected AccruedVerifyVO[] accruedVerifyVO;// 核销预提明细
 	
-	protected BXTbbDetailVO[] bxtbbDetailVO ;//预算占用期间
+	protected ERMTbbDetailVO[] bxtbbDetailVO ;//预算占用期间
 
 	protected JKBXHeaderVO parentVO;
 
@@ -184,12 +184,12 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 			}
 		}
 		//预算占用期间:以后可能需要
-		BXTbbDetailVO[] vobxtbbDetailVO =null;
+		ERMTbbDetailVO[] vobxtbbDetailVO =null;
 		if(bxtbbDetailVO!=null){
-			vobxtbbDetailVO = new BXTbbDetailVO[bxtbbDetailVO.length];
+			vobxtbbDetailVO = new ERMTbbDetailVO[bxtbbDetailVO.length];
 			for(int i = 0; i < bxtbbDetailVO.length; i++){
 				if(bxtbbDetailVO[i]!=null){
-					vobxtbbDetailVO[i] = (BXTbbDetailVO)bxtbbDetailVO[i].clone();
+					vobxtbbDetailVO[i] = (ERMTbbDetailVO)bxtbbDetailVO[i].clone();
 				}
 			}
 		}
