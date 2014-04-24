@@ -17,16 +17,16 @@ import nc.vo.pub.*;
  */
 @SuppressWarnings("serial")
 public class ERMTbbDetailVO extends SuperVO {
-	private java.lang.String pk_jkbx;
+	private java.lang.String pk_bill;
 	private java.lang.String pk_tbb_detail;
-	private java.lang.String tbb_year;
+	private java.lang.Integer tbb_year;
 	private java.lang.String tbb_month;
 	private nc.vo.pub.lang.UFDouble tbb_amount;
 	private nc.vo.pub.lang.UFDouble ratio;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
 
-	public static final String PK_JKBX = "pk_jkbx";
+	public static final String PK_BILL = "pk_bill";
 	public static final String PK_TBB_DETAIL = "pk_tbb_detail";
 	public static final String TBB_YEAR = "tbb_year";
 	public static final String TBB_MONTH = "tbb_month";
@@ -34,23 +34,23 @@ public class ERMTbbDetailVO extends SuperVO {
 	public static final String RATIO = "ratio";
 			
 	/**
-	 * 属性pk_jkbx的Getter方法.属性名：报销单标识
+	 * 属性pk_bill的Getter方法.属性名：报销单标识
 	 * 创建日期:
 	 * @return java.lang.String
 	 */
-	public java.lang.String getPk_jkbx () {
-		return pk_jkbx;
+	public java.lang.String getPk_bill () {
+		return pk_bill;
 	}   
 	/**
-	 * 属性pk_jkbx的Setter方法.属性名：报销单标识
+	 * 属性pk_bill的Setter方法.属性名：报销单标识
 	 * 创建日期:
-	 * @param newPk_jkbx java.lang.String
+	 * @param newPk_bill java.lang.String
 	 */
-	public void setPk_jkbx (java.lang.String newPk_jkbx ) {
-	 	this.pk_jkbx = newPk_jkbx;
+	public void setPk_bill (java.lang.String newPk_bill ) {
+	 	this.pk_bill = newPk_bill;
 	} 	  
 	/**
-	 * 属性pk_tbb_detail的Getter方法.属性名：预算占用期间业务行
+	 * 属性pk_tbb_detail的Getter方法.属性名：预算占用业务行
 	 * 创建日期:
 	 * @return java.lang.String
 	 */
@@ -58,7 +58,7 @@ public class ERMTbbDetailVO extends SuperVO {
 		return pk_tbb_detail;
 	}   
 	/**
-	 * 属性pk_tbb_detail的Setter方法.属性名：预算占用期间业务行
+	 * 属性pk_tbb_detail的Setter方法.属性名：预算占用业务行
 	 * 创建日期:
 	 * @param newPk_tbb_detail java.lang.String
 	 */
@@ -68,17 +68,17 @@ public class ERMTbbDetailVO extends SuperVO {
 	/**
 	 * 属性tbb_year的Getter方法.属性名：预算占用年度
 	 * 创建日期:
-	 * @return java.lang.String
+	 * @return java.lang.Integer
 	 */
-	public java.lang.String getTbb_year () {
+	public java.lang.Integer getTbb_year () {
 		return tbb_year;
 	}   
 	/**
 	 * 属性tbb_year的Setter方法.属性名：预算占用年度
 	 * 创建日期:
-	 * @param newTbb_year java.lang.String
+	 * @param newTbb_year java.lang.Integer
 	 */
-	public void setTbb_year (java.lang.String newTbb_year ) {
+	public void setTbb_year (java.lang.Integer newTbb_year ) {
 	 	this.tbb_year = newTbb_year;
 	} 	  
 	/**
@@ -211,7 +211,7 @@ public class ERMTbbDetailVO extends SuperVO {
 		super();	
 	}    
 	
-	@nc.vo.annotation.MDEntityInfo(beanFullclassName =  "nc.vo.ep.bx.BXTbbDetailVO" )
+	@nc.vo.annotation.MDEntityInfo(beanFullclassName =  "nc.vo.ep.bx.ERMTbbDetailVO" )
 	public IVOMeta getMetaData() {
    		return null;
   	}

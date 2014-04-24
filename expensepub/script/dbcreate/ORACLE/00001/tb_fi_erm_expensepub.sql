@@ -44,7 +44,7 @@ create table er_tbbdetail (pk_jkbx char(20) null
 /*报销单标识*/,
 pk_tbb_detail char(20) not null 
 /*预算占用业务行*/,
-tbb_year varchar2(4) null 
+tbb_year int(4) null 
 /*预算占用年度*/,
 tbb_month varchar2(101) null 
 /*预算占用月份*/,

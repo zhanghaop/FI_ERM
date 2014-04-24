@@ -1,3 +1,5 @@
 /bin
 *.keep
 *.bak
+*.pdb
+*.gitignore
