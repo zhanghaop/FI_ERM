@@ -1015,10 +1015,9 @@ TableComment 0 Microsoft Sans Serif,8,N</a:FontList>
 <a:Code>tbb_year</a:Code>
 <a:CreationDate>1398394808</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398394808</a:ModificationDate>
+<a:ModificationDate>1398411419</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
-<a:DataType>INT(4)</a:DataType>
-<a:Length>4</a:Length>
+<a:DataType>INT</a:DataType>
 </o:Column>
 <o:Column Id="o30">
 <a:ObjectID>5DD8721D-4CA8-4F5A-B51F-3FC66963BF65</a:ObjectID>
