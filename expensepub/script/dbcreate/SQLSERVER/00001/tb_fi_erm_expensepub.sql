@@ -46,7 +46,7 @@ pk_jkbx nchar(20) null
 /*报销单标识*/,
 pk_tbb_detail nchar(20) not null 
 /*预算占用业务行*/,
-tbb_year int(4) null 
+tbb_year int null 
 /*预算占用年度*/,
 tbb_month nvarchar(101) null 
 /*预算占用月份*/,

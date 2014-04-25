@@ -12,7 +12,7 @@
 <a:Code>FI_ERM_ExpensePub</a:Code>
 <a:CreationDate>1234925207</a:CreationDate>
 <a:Creator>yuyonga</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:PackageOptionsText>[FolderOptions][FolderOptions\Physical Objects]GenerationCheckModel=YesGenerationPath=RevPkey=YesRevFkey=YesRevAkey=YesRevCheck=YesRevIndx=YesRevOpts=YesRevViewAsTabl=NoRevViewOpts=YesRevSystAsTabl=YesRevSynmAsTabl=NoRevTablPerm=NoRevViewPerm=NoRevProcPerm=NoRevDbpkPerm=NoRevSqncPerm=NoRevAdtPerm=NoRevUserPriv=NoRevGrpePriv=NoRevRolePriv=NoGenScriptName=crebasGenScriptName0=GenScriptName1=GenScriptName2=GenScriptName3=GenScriptName4=GenScriptName5=GenScriptName6=GenScriptName7=GenScriptName8=GenScriptName9=GenPathName=GenSingleFile=YesGenTrgScriptName=cretrgGenTrgScriptName0=GenTrgScriptName1=GenTrgScriptName2=GenTrgScriptName3=GenTrgScriptName4=GenTrgScriptName5=GenTrgScriptName6=GenTrgScriptName7=GenTrgScriptName8=GenTrgScriptName9=GenTrgPathName=GenTrgSingleFile=YesGenODBC=NoGenCheckModel=YesGenScriptPrev=YesGenArchiveModel=NoGenDataPathName=GenDataSinglefile=YesGenDataScriptName=testdataGenDataScriptName0=GenDataScriptName1=GenDataScriptName2=GenDataScriptName3=GenDataScriptName4=GenDataScriptName5=GenDataScriptName6=GenDataScriptName7=GenDataScriptName8=GenDataScriptName9=GenDataOdbc=NoGenDataDelOld=NoGenDataTitle=NoGenDataDefNumRows=20GenDataCommit=0GenDataPacket=0GenDataCSV=NoGenDataOwner=NoGenDataProfNumb=GenDataProfChar=GenDataProfDate=GenTspcCrea=YesGenTspcDrop=YesGenTspcHead=YesGenTspcFoot=YesGenTspcCmmt=YesGenStorCrea=YesGenStorDrop=YesGenStorCmmt=YesGenUddtCrea=YesGenUddtDval=YesGenUddtChck=YesGenUddtCmmt=YesGenUddtDrop=YesGenClssCrea=YesGenClssHead=YesGenClssFoot=YesGenClssCmmt=YesGenClssDrop=YesGenClssInst=YesGenClssSupp=YesGenClssPerm=NoGenDtbsCrea=YesGenDtbsOpts=YesGenDtbsHead=YesGenDtbsFoot=YesGenDtbsOpen=YesGenDtbsClose=YesGenDtbsDrop=YesGenUserCrea=YesGenUserGrant=YesGenUserDrop=YesGenUserPriv=NoGenGrpeCrea=YesGenGrpeDrop=YesGenGrpePriv=NoGenRoleCrea=YesGenRoleDrop=YesGenRolePriv=NoGenSynmCrea=YesGenSynmDrop=YesGenSynmTabl=YesGenSynmView=YesGenSynmProc=YesGenSynmSynm=YesGenSynmDbpk=YesGenSynmSqnc=YesGenTablCrea=YesGenTablChck=YesGenTablCntr=NoGenTablOpts=YesGenTablHead=YesGenTablFoot=YesGenTablCmmt=YesGenTablDrop=YesGenTablPerm=NoGenColnUddt=YesGenColnDval=YesGenColnChck=YesGenColnCntr=NoGenColnOpts=YesGenColnCmmt=YesGenPkeyCrea=YesGenPkeyCntr=NoGenPkeyOpts=YesGenPkeyDrop=YesGenPkeyCmmt=YesGenAkeyCrea=YesGenAkeyCntr=NoGenAkeyOpts=YesGenAkeyDrop=YesGenAkeyCmmt=YesGenRefrCrea=YesGenRefrCntr=YesGenRefrIdcl=YesGenRefrIDUR=YesGenRefrIDUC=YesGenRefrIDUN=YesGenRefrIDUD=YesGenRefrIDDR=YesGenRefrIDDC=YesGenRefrIDDN=YesGenRefrIDDD=YesGenRefrDrop=YesGenRefrCmmt=YesGenIndxCrea=YesGenIndxPkey=YesGenIndxFkey=YesGenIndxAkey=YesGenIndxClus=YesGenIndxOthr=YesGenIndxOpts=YesGenIndxCmmt=YesGenIndxDrop=YesGenViewCrea=YesGenViewHead=YesGenViewFoot=YesGenViewCmmt=YesGenViewDrop=YesGenViewPerm=NoGenJidxCrea=YesGenJidxHead=YesGenJidxFoot=YesGenJidxDrop=YesGenJidxCmmt=YesGenSqncCrea=YesGenSqncDrop=YesGenSqncCmmt=YesGenSqncPerm=NoGenTrgrCrea=YesGenTrgrDrop=YesGenTrgrCmmt=YesGenTrgrFIns=YesGenTrgrFUpd=YesGenTrgrFDel=YesGenProcCrea=YesGenProcDrop=YesGenProcHead=YesGenProcFoot=YesGenProcCmmt=YesGenProcPerm=NoGenScriptTitle=YesGenScriptNamLabl=NoGenScriptQDtbs=YesGenScriptQOwnr=YesGenScriptCase=0GenScriptCharset=0GenScriptNAcct=NoGenScriptODBC=NoGenUseSync=NoGenSyncChoice=0GenSyncArch=GenKeepBackTabl=1GenTmpTablDrop=NoGenTrgrStdMsg=YesGenTrgrMsgTab=GenTrgrMsgNo=GenTrgrMsgTxt=GenRuleCrea=YesGenRuleDrop=YesGenRuleCmmt=YesGenSynmPathName=GenSynmSinglefile=YesGenSynmScriptName=synonymGenSynmScriptName0=GenSynmScriptName1=GenSynmScriptName2=GenSynmScriptName3=GenSynmScriptName4=GenSynmScriptName5=GenSynmScriptName6=GenSynmScriptName7=GenSynmScriptName8=GenSynmScriptName9=GenSynmOdbc=NoGenSynmTitle=NoGenSynmOwner=NoGenPrivPathName=GenPrivSinglefile=YesGenPrivScriptName=privilegeGenPrivScriptName0=GenPrivScriptName1=GenPrivScriptName2=GenPrivScriptName3=GenPrivScriptName4=GenPrivScriptName5=GenPrivScriptName6=GenPrivScriptName7=GenPrivScriptName8=GenPrivScriptName9=GenPrivOdbc=NoGenPrivTitle=NoGenPrivOwner=NoGenDbpkCrea=YesGenDbpkDrop=YesGenDbpkPerm=No[FolderOptions\Pdm]IndxIQName=%COLUMN%_%INDEXTYPE%IndxPK=YesIndxFK=YesIndxAK=YesIndxPKName=%TABLE%_PKIndxFKName=%REFR%_FKIndxAKName=%AKEY%_AKIndxPreserve=NoIndxThreshold=0RefrPreserve=NoJidxPreserve=NoRbldMultiFact=YesRbldMultiDim=YesRbldMultiJidx=YesCubePreserve=NoCubeScriptPath=CubeScriptCase=0CubeScriptCharset=0CubeScriptNacct=NoCubeScriptHeader=NoCubeScriptExt=csvCubeScriptExt0=txtCubeScriptExt1=CubeScriptExt2=CubeScriptSep=,CubeScriptDeli=&quot;TrgrPreserve=NoTrgrIns=YesTrgrUpd=YesTrgrDel=YesTrgrC2Ins=YesTrgrC2Upd=YesTrgrC3=YesTrgrC4=YesTrgrC5=YesTrgrC6=YesTrgrC7=YesTrgrC8=YesTrgrC9=YesTrgrC10=YesTrgrC11=YesTrgrC1=YesTrgrC12Ins=YesTrgrC12Upd=YesTrgrC13=Yes</a:PackageOptionsText>
 <a:ModelOptionsText>[ModelOptions]
@@ -694,7 +694,7 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>费用管理公共单据</a:Code>
 <a:CreationDate>1234925207</a:CreationDate>
 <a:Creator>yuyonga</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398391643</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:DisplayPreferences>[DisplayPreferences][DisplayPreferences\PDM][DisplayPreferences\General]Adjust to text=YesSnap Grid=NoDisplay Grid=NoShow Page Delimiter=YesGrid size=0Graphic unit=2Window color=255, 255, 255Background image=Background mode=8Watermark image=Watermark mode=8Show watermark on screen=NoGradient mode=0Gradient end color=255, 255, 255Show Swimlane=YesSwimlaneVert=Yes[DisplayPreferences\Object]Mode=0Trunc Length=80Word Length=80Word Text= !&quot;&quot;#$%&amp;&#39;()*+,-./:;&lt;=&gt;?@[\]^_`{|}~Shortcut IntIcon=YesShortcut IntLoct=NoShortcut ExtIcon=YesShortcut ExtLoct=NoFile Location=NoTablColn=YesColnMode=0ColnMax=5TablIndx=NoTablKey=NoTablTrgr=NoTablOwnr=NoColnDttp=YesColnDomn=NoColnShowDomn=NoColnKey=YesColnIndx=NoColnMand=NoViewTabl=YesViewColn=YesViewOwnr=NoVColName=YesVColExpr=NoVColDttp=NoVColCMod=1VColCMax=5RefrName=NoRefrJoin=NoRefrCnam=YesRefrIntg=NoRefrImpl=NoRefrCard=NoRefrMode=0VRefName=NoVRefJoin=NoVRefMode=0[DisplayPreferences\Symbol][DisplayPreferences\Symbol\PDMPCKG]DISPNAMEFont=Arial,8,NDISPNAMEFont color=0, 0, 0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoWidth=4800Height=3600Brush color=255 255 192Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\TABL]DISPNAMEFont=Arial,8,NDISPNAMEFont color=0, 0, 0TableColumnsFont=Arial,15,NTableColumnsFont color=0, 0, 0TablePkColumnsFont=瀹嬩綋,8,UTablePkColumnsFont color=0, 0, 0TableIndexsFont=Arial,8,NTableIndexsFont color=0, 0, 0TableKeysFont=Arial,8,NTableKeysFont color=0, 0, 0TableTriggersFont=Arial,8,NTableTriggersFont color=0, 0, 0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoWidth=4800Height=4000Brush color=192 255 192Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\REFR]DISPNAMEFont=Arial,8,NDISPNAMEFont color=0, 0, 0CARDFont=Arial,8,NCARDFont color=0, 0, 0Line style=0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoBrush color=255 255 255Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\VREF]DISPNAMEFont=Arial,8,NDISPNAMEFont color=0, 0, 0Line style=0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoBrush color=255 255 255Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\VIEW]DISPNAMEFont=Arial,8,NDISPNAMEFont color=0, 0, 0ViewColumnnFont=Arial,8,NViewColumnnFont color=0, 0, 0ViewTablesFont=Arial,8,NViewTablesFont color=0, 0, 0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoWidth=4800Height=4000Brush color=208 208 255Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\PROC]DISPNAMEFont=Arial,8,NDISPNAMEFont color=0, 0, 0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoWidth=4000Height=1000Brush color=255 255 192Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\FILO]NAMEFont=Arial,8,NNAMEFont color=0, 0, 0AutoAdjustToText=YesKeep aspect=YesKeep center=YesKeep size=NoWidth=2400Height=2400Brush color=255 255 255Fill Color=NoBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\USRDEPD]OBJXSTRFont=Arial,8,NOBJXSTRFont color=0, 0, 0Line style=0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoBrush color=255 255 255Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=2 0 0 0 255Shadow color=192 192 192Shadow=0[DisplayPreferences\Symbol\Free Symbol]Free TextFont=Arial,8,NFree TextFont color=0, 0, 0Line style=0AutoAdjustToText=YesKeep aspect=NoKeep center=NoKeep size=NoBrush color=255 255 255Fill Color=YesBrush style=1Brush bitmap mode=12Brush gradient mode=0Brush gradient color=118 118 118Brush background image=Custom shape=Custom text mode=0Pen=1 0 0 0 255Shadow color=192 192 192Shadow=0</a:DisplayPreferences>
 <a:PaperSize>(8268, 11693)</a:PaperSize>
@@ -722,9 +722,9 @@ TableComment 0 Arial Unicode MS,8,N</a:FontList>
 </c:Object>
 </o:TableSymbol>
 <o:TableSymbol Id="o7">
-<a:CreationDate>1398327078</a:CreationDate>
-<a:ModificationDate>1398327079</a:ModificationDate>
-<a:Rect>((-1729,7929), (18379,17271))</a:Rect>
+<a:CreationDate>1398329302</a:CreationDate>
+<a:ModificationDate>1398329304</a:ModificationDate>
+<a:Rect>((-1954,5529), (18154,14871))</a:Rect>
 <a:LineColor>16711680</a:LineColor>
 <a:FillColor>16777215</a:FillColor>
 <a:ShadowColor>13158600</a:ShadowColor>
@@ -978,78 +978,77 @@ TableComment 0 Microsoft Sans Serif,8,N</a:FontList>
 </c:PrimaryKey>
 </o:Table>
 <o:Table Id="o8">
-<a:ObjectID>F8CB76EA-5149-45CD-AB6E-A718A0CB15D5</a:ObjectID>
+<a:ObjectID>C5ECA7F9-58A8-407D-9896-7F23C513E2B6</a:ObjectID>
 <a:Name>预算占用期间</a:Name>
 <a:Code>er_tbbdetail</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <c:Columns>
 <o:Column Id="o27">
-<a:ObjectID>1A470866-4D9F-4DBA-AE75-656846AF5863</a:ObjectID>
+<a:ObjectID>00BD233B-9366-45E1-8C06-3C4B65EE00CB</a:ObjectID>
 <a:Name>报销单标识</a:Name>
 <a:Code>pk_jkbx</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:DataType>CHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o28">
-<a:ObjectID>FB7F52EB-2E25-4D1A-9FF7-6F2012D8BB63</a:ObjectID>
+<a:ObjectID>2BA0D4F5-87EA-4266-90F8-BF370CB4AF99</a:ObjectID>
 <a:Name>预算占用业务行</a:Name>
 <a:Code>pk_tbb_detail</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:DataType>CHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 <a:Mandatory>1</a:Mandatory>
 </o:Column>
 <o:Column Id="o29">
-<a:ObjectID>246BF702-0D76-4004-B817-622FEB91BD99</a:ObjectID>
+<a:ObjectID>6E3B8583-6B4C-4043-8F5D-2B37DAA6D41B</a:ObjectID>
 <a:Name>预算占用年度</a:Name>
 <a:Code>tbb_year</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398391650</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
-<a:DataType>VARCHAR(4)</a:DataType>
-<a:Length>4</a:Length>
+<a:DataType>INT</a:DataType>
 </o:Column>
 <o:Column Id="o30">
-<a:ObjectID>5E582F43-BF5C-4E10-B57E-AAC3B1616622</a:ObjectID>
+<a:ObjectID>18CD939A-2B37-4CA6-9581-4D4BE14DEB94</a:ObjectID>
 <a:Name>预算占用月份</a:Name>
 <a:Code>tbb_month</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:DataType>VARCHAR(101)</a:DataType>
 <a:Length>101</a:Length>
 </o:Column>
 <o:Column Id="o31">
-<a:ObjectID>13BF49B1-37AA-491E-8536-2E829D18E7AB</a:ObjectID>
+<a:ObjectID>F971DC60-6372-4420-97E9-FFB52F7EE1E1</a:ObjectID>
 <a:Name>预算占用金额</a:Name>
 <a:Code>tbb_amount</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:DataType>DECIMAL(28,8)</a:DataType>
 <a:Length>28</a:Length>
 <a:Precision>8</a:Precision>
 </o:Column>
 <o:Column Id="o32">
-<a:ObjectID>E9516C89-1EE8-4730-9F41-68CDDB172F48</a:ObjectID>
+<a:ObjectID>B09F0FC0-4769-4F62-AAB8-5E467AEE9BBB</a:ObjectID>
 <a:Name>比例</a:Name>
 <a:Code>ratio</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:DataType>DECIMAL(15,8)</a:DataType>
 <a:Length>15</a:Length>
@@ -1058,12 +1057,12 @@ TableComment 0 Microsoft Sans Serif,8,N</a:FontList>
 </c:Columns>
 <c:Keys>
 <o:Key Id="o33">
-<a:ObjectID>65CB0039-C939-4D6C-B7E1-575D90137C33</a:ObjectID>
+<a:ObjectID>08BB4A59-FF45-42D1-A1F6-087274FEF0FA</a:ObjectID>
 <a:Name>预算占用业务行</a:Name>
 <a:Code>pk_tbb_detail</a:Code>
-<a:CreationDate>1398327078</a:CreationDate>
+<a:CreationDate>1398329302</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398327078</a:ModificationDate>
+<a:ModificationDate>1398329302</a:ModificationDate>
 <a:Modifier>wangled</a:Modifier>
 <a:ConstraintName>PK_ER_TBBDETAIL</a:ConstraintName>
 <c:Key.Columns>
