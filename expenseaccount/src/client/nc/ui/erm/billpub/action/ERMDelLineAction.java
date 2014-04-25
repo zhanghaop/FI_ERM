@@ -7,6 +7,7 @@ import nc.bs.erm.util.ErmDjlxConst;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.erm.billpub.view.eventhandler.BodyEventHandleUtil;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.bill.BillCardPanel;
@@ -45,7 +46,7 @@ public class ERMDelLineAction extends DelLineAction {
 
 			// 删除，粘贴行后进行重设表头金额的操作.
 			((ErmBillBillForm) getCardpanel()).getbodyEventHandle().resetJeAfterModifyRow();
-
+			
 			if (isNeed) {
 				doContract();
 			}
@@ -89,6 +90,8 @@ public class ERMDelLineAction extends DelLineAction {
 				}
 			}
 		}
+		
+		new BodyEventHandleUtil((ErmBillBillForm) getCardpanel()).exeBodyUserdefine2();
 	}
 	
 	protected boolean isCancelCostshareEnable(JKBXVO jkbxvo){
