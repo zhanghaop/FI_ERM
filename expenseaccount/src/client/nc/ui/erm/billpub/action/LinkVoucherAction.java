@@ -18,7 +18,6 @@ import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.fip.service.FipRelationInfoVO;
 import nc.vo.pub.BusinessException;
 
-@SuppressWarnings("restriction")
 public class LinkVoucherAction extends NCAction {
 
 	private static final long serialVersionUID = 1L;
@@ -47,20 +46,8 @@ public class LinkVoucherAction extends NCAction {
 		List<FipRelationInfoVO> srcinfovolist = new ArrayList<FipRelationInfoVO>();
 		//只有一张凭证
 		if(queryHeaders!=null && queryHeaders.size()!=0){
-			if(queryHeaders.get(0).getVouchertag()==null || (queryHeaders.get(0).getVouchertag()!=null && 
-					queryHeaders.get(0).getVouchertag()==BXStatusConst.ZFFlag)){
-				FipRelationInfoVO srcinfovo = new FipRelationInfoVO();
-				srcinfovo.setPk_group(queryHeaders.get(0).getPk_group());
-				srcinfovo.setPk_org(queryHeaders.get(0).getPk_payorg());
-				if(queryHeaders.get(0).getVouchertag()==null){//凭证标志为空时，没有凭证
-					srcinfovo.setRelationID(queryHeaders.get(0).getPk());
-				}else{
-					srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+queryHeaders.get(0).getVouchertag());
-				}
-				srcinfovo.setPk_billtype(queryHeaders.get(0).getDjlxbm());
-				srcinfovolist.add(srcinfovo);		
-			}else{//有多个凭证
-				for(int i =0 ;i<=6 ;i++){
+			//有多个凭证
+				for(int i =0 ;i<=7 ;i++){
 					FipRelationInfoVO srcinfovo = new FipRelationInfoVO();
 					srcinfovo.setPk_group(queryHeaders.get(0).getPk_group());
 					srcinfovo.setPk_org(queryHeaders.get(0).getPk_payorg());
@@ -78,11 +65,12 @@ public class LinkVoucherAction extends NCAction {
 						srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+BXStatusConst.ZGMEZFFlag);
 					}else if(i==6){
 						srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+BXStatusConst.SXFlag);
+					}else if(i==7){
+						srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+BXStatusConst.ZFFlag);
 					}
 					srcinfovo.setPk_billtype(queryHeaders.get(0).getDjlxbm());
 					srcinfovolist.add(srcinfovo);	
 				}
-			}
 			try {
 				CShareDetailVO[] csharedetailvos = selectedVO.getcShareDetailVo();
 				if (csharedetailvos != null && csharedetailvos.length > 0) {
