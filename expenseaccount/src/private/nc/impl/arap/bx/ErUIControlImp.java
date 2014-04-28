@@ -53,6 +53,7 @@ public class ErUIControlImp implements IBxUIControl{
 		String jkbxr=StringUtils.isNullWithTrim(bxvo.getParentVO().getReceiver())?bxvo.getParentVO().getJkbxr():bxvo.getParentVO().getReceiver();
 		String pkbxd=bxvo.getParentVO().getPk_jkbx();
 		String bzbm= bxvo.getParentVO().getBzbm();
+		String dwbm= bxvo.getParentVO().getDwbm();
 
 		UFBoolean ischeck = bxvo.getParentVO().getIscheck()==null?UFBoolean.FALSE:bxvo.getParentVO().getIscheck();
 
@@ -60,7 +61,7 @@ public class ErUIControlImp implements IBxUIControl{
 
 		if(StringUtils.isNullWithTrim(sampQuery)){
 			sql = "  where (zb.yjye>0 and zb.dr=0 and zb.djzt=3 and zb.ischeck='"+ischeck+"' and zb.bzbm='"+bzbm+"' and zb.jkbxr='"
-			+ jkbxr + "' and zb.djrq<='"+cxrq+"') ";
+			+ jkbxr + "' and zb.djrq<='"+cxrq+"' and zb.dwbm='"+dwbm+"') ";
 			
 			sql = dealCjkQueryCondition(bxvo, sql);
 			
@@ -73,7 +74,7 @@ public class ErUIControlImp implements IBxUIControl{
 
 			}
 		}else{
-			sql = "  where zb.yjye>0 and zb.dr=0 and zb.djzt=3 and zb.djrq<='"+cxrq+"' and zb.ischeck='"+ischeck+"' and zb.bzbm='"+bzbm+"' and "+sampQuery ;
+			sql = "  where zb.yjye>0 and zb.dr=0 and zb.djzt=3 and zb.djrq<='"+cxrq+"' and zb.ischeck='"+ischeck+"' and zb.bzbm='"+bzbm+"' and zb.dwbm='"+dwbm+"' and "+sampQuery ;
 			
 			sql = dealCjkQueryCondition(bxvo, sql);
 			
