@@ -48,8 +48,7 @@ public class LinkVoucherAction extends NCAction {
 		//只有一张凭证
 		if(queryHeaders!=null && queryHeaders.size()!=0){
 			if(queryHeaders.get(0).getVouchertag()==null || (queryHeaders.get(0).getVouchertag()!=null && 
-					(queryHeaders.get(0).getVouchertag()==BXStatusConst.SXFlag)||
-					(queryHeaders.get(0).getVouchertag()==BXStatusConst.ZFFlag))){
+					queryHeaders.get(0).getVouchertag()==BXStatusConst.ZFFlag)){
 				FipRelationInfoVO srcinfovo = new FipRelationInfoVO();
 				srcinfovo.setPk_group(queryHeaders.get(0).getPk_group());
 				srcinfovo.setPk_org(queryHeaders.get(0).getPk_payorg());
@@ -61,7 +60,7 @@ public class LinkVoucherAction extends NCAction {
 				srcinfovo.setPk_billtype(queryHeaders.get(0).getDjlxbm());
 				srcinfovolist.add(srcinfovo);		
 			}else{//有多个凭证
-				for(int i =0 ;i<=5 ;i++){
+				for(int i =0 ;i<=6 ;i++){
 					FipRelationInfoVO srcinfovo = new FipRelationInfoVO();
 					srcinfovo.setPk_group(queryHeaders.get(0).getPk_group());
 					srcinfovo.setPk_org(queryHeaders.get(0).getPk_payorg());
@@ -77,6 +76,8 @@ public class LinkVoucherAction extends NCAction {
 						srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+BXStatusConst.ZGMEFlag);
 					}else if(i==5){
 						srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+BXStatusConst.ZGMEZFFlag);
+					}else if(i==6){
+						srcinfovo.setRelationID(queryHeaders.get(0).getPk()+"_"+BXStatusConst.SXFlag);
 					}
 					srcinfovo.setPk_billtype(queryHeaders.get(0).getDjlxbm());
 					srcinfovolist.add(srcinfovo);	

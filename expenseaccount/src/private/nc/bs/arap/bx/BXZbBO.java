@@ -884,7 +884,7 @@ public class BXZbBO {
 			String param) throws BusinessException {
 		settle(headerVO.getApprover(), headerVO.getShrq().getDate(), bxvo);
 		// 传会计平台
-		if(		(headerVO.getVouchertag()==null || headerVO.getVouchertag()==BXStatusConst.SXFlag) && (
+		if(		(headerVO.getVouchertag()==null || headerVO.getVouchertag()==BXStatusConst.SXFlag || headerVO.getVouchertag()==BXStatusConst.ZGDeal) && (
 				param.equals(BXStatusConst.VounterCondition_QZ) || 
 				(headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
 				||headerVO.isAdjustBxd())){
