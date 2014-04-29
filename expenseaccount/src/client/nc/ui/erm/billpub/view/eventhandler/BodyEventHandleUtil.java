@@ -263,7 +263,16 @@ public class BodyEventHandleUtil {
 	public String getUserdefine(int pos, String key, int def) {
 		return BXUiUtil.getUserdefine(pos, key, def, getBillCardPanel());
 	}
-
+	
+	/**
+	 * 编辑公式2执行<br>
+	 * 公式配置在模板自定义2位置
+	 * @param formula 公式
+	 * @param skey 字段key
+	 * @param srow 行
+	 * @param stable tablecode
+	 * @param svalue 该字段的值
+	 */
 	public void doFormulaAction(String formula, String skey, int srow,
 			String stable, Object svalue) {
 		if (formula == null)
@@ -453,7 +462,6 @@ public class BodyEventHandleUtil {
 				}
 				if (sv instanceof UFDate) {
 					UFDate new_name = (UFDate) sv;
-					// FIXME
 					if (new_name.compareTo((UFDate) revalue) < 0)
 						revalue = new_name;
 				}
@@ -496,7 +504,7 @@ public class BodyEventHandleUtil {
 		return value;
 	}
 	
-	/**
+	/*
 	 * 执行自定义项2的公式
 	 * 针对删行、粘贴行
 	 * @param pos
