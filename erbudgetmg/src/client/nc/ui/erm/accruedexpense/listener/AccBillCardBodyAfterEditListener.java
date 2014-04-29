@@ -95,6 +95,9 @@ public class AccBillCardBodyAfterEditListener implements BillEditListener {
 				billForm.resetCardBodyAmount(e.getRow());
 			}
 		}
+		
+		// 事件转换，且发出事件 
+		billForm.getEventTransformer().afterEdit(e);
 	}
 
 	/**

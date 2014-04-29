@@ -88,9 +88,9 @@ public class ErmNtbProvider implements IBusiSysExecDataProvider {
 	public void createBillType(NtbParamVO[] param) throws BusinessException {
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected UFDouble[] getData(NtbParamVO param) throws BusinessException {
 		UFDouble[] returnData = new UFDouble[]{UFDouble.ZERO_DBL,UFDouble.ZERO_DBL,UFDouble.ZERO_DBL,UFDouble.ZERO_DBL};
-
 		String[] sqls = ErmNtbSqlFactory.getInstance(param).getSqls();
 		
 		if(sqls != null && sqls.length > 0){
@@ -98,8 +98,14 @@ public class ErmNtbProvider implements IBusiSysExecDataProvider {
 				if(sqls[i] == null || sqls[i].trim().length() == 0){
 					continue;
 				}
-				@SuppressWarnings("unchecked")
-				List<Object[]> list = (List<Object[]>) dao.executeQuery(sqls[i], new ArrayListProcessor());
+				
+				List<Object[]> list = null;
+				try {
+					list  = (List<Object[]>) dao.executeQuery(sqls[i], new ArrayListProcessor());				
+				}catch (Exception e) {
+					ExceptionHandler.handleException(e);
+					nc.bs.logging.Log.getInstance(this.getClass()).debug("erm ntb sql:" + sqls[i]);
+				}
 				if (list != null && list.size() == 1) {
 					Object[] obj = list.get(0);
 					returnData[0] = (obj[0] == null ? UFDouble.ZERO_DBL : new UFDouble(obj[0].toString())).add(returnData[0]);
@@ -111,5 +117,4 @@ public class ErmNtbProvider implements IBusiSysExecDataProvider {
 		}
 		return returnData;
 	}
-
 }

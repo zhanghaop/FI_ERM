@@ -543,9 +543,8 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 			} catch (BusinessException e1) {
 				ExceptionHandler.handleExceptionRuntime(e1);
 			}
-			getBillCardPanel().getBillModel().loadLoadRelationItemValue();
 		}
-	// 事件扩展，转出
+		// 事件扩展，转出
 		editor.getEventTransformer().afterEdit(e);
 	}
 	

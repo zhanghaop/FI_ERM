@@ -2,7 +2,9 @@ package nc.ui.erm.billpub.view.eventhandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 
@@ -26,6 +28,7 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
+import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 /**
@@ -260,7 +263,16 @@ public class BodyEventHandleUtil {
 	public String getUserdefine(int pos, String key, int def) {
 		return BXUiUtil.getUserdefine(pos, key, def, getBillCardPanel());
 	}
-
+	
+	/**
+	 * 编辑公式2执行<br>
+	 * 公式配置在模板自定义2位置
+	 * @param formula 公式
+	 * @param skey 字段key
+	 * @param srow 行
+	 * @param stable tablecode
+	 * @param svalue 该字段的值
+	 */
 	public void doFormulaAction(String formula, String skey, int srow,
 			String stable, Object svalue) {
 		if (formula == null)
@@ -301,9 +313,7 @@ public class BodyEventHandleUtil {
 				Object resultvalue = getResultValue(func, svalue, prow, key,
 						table);
 
-				if (resultvalue != null) {
-					setHeadValue(headKey, resultvalue);
-				}
+				setHeadValue(headKey, resultvalue);
 			}
 			if (formula.startsWith("toBody")) {
 				String[] values = formula.split("#");
@@ -376,14 +386,15 @@ public class BodyEventHandleUtil {
 			}
 			value = arrayValue.toArray(new Object[] {});
 		} else if (prow.equals("%row%")) {
-			value = new Object[] { svalue };
+			Object obj = getBillCardPanel().getBillModel(table).getValueObjectAt(row, key);
+			value = new Object[] { obj };
 		} else if (Integer.valueOf(prow) == -1) { // head
 			value = new Object[] { getHeadValue(key) };
 		} else {
 			row = Integer.parseInt(prow);
 			value = new Object[] { getBillCardPanel().getBillModel(table).getValueAt(row, key) };
 		}
-		if (value == null)
+		if (value == null || value.length == 0)
 			return null;
 		if (value.length <= 1)
 			return value[0];
@@ -451,7 +462,6 @@ public class BodyEventHandleUtil {
 				}
 				if (sv instanceof UFDate) {
 					UFDate new_name = (UFDate) sv;
-					// FIXME
 					if (new_name.compareTo((UFDate) revalue) < 0)
 						revalue = new_name;
 				}
@@ -492,6 +502,39 @@ public class BodyEventHandleUtil {
 			return revalue;
 		}
 		return value;
+	}
+	
+	/*
+	 * 执行自定义项2的公式
+	 * 针对删行、粘贴行
+	 * @param pos
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public void exeBodyUserdefine2() {
+		if (getBillCardPanel().getBillData().getBillTempletVO() == null
+				|| getBillCardPanel().getBillData().getBillTempletVO().getChildrenVO() == null) {
+			return;
+		}
+		
+		BillTempletBodyVO[] tbodyvos = (BillTempletBodyVO[]) getBillCardPanel()
+				.getBillData().getBillTempletVO().getChildrenVO();
+		
+		Map<String,String> define2Map = new HashMap<String,String>();
+		for (BillTempletBodyVO bodyvo : tbodyvos) {
+			if (bodyvo.getPos() == 1) {
+				String userDefine2 = bodyvo.getUserdefine2();
+				if(userDefine2 != null && userDefine2.length() > 0){
+					define2Map.put(bodyvo.getTable_code() + "##" + bodyvo.getItemkey(), userDefine2);
+				}
+			}
+		}
+		
+		for(Map.Entry<String, String> entry: define2Map.entrySet()){
+			String[] names = entry.getKey().split("##");
+			doFormulaAction(entry.getValue(), names[1], -1, names[0], null);
+		}
 	}
 
 	private BillCardPanel getBillCardPanel() {

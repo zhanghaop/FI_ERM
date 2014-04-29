@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.erm.billpub.view.eventhandler.BodyEventHandleUtil;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
@@ -88,5 +89,7 @@ public class ERNPasteLineToTailAction extends PasteLineToTailAction{
 				BXUiUtil.doContract((ErmBillBillForm) getCardpanel());
 			}
 		}
+		
+		new BodyEventHandleUtil((ErmBillBillForm) getCardpanel()).exeBodyUserdefine2();
 	}
 }

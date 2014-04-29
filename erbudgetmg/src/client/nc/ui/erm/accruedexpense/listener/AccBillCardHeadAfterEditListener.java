@@ -79,6 +79,9 @@ public class AccBillCardHeadAfterEditListener implements BillEditListener, Value
 		} catch (BusinessException exception) {
 			exceptionHandler.handlerExeption(exception);
 		}
+		
+		// 事件转换，且发出事件 
+		billForm.getEventTransformer().afterEdit(e);
 	}
 
 	private void afterEditCurrInfo(String key) throws BusinessException {// 汇率
