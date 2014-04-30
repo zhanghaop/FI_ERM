@@ -1409,7 +1409,7 @@ public class BXZbBO {
 		reVO.setPk_group(headVO.getPk_group());
 
 		// 63后传会计凭证按支付单位来进行处理
-		reVO.setPk_org(headVO.getPk_payorg());
+		reVO.setPk_org(headVO.getPk_org());
 		//reVO.setRelationID(headVO.getPk());
 		reVO.setRelationID(headVO.getPk()+"_"+headVO.getVouchertag());
 		reVO.setPk_system(BXConstans.ERM_PRODUCT_CODE_Lower);
