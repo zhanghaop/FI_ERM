@@ -270,8 +270,6 @@ public class VOChecker {
 
 		JKBXHeaderVO headVO = vo.getParentVO();
 		if (!headVO.isInit()) {
-			
-			checkUpdateSave(vo);
 			// 先补充拉单信息
 //			fillMtapp(vo);
             //拉单申请单加锁

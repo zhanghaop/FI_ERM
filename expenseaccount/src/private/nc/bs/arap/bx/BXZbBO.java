@@ -415,6 +415,8 @@ public class BXZbBO {
 			VOChecker voChecker = new VOChecker();
 			VOChecker.prepare(vo);
 			//后台校验
+			voChecker.checkUpdateSave(vo);
+			
 			voChecker.checkkSaveBackground(vo);
 
 			// 补齐申请单申请记录(预算控制中用到)
