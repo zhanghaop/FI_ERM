@@ -261,6 +261,7 @@ public class VOChecker {
 				throw new DataValidateException(msgs);
 			}
 		}
+		checkkSaveBackground(vo);
 	}
 	
 	/**

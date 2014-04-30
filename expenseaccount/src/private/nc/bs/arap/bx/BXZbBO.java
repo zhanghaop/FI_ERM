@@ -417,7 +417,6 @@ public class BXZbBO {
 			//后台校验
 			voChecker.checkUpdateSave(vo);
 			
-			voChecker.checkkSaveBackground(vo);
 
 			// 补齐申请单申请记录(预算控制中用到)
 			fillUpMapf(vo);
