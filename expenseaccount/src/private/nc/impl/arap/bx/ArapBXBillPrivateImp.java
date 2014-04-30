@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -209,97 +211,138 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		if (keys == null && djdl == null) {
 			return null;
 		}
-		List<JKBXVO> list = new ArrayList<JKBXVO>();
+		List<JKBXVO> resultList = new ArrayList<JKBXVO>();
 		if(!isCommonBill){
 		    if (djdl == null || BXConstans.BX_DJDL.equals(djdl)) {
-		        list = queryJKBXHeadVOBypks(keys, BXConstans.BX_DJDL);
-		        if (list == null || (list != null && list.size() != keys.length)) {
-		            List<JKBXVO> result2 = queryJKBXHeadVOBypks(keys, BXConstans.JK_DJDL);
-		            list.addAll(result2);
+		        resultList = queryJKBXHeadVOBypks(keys, BXConstans.BX_DJDL);
+		        if (resultList == null || (resultList != null && resultList.size() != keys.length)) {
+		            List<JKBXVO> jkResultList = queryJKBXHeadVOBypks(keys, BXConstans.JK_DJDL);
+		            resultList.addAll(jkResultList);
 		        }
 		    } else {
-		        list = queryJKBXHeadVOBypks(keys, djdl);
+		        resultList = queryJKBXHeadVOBypks(keys, djdl);
 		    }
 		}else{
 		    String inStr = SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, keys, true);
 		    List<InitHeaderVO> headList = (List<InitHeaderVO>) new BaseDAO().retrieveByClause(InitHeaderVO.class, inStr);
-		    for (InitHeaderVO initHeaderVO : headList)
-            {
-               if(BXConstans.BX_DJDL.equals(initHeaderVO.getDjdl())){
-                   BXHeaderVO bxHeaderVO = new BXHeaderVO();
-                   convertCommonBillVo(initHeaderVO, bxHeaderVO);
-                   list.add(new BXVO(bxHeaderVO));
-               }else if(BXConstans.JK_DJDL.equals(initHeaderVO.getDjdl())){
-                   JKHeaderVO jkHeaderVO = new JKHeaderVO();
-                   convertCommonBillVo(initHeaderVO, jkHeaderVO);
-                   list.add(new JKVO(jkHeaderVO));
-               }
-            }
+			for (InitHeaderVO initHeaderVO : headList) {
+				if (BXConstans.BX_DJDL.equals(initHeaderVO.getDjdl())) {
+					BXHeaderVO bxHeaderVO = new BXHeaderVO();
+					convertCommonBillVo(initHeaderVO, bxHeaderVO);
+					resultList.add(new BXVO(bxHeaderVO));
+				} else if (BXConstans.JK_DJDL.equals(initHeaderVO.getDjdl())) {
+					JKHeaderVO jkHeaderVO = new JKHeaderVO();
+					convertCommonBillVo(initHeaderVO, jkHeaderVO);
+					resultList.add(new JKVO(jkHeaderVO));
+				}
+			}
 		}
 		
 		//只将未结算的单据过滤出来:没有安装结算信息时，不做任何处理
 		if (djCondVO != null && !djCondVO.isIsjs()) {
 			SettlementAggVO[] bills =null;
-			boolean iscmpused = BXUtil.isProductInstalled(list.get(0)
-					.getParentVO().getPk_group(), BXConstans.TM_CMP_FUNCODE);
-			if (!iscmpused) {
-				
-			} else {
-				for (int i = 0 ; i<list.size() ;i++) {
-					String pk_jkbx = list.get(i).getParentVO().getPk_jkbx();
-					bills = NCLocator.getInstance().lookup(
-							ICmpSettlementPubQueryService.class)
-							.queryBillsBySourceBillID(new String[] { pk_jkbx });
-					if(bills != null && bills[0] != null && 
-							((SettlementHeadVO)bills[0].getParentVO()).getSettlestatus()!=0){
-						list.remove(i);
+			boolean iscmpused = BXUtil.isProductInstalled(resultList.get(0).getParentVO().getPk_group(), BXConstans.TM_CMP_FUNCODE);
+			if (iscmpused) {
+				for (int i = 0; i < resultList.size(); i++) {
+					String pk_jkbx = resultList.get(i).getParentVO().getPk_jkbx();
+					//TODO 存在效率问题
+					bills = NCLocator.getInstance().lookup(ICmpSettlementPubQueryService.class).queryBillsBySourceBillID(new String[] { pk_jkbx });
+					if (bills != null && bills.length > 0  && ((SettlementHeadVO) bills[0].getParentVO()).getSettlestatus() != 0) {
+						resultList.remove(i);
 					}
 				}
 			}
 		}
 		try {
-			if (djCondVO != null && djCondVO.getVoucherFlags()!=null && djCondVO.getVoucherFlags().length!=0) {
-				//根据凭证状态过滤
-				JKBXHeaderVO[] newVO = dealVoucherInfo(djCondVO.isLinkPz(), list, djCondVO.getVoucherFlags());
-				List<String> pk_jkbx=new ArrayList<String>();
-				for(JKBXHeaderVO vo:newVO){
-					pk_jkbx.add(vo.getPk_jkbx());
+			if (djCondVO != null) {
+				Integer[] voucherFlag = null;
+				if((djCondVO.getVoucherFlags() == null || djCondVO.getVoucherFlags().length == 0) && djCondVO.isLinkPz){
+					voucherFlag = new Integer[] {//联查凭证号
+							VoucherRsChecker.VOUCHER_EXIST_FLAG,
+							VoucherRsChecker.VOUCHER_EXIST_JZ_FLAG };
+				}else{
+					voucherFlag = djCondVO.getVoucherFlags();
 				}
-				List<JKBXVO> newList =new ArrayList<JKBXVO>();
-				for(JKBXVO vo:list){
-					if(pk_jkbx.contains(vo.getParentVO().getPk_jkbx())){
-						newList.add(vo);
+				
+				if(voucherFlag != null && voucherFlag.length > 0){
+					//根据凭证状态过滤
+					JKBXHeaderVO[] newHeadVOs = dealVoucherInfo(djCondVO.isLinkPz(), resultList, djCondVO.getVoucherFlags());
+					
+					//如果选择了凭证状态，则进行查询结果过滤
+					if (djCondVO.getVoucherFlags() != null && djCondVO.getVoucherFlags().length > 0) {
+						List<String> pk_jkbxList = new ArrayList<String>();
+						for (JKBXHeaderVO vo : newHeadVOs) {
+							pk_jkbxList.add(vo.getPk_jkbx());
+						}
+
+						List<JKBXVO> newList = new ArrayList<JKBXVO>();
+						for (JKBXVO vo : resultList) {
+							if (pk_jkbxList.contains(vo.getParentVO().getPk_jkbx())) {
+								newList.add(vo);
+							}
+						}
+						resultList = newList;
 					}
 				}
-				return newList;
-			}else if (djCondVO != null && djCondVO.isLinkPz) {
-				// 设置凭证号
-				Integer[] voucherFlag = new Integer[] {
-						VoucherRsChecker.VOUCHER_EXIST_FLAG,
-						VoucherRsChecker.VOUCHER_EXIST_JZ_FLAG };
-				dealVoucherInfo(djCondVO.isLinkPz(), list, voucherFlag);
 			}
 		} catch (SQLException e) {
 			ExceptionHandler.handleException(e);
 		}
-		return list;
+		
+		if(djdl == null && resultList != null){//按日期、单据号进行排序
+			Collections.sort(resultList, new Comparator<JKBXVO>(){
+				@Override
+				public int compare(JKBXVO bxvo1, JKBXVO bxvo2) {
+					JKBXHeaderVO head1 = bxvo1.getParentVO();
+					JKBXHeaderVO head2 = bxvo2.getParentVO();
+					if(head1.getDjrq() != null && head2.getDjrq() != null){
+						if(head1.getDjrq().compareTo(head2.getDjrq()) > 0){
+							return -1;
+						}else if(head1.getDjrq().compareTo(head2.getDjrq()) < 0){
+							return 1;
+						}else{
+							if(head1.getDjbh() != null && head2.getDjbh() != null){
+								if(head1.getDjbh().compareTo(head2.getDjbh()) > 0){
+									return -1;
+								}else if(head1.getDjbh().compareTo(head2.getDjbh()) < 0){
+									return  1;
+								}
+							}
+						}
+					}
+					return 0;
+				}
+			});
+		}
+		
+		return resultList;
 	}
-
-	private JKBXHeaderVO[] dealVoucherInfo(boolean showVoucherNo, List<JKBXVO> list,
-			Integer[] voucherFlag) throws SQLException {
+	
+	/**
+	 * 按凭证状态过滤查询结果
+	 * @param showVoucherNo
+	 *            是否显示凭证号
+	 * @param list
+	 *            单据集合
+	 * @param voucherFlags
+	 *            凭证状态
+	 * @return
+	 * @throws SQLException
+	 */
+	private JKBXHeaderVO[] dealVoucherInfo(boolean showVoucherNo, List<JKBXVO> list, Integer[] voucherFlags) throws SQLException {
 		JKBXHeaderVO[] tempJKBXHeaderVO = new JKBXHeaderVO[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			tempJKBXHeaderVO[i] = list.get(i).getParentVO();
 		}
-		CircularlyAccessibleValueObject[] reslut = new VoucherRsChecker(showVoucherNo, voucherFlag).getReslut(tempJKBXHeaderVO);
-		JKBXHeaderVO[] dealVoucher=new JKBXHeaderVO[reslut.length];
-		for(int j=0;j<reslut.length;j++){
-			if(reslut[j] instanceof JKBXHeaderVO){
-				dealVoucher[j]=(JKBXHeaderVO)reslut[j];
+		CircularlyAccessibleValueObject[] reslut = new VoucherRsChecker(showVoucherNo, voucherFlags).getReslut(tempJKBXHeaderVO);
+		JKBXHeaderVO[] dealVoucher = new JKBXHeaderVO[reslut.length];
+		for (int j = 0; j < reslut.length; j++) {
+			if (reslut[j] instanceof JKBXHeaderVO) {
+				dealVoucher[j] = (JKBXHeaderVO) reslut[j];
 			}
 		}
 		return dealVoucher;
-		
+
 	}
 
     /**
@@ -309,15 +352,13 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
      * @param vo
      * @author: wangyhh@ufida.com.cn
      */
-    private void convertCommonBillVo(InitHeaderVO initHeaderVO, JKBXHeaderVO vo)
-    {
-        String[] attributeNames = vo.getAttributeNames();
-           for (String attributeName : attributeNames)
-           {
-               vo.setAttributeValue(attributeName, initHeaderVO.getAttributeValue(attributeName));
-           }
-           vo.setInit(true);
-    }
+	private void convertCommonBillVo(InitHeaderVO initHeaderVO, JKBXHeaderVO vo) {
+		String[] attributeNames = vo.getAttributeNames();
+		for (String attributeName : attributeNames) {
+			vo.setAttributeValue(attributeName, initHeaderVO.getAttributeValue(attributeName));
+		}
+		vo.setInit(true);
+	}
 
 	/**
 	 * 查询借款报销主表vo
