@@ -10,6 +10,7 @@ import java.util.Map;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
+import nc.bs.erm.matterapp.check.VOStatusChecker;
 import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmDjlxCache;
@@ -35,6 +36,7 @@ import nc.pubitf.para.SysInitQuery;
 import nc.pubitf.uapbd.ISupplierPubService;
 import nc.util.erm.costshare.ErmForCShareUtil;
 import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
+import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -49,9 +51,9 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ContrastBusinessException;
+import nc.vo.er.exception.ContrastBusinessException.ContrastBusinessExceptionType;
 import nc.vo.er.exception.CrossControlMsgException;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.er.exception.ContrastBusinessException.ContrastBusinessExceptionType;
 import nc.vo.er.util.UFDoubleTool;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
@@ -241,7 +243,26 @@ public class VOChecker {
 			corpItems.put(corp, items);
 		}
 	}
-
+	
+	/**
+	 * 修改保存校验:将前台的修改单据的校验，也在后台处理，为了其他客户端的处理
+	 * 
+	 */
+	public void checkUpdateSave(JKBXVO vo)	throws BusinessException{
+		JKBXHeaderVO headvo = vo.getParentVO();
+		if (!headvo.getDjzt().equals(
+				BXStatusConst.DJZT_TempSaved)) {
+			//修改单据时，状态控制
+			String msgs = VOStatusChecker.checkBillStatus(headvo.getDjzt(),
+					ActionUtils.EDIT, new int[] {
+							BXStatusConst.DJZT_Saved,
+							BXStatusConst.DJZT_TempSaved });
+			if (msgs != null && msgs.trim().length() != 0) {
+				throw new DataValidateException(msgs);
+			}
+		}
+	}
+	
 	/**
 	 * 后台保存校验
 	 */
@@ -250,6 +271,7 @@ public class VOChecker {
 		JKBXHeaderVO headVO = vo.getParentVO();
 		if (!headVO.isInit()) {
 			
+			checkUpdateSave(vo);
 			// 先补充拉单信息
 //			fillMtapp(vo);
             //拉单申请单加锁
