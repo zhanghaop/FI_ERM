@@ -15,6 +15,7 @@ import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.para.SysInitQuery;
 import nc.util.erm.closeacc.CloseAccUtil;
 import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
+import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.bd.period2.AccperiodmonthVO;
 import nc.vo.erm.accruedexpense.AccruedDetailVO;
@@ -54,6 +55,21 @@ public class AccruedBillVOChecker {
 			// 校验关帐
 			checkErmIsCloseAcc(aggvo);
 		}
+	}
+	
+	/**
+	 * 保存(后台)校验
+	 * 
+	 * @param aggvo
+	 * @throws BusinessException
+	 */
+	public void checkBackUpdateSave(AggAccruedBillVO aggvo) throws BusinessException {
+		AccruedVO parentVo = (AccruedVO) aggvo.getParentVO();
+		if (!parentVo.getBillstatus().equals(ErmAccruedBillConst.BILLSTATUS_TEMPSAVED)) {
+			AccruedBillVOStatusChecker.checkBillStatus(parentVo.getBillstatus(), ActionUtils.EDIT, new int[] { ErmAccruedBillConst.BILLSTATUS_SAVED, ErmAccruedBillConst.BILLSTATUS_TEMPSAVED });
+		}
+
+		checkBackSave(aggvo);
 	}
 
 	/**

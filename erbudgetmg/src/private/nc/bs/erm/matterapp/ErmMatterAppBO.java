@@ -110,7 +110,6 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		IErmMatterAppBillQuery qryService = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
 		AggMatterAppVO oldvo = qryService.queryBillByPK(vo.getParentVO().getPrimaryKey());
 		
-
 		// 补齐children信息（因前台传过来的的只是改变的children）
 		fillUpChildren(vo, oldvo);
 
@@ -122,7 +121,7 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		prepareVoValue(vo);
 		// vo校验
 		MatterAppVOChecker vochecker = new MatterAppVOChecker();
-		vochecker.checkBackSave(vo);
+		vochecker.checkBackUpdateSave(vo);
 		// 修改前事件处理
 		fireBeforeUpdateEvent(new AggMatterAppVO[] { vo }, new AggMatterAppVO[] { oldvo });
 		// 更新保存

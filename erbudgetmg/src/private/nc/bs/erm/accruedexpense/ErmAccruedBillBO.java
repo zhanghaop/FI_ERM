@@ -181,7 +181,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		prepareVoValue(aggvo);
 		// vo校验
 		AccruedBillVOChecker vochecker = new AccruedBillVOChecker();
-		vochecker.checkBackSave(aggvo);
+		vochecker.checkBackUpdateSave(aggvo);
 		// 修改前事件处理
 		fireBeforeUpdateEvent(new AggAccruedBillVO[] { aggvo }, new AggAccruedBillVO[] { oldaggvo });
 		// 更新保存

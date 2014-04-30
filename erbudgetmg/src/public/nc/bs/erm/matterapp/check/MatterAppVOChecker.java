@@ -10,6 +10,7 @@ import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.para.SysInitQuery;
 import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
+import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.AggMatterAppVO;
@@ -53,6 +54,29 @@ public class MatterAppVOChecker {
 			new FipubCrossCheckRuleChecker()
 					.check(vo.getParentVO().getPk_org(), vo.getParentVO().getPk_tradetype(), vo);
 		}
+	}
+	
+	/**
+	 * 修改保存校验
+	 * 
+	 * @param vo
+	 * @throws BusinessException
+	 */
+	public void checkBackUpdateSave(AggMatterAppVO vo) throws BusinessException {
+		MatterAppVO parentVo = (MatterAppVO) vo.getParentVO();
+		if (!parentVo.getBillstatus().equals(
+				ErmMatterAppConst.BILLSTATUS_TEMPSAVED)) {
+			//修改单据时，状态控制
+			String msgs = VOStatusChecker.checkBillStatus(parentVo.getBillstatus(),
+					ActionUtils.EDIT, new int[] {
+							ErmMatterAppConst.BILLSTATUS_SAVED,
+							ErmMatterAppConst.BILLSTATUS_TEMPSAVED });
+			if (msgs != null && msgs.trim().length() != 0) {
+				throw new DataValidateException(msgs);
+			}
+
+		}
+		checkBackSave(vo);
 	}
 	
 	/**
