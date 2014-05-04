@@ -10,9 +10,9 @@ go
 insert into bd_mode_selected(pk_bdmode,dataoriginflag,dr,managemode,mdclassid,ts,uniquescope,visiblescope) values('0001Z31000000000KHNS',0,0,6,'54a18bd1-6e2b-4009-937d-08811ac8dcea','2012-12-18 14:04:08',6,6)
 go
 
-insert into bd_mode_selected(pk_bdmode,dataoriginflag,dr,managemode,mdclassid,ts,uniquescope,visiblescope) values('1001Z31000000002PLWA',0,0,6,'7b51cdf3-576c-47bb-99f3-8623bb092531','2014-01-07 09:12:05',6,6)
+insert into bd_mode_selected(pk_bdmode,dataoriginflag,dr,managemode,mdclassid,ts,uniquescope,visiblescope) values('1001Z31000000002PLWA',0,0,6,'7b51cdf3-576c-47bb-99f3-8623bb092531','2014-04-28 22:00:02',6,6)
 go
 
-insert into bd_mode_selected(pk_bdmode,dataoriginflag,dr,managemode,mdclassid,ts,uniquescope,visiblescope) values('1001Z31000000002PLW4',0,0,6,'e779296b-cd8e-4efa-935d-e87ee2432071','2014-01-07 09:12:05',6,6)
+insert into bd_mode_selected(pk_bdmode,dataoriginflag,dr,managemode,mdclassid,ts,uniquescope,visiblescope) values('1001Z31000000002PLW4',0,0,6,'e779296b-cd8e-4efa-935d-e87ee2432071','2014-04-28 22:00:02',6,6)
 go
 

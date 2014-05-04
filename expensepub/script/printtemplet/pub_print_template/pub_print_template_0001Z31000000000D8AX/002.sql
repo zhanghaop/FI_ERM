@@ -1,6 +1,3 @@
-insert into pub_print_datasource(cdatasourceid,bbreakflag,bhorsubtotal,bisname,bversubtotal,ccellcode,cextendproperty,ctemplateid,dr,pk_corp,prepare1,prepare2,prepare3,ts,vdatasourcename) values('0001Z310000000000E7R','N','N','Y','N','007001007003','011','0001Z31000000000D8AX',0,'@@@@',null,null,null,'2013-09-23 13:40:10',null)
-go
-
 insert into pub_print_datasource(cdatasourceid,bbreakflag,bhorsubtotal,bisname,bversubtotal,ccellcode,cextendproperty,ctemplateid,dr,pk_corp,prepare1,prepare2,prepare3,ts,vdatasourcename) values('0001Z310000000000E6K','N','N','Y','N','000007000007','011','0001Z31000000000D8AX',0,'@@@@',null,null,null,'2013-09-23 13:40:10',null)
 go
 
@@ -20,6 +17,9 @@ insert into pub_print_datasource(cdatasourceid,bbreakflag,bhorsubtotal,bisname,b
 go
 
 insert into pub_print_datasource(cdatasourceid,bbreakflag,bhorsubtotal,bisname,bversubtotal,ccellcode,cextendproperty,ctemplateid,dr,pk_corp,prepare1,prepare2,prepare3,ts,vdatasourcename) values('0001Z310000000000E6Q','N','N','Y','N','001006001006','011','0001Z31000000000D8AX',0,'@@@@',null,null,null,'2013-09-23 13:40:10',null)
+go
+
+insert into pub_print_datasource(cdatasourceid,bbreakflag,bhorsubtotal,bisname,bversubtotal,ccellcode,cextendproperty,ctemplateid,dr,pk_corp,prepare1,prepare2,prepare3,ts,vdatasourcename) values('0001Z310000000000E7R','N','N','Y','N','007001007003','011','0001Z31000000000D8AX',0,'@@@@',null,null,null,'2013-09-23 13:40:10',null)
 go
 
 insert into pub_print_datasource(cdatasourceid,bbreakflag,bhorsubtotal,bisname,bversubtotal,ccellcode,cextendproperty,ctemplateid,dr,pk_corp,prepare1,prepare2,prepare3,ts,vdatasourcename) values('0001Z310000000000E6R','N','N','Y','N','001008001008','011','0001Z31000000000D8AX',0,'@@@@',null,null,null,'2013-09-23 13:40:10',null)

@@ -358,3 +358,123 @@ go
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000FZS5','pk_accasoa',null,'matchview("ERM05","费用结转","1001Z31000000000DUQA")',null,204,0,'1001Z31000000000FZOX','2014-03-24 10:24:33')
 go
 
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I1','excrate2',null,'$bbhl@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I2','pk_currtype',null,'$bzbm@',null,204,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I3','localdebitamount',null,'$er_busitem.bbje@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I4','globaldebitamount',null,'$er_busitem.globalbbje@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I5','groupdebitamount',null,'$er_busitem.groupbbje@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I6','debitamount',null,'$er_busitem.ybje@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I7','excrate4',null,'$globalbbhl@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I8','excrate3',null,'$groupbbhl@',null,31,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009I9','explanation',null,'$zy@',null,1,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IA','pk_accasoa',null,'matchview("ERM03","费用科目","0001Z31000000000HIG7")',null,204,0,'2011Z3100000000009HX','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IB','excrate2',null,'$bbhl@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IC','pk_currtype',null,'$bzbm@',null,204,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009ID','localcreditamount',null,'$er_busitem.cjkbbje@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IG','creditamount',null,'$er_busitem.cjkybje@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IE','globalcreditamount',null,'$er_busitem.globalcjkbbje@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IF','groupcreditamount',null,'$er_busitem.groupcjkbbje@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IH','excrate4',null,'$globalbbhl@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009II','excrate3',null,'$groupbbhl@',null,31,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IJ','explanation',null,'$zy@',null,1,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IK','pk_accasoa',null,'matchview("ERM01","其他应收款","0001Z31000000000HIG9")',null,204,0,'2011Z3100000000009HY','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IL','excrate2',null,'$bbhl@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IM','pk_currtype',null,'$bzbm@',null,204,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IN','globaldebitamount',null,'$er_busitem.globalhkbbje@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IO','groupdebitamount',null,'$er_busitem.grouphkbbje@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IP','localdebitamount',null,'$er_busitem.hkbbje@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IQ','debitamount',null,'$er_busitem.hkybje@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IR','excrate4',null,'$globalbbhl@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IS','excrate3',null,'$groupbbhl@',null,31,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IT','explanation',null,'$zy@',null,1,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IU','pk_accasoa',null,'matchview("ERM02","过渡科目","0001Z31000000000HIG8")',null,204,0,'2011Z3100000000009HZ','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IV','excrate2',null,'$bbhl@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IW','pk_currtype',null,'$bzbm@',null,204,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IX','globalcreditamount',null,'$er_busitem.globalzfbbje@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IY','groupcreditamount',null,'$er_busitem.groupzfbbje@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009IZ','localcreditamount',null,'$er_busitem.zfbbje@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009J0','creditamount',null,'$er_busitem.zfybje@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009J1','excrate4',null,'$globalbbhl@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009J2','excrate3',null,'$groupbbhl@',null,31,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009J3','explanation',null,'$zy@',null,1,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009J4','pk_accasoa',null,'matchview("ERM02","过渡科目","0001Z31000000000HIG8")',null,204,0,'2011Z3100000000009I0','2014-04-28 21:47:06')
+go
+
