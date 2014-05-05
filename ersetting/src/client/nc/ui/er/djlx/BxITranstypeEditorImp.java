@@ -31,7 +31,6 @@ public class BxITranstypeEditorImp implements ITranstypeEditor {
 
 	public void doAction(EditorContext context) throws BusinessException {
 		lasttype = context.getEventtype();
-		// setButtonEnable(false);
 		switch (context.getEventtype()) {
 		case TYPE_BROWSE:
 			seteditable(false);
@@ -75,6 +74,13 @@ public class BxITranstypeEditorImp implements ITranstypeEditor {
 			}else{
 				getcardpanel().getBillCardPanelDj().getHeadItem("is_mactrl").setShow(true);
 				
+			}
+			boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(context.getTranstype().getPk_group(), context.getTranstype().getPk_billtypecode(),ErmDjlxConst.BXTYPE_ADJUST);
+			if(isAdjust){
+				getcardpanel().getBillCardPanelDj().getHeadItem("autosettle").setShow(false);
+			}else{
+				getcardpanel().getBillCardPanelDj().getHeadItem("autosettle").setShow(true);
+
 			}
 		}
 		// 报销单交易类型显示配置报销类型
