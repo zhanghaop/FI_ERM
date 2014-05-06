@@ -14,11 +14,13 @@ import java.util.Map;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.arap.bx.BXZbBO;
+import nc.bs.arap.bx.BxVerifyAccruedBillBO;
 import nc.bs.arap.bx.ContrastBO;
 import nc.bs.arap.bx.IBXBusItemBO;
 import nc.bs.arap.bx.VoucherRsChecker;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
+import nc.bs.er.settle.ErForCmpBO;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtil;
 import nc.bs.erm.util.ErUtil;
@@ -49,6 +51,7 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.arap.bx.util.CurrencyControlBO;
 import nc.vo.bd.psn.PsndocVO;
+import nc.vo.cmp.BusiStatus;
 import nc.vo.cmp.settlement.SettlementAggVO;
 import nc.vo.cmp.settlement.SettlementHeadVO;
 import nc.vo.ep.bx.BXBusItemVO;
@@ -89,6 +92,7 @@ import nc.vo.pub.bill.BillOperaterEnvVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.resa.costcenter.CostCenterVO;
 import nc.vo.sm.UserVO;
 import nc.vo.trade.billsource.LightBillVO;
@@ -1594,6 +1598,59 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		
 		new BXZbBO().effectToFip(vos, BXZbBO.MESSAGE_SETTLE);//在生成凭证
 		
+		return vos;
+	}
+	/**
+	 * 设置单据状态
+	 * 删除结算信息
+	 * 释放所占预算
+	 * 删除费用账
+	 */
+	@Override
+	public List<JKBXVO> dealInvalid(List<JKBXVO> jkbxvo) throws BusinessException {
+		List<JKBXHeaderVO> header = new ArrayList <JKBXHeaderVO>();
+		//版本和ts校验
+		new BXZbBO().compareTs(jkbxvo.toArray(new JKBXVO[]{}));
+		
+		//1.先更新单据的单据状态
+		for (JKBXVO jkbxVO : jkbxvo) {
+			jkbxVO.getParentVO().setDjzt(BXStatusConst.DJZT_Invalid);
+			header.add(jkbxVO.getParentVO());
+		}
+		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT});
+		
+		//2.再删除单据的结算信息
+		try {
+			for (JKBXVO vo : jkbxvo) {
+				// 判断CMP产品是否启用
+				boolean isCmpInstalled = BXZbBO.isCmpInstall(vo.getParentVO());
+
+				// 是否 既无收款也无付款
+				boolean notExistsPayOrRecv = (vo.getParentVO().getZfybje() == null || vo
+						.getParentVO().getZfybje().equals(new UFDouble(0)))
+						&& (vo.getParentVO().getHkybje() == null || vo.getParentVO().getHkybje().equals(new UFDouble(0)));
+
+				if (!notExistsPayOrRecv && isCmpInstalled) {
+					new ErForCmpBO().invokeCmp(vo, vo.getParentVO().getDjrq(),
+							BusiStatus.Deleted);
+				}
+
+				// 删除冲借款对照信息
+
+				new ContrastBO().deleteByPK_bxd(new String[] { vo.getParentVO().getPk_jkbx() });
+
+				// 删除报销核销 预提明细
+				new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
+			}
+		} catch (SQLException e) {
+			ExceptionHandler.handleException(e);
+		}
+		//5.处理预算
+			
+		//6.删除费用帐
+		
+		List<JKBXVO> vos = retriveItems(header);
+
 		return vos;
 	}
 }

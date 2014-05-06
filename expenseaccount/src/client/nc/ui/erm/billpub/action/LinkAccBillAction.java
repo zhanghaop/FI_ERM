@@ -16,6 +16,7 @@ import nc.ui.uap.sf.SFClientUtil2;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.link.LinkQuery;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
@@ -64,6 +65,7 @@ public class LinkAccBillAction extends NCAction {
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
 		if (selectedData == null
+				|| selectedData.getParentVO().getDjzt() == BXStatusConst.DJZT_Invalid
 				|| ArrayUtils.isEmpty(selectedData.getAccruedVerifyVO())) {
 			return false;
 		}

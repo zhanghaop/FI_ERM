@@ -2151,7 +2151,7 @@ public class BXZbBO {
 		return jkbxDAO;
 	}
 
-	private static boolean isCmpInstall(JKBXHeaderVO parentVO) throws BusinessException {
+	public static boolean isCmpInstall(JKBXHeaderVO parentVO) throws BusinessException {
 		boolean flag = BXUtil.isProductInstalled(parentVO.getPk_group(), BXConstans.TM_CMP_FUNCODE);
 		if (!flag) {
 			return false;

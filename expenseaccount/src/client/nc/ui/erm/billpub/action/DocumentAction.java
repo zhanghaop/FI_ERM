@@ -9,6 +9,7 @@ import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
@@ -32,7 +33,8 @@ public class DocumentAction extends NCAction {
 	
 	@Override
 	protected boolean isActionEnable() {
-		return this.model.getSelectedData() != null;
+		Object selectedData = getModel().getSelectedData();
+		return selectedData != null && ((JKBXVO)selectedData).getParentVO().getDjzt() != BXStatusConst.DJZT_Invalid;
 	}
 
 

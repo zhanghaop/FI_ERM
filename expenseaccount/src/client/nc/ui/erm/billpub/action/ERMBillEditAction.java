@@ -148,6 +148,7 @@ public class ERMBillEditAction extends EditAction {
 		
 		if (!BXConstans.BXLR_QCCODE.equals(nodeCode)) {
 			return getModel().getUiState() == UIState.NOT_EDIT && selectedData != null
+					&& ((JKBXVO) selectedData).getParentVO().getDjzt().intValue() !=BXStatusConst.DJZT_Invalid
 					&& ((JKBXVO) selectedData).getParentVO().getSpzt().intValue() != IPfRetCheckInfo.NOPASS
 					&& ((JKBXVO) selectedData).getParentVO().getDjzt().intValue() < BXStatusConst.DJZT_Verified
 					&& (((JKBXVO) selectedData).getParentVO().getVouchertag()==null ||(((JKBXVO) selectedData).getParentVO().getVouchertag()!=null && 

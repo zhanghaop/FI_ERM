@@ -90,7 +90,8 @@ public class LinkYsAction extends NCAction {
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if (selectedData == null) {
+		if (selectedData == null
+				|| selectedData.getParentVO().getDjzt() == BXStatusConst.DJZT_Invalid) {
 			return false;
 		}
 

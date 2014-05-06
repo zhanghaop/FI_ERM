@@ -40,6 +40,10 @@ public class ActionUtils {
 				strMessage = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000265")/*@res "单据已经签字"*/;
 				break;
 			}
+			case 4:{
+				strMessage = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955");//单据状态为作废，不可以操作
+				break;
+			}
 			default: {
 				strMessage = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000266")/*@res "单据状态不明"*/;
 				break;

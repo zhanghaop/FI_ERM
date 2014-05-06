@@ -10,6 +10,10 @@
 		<property name="model" ref="manageAppModel" />
 	</bean>
 	
+	<bean id="invalaction" class="nc.ui.erm.billquery.action.InvalidAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
 	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
 		<constructor-arg>
 			<ref bean="editor" />
@@ -20,13 +24,13 @@
 				<ref bean="cardRefreshAction" />
 				<ref bean="nullAction"/>
 				<ref bean="dealvoucheraction"/>
+				<ref bean="invalaction" />
 				<ref bean="documentaction"/>
 				<ref bean="assistantAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="printActionGroup"/>
-				
 			</list>
 		</property>
 		<property name="model" ref="manageAppModel" />
@@ -42,6 +46,7 @@
 				<ref bean="listRefreshAction" />
 				<ref bean="nullAction"/>
 				<ref bean="dealvoucheraction"/>
+				<ref bean="invalaction" />
 				<ref bean="documentaction"/>
 				<ref bean="assistantAction"/>
 				<ref bean="nullAction"/>

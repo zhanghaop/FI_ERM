@@ -199,7 +199,7 @@ public class MergePfAction extends NCAction {
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if ((selectedData != null && (selectedData.getParentVO().getDjzt()).equals(BXStatusConst.DJZT_Sign))) {
+		if ((selectedData != null && selectedData.getParentVO().getDjzt() != BXStatusConst.DJZT_Invalid && (selectedData.getParentVO().getDjzt()).equals(BXStatusConst.DJZT_Sign))) {
 			return true;
 		}
 

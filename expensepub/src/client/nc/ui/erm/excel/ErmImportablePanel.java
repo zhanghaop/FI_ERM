@@ -9,6 +9,7 @@ import nc.ui.pub.bill.BillData;
 import nc.ui.trade.excelimport.Uif2ImportablePanel;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.AbstractUIAppModel;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 
 /**
@@ -104,7 +105,8 @@ public abstract class ErmImportablePanel extends Uif2ImportablePanel {
 		for(Object select : selectedObject ){
 			if(select instanceof JKBXVO){
 				String mPk= ((JKBXVO)select).getParentVO().getPk_item();//…Í«Îµ•pk
-				if(mPk ==null){
+				if (mPk == null
+						&& ((JKBXVO) select).getParentVO().getDjzt() != BXStatusConst.DJZT_Invalid) {
 					retrunObject.add(select);
 				}
 			}else{

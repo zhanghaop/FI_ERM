@@ -8,6 +8,7 @@ import nc.bs.logging.Log;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.ep.bx.BusiTypeVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -59,7 +60,8 @@ public class LinkLimitAction extends NCAction {
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if (selectedData == null) {
+		if (selectedData == null
+				|| selectedData.getParentVO().getDjzt() == BXStatusConst.DJZT_Invalid) {
 			return false;
 		}
 

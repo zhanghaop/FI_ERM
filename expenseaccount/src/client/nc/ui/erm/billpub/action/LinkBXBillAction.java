@@ -12,6 +12,7 @@ import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.link.LinkQuery;
@@ -68,10 +69,11 @@ public class LinkBXBillAction extends NCAction{
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if (selectedData == null || ArrayUtils.isEmpty(selectedData.getContrastVO())) {
+		if (selectedData == null
+				|| selectedData.getParentVO().getDjzt() == BXStatusConst.DJZT_Invalid
+				|| ArrayUtils.isEmpty(selectedData.getContrastVO())) {
 			return false;
 		}
-
 		return true;
 	}
 

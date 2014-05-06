@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 
 public class LinkFpplanAction extends LinkYsAction {
@@ -26,10 +27,10 @@ public class LinkFpplanAction extends LinkYsAction {
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if (selectedData == null) {
+		if (selectedData == null
+				|| selectedData.getParentVO().getDjzt() == BXStatusConst.DJZT_Invalid) {
 			return false;
 		}
-
 		return true;
 	}
 	

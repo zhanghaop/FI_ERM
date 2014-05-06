@@ -203,16 +203,16 @@ public class ERMBillDeleteAction extends DeleteAction {
 		if (obj != null && model.getUiState() == UIState.NOT_EDIT) {
 			JKBXVO[] selectedData = Arrays.asList(obj).toArray(new JKBXVO[0]);
 			if (selectedData.length == 1) {
-				
-				
 				JKBXHeaderVO parentVO = selectedData[0].getParentVO();
 				int spzt = parentVO.getSpzt().intValue();
-				return spzt == IPfRetCheckInfo.NOSTATE ;
+				int djzt = parentVO.getDjzt().intValue();
+				return spzt == IPfRetCheckInfo.NOSTATE && djzt!=BXStatusConst.DJZT_Invalid;
 			} else {
 				boolean enable = false;
 				for (int i = 0; i < selectedData.length; i++) {
 					JKBXHeaderVO parentVO = selectedData[i].getParentVO();
-					if (parentVO.getSpzt().intValue() == IPfRetCheckInfo.NOSTATE) {
+					if (parentVO.getSpzt().intValue() == IPfRetCheckInfo.NOSTATE
+							&& parentVO.getDjzt().intValue()!=BXStatusConst.DJZT_Invalid) {
 						enable = true;
 						break;
 					}
@@ -222,7 +222,6 @@ public class ERMBillDeleteAction extends DeleteAction {
 		} else {
 			return false;
 		}
-
 	}
 
 	public ErmBillBillForm getEditor() {

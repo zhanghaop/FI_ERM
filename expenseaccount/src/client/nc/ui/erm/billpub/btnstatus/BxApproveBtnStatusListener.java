@@ -51,7 +51,7 @@ public class BxApproveBtnStatusListener
         } else {
                 // ¿¨Æ¬½çÃæ
                 JKBXVO vo= (JKBXVO) getModel().getSelectedData();
-                isApproveBtnEnable = isApproveBtnEnable(vo);
+                isApproveBtnEnable = isApproveBtnEnable(vo) ;
         }
         
         return isApproveBtnEnable;
@@ -125,7 +125,9 @@ public class BxApproveBtnStatusListener
 				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.COMMIT)) {
 			return true;
 		}
-
+		if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
+			return false;
+		}
 		return false;
 	}
     /**
@@ -156,6 +158,10 @@ public class BxApproveBtnStatusListener
         if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved) {
             return true;
         }
+        if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
+			return false;
+		}
+        
         return true;
     }
 

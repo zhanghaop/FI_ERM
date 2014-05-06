@@ -13,6 +13,7 @@ public class BXStatusConst {
 	public static final int DJZT_Saved = 1;	//单据状态——保存
 	public static final int DJZT_Verified = 2;//单据状态——审核
 	public static final int DJZT_Sign = 3;	//单据状态——签字
+	public static final int DJZT_Invalid = 4;	//单据状态——作废
 		
 	public static final int SXBZ_NO = 0;  //生效标志——未生效
 	public static final int SXBZ_VALID = 1;	//生效标志——生效

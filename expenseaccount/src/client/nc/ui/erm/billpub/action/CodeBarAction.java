@@ -6,6 +6,8 @@ import nc.ui.erm.billpub.view.BarCodeDialog;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.ep.bx.JKBXVO;
 
 /**
  *
@@ -34,6 +36,7 @@ public class CodeBarAction extends NCAction {
 
 	public void setModel(BillManageModel model) {
 		this.model = model;
+		this.model.addAppEventListener(this);
 	}
 
 	public BillForm getEditor() {

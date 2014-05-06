@@ -115,7 +115,7 @@ public class VOStatusChecker {
 	 */
 	public static void checkRecallStatus(JKBXHeaderVO head) throws DataValidateException {
 		String msgs = ActionUtils.checkBillStatus(head.getDjzt(), ActionUtils.RECALL,
-				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED });
+				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED,BXStatusConst.DJZT_Invalid });
 
 		if (StringUtils.isNullWithTrim(msgs)) {
 			Integer apprStatus = head.getSpzt();// 审核状态
@@ -141,7 +141,7 @@ public class VOStatusChecker {
 	 */
 	public static void checkCommitStatus(JKBXHeaderVO head) throws DataValidateException {
 		String msgs = ActionUtils.checkBillStatus(head.getDjzt(), ActionUtils.COMMIT,
-				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED });
+				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED,BXStatusConst.DJZT_Invalid });
 
 		if (StringUtils.isNullWithTrim(msgs)) {
 			Integer apprStatus = head.getSpzt();// 审核状态
@@ -179,6 +179,10 @@ public class VOStatusChecker {
 																									 * res
 																									 * "审批未通过的单据不可以删除！"
 																									 */;
+			}
+			if(head.getDjzt() !=null && head.getDjzt().intValue()==BXStatusConst.DJZT_Invalid){
+				msg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955");//单据状态为作废，不可以操作
+
 			}
 //			//ehp2： 对于暂估的单据是不可以删除的
 //			if(head.getVouchertag()!= null && head.getVouchertag()==BXStatusConst.ZGDeal){

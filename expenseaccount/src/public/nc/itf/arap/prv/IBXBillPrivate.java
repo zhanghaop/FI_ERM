@@ -448,4 +448,12 @@ public interface IBXBillPrivate {
 	public UFDate queryOrgStartDate(String pk_org) throws BusinessException, InvalidAccperiodExcetion;
 	
 	public List<JKBXVO> effectToFip(List<JKBXVO> jkbxvo) throws BusinessException;
+	
+	/**
+	 * 处理借款报销单作废
+	 * @param jkbxvo
+	 * @return
+	 * @throws BusinessException
+	 */
+	public List<JKBXVO> dealInvalid(List<JKBXVO> jkbxvo) throws BusinessException;
 }

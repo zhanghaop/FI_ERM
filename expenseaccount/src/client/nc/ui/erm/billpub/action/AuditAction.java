@@ -145,6 +145,12 @@ public class AuditAction extends ErmAuditAction {
 			return msgVO;
 		}
 		
+		if(head.getDjzt().intValue()==BXStatusConst.DJZT_Invalid){
+			msgVO.setSuccess(false);
+			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UPP2011-000955"));
+			return msgVO;
+		}
+		
 		//权限校验
 		if(!checkDataPermission(bxvo)){
 			msgVO.setSuccess(false);
@@ -305,7 +311,8 @@ public class AuditAction extends ErmAuditAction {
 
 	@Override
 	protected boolean isActionEnable() {
-		return getModel().getSelectedData() != null && getAuditstausListener().approveButtonStatus();
+		return getModel().getSelectedData() != null
+				&& getAuditstausListener().approveButtonStatus();
 	}
 
 	public BxApproveBtnStatusListener getAuditstausListener() {

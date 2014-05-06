@@ -14,6 +14,8 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.editor.BillListView;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
@@ -83,7 +85,7 @@ public class DocumentAction extends NCAction{
 	protected boolean isActionEnable() {
 		if (getModel().getUiState() == UIState.EDIT || getModel().getUiState() == UIState.ADD) {
 			return true;
-		}else if(getModel().getSelectedData() != null){
+		}else if(getModel().getSelectedData() != null && ((JKBXVO)getModel().getSelectedData()).getParentVO().getDjzt().intValue()!=BXStatusConst.DJZT_Invalid){
 			return true;
 		}
 		return false;  

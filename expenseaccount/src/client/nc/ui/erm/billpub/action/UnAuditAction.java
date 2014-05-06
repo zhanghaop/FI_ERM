@@ -26,6 +26,7 @@ import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.cmp.exception.CmpAuthorizationException;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -210,6 +211,12 @@ public class UnAuditAction extends NCAsynAction {
 																													 * res
 																													 * "期初单据不能反审核"
 																													 */;
+			return msgVO;
+		}
+		
+		if(head.getDjzt().intValue()==BXStatusConst.DJZT_Invalid){
+			msgVO.setSuccess(false);
+			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UPP2011-000955"));
 			return msgVO;
 		}
 
