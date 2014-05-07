@@ -218,17 +218,15 @@ public class ErmMatterAppDAO {
 	 * @param fields
 	 * @throws BusinessException
 	 */
+	@SuppressWarnings("unchecked")
 	public MtAppDetailVO[] queryMtDetailsByPk(String mAppPk) throws BusinessException {
 		// 数据库字段更新主表
-		
-		@SuppressWarnings("unchecked")
 		Collection<MtAppDetailVO> result = getBaseDAO().retrieveByClause(MtAppDetailVO.class,
 				MtAppDetailVO.PK_MTAPP_BILL + " = '" + mAppPk + "' ");
 		
 		if(result != null){
 			return result.toArray(new MtAppDetailVO[]{});
 		}
-		
 		return null;
 	}
 	
