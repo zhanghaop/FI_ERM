@@ -512,10 +512,10 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
 
-        //当期的借款单和期初的借款单
-        sqlBuffer.append(" and ((").append(jkzbAlias).append(".djrq >= '").append(
+        //当期的还款单据 和期初的借款单
+        sqlBuffer.append(" and ((").append(cxAlias).append(".cxrq >= '").append(
                 queryVO.getBeginDate()).append("' and ");
-        sqlBuffer.append(jkzbAlias).append(".djrq <= '").append(queryVO.getEndDate()).append("') or  (");
+        sqlBuffer.append(cxAlias).append(".cxrq <= '").append(queryVO.getEndDate()).append("') or  (");
         sqlBuffer.append(jkzbAlias).append(".qcbz = 'Y' and ");
         sqlBuffer.append(jkzbAlias).append(".djrq < '").append(queryVO.getBeginDate()).append("') )");
         
