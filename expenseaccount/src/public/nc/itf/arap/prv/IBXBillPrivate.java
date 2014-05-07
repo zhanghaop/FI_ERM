@@ -6,6 +6,7 @@ import java.util.Map;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.dao.DAOException;
+import nc.vo.cmp.NetPayExecInfo;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.BatchContratParam;
@@ -456,4 +457,13 @@ public interface IBXBillPrivate {
 	 * @throws BusinessException
 	 */
 	public List<JKBXVO> dealInvalid(List<JKBXVO> jkbxvo) throws BusinessException;
+	/**
+	 * 处理结算红冲业务
+	 * @param payInfo
+	 * @param map
+	 * @return
+	 * @throws BusinessException
+	 */
+	public JKBXVO[] settleRedHandleSaveAndSign(NetPayExecInfo payInfo, Map  map) throws BusinessException;
+
 }

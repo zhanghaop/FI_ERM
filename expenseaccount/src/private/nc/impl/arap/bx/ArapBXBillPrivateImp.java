@@ -8,9 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.arap.bx.BXZbBO;
@@ -24,13 +27,18 @@ import nc.bs.er.settle.ErForCmpBO;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtil;
 import nc.bs.erm.util.ErUtil;
+import nc.bs.erm.util.ErmBillPubUtil;
+import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.PfUtilTools;
 import nc.bs.trade.billsource.IBillDataFinder;
 import nc.bs.trade.billsource.IBillFinder;
+import nc.erm.pub.conversion.ErmBillCostConver;
 import nc.impl.pubapp.linkquery.BillTypeSetBillFinder;
 import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.arap.pub.ISqdlrKeyword;
+import nc.itf.cm.prv.CmpConst;
 import nc.itf.er.indauthorize.IIndAuthorizeQueryService;
 import nc.itf.org.IDeptQryService;
 import nc.itf.resa.costcenter.ICostCenterQueryOpt;
@@ -40,6 +48,7 @@ import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.cmp.settlement.ICmpSettlementPubQueryService;
+import nc.pubitf.erm.expenseaccount.IErmExpenseaccountWriteoffService;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.rbac.IFunctionPermissionPubService;
 import nc.pubitf.rbac.IRolePubService;
@@ -52,7 +61,9 @@ import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.arap.bx.util.CurrencyControlBO;
 import nc.vo.bd.psn.PsndocVO;
 import nc.vo.cmp.BusiStatus;
+import nc.vo.cmp.NetPayExecInfo;
 import nc.vo.cmp.settlement.SettlementAggVO;
+import nc.vo.cmp.settlement.SettlementBodyVO;
 import nc.vo.cmp.settlement.SettlementHeadVO;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
@@ -65,6 +76,7 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKHeaderVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.ep.bx.JsConstrasVO;
+import nc.vo.ep.bx.Paytarget;
 import nc.vo.ep.bx.SqdlrVO;
 import nc.vo.ep.bx.VOFactory;
 import nc.vo.ep.dj.DjCondVO;
@@ -76,6 +88,7 @@ import nc.vo.er.util.StringUtils;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.costshare.CShareDetailVO;
+import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.fi.pub.SqlUtils;
@@ -93,6 +106,7 @@ import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pubapp.pattern.pub.MathTool;
 import nc.vo.resa.costcenter.CostCenterVO;
 import nc.vo.sm.UserVO;
 import nc.vo.trade.billsource.LightBillVO;
@@ -1641,16 +1655,239 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 
 				// 删除报销核销 预提明细
 				new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
+				
+				// 删除费用帐
+				ExpenseAccountVO[] expaccvo = ErmBillCostConver.getExpAccVO(vo);
+				NCLocator.getInstance().lookup(IErmExpenseaccountWriteoffService.class).
+				writeoffVOs(expaccvo);
 			}
 		} catch (SQLException e) {
 			ExceptionHandler.handleException(e);
 		}
-		//5.处理预算
-			
-		//6.删除费用帐
-		
 		List<JKBXVO> vos = retriveItems(header);
 
 		return vos;
+	}
+	/**
+	 * 结算红冲
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public JKBXVO[] settleRedHandleSaveAndSign(NetPayExecInfo payInfo, Map map)
+			throws BusinessException {
+		Map<String, SettlementBodyVO[]> copy = map;
+		Set<Entry<String, SettlementBodyVO[]>> entrySet = copy.entrySet();
+		
+		Set<String> pk_billSet = new HashSet<String>();//结算信息的pk
+		Map<String,SettlementBodyVO> pk_bill_detailMap = new HashMap<String,SettlementBodyVO>();//结算明细信息pk_detail
+		
+		//结算信息如果拆分过的话，需要进行合并
+		Iterator it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			SettlementBodyVO[] settlementBodyVOs = (SettlementBodyVO[]) entry.getValue();
+			for (SettlementBodyVO settlementBodyVO : settlementBodyVOs) {
+				pk_billSet.add(settlementBodyVO.getPk_bill());
+				if (!pk_bill_detailMap.containsKey(settlementBodyVO.getPk_billdetail())) {
+					pk_bill_detailMap.put(settlementBodyVO.getPk_billdetail(), settlementBodyVO);
+				} else {
+					SettlementBodyVO bodyVO = (SettlementBodyVO) pk_bill_detailMap.get(settlementBodyVO
+						.getPk_billdetail());
+					getCombinationVO(bodyVO, settlementBodyVO);
+				}
+
+			}
+
+		}
+		JKBXHeaderVO headVO = VOFactory.createHeadVO(payInfo.getBilltype());
+		
+		List<JKBXVO>  writeBackBillVOs = new ArrayList<JKBXVO>();
+		List<BXBusItemVO>  childs = new ArrayList<BXBusItemVO>();
+		SettlementBodyVO sbodyVO = null;
+		for (Entry<String, SettlementBodyVO[]> entry : entrySet) {
+			SettlementBodyVO[] value = entry.getValue();
+			if(value== null){
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2006v61020_0","02006v61020-0113")/*@res "结算红冲结算信息不能为空"*/);
+			}else {
+				childs.addAll(Arrays.asList(generateItems(value)));
+			}
+			sbodyVO =value[0];
+
+		}
+		
+		JKBXHeaderVO header = generateHead(headVO, sbodyVO);
+		JKBXVO bxvo = VOFactory.createVO(header,childs == null ? new BXBusItemVO[] {} : childs.toArray(new BXBusItemVO[] {}));
+		
+		writeBackBillVOs.add(bxvo);
+		return saveRedBills(writeBackBillVOs, new ArrayList<JKBXVO>());
+	}
+	/**
+	 * 合并结算信息
+	 * @param cBodyVO
+	 * @param settlementBodyVO
+	 */
+	private void getCombinationVO(SettlementBodyVO cBodyVO, SettlementBodyVO settlementBodyVO) {
+		cBodyVO.setPay( MathTool.add(cBodyVO.getPay(), settlementBodyVO.getPay()));
+		cBodyVO.setPaylocal( MathTool.add(cBodyVO.getPaylocal(), settlementBodyVO.getPaylocal()));
+		cBodyVO.setGrouppaylocal( MathTool.add(cBodyVO.getGrouppaylocal(), settlementBodyVO.getGrouppaylocal()));
+		cBodyVO.setGlobalpaylocal( MathTool.add(cBodyVO.getGlobalpaylocal(), settlementBodyVO.getGlobalpaylocal()));
+	}
+	/**
+	 * 保存红冲单据
+	 * @param writeBackBillVOs
+	 * @param arrayList
+	 * @return
+	 * @throws BusinessException 
+	 */
+	private JKBXVO[] saveRedBills(List<JKBXVO> writeBackBillVOs,
+			ArrayList<JKBXVO> arrayList) throws BusinessException {
+		JKBXVO[] writeBackBillVO = ErmBillPubUtil.getWriteBackBillVO(
+				writeBackBillVOs.toArray(new JKBXVO[0]), new UFDate(
+						InvocationInfoProxy.getInstance().getBizDateTime()),
+				InvocationInfoProxy.getInstance().getUserId());
+		// 保存红冲单据
+		JKBXVO[] jkbxvos = NCLocator.getInstance().lookup(IBXBillPublic.class)
+				.save(writeBackBillVO);
+
+		return jkbxvos;
+	}
+	
+	/**
+	 * 设置表头的数据
+	 * @param headVO
+	 * @param sbodyVO
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private JKBXHeaderVO generateHead(JKBXHeaderVO headVO ,SettlementBodyVO sbodyVO) {
+		//设置表头的字段
+		headVO.setDjbh(sbodyVO.getBillcode());
+		headVO.setDjrq(sbodyVO.getBilldate());
+		headVO.setBbhl(sbodyVO.getLocalrate());
+		headVO.setZy(sbodyVO.getMemo());
+		headVO.setDjlxbm(sbodyVO.getPk_billtype());
+		headVO.setPk_jkbx(sbodyVO.getPk_bill());
+		//支付单位
+		headVO.setPk_payorg(sbodyVO.getPk_org());
+		headVO.setPk_payorg_v(sbodyVO.getPk_org_v());
+		//主组织
+		headVO.setPk_org(sbodyVO.getPk_org());
+		headVO.setPk_org_v(sbodyVO.getPk_org_v());
+		//费用承担单位
+		headVO.setFydwbm(sbodyVO.getPk_org());
+		headVO.setFydwbm_v(sbodyVO.getPk_org_v());
+		//
+		headVO.setPk_fiorg(sbodyVO.getPk_org());
+		headVO.setPk_group(sbodyVO.getPk_group());
+		headVO.setGroupbbhl(sbodyVO.getGrouprate());
+		headVO.setGlobalbbhl(sbodyVO.getGlobalrate());
+		headVO.setPjh(sbodyVO.getNotenumber());
+		headVO.setChecktype(sbodyVO.getNotenumber());
+		headVO.setBzbm(sbodyVO.getPk_currtype());
+		headVO.setCashproj(sbodyVO.getPk_plansubj());
+		headVO.setJsfs(sbodyVO.getPk_balatype());
+		headVO.setFkyhzh(sbodyVO.getPk_account());
+		headVO.setPk_cashaccount(sbodyVO.getPk_cashaccount());
+		headVO.setBusitype(sbodyVO.getPk_busitype());
+		headVO.setCashitem(sbodyVO.getPk_cashflow());
+		headVO.setFydeptid(sbodyVO.getPk_rescenter());
+		headVO.setDeptid(sbodyVO.getPk_deptdoc());
+		try {
+			String condition = " ts = (select max(ts) from org_dept_v where pk_dept = '"+sbodyVO.getPk_deptdoc()+"')";
+			String dept_v =null;
+			Collection<String> dept_vs;
+			dept_vs = new BaseDAO().retrieveByClause(DeptVO.class, condition, new String[]{"pk_vid"});
+			if(dept_vs!=null && dept_vs.size()!=0){
+				Iterator<String> iterator = dept_vs.iterator();
+				dept_v = iterator.next();
+			}
+			headVO.setFydeptid_v(dept_v);
+			headVO.setDeptid(dept_v);
+		
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return headVO;
+	}
+	/**
+	 * 设置表体的数据
+	 * @param sbodyVOs
+	 * @return
+	 */
+	private BXBusItemVO[] generateItems(SettlementBodyVO[] sbodyVOs) {
+		BXBusItemVO[] itemVOs = new BXBusItemVO[sbodyVOs.length];
+		for(int i = 0 ; i<sbodyVOs.length ; i++){
+			itemVOs[i] = generateItems(sbodyVOs[i]);
+		}
+		return itemVOs;
+	}
+	/**
+	 * 将结算信息表体的VO转为借款报销业务行VO
+	 * @param sbodyVO
+	 * @return
+	 */
+	private BXBusItemVO generateItems(SettlementBodyVO sbodyVO) {
+		BXBusItemVO bodyVO = new BXBusItemVO();
+		UFDouble pay = sbodyVO.getPay();
+		UFDouble paylocal =sbodyVO.getPaylocal();
+		UFDouble paygroup = sbodyVO.getGrouppaylocal();
+		UFDouble payglobal = sbodyVO.getGlobalpaylocal();
+		UFDouble receive = sbodyVO.getReceive();
+		UFDouble receivelocal= sbodyVO.getReceivelocal();
+		UFDouble receivegroup= sbodyVO.getGroupreceivelocal();
+		UFDouble receiveglobal=sbodyVO.getGlobalreceivelocal();
+		//金额字段设置，分两个方向
+		if(pay!=null && pay.doubleValue()>0){
+			bodyVO.setYbje(pay);
+			bodyVO.setYbye(pay);
+			bodyVO.setYjye(pay);
+			bodyVO.setZfybje(pay);
+			bodyVO.setBbje(paylocal);
+			bodyVO.setBbye(paylocal);
+			bodyVO.setZfbbje(paylocal);
+			bodyVO.setGroupbbje(paygroup);
+			bodyVO.setGroupbbye(paygroup);
+			bodyVO.setGroupzfbbje(paygroup);
+			bodyVO.setGlobalbbje(payglobal);
+			bodyVO.setGlobalbbye(payglobal);
+			bodyVO.setGlobalzfbbje(payglobal);
+		}else{
+			bodyVO.setYbje(receive);
+			bodyVO.setYbye(receive);
+			bodyVO.setYjye(receive);
+			bodyVO.setHkybje(receive);
+			bodyVO.setBbje(receivelocal);
+			bodyVO.setBbye(receivelocal);
+			bodyVO.setHkbbje(receivelocal);
+			bodyVO.setGroupbbje(receivegroup);
+			bodyVO.setGroupbbye(receivegroup);
+			bodyVO.setGrouphkbbje(receivegroup);
+			bodyVO.setGlobalbbje(receiveglobal);
+			bodyVO.setGlobalbbye(receiveglobal);
+			bodyVO.setGlobalhkbbje(receiveglobal);
+		}
+		bodyVO.setPrimaryKey(null);
+		bodyVO.setPk_jkbx(sbodyVO.getBillcode());
+		
+		bodyVO.setSzxmid(sbodyVO.getPk_costsubj());
+		bodyVO.setJobid(sbodyVO.getPk_job());
+		bodyVO.setProjecttask(sbodyVO.getPk_jobphase());
+		
+		Integer traderType = sbodyVO.getTradertype();
+		if(traderType == CmpConst.TradeObjType_Person){
+			bodyVO.setPaytarget(Paytarget.EMPLOYEE);
+			bodyVO.setReceiver(sbodyVO.getPk_trader());
+			bodyVO.setSkyhzh(sbodyVO.getPk_oppaccount());
+		}else if(traderType == CmpConst.TradeObjType_SUPPLIER){
+			bodyVO.setPaytarget(Paytarget.HBBM);
+			bodyVO.setHbbm(sbodyVO.getPk_trader());
+			bodyVO.setCustaccount(sbodyVO.getPk_oppaccount());
+		}else if(traderType == CmpConst.TradeObjType_CUSTOMER){
+			bodyVO.setPaytarget(Paytarget.CUSTOMER);
+			bodyVO.setCustomer(sbodyVO.getPk_trader());
+			bodyVO.setCustaccount(sbodyVO.getPk_oppaccount());
+		}
+		return bodyVO;
 	}
 }

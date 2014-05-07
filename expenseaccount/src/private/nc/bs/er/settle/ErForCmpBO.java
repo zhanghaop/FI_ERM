@@ -10,6 +10,7 @@ import nc.bs.arap.bx.BXBusItemBO;
 import nc.bs.arap.bx.BXZbBO;
 import nc.bs.dao.BaseDAO;
 import nc.bs.er.djlx.DjLXDMO;
+import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -44,6 +45,7 @@ import nc.vo.fip.external.FipExtendAggVO;
 import nc.vo.fip.service.FipRelationInfoVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 
@@ -100,9 +102,30 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		return null;
 	}
 
-	// 红冲,不处理
+	/**
+	 * 结算红冲
+	 */
 	@Override
 	public void setoffRed(NetPayExecInfo payInfo, Map<String, SettlementBodyVO[]> value) throws BusinessException {
+		if(payInfo!=null && value!=null){
+			NCLocator.getInstance().lookup(IBXBillPrivate.class).settleRedHandleSaveAndSign(payInfo, value);
+		}
+	}
+	
+	/**
+	 * 自动结算
+	 */
+	public boolean isAutoSettle(String pk_group, String pk_tradetype,
+			SettlementAggVO... settlementAggVOs) throws BusinessException {
+		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class,
+				"pk_group = '" + pk_group + "' and djlxbm = '" + pk_tradetype
+						+ "'");
+		if (vos == null || vos.length == 0) {
+			return false;
+		} else {
+			return vos[0].getAutosettle() == null ? false : vos[0]
+					.getAutosettle().booleanValue() ? true : false;
+		}
 	}
 	
 	@Override
@@ -181,6 +204,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		FipExtendAggVO[] datavos = ip.queryDesBillBySrc(new FipRelationInfoVO[]{srcinfovo}, null);
 		return datavos;
 	}
+	
 
 	private JKBXHeaderVO getBxHeaderVO(BusiInfo busiInfo) throws BusinessException {
 		JKBXHeaderVO head = null;
@@ -532,6 +556,8 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZGMEFlag);
 		}
 	}
+	
+
 
 	public List<SettlementBodyVO> autoBX(List<SettlementBodyVO> bodyList) throws BusinessException {
 		if (bodyList == null)
@@ -643,4 +669,5 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			throws BusinessException {
 		//
 	}
+
 }

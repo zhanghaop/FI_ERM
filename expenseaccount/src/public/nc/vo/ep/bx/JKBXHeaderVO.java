@@ -832,6 +832,16 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public void setVouchertag(Integer vouchertag) {
 		this.vouchertag = vouchertag;
 	}
+	//ehp3加入
+	public UFBoolean isreded;//红冲标志
+	
+	public UFBoolean getIsreded() {
+		return isreded;
+	}
+
+	public void setIsreded(UFBoolean isreded) {
+		this.isreded = isreded;
+	}
 
 	public UFDate  tbb_period ;//预算占用期间
 	public UFDate getTbb_period() {
