@@ -1675,6 +1675,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	@Override
 	public JKBXVO[] settleRedHandleSaveAndSign(NetPayExecInfo payInfo, Map map)
 			throws BusinessException {
+		
 		Map<String, SettlementBodyVO[]> copy = map;
 		Set<Entry<String, SettlementBodyVO[]>> entrySet = copy.entrySet();
 		
@@ -1805,8 +1806,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			headVO.setDeptid(dept_v);
 		
 		} catch (DAOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ExceptionHandler.consume(e);
 		}
 		return headVO;
 	}

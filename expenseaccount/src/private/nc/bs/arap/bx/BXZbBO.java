@@ -27,6 +27,7 @@ import nc.bs.er.util.SqlUtils;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.event.ErmBusinessEvent;
 import nc.bs.erm.event.ErmEventType;
+import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
@@ -72,6 +73,7 @@ import nc.vo.ep.bx.VOFactory;
 import nc.vo.ep.dj.DjCondVO;
 import nc.vo.er.check.VOChecker;
 import nc.vo.er.check.VOStatusChecker;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.settle.SettleUtil;
 import nc.vo.er.util.StringUtils;
@@ -773,8 +775,10 @@ public class BXZbBO {
 		dealToFip(bxvo, headerVO, updateFields);
 		
 		try {
-			getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
-			
+			if(!isAutoSettle(headerVO)){
+				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
+				
+			}
 			// 重新加载冲销行表体（带出冲销行生效日期）
 			if (bxvo.getContrastVO() != null && bxvo.getContrastVO().length > 0) {
 				Collection<BxcontrastVO> contrasts = queryContrasts(bxvo.getParentVO());
@@ -791,6 +795,22 @@ public class BXZbBO {
 			ExceptionHandler.handleException(e);
 		}
 
+	}
+	/**
+	 * 判断是否是自动结算
+	 * @param headerVO
+	 * @return
+	 * @throws BusinessException
+	 */
+	private boolean isAutoSettle(JKBXHeaderVO headerVO) throws BusinessException {
+		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class,
+				"pk_group = '" + headerVO.getPk_group() + "' and djlxbm = '" + headerVO.getDjlxbm()+ "'");
+		boolean isAutoSettle = false;
+		if (vos != null || vos.length != 0) {
+			 return isAutoSettle = vos[0].getAutosettle() == null ? false : vos[0]
+					.getAutosettle().booleanValue() ? true : false;
+		}
+		return isAutoSettle;
 	}
 	
 	/**
