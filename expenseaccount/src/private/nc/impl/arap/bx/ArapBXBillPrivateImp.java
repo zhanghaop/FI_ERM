@@ -48,6 +48,8 @@ import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.cmp.settlement.ICmpSettlementPubQueryService;
+import nc.pubitf.erm.expenseaccount.IErmExpenseaccountManageService;
+import nc.pubitf.erm.expenseaccount.IErmExpenseaccountQueryService;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountWriteoffService;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.rbac.IFunctionPermissionPubService;
@@ -1633,7 +1635,8 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		}
 		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT});
 		
-		//2.再删除单据的结算信息
+		List<String> pksList = new ArrayList<String>();
+
 		try {
 			for (JKBXVO vo : jkbxvo) {
 				// 判断CMP产品是否启用
@@ -1645,6 +1648,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 						&& (vo.getParentVO().getHkybje() == null || vo.getParentVO().getHkybje().equals(new UFDouble(0)));
 
 				if (!notExistsPayOrRecv && isCmpInstalled) {
+					//2.再删除单据的结算信息
 					new ErForCmpBO().invokeCmp(vo, vo.getParentVO().getDjrq(),
 							BusiStatus.Deleted);
 				}
@@ -1656,10 +1660,14 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				// 删除报销核销 预提明细
 				new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
 				
+				
+				pksList.add(vo.getParentVO().getPk_jkbx());
+				
 				// 删除费用帐
-				ExpenseAccountVO[] expaccvo = ErmBillCostConver.getExpAccVO(vo);
-				NCLocator.getInstance().lookup(IErmExpenseaccountWriteoffService.class).
-				writeoffVOs(expaccvo);
+				ExpenseAccountVO[] accountVOs = NCLocator.getInstance().lookup(IErmExpenseaccountQueryService.class).
+						queryBySrcID(pksList.toArray(new String[0]));
+				NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
+				deleteVOs(accountVOs);
 			}
 		} catch (SQLException e) {
 			ExceptionHandler.handleException(e);

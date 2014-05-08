@@ -777,7 +777,6 @@ public class BXZbBO {
 		try {
 			if(!isAutoSettle(headerVO)){
 				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
-				
 			}
 			// 重新加载冲销行表体（带出冲销行生效日期）
 			if (bxvo.getContrastVO() != null && bxvo.getContrastVO().length > 0) {
