@@ -13,6 +13,7 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.check.VOStatusChecker;
@@ -125,7 +126,8 @@ public class ErmBillRecallAction extends NCAction {
 		for (int i = 0; i < selectedData.length; i++) {
 			JKBXVO aggBean = (JKBXVO) selectedData[i];
 			Integer appStatus = ((JKBXHeaderVO) aggBean.getParentVO()).getSpzt();
-			if (appStatus.equals(IBillStatus.COMMIT)) {
+			Integer billStatus = ((JKBXHeaderVO) aggBean.getParentVO()).getDjzt();
+			if (appStatus.equals(IBillStatus.COMMIT) && !billStatus.equals(BXStatusConst.DJZT_Invalid)) {
 				return true;
 			}
 		}

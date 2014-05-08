@@ -1663,15 +1663,16 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				
 				pksList.add(vo.getParentVO().getPk_jkbx());
 				
-				// 删除费用帐
-				ExpenseAccountVO[] accountVOs = NCLocator.getInstance().lookup(IErmExpenseaccountQueryService.class).
-						queryBySrcID(pksList.toArray(new String[0]));
-				NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
-				deleteVOs(accountVOs);
 			}
 		} catch (SQLException e) {
 			ExceptionHandler.handleException(e);
 		}
+		// 删除费用帐
+		ExpenseAccountVO[] accountVOs = NCLocator.getInstance().lookup(IErmExpenseaccountQueryService.class).
+				queryBySrcID(pksList.toArray(new String[0]));
+		NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
+		deleteVOs(accountVOs);
+		
 		List<JKBXVO> vos = retriveItems(header);
 
 		return vos;
