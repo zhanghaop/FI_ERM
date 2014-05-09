@@ -71,7 +71,8 @@ public class ErmBxCostShareControlListener implements IBusinessListener {
 					costBillManager.updateVO(shareVo);
 				}
 				
-			} else if (ErmEventType.TYPE_DELETE_AFTER.equals(eventType)) {// É¾³ý
+			} else if (ErmEventType.TYPE_DELETE_AFTER.equals(eventType)
+					|| ErmEventType.TYPE_InValid_AFTER.equals(eventType)) {// É¾³ý
 				bo.doDeleteVOs(new AggCostShareVO[] { shareVo });
 			} else if (ErmEventType.TYPE_SIGN_AFTER.equals(eventType)) {// Ç©×Ö
 				bo.doApproveVOs(new AggCostShareVO[] { shareVo }, vo.getParentVO().getJsrq());

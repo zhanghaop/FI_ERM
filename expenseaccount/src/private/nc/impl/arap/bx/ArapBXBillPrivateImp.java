@@ -21,11 +21,14 @@ import nc.bs.arap.bx.BxVerifyAccruedBillBO;
 import nc.bs.arap.bx.ContrastBO;
 import nc.bs.arap.bx.IBXBusItemBO;
 import nc.bs.arap.bx.VoucherRsChecker;
+import nc.bs.businessevent.EventDispatcher;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.er.settle.ErForCmpBO;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtil;
+import nc.bs.erm.event.ErmBusinessEvent;
+import nc.bs.erm.event.ErmEventType;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmBillPubUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
@@ -33,7 +36,6 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.PfUtilTools;
 import nc.bs.trade.billsource.IBillDataFinder;
 import nc.bs.trade.billsource.IBillFinder;
-import nc.erm.pub.conversion.ErmBillCostConver;
 import nc.impl.pubapp.linkquery.BillTypeSetBillFinder;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
@@ -48,9 +50,6 @@ import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.cmp.settlement.ICmpSettlementPubQueryService;
-import nc.pubitf.erm.expenseaccount.IErmExpenseaccountManageService;
-import nc.pubitf.erm.expenseaccount.IErmExpenseaccountQueryService;
-import nc.pubitf.erm.expenseaccount.IErmExpenseaccountWriteoffService;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.rbac.IFunctionPermissionPubService;
 import nc.pubitf.rbac.IRolePubService;
@@ -90,7 +89,6 @@ import nc.vo.er.util.StringUtils;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.costshare.CShareDetailVO;
-import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.fi.pub.SqlUtils;
@@ -1654,7 +1652,6 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				}
 
 				// 删除冲借款对照信息
-
 				new ContrastBO().deleteByPK_bxd(new String[] { vo.getParentVO().getPk_jkbx() });
 
 				// 删除报销核销 预提明细
@@ -1667,13 +1664,12 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		} catch (SQLException e) {
 			ExceptionHandler.handleException(e);
 		}
-		// 删除费用帐
-		ExpenseAccountVO[] accountVOs = NCLocator.getInstance().lookup(IErmExpenseaccountQueryService.class).
-				queryBySrcID(pksList.toArray(new String[0]));
-		NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
-		deleteVOs(accountVOs);
 		
 		List<JKBXVO> vos = retriveItems(header);
+		
+		//调用业务事件插件
+		EventDispatcher.fireEvent(new ErmBusinessEvent(BXConstans.ERM_MDID_BX, ErmEventType.TYPE_InValid_AFTER, vos.toArray(new JKBXVO[]{})));
+		
 
 		return vos;
 	}

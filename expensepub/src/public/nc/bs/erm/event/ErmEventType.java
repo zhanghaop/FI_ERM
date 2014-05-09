@@ -77,4 +77,7 @@ public class ErmEventType {
 	 
 	 public static final String TYPE_UNREDBACK_BEFORE = "ERM2003"; //É¾³ýºì³åÇ°
 	 public static final String TYPE_UNREDBACK_AFTER = "ERM2004"; //É¾³ýºì³åºó
+	 //ehp3
+	 public static final String TYPE_InValid_AFTER = "ERM2005"; //×÷·Ïºó
+
 }
