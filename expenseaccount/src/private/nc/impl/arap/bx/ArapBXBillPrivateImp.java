@@ -1765,7 +1765,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			headList.add(parentVO);
 		}
 		
-		new BaseDAO().updateVOArray(headList.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ,JKBXHeaderVO.SPZT,JKBXHeaderVO.PAYFLAG});
+		new BaseDAO().updateVOArray(headList.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ,JKBXHeaderVO.SPZT,JKBXHeaderVO.PAYFLAG,JKBXHeaderVO.VOUCHERTAG});
 		//生成生效凭证
 		new BXZbBO().effectToFip(Arrays.asList(jkbxvos),BXZbBO.MESSAGE_SETTLE);
 		return jkbxvos;
