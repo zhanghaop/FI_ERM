@@ -106,6 +106,7 @@ import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pubapp.pattern.pub.MathTool;
 import nc.vo.resa.costcenter.CostCenterVO;
 import nc.vo.sm.UserVO;
@@ -1752,9 +1753,19 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 						InvocationInfoProxy.getInstance().getBizDateTime()),
 				InvocationInfoProxy.getInstance().getUserId());
 		// 保存红冲单据
-		JKBXVO[] jkbxvos = NCLocator.getInstance().lookup(IBXBillPublic.class)
-				.save(writeBackBillVO);
-
+		JKBXVO[] jkbxvos = NCLocator.getInstance().lookup(IBXBillPublic.class).save(writeBackBillVO);
+		List<JKBXHeaderVO> headList = new ArrayList<JKBXHeaderVO>();
+		for (int i = 0; i < jkbxvos.length; i++) {
+			JKBXHeaderVO parentVO = jkbxvos[i].getParentVO();
+			parentVO.setDjzt(BXStatusConst.DJZT_Sign);
+			parentVO.setSxbz(BXStatusConst.SXBZ_VALID);
+			parentVO.setSpzt(IPfRetCheckInfo.PASSING);
+			parentVO.setPayflag(BXStatusConst.PAYFLAG_PayFinish);
+			headList.add(parentVO);
+		}
+		
+		new BaseDAO().updateVOArray(headList.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ,JKBXHeaderVO.SPZT,JKBXHeaderVO.PAYFLAG});
+		
 		return jkbxvos;
 	}
 	
@@ -1772,7 +1783,12 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setBbhl(sbodyVO.getLocalrate());
 		headVO.setZy(sbodyVO.getMemo());
 		headVO.setDjlxbm(sbodyVO.getPk_billtype());
-		headVO.setPk_jkbx(sbodyVO.getPk_bill());
+		
+		if(headVO.getDjlxbm().startsWith(BXConstans.BX_PREFIX)){
+			headVO.setDjdl(BXConstans.BX_DJDL);
+		}else{
+			headVO.setDjdl(BXConstans.JK_DJDL);
+		}
 		//支付单位
 		headVO.setPk_payorg(sbodyVO.getPk_org());
 		headVO.setPk_payorg_v(sbodyVO.getPk_org_v());
@@ -1782,7 +1798,10 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		//费用承担单位
 		headVO.setFydwbm(sbodyVO.getPk_org());
 		headVO.setFydwbm_v(sbodyVO.getPk_org_v());
-		//
+		//报销人单位
+		headVO.setDwbm(sbodyVO.getPk_org());
+		headVO.setDwbm_v(sbodyVO.getPk_org_v());
+		
 		headVO.setPk_fiorg(sbodyVO.getPk_org());
 		headVO.setPk_group(sbodyVO.getPk_group());
 		headVO.setGroupbbhl(sbodyVO.getGrouprate());
@@ -1798,21 +1817,22 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setCashitem(sbodyVO.getPk_cashflow());
 		headVO.setFydeptid(sbodyVO.getPk_rescenter());
 		headVO.setDeptid(sbodyVO.getPk_deptdoc());
+		String dept_v =null;
 		try {
 			String condition = " ts = (select max(ts) from org_dept_v where pk_dept = '"+sbodyVO.getPk_deptdoc()+"')";
-			String dept_v =null;
-			Collection<String> dept_vs;
+			Collection<DeptVO> dept_vs;
 			dept_vs = new BaseDAO().retrieveByClause(DeptVO.class, condition, new String[]{"pk_vid"});
 			if(dept_vs!=null && dept_vs.size()!=0){
-				Iterator<String> iterator = dept_vs.iterator();
-				dept_v = iterator.next();
+				Iterator<DeptVO> iterator = dept_vs.iterator();
+				dept_v = ((DeptVO)iterator.next()).getPk_dept();
 			}
-			headVO.setFydeptid_v(dept_v);
-			headVO.setDeptid(dept_v);
 		
 		} catch (DAOException e) {
 			ExceptionHandler.consume(e);
 		}
+		
+		headVO.setFydeptid_v(dept_v);
+		headVO.setDeptid_v(dept_v);
 		return headVO;
 	}
 	/**
@@ -1834,16 +1854,18 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 */
 	private BXBusItemVO generateItems(SettlementBodyVO sbodyVO) {
 		BXBusItemVO bodyVO = new BXBusItemVO();
-		UFDouble pay = sbodyVO.getPay();
-		UFDouble paylocal =sbodyVO.getPaylocal();
-		UFDouble paygroup = sbodyVO.getGrouppaylocal();
-		UFDouble payglobal = sbodyVO.getGlobalpaylocal();
-		UFDouble receive = sbodyVO.getReceive();
-		UFDouble receivelocal= sbodyVO.getReceivelocal();
-		UFDouble receivegroup= sbodyVO.getGroupreceivelocal();
-		UFDouble receiveglobal=sbodyVO.getGlobalreceivelocal();
+		UFDouble pay = sbodyVO.getPay()==null ? UFDouble.ZERO_DBL: sbodyVO.getPay();
+		UFDouble paylocal =sbodyVO.getPaylocal()==null ?UFDouble.ZERO_DBL : sbodyVO.getPaylocal() ;
+		UFDouble paygroup = sbodyVO.getGrouppaylocal()==null ?UFDouble.ZERO_DBL :sbodyVO.getGrouppaylocal();
+		UFDouble payglobal = sbodyVO.getGlobalpaylocal()==null ?UFDouble.ZERO_DBL :sbodyVO.getGlobalpaylocal();
+		UFDouble receive = sbodyVO.getReceive()==null ? UFDouble.ZERO_DBL: sbodyVO.getReceive();
+		UFDouble receivelocal= sbodyVO.getReceivelocal()==null ? UFDouble.ZERO_DBL :sbodyVO.getReceivelocal();
+		UFDouble receivegroup= sbodyVO.getGroupreceivelocal()==null ? UFDouble.ZERO_DBL :sbodyVO.getGroupreceivelocal();
+		UFDouble receiveglobal=sbodyVO.getGlobalreceivelocal()==null ? UFDouble.ZERO_DBL : sbodyVO.getGlobalreceivelocal();
 		//金额字段设置，分两个方向
+		
 		if(pay!=null && pay.doubleValue()>0){
+			bodyVO.setAmount(pay);
 			bodyVO.setYbje(pay);
 			bodyVO.setYbye(pay);
 			bodyVO.setYjye(pay);
@@ -1858,6 +1880,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			bodyVO.setGlobalbbye(payglobal);
 			bodyVO.setGlobalzfbbje(payglobal);
 		}else{
+			bodyVO.setAmount(receive);
 			bodyVO.setYbje(receive);
 			bodyVO.setYbye(receive);
 			bodyVO.setYjye(receive);
@@ -1873,9 +1896,16 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			bodyVO.setGlobalhkbbje(receiveglobal);
 		}
 		bodyVO.setPrimaryKey(null);
-		bodyVO.setPk_jkbx(sbodyVO.getBillcode());
-		
+		bodyVO.setPk_jkbx(null);
+		if(sbodyVO.getPk_billtype().startsWith(BXConstans.BX_PREFIX)){
+			bodyVO.setTablecode(BXConstans.BUS_PAGE);
+		}else{
+			bodyVO.setTablecode(BXConstans.BUS_PAGE_JK);
+		}
+		bodyVO.setDwbm(sbodyVO.getPk_org());
+		bodyVO.setDeptid(sbodyVO.getPk_deptdoc());
 		bodyVO.setSzxmid(sbodyVO.getPk_costsubj());
+		bodyVO.setJkbxr(sbodyVO.getPk_trader());
 		bodyVO.setJobid(sbodyVO.getPk_job());
 		bodyVO.setProjecttask(sbodyVO.getPk_jobphase());
 		

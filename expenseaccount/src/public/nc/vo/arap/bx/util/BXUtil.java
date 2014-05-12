@@ -134,6 +134,7 @@ public class BXUtil {
 			return;
 		}
 		
+		
 		final JKBXHeaderVO headVo = jkbxvo.getParentVO();
 		if(headVo.isAdjustBxd()){
 			// 报销类型为费用调整的单据，只需要主表+分摊明细

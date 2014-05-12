@@ -5,12 +5,17 @@ import java.util.List;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.framework.common.InvocationInfoProxy;
+import nc.bs.framework.common.NCLocator;
+import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.cm.prv.CmpConst;
 import nc.ui.erm.billpub.view.ErmBillBillFormHelper;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.ep.bx.Paytarget;
 import nc.vo.fipub.exception.ExceptionHandler;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFBoolean;
@@ -48,7 +53,7 @@ public class ErmBillPubUtil {
 	private static JKBXVO getWriteBackBillVO(JKBXVO bill, UFDate current,
 			String userid) throws InvalidAccperiodExcetion{
 		//表体的金额字段
-		String[] itemMnyKeys = { BXBusItemVO.YJYE, BXBusItemVO.YBYE,
+		String[] itemMnyKeys = { BXBusItemVO.AMOUNT,BXBusItemVO.YJYE, BXBusItemVO.YBYE,
 				BXBusItemVO.YBJE, BXBusItemVO.BBYE, BXBusItemVO.BBJE,
 				BXBusItemVO.CJKYBJE, BXBusItemVO.CJKBBJE, BXBusItemVO.ZFYBJE,
 				BXBusItemVO.ZFBBJE, BXBusItemVO.HKYBJE, BXBusItemVO.HKBBJE,
@@ -65,6 +70,21 @@ public class ErmBillPubUtil {
 		
 		UFDouble NEGATIVE = new UFDouble("-1");//需要与金额字段相乘
 		
+		String[] result;
+		String pk_psndoc=null;
+		try {
+			result = NCLocator.getInstance().lookup(
+					IBXBillPrivate.class).queryPsnidAndDeptid(userid,parent.getPk_group());
+			if(result[0] == null || StringUtil.isEmpty(result[0])){
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011ermpub0316_0",
+						"02011ermpub0316-0000")/* * * @res*
+						 * "当前用户未关联人员，请联系管理人员为此用户指定身份"*/);
+			}
+			pk_psndoc = result[0];
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		
 		// 清空表头项
 		for (String key : clearKeys) {
 			parent.setAttributeValue(key, null);
@@ -72,41 +92,43 @@ public class ErmBillPubUtil {
 		parent.setQcbz(UFBoolean.FALSE);
 		parent.setCreator(userid);
 		parent.setOperator(userid);
-		parent.setJsr(userid);
-		parent.setJkbxr(userid);
-		parent.setReceiver(userid);
+		parent.setJsr(pk_psndoc);
+		parent.setJkbxr(pk_psndoc);
+		parent.setReceiver(pk_psndoc);
+		parent.setApprover(pk_psndoc);
 		parent.setPrimaryKey(null);
-		parent.setApprover(InvocationInfoProxy.getInstance().getUserId());
 		long bizDateTime = InvocationInfoProxy.getInstance().getBizDateTime();
 		parent.setShrq(new UFDateTime(bizDateTime));
 		parent.setDjrq(current);
 		parent.setJsrq(current);
 		parent.setPaydate(current);
 		parent.setShrq_show(current);
-		parent.setDjzt(BXStatusConst.DJZT_Sign);
-		parent.setSxbz(BXStatusConst.SXBZ_VALID);
-		parent.setSpzt(IPfRetCheckInfo.PASSING);
-		parent.setPayflag(BXStatusConst.PAYFLAG_PayFinish);
+		parent.setDjzt(BXStatusConst.DJZT_Saved);
+		parent.setSxbz(BXStatusConst.SXBZ_NO);
+		parent.setSpzt(IPfRetCheckInfo.NOSTATE);
+		parent.setPayflag(BXStatusConst.PAYFLAG_None);
 		parent.setIsreded(UFBoolean.TRUE);
 		parent.setTs(null);
 		parent.setGroupbbhl(parent.getGroupbbhl() == null ? UFDouble.ZERO_DBL : parent.getGroupbbhl());
 		parent.setGlobalbbhl(parent.getGlobalbbhl() == null ? UFDouble.ZERO_DBL : parent.getGlobalbbhl());
-		
-		//设置多版本
 		
 		for (int i = 0; i < children.length; i++) {
 			children[i].setPk_jkbx(null);
 			children[i].setPrimaryKey(null);
 			children[i].setStatus(VOStatus.NEW);
 			for(String itemkey : itemMnyKeys){//表体的金额字段
-				children[i].setAttributeValue(itemkey, ((UFDouble)children[i].getAttributeValue(itemkey)).multiply(NEGATIVE));
+				UFDouble ufDouble = (UFDouble)children[i].getAttributeValue(itemkey);
+				UFDouble multiply = ufDouble==null ?UFDouble.ZERO_DBL.multiply(NEGATIVE):ufDouble.multiply(NEGATIVE);
+				children[i].setAttributeValue(itemkey, multiply);
 			}
-			
 		}
 		//将表体的金额字段合计到表头
 		for (int i = 0; i < children.length; i++) {
 			for(String itemkey : itemMnyKeys){//表体的金额字段
 				UFDouble itemValue = (UFDouble)children[i].getAttributeValue(itemkey);
+				if(itemkey.equals(BXBusItemVO.AMOUNT)){
+					parent.setTotal(itemValue);
+				}
 				if(itemValue!=UFDouble.ZERO_DBL){
 					parent.setAttributeValue(itemkey, itemValue);
 				}else{
@@ -114,6 +136,25 @@ public class ErmBillPubUtil {
 				}
 			}
 		}
+		/**
+		 * 设置表头的支付对象信息
+		 */
+		for (int i = 0; i < children.length; i++) {
+				if(children[i].getPaytarget().intValue()==Paytarget.EMPLOYEE){
+					parent.setPaytarget(Paytarget.EMPLOYEE);
+					parent.setReceiver(children[i].getReceiver());
+					parent.setSkyhzh(children[i].getSkyhzh());
+				}else if(children[i].getPaytarget().intValue()==Paytarget.HBBM){
+					parent.setPaytarget(Paytarget.HBBM);
+					parent.setHbbm(children[i].getHbbm());
+					parent.setCustaccount(children[i].getCustaccount());
+				}else if(children[i].getPaytarget().intValue()==Paytarget.CUSTOMER){
+					parent.setPaytarget(Paytarget.CUSTOMER);
+					parent.setCustomer(children[i].getCustomer());
+					parent.setCustaccount(children[i].getCustaccount());
+				}
+		}
+		
 		return vo;
 	}
 }
