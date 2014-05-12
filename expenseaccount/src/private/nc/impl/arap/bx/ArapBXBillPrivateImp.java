@@ -1761,11 +1761,13 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			parentVO.setSxbz(BXStatusConst.SXBZ_VALID);
 			parentVO.setSpzt(IPfRetCheckInfo.PASSING);
 			parentVO.setPayflag(BXStatusConst.PAYFLAG_PayFinish);
+			parentVO.setVouchertag(BXStatusConst.SXFlag);
 			headList.add(parentVO);
 		}
 		
 		new BaseDAO().updateVOArray(headList.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ,JKBXHeaderVO.SPZT,JKBXHeaderVO.PAYFLAG});
-		
+		//生成生效凭证
+		new BXZbBO().effectToFip(Arrays.asList(jkbxvos),BXZbBO.MESSAGE_SETTLE);
 		return jkbxvos;
 	}
 	
