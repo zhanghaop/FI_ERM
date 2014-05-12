@@ -7,8 +7,6 @@ import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
-import nc.itf.cm.prv.CmpConst;
-import nc.ui.erm.billpub.view.ErmBillBillFormHelper;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
