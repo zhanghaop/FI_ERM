@@ -111,6 +111,9 @@ public class BxApproveBtnStatusListener
 		if (vo == null) {
 			return false;
 		}
+		if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
+			return false;
+		}
 		// 审批不通过， 审核按钮不可用
 		if (vo.getParentVO().getSpzt() != null && vo.getParentVO().getSpzt() == IPfRetCheckInfo.NOPASS) {
 			return false;
@@ -125,9 +128,6 @@ public class BxApproveBtnStatusListener
 				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.COMMIT)) {
 			return true;
 		}
-		if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
-			return false;
-		}
 		return false;
 	}
     /**
@@ -140,6 +140,9 @@ public class BxApproveBtnStatusListener
         
         if(vo==null){
             return false;
+        }
+        if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
+        	return false;
         }
 
         //审批中， 反审核按钮可用
@@ -155,12 +158,9 @@ public class BxApproveBtnStatusListener
         }
         
         // 单据已经审核通过了，反审核按钮可用
-        if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved) {
+        if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved ) {
             return true;
         }
-        if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
-			return false;
-		}
         
         return true;
     }

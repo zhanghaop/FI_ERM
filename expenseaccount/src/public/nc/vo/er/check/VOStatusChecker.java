@@ -115,7 +115,7 @@ public class VOStatusChecker {
 	 */
 	public static void checkRecallStatus(JKBXHeaderVO head) throws DataValidateException {
 		String msgs = ActionUtils.checkBillStatus(head.getDjzt(), ActionUtils.RECALL,
-				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED,BXStatusConst.DJZT_Invalid });
+				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED});
 
 		if (StringUtils.isNullWithTrim(msgs)) {
 			Integer apprStatus = head.getSpzt();// ÉóºË×´Ì¬
@@ -141,7 +141,7 @@ public class VOStatusChecker {
 	 */
 	public static void checkCommitStatus(JKBXHeaderVO head) throws DataValidateException {
 		String msgs = ActionUtils.checkBillStatus(head.getDjzt(), ActionUtils.COMMIT,
-				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED,BXStatusConst.DJZT_Invalid });
+				new int[] { ErmMatterAppConst.BILLSTATUS_SAVED});
 
 		if (StringUtils.isNullWithTrim(msgs)) {
 			Integer apprStatus = head.getSpzt();// ÉóºË×´Ì¬
