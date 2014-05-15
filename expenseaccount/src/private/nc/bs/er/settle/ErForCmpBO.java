@@ -115,7 +115,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	/**
 	 * ×Ô¶¯½áËã
 	 */
-	@Override
 	public boolean isAutoSettle(String pk_group, String pk_tradetype,
 			SettlementAggVO... settlementAggVOs) throws BusinessException {
 		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class,
