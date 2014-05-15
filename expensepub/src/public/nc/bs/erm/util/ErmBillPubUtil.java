@@ -121,14 +121,16 @@ public class ErmBillPubUtil {
 			}
 		}
 		//将表体的金额字段合计到表头
-		for (int i = 0; i < children.length; i++) {
-			for(String itemkey : itemMnyKeys){//表体的金额字段
+		for(String itemkey : itemMnyKeys){//表体的金额字段
+			for (int i = 0; i < children.length; i++) {
 				UFDouble itemValue = (UFDouble)children[i].getAttributeValue(itemkey);
 				if(itemkey.equals(BXBusItemVO.AMOUNT)){
-					parent.setTotal(itemValue);
+					UFDouble total = parent.getTotal()==null?UFDouble.ZERO_DBL : parent.getTotal();
+					parent.setTotal(total.add(itemValue));
 				}
-				if(itemValue!=UFDouble.ZERO_DBL){
-					parent.setAttributeValue(itemkey, itemValue);
+				if(itemValue!=null && itemValue!=UFDouble.ZERO_DBL){
+					UFDouble ufDouble = (UFDouble)parent.getAttributeValue(itemkey)==null ? UFDouble.ZERO_DBL : (UFDouble)parent.getAttributeValue(itemkey);
+					parent.setAttributeValue(itemkey, ufDouble.add(itemValue));
 				}else{
 					parent.setAttributeValue(itemkey, UFDouble.ZERO_DBL);
 				}
