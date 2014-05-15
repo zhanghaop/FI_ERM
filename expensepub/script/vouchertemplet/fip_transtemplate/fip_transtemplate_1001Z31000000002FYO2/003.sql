@@ -1,4 +1,4 @@
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000002FYOQ','pk_vouchertype',null,'getBD("4fbff043-eca7-4d9a-b7b3-82c9b32ea9c7","记账凭证","0001Z310000000003FUV")',null,204,0,'1001Z31000000002FYO3','2014-04-01 15:57:49')
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000002FYOQ','pk_vouchertype',null,null,null,204,0,'1001Z31000000002FYO3','2014-05-05 08:56:26')
 go
 
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000002FYOC','debitamount',null,'$accrued_detail.amount@',null,31,0,'1001Z31000000002FYO4','2014-04-01 15:57:49')

@@ -148,6 +148,18 @@ go
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZP3','pk_accasoa',null,'matchview("ERM03","费用科目","0001Z31000000000HIG7")',null,204,0,'1001Z31000000000EZOM','2014-03-24 10:24:33')
 go
 
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPG','excrate2',null,'$bbhl@',null,31,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPC','pk_currtype',null,'$bzbm@',null,204,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPH','excrate4',null,'$globalbbhl@',null,31,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPF','excrate3',null,'$groupbbhl@',null,31,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
+go
+
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPE','explanation',null,'$zy@',null,1,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
 go
 
@@ -164,18 +176,6 @@ insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columni
 go
 
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPD','pk_accasoa',null,'matchview("ERM03","费用科目","0001Z31000000000HIG7")',null,204,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPF','excrate3',null,'$groupbbhl@',null,31,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPG','excrate2',null,'$bbhl@',null,31,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPC','pk_currtype',null,'$bzbm@',null,204,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPH','excrate4',null,'$globalbbhl@',null,31,0,'1001Z31000000000EZON','2014-03-24 10:24:33')
 go
 
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000EZPQ','excrate2',null,'$bbhl@',null,31,0,'1001Z31000000000EZOO','2014-03-24 10:24:33')

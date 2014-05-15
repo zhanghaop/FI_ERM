@@ -358,15 +358,6 @@ go
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZR1','pk_accasoa',null,'matchview("ERM02","过渡科目","0001Z31000000000HIG8")',null,204,0,'1001Z31000000000AZOT','2014-03-24 10:24:33')
 go
 
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZR7','localcreditamount',null,'iif(@vouchertag@=3,#zfbbje@,0)',null,31,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZR6','creditamount',null,'iif(@vouchertag@=3,#zfybje@,0)',null,31,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZRB','pk_accasoa',null,'matchview("ERM02","过渡科目","0001Z31000000000HIG8")',null,204,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
-go
-
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZRE','excrate2',null,'$bbhl@',null,31,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
 go
 
@@ -386,6 +377,15 @@ insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columni
 go
 
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZR8','groupcreditamount',null,'iif(@vouchertag@=3,#groupzfbbje@,0)',null,31,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZR7','localcreditamount',null,'iif(@vouchertag@=3,#zfbbje@,0)',null,31,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZR6','creditamount',null,'iif(@vouchertag@=3,#zfybje@,0)',null,31,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZRB','pk_accasoa',null,'matchview("ERM02","过渡科目","0001Z31000000000HIG8")',null,204,0,'1001Z31000000000AZOU','2014-03-24 10:24:33')
 go
 
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('1001Z31000000000AZRO','excrate2',null,'$bbhl@',null,31,0,'1001Z31000000000AZOV','2014-03-24 10:24:33')

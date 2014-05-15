@@ -49,3 +49,9 @@ go
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001MII1','CodeBarInput','条码输入','条码输入',0,0,'Y','Y','N','1001Z31000000001MIHG',null,'2014-01-27 09:05:00')
 go
 
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000002MWS','DealVoucher','生成凭证','生成凭证',0,0,'Y','Y','N','1001Z31000000001MIHG',null,'2014-05-12 09:34:15')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000002MWT','Invalid','作废','作废',0,0,'Y','Y','N','1001Z31000000001MIHG',null,'2014-05-12 09:34:15')
+go
+

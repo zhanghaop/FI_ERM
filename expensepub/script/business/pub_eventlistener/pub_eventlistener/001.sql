@@ -343,3 +343,9 @@ go
 insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000042WL1',0,'Y','nc.impl.erm.closeaccount.BXAntiCloseAccountValidateServiceImpl','~','~','报销反结账前',null,null,null,null,null,'报销反结账前',1,'2011','1001Z01000000002M8R0','2014-04-29 09:52:22')
 go
 
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000002C3Z',0,'Y','nc.bs.erm.eventlistener.ErmExpBXListener','0','~','费用账表同步',null,null,null,null,null,null,null,'2011','1001Z310000000002C3Y','2014-05-09 10:29:29')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000002C41',0,'Y','nc.bs.erm.eventlistener.ErmBxBudgetListener','0','~','项目预算插件',null,null,null,null,null,null,null,'2011','1001Z310000000002C3Y','2014-05-09 10:29:29')
+go
+

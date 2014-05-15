@@ -28,12 +28,6 @@ go
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KI','pk_accasoa',null,'matchview("ERM02","过渡科目","0001Z31000000000HIG8")',null,204,0,'2011Z3100000000009KG','2014-04-29 09:52:01')
 go
 
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KU','explanation',null,'$zy@',null,1,0,'2011Z3100000000009KH','2014-04-29 09:52:01')
-go
-
-insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KS','pk_accasoa',null,'matchview("ERM01","其他应收款","0001Z31000000000HIG9")',null,204,0,'2011Z3100000000009KH','2014-04-29 09:52:01')
-go
-
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KV','excrate2',null,'$bbhl@',null,31,0,'2011Z3100000000009KH','2014-04-29 09:52:01')
 go
 
@@ -56,5 +50,11 @@ insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columni
 go
 
 insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KW','excrate3',null,'$groupbbhl@',null,31,0,'2011Z3100000000009KH','2014-04-29 09:52:01')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KU','explanation',null,'$zy@',null,1,0,'2011Z3100000000009KH','2014-04-29 09:52:01')
+go
+
+insert into fip_templatecell(pk_templatecell,attrcode,attrname,cellvalue,columnindex,datatype,dr,pk_templaterow,ts) values('2011Z3100000000009KS','pk_accasoa',null,'matchview("ERM01","其他应收款","0001Z31000000000HIG9")',null,204,0,'2011Z3100000000009KH','2014-04-29 09:52:01')
 go
 
