@@ -775,11 +775,13 @@ public class BXZbBO {
 		dealToFip(bxvo, headerVO, updateFields);
 		
 		try {
-			getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
 			//如果自动结算处理
 			if(isAutoSettle(headerVO)){
 				List<JKBXHeaderVO> headerVOs = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadersByPrimaryKeys(new String[]{headerVO.getPk_jkbx()}, headerVO.getDjdl());
 				getJKBXDAO().update(new JKBXHeaderVO[] {headerVOs.get(0)}, new String[]{JKBXHeaderVO.PAYDATE,JKBXHeaderVO.PAYFLAG,JKBXHeaderVO.PAYMAN,JKBXHeaderVO.VOUCHERTAG});
+			}else{
+				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
+				
 			}
 			// 重新加载冲销行表体（带出冲销行生效日期）
 			if (bxvo.getContrastVO() != null && bxvo.getContrastVO().length > 0) {
