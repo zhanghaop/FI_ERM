@@ -102,7 +102,8 @@ public class WriteBackPrivateImp implements IWriteBackPrivate {
 					negativeOperationForJKBX(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo.getBxoldvo());
 					positiveOperationForJKBX(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
 					positiveOperationForContrast(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
-				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)) {
+				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
+						 || ErmEventType.TYPE_InValid_AFTER.equalsIgnoreCase(eventType)) {
 					// 此处只处理预占数，可以忽略排序 2013-04-16
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
 					negativeOperationForJKBX(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
@@ -128,7 +129,8 @@ public class WriteBackPrivateImp implements IWriteBackPrivate {
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo.getBxoldvo());
 					positiveOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 					positiveOperationForJKBX(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
-				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)) {
+				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
+						||ErmEventType.TYPE_InValid_AFTER.equalsIgnoreCase(eventType)) {
 					negativeOperationForJKBX(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 				} 
