@@ -661,7 +661,14 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		}
 		// 切换组织后，重新设置表头和表体的本币金额
 		if (getHeadValue(JKBXHeaderVO.PK_ORG) != null) {
-			
+			//切换组织后，重新重设币种,重新计算汇率
+			String pk_loccurrency = Currency.getOrgLocalCurrPK((String) getHeadValue(JKBXHeaderVO.PK_ORG));
+			if(pk_loccurrency!=null && getHeadValue(JKBXHeaderVO.BZBM)!=null
+					&& !pk_loccurrency.equals(getHeadValue(JKBXHeaderVO.BZBM))){
+				setHeadValue(JKBXHeaderVO.BZBM, pk_loccurrency);
+				UFDate date = (UFDate) getBillCardPanel().getHeadItem(JKBXHeaderVO.DJRQ).getValueObject();
+				helper.setCurrencyInfo((String) getHeadValue(JKBXHeaderVO.PK_ORG), pk_loccurrency, pk_loccurrency, date);
+			}
 			afterHLChanged(e);
 		
 		} else {
