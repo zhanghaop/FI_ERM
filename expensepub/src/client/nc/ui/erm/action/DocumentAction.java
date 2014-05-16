@@ -85,7 +85,14 @@ public class DocumentAction extends NCAction{
 	protected boolean isActionEnable() {
 		if (getModel().getUiState() == UIState.EDIT || getModel().getUiState() == UIState.ADD) {
 			return true;
-		}else if(getModel().getSelectedData() != null && ((JKBXVO)getModel().getSelectedData()).getParentVO().getDjzt().intValue()!=BXStatusConst.DJZT_Invalid){
+		}else if(getModel().getSelectedData() != null){
+			if(getModel().getSelectedData() instanceof JKBXVO){
+				if(((JKBXVO)getModel().getSelectedData()).getParentVO().getDjzt().intValue()!=BXStatusConst.DJZT_Invalid){
+					return true;
+				}else{
+					return false;  
+				}
+			}
 			return true;
 		}
 		return false;  
