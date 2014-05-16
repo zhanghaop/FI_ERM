@@ -1181,6 +1181,7 @@ public class ErmBillBillForm extends ERMBillForm {
 			if(list != null){
 				billModel.setBodyDataVO(list.toArray(new BXBusItemVO[0]));
 				billModel.loadLoadRelationItemValue();
+				billModel.execLoadFormula();
 			}
 		}
 	}
