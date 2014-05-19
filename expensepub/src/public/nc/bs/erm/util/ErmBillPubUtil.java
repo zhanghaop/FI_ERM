@@ -137,24 +137,23 @@ public class ErmBillPubUtil {
 			}
 		}
 		/**
-		 * 设置表头的支付对象信息
+		 * 设置表头的支付对象信息:取表体的第一行
 		 */
-		for (int i = 0; i < children.length; i++) {
-				if(children[i].getPaytarget().intValue()==Paytarget.EMPLOYEE){
+		if (children!=null && children.length!=0) {
+				if(children[0].getPaytarget().intValue()==Paytarget.EMPLOYEE){
 					parent.setPaytarget(Paytarget.EMPLOYEE);
-					parent.setReceiver(children[i].getReceiver());
-					parent.setSkyhzh(children[i].getSkyhzh());
-				}else if(children[i].getPaytarget().intValue()==Paytarget.HBBM){
+					parent.setReceiver(children[0].getReceiver());
+					parent.setSkyhzh(children[0].getSkyhzh());
+				}else if(children[0].getPaytarget().intValue()==Paytarget.HBBM){
 					parent.setPaytarget(Paytarget.HBBM);
-					parent.setHbbm(children[i].getHbbm());
-					parent.setCustaccount(children[i].getCustaccount());
-				}else if(children[i].getPaytarget().intValue()==Paytarget.CUSTOMER){
+					parent.setHbbm(children[0].getHbbm());
+					parent.setCustaccount(children[0].getCustaccount());
+				}else if(children[0].getPaytarget().intValue()==Paytarget.CUSTOMER){
 					parent.setPaytarget(Paytarget.CUSTOMER);
-					parent.setCustomer(children[i].getCustomer());
-					parent.setCustaccount(children[i].getCustaccount());
+					parent.setCustomer(children[0].getCustomer());
+					parent.setCustaccount(children[0].getCustaccount());
 				}
 		}
-		
 		return vo;
 	}
 }
