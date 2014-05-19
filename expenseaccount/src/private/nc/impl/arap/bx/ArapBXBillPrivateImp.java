@@ -1771,6 +1771,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		return jkbxvos;
 	}
 	
+	
 	/**
 	 * 设置表头的数据
 	 * @param headVO
