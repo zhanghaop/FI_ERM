@@ -103,7 +103,7 @@ public class ErmBillPubUtil {
 		parent.setShrq_show(current);
 		parent.setDjzt(BXStatusConst.DJZT_Saved);
 		parent.setSxbz(BXStatusConst.SXBZ_NO);
-		parent.setSpzt(IPfRetCheckInfo.NOSTATE);
+		parent.setSpzt(IPfRetCheckInfo.COMMIT);
 		parent.setPayflag(BXStatusConst.PAYFLAG_None);
 		parent.setIsreded(UFBoolean.TRUE);
 		parent.setTs(null);

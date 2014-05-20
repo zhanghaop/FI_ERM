@@ -106,7 +106,6 @@ import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
-import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pubapp.pattern.pub.MathTool;
 import nc.vo.resa.costcenter.CostCenterVO;
 import nc.vo.sm.UserVO;
@@ -1754,21 +1753,16 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				InvocationInfoProxy.getInstance().getUserId());
 		// 保存红冲单据
 		JKBXVO[] jkbxvos = NCLocator.getInstance().lookup(IBXBillPublic.class).save(writeBackBillVO);
-		List<JKBXHeaderVO> headList = new ArrayList<JKBXHeaderVO>();
-		for (int i = 0; i < jkbxvos.length; i++) {
-			JKBXHeaderVO parentVO = jkbxvos[i].getParentVO();
-			parentVO.setDjzt(BXStatusConst.DJZT_Sign);
-			parentVO.setSxbz(BXStatusConst.SXBZ_VALID);
-			parentVO.setSpzt(IPfRetCheckInfo.PASSING);
-			parentVO.setPayflag(BXStatusConst.PAYFLAG_PayFinish);
-			parentVO.setVouchertag(BXStatusConst.SXFlag);
-			headList.add(parentVO);
-		}
 		
-		new BaseDAO().updateVOArray(headList.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ,JKBXHeaderVO.SPZT,JKBXHeaderVO.PAYFLAG,JKBXHeaderVO.VOUCHERTAG});
-		//生成生效凭证
-		new BXZbBO().effectToFip(Arrays.asList(jkbxvos),BXZbBO.MESSAGE_SETTLE);
-		return jkbxvos;
+		//红冲单据保存后生效
+		List<JKBXVO> returnVos = new ArrayList<JKBXVO>();
+		MessageVO[] messageVO = new BXZbBO().audit(jkbxvos);
+		for (MessageVO message : messageVO) {
+			if(message.isSuccess()){
+				returnVos.add((JKBXVO)message.getSuccessVO());
+			}
+		}
+		return returnVos.toArray(new JKBXVO[0]);
 	}
 	
 	
