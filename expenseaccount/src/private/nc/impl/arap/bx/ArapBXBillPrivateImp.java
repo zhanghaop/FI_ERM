@@ -104,6 +104,7 @@ import nc.vo.pub.SuperVO;
 import nc.vo.pub.bill.BillOperaterEnvVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.billtype.BilltypeVO;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.pub.MathTool;
@@ -1762,6 +1763,15 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				returnVos.add((JKBXVO)message.getSuccessVO());
 			}
 		}
+		//查询出被红冲的单据:更新字段
+		String[] pk_jkbx = VOUtils.getAttributeValues(writeBackBillVOs.toArray(new JKBXVO[0]),JKBXHeaderVO.PK_JKBX); 
+		List<JKBXVO> vos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadVOsByPrimaryKeys(pk_jkbx, null,false,null);
+		List<JKBXHeaderVO> headvos = new ArrayList<JKBXHeaderVO>();
+		for (JKBXVO jkbxvo : vos) {
+			jkbxvo.getParentVO().setIsreded(UFBoolean.TRUE);
+			headvos.add(jkbxvo.getParentVO());
+		}
+		new BaseDAO().updateVOArray(headvos.toArray(new JKBXHeaderVO[0]), new String[]{JKBXHeaderVO.ISREDED});
 		
 		return returnVos.toArray(new JKBXVO[0]);
 	}
@@ -1781,7 +1791,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setBbhl(sbodyVO.getLocalrate());
 		headVO.setZy(sbodyVO.getMemo());
 		headVO.setDjlxbm(sbodyVO.getPk_billtype());
-		
+		headVO.setRedbillpk(sbodyVO.getPk_bill());
 		if(headVO.getDjlxbm().startsWith(BXConstans.BX_PREFIX)){
 			headVO.setDjdl(BXConstans.BX_DJDL);
 		}else{

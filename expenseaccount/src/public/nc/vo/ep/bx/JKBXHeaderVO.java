@@ -834,6 +834,7 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	}
 	//ehp3加入
 	public UFBoolean isreded;//红冲标志
+	public static final String ISREDED = "isreded";//红冲 
 	public String redbillpk;//红冲单据主键
 	
 	public UFBoolean getIsreded() {
