@@ -834,6 +834,7 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	}
 	//ehp3加入
 	public UFBoolean isreded;//红冲标志
+	public String redbillpk;//红冲单据主键
 	
 	public UFBoolean getIsreded() {
 		return isreded;
@@ -841,6 +842,15 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 
 	public void setIsreded(UFBoolean isreded) {
 		this.isreded = isreded;
+	}
+	
+
+	public String getRedbillpk() {
+		return redbillpk;
+	}
+
+	public void setRedbillpk(String redbillpk) {
+		this.redbillpk = redbillpk;
 	}
 
 	public UFDate  tbb_period ;//预算占用期间

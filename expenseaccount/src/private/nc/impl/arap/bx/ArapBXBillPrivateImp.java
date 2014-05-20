@@ -1762,6 +1762,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 				returnVos.add((JKBXVO)message.getSuccessVO());
 			}
 		}
+		
 		return returnVos.toArray(new JKBXVO[0]);
 	}
 	

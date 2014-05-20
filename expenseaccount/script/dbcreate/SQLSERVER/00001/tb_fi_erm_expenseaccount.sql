@@ -268,6 +268,8 @@ vouchertag int(1) null
 /*凭证标志*/,
 isreded nchar(1) null 
 /*红冲标志*/,
+redbillpk nchar(20) null 
+/*红冲单据主键*/,
  constraint pk_er_jkzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -828,6 +830,8 @@ tbb_period nchar(19) null
 /*预算占用期间*/,
 isreded nchar(1) null 
 /*红冲标志*/,
+redbillpk nchar(20) null 
+/*红冲单据主键*/,
  constraint pk_er_bxzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0

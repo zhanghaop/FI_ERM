@@ -105,7 +105,7 @@ public class ErmBillPubUtil {
 		parent.setSxbz(BXStatusConst.SXBZ_NO);
 		parent.setSpzt(IPfRetCheckInfo.COMMIT);
 		parent.setPayflag(BXStatusConst.PAYFLAG_None);
-		parent.setIsreded(UFBoolean.TRUE);
+		parent.setIsreded(UFBoolean.FALSE);
 		parent.setTs(null);
 		parent.setGroupbbhl(parent.getGroupbbhl() == null ? UFDouble.ZERO_DBL : parent.getGroupbbhl());
 		parent.setGlobalbbhl(parent.getGlobalbbhl() == null ? UFDouble.ZERO_DBL : parent.getGlobalbbhl());
