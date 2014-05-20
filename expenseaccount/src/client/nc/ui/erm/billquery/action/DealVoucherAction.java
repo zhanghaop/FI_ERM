@@ -142,7 +142,14 @@ public class DealVoucherAction extends NCAction {
 					"0201107-0174")).append("\r\n");
 					continue;
 				}
-				
+		
+				//对于作废的单据不能月末处理:ehp3
+				if(jkbxVos[i].getParentVO().getDjzt()!=null && BXStatusConst.DJZT_Invalid == jkbxVos[i].getParentVO().getDjzt()){
+					existSuccess = false;
+					msg.append(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
+					"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955")).append("\r\n");
+					continue;
+				}
 				//对于生效的单据，并且凭证标志不是暂估时，提示提示生成凭证
 //				if(((Integer.valueOf(BXStatusConst.SXBZ_VALID).equals(jkbxVos[i].getParentVO().getSxbz()) 
 //					&& jkbxVos[i].getParentVO().getVouchertag()!=null && jkbxVos[i].getParentVO().getVouchertag()!=BXStatusConst.ZGDeal )
