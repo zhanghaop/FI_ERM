@@ -1764,14 +1764,14 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			}
 		}
 		//查询出被红冲的单据:更新字段
-		String[] pk_jkbx = VOUtils.getAttributeValues(writeBackBillVOs.toArray(new JKBXVO[0]),JKBXHeaderVO.PK_JKBX); 
-		List<JKBXVO> vos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadVOsByPrimaryKeys(pk_jkbx, null,false,null);
-		List<JKBXHeaderVO> headvos = new ArrayList<JKBXHeaderVO>();
-		for (JKBXVO jkbxvo : vos) {
-			jkbxvo.getParentVO().setIsreded(UFBoolean.TRUE);
-			headvos.add(jkbxvo.getParentVO());
+		String[] pk_redbill = VOUtils.getAttributeValues(writeBackBillVOs.toArray(new JKBXVO[0]),JKBXHeaderVO.REDBILLPK); 
+		List<JKBXVO> redvos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadVOsByPrimaryKeys(pk_redbill, null,false,null);
+		List<JKBXHeaderVO> redheadvos = new ArrayList<JKBXHeaderVO>();
+		for (JKBXVO redvo : redvos) {
+			redvo.getParentVO().setIsreded(UFBoolean.TRUE);
+			redheadvos.add(redvo.getParentVO());
 		}
-		new BaseDAO().updateVOArray(headvos.toArray(new JKBXHeaderVO[0]), new String[]{JKBXHeaderVO.ISREDED});
+		new BaseDAO().updateVOArray(redheadvos.toArray(new JKBXHeaderVO[0]), new String[]{JKBXHeaderVO.ISREDED});
 		
 		return returnVos.toArray(new JKBXVO[0]);
 	}

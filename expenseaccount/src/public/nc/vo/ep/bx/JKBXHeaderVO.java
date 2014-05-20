@@ -836,6 +836,7 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public UFBoolean isreded;//ºì³å±êÖ¾
 	public static final String ISREDED = "isreded";//ºì³å 
 	public String redbillpk;//ºì³åµ¥¾ÝÖ÷¼ü
+	public static final String REDBILLPK = "redbillpk";//ºì³å 
 	
 	public UFBoolean getIsreded() {
 		return isreded;
