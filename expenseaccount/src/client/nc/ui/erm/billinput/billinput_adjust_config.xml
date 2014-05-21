@@ -75,6 +75,7 @@
 				<ref bean="linkvouaction"/>
 				<ref bean="linkysaction"/>
 				<ref bean="linkfpplanaction"/>
+				<ref bean="linkRedBillAction"/>
 				<!-- <ref bean="linkBillAction"/> -->
 			</list>
 		</property>

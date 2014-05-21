@@ -666,6 +666,12 @@
 		<property name="editor" ref="editor"/>
 		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
 	</bean>
+	<!-- 联查红冲单据 -->
+	<bean id="linkRedBillAction" class="nc.ui.erm.billpub.action.LinkRedBillAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="editor"/>
+		<property name="exceptionHandler" ref="linkexeceptionHandler"/>
+	</bean>
 
 	<bean id="datasource" class="nc.ui.erm.billpub.model.ErmDataSingleSelectDataSource">
 		<property name="model" ref="manageAppModel" />

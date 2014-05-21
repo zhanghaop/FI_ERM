@@ -105,6 +105,7 @@
 				<ref bean="linkfpplanaction"/>
 				<ref bean="linkBillAction"/>
 				<ref bean="linkAccBillAction"/>
+				<ref bean="linkRedBillAction"/>
 			</list>
 		</property>
 	</bean>

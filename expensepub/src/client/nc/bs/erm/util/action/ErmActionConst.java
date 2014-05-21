@@ -150,4 +150,8 @@ public abstract class ErmActionConst {
 	public static String getLinkAccName() {
 		return NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0043")/*@res "联查预提单"*/;
 	}
+	public static final String LinkRed  = "LinkRed";//联查红冲单据
+	public static String getLinkRedName() {
+		return NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0044")/*@res "联查红冲单据"*/;
+	}
 }
