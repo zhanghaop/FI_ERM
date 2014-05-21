@@ -5,15 +5,11 @@ import java.util.List;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.framework.common.InvocationInfoProxy;
-import nc.bs.framework.common.NCLocator;
-import nc.itf.arap.prv.IBXBillPrivate;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.ep.bx.Paytarget;
 import nc.vo.fipub.exception.ExceptionHandler;
-import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFBoolean;
@@ -61,39 +57,17 @@ public class ErmBillPubUtil {
 				BXBusItemVO.GROUPBBJE,BXBusItemVO.GROUPBBYE,BXBusItemVO.GROUPCJKBBJE,BXBusItemVO.GROUPHKBBJE,
 				BXBusItemVO.GROUPZFBBJE};
 		
-		String[] clearKeys = new String[] { JKBXHeaderVO.PJH,JKBXHeaderVO.PAYDATE, JKBXHeaderVO.PAYMAN, JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.DJBH};
+		String[] clearKeys = new String[] {JKBXHeaderVO.PAYDATE, JKBXHeaderVO.PAYMAN, JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.DJBH};
 		JKBXVO vo = (JKBXVO) bill.clone();
 		JKBXHeaderVO parent = (JKBXHeaderVO) vo.getParentVO();
 		BXBusItemVO[] children = (BXBusItemVO[]) vo.getChildrenVO();
 		
 		UFDouble NEGATIVE = new UFDouble("-1");//需要与金额字段相乘
-		
-		String[] result;
-		String pk_psndoc=null;
-		try {
-			result = NCLocator.getInstance().lookup(
-					IBXBillPrivate.class).queryPsnidAndDeptid(userid,parent.getPk_group());
-			if(result[0] == null || StringUtil.isEmpty(result[0])){
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011ermpub0316_0",
-						"02011ermpub0316-0000")/* * * @res*
-						 * "当前用户未关联人员，请联系管理人员为此用户指定身份"*/);
-			}
-			pk_psndoc = result[0];
-		} catch (BusinessException e) {
-			ExceptionHandler.consume(e);
-		}
-		
 		// 清空表头项
 		for (String key : clearKeys) {
 			parent.setAttributeValue(key, null);
 		}
 		parent.setQcbz(UFBoolean.FALSE);
-		parent.setCreator(userid);
-		parent.setOperator(userid);
-		parent.setJsr(pk_psndoc);
-		parent.setJkbxr(pk_psndoc);
-		parent.setReceiver(pk_psndoc);
-		parent.setApprover(pk_psndoc);
 		parent.setPrimaryKey(null);
 		long bizDateTime = InvocationInfoProxy.getInstance().getBizDateTime();
 		parent.setShrq(new UFDateTime(bizDateTime));
@@ -107,13 +81,11 @@ public class ErmBillPubUtil {
 		parent.setPayflag(BXStatusConst.PAYFLAG_None);
 		parent.setIsreded(UFBoolean.FALSE);
 		parent.setTs(null);
-		parent.setGroupbbhl(parent.getGroupbbhl() == null ? UFDouble.ZERO_DBL : parent.getGroupbbhl());
-		parent.setGlobalbbhl(parent.getGlobalbbhl() == null ? UFDouble.ZERO_DBL : parent.getGlobalbbhl());
-		
 		for (int i = 0; i < children.length; i++) {
 			children[i].setPk_jkbx(null);
 			children[i].setPrimaryKey(null);
 			children[i].setStatus(VOStatus.NEW);
+			children[i].setTs(null);
 			for(String itemkey : itemMnyKeys){//表体的金额字段
 				UFDouble ufDouble = (UFDouble)children[i].getAttributeValue(itemkey);
 				UFDouble multiply = ufDouble==null ?UFDouble.ZERO_DBL.multiply(NEGATIVE):ufDouble.multiply(NEGATIVE);
@@ -135,24 +107,6 @@ public class ErmBillPubUtil {
 					parent.setAttributeValue(itemkey, UFDouble.ZERO_DBL);
 				}
 			}
-		}
-		/**
-		 * 设置表头的支付对象信息:取表体的第一行
-		 */
-		if (children!=null && children.length!=0) {
-				if(children[0].getPaytarget().intValue()==Paytarget.EMPLOYEE){
-					parent.setPaytarget(Paytarget.EMPLOYEE);
-					parent.setReceiver(children[0].getReceiver());
-					parent.setSkyhzh(children[0].getSkyhzh());
-				}else if(children[0].getPaytarget().intValue()==Paytarget.HBBM){
-					parent.setPaytarget(Paytarget.HBBM);
-					parent.setHbbm(children[0].getHbbm());
-					parent.setCustaccount(children[0].getCustaccount());
-				}else if(children[0].getPaytarget().intValue()==Paytarget.CUSTOMER){
-					parent.setPaytarget(Paytarget.CUSTOMER);
-					parent.setCustomer(children[0].getCustomer());
-					parent.setCustaccount(children[0].getCustaccount());
-				}
 		}
 		return vo;
 	}
