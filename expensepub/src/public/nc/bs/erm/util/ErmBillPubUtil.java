@@ -9,7 +9,6 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.lang.UFBoolean;
@@ -27,12 +26,8 @@ public class ErmBillPubUtil {
 	public static JKBXVO[] getWriteBackBillVO(JKBXVO[] bills, UFDate current, String userid) throws BusinessException {
 		List<JKBXVO> ret = new ArrayList<JKBXVO>();
 		for (JKBXVO bill : bills) {
-			try {
 				JKBXVO writeBackBillVO = getWriteBackBillVO(bill, current, userid);
 				ret.add(writeBackBillVO);
-			} catch (InvalidAccperiodExcetion e) {
-				throw ExceptionHandler.createException(e.getMessage());
-			}
 		}
 		return ret.toArray(new JKBXVO[0]);
 	}
@@ -45,7 +40,7 @@ public class ErmBillPubUtil {
 	 * @throws InvalidAccperiodExcetion
 	 */
 	private static JKBXVO getWriteBackBillVO(JKBXVO bill, UFDate current,
-			String userid) throws InvalidAccperiodExcetion{
+			String userid){
 		//表体的金额字段
 		String[] itemMnyKeys = { BXBusItemVO.AMOUNT,BXBusItemVO.YJYE, BXBusItemVO.YBYE,
 				BXBusItemVO.YBJE, BXBusItemVO.BBYE, BXBusItemVO.BBJE,
