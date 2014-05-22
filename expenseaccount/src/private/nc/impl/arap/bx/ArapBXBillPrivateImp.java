@@ -40,7 +40,6 @@ import nc.impl.pubapp.linkquery.BillTypeSetBillFinder;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.arap.pub.ISqdlrKeyword;
-import nc.itf.cm.prv.CmpConst;
 import nc.itf.er.indauthorize.IIndAuthorizeQueryService;
 import nc.itf.org.IDeptQryService;
 import nc.itf.resa.costcenter.ICostCenterQueryOpt;
@@ -77,7 +76,6 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKHeaderVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.ep.bx.JsConstrasVO;
-import nc.vo.ep.bx.Paytarget;
 import nc.vo.ep.bx.SqdlrVO;
 import nc.vo.ep.bx.VOFactory;
 import nc.vo.ep.dj.DjCondVO;
@@ -1857,11 +1855,18 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 * 设置表体的数据
 	 * @param sbodyVOs
 	 * @return
+	 * @throws BusinessException 
 	 */
-	private BXBusItemVO[] generateItems(SettlementBodyVO[] sbodyVOs) {
+	@SuppressWarnings("unchecked")
+	private BXBusItemVO[] generateItems(SettlementBodyVO[] sbodyVOs) throws BusinessException {
 		BXBusItemVO[] itemVOs = new BXBusItemVO[sbodyVOs.length];
-		for(int i = 0 ; i<sbodyVOs.length ; i++){
-			itemVOs[i] = generateItems(sbodyVOs[i]);
+		String[] pk_busitem = VOUtils.getAttributeValues(sbodyVOs, "pk_billdetail");
+		String condition = nc.vo.fi.pub.SqlUtils.getInStr(BXBusItemVO.PK_BUSITEM, pk_busitem,false);
+		
+		List<BXBusItemVO> oldBusItem = (List<BXBusItemVO>) new BaseDAO().retrieveByClause(BXBusItemVO.class, condition);
+		//将原来单据的item信息得到
+		for(int i = 0 ; i<oldBusItem.size() ; i++){
+			itemVOs[i] = generateItems(oldBusItem.get(i));
 		}
 		return itemVOs;
 	}
@@ -1870,76 +1875,52 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 * @param sbodyVO
 	 * @return
 	 */
-	private BXBusItemVO generateItems(SettlementBodyVO sbodyVO) {
+	private BXBusItemVO generateItems(BXBusItemVO oldBusitemVO) {
+		//通过结算页签将
 		BXBusItemVO bodyVO = new BXBusItemVO();
-		UFDouble pay = sbodyVO.getPay()==null ? UFDouble.ZERO_DBL: sbodyVO.getPay();
-		UFDouble paylocal =sbodyVO.getPaylocal()==null ?UFDouble.ZERO_DBL : sbodyVO.getPaylocal() ;
-		UFDouble paygroup = sbodyVO.getGrouppaylocal()==null ?UFDouble.ZERO_DBL :sbodyVO.getGrouppaylocal();
-		UFDouble payglobal = sbodyVO.getGlobalpaylocal()==null ?UFDouble.ZERO_DBL :sbodyVO.getGlobalpaylocal();
-		UFDouble receive = sbodyVO.getReceive()==null ? UFDouble.ZERO_DBL: sbodyVO.getReceive();
-		UFDouble receivelocal= sbodyVO.getReceivelocal()==null ? UFDouble.ZERO_DBL :sbodyVO.getReceivelocal();
-		UFDouble receivegroup= sbodyVO.getGroupreceivelocal()==null ? UFDouble.ZERO_DBL :sbodyVO.getGroupreceivelocal();
-		UFDouble receiveglobal=sbodyVO.getGlobalreceivelocal()==null ? UFDouble.ZERO_DBL : sbodyVO.getGlobalreceivelocal();
-		//金额字段设置，分两个方向
-		
-		if(pay!=null && pay.doubleValue()>0){
-			bodyVO.setAmount(pay);
-			bodyVO.setYbje(pay);
-			bodyVO.setYbye(pay);
-			bodyVO.setYjye(pay);
-			bodyVO.setZfybje(pay);
-			bodyVO.setBbje(paylocal);
-			bodyVO.setBbye(paylocal);
-			bodyVO.setZfbbje(paylocal);
-			bodyVO.setGroupbbje(paygroup);
-			bodyVO.setGroupbbye(paygroup);
-			bodyVO.setGroupzfbbje(paygroup);
-			bodyVO.setGlobalbbje(payglobal);
-			bodyVO.setGlobalbbye(payglobal);
-			bodyVO.setGlobalzfbbje(payglobal);
-		}else{
-			bodyVO.setAmount(receive);
-			bodyVO.setYbje(receive);
-			bodyVO.setYbye(receive);
-			bodyVO.setYjye(receive);
-			bodyVO.setHkybje(receive);
-			bodyVO.setBbje(receivelocal);
-			bodyVO.setBbye(receivelocal);
-			bodyVO.setHkbbje(receivelocal);
-			bodyVO.setGroupbbje(receivegroup);
-			bodyVO.setGroupbbye(receivegroup);
-			bodyVO.setGrouphkbbje(receivegroup);
-			bodyVO.setGlobalbbje(receiveglobal);
-			bodyVO.setGlobalbbye(receiveglobal);
-			bodyVO.setGlobalhkbbje(receiveglobal);
-		}
+		bodyVO.setAmount(oldBusitemVO.getAmount());
+		bodyVO.setYbje(oldBusitemVO.getYbje());
+		bodyVO.setYbye(oldBusitemVO.getYbye());
+		bodyVO.setYjye(oldBusitemVO.getYjye());
+		bodyVO.setBbje(oldBusitemVO.getBbje());
+		bodyVO.setBbye(oldBusitemVO.getBbye());
+		bodyVO.setZfybje(oldBusitemVO.getZfybje());
+		bodyVO.setZfbbje(oldBusitemVO.getZfbbje());
+		bodyVO.setHkybje(oldBusitemVO.getHkybje());
+		bodyVO.setHkbbje(oldBusitemVO.getHkbbje());
+		bodyVO.setGroupbbje(oldBusitemVO.getGroupbbje());
+		bodyVO.setGroupbbye(oldBusitemVO.getGroupbbye());
+		bodyVO.setGroupzfbbje(oldBusitemVO.getGroupzfbbje());
+		bodyVO.setGrouphkbbje(oldBusitemVO.getGrouphkbbje());
+		bodyVO.setGlobalbbje(oldBusitemVO.getGlobalbbje());
+		bodyVO.setGlobalbbye(oldBusitemVO.getGlobalbbye());
+		bodyVO.setGlobalzfbbje(oldBusitemVO.getGlobalzfbbje());
+		bodyVO.setGlobalhkbbje(oldBusitemVO.getGlobalhkbbje());
+		//}
 		bodyVO.setPrimaryKey(null);
 		bodyVO.setPk_jkbx(null);
-		if(sbodyVO.getPk_billtype().startsWith(BXConstans.BX_PREFIX)){
-			bodyVO.setTablecode(BXConstans.BUS_PAGE);
-		}else{
-			bodyVO.setTablecode(BXConstans.BUS_PAGE_JK);
-		}
-		bodyVO.setDwbm(sbodyVO.getPk_org());
-		bodyVO.setDeptid(sbodyVO.getPk_deptdoc());
-		bodyVO.setSzxmid(sbodyVO.getPk_costsubj());
-		bodyVO.setJkbxr(sbodyVO.getPk_trader());
-		bodyVO.setJobid(sbodyVO.getPk_job());
-		bodyVO.setProjecttask(sbodyVO.getPk_jobphase());
+		bodyVO.setTablecode(oldBusitemVO.getTablecode());
 		
-		Integer traderType = sbodyVO.getTradertype();
-		if(traderType == CmpConst.TradeObjType_Person){
-			bodyVO.setPaytarget(Paytarget.EMPLOYEE);
-			bodyVO.setReceiver(sbodyVO.getPk_trader());
-			bodyVO.setSkyhzh(sbodyVO.getPk_oppaccount());
-		}else if(traderType == CmpConst.TradeObjType_SUPPLIER){
-			bodyVO.setPaytarget(Paytarget.HBBM);
-			bodyVO.setHbbm(sbodyVO.getPk_trader());
-			bodyVO.setCustaccount(sbodyVO.getPk_oppaccount());
-		}else if(traderType == CmpConst.TradeObjType_CUSTOMER){
-			bodyVO.setPaytarget(Paytarget.CUSTOMER);
-			bodyVO.setCustomer(sbodyVO.getPk_trader());
-			bodyVO.setCustaccount(sbodyVO.getPk_oppaccount());
+		bodyVO.setDwbm(oldBusitemVO.getDwbm());
+		bodyVO.setDeptid(oldBusitemVO.getDeptid());
+		bodyVO.setJkbxr(oldBusitemVO.getJkbxr());
+		bodyVO.setSzxmid(oldBusitemVO.getSzxmid());
+		bodyVO.setJobid(oldBusitemVO.getJobid());
+		bodyVO.setProjecttask(oldBusitemVO.getProjecttask());
+		
+		bodyVO.setPaytarget(oldBusitemVO.getPaytarget());
+		bodyVO.setReceiver(oldBusitemVO.getReceiver());
+		bodyVO.setSkyhzh(oldBusitemVO.getSkyhzh());
+		bodyVO.setHbbm(oldBusitemVO.getHbbm());
+		bodyVO.setCustaccount(oldBusitemVO.getCustaccount());
+		bodyVO.setCustomer(oldBusitemVO.getCustomer());
+		bodyVO.setFreecust(oldBusitemVO.getFreecust());
+		bodyVO.setFreeaccount(oldBusitemVO.getFreeaccount());
+		
+		//表体自定义字段
+		String defitem_prefix="defitem";
+		for(int i=1 ; i<=50 ; i++){
+			bodyVO.setAttributeValue(defitem_prefix+i, oldBusitemVO.getAttributeValue(defitem_prefix+i));
 		}
 		return bodyVO;
 	}
