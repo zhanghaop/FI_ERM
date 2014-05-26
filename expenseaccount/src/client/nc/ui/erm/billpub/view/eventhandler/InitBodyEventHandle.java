@@ -170,8 +170,7 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 			beforeCustAccount(e, key);
 		} else if(BXBusItemVO.FREECUST.equals(key)){
 			beforeEditFreecust(e);
-		}
-		else if(key != null && (key.startsWith(BXConstans.BODY_USERDEF_PREFIX))){
+		} else if(key != null && (key.startsWith(BXConstans.BODY_USERDEF_PREFIX))){
 			filterDefItemField(key);
 		}
 		try {
@@ -300,6 +299,7 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener{
 			}
 
 			((UIRefPane) bodyItem.getComponent()).getRefModel().setPk_org(pk_org);
+			((UIRefPane) bodyItem.getComponent()).getRefModel().setDataPowerOperation_code("fi");//走财务的数据权限，不走通用的数据权限
 		}
 	}
 
