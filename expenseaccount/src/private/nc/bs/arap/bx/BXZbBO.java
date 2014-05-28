@@ -781,12 +781,13 @@ public class BXZbBO {
 						new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ, JKBXHeaderVO.APPROVER,
 						JKBXHeaderVO.SHRQ });
 				List<JKBXHeaderVO> headerVOs = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-						.queryHeadersByPrimaryKeys(new String[] { headerVO.getPk_jkbx() },
-								headerVO.getDjdl());
+						.queryHeadersByPrimaryKeys(new String[] { headerVO.getPk_jkbx() },headerVO.getDjdl());
+				headerVO.setVouchertag(headerVOs.get(0).getVouchertag());//设置到原来的数据中，返回时设置到界面上
+				headerVO.setPayflag(headerVOs.get(0).getPayflag());
+				headerVO.setPaydate(headerVOs.get(0).getPaydate());
+				headerVO.setPayman(headerVOs.get(0).getPayman());
 				getJKBXDAO().update(new JKBXHeaderVO[] { headerVOs.get(0) },
-						new String[] { JKBXHeaderVO.PAYDATE,
-								JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.PAYMAN,
-								JKBXHeaderVO.VOUCHERTAG });
+						new String[] { JKBXHeaderVO.PAYDATE,JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.PAYMAN,JKBXHeaderVO.VOUCHERTAG });
 			} else {
 				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO },
 						updateFields);
