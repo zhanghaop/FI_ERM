@@ -457,6 +457,7 @@ public interface IBXBillPrivate {
 	 * @throws BusinessException
 	 */
 	public List<JKBXVO> dealInvalid(List<JKBXVO> jkbxvo) throws BusinessException;
+	
 	/**
 	 * 处理结算红冲业务
 	 * @param payInfo
