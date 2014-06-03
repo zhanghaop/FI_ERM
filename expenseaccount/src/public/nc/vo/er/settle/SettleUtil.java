@@ -1,9 +1,11 @@
 package nc.vo.er.settle;
 
+import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.cmp.utils.BusiBillStatus;
 import nc.itf.cm.prv.CmpConst;
 import nc.itf.er.pub.IArapBillTypePublic;
+import nc.itf.uap.busibean.SysinitAccessor;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BXUtil;
@@ -35,27 +37,86 @@ public class SettleUtil {
 		return isAuto;
 	}
 	
-	public static boolean isAutoSign(JKBXHeaderVO head){
-		
-		boolean isAuto=true;
-		//判断CMP产品是否启用
+	/**
+	 * 是否自动签字
+	 * 
+	 * @param head
+	 * @return
+	 */
+	public static boolean isAutoSign(JKBXHeaderVO head) {
+		boolean isAuto = true;
+		// 判断CMP产品是否启用
 		boolean iscmpused = BXUtil.isProductInstalled(head.getPk_group(), BXConstans.TM_CMP_FUNCODE);
-		
-		if(!iscmpused)
+
+		if (!iscmpused)
 			return true;
-		try{
+		try {
 			IArapBillTypePublic billtype = NCLocator.getInstance().lookup(IArapBillTypePublic.class);
 			DjLXVO typeVOs = billtype.getDjlxvoByDjlxbm(head.getDjlxbm(), head.getPk_group());
-			if(typeVOs!=null){
-				isAuto=!(typeVOs.getIsqr().booleanValue());
+			if (typeVOs != null) {
+				isAuto = !(typeVOs.getIsqr().booleanValue());
 			}
-		}catch (Exception e) {
-			throw new BusinessRuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000403")/*@res "查询单据类型信息出错，请重新分配单据类型."*/);
+		} catch (Exception e) {
+			throw new BusinessRuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000403")/*
+																															 * @
+																															 * res
+																															 * "查询单据类型信息出错，请重新分配单据类型."
+																															 */);
 		}
 		return isAuto;
 	}
+	
+	/**
+	 * 是否自动结算
+	 * <br>根据交易类型参数判断
+	 * @param head
+	 * @return
+	 */
+	public static boolean isAutoJS(JKBXHeaderVO head) {
+		// 判断CMP产品是否启用
+		boolean iscmpused = BXUtil.isProductInstalled(head.getPk_group(), BXConstans.TM_CMP_FUNCODE);
+		if (!iscmpused) {
+			return false;
+		}
 
-	public static BusiBillStatus getBusiBillStatusByNode(String node, int nodeopentype){
+		boolean isAuto = false;
+		try {
+			DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + head.getPk_group() + "' and djlxbm = '" + head.getDjlxbm() + "'");
+			if (vos != null && vos.length != 0) {
+				isAuto = vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue();
+			}
+		} catch (BusinessException e) {
+			throw new BusinessRuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000403")/*
+																															 * @
+																															 * res
+																															 * "查询单据类型信息出错，请重新分配单据类型."
+																															 */);
+		}
+		return isAuto;
+	}
+	
+	/**
+	 * 是否结算环节传会计平台
+	 * @param head
+	 * @return
+	 * @throws BusinessException
+	 */
+	public static boolean isJsToFip(JKBXHeaderVO head) throws BusinessException{
+		boolean iscmpused = BXUtil.isProductInstalled(head.getPk_group(), BXConstans.TM_CMP_FUNCODE);
+		if (!iscmpused) {
+			return false;
+		}
+		
+		String param = SysinitAccessor.getInstance().getParaString(head.getPk_org(), "CMP37");
+		
+		if(param != null && param.equals(BXStatusConst.VounterCondition_ZF)){
+			return true;
+		}
+		
+		return false;
+	}
+
+	public static BusiBillStatus getBusiBilheadlStatusByNode(String node, int nodeopentype){
 		if(nodeopentype==2)//BxParam.NodeOpenType_Link
 			return BusiBillStatus.QUERY;
 		if(BXConstans.BXMNG_NODECODE.equals(node)){

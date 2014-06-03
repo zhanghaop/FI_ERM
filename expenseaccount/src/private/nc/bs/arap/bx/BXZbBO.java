@@ -27,7 +27,6 @@ import nc.bs.er.util.SqlUtils;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.event.ErmBusinessEvent;
 import nc.bs.erm.event.ErmEventType;
-import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
@@ -37,7 +36,6 @@ import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.ISqdlrKeyword;
 import nc.itf.fi.pub.Currency;
 import nc.itf.fipub.summary.ISummaryQueryService;
-import nc.itf.uap.busibean.SysinitAccessor;
 import nc.jdbc.framework.ConnectionFactory;
 import nc.jdbc.framework.JdbcSession;
 import nc.jdbc.framework.PersistenceManager;
@@ -50,7 +48,6 @@ import nc.pubitf.arap.payable.IArapPayableBillPubService;
 import nc.pubitf.arap.receivable.IArapReceivableBillPubQueryService;
 import nc.pubitf.arap.receivable.IArapReceivableBillPubService;
 import nc.pubitf.erm.costshare.IErmCostShareBillQuery;
-import nc.pubitf.org.IOrgUnitPubService;
 import nc.vo.arap.basebill.BaseBillVO;
 import nc.vo.arap.billstatus.ARAPBillStatus;
 import nc.vo.arap.bx.util.ActionUtils;
@@ -73,7 +70,6 @@ import nc.vo.ep.bx.VOFactory;
 import nc.vo.ep.dj.DjCondVO;
 import nc.vo.er.check.VOChecker;
 import nc.vo.er.check.VOStatusChecker;
-import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.settle.SettleUtil;
 import nc.vo.er.util.StringUtils;
@@ -762,7 +758,6 @@ public class BXZbBO {
 
 		beforeActInf(bxvo, MESSAGE_AUDIT);
 
-		// modified by chendya
 		if (headerVO.getSpzt() == IPfRetCheckInfo.PASSING) {
 			// 审批通过
 			headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Verified));
@@ -770,29 +765,29 @@ public class BXZbBO {
 
 		// 需更新字段
 		String[] updateFields = new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ,
-				JKBXHeaderVO.APPROVER, JKBXHeaderVO.SHRQ, JKBXHeaderVO.PAYFLAG,JKBXHeaderVO.VOUCHERTAG};
+				JKBXHeaderVO.APPROVER, JKBXHeaderVO.SHRQ ,JKBXHeaderVO.VOUCHERTAG};
 		
 		dealToFip(bxvo, headerVO, updateFields);
 		
 		try {
 			//如果自动结算处理
-			if (isAutoSettle(headerVO)) {
-				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO },
-						new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ, JKBXHeaderVO.APPROVER,
-						JKBXHeaderVO.SHRQ });
+			if (SettleUtil.isAutoJS(headerVO)) {
 				List<JKBXHeaderVO> headerVOs = NCLocator.getInstance().lookup(IBXBillPrivate.class)
 						.queryHeadersByPrimaryKeys(new String[] { headerVO.getPk_jkbx() },headerVO.getDjdl());
 				headerVO.setVouchertag(headerVOs.get(0).getVouchertag());//设置到原来的数据中，返回时设置到界面上
 				headerVO.setPayflag(headerVOs.get(0).getPayflag());
 				headerVO.setPaydate(headerVOs.get(0).getPaydate());
 				headerVO.setPayman(headerVOs.get(0).getPayman());
-				getJKBXDAO().update(new JKBXHeaderVO[] { headerVOs.get(0) },
-						new String[] { JKBXHeaderVO.PAYDATE,JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.PAYMAN,JKBXHeaderVO.VOUCHERTAG });
-			} else {
-				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO },
-						updateFields);
-
+				
+				//支付成功，表示已经自动结算，自动结算仅为手工结算，必支付完成
+				if(headerVO.getPayflag() != null && headerVO.getPayflag().intValue() == BXStatusConst.PAYFLAG_PayFinish){
+					updateFields = new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT,JKBXHeaderVO.SXBZ, JKBXHeaderVO.APPROVER,
+							JKBXHeaderVO.SHRQ };
+				}
 			}
+			
+			getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
+			
 			// 重新加载冲销行表体（带出冲销行生效日期）
 			if (bxvo.getContrastVO() != null && bxvo.getContrastVO().length > 0) {
 				Collection<BxcontrastVO> contrasts = queryContrasts(bxvo.getParentVO());
@@ -808,23 +803,6 @@ public class BXZbBO {
 		} catch (BusinessException e) {
 			ExceptionHandler.handleException(e);
 		}
-
-	}
-	/**
-	 * 判断是否是自动结算
-	 * @param headerVO
-	 * @return
-	 * @throws BusinessException
-	 */
-	private boolean isAutoSettle(JKBXHeaderVO headerVO) throws BusinessException {
-		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class,
-				"pk_group = '" + headerVO.getPk_group() + "' and djlxbm = '" + headerVO.getDjlxbm()+ "'");
-		boolean isAutoSettle = false;
-		if (vos != null || vos.length != 0) {
-			 return isAutoSettle = vos[0].getAutosettle() == null ? false : vos[0]
-					.getAutosettle().booleanValue() ? true : false;
-		}
-		return isAutoSettle;
 	}
 	
 	/**
@@ -838,8 +816,7 @@ public class BXZbBO {
 	 * @throws SQLException
 	 * @throws BusinessException
 	 */
-	private void dealToFip(JKBXVO bxvo, JKBXHeaderVO headerVO,
-			String[] updateFields)
+	private void dealToFip(JKBXVO bxvo, JKBXHeaderVO headerVO, String[] updateFields)
 			throws DAOException, SQLException, BusinessException {
 			
 			// 单据是否自动签字(受参数控制)
@@ -847,13 +824,16 @@ public class BXZbBO {
 
 			// 判断CMP产品是否启用
 			boolean isCmpInstalled = isCmpInstall(headerVO);
+			
+			//是否结算传会计平台
+			boolean isJsToFip = SettleUtil.isJsToFip(headerVO);
 		
-			String param = null;
-			if(isCmpInstalled){
-				param = SysinitAccessor.getInstance().getParaString(headerVO.getPk_org(), "CMP37");
-			}else {
-				param = BXStatusConst.VounterCondition_QZ;
-			}
+//			String param = null;
+//			if(isCmpInstalled){
+//				param = SysinitAccessor.getInstance().getParaString(headerVO.getPk_org(), "CMP37");
+//			}else {
+//				param = BXStatusConst.VounterCondition_QZ;
+//			}
 			//全额冲销的情况和调整单特殊处理凭证标志字段
 			if((headerVO.getVouchertag()==null && (headerVO.getPayflag()!=null 
 					&& headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST ))||headerVO.isAdjustBxd()){
@@ -868,23 +848,21 @@ public class BXZbBO {
 				headerVO.setJsr(headerVO.getApprover());
 				headerVO.setJsrq(headerVO.getShrq().getDate());
 				
-				if(param.equals(BXStatusConst.VounterCondition_QZ) && 
-						headerVO.getVouchertag()==null){
+				if(!isJsToFip && headerVO.getVouchertag()==null){
 					headerVO.setVouchertag(BXStatusConst.SXFlag);//自动签字时设置该字段
 				}
 
 				getJKBXDAO().update(new JKBXHeaderVO[] { headerVO }, updateFields);
 
-
 				// 没有结算信息的单据直接签字生效
 				if (billStatus.equals(BusiStatus.Deleted)) {
-						isAutoSignDeal(bxvo, headerVO, param);
+						autoSignDeal(bxvo, headerVO, isJsToFip);
 				} else {
 					if (isCmpInstalled) {
 						new ErForCmpBO().invokeCmp(bxvo, headerVO.getShrq().getDate(), billStatus);
 					} 
 					else {
-						isAutoSignDeal(bxvo, headerVO, param);
+						autoSignDeal(bxvo, headerVO, isJsToFip);
 					}
 				}
 				// 自动签字
@@ -896,13 +874,12 @@ public class BXZbBO {
 				
 				// 没有结算信息的单据直接签字生效
 				if (billStatus.equals(BusiStatus.Deleted)) {
-						notAutoSignDeal(bxvo, headerVO, param);
+						notAutoSignDeal(bxvo, headerVO, isJsToFip);
 				} else {
 					if (isCmpInstalled) {
 						new ErForCmpBO().invokeCmp(bxvo, headerVO.getShrq().getDate(), billStatus);
-					} 
-					else {
-						notAutoSignDeal(bxvo, headerVO, param);	
+					} else {
+						notAutoSignDeal(bxvo, headerVO, isJsToFip);	
 					}
 				}
 			}
@@ -915,11 +892,11 @@ public class BXZbBO {
 	 * @throws BusinessException
 	 */
 	private void notAutoSignDeal(JKBXVO bxvo, JKBXHeaderVO headerVO,
-			String param) throws BusinessException {
+			boolean isJsToFip) throws BusinessException {
 		settle(headerVO.getApprover(), headerVO.getShrq().getDate(), bxvo);
 		// 传会计平台
-		if(		(headerVO.getVouchertag()==null || headerVO.getVouchertag()==BXStatusConst.SXFlag || headerVO.getVouchertag()==BXStatusConst.ZGDeal) && (
-				param.equals(BXStatusConst.VounterCondition_QZ) || 
+		if((headerVO.getVouchertag()==null || headerVO.getVouchertag()==BXStatusConst.SXFlag || headerVO.getVouchertag()==BXStatusConst.ZGDeal) && (
+				!isJsToFip || 
 				(headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
 				||headerVO.isAdjustBxd())){
 			bxvo.getParentVO().setVouchertag(BXStatusConst.SXFlag);
@@ -933,11 +910,11 @@ public class BXZbBO {
 	 * @param param
 	 * @throws BusinessException
 	 */
-	private void isAutoSignDeal(JKBXVO bxvo, JKBXHeaderVO headerVO, String param)
+	private void autoSignDeal(JKBXVO bxvo, JKBXHeaderVO headerVO, boolean isJsToFip)
 			throws BusinessException {
 		settle(headerVO.getApprover(), headerVO.getShrq().getDate(), bxvo);
 		// 传会计平台
-		if(headerVO.getVouchertag()==BXStatusConst.SXFlag && (param.equals(BXStatusConst.VounterCondition_QZ) 
+		if(headerVO.getVouchertag()==BXStatusConst.SXFlag && (!isJsToFip 
 				||(headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
 				||headerVO.isAdjustBxd())){
 			
@@ -1406,9 +1383,7 @@ public class BXZbBO {
 
 			sendMessageToFip(headVO, vo, object, message);
 		} catch (BusinessException e) {
-
 			ExceptionHandler.handleException(e);
-
 		}
 	}
 
@@ -2160,7 +2135,6 @@ public class BXZbBO {
 			c = dao.retrieveByClause(SqdlrVO.class, condition);
 		} catch (DAOException e) {
 			nc.bs.logging.Log.getInstance(this.getClass()).error(e);
-			;
 		}
 		if (c != null && c.size() > 0)
 			return c.toArray(new SqdlrVO[c.size()]);
@@ -2190,13 +2164,13 @@ public class BXZbBO {
 		if (!flag) {
 			return false;
 		}
-		// 组织是否启用了现金管理
-		String periord = NCLocator.getInstance().lookup(IOrgUnitPubService.class)
-				.getOrgModulePeriodByOrgIDAndModuleID(parentVO.getPk_org(), BXConstans.TM_CMP_FUNCODE);
-		if (periord == null) {
-			Logger.debug("当前单据所属组织（借款报销单位)未启用现金管理");
-			flag = false;
-		}
+		// 现金在保存时会给出校验
+//		String periord = NCLocator.getInstance().lookup(IOrgUnitPubService.class)
+//				.getOrgModulePeriodByOrgIDAndModuleID(parentVO.getPk_org(), BXConstans.TM_CMP_FUNCODE);
+//		if (periord == null) {
+//			Logger.debug("当前单据所属组织（借款报销单位)未启用现金管理");
+//			flag = false;
+//		}
 		return flag;
 	}
 

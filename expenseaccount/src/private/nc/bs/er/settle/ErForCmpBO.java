@@ -45,7 +45,6 @@ import nc.vo.fip.external.FipExtendAggVO;
 import nc.vo.fip.service.FipRelationInfoVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 
@@ -118,13 +117,11 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	public boolean isAutoSettle(String pk_group, String pk_tradetype,
 			SettlementAggVO... settlementAggVOs) throws BusinessException {
 		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class,
-				"pk_group = '" + pk_group + "' and djlxbm = '" + pk_tradetype
-						+ "'");
+				"pk_group = '" + pk_group + "' and djlxbm = '" + pk_tradetype + "'");
 		if (vos == null || vos.length == 0) {
 			return false;
 		} else {
-			return vos[0].getAutosettle() == null ? false : vos[0]
-					.getAutosettle().booleanValue() ? true : false;
+			return vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue() ;
 		}
 	}
 	
