@@ -1,6 +1,9 @@
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z310000000013ADY',0,null,'pk_defdoc','bd_defdoc',null,'defitem10','er_busitem','2014-04-29 09:52:14')
 go
 
+insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z310000000003NYN',0,null,'pk_psndoc','bd_psndoc',null,'defitem40','er_busitem','2014-05-26 11:04:20')
+go
+
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000R5ML',0,null,'pk_accperiodmonth','bd_accperiodmonth',null,'zyx2','er_jkzb','2013-11-22 10:13:04')
 go
 

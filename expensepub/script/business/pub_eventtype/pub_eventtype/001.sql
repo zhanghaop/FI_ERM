@@ -1,3 +1,15 @@
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000003YRE',0,'ERM1042','作废前',null,null,null,null,null,null,'2011','204d357b-d993-43b1-baa9-8bfde873ba3b','费用结转单',null,null,null,null,null,'2014-06-04 15:20:36')
+go
+
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000003YR5',0,'ERM1042','作废前',null,null,null,null,null,null,'2011','d9b9f860-4dc7-47fa-a7d5-7a5d91f39290','借款报销单',null,null,null,null,null,'2014-06-04 14:35:01')
+go
+
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000003YR6',0,'ERM1043','作废后',null,null,null,null,null,null,'2011','d9b9f860-4dc7-47fa-a7d5-7a5d91f39290','借款报销单',null,null,null,null,null,'2014-06-04 14:35:18')
+go
+
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000003YRF',0,'ERM1043','作废后',null,null,null,null,null,null,'2011','204d357b-d993-43b1-baa9-8bfde873ba3b','费用结转单',null,null,null,null,null,'2014-06-04 15:20:46')
+go
+
 insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z31000000000YW6A',0,'ERM1023','生效前',null,null,null,null,null,null,'2011','3fecbcfe-bca0-4fb1-b4ea-46d8b6616337','费用帐明细',null,null,null,null,null,'2014-04-29 09:52:22')
 go
 
@@ -38,9 +50,6 @@ insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypen
 go
 
 insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z31000000000TTAY',0,'ERM1040','暂存修改后',null,null,null,null,null,null,'2011','e3167d31-9694-4ea1-873f-2ffafd8fbed8','费用申请单',null,null,null,null,null,'2014-04-29 09:52:22')
-go
-
-insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000002C3Y',0,'ERM2005','作废后',null,null,null,null,null,null,'2011','d9b9f860-4dc7-47fa-a7d5-7a5d91f39290','借款报销单',null,null,null,null,null,'2014-05-09 10:29:45')
 go
 
 insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z31000000001ZZ1W',0,'ERM2003','删除红冲前',null,null,null,null,null,null,'2011','61a2bcdb-e040-44d7-949a-54aa632591f5','预提单',null,null,null,null,null,'2014-04-29 09:52:22')

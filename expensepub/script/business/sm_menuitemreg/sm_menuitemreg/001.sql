@@ -226,13 +226,16 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000006AYR',0,'20110ETEA000',null,'N','transtype','2011200210','差旅费报销单','1004ZZ10000000000FFL',null,'2014-04-29 09:53:14')
 go
 
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000003R44',0,'20110ETEA000',null,'N','transtype','2011200211','差旅费报销单','1004ZZ10000000000FFL',null,'2014-05-27 11:01:07')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000003R7W',0,'20110ETEA001',null,'N','transtype','2011200212','新增交易类型','1004ZZ10000000000FFL',null,'2014-05-27 11:05:56')
+go
+
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001NV3D',0,'20110ACCMN',null,'N',null,'20110702','费用预提单管理','1004ZZ10000000000FFL','D20110702','2014-03-12 17:03:46')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001MIIB',0,'20110EndMD',null,'N',null,'20114004','月末凭证处理','1004ZZ10000000000FFL','D20114004','2014-02-12 15:28:17')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001PH0P',0,'201102621000',null,'N','transtype','2011070102','预提单测试1','1004ZZ10000000000FFL',null,'2014-02-13 14:12:38')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001S1K4',0,'20110ACCQRY',null,'N',null,'20110703','费用预提单查询','1004ZZ10000000000FFL','D20110703','2014-03-12 17:03:54')

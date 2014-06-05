@@ -343,9 +343,27 @@ go
 insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000042WL1',0,'Y','nc.impl.erm.closeaccount.BXAntiCloseAccountValidateServiceImpl','~','~','报销反结账前',null,null,null,null,null,'报销反结账前',1,'2011','1001Z01000000002M8R0','2014-04-29 09:52:22')
 go
 
-insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000002C3Z',0,'Y','nc.bs.erm.eventlistener.ErmExpBXListener','0','~','费用账表同步',null,null,null,null,null,null,null,'2011','1001Z310000000002C3Y','2014-05-09 10:29:29')
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YR7',0,'Y','nc.bs.erm.eventlistener.ErmWriteBackMAListener','0','~','费用申请单回写控制',null,null,null,null,null,null,10,'2011','1001Z310000000003YR5','2014-06-04 14:36:48')
 go
 
-insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000002C41',0,'Y','nc.bs.erm.eventlistener.ErmBxBudgetListener','0','~','项目预算插件',null,null,null,null,null,null,null,'2011','1001Z310000000002C3Y','2014-05-09 10:29:29')
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YR9',0,'Y','nc.bs.erm.eventlistener.ErmBxYsControlListener','0','~','借款报销预算控制插件',null,null,null,null,null,null,30,'2011','1001Z310000000003YR5','2014-06-04 14:36:48')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YRA',0,'Y','nc.bs.erm.eventlistener.ErmExpBXListener','0','~','费用账表同步',null,null,null,null,null,null,10,'2011','1001Z310000000003YR6','2014-06-04 14:38:05')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YRB',0,'Y','nc.bs.erm.eventlistener.ErmBxCostShareControlListener','0','~','报销单转费用结转单插件',null,null,null,null,null,null,20,'2011','1001Z310000000003YR6','2014-06-04 14:38:05')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YRC',0,'Y','nc.bs.erm.eventlistener.ErmBxBudgetListener','0','~','项目预算插件',null,null,null,null,null,null,30,'2011','1001Z310000000003YR6','2014-06-04 14:38:05')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YRG',0,'Y','nc.bs.erm.costshare.actimpl.ErmCostshareMaControlListener','0','~','报销分摊回写申请单',null,null,null,null,null,null,10,'2011','1001Z310000000003YRE','2014-06-04 15:24:33')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YRH',0,'Y','nc.bs.erm.costshare.actimpl.ErmCostshareYsControlListener','0','~','费用结转单预算控制',null,null,null,null,null,null,20,'2011','1001Z310000000003YRE','2014-06-04 15:24:33')
+go
+
+insert into pub_eventlistener(pk_eventlistener,dr,enabled,implclassname,industrytype,localtype,name,name2,name3,name4,name5,name6,note,operindex,owner,pk_eventtype,ts) values('1001Z310000000003YRI',0,'Y','nc.bs.erm.costshare.actimpl.ErmExpCostListener','0','~','费用明细账同步',null,null,null,null,null,null,10,'2011','1001Z310000000003YRF','2014-06-04 15:25:06')
 go
 
