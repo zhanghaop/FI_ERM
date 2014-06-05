@@ -1,21 +1,6 @@
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z310000000013ADY',0,null,'pk_defdoc','bd_defdoc',null,'defitem10','er_busitem','2014-04-29 09:52:14')
 go
 
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z310000000003NYN',0,null,'pk_psndoc','bd_psndoc',null,'defitem40','er_busitem','2014-05-26 11:04:20')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000R5ML',0,null,'pk_accperiodmonth','bd_accperiodmonth',null,'zyx2','er_jkzb','2013-11-22 10:13:04')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000R5MM',0,null,'pk_accperiodmonth','bd_accperiodmonth',null,'zyx1','er_jkzb','2013-11-22 10:13:04')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000R60F',0,null,'pk_accperiodmonth','bd_accperiodmonth',null,'zyx1','er_bxzb','2013-11-22 10:23:27')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000R60G',0,null,'pk_accperiodmonth','bd_accperiodmonth',null,'zyx2','er_bxzb','2013-11-22 10:23:27')
-go
-
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001K9GS',0,null,'pk_project','bd_project',null,'defitem1','er_mtapp_detail','2013-05-24 11:17:07')
 go
 
@@ -29,12 +14,6 @@ insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtable
 go
 
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001K42K',0,null,'pk_dept','org_dept',null,'zyx10','er_bxzb','2014-04-29 09:52:14')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000CA4W',0,null,'pk_workcalendar','bd_workcalendar',null,'zyx2','er_bxzb','2014-04-29 09:52:14')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000CA50',0,null,'pk_balatype','bd_balatype',null,'zyx1','er_bxzb','2014-04-29 09:52:14')
 go
 
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000000CA5D',0,null,'pk_supplier','bd_supplier',null,'zyx3','er_bxzb','2014-04-29 09:52:14')
@@ -58,12 +37,6 @@ go
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGD2',0,null,'pk_project','bd_project',null,'defitem1','er_mtapp_bill','2013-05-24 11:17:07')
 go
 
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGGA',0,null,'pk_project','bd_project',null,'defitem1','er_busitem','2014-04-29 09:52:14')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGGC',0,null,'pk_project','bd_project',null,'zyx1','er_jkzb','2014-04-29 09:52:14')
-go
-
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGGE',0,null,'pk_project','bd_project',null,'defitem1','er_cshare_detail','2014-04-29 09:52:14')
 go
 
@@ -71,11 +44,5 @@ insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtable
 go
 
 insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGGI',0,null,'pk_project','bd_project',null,'defitem1','er_sruledata','2014-04-29 09:52:14')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGIQ',0,null,'pk_project','bd_project',null,'defitem1','er_busitem','2014-04-29 09:52:14')
-go
-
-insert into bd_ref_relation(crefid,dr,orgtype,referencedtablekey,referencedtablename,referencingkeycolumn,referencingtablecolumn,referencingtablename,ts) values('1001Z31000000001EGIS',0,null,'pk_project','bd_project',null,'zyx1','er_jkzb','2014-04-29 09:52:14')
 go
 

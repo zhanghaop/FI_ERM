@@ -90,7 +90,7 @@
 		<sysField></sysField>
 		<corpField></corpField>
 		<grpField></grpField>
-		<fixedWhere>(funcode like '2011%' or funcode like '20' )</fixedWhere>
+		<fixedWhere>(funcode like '2011%')</fixedWhere>
 	</item>
 
 	<item>
