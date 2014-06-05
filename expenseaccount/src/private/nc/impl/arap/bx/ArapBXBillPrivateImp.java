@@ -17,18 +17,13 @@ import java.util.Set;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.arap.bx.BXZbBO;
-import nc.bs.arap.bx.BxVerifyAccruedBillBO;
 import nc.bs.arap.bx.ContrastBO;
 import nc.bs.arap.bx.IBXBusItemBO;
 import nc.bs.arap.bx.VoucherRsChecker;
-import nc.bs.businessevent.EventDispatcher;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
-import nc.bs.er.settle.ErForCmpBO;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtil;
-import nc.bs.erm.event.ErmBusinessEvent;
-import nc.bs.erm.event.ErmEventType;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmBillPubUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
@@ -60,7 +55,6 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.arap.bx.util.CurrencyControlBO;
 import nc.vo.bd.psn.PsndocVO;
-import nc.vo.cmp.BusiStatus;
 import nc.vo.cmp.NetPayExecInfo;
 import nc.vo.cmp.settlement.SettlementAggVO;
 import nc.vo.cmp.settlement.SettlementBodyVO;
@@ -195,12 +189,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 
 	public List<JKBXVO> queryVOsByPrimaryKeys(String[] keys, String djdl)
 			throws BusinessException {
-//		List<JKBXHeaderVO> name = queryHeadersByPrimaryKeys(keys, djdl);
-//		List<JKBXVO> vos = retriveItems(name);
-//		return vos;
-		
 		return queryVOsByPrimaryKeysForNewNode(keys,djdl,false,null);
-
 	}
 	
 	public List<JKBXVO> queryVOsByPrimaryKeysForNewNode(String[] keys, String djdl,boolean isCommon,ERMDjCondVO djCondVO)
@@ -1613,65 +1602,65 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		
 		return vos;
 	}
-	/**
-	 * 设置单据状态
-	 * 删除结算信息
-	 * 释放所占预算
-	 * 删除费用账
-	 */
-	@Override
-	public List<JKBXVO> dealInvalid(List<JKBXVO> jkbxvo) throws BusinessException {
-		List<JKBXHeaderVO> header = new ArrayList <JKBXHeaderVO>();
-		//版本和ts校验
-		new BXZbBO().compareTs(jkbxvo.toArray(new JKBXVO[]{}));
-		
-		//1.先更新单据的单据状态
-		for (JKBXVO jkbxVO : jkbxvo) {
-			jkbxVO.getParentVO().setDjzt(BXStatusConst.DJZT_Invalid);
-			header.add(jkbxVO.getParentVO());
-		}
-		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT});
-		
-		List<String> pksList = new ArrayList<String>();
-
-		try {
-			for (JKBXVO vo : jkbxvo) {
-				// 判断CMP产品是否启用
-				boolean isCmpInstalled = BXZbBO.isCmpInstall(vo.getParentVO());
-
-				// 是否 既无收款也无付款
-				boolean notExistsPayOrRecv = (vo.getParentVO().getZfybje() == null || vo
-						.getParentVO().getZfybje().equals(new UFDouble(0)))
-						&& (vo.getParentVO().getHkybje() == null || vo.getParentVO().getHkybje().equals(new UFDouble(0)));
-
-				if (!notExistsPayOrRecv && isCmpInstalled) {
-					//2.再删除单据的结算信息
-					new ErForCmpBO().invokeCmp(vo, vo.getParentVO().getDjrq(),
-							BusiStatus.Deleted);
-				}
-
-				// 删除冲借款对照信息
-				new ContrastBO().deleteByPK_bxd(new String[] { vo.getParentVO().getPk_jkbx() });
-
-				// 删除报销核销 预提明细
-				new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
-				
-				
-				pksList.add(vo.getParentVO().getPk_jkbx());
-				
-			}
-		} catch (SQLException e) {
-			ExceptionHandler.handleException(e);
-		}
-		
-		List<JKBXVO> vos = retriveItems(header);
-		
-		//调用业务事件插件
-		EventDispatcher.fireEvent(new ErmBusinessEvent(BXConstans.ERM_MDID_BX, ErmEventType.TYPE_InValid_AFTER, vos.toArray(new JKBXVO[]{})));
-		
-
-		return vos;
-	}
+	
+//	/**
+//	 * 设置单据状态
+//	 * 删除结算信息
+//	 * 释放所占预算
+//	 * 删除费用账
+//	 */
+//	@Override
+//	public JKBXVO invalidBill(JKBXVO jkbxvos) throws BusinessException {
+//		List<JKBXHeaderVO> header = new ArrayList <JKBXHeaderVO>();
+//		//版本和ts校验
+//		new BXZbBO().compareTs(jkbxvo.toArray(new JKBXVO[]{}));
+//		
+//		//1.先更新单据的单据状态
+//		for (JKBXVO jkbxVO : jkbxvo) {
+//			jkbxVO.getParentVO().setDjzt(BXStatusConst.DJZT_Invalid);
+//			header.add(jkbxVO.getParentVO());
+//		}
+//		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT});
+//		
+//		List<String> pksList = new ArrayList<String>();
+//
+//		try {
+//			for (JKBXVO vo : jkbxvo) {
+//				// 判断CMP产品是否启用
+//				boolean isCmpInstalled = BXZbBO.isCmpInstall(vo.getParentVO());
+//
+//				// 是否 既无收款也无付款
+//				boolean notExistsPayOrRecv = (vo.getParentVO().getZfybje() == null || vo
+//						.getParentVO().getZfybje().equals(new UFDouble(0)))
+//						&& (vo.getParentVO().getHkybje() == null || vo.getParentVO().getHkybje().equals(new UFDouble(0)));
+//
+//				if (!notExistsPayOrRecv && isCmpInstalled) {
+//					//2.再删除单据的结算信息
+//					new ErForCmpBO().invokeCmp(vo, vo.getParentVO().getDjrq(),
+//							BusiStatus.Deleted);
+//				}
+//
+//				// 删除冲借款对照信息
+//				new ContrastBO().deleteByPK_bxd(new String[] { vo.getParentVO().getPk_jkbx() });
+//
+//				// 删除报销核销 预提明细
+//				new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
+//				
+//				
+//				pksList.add(vo.getParentVO().getPk_jkbx());
+//				
+//			}
+//		} catch (SQLException e) {
+//			ExceptionHandler.handleException(e);
+//		}
+//		
+//		List<JKBXVO> vos = retriveItems(header);
+//		
+//		//调用业务事件插件
+//		EventDispatcher.fireEvent(new ErmBusinessEvent(BXConstans.ERM_MDID_BX, ErmEventType.TYPE_InValid_AFTER, vos.toArray(new JKBXVO[]{})));
+//		
+//		return vos;
+//	}
 	/**
 	 * 结算红冲
 	 */

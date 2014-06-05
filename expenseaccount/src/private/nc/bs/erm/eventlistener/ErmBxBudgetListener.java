@@ -91,7 +91,8 @@ public class ErmBxBudgetListener implements IBusinessListener {
 				}else{
 					msg = service.budgetExe4Update(budgetBxVos, oldVos);
 				}
-			}else if(ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)){// É¾³ý²Ù×÷
+			}else if(ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)
+					|| ErmEventType.TYPE_INVALID_AFTER.equalsIgnoreCase(eventType)){// É¾³ý²Ù×÷
 				msg = service.budgetExe4Delete(budgetBxVos);
 			}else if(ErmEventType.TYPE_APPROVE_AFTER.equalsIgnoreCase(eventType) ){// ÉóºËºó²Ù×÷
 				msg = service.budgetExe4Approve(budgetBxVos);

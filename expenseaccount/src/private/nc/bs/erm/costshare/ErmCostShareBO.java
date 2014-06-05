@@ -315,10 +315,40 @@ public class ErmCostShareBO {
 		}
 		BusiLogUtil.insertSmartBusiLog(IErmCostShareConst.CS_MD_DELETE_OPER,vos, null);
 	}
+	
+	/**
+	 * 报销单作废后，对应结转单作废
+	 * @param vo
+	 * @throws BusinessException
+	 * @throws DataValidateException
+	 * @throws ValidationException
+	 */
+	public void doInvalidVOs(AggCostShareVO vo) throws BusinessException, DataValidateException, ValidationException {
+		// 加锁
+		deletelockOperate(new AggCostShareVO[]{vo});
+		// 版本校验
+		BDVersionValidationUtil.validateVersion(new AggCostShareVO[]{vo});
+		
+		// 补充事前分摊拉单执行记录
+		fillUpMapf(new AggCostShareVO[]{vo});
+		
+		// 作废前事件处理
+		fireBeforeInvalidEvent(new AggCostShareVO[]{vo});
+		// 更新单据状态
+		((CostShareVO)vo.getParentVO()).setBillstatus(BXStatusConst.DJZT_Invalid);
+		
+		CShareDetailVO[] cr = (CShareDetailVO[]) vo.getChildrenVO();
+		for (int i = 0; i < cr.length; i++) {
+			cr[i].setBillstatus(BXStatusConst.DJZT_Invalid);
+			cr[i].setStatus(VOStatus.UPDATED);
+		}
+		
+		getDAO().updateVO(vo);//更新
+		// 作废后事件处理
+		fireAfterInvalidEvent(new AggCostShareVO[]{vo});
+	}
 
-
-	public MessageVO[] approveVOs(AggCostShareVO[] vos,UFDate buDate)
-	throws BusinessException {
+	public MessageVO[] approveVOs(AggCostShareVO[] vos,UFDate buDate) throws BusinessException {
 		if (vos == null || vos.length == 0) {
 			return null;
 		}
@@ -779,6 +809,20 @@ public class ErmCostShareBO {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(
 				IErmCostShareConst.COSTSHARE_MDID,
 				ErmEventType.TYPE_DELETE_AFTER, vos));
+	}
+	
+	protected void fireBeforeInvalidEvent(AggCostShareVO... vos)
+			throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(
+				IErmCostShareConst.COSTSHARE_MDID,
+				ErmEventType.TYPE_INVALID_BEFORE, vos));
+	}
+
+	protected void fireAfterInvalidEvent(AggCostShareVO... vos)
+			throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(
+				IErmCostShareConst.COSTSHARE_MDID,
+				ErmEventType.TYPE_INVALID_AFTER, vos));
 	}
 
 	protected void fireBeforeApproveEvent(AggCostShareVO... vos)

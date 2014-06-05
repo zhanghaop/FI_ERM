@@ -44,7 +44,7 @@ public class ErmWriteBackMAListener implements IBusinessListener {
 					(!ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)) && 
 					(!ErmEventType.TYPE_UNSIGN_BEFORE.equalsIgnoreCase(eventType)) && 
 					(!ErmEventType.TYPE_SIGN_BEFORE.equalsIgnoreCase(eventType))   &&
-					(!ErmEventType.TYPE_InValid_AFTER.equalsIgnoreCase(eventType)) 
+					(!ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)) 
 					) {
 				// 新增后,修改前,删除前,生效前，取消生效前,作废后
 				return;

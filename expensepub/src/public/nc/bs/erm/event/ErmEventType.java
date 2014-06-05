@@ -71,13 +71,16 @@ public class ErmEventType {
 	 
 	 public static final String TYPE_MTAPPWB_AFTER = "ERM1041";//冲费用申请单生效(write back)
 	 
+	 //ehp3
+	 public static final String TYPE_INVALID_BEFORE = "ERM1042"; //作废前
+	 public static final String TYPE_INVALID_AFTER = "ERM1043"; //作废后
+	 
 	 
 	 public static final String TYPE_REDBACK_BEFORE = "ERM2001"; //红冲前
 	 public static final String TYPE_REDBACK_AFTER = "ERM2002"; //红冲后
 	 
 	 public static final String TYPE_UNREDBACK_BEFORE = "ERM2003"; //删除红冲前
 	 public static final String TYPE_UNREDBACK_AFTER = "ERM2004"; //删除红冲后
-	 //ehp3
-	 public static final String TYPE_InValid_AFTER = "ERM2005"; //作废后
+	
 
 }

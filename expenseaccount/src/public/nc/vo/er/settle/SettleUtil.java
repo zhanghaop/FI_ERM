@@ -24,15 +24,18 @@ import nc.vo.pub.pf.IPfRetCheckInfo;
 
 public class SettleUtil {
 
-	public static boolean isAutoSign(DjLXVO typeVOs){
+	public static boolean isAutoSign(DjLXVO typeVO){
+		if(typeVO == null){
+			return false;
+		}
 		boolean isAuto=true;
 		//判断CMP产品是否启用
-		boolean iscmpused = BXUtil.isProductInstalled(typeVOs.getPk_group(), BXConstans.TM_CMP_FUNCODE);
+		boolean iscmpused = BXUtil.isProductInstalled(typeVO.getPk_group(), BXConstans.TM_CMP_FUNCODE);
 		
 		if(!iscmpused)
 			return true;
-		if(typeVOs!=null){
-			isAuto=!(typeVOs.getIsqr().booleanValue());
+		if(typeVO!=null){
+			isAuto=!(typeVO.getIsqr().booleanValue());
 		}
 		return isAuto;
 	}
@@ -73,12 +76,6 @@ public class SettleUtil {
 	 * @return
 	 */
 	public static boolean isAutoJS(JKBXHeaderVO head) {
-		// 判断CMP产品是否启用
-		boolean iscmpused = BXUtil.isProductInstalled(head.getPk_group(), BXConstans.TM_CMP_FUNCODE);
-		if (!iscmpused) {
-			return false;
-		}
-
 		boolean isAuto = false;
 		try {
 			DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + head.getPk_group() + "' and djlxbm = '" + head.getDjlxbm() + "'");
@@ -285,20 +282,24 @@ public class SettleUtil {
 
 
 	public static boolean hasSettleInfo(JKBXHeaderVO head, String currentDjdl) {
-		 if(head.isInit())
-			 return false;
+		if (head == null) {
+			return false;
+		}
 
-		 if(head.getQcbz().booleanValue())
-			 return false;
+		if (head.isInit())
+			return false;
 
-		 if(head==null || head.getDjdl()==null)
-			 return true;
+		if (head.getQcbz().booleanValue())
+			return false;
 
-		 if(head.getDjdl().equals(BXConstans.JK_DJDL) && head.getIscheck().booleanValue()){
-		    	return false;
-		 }
+		if (head == null || head.getDjdl() == null)
+			return true;
 
-         return true;
+		if (head.getDjdl().equals(BXConstans.JK_DJDL) && head.getIscheck().booleanValue()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public static BusiStatus getBillStatus(JKBXHeaderVO parentVO, boolean isaudit) {

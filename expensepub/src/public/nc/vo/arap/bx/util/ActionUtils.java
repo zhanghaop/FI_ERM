@@ -41,7 +41,7 @@ public class ActionUtils {
 				break;
 			}
 			case 4:{
-				strMessage = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955");//单据状态为作废，不可以操作
+				strMessage = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955");/*@res 单据已作废*/
 				break;
 			}
 			default: {
@@ -136,6 +136,8 @@ public class ActionUtils {
     public static final int CONFIRM = 13;//确认
     public static final int UNCONFIRM = 14;//反确认
     
+    public static final int INVALID = 15;//作废
+    
     
 	public static String getOperationName(int oper){
 		String name = "";
@@ -184,6 +186,9 @@ public class ActionUtils {
         	break;
         case UNCONFIRM:
         	name=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0008")/*@res "取消确认"*/;
+        	break;
+        case INVALID:
+        	name= "作废";
         	break;
 		default:
 			break;

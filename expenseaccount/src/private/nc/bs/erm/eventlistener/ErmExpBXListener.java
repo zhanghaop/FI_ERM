@@ -90,7 +90,7 @@ public class ErmExpBXListener implements IBusinessListener {
 				
 			}
 		}else if(ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)
-				|| ErmEventType.TYPE_InValid_AFTER.equals(eventType)){
+				|| ErmEventType.TYPE_INVALID_AFTER.equals(eventType)){
 			List<String> pksList = new ArrayList<String>();
 			for (int j = 0; j < vos.length; j++) {
 				pksList.add(vos[j].getParentVO().getPk_jkbx());
@@ -100,8 +100,7 @@ public class ErmExpBXListener implements IBusinessListener {
 			queryBySrcID(pksList.toArray(new String[0]));
 			
 			//É¾³ý
-			NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).
-			deleteVOs(accountVOs);
+			NCLocator.getInstance().lookup(IErmExpenseaccountManageService.class).deleteVOs(accountVOs);
 		}else if( ErmEventType.TYPE_SIGN_AFTER.equalsIgnoreCase(eventType)){
 			//²éÑ¯
 			String[] srcIDS = new String[vos.length];

@@ -103,7 +103,7 @@ public class WriteBackPrivateImp implements IWriteBackPrivate {
 					positiveOperationForJKBX(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
 					positiveOperationForContrast(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
 				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
-						 || ErmEventType.TYPE_InValid_AFTER.equalsIgnoreCase(eventType)) {
+						 || ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)) {
 					// 此处只处理预占数，可以忽略排序 2013-04-16
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
 					negativeOperationForJKBX(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
@@ -130,7 +130,7 @@ public class WriteBackPrivateImp implements IWriteBackPrivate {
 					positiveOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 					positiveOperationForJKBX(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
-						||ErmEventType.TYPE_InValid_AFTER.equalsIgnoreCase(eventType)) {
+						||ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)) {
 					negativeOperationForJKBX(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 				} 
@@ -402,7 +402,8 @@ public class WriteBackPrivateImp implements IWriteBackPrivate {
 					positiveOperationForContrast(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
 					positiveOperationForCS(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, aggvo);
 				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)||
-						ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)) {
+						ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)
+						|| ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)) {
 					// 此处只处理预占数
 					negativeOperationForCS(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, aggvo);
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_pre, mtBusiVoList, jkbxvo);
@@ -430,7 +431,8 @@ public class WriteBackPrivateImp implements IWriteBackPrivate {
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo.getBxoldvo());
 					positiveOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 					positiveOperationForCS(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, aggvo);
-				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)) {
+				}else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
+						|| ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)) {
 					negativeOperationForCS(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, aggvo);
 					negativeOperationForContrast(IMtappCtrlBusiVO.DataType_exe, mtBusiVoList, jkbxvo);
 				} 

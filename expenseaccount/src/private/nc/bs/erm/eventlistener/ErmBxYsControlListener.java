@@ -36,7 +36,8 @@ public class ErmBxYsControlListener implements IBusinessListener {
 			return ;
 		}else if(ErmEventType.TYPE_INSERT_AFTER.equalsIgnoreCase(eventType)){//保存后
 			actionCode = BXConstans.ERM_NTB_SAVE_KEY;// 默认为保存动作
-		}else if(ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)){// 删除操作
+		}else if(ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)){// 删除操作/作废操作
 			actionCode = BXConstans.ERM_NTB_SAVE_KEY;
 			isContray = true;
 		}else if(ErmEventType.TYPE_SIGN_BEFORE.equalsIgnoreCase(eventType) ){// 生效前操作

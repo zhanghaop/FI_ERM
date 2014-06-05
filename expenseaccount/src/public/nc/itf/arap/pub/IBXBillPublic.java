@@ -46,6 +46,22 @@ public interface IBXBillPublic {
 	 */
 	public JKBXVO[] update(JKBXVO[] vos)throws BusinessException;
 	
+	/**
+	 * 借款报销单作废
+	 * <br><b>63EHP3增加</b>
+	 * @param jkbxvo
+	 * @return
+	 * @throws BusinessException
+	 */
+	public JKBXVO invalidBill(JKBXVO jkbxvo) throws BusinessException;
+	
+	/**
+	 * 更新表头字段
+	 * @param header
+	 * @param fields
+	 * @return
+	 * @throws BusinessException
+	 */
 	public JKBXHeaderVO updateHeader(JKBXHeaderVO header,String[] fields)throws BusinessException;
 	
 	/**
@@ -63,29 +79,8 @@ public interface IBXBillPublic {
 	 */
 	public void updateDataAfterImport(String[] pk_tradetype)throws BusinessException;
 	
-//	/**
-//	 * 为项目预算提供的查询服务接口
-//	 * 查询生效状态的报销单(业务场景：先报销，后手动执行项目预算)
-//	 * @param pk_group 所属集团
-//	 * @param pk_project 项目主键
-//	 * @param pk_billtypes 交易类型主键数组
-//	 * @return 项目预算执行VO[]
-//	 * @throws BusinessException
-//	 */
-//	public IBudgetExecVO[] queryBxBill4ProjBudget(String pk_group, String pk_project, String[] pk_billtypes) throws BusinessException;
-//	
-//	/**
-//	 * 为项目预算提供的查询服务接口
-//	 * <p>按交易类型编码查询生效状态的报销单
-//	 * <p>(业务场景：先报销，后手动执行项目预算)
-//	 * @param pk_group 所属集团
-//	 * @param pk_project 项目主键
-//	 * @param djlxbms 交易类型编码s
-////	 * @return 项目预算执行VO[]
-////	 * @throws BusinessException
-////	 */
-////	public IBudgetExecVO[] queryBxBill4ProjBudget2(String pk_group,String pk_project,String[] djlxbms) throws BusinessException;
-//	
+	
+	
 	/**
 	 * 获取指定项目所有审批通过的报销单的报销总金额之和<br>
 	 * 场景：项目决算单获取成本时，要获取该项目所有审批通过的报销单的报销总金额之和<br>
@@ -132,4 +127,5 @@ public interface IBXBillPublic {
 	 * @return
 	 */
 	public IAccessableOrgsBusiVO[] queryMaYsBusiVOsByDetailPks(String[] details, String actionCode) throws BusinessException;
+	
 }

@@ -51,7 +51,8 @@ public class ErmCostshareYsControlListener implements IBusinessListener {
 			service.ysControlUpdate(vos, oldvos);
 			return;
 		} else if (ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
-				|| ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)) {
+				|| ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)) {
 			if(isSrcType_Self){
 				return ;
 			}

@@ -448,15 +448,13 @@ public interface IBXBillPrivate {
 	 */
 	public UFDate queryOrgStartDate(String pk_org) throws BusinessException, InvalidAccperiodExcetion;
 	
-	public List<JKBXVO> effectToFip(List<JKBXVO> jkbxvo) throws BusinessException;
-	
 	/**
-	 * 处理借款报销单作废
+	 * 生成凭证
 	 * @param jkbxvo
 	 * @return
 	 * @throws BusinessException
 	 */
-	public List<JKBXVO> dealInvalid(List<JKBXVO> jkbxvo) throws BusinessException;
+	public List<JKBXVO> effectToFip(List<JKBXVO> jkbxvo) throws BusinessException;
 	
 	/**
 	 * 处理结算红冲业务
@@ -466,5 +464,4 @@ public interface IBXBillPrivate {
 	 * @throws BusinessException
 	 */
 	public JKBXVO[] settleRedHandleSaveAndSign(NetPayExecInfo payInfo, Map  map) throws BusinessException;
-
 }

@@ -376,6 +376,22 @@ public class VOChecker {
 	}
 	
 	/**
+	 * 作废单据校验
+	 * 
+	 * @param vo
+	 * @throws BusinessException
+	 */
+	public void checkInvalid(JKBXVO vo) throws BusinessException {
+		// 作废单据时，状态控制
+		String msgs = VOStatusChecker.checkBillStatus(vo.getParentVO().getDjzt(), ActionUtils.INVALID, new int[] { BXStatusConst.DJZT_Saved });
+		if (msgs != null && msgs.trim().length() != 0) {
+			throw new DataValidateException(msgs);
+		}
+		
+		
+	}
+	
+	/**
 	 * 报销核销预提单时，报销金额必须等于总核销预提金额
 	 * 
 	 * @param bxvo

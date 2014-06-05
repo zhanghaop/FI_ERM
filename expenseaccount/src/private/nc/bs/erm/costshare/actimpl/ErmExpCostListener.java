@@ -104,7 +104,8 @@ public class ErmExpCostListener implements IBusinessListener {
 					}
 				}
 			}
-		}else if(ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)){
+		}else if(ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_INVALID_AFTER.equalsIgnoreCase(eventType)){
 			//更新完，如果是事前需要再冲销报销单
 			for (int i = 0; i < vos.length; i++) {
 				//查询旧费用账
@@ -122,8 +123,7 @@ public class ErmExpCostListener implements IBusinessListener {
 					ExpenseAccountVO[] bxoldaccountVOs = NCLocator.getInstance().
 					lookup(IErmExpenseaccountQueryService.class).queryBySrcID(new String[]{ ((CostShareVO)vos[i].getParentVO()).getSrc_id()});
 					//事前报销的冲销处理
-					NCLocator.getInstance().lookup(IErmExpenseaccountWriteoffService.class).
-					unWriteoffVOs(bxoldaccountVOs);
+					NCLocator.getInstance().lookup(IErmExpenseaccountWriteoffService.class).unWriteoffVOs(bxoldaccountVOs);
 				}
 			}
 			

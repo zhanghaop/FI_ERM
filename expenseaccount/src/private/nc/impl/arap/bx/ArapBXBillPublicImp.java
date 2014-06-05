@@ -303,4 +303,9 @@ public class ArapBXBillPublicImp implements IBXBillPublic {
 		
 		return fyControlList;
 	}
+
+	@Override
+	public JKBXVO invalidBill(JKBXVO jkbxvo) throws BusinessException {
+		return bxZbBO.invalidBill(jkbxvo);
+	}
 }
