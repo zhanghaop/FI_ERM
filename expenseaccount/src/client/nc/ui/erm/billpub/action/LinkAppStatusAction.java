@@ -63,8 +63,7 @@ public class LinkAppStatusAction extends NCAction{
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if (selectedData == null
-				|| selectedData.getParentVO().getDjzt() == BXStatusConst.DJZT_Invalid) {
+		if (selectedData == null) {
 			return false;
 		}
 		return true;

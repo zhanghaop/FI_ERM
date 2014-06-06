@@ -387,8 +387,8 @@ public class VOChecker {
 		if (msgs != null && msgs.trim().length() != 0) {
 			throw new DataValidateException(msgs);
 		}
-		
-		
+		//πÿ’ –£—È
+		VOChecker.checkErmIsCloseAcc(vo);
 	}
 	
 	/**
