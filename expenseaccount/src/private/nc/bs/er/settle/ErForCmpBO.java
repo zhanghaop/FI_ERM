@@ -74,12 +74,19 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			throws BusinessException {
 		// 更新报销单据支付状态
 		List<JKBXHeaderVO> voList = new ArrayList<JKBXHeaderVO>();
-		List<JKBXHeaderVO> vos = bo.queryHeadersByPrimaryKeys(
-				new String[] { busiInfo.getPk_bill() }, getDJDL(busiInfo));
+		List<JKBXHeaderVO> vos = bo.queryHeadersByPrimaryKeys(new String[] { busiInfo.getPk_bill() }, getDJDL(busiInfo));
 		for (JKBXHeaderVO vo : vos) {
 			vo.setPayflag(status.getStatus());
+			if(status.getStatus() == BXStatusConst.PAYFLAG_PayFinish){
+				vo.setPayman(busiInfo.getOperator());
+				vo.setPaydate(busiInfo.getOperatorDate());
+			}else{
+				vo.setPayman(null);
+				vo.setPaydate(null);
+			}
 			voList.add(vo);
 		}
+		
 		//委托办理支付成功时生成凭证
 		if (voList.get(0).getPayflag().intValue() == BXStatusConst.PAYFLAG_PayFinish) {
 			String param = SysinitAccessor.getInstance().getParaString(
@@ -90,9 +97,10 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 				forwardToFip(BXZbBO.MESSAGE_SETTLE, jkbxvo);// 生成凭证的正向操作
 			}
 		}
+		
 		// 更新支付状态
 		bo.updateHeaders(voList.toArray(new JKBXHeaderVO[0]), new String[] {
-				JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.VOUCHERTAG });
+				JKBXHeaderVO.PAYFLAG,JKBXHeaderVO.PAYMAN, JKBXHeaderVO.PAYDATE, JKBXHeaderVO.VOUCHERTAG });
 	}
 
 	// 承兑汇票退票,不处理

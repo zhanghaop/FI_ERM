@@ -645,8 +645,7 @@ public class BXZbBO {
 			// 没有结算信息的单据直接反生效
 			unSettle(new JKBXVO[] { bxvo });
 			if((headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
-					||headerVO.isAdjustBxd()
-					){
+					||headerVO.isAdjustBxd()){
 				// 删除凭证
 				effectToFip(bxvo, MESSAGE_UNSETTLE);
 			}
@@ -673,6 +672,9 @@ public class BXZbBO {
 		headerVO.setJsr(null);
 		headerVO.setJsrq(null);
 		headerVO.shrq_show = null;
+		headerVO.setPayflag(BXStatusConst.PAYFLAG_None);
+		headerVO.setPayman(null);
+		headerVO.setPaydate(null);
 		headerVO.setVouchertag(null);
 		
 		try {
