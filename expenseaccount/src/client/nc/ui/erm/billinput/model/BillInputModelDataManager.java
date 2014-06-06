@@ -2,6 +2,7 @@ package nc.ui.erm.billinput.model;
 
 import java.util.List;
 
+import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -13,12 +14,11 @@ import nc.ui.uif2.components.pagination.IPaginationQueryService;
 import nc.ui.uif2.components.pagination.PaginationModel;
 import nc.ui.uif2.model.ModelDataDescriptor;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
 
-public class BillInputModelDataManager extends ERMModelDataManager
-{
-    private static final long serialVersionUID = 1L;
+public class BillInputModelDataManager extends ERMModelDataManager{
 
     @Override
     public Object[] queryData(ModelDataDescriptor modelDataDescriptor) {
@@ -28,6 +28,22 @@ public class BillInputModelDataManager extends ERMModelDataManager
         }else{
             sqlWhere = " " + sqlWhere;
         }
+        
+        //调整单不存在业务行，数据权限控制时，会查不到数据，这里对表体进行过滤掉
+        DjLXVO djlxvo = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+        if(djlxvo != null && djlxvo.getBxtype() != null && djlxvo.getBxtype() == ErmDjlxConst.BXTYPE_ADJUST){
+        	String[] sqls = sqlWhere.split("( and )|( AND )");
+        	StringBuffer sqlBuf = new StringBuffer(sqls[0]);
+        	
+        	for(int i = 1; i < sqls.length; i ++){
+        		if(sqls[i].indexOf("er_busitem") < 0 && sqls[i].indexOf("ER_BUSITEM") < 0){
+        			sqlBuf.append(" and " + sqls[i]);
+        		}
+        	}
+        	
+        	sqlWhere = sqlBuf.toString();
+        }
+        
         sqlWhere += " and QCBZ='N' and DR ='0'";
         sqlWhere += " and djlxbm = '"+((ErmBillBillManageModel)getModel()).getCurrentBillTypeCode()+"'";
         String pks[]= null;

@@ -2,6 +2,7 @@ package nc.ui.erm.accruedexpense.importable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class AccImportablePanel extends ErmImportablePanel {
 		
 		List<InputItem> resultInputItemList = new ArrayList<InputItem>();
 		List<InputItem> defaultInputItemList = InputItemCreator.getInputItems(getEditorBillData(), false);
-		Map<String, InputItem> inputItemMap = new HashMap<String, InputItem>();
+		Map<String, InputItem> inputItemMap = new LinkedHashMap<String, InputItem>();
 		for (InputItem item : defaultInputItemList) {
 			if (item.getPos() == IBillItem.BODY) {
 				inputItemMap.put(item.getTabCode() + "_" + item.getItemKey(), item);

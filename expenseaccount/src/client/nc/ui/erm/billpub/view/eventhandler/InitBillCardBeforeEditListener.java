@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.ui.bd.ref.model.FreeCustRefModel;
+import nc.ui.bd.ref.model.PsnbankaccDefaultRefModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.view.ERMBillForm;
 import nc.ui.org.ref.DeptDefaultRefModel;
@@ -85,16 +86,19 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 	}
 	
 	private void beforeEditSkyhzh() {
-
 		// 收款人
 		String receiver = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
 		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		// 收款银行参照
 		UIRefPane refpane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
 		StringBuffer wherepart = new StringBuffer();
-		wherepart.append(" pk_psndoc='" +receiver+ "'");
-		wherepart.append(" and pk_currtype='" +pk_currtype+ "'");
-		HeadFieldHandleUtil.setWherePart2RefModel(refpane, getHeadItemStrValue(JKBXHeaderVO.DWBM), wherepart.toString());
+		wherepart.append(" pk_psndoc='" + receiver + "'");
+		wherepart.append(" and pk_currtype='" + pk_currtype + "'");
+		
+		// 创维项目测出，收款银行账户仅根据人员进行过滤即可
+		PsnbankaccDefaultRefModel psnbankModel = (PsnbankaccDefaultRefModel) refpane.getRefModel();
+		psnbankModel.setWherePart(wherepart.toString());
+		psnbankModel.setPk_psndoc(receiver);
 	}
 
 	/**

@@ -487,16 +487,19 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	 * 客商银行账号设置默认值
 	 */
 	private void setDefaultCustaccountByCustomer() {
-		// 通过客户过滤对应客商的银行账号
-		String cust = getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
-		ICustomerPubService service = (ICustomerPubService) NCLocator.getInstance().lookup(
-				ICustomerPubService.class.getName());
-		try {
-			String custaccount = service.getDefaultBankAcc(cust);
-			setHeadValue(JKBXHeaderVO.CUSTACCOUNT, custaccount);
-		} catch (Exception ex) {
-			setHeadValue(JKBXHeaderVO.CUSTACCOUNT, "");
-			Log.getInstance(this.getClass()).error(ex);
+		Integer paytarget = (Integer)getHeadValue(JKBXHeaderVO.PAYTARGET);
+		if(!isBxBill() || (paytarget != null && paytarget.equals(2))){
+			// 通过客户过滤对应客商的银行账号
+			String cust = getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
+			ICustomerPubService service = (ICustomerPubService) NCLocator.getInstance().lookup(
+					ICustomerPubService.class.getName());
+			try {
+				String custaccount = service.getDefaultBankAcc(cust);
+				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, custaccount);
+			} catch (Exception ex) {
+				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, "");
+				Log.getInstance(this.getClass()).error(ex);
+			}
 		}
 	}
 	
@@ -727,18 +730,20 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	}
 
 	private void setDefaultCustaccountBySupplier() {
-		// 通过供应商过滤对应客商的银行账号
-		String supplier = getHeadItemStrValue(JKBXHeaderVO.HBBM);
-		ISupplierPubService service = (ISupplierPubService) NCLocator.getInstance().lookup(
-				ISupplierPubService.class.getName());
-		try {
-			String custaccount = service.getDefaultBankAcc(supplier);
-			setHeadValue(JKBXHeaderVO.CUSTACCOUNT, custaccount);
-		} catch (Exception ex) {
-			setHeadValue(JKBXHeaderVO.CUSTACCOUNT, "");
-			Log.getInstance(this.getClass()).error(ex);
+		Integer paytarget = (Integer)getHeadValue(JKBXHeaderVO.PAYTARGET);
+		if(!isBxBill() || (paytarget != null && paytarget.equals(1))){
+			// 通过供应商过滤对应客商的银行账号
+			String supplier = getHeadItemStrValue(JKBXHeaderVO.HBBM);
+			ISupplierPubService service = (ISupplierPubService) NCLocator.getInstance().lookup(
+					ISupplierPubService.class.getName());
+			try {
+				String custaccount = service.getDefaultBankAcc(supplier);
+				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, custaccount);
+			} catch (Exception ex) {
+				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, "");
+				Log.getInstance(this.getClass()).error(ex);
+			}
 		}
-		
 	}
 
 	/**
@@ -1526,5 +1531,9 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			editor.getBillOrgPanel().getRefPane().setPK(oldpk_org_v);
 			return false;
 		}
+	}
+	
+	private boolean isBxBill() {
+		return BXConstans.BX_DJDL.equals(getHeadItemStrValue(JKBXHeaderVO.DJDL));
 	}
 }

@@ -17,6 +17,7 @@ import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.model.CashAccountRefModel;
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.ui.bd.ref.model.FreeCustRefModel;
+import nc.ui.bd.ref.model.PsnbankaccDefaultRefModel;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.remote.UserBankAccVoCall;
@@ -290,7 +291,7 @@ public class HeadFieldHandleUtil {
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
 		String wherepart = " pk_psndoc='" + filterStr + "'";
 		wherepart += " and pk_currtype='" + pk_currtype + "'";
-		setWherePart2RefModel(refPane, getHeadItemStrValue(JKBXHeaderVO.DWBM), wherepart);
+		setWherePart2RefModel(refPane, null, wherepart);
 	}
 	
 	/**
@@ -301,12 +302,16 @@ public class HeadFieldHandleUtil {
 		String receiver = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
 		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		// 收款银行参照
-
 		UIRefPane refpane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
 
 		String wherepart = " pk_psndoc='" + receiver + "'";
 		wherepart += " and pk_currtype='" + pk_currtype + "'";
-		HeadFieldHandleUtil.setWherePart2RefModel(refpane, getHeadItemStrValue(JKBXHeaderVO.DWBM), wherepart);
+//		HeadFieldHandleUtil.setWherePart2RefModel(refpane, pk_org, wherepart);
+		//创维项目测出，收款银行账户仅根据人员进行过滤即可
+		PsnbankaccDefaultRefModel psnbankModel = (PsnbankaccDefaultRefModel)refpane.getRefModel();
+		psnbankModel.setWherePart(wherepart);
+		psnbankModel.setPk_psndoc(receiver);
+		
 		// 收款人发生变更,清空个人银行帐号
 		String pk_psndoc = (String) refpane.getRefValue("pk_psndoc");
 		if (pk_psndoc != null && !pk_psndoc.equals(receiver)) {

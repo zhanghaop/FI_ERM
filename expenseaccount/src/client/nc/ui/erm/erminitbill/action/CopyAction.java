@@ -24,6 +24,7 @@ import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
+import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.util.ErVOUtils;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
@@ -83,11 +84,22 @@ public class CopyAction extends NCAction{
 			copyJkbxVO.setChildrenVO(null);
 		}
 		
+		//表体pk清空
 		if(copyJkbxVO.getBxBusItemVOS()!=null){
 			for(BXBusItemVO itm:copyJkbxVO.getBxBusItemVOS()){
 				itm.setPk_jkbx(null);
+				itm.setPk_busitem(null);
 			}
 		}
+		
+		if (copyJkbxVO.getcShareDetailVo() != null) {
+			for (CShareDetailVO itm : copyJkbxVO.getcShareDetailVo()) {
+				itm.setPk_jkbx(null);
+				itm.setPk_cshare_detail(null);
+				itm.setPk_costshare(null);
+			}
+		}
+		
 		//清空核销明细
 		copyJkbxVO.setAccruedVerifyVO(null);
 		

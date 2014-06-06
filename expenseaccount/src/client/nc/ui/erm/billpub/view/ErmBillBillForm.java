@@ -101,6 +101,7 @@ import nc.vo.erm.util.VOUtils;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
+import nc.vo.pub.ExtendedAggregatedValueObject;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.bill.BillTabVO;
@@ -158,6 +159,9 @@ public class ErmBillBillForm extends ERMBillForm {
 	private MatterAppConvResVO resVO = null;
 
 	private NCAction rapidShareAction;
+	
+	//Excel导入时VO
+	private ExtendedAggregatedValueObject eavo;
 	
 	/**
 	 * 是否第一次卡片显示
@@ -1002,6 +1006,8 @@ public class ErmBillBillForm extends ERMBillForm {
 		}else{
 			this.getBillCardPanel().getBillData().clearViewData();
 		}
+		
+		helper.initCostPageShow(getModel().getUiState());
 	}
 	@Override
 	public void setValue(Object object) {
@@ -1181,7 +1187,7 @@ public class ErmBillBillForm extends ERMBillForm {
 			if(list != null){
 				billModel.setBodyDataVO(list.toArray(new BXBusItemVO[0]));
 				billModel.loadLoadRelationItemValue();
-				billModel.execLoadFormula();
+				billModel.execLoadFormula();//执行显示公式
 			}
 		}
 	}
@@ -1377,7 +1383,7 @@ public class ErmBillBillForm extends ERMBillForm {
 		helper.prepareContrast(value);
 		helper.prepareBxVerifyAccrued(value);
 
-		clearCopyBodyRowPk(value);
+//		clearCopyBodyRowPk(value);
 
 		// 设置冲借款冲销的借款业单
 		try {
@@ -1402,8 +1408,8 @@ public class ErmBillBillForm extends ERMBillForm {
 	}
 
 	//清空表体行的pk字段
-    private void clearCopyBodyRowPk(JKBXVO value)
-    {
+    @SuppressWarnings("unused")
+	private void clearCopyBodyRowPk(JKBXVO value){
         BXBusItemVO[] childrenVO = value.getChildrenVO();
 		if(childrenVO != null){
 			for (BXBusItemVO bxBusItemVO : childrenVO) {
@@ -1945,6 +1951,12 @@ public class ErmBillBillForm extends ERMBillForm {
 	public void setVerifyAccrued(boolean isVerifyAccrued) {
 		this.isVerifyAccrued = isVerifyAccrued;
 	}
-	
-	
+
+	public ExtendedAggregatedValueObject getEavo() {
+		return eavo;
+	}
+
+	public void setEavo(ExtendedAggregatedValueObject eavo) {
+		this.eavo = eavo;
+	}
 }

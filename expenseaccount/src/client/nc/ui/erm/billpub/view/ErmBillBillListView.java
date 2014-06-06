@@ -304,7 +304,7 @@ public class ErmBillBillListView extends ERMBillListView {
 	protected void handleRowInserted(AppEvent event) {
 		super.handleRowInserted(event);
 		//同步条码输入的数据
-		synchronizeDataFromModel();
+//		synchronizeDataFromModel();//创维修改，列表排序后，新增保存的单据切换为了最后一行的数据，出现问题
 	}
 
 	@Override
