@@ -74,7 +74,7 @@ public class ErmBillPubUtil {
 		parent.setSxbz(BXStatusConst.SXBZ_NO);
 		parent.setSpzt(IPfRetCheckInfo.COMMIT);
 		parent.setPayflag(BXStatusConst.PAYFLAG_None);
-		parent.setRed_status(BXStatusConst.RED_STATUS_RED);
+		parent.setRed_status(Integer.valueOf(1));
 		parent.setTs(null);
 		for (int i = 0; i < children.length; i++) {
 			children[i].setPk_jkbx(null);

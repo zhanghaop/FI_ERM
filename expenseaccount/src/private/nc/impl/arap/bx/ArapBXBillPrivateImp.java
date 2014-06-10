@@ -1743,7 +1743,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			}
 		}
 		//查询出被红冲的单据:更新字段
-		oldvo.setRed_status(BXStatusConst.RED_STATUS_REDED);
+		oldvo.setRed_status(2);
 		oldvo.setRedbillpk(returnVos.get(0).getParentVO().getPrimaryKey());
 		new BaseDAO().updateVOArray(new JKBXHeaderVO[]{oldvo}, new String[]{JKBXHeaderVO.RED_STATUS});
 		return returnVos.toArray(new JKBXVO[0]);
