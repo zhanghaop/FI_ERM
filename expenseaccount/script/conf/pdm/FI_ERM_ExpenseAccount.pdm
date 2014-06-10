@@ -712,8 +712,8 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>er_jkzb</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1400574199</a:ModificationDate>
-<a:Modifier>wangled</a:Modifier>
+<a:ModificationDate>1402384313</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
 <c:Columns>
 <o:Column Id="o6">
 <a:ObjectID>5A8AD15F-A2FA-4329-B92B-7D02BF68FB4E</a:ObjectID>
@@ -2241,12 +2241,13 @@ PhysOpts=</a:ModelOptionsText>
 <o:Column Id="o139">
 <a:ObjectID>488DC90F-6B5F-4690-A5A6-49792059AE4A</a:ObjectID>
 <a:Name>红冲标志</a:Name>
-<a:Code>isreded</a:Code>
+<a:Code>red_status</a:Code>
 <a:CreationDate>1399272963</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1399272963</a:ModificationDate>
-<a:Modifier>wangled</a:Modifier>
-<a:DataType>char(1)</a:DataType>
+<a:ModificationDate>1402384511</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>0</a:DefaultValue>
+<a:DataType>INT(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>
 <o:Column Id="o140">
@@ -5594,12 +5595,12 @@ PhysOpts=</a:ModelOptionsText>
 <o:Column Id="o431">
 <a:ObjectID>F4BAE96C-813B-433C-9D95-3D7840148006</a:ObjectID>
 <a:Name>红冲标志</a:Name>
-<a:Code>isreded</a:Code>
+<a:Code>red_status</a:Code>
 <a:CreationDate>1399272892</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1399272892</a:ModificationDate>
-<a:Modifier>wangled</a:Modifier>
-<a:DataType>char(1)</a:DataType>
+<a:ModificationDate>1402384340</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>INT(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>
 <o:Column Id="o432">

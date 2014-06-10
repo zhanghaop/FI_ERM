@@ -47,6 +47,10 @@ public class SettleUtil {
 	 * @return
 	 */
 	public static boolean isAutoSign(JKBXHeaderVO head) {
+		if (head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED) {
+			return true;// 红冲单据自动签字
+		}
+		
 		boolean isAuto = true;
 		// 判断CMP产品是否启用
 		boolean iscmpused = BXUtil.isProductInstalled(head.getPk_group(), BXConstans.TM_CMP_FUNCODE);
@@ -78,6 +82,10 @@ public class SettleUtil {
 	public static boolean isAutoJS(JKBXHeaderVO head) {
 		boolean isAuto = false;
 		try {
+			if(head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED){
+				return true;//红冲单据自动结算
+			}
+			
 			DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + head.getPk_group() + "' and djlxbm = '" + head.getDjlxbm() + "'");
 			if (vos != null && vos.length != 0) {
 				isAuto = vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue();
@@ -136,6 +144,10 @@ public class SettleUtil {
 			msg.setLastOperator(zbvo.getParentVO().getOperationUser());
 			msg.setLastOperatorDate(zbvo.getParentVO().getOperationDate());
 			msg.setAutoSign(isAutoSign(djlx));
+			if(head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED){
+				msg.setAutoSign(true);//红冲单据自动结算
+			}
+			
 			msg.setBillcode(head.getDjbh());
 			msg.setBillDate(head.getDjrq());
 			msg.setBillkey(head.getPk_jkbx());

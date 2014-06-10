@@ -22,6 +22,10 @@ public class BXStatusConst {
 	public static final int STATUS_NOTVALID = 0;   //可用状态
 	public static final int STATUS_VALID = 1;	  //不可用状态
 	
+	public static final int RED_STATUS_NOMAL = 0; //可用状态
+	public static final int RED_STATUS_RED = 1;	  //红冲
+	public static final int RED_STATUS_REDED = 2; //被红冲
+	
 	public static final int PAYFLAG_None = 1;  //支付状态——未支付
 	public static final int PAYFLAG_Paying = 2;  //支付状态——支付中
 	public static final int PAYFLAG_PayFinish = 3;  //支付状态——支付完成

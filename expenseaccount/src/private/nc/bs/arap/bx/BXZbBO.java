@@ -242,13 +242,11 @@ public class BXZbBO {
 				vo.getParentVO().setJsr(InvocationInfoProxy.getInstance().getUserId());
 
 			} 
-//			else {
-//				// 保存后自动提交
-//				vo.getParentVO().setSpzt(IBillStatus.FREE);
-//			}
 
 			// 去服务器事件作为创建时间
-			AuditInfoUtil.addData(vo.getParentVO());
+			if(vo.getParentVO().getCreator() == null){
+				AuditInfoUtil.addData(vo.getParentVO());
+			}
 			
 			fillUpMapf(vo);
 		}
@@ -269,11 +267,8 @@ public class BXZbBO {
 		try {
 			// 调用现金流平台结算
 			ErForCmpBO erBO = new ErForCmpBO();
-
 			for (JKBXVO vo : vos) {
-
 				BusiStatus billStatus = SettleUtil.getBillStatus(vo.getParentVO(), false);
-
 				// 是否安装结算
 				boolean isInstallCmp = BXUtil.isProductInstalled(vo.getParentVO().getPk_group(),
 						BXConstans.TM_CMP_FUNCODE);
@@ -754,16 +749,17 @@ public class BXZbBO {
 		if (!headerVO.isAdjustBxd()&&headerVO.zfybje.doubleValue() == 0 && headerVO.hkybje.doubleValue() == 0) {
 			headerVO.setPayflag(BXStatusConst.ALL_CONTRAST);
 		}
+		
+		headerVO.setSpzt(IPfRetCheckInfo.PASSING);
+		headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Verified));
+		
+		if(headerVO.getApprover() == null){
+			headerVO.setApprover(AuditInfoUtil.getCurrentUser());
+			headerVO.setShrq(AuditInfoUtil.getCurrentTime());
+		}
 
 		VOStatusChecker.checkAuditStatus(headerVO, headerVO.getShrq());
-		headerVO.setSpzt(IPfRetCheckInfo.PASSING);
-
 		beforeActInf(bxvo, MESSAGE_AUDIT);
-
-		if (headerVO.getSpzt() == IPfRetCheckInfo.PASSING) {
-			// 审批通过
-			headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Verified));
-		}
 
 		// 需更新字段
 		String[] updateFields = new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ,
@@ -1093,15 +1089,13 @@ public class BXZbBO {
 		// 补充信息
 		addBxExtralInfo(vo);
 		fillUpMapf(vo);
+		
 		// begin--added by chendya 下列代码块一定放在预算控制之前，
 		// 避免预算控制设置控制规则中如果设置控制日期为“生效日期”时查不到控制方案
-		{
-			head.setJsr(jsr);
-			head.setJsrq(jsrq);
-			head.setDjzt(BXStatusConst.DJZT_Sign);
-			head.setSxbz(BXStatusConst.SXBZ_VALID);
-		}
-		// --end
+		head.setJsr(jsr);
+		head.setJsrq(jsrq);
+		head.setDjzt(BXStatusConst.DJZT_Sign);
+		head.setSxbz(BXStatusConst.SXBZ_VALID);
 
 		// 处理前插件动作(预算控制)
 		beforeActInf(new JKBXVO[] { vo }, MESSAGE_SETTLE);

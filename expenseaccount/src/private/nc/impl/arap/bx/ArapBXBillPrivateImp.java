@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1661,57 +1660,50 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 //		
 //		return vos;
 //	}
-	/**
-	 * 结算红冲
-	 */
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public JKBXVO[] settleRedHandleSaveAndSign(NetPayExecInfo payInfo, Map map)
 			throws BusinessException {
 		
+		@SuppressWarnings("unchecked")
 		Map<String, SettlementBodyVO[]> copy = map;
-		Set<Entry<String, SettlementBodyVO[]>> entrySet = copy.entrySet();
 		
-		Set<String> pk_billSet = new HashSet<String>();//结算信息的pk
-		Map<String,SettlementBodyVO> pk_bill_detailMap = new HashMap<String,SettlementBodyVO>();//结算明细信息pk_detail
+		//结算明细信息pk_detail
+		Map<String,SettlementBodyVO> pk_bill_detailMap = new HashMap<String,SettlementBodyVO>();
 		
 		//结算信息如果拆分过的话，需要进行合并
-		Iterator it = map.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+		for(Map.Entry entry : copy.entrySet()) {
 			SettlementBodyVO[] settlementBodyVOs = (SettlementBodyVO[]) entry.getValue();
 			for (SettlementBodyVO settlementBodyVO : settlementBodyVOs) {
-				pk_billSet.add(settlementBodyVO.getPk_bill());
 				if (!pk_bill_detailMap.containsKey(settlementBodyVO.getPk_billdetail())) {
 					pk_bill_detailMap.put(settlementBodyVO.getPk_billdetail(), settlementBodyVO);
 				} else {
-					SettlementBodyVO bodyVO = (SettlementBodyVO) pk_bill_detailMap.get(settlementBodyVO
-						.getPk_billdetail());
+					SettlementBodyVO bodyVO = (SettlementBodyVO) pk_bill_detailMap.get(settlementBodyVO.getPk_billdetail());
 					getCombinationVO(bodyVO, settlementBodyVO);
 				}
-
 			}
-
 		}
-		JKBXHeaderVO headVO = VOFactory.createHeadVO(payInfo.getBilltype());
 		
 		//查询原报销单表头的信息：
-		List<JKBXHeaderVO> oldJkbxHead = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadersByPrimaryKeys(new String[]{payInfo.getBillid()}, payInfo.getBilltype());
-		
-		List<JKBXVO>  writeBackBillVOs = new ArrayList<JKBXVO>();
 		List<BXBusItemVO>  childs = new ArrayList<BXBusItemVO>();
-		for (Entry<String, SettlementBodyVO[]> entry : entrySet) {
-			SettlementBodyVO[] value = entry.getValue();
-			if(value== null){
+		Set<Entry<String, SettlementBodyVO>> entrySet = pk_bill_detailMap.entrySet();
+		for (Entry<String, SettlementBodyVO> entry : entrySet) {
+			SettlementBodyVO settleBodyVo = entry.getValue();
+			if(settleBodyVo== null){
 				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2006v61020_0","02006v61020-0113")/*@res "结算红冲结算信息不能为空"*/);
 			}else {
-				childs.addAll(Arrays.asList(generateItems(value)));
+				childs.addAll(Arrays.asList(generateItems(settleBodyVo)));
 			}
 		}
 		
-		JKBXHeaderVO header = generateHead(headVO, oldJkbxHead.get(0));
+		List<JKBXHeaderVO> oldJkbxHead = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryHeadersByPrimaryKeys(new String[]{payInfo.getBillid()}, payInfo.getBilltype());
+		
+		JKBXHeaderVO header = generateHead(payInfo.getBilltype(), oldJkbxHead.get(0));
+		
 		JKBXVO bxvo = VOFactory.createVO(header,childs == null ? new BXBusItemVO[] {} : childs.toArray(new BXBusItemVO[] {}));
 		
+		List<JKBXVO>  writeBackBillVOs = new ArrayList<JKBXVO>();
 		writeBackBillVOs.add(bxvo);
 		return saveRedBills(writeBackBillVOs, oldJkbxHead.get(0));
 	}
@@ -1751,93 +1743,112 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			}
 		}
 		//查询出被红冲的单据:更新字段
-		oldvo.setIsreded(UFBoolean.TRUE);
-		new BaseDAO().updateVOArray(new JKBXHeaderVO[]{oldvo}, new String[]{JKBXHeaderVO.ISREDED});
-		
+		oldvo.setRed_status(BXStatusConst.RED_STATUS_REDED);
+		oldvo.setRedbillpk(returnVos.get(0).getParentVO().getPrimaryKey());
+		new BaseDAO().updateVOArray(new JKBXHeaderVO[]{oldvo}, new String[]{JKBXHeaderVO.RED_STATUS});
 		return returnVos.toArray(new JKBXVO[0]);
 	}
 	
-	
 	/**
 	 * 设置表头的数据
-	 * @param headVO
+	 * @param billType
 	 * @param sbodyVO
 	 * @return
 	 */
-	private JKBXHeaderVO generateHead(JKBXHeaderVO headVO ,JKBXHeaderVO oldHeadVO) {
-		//设置表头的字段
-		headVO.setZy(oldHeadVO.getZy());
-		headVO.setDjlxbm(oldHeadVO.getDjlxbm());
-		headVO.setRedbillpk(oldHeadVO.getPk_jkbx());
-		headVO.setDjdl(oldHeadVO.getDjdl());
-		headVO.setCenter_dept(oldHeadVO.getCenter_dept());
-		headVO.setInit(oldHeadVO.isInit());
-		headVO.setIsinitgroup(oldHeadVO.getIsinitgroup());
-		headVO.setSzxmid(oldHeadVO.getSzxmid());
-		//支付单位
-		headVO.setPk_payorg(oldHeadVO.getPk_payorg());
-		headVO.setPk_payorg_v(oldHeadVO.getPk_payorg_v());
-		//主组织
-		headVO.setPk_org(oldHeadVO.getPk_org());
-		headVO.setPk_org_v(oldHeadVO.getPk_org_v());
-		//费用承担单位
-		headVO.setFydwbm(oldHeadVO.getFydwbm());
-		headVO.setFydwbm_v(oldHeadVO.getFydwbm_v());
-		//报销人单位
-		headVO.setDwbm(oldHeadVO.getDwbm());
-		headVO.setDwbm_v(oldHeadVO.getDwbm_v());
-		//利润中心
-		headVO.setPk_pcorg(oldHeadVO.getPk_pcorg());
-		headVO.setPk_pcorg_v(oldHeadVO.getPk_pcorg_v());
-		//成本中心
-		headVO.setPk_resacostcenter(oldHeadVO.getPk_resacostcenter());
-		//产品线和品牌
-		headVO.setPk_proline(oldHeadVO.getPk_proline());
-		headVO.setPk_brand(oldHeadVO.getPk_brand());
-		//部门
-		headVO.setFydeptid(oldHeadVO.getFydeptid());
-		headVO.setDeptid(oldHeadVO.getDeptid());
-		headVO.setFydeptid_v(oldHeadVO.getFydeptid_v());
-		headVO.setDeptid_v(oldHeadVO.getDeptid_v());
-		//人员
-		headVO.setCreator(oldHeadVO.getCreator());
-		headVO.setOperator(oldHeadVO.getOperator());
-		headVO.setJsr(oldHeadVO.getJsr());
-		headVO.setJkbxr(oldHeadVO.getJkbxr());
-		headVO.setReceiver(oldHeadVO.getReceiver());
-		headVO.setApprover(oldHeadVO.getApprover());
+	private JKBXHeaderVO generateHead(String billType ,JKBXHeaderVO oldHeadVO) {
+		JKBXHeaderVO headVO = VOFactory.createHeadVO(billType);
 		
-		headVO.setPk_fiorg(oldHeadVO.getPk_fiorg());
-		headVO.setPk_group(oldHeadVO.getPk_group());
-		headVO.setPjh(oldHeadVO.getPjh());
-		headVO.setChecktype(oldHeadVO.getChecktype());
-		headVO.setBzbm(oldHeadVO.getBzbm());
-		//汇率
-		headVO.setGroupbbhl(oldHeadVO.getGroupbbhl() == null ? UFDouble.ZERO_DBL : oldHeadVO.getGroupbbhl());
-		headVO.setGlobalbbhl(oldHeadVO.getGlobalbbhl() == null ? UFDouble.ZERO_DBL : oldHeadVO.getGlobalbbhl());
-		headVO.setBbhl(oldHeadVO.getBbhl()==null ? UFDouble.ZERO_DBL : oldHeadVO.getBbhl());
+		headVO = (JKBXHeaderVO)oldHeadVO.clone();
 		
-		headVO.setCashproj(oldHeadVO.getCashproj());
-		headVO.setJsfs(oldHeadVO.getJsfs());
-		headVO.setFkyhzh(oldHeadVO.getFkyhzh());
-		headVO.setPk_cashaccount(oldHeadVO.getPk_cashaccount());
-		headVO.setBusitype(oldHeadVO.getBusitype());
-		headVO.setCashitem(oldHeadVO.getCashitem());
-
-		headVO.setPaytarget(oldHeadVO.getPaytarget());
-		headVO.setSkyhzh(oldHeadVO.getSkyhzh());
-		headVO.setHbbm(oldHeadVO.getHbbm());
-		headVO.setCustaccount(oldHeadVO.getCustaccount());
-		headVO.setCustomer(oldHeadVO.getCustomer());
-		headVO.setFreecust(oldHeadVO.getFreecust());
+		headVO.setRedbillpk(oldHeadVO.getPk_jkbx());//红冲关联ID
+		headVO.setJsfs(null);//结算方式清空，这样结算可以自动结算
+		headVO.setPk_jkbx(null);
+		//结转/摊销信息不复制
+		headVO.setIscostshare(UFBoolean.FALSE);
+		headVO.setIsexpamt(UFBoolean.FALSE);
+		headVO.setStart_period(null);
+		headVO.setTotal_period(Integer.valueOf(0));
 		
-		//自定义项信息
-		String[] defKey= new String[]{JKBXHeaderVO.ZYX1,JKBXHeaderVO.ZYX2,JKBXHeaderVO.ZYX3,JKBXHeaderVO.ZYX4,JKBXHeaderVO.ZYX5,JKBXHeaderVO.ZYX6,JKBXHeaderVO.ZYX7,JKBXHeaderVO.ZYX8,JKBXHeaderVO.ZYX9,JKBXHeaderVO.ZYX10,
-				JKBXHeaderVO.ZYX11,JKBXHeaderVO.ZYX12,JKBXHeaderVO.ZYX13,JKBXHeaderVO.ZYX14,JKBXHeaderVO.ZYX15,JKBXHeaderVO.ZYX16,JKBXHeaderVO.ZYX17,JKBXHeaderVO.ZYX18,JKBXHeaderVO.ZYX19,JKBXHeaderVO.ZYX20,
-				JKBXHeaderVO.ZYX21,JKBXHeaderVO.ZYX22,JKBXHeaderVO.ZYX23,JKBXHeaderVO.ZYX24,JKBXHeaderVO.ZYX25,JKBXHeaderVO.ZYX26,JKBXHeaderVO.ZYX27,JKBXHeaderVO.ZYX28,JKBXHeaderVO.ZYX29,JKBXHeaderVO.ZYX30};
-		for (String def : defKey) {
-			headVO.setAttributeValue(def, oldHeadVO.getAttributeValue(def));
-		}
+		//基础审计信息
+		headVO.setCreator(null);
+		headVO.setCreationtime(null);
+		headVO.setJsr(null);
+		headVO.setJsrq(null);
+		headVO.setModifiedtime(null);
+		headVO.setModifier(null);
+		
+//		//设置表头的字段
+//		headVO.setZy(oldHeadVO.getZy());
+//		headVO.setDjlxbm(oldHeadVO.getDjlxbm());
+//		headVO.setDjdl(oldHeadVO.getDjdl());
+//		headVO.setCenter_dept(oldHeadVO.getCenter_dept());
+//		headVO.setInit(oldHeadVO.isInit());
+//		headVO.setIsinitgroup(oldHeadVO.getIsinitgroup());
+//		headVO.setSzxmid(oldHeadVO.getSzxmid());
+//		//支付单位
+//		headVO.setPk_payorg(oldHeadVO.getPk_payorg());
+//		headVO.setPk_payorg_v(oldHeadVO.getPk_payorg_v());
+//		//主组织
+//		headVO.setPk_org(oldHeadVO.getPk_org());
+//		headVO.setPk_org_v(oldHeadVO.getPk_org_v());
+//		//费用承担单位
+//		headVO.setFydwbm(oldHeadVO.getFydwbm());
+//		headVO.setFydwbm_v(oldHeadVO.getFydwbm_v());
+//		//报销人单位
+//		headVO.setDwbm(oldHeadVO.getDwbm());
+//		headVO.setDwbm_v(oldHeadVO.getDwbm_v());
+//		//利润中心
+//		headVO.setPk_pcorg(oldHeadVO.getPk_pcorg());
+//		headVO.setPk_pcorg_v(oldHeadVO.getPk_pcorg_v());
+//		//成本中心
+//		headVO.setPk_resacostcenter(oldHeadVO.getPk_resacostcenter());
+//		//产品线和品牌
+//		headVO.setPk_proline(oldHeadVO.getPk_proline());
+//		headVO.setPk_brand(oldHeadVO.getPk_brand());
+//		//部门
+//		headVO.setFydeptid(oldHeadVO.getFydeptid());
+//		headVO.setDeptid(oldHeadVO.getDeptid());
+//		headVO.setFydeptid_v(oldHeadVO.getFydeptid_v());
+//		headVO.setDeptid_v(oldHeadVO.getDeptid_v());
+//		//人员
+//		headVO.setCreator(oldHeadVO.getCreator());
+//		headVO.setOperator(oldHeadVO.getOperator());
+//		headVO.setJsr(oldHeadVO.getJsr());
+//		headVO.setJkbxr(oldHeadVO.getJkbxr());
+//		headVO.setReceiver(oldHeadVO.getReceiver());
+//		headVO.setApprover(oldHeadVO.getApprover());
+//		
+//		headVO.setPk_fiorg(oldHeadVO.getPk_fiorg());
+//		headVO.setPk_group(oldHeadVO.getPk_group());
+//		headVO.setPjh(oldHeadVO.getPjh());
+//		headVO.setChecktype(oldHeadVO.getChecktype());
+//		headVO.setBzbm(oldHeadVO.getBzbm());
+//		//汇率
+//		headVO.setGroupbbhl(oldHeadVO.getGroupbbhl() == null ? UFDouble.ZERO_DBL : oldHeadVO.getGroupbbhl());
+//		headVO.setGlobalbbhl(oldHeadVO.getGlobalbbhl() == null ? UFDouble.ZERO_DBL : oldHeadVO.getGlobalbbhl());
+//		headVO.setBbhl(oldHeadVO.getBbhl()==null ? UFDouble.ZERO_DBL : oldHeadVO.getBbhl());
+//		
+//		headVO.setCashproj(oldHeadVO.getCashproj());
+//		
+//		headVO.setFkyhzh(oldHeadVO.getFkyhzh());
+//		headVO.setPk_cashaccount(oldHeadVO.getPk_cashaccount());
+//		headVO.setBusitype(oldHeadVO.getBusitype());
+//		headVO.setCashitem(oldHeadVO.getCashitem());
+//
+//		headVO.setPaytarget(oldHeadVO.getPaytarget());
+//		headVO.setSkyhzh(oldHeadVO.getSkyhzh());
+//		headVO.setHbbm(oldHeadVO.getHbbm());
+//		headVO.setCustaccount(oldHeadVO.getCustaccount());
+//		headVO.setCustomer(oldHeadVO.getCustomer());
+//		headVO.setFreecust(oldHeadVO.getFreecust());
+//		
+//		//自定义项信息
+//		String[] defKey= new String[]{JKBXHeaderVO.ZYX1,JKBXHeaderVO.ZYX2,JKBXHeaderVO.ZYX3,JKBXHeaderVO.ZYX4,JKBXHeaderVO.ZYX5,JKBXHeaderVO.ZYX6,JKBXHeaderVO.ZYX7,JKBXHeaderVO.ZYX8,JKBXHeaderVO.ZYX9,JKBXHeaderVO.ZYX10,
+//				JKBXHeaderVO.ZYX11,JKBXHeaderVO.ZYX12,JKBXHeaderVO.ZYX13,JKBXHeaderVO.ZYX14,JKBXHeaderVO.ZYX15,JKBXHeaderVO.ZYX16,JKBXHeaderVO.ZYX17,JKBXHeaderVO.ZYX18,JKBXHeaderVO.ZYX19,JKBXHeaderVO.ZYX20,
+//				JKBXHeaderVO.ZYX21,JKBXHeaderVO.ZYX22,JKBXHeaderVO.ZYX23,JKBXHeaderVO.ZYX24,JKBXHeaderVO.ZYX25,JKBXHeaderVO.ZYX26,JKBXHeaderVO.ZYX27,JKBXHeaderVO.ZYX28,JKBXHeaderVO.ZYX29,JKBXHeaderVO.ZYX30};
+//		for (String def : defKey) {
+//			headVO.setAttributeValue(def, oldHeadVO.getAttributeValue(def));
+//		}
 		return headVO;
 	}
 	/**
@@ -1847,70 +1858,86 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 * @throws BusinessException 
 	 */
 	@SuppressWarnings("unchecked")
-	private BXBusItemVO[] generateItems(SettlementBodyVO[] sbodyVOs) throws BusinessException {
-		BXBusItemVO[] itemVOs = new BXBusItemVO[sbodyVOs.length];
-		String[] pk_busitem = VOUtils.getAttributeValues(sbodyVOs, "pk_billdetail");
+	private BXBusItemVO generateItems(SettlementBodyVO sbodyVO) throws BusinessException {
+		String[] pk_busitem = VOUtils.getAttributeValues(new SettlementBodyVO[]{sbodyVO}, "pk_billdetail");
 		String condition = nc.vo.fi.pub.SqlUtils.getInStr(BXBusItemVO.PK_BUSITEM, pk_busitem,false);
 		
-		List<BXBusItemVO> oldBusItem = (List<BXBusItemVO>) new BaseDAO().retrieveByClause(BXBusItemVO.class, condition);
+		List<BXBusItemVO> oriBusItemList = (List<BXBusItemVO>) new BaseDAO().retrieveByClause(BXBusItemVO.class, condition);
 		//将原来单据的item信息得到
-		for(int i = 0 ; i<oldBusItem.size() ; i++){
-			itemVOs[i] = generateItems(oldBusItem.get(i));
-		}
-		return itemVOs;
-	}
-	/**
-	 * 将结算信息表体的VO转为借款报销业务行VO
-	 * @param sbodyVO
-	 * @return
-	 */
-	private BXBusItemVO generateItems(BXBusItemVO oldBusitemVO) {
-		//通过结算页签将
-		BXBusItemVO bodyVO = new BXBusItemVO();
-		bodyVO.setAmount(oldBusitemVO.getAmount());
-		bodyVO.setYbje(oldBusitemVO.getYbje());
-		bodyVO.setYbye(oldBusitemVO.getYbye());
-		bodyVO.setYjye(oldBusitemVO.getYjye());
-		bodyVO.setBbje(oldBusitemVO.getBbje());
-		bodyVO.setBbye(oldBusitemVO.getBbye());
-		bodyVO.setZfybje(oldBusitemVO.getZfybje());
-		bodyVO.setZfbbje(oldBusitemVO.getZfbbje());
-		bodyVO.setHkybje(oldBusitemVO.getHkybje());
-		bodyVO.setHkbbje(oldBusitemVO.getHkbbje());
-		bodyVO.setGroupbbje(oldBusitemVO.getGroupbbje());
-		bodyVO.setGroupbbye(oldBusitemVO.getGroupbbye());
-		bodyVO.setGroupzfbbje(oldBusitemVO.getGroupzfbbje());
-		bodyVO.setGrouphkbbje(oldBusitemVO.getGrouphkbbje());
-		bodyVO.setGlobalbbje(oldBusitemVO.getGlobalbbje());
-		bodyVO.setGlobalbbye(oldBusitemVO.getGlobalbbye());
-		bodyVO.setGlobalzfbbje(oldBusitemVO.getGlobalzfbbje());
-		bodyVO.setGlobalhkbbje(oldBusitemVO.getGlobalhkbbje());
-		//}
+		BXBusItemVO bodyVO = (BXBusItemVO)oriBusItemList.get(0).clone();
 		bodyVO.setPrimaryKey(null);
 		bodyVO.setPk_jkbx(null);
-		bodyVO.setTablecode(oldBusitemVO.getTablecode());
 		
-		bodyVO.setDwbm(oldBusitemVO.getDwbm());
-		bodyVO.setDeptid(oldBusitemVO.getDeptid());
-		bodyVO.setJkbxr(oldBusitemVO.getJkbxr());
-		bodyVO.setSzxmid(oldBusitemVO.getSzxmid());
-		bodyVO.setJobid(oldBusitemVO.getJobid());
-		bodyVO.setProjecttask(oldBusitemVO.getProjecttask());
+		//金额设置
+		bodyVO.setAmount(sbodyVO.getPay());
+		bodyVO.setYbje(sbodyVO.getPay());
+		bodyVO.setBbje(sbodyVO.getPaylocal());
+		bodyVO.setGroupbbje(sbodyVO.getGrouppaylocal());
+		bodyVO.setGlobalbbje(sbodyVO.getGlobalpaylocal());
 		
-		bodyVO.setPaytarget(oldBusitemVO.getPaytarget());
-		bodyVO.setReceiver(oldBusitemVO.getReceiver());
-		bodyVO.setSkyhzh(oldBusitemVO.getSkyhzh());
-		bodyVO.setHbbm(oldBusitemVO.getHbbm());
-		bodyVO.setCustaccount(oldBusitemVO.getCustaccount());
-		bodyVO.setCustomer(oldBusitemVO.getCustomer());
-		bodyVO.setFreecust(oldBusitemVO.getFreecust());
-		bodyVO.setFreeaccount(oldBusitemVO.getFreeaccount());
+		bodyVO.setZfybje(sbodyVO.getPay());
+		bodyVO.setZfbbje(sbodyVO.getPaylocal());
+		bodyVO.setGroupzfbbje(sbodyVO.getGrouppaylocal());
+		bodyVO.setGlobalzfbbje(sbodyVO.getGlobalpaylocal());
 		
-		//表体自定义字段
-		String defitem_prefix="defitem";
-		for(int i=1 ; i<=50 ; i++){
-			bodyVO.setAttributeValue(defitem_prefix+i, oldBusitemVO.getAttributeValue(defitem_prefix+i));
-		}
+		bodyVO.setCjkybje(UFDouble.ZERO_DBL);
+		bodyVO.setCjkbbje(UFDouble.ZERO_DBL);
+		bodyVO.setGroupcjkbbje(UFDouble.ZERO_DBL);
+		bodyVO.setGlobalcjkbbje(UFDouble.ZERO_DBL);
+		
 		return bodyVO;
 	}
+	
+//	/**
+//	 * 将结算信息表体的VO转为借款报销业务行VO
+//	 * @param sbodyVO
+//	 * @return
+//	 */
+//	private BXBusItemVO generateItems(BXBusItemVO oldBusitemVO) {
+//		
+////		bodyVO.setAmount(oldBusitemVO.getAmount());
+////		bodyVO.setYbje(oldBusitemVO.getYbje());
+////		bodyVO.setYbye(oldBusitemVO.getYbye());
+////		bodyVO.setYjye(oldBusitemVO.getYjye());
+////		bodyVO.setBbje(oldBusitemVO.getBbje());
+////		bodyVO.setBbye(oldBusitemVO.getBbye());
+////		bodyVO.setZfybje(oldBusitemVO.getZfybje());
+////		bodyVO.setZfbbje(oldBusitemVO.getZfbbje());
+////		bodyVO.setHkybje(oldBusitemVO.getHkybje());
+////		bodyVO.setHkbbje(oldBusitemVO.getHkbbje());
+////		bodyVO.setGroupbbje(oldBusitemVO.getGroupbbje());
+////		bodyVO.setGroupbbye(oldBusitemVO.getGroupbbye());
+////		bodyVO.setGroupzfbbje(oldBusitemVO.getGroupzfbbje());
+////		bodyVO.setGrouphkbbje(oldBusitemVO.getGrouphkbbje());
+////		bodyVO.setGlobalbbje(oldBusitemVO.getGlobalbbje());
+////		bodyVO.setGlobalbbye(oldBusitemVO.getGlobalbbye());
+////		bodyVO.setGlobalzfbbje(oldBusitemVO.getGlobalzfbbje());
+////		bodyVO.setGlobalhkbbje(oldBusitemVO.getGlobalhkbbje());
+//		//}
+//		
+////		bodyVO.setTablecode(oldBusitemVO.getTablecode());
+//		
+////		bodyVO.setDwbm(oldBusitemVO.getDwbm());
+////		bodyVO.setDeptid(oldBusitemVO.getDeptid());
+////		bodyVO.setJkbxr(oldBusitemVO.getJkbxr());
+////		bodyVO.setSzxmid(oldBusitemVO.getSzxmid());
+////		bodyVO.setJobid(oldBusitemVO.getJobid());
+////		bodyVO.setProjecttask(oldBusitemVO.getProjecttask());
+////		
+////		bodyVO.setPaytarget(oldBusitemVO.getPaytarget());
+////		bodyVO.setReceiver(oldBusitemVO.getReceiver());
+////		bodyVO.setSkyhzh(oldBusitemVO.getSkyhzh());
+////		bodyVO.setHbbm(oldBusitemVO.getHbbm());
+////		bodyVO.setCustaccount(oldBusitemVO.getCustaccount());
+////		bodyVO.setCustomer(oldBusitemVO.getCustomer());
+////		bodyVO.setFreecust(oldBusitemVO.getFreecust());
+////		bodyVO.setFreeaccount(oldBusitemVO.getFreeaccount());
+//		
+//		//表体自定义字段
+////		String defitem_prefix="defitem";
+////		for(int i=1 ; i<=50 ; i++){
+////			bodyVO.setAttributeValue(defitem_prefix+i, oldBusitemVO.getAttributeValue(defitem_prefix+i));
+////		}
+//		return bodyVO;
+//	}
 }

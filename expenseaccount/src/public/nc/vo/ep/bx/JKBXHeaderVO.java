@@ -833,19 +833,19 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 		this.vouchertag = vouchertag;
 	}
 	//ehp3¼ÓÈë
-	public UFBoolean isreded;//ºì³å±êÖ¾
-	public static final String ISREDED = "isreded";//ºì³å 
+	public Integer red_status;//ºì³å±êÖ¾
 	public String redbillpk;//ºì³åµ¥¾ÝÖ÷¼ü
-	public static final String REDBILLPK = "redbillpk";//ºì³å 
+
+	public static final String RED_STATUS = "red_status";//ºì³å×´Ì¬
+	public static final String REDBILLPK = "redbillpk";//ºì³åpk
 	
-	public UFBoolean getIsreded() {
-		return isreded;
+	public Integer getRed_status() {
+		return red_status;
 	}
 
-	public void setIsreded(UFBoolean isreded) {
-		this.isreded = isreded;
+	public void setRed_status(Integer red_status) {
+		this.red_status = red_status;
 	}
-	
 
 	public String getRedbillpk() {
 		return redbillpk;

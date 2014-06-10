@@ -133,31 +133,31 @@ public abstract class ErmBaseSqlCreator {
 		String billStatus = queryVO.getBillState().toString();
 		String strRtn = "";
 		if (IPubReportConstants.BILL_STATUS_ALL.equals(billStatus)) {
-			if (!isLoan) {
-				strRtn = " and " + getAlias("er_bxzb") + ".djzt <> 0 ";
+			if (!isLoan) {//删除和作废单据不能查出（借款）
+				strRtn = " and " + getAlias("er_bxzb") + ".djzt not in (0, 4)";
 			} else {
-				strRtn = " and " + getAlias("er_jkzb") + ".djzt <> 0 ";
+				strRtn = " and " + getAlias("er_jkzb") + ".djzt not in (0, 4) ";
 			}
 		} else if (IPubReportConstants.BILL_STATUS_SAVE.equals(billStatus)) {
 			if (!isLoan) {
-				strRtn = " and " + getAlias("er_bxzb") + ".djzt >= 1 ";
+				strRtn = " and " + getAlias("er_bxzb") + ".djzt in(1,2,3) ";
 			} else {
-				strRtn = " and " + getAlias("er_jkzb") + ".djzt >= 1 ";
+				strRtn = " and " + getAlias("er_jkzb") + ".djzt in(1,2,3) ";
 			}
 		} else if (IPubReportConstants.BILL_STATUS_CONFIRM.equals(billStatus)) {
 			if (!isLoan) {
-				strRtn = " and " + getAlias("er_bxzb") + ".djzt >= 2 ";
+				strRtn = " and " + getAlias("er_bxzb") + ".djzt in(2,3) ";
 			} else {
-				strRtn = " and " + getAlias("er_jkzb") + ".djzt >= 2 ";
+				strRtn = " and " + getAlias("er_jkzb") + ".djzt in(2,3) ";
 			}
 			if (hascontrast) {
 				strRtn += " and " + getAlias("er_bxcontrast") + ".sxbz = 1 ";
 			}
 		} else if (IPubReportConstants.BILL_STATUS_EFFECT.equals(billStatus)) {
 			if (!isLoan) {
-				strRtn = " and " + getAlias("er_bxzb") + ".djzt >= 2 ";
+				strRtn = " and " + getAlias("er_bxzb") + ".djzt in(2,3) ";
 			} else {
-				strRtn = " and " + getAlias("er_jkzb") + ".djzt >= 3 ";
+				strRtn = " and " + getAlias("er_jkzb") + ".djzt in(3) ";
 			}
 			if (hascontrast) {
 				strRtn += " and " + getAlias("er_bxcontrast") + ".sxbz = 1 ";
