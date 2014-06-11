@@ -47,7 +47,7 @@ public class SettleUtil {
 	 * @return
 	 */
 	public static boolean isAutoSign(JKBXHeaderVO head) {
-		if (head.getRed_status() != null && head.getRed_status() == 1) {
+		if (head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED) {
 			return true;// 红冲单据自动签字
 		}
 		
@@ -82,7 +82,7 @@ public class SettleUtil {
 	public static boolean isAutoJS(JKBXHeaderVO head) {
 		boolean isAuto = false;
 		try {
-			if(head.getRed_status() != null && head.getRed_status() == 1){
+			if(head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED){
 				return true;//红冲单据自动结算
 			}
 			
@@ -144,7 +144,7 @@ public class SettleUtil {
 			msg.setLastOperator(zbvo.getParentVO().getOperationUser());
 			msg.setLastOperatorDate(zbvo.getParentVO().getOperationDate());
 			msg.setAutoSign(isAutoSign(djlx));
-			if(head.getRed_status() != null && head.getRed_status() == 1){
+			if(head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED){
 				msg.setAutoSign(true);//红冲单据自动结算
 			}
 			

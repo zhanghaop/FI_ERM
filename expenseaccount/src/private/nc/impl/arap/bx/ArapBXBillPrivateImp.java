@@ -1777,6 +1777,13 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setModifiedtime(null);
 		headVO.setModifier(null);
 		
+		//申请信息删除
+		headVO.setPk_item(null);
+		headVO.setPk_mtapp_detail(null);
+		headVO.setIsmashare(UFBoolean.FALSE);
+		headVO.setSrcbilltype(null);
+		headVO.setSrctype(null);
+		
 //		//设置表头的字段
 //		headVO.setZy(oldHeadVO.getZy());
 //		headVO.setDjlxbm(oldHeadVO.getDjlxbm());
@@ -1884,6 +1891,12 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		bodyVO.setCjkbbje(UFDouble.ZERO_DBL);
 		bodyVO.setGroupcjkbbje(UFDouble.ZERO_DBL);
 		bodyVO.setGlobalcjkbbje(UFDouble.ZERO_DBL);
+		
+		//申请信息去除
+		bodyVO.setSrctype(null);
+		bodyVO.setSrcbilltype(null);
+		bodyVO.setPk_item(null);
+		bodyVO.setPk_mtapp_detail(null);
 		
 		return bodyVO;
 	}

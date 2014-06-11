@@ -66,10 +66,11 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 		String key = event.getFieldCode();
 		if (event.getEventtype() == CriteriaChangedEvent.FILTEREDITOR_INITIALIZED) {
 			String pk_org = ErUiUtil.getDefaultPsnOrg();
-			if (key.equals(JKBXHeaderVO.DWBM) || key.equals(JKBXHeaderVO.FYDWBM)
-					|| key.equals(JKBXHeaderVO.PK_PAYORG) || key.equals(JKBXHeaderVO.PK_PCORG)) {
-				ERMQueryActionHelper.setPk(event, pk_org, false);
-			}else if (key.equals(JKBXHeaderVO.PK_ORG)) {
+//			if (key.equals(JKBXHeaderVO.DWBM) || key.equals(JKBXHeaderVO.FYDWBM)
+//					|| key.equals(JKBXHeaderVO.PK_PAYORG) || key.equals(JKBXHeaderVO.PK_PCORG)) {
+//				ERMQueryActionHelper.setPk(event, pk_org, false);
+//			}else 
+			if (key.equals(JKBXHeaderVO.PK_ORG)) {
 				// 主组织权限过滤
 				String[] permissionOrgs = getModel().getContext().getPkorgs();
 				ERMQueryActionHelper.filtOrgsForQueryAction(event, permissionOrgs);
