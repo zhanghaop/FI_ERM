@@ -43,6 +43,11 @@ public class BXStatusConst {
 	public static final int ZGMEFlag = 6;	//暂估月末凭证
 	public static final int ZGMEZFFlag = 7;	//暂估月末结算
 	
+	public static final int PAY_TARGET_RECEIVER = 0;//支付对象-员工 
+	public static final int PAY_TARGET_HBBM = 1;//支付对象-供应商
+	public static final int PAY_TARGET_CUSTOMER = 2;//支付对象-客户
+	public static final int PAY_TARGET_OTHER = 3;//支付对象-外部人员 
+	
 	public static final String VounterCondition_QZ = "签字成功";
 	public static final String VounterCondition_ZF = "结算成功";
 

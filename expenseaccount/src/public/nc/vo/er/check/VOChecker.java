@@ -801,39 +801,39 @@ public class VOChecker {
 		if(BXConstans.BX_DJDL.equals(parentVO.getDjdl()) 
 				&& !BXConstans.BILLTYPECODE_RETURNBILL.equals(parentVO.getDjlxbm())
 				&& !isAdjust){
-			if(parentVO.getPaytarget().compareTo(0)==0){//收款对象是员工，收款人不能为空
+			if(parentVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_RECEIVER){//收款对象是员工，收款人不能为空
 				if(parentVO.getReceiver()== null){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 					"02011002-0185")/* @res "收款对象是员工，收款人不能为空！" */);
 				}
-			}else if(parentVO.getPaytarget().compareTo(1)==0){//收款对象是供应商，供应商不能为空
+			}else if(parentVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_HBBM){//收款对象是供应商，供应商不能为空
 				if(parentVO.getHbbm()== null){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 					"02011002-0186")/* @res "收款对象是供应商，供应商不能为空！" */);
 				}
-			}else if(parentVO.getPaytarget().compareTo(2)==0){//收款对象是客户，客户不能为空
+			}else if(parentVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_CUSTOMER){//收款对象是客户，客户不能为空
 				if(parentVO.getCustomer()== null){
 					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 					"02011002-0187")/* @res "收款对象是客户，客户不能为空！" */);
 				}
 			}
 			for (BXBusItemVO bxBusItemVO : childrenVO) {
-				if(bxBusItemVO.getPaytarget().compareTo(0)==0){//收款对象是员工，收款人不能为空
+				if(bxBusItemVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_RECEIVER){//收款对象是员工，收款人不能为空
 					if(bxBusItemVO.getReceiver()== null){
 						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 						"02011002-0188")/* @res "收款对象是员工，收款人不能为空！" */);
 					}
-				}else if(bxBusItemVO.getPaytarget().compareTo(1)==0){//收款对象是供应商，供应商不能为空
+				}else if(bxBusItemVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_HBBM){//收款对象是供应商，供应商不能为空
 					if(bxBusItemVO.getHbbm()== null){
 						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 						"02011002-0189")/* @res "收款对象是供应商，供应商不能为空！" */);
 					}
-				}else if(bxBusItemVO.getPaytarget().compareTo(2)==0){//收款对象是客户，客户不能为空
+				}else if(bxBusItemVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_CUSTOMER){//收款对象是客户，客户不能为空
 					if(bxBusItemVO.getCustomer()== null){
 						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 						"02011002-0190")/* @res "收款对象是客户，客户不能为空！" */);
 					}
-				}else if(bxBusItemVO.getPaytarget().compareTo(3)==0){
+				}else if(bxBusItemVO.getPaytarget().intValue() == BXStatusConst.PAY_TARGET_OTHER){
 					if(bxBusItemVO.getDefitem38()== null || bxBusItemVO.getDefitem37()== null || bxBusItemVO.getDefitem36()==null){
 						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
 						"02011002-0193")/* @res "收款对象是外部人员，收款户名、收款银行账号、收款开户银行不能为空！" */);

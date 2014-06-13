@@ -36,6 +36,7 @@ import nc.vo.bd.cashaccount.CashAccountVO;
 import nc.vo.bd.cust.CustomerVO;
 import nc.vo.bd.pub.IPubEnumConst;
 import nc.vo.bd.supplier.SupplierVO;
+import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
@@ -136,7 +137,6 @@ public class HeadFieldHandleUtil {
 	 */
 	public void initCashProj() {
 		UIRefPane ref = getHeadItemUIRefPane(JKBXHeaderVO.CASHPROJ);
-//		final String pk_org = getHeadItemStrValue(JKBXHeaderVO.PK_ORG);
 		String pk_org =null;
 		if(BXConstans.BXRB_CODE.equals(editor.getModel().getContext().getNodeCode())){
 			 pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
@@ -165,9 +165,6 @@ public class HeadFieldHandleUtil {
 		
 	}
 	
-
-	
-	
 	/**
 	 * @author wangle 
 	 * 各多版本组织过滤
@@ -176,13 +173,7 @@ public class HeadFieldHandleUtil {
 		//保存后不允许修改借款报销单位
 		UFDate date = (UFDate) getBillCardPanel().getHeadItem(JKBXHeaderVO.DJRQ).getValueObject();
 		if (editor.isInit()) {//期初单据
-		//	String pk_org = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject().toString();
-		//	try {
-				//date = BXUiUtil.getStartDate(pk_org).getDateBefore(1);
 				date=new UFDate("3000-01-01");
-//			} catch (BusinessException e) {
-//				ExceptionHandler.handleExceptionRuntime(e);
-//			}
 		} else {
 			if(date == null || StringUtil.isEmpty(date.toString())){
 				//单据日期为空，去业务日期
@@ -306,7 +297,6 @@ public class HeadFieldHandleUtil {
 
 		String wherepart = " pk_psndoc='" + receiver + "'";
 		wherepart += " and pk_currtype='" + pk_currtype + "'";
-//		HeadFieldHandleUtil.setWherePart2RefModel(refpane, pk_org, wherepart);
 		//创维项目测出，收款银行账户仅根据人员进行过滤即可
 		PsnbankaccDefaultRefModel psnbankModel = (PsnbankaccDefaultRefModel)refpane.getRefModel();
 		psnbankModel.setWherePart(wherepart);
@@ -333,10 +323,11 @@ public class HeadFieldHandleUtil {
 				BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
 				if (vos != null && vos.length > 0 && vos[0] != null) {
 					getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, vos[0].getPk_bankaccsub());
+					editor.getHelper().changeBusItemValue(BXBusItemVO.SKYHZH, vos[0].getPk_bankaccsub());
 				}
 			}
 		} catch (Exception e) {
-			getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, "");
+			getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
 		}
 	}
 

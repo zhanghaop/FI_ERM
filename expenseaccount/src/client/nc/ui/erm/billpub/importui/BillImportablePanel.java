@@ -36,6 +36,7 @@ import nc.ui.trade.excelimport.vo.DataRowVO;
 import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.bd.psn.PsndocVO;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BxcontrastVO;
@@ -437,13 +438,13 @@ public class BillImportablePanel extends ErmImportablePanel {
 							&& !BXConstans.BILLTYPECODE_RETURNBILL.equals(pkBillTypeCode)) {
 						if (parentVo.getAttributeValue(JKBXHeaderVO.PAYTARGET) != null) {
 							if (parentVo.getAttributeValue(JKBXHeaderVO.PAYTARGET).equals("员工")) {
-								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, 0);
+								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, BXStatusConst.PAY_TARGET_RECEIVER);
 							} else if (parentVo.getAttributeValue(JKBXHeaderVO.PAYTARGET).equals("供应商")) {
-								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, 1);
+								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, BXStatusConst.PAY_TARGET_HBBM);
 							} else if (parentVo.getAttributeValue(JKBXHeaderVO.PAYTARGET).equals("客户")) {
-								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, 2);
+								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, BXStatusConst.PAY_TARGET_CUSTOMER);
 							} else {
-								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, 3);
+								parentVo.setAttributeValue(JKBXHeaderVO.PAYTARGET, BXStatusConst.PAY_TARGET_OTHER);
 							}
 						}
 					}

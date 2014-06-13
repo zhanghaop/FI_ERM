@@ -477,9 +477,12 @@ public class ErmBillBillForm extends ERMBillForm {
 		// 初始化根据分摊标志显示或隐藏分摊页签
 		helper.initCostPageShow(getModel().getUiState());
 		
+		try {
+			getEventHandle().afterEditPayarget(false);
+		} catch (BusinessException e) {
+			ExceptionHandler.handleExceptionRuntime(e);
+		}
 		setExpamtEnable();
-		
-	
 	}
 	
 	// 卡片界面编辑状态默认为不可更改
@@ -603,7 +606,11 @@ public class ErmBillBillForm extends ERMBillForm {
 			pkOrg = getModel().getContext().getPk_org();
 			// 初始化根据分摊标志显示或隐藏分摊页签
 			helper.initCostPageShow(getModel().getUiState());
-			
+			try {//收款对象可编辑
+				getEventHandle().afterEditPayarget(false);
+			} catch (BusinessException e) {
+				ExceptionHandler.handleExceptionRuntime(e);
+			}
 			
 			// 加载常用单据，根据汇率重新计算表头表体页签金额值，注意分摊应在初始化分摊页签后
 			// 以后可以考虑，因为汇率带来的金额变化的逻辑放在后台处理
@@ -651,7 +658,6 @@ public class ErmBillBillForm extends ERMBillForm {
 			
 			// 如果是还款单，将表体的行删除
 			if (BXConstans.BXRB_CODE.equals(getModel().getContext().getNodeCode())) {
-
 				getBillCardPanel().getBillModel(BXConstans.BUS_PAGE).clearBodyData();
 			}
 		} catch (BusinessException e) {
