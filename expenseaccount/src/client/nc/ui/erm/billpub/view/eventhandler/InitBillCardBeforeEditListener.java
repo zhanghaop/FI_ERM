@@ -72,6 +72,8 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 				beforeEditFreecust();
 			} else if (JKBXHeaderVO.SKYHZH.equals(key)) {// 个人银行账户
 				beforeEditSkyhzh();
+			} else if(JKBXHeaderVO.JOBID.equals(key)){//项目
+				new HeadFieldHandleUtil((ErmBillBillForm) editor).initProj();
 			}
 
 			if (!JKBXHeaderVO.PK_ORG_V.equals(key) && !JKBXHeaderVO.PK_ORG.equals(key)) {

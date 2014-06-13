@@ -1743,9 +1743,9 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			}
 		}
 		//查询出被红冲的单据:更新字段
-		oldvo.setRed_status(2);
+		oldvo.setRed_status(BXStatusConst.RED_STATUS_REDED);
 		oldvo.setRedbillpk(returnVos.get(0).getParentVO().getPrimaryKey());
-		new BaseDAO().updateVOArray(new JKBXHeaderVO[]{oldvo}, new String[]{JKBXHeaderVO.RED_STATUS});
+		new BaseDAO().updateVOArray(new JKBXHeaderVO[]{oldvo}, new String[]{JKBXHeaderVO.RED_STATUS, JKBXHeaderVO.REDBILLPK});
 		return returnVos.toArray(new JKBXVO[0]);
 	}
 	
@@ -1759,10 +1759,13 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		JKBXHeaderVO headVO = VOFactory.createHeadVO(billType);
 		
 		headVO = (JKBXHeaderVO)oldHeadVO.clone();
-		
 		headVO.setRedbillpk(oldHeadVO.getPk_jkbx());//红冲关联ID
 		headVO.setJsfs(null);//结算方式清空，这样结算可以自动结算
 		headVO.setPk_jkbx(null);
+		//表头信息
+		headVO.setDjbh(null);
+		headVO.setPaydate(null);
+		
 		//结转/摊销信息不复制
 		headVO.setIscostshare(UFBoolean.FALSE);
 		headVO.setIsexpamt(UFBoolean.FALSE);
@@ -1783,6 +1786,26 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setIsmashare(UFBoolean.FALSE);
 		headVO.setSrcbilltype(null);
 		headVO.setSrctype(null);
+		
+		// 金额设置
+		headVO.setTotal(UFDouble.ZERO_DBL);
+		headVO.setYbje(UFDouble.ZERO_DBL);
+		headVO.setBbje(UFDouble.ZERO_DBL);
+		headVO.setGroupbbje(UFDouble.ZERO_DBL);
+		headVO.setGlobalbbje(UFDouble.ZERO_DBL);
+
+		headVO.setZfybje(UFDouble.ZERO_DBL);
+		headVO.setZfbbje(UFDouble.ZERO_DBL);
+		headVO.setGroupzfbbje(UFDouble.ZERO_DBL);
+		headVO.setGlobalzfbbje(UFDouble.ZERO_DBL);
+
+		headVO.setCjkybje(UFDouble.ZERO_DBL);
+		headVO.setCjkbbje(UFDouble.ZERO_DBL);
+		headVO.setGroupcjkbbje(UFDouble.ZERO_DBL);
+		headVO.setGlobalcjkbbje(UFDouble.ZERO_DBL);
+		
+		headVO.setYjye(UFDouble.ZERO_DBL);
+		
 		
 //		//设置表头的字段
 //		headVO.setZy(oldHeadVO.getZy());

@@ -74,16 +74,16 @@ public class ErmBillPubUtil {
 		parent.setSxbz(BXStatusConst.SXBZ_NO);
 		parent.setSpzt(IPfRetCheckInfo.COMMIT);
 		parent.setPayflag(BXStatusConst.PAYFLAG_None);
-		parent.setRed_status(Integer.valueOf(1));
+		parent.setRed_status(BXStatusConst.RED_STATUS_RED);
 		parent.setTs(null);
 		for (int i = 0; i < children.length; i++) {
 			children[i].setPk_jkbx(null);
 			children[i].setPrimaryKey(null);
 			children[i].setStatus(VOStatus.NEW);
 			children[i].setTs(null);
-			for(String itemkey : itemMnyKeys){//表体的金额字段
-				UFDouble ufDouble = (UFDouble)children[i].getAttributeValue(itemkey);
-				UFDouble multiply = ufDouble==null ?UFDouble.ZERO_DBL.multiply(NEGATIVE):ufDouble.multiply(NEGATIVE);
+			for (String itemkey : itemMnyKeys) {// 表体的金额字段
+				UFDouble ufDouble = (UFDouble) children[i].getAttributeValue(itemkey);
+				UFDouble multiply = ufDouble == null ? UFDouble.ZERO_DBL : ufDouble.multiply(NEGATIVE);
 				children[i].setAttributeValue(itemkey, multiply);
 			}
 		}

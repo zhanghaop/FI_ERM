@@ -750,6 +750,9 @@ public class BXZbBO {
 			headerVO.setPayflag(BXStatusConst.ALL_CONTRAST);
 		}
 		
+		VOStatusChecker.checkAuditStatus(headerVO, headerVO.getShrq());
+		beforeActInf(bxvo, MESSAGE_AUDIT);
+		
 		headerVO.setSpzt(IPfRetCheckInfo.PASSING);
 		headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Verified));
 		
@@ -757,9 +760,6 @@ public class BXZbBO {
 			headerVO.setApprover(AuditInfoUtil.getCurrentUser());
 			headerVO.setShrq(AuditInfoUtil.getCurrentTime());
 		}
-
-		VOStatusChecker.checkAuditStatus(headerVO, headerVO.getShrq());
-		beforeActInf(bxvo, MESSAGE_AUDIT);
 
 		// Ðè¸üÐÂ×Ö¶Î
 		String[] updateFields = new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ,
