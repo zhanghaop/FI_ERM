@@ -1760,7 +1760,6 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		
 		headVO = (JKBXHeaderVO)oldHeadVO.clone();
 		headVO.setRedbillpk(oldHeadVO.getPk_jkbx());//红冲关联ID
-		headVO.setJsfs(null);//结算方式清空，这样结算可以自动结算
 		headVO.setPk_jkbx(null);
 		//表头信息
 		headVO.setDjbh(null);
