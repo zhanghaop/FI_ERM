@@ -334,6 +334,9 @@ go
 insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('0001Z310000000000PKK','WRITE','N_263X_WRITE',0,'N','263X','0000Z30000000000263X','~','0001Z310000000000AUU','2014-04-11 16:27:08')
 go
 
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('ArapZ3jkbx0000000a29','TRANSFERFTS','N_263X_TRANSFERFTS',0,'N','263X','0000Z30000000000263X',null,'global00000000000000','2014-06-12 09:09:44')
+go
+
 insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('0001Z310000000003PK6','APPROVE','N_263X_APPROVE',0,'N','263X','0000Z30000000000263X','~','0001Z310000000000NX9','2013-09-23 16:20:11')
 go
 
