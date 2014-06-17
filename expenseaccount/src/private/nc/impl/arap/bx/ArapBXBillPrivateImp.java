@@ -959,8 +959,10 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 			PsndocVO[] pm = pd.queryPsndocByPks(new String[] { jkbxr },
 					new String[] { PsndocVO.PK_ORG, PsndocVO.PK_GROUP });
 			result[1] = pd.queryMainDeptByPandocIDs(jkbxr).get("pk_dept");
-			result[2] = pm[0].getPk_org();
-			result[3] = pm[0].getPk_group();
+			if(pm!=null && pm.length!=0 && pm[0]!=null){//ÐèÒªÅÐ¿Õ
+				result[2] = pm[0].getPk_org();
+				result[3] = pm[0].getPk_group();
+			}
 		}
 		return result;
 	}
