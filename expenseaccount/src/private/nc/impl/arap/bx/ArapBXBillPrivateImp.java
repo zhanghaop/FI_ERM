@@ -97,6 +97,7 @@ import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.pub.MathTool;
 import nc.vo.resa.costcenter.CostCenterVO;
@@ -1602,65 +1603,6 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		return vos;
 	}
 	
-//	/**
-//	 * 设置单据状态
-//	 * 删除结算信息
-//	 * 释放所占预算
-//	 * 删除费用账
-//	 */
-//	@Override
-//	public JKBXVO invalidBill(JKBXVO jkbxvos) throws BusinessException {
-//		List<JKBXHeaderVO> header = new ArrayList <JKBXHeaderVO>();
-//		//版本和ts校验
-//		new BXZbBO().compareTs(jkbxvo.toArray(new JKBXVO[]{}));
-//		
-//		//1.先更新单据的单据状态
-//		for (JKBXVO jkbxVO : jkbxvo) {
-//			jkbxVO.getParentVO().setDjzt(BXStatusConst.DJZT_Invalid);
-//			header.add(jkbxVO.getParentVO());
-//		}
-//		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.DJZT});
-//		
-//		List<String> pksList = new ArrayList<String>();
-//
-//		try {
-//			for (JKBXVO vo : jkbxvo) {
-//				// 判断CMP产品是否启用
-//				boolean isCmpInstalled = BXZbBO.isCmpInstall(vo.getParentVO());
-//
-//				// 是否 既无收款也无付款
-//				boolean notExistsPayOrRecv = (vo.getParentVO().getZfybje() == null || vo
-//						.getParentVO().getZfybje().equals(new UFDouble(0)))
-//						&& (vo.getParentVO().getHkybje() == null || vo.getParentVO().getHkybje().equals(new UFDouble(0)));
-//
-//				if (!notExistsPayOrRecv && isCmpInstalled) {
-//					//2.再删除单据的结算信息
-//					new ErForCmpBO().invokeCmp(vo, vo.getParentVO().getDjrq(),
-//							BusiStatus.Deleted);
-//				}
-//
-//				// 删除冲借款对照信息
-//				new ContrastBO().deleteByPK_bxd(new String[] { vo.getParentVO().getPk_jkbx() });
-//
-//				// 删除报销核销 预提明细
-//				new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
-//				
-//				
-//				pksList.add(vo.getParentVO().getPk_jkbx());
-//				
-//			}
-//		} catch (SQLException e) {
-//			ExceptionHandler.handleException(e);
-//		}
-//		
-//		List<JKBXVO> vos = retriveItems(header);
-//		
-//		//调用业务事件插件
-//		EventDispatcher.fireEvent(new ErmBusinessEvent(BXConstans.ERM_MDID_BX, ErmEventType.TYPE_InValid_AFTER, vos.toArray(new JKBXVO[]{})));
-//		
-//		return vos;
-//	}
-	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public JKBXVO[] settleRedHandleSaveAndSign(NetPayExecInfo payInfo, Map map)
@@ -1718,6 +1660,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		cBodyVO.setGrouppaylocal( MathTool.add(cBodyVO.getGrouppaylocal(), settlementBodyVO.getGrouppaylocal()));
 		cBodyVO.setGlobalpaylocal( MathTool.add(cBodyVO.getGlobalpaylocal(), settlementBodyVO.getGlobalpaylocal()));
 	}
+	
 	/**
 	 * 保存红冲单据
 	 * @param writeBackBillVOs
@@ -1727,16 +1670,20 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 */
 	private JKBXVO[] saveRedBills(List<JKBXVO> writeBackBillVOs,
 			JKBXHeaderVO oldvo) throws BusinessException {
-		JKBXVO[] writeBackBillVO = ErmBillPubUtil.getWriteBackBillVO(
-				writeBackBillVOs.toArray(new JKBXVO[0]), new UFDate(
-						InvocationInfoProxy.getInstance().getBizDateTime()),
-				InvocationInfoProxy.getInstance().getUserId());
+		UFDate currentDate = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());
+		String currentUserId = InvocationInfoProxy.getInstance().getUserId();
+		JKBXVO[] writeBackBillVO = ErmBillPubUtil.getWriteBackBillVO(writeBackBillVOs.toArray(new JKBXVO[0]), currentDate, currentUserId);
 		// 保存红冲单据
 		JKBXVO[] jkbxvos = NCLocator.getInstance().lookup(IBXBillPublic.class).save(writeBackBillVO);
 		
+		for(JKBXVO jkbxvo : jkbxvos){//审计信息
+			jkbxvo.getParentVO().setApprover(currentUserId);
+			jkbxvo.getParentVO().setShrq(new UFDateTime(InvocationInfoProxy.getInstance().getBizDateTime()));
+		}
+
 		//红冲单据保存后生效
-		List<JKBXVO> returnVos = new ArrayList<JKBXVO>();
 		MessageVO[] messageVO = new BXZbBO().audit(jkbxvos);
+		List<JKBXVO> returnVos = new ArrayList<JKBXVO>();
 		for (MessageVO message : messageVO) {
 			if(message.isSuccess()){
 				returnVos.add((JKBXVO)message.getSuccessVO());
@@ -1756,9 +1703,8 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 	 * @return
 	 */
 	private JKBXHeaderVO generateHead(String billType ,JKBXHeaderVO oldHeadVO) {
-		JKBXHeaderVO headVO = VOFactory.createHeadVO(billType);
+		JKBXHeaderVO headVO = (JKBXHeaderVO)oldHeadVO.clone();
 		
-		headVO = (JKBXHeaderVO)oldHeadVO.clone();
 		headVO.setRedbillpk(oldHeadVO.getPk_jkbx());//红冲关联ID
 		headVO.setPk_jkbx(null);
 		//表头信息
@@ -1778,6 +1724,9 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setJsrq(null);
 		headVO.setModifiedtime(null);
 		headVO.setModifier(null);
+		headVO.setApprover(null);
+		headVO.setShrq(null);
+		
 		
 		//申请信息删除
 		headVO.setPk_item(null);
@@ -1802,82 +1751,8 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		headVO.setCjkbbje(UFDouble.ZERO_DBL);
 		headVO.setGroupcjkbbje(UFDouble.ZERO_DBL);
 		headVO.setGlobalcjkbbje(UFDouble.ZERO_DBL);
-		
 		headVO.setYjye(UFDouble.ZERO_DBL);
 		
-		
-//		//设置表头的字段
-//		headVO.setZy(oldHeadVO.getZy());
-//		headVO.setDjlxbm(oldHeadVO.getDjlxbm());
-//		headVO.setDjdl(oldHeadVO.getDjdl());
-//		headVO.setCenter_dept(oldHeadVO.getCenter_dept());
-//		headVO.setInit(oldHeadVO.isInit());
-//		headVO.setIsinitgroup(oldHeadVO.getIsinitgroup());
-//		headVO.setSzxmid(oldHeadVO.getSzxmid());
-//		//支付单位
-//		headVO.setPk_payorg(oldHeadVO.getPk_payorg());
-//		headVO.setPk_payorg_v(oldHeadVO.getPk_payorg_v());
-//		//主组织
-//		headVO.setPk_org(oldHeadVO.getPk_org());
-//		headVO.setPk_org_v(oldHeadVO.getPk_org_v());
-//		//费用承担单位
-//		headVO.setFydwbm(oldHeadVO.getFydwbm());
-//		headVO.setFydwbm_v(oldHeadVO.getFydwbm_v());
-//		//报销人单位
-//		headVO.setDwbm(oldHeadVO.getDwbm());
-//		headVO.setDwbm_v(oldHeadVO.getDwbm_v());
-//		//利润中心
-//		headVO.setPk_pcorg(oldHeadVO.getPk_pcorg());
-//		headVO.setPk_pcorg_v(oldHeadVO.getPk_pcorg_v());
-//		//成本中心
-//		headVO.setPk_resacostcenter(oldHeadVO.getPk_resacostcenter());
-//		//产品线和品牌
-//		headVO.setPk_proline(oldHeadVO.getPk_proline());
-//		headVO.setPk_brand(oldHeadVO.getPk_brand());
-//		//部门
-//		headVO.setFydeptid(oldHeadVO.getFydeptid());
-//		headVO.setDeptid(oldHeadVO.getDeptid());
-//		headVO.setFydeptid_v(oldHeadVO.getFydeptid_v());
-//		headVO.setDeptid_v(oldHeadVO.getDeptid_v());
-//		//人员
-//		headVO.setCreator(oldHeadVO.getCreator());
-//		headVO.setOperator(oldHeadVO.getOperator());
-//		headVO.setJsr(oldHeadVO.getJsr());
-//		headVO.setJkbxr(oldHeadVO.getJkbxr());
-//		headVO.setReceiver(oldHeadVO.getReceiver());
-//		headVO.setApprover(oldHeadVO.getApprover());
-//		
-//		headVO.setPk_fiorg(oldHeadVO.getPk_fiorg());
-//		headVO.setPk_group(oldHeadVO.getPk_group());
-//		headVO.setPjh(oldHeadVO.getPjh());
-//		headVO.setChecktype(oldHeadVO.getChecktype());
-//		headVO.setBzbm(oldHeadVO.getBzbm());
-//		//汇率
-//		headVO.setGroupbbhl(oldHeadVO.getGroupbbhl() == null ? UFDouble.ZERO_DBL : oldHeadVO.getGroupbbhl());
-//		headVO.setGlobalbbhl(oldHeadVO.getGlobalbbhl() == null ? UFDouble.ZERO_DBL : oldHeadVO.getGlobalbbhl());
-//		headVO.setBbhl(oldHeadVO.getBbhl()==null ? UFDouble.ZERO_DBL : oldHeadVO.getBbhl());
-//		
-//		headVO.setCashproj(oldHeadVO.getCashproj());
-//		
-//		headVO.setFkyhzh(oldHeadVO.getFkyhzh());
-//		headVO.setPk_cashaccount(oldHeadVO.getPk_cashaccount());
-//		headVO.setBusitype(oldHeadVO.getBusitype());
-//		headVO.setCashitem(oldHeadVO.getCashitem());
-//
-//		headVO.setPaytarget(oldHeadVO.getPaytarget());
-//		headVO.setSkyhzh(oldHeadVO.getSkyhzh());
-//		headVO.setHbbm(oldHeadVO.getHbbm());
-//		headVO.setCustaccount(oldHeadVO.getCustaccount());
-//		headVO.setCustomer(oldHeadVO.getCustomer());
-//		headVO.setFreecust(oldHeadVO.getFreecust());
-//		
-//		//自定义项信息
-//		String[] defKey= new String[]{JKBXHeaderVO.ZYX1,JKBXHeaderVO.ZYX2,JKBXHeaderVO.ZYX3,JKBXHeaderVO.ZYX4,JKBXHeaderVO.ZYX5,JKBXHeaderVO.ZYX6,JKBXHeaderVO.ZYX7,JKBXHeaderVO.ZYX8,JKBXHeaderVO.ZYX9,JKBXHeaderVO.ZYX10,
-//				JKBXHeaderVO.ZYX11,JKBXHeaderVO.ZYX12,JKBXHeaderVO.ZYX13,JKBXHeaderVO.ZYX14,JKBXHeaderVO.ZYX15,JKBXHeaderVO.ZYX16,JKBXHeaderVO.ZYX17,JKBXHeaderVO.ZYX18,JKBXHeaderVO.ZYX19,JKBXHeaderVO.ZYX20,
-//				JKBXHeaderVO.ZYX21,JKBXHeaderVO.ZYX22,JKBXHeaderVO.ZYX23,JKBXHeaderVO.ZYX24,JKBXHeaderVO.ZYX25,JKBXHeaderVO.ZYX26,JKBXHeaderVO.ZYX27,JKBXHeaderVO.ZYX28,JKBXHeaderVO.ZYX29,JKBXHeaderVO.ZYX30};
-//		for (String def : defKey) {
-//			headVO.setAttributeValue(def, oldHeadVO.getAttributeValue(def));
-//		}
 		return headVO;
 	}
 	/**

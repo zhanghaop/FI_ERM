@@ -78,8 +78,6 @@ public class CopyAction extends NCAction{
 			header.setAttributeValue(fieldNotCopy[i], null);
 		}
 		
-		//header.setShrq_show(null);
-		
 		if(currentDjlx.getDjlxbm().equals(BXConstans.BILLTYPECODE_RETURNBILL)){
 			copyJkbxVO.setChildrenVO(null);
 		}
