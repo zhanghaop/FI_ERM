@@ -558,7 +558,7 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		//pk_group参数建议删除，实现方法中并没有用到
 		String[] result = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPsnidAndDeptid(loginUser, null);
 		String pk_psn = result[0];
-		String pk_group = result[3];
+		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 		
 		//构造代理权限sql
 //		String insql = constructAuthSql(loginUser, pk_psn, pk_dept, pk_fiorg, pk_group);
