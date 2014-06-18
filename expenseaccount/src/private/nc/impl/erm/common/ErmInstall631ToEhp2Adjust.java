@@ -23,6 +23,8 @@ import nc.itf.erm.prv.IArapCommonPrivate;
 import nc.itf.fip.initdata.IFipInitDataService;
 import nc.itf.org.IGroupQryService;
 import nc.itf.org.IOrgUnitQryService;
+import nc.itf.uap.pf.IWorkflowUpgrade;
+import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ColumnListProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.MDBaseQueryFacade;
@@ -157,10 +159,42 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 		//更新编码规则属性
 		updateBillCode();
 		
+		// 借款单"委托办理"动作升级
+        updateJKBillAction();
+		
+		
 		Logger.debug("*************************************");
 		Logger.debug("******** 报销管理模块升级6.31升级到6.3EHP2开始更新信息结束" + getClass().getName() + "**********");
 		Logger.debug("*************************************");
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateJKBillAction() throws BusinessException {
+		String[] delActionType = new String[]{"TRANSFERFTS"};
+		String[] addActionType = new String[]{"TRANSFERFTS"};
+		String sql = "select distinct pk_billtypecode from bd_billtype where systemcode='erm' and ncbrcode='jk' and istransaction='Y'";
+		List<String> result = (List<String>) new BaseDAO().executeQuery(sql.toString(), new BaseProcessor() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Object processResultSet(ResultSet rs) throws SQLException {
+				List<String> lstResult = new ArrayList<String>();
+				while (rs.next()) {
+					lstResult.add(rs.getString(1));
+				}
+				return lstResult;
+			}
+
+		});
+		if(result == null || result.size() < 0){
+			return;
+		}
+		IWorkflowUpgrade workflowUpgrade = NCLocator.getInstance().lookup(IWorkflowUpgrade.class);
+		for (String billorTranstype : result) {
+			workflowUpgrade.updateBillactionByGlobal(billorTranstype, delActionType, addActionType);
+		}
+	}
+	
 	
 	/**
 	 * 更新编码规则
