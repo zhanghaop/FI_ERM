@@ -726,4 +726,13 @@
 		<grpField></grpField>
 		<fixedWhere>pk_group = 'GLOBLE00000000000000'</fixedWhere>
 	</item>
+	<item>
+		<itemKey>pub_bsplugins</itemKey>
+		<itemName>组件扩展点插件</itemName>
+		<itemRule>pub_bsplugins</itemRule>
+		<sysField></sysField>
+		<corpField></corpField>
+		<grpField></grpField>
+		<fixedWhere>pk_module = '2011'</fixedWhere>
+	</item>
 </items>
