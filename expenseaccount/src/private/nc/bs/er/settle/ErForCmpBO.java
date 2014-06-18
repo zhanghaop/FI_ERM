@@ -14,6 +14,7 @@ import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
 import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.cmp.busi.IBusi4CMPAutoSettleServcie;
 import nc.itf.cmp.busi.ISettleNotifyPayTypeBusiBillService;
 import nc.itf.cmp.settlement.ISettlement;
 import nc.itf.er.pub.IArapBillTypePublic;
@@ -48,7 +49,7 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 
-public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
+public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService, IBusi4CMPAutoSettleServcie {
 
 	private final BXZbBO bo = new BXZbBO();
 	private JKBXVO jkbxVO = null;
@@ -117,20 +118,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		if(payInfo!=null && value!=null){
 			NCLocator.getInstance().lookup(IBXBillPrivate.class).settleRedHandleSaveAndSign(payInfo, value);
 		}
-	}
-	
-	/**
-	 * 自动结算
-	 */
-	public boolean isAutoSettle(String pk_group, String pk_tradetype, SettlementAggVO... settlementAggVOs) throws BusinessException {
-		boolean isAutoSettle = false;
-		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + pk_group + "' and djlxbm = '" + pk_tradetype + "'");
-		if (vos == null || vos.length == 0) {
-			return false;
-		} else {
-			isAutoSettle = vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue();
-		}
-		return isAutoSettle;
 	}
 	
 	@Override
@@ -695,5 +682,25 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			throws BusinessException {
 		//
 	}
+	
+	/**
+	 * 自动结算
+	 */
+	public boolean isAutoSettle(String pk_group, String pk_tradetype, SettlementAggVO... settlementAggVOs) throws BusinessException {
+		boolean isAutoSettle = false;
+		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + pk_group + "' and djlxbm = '" + pk_tradetype + "'");
+		if (vos == null || vos.length == 0) {
+			return false;
+		} else {
+			isAutoSettle = vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue();
+		}
+		return isAutoSettle;
+	}
 
+	public boolean isSuportBilltype(String billtype) throws BusinessException {
+		if (billtype != null && (billtype.equals(BXConstans.BX_DJLXBM) || billtype.equals(BXConstans.JK_DJLXBM))) {
+			return true;
+		}
+		return false;
+	}
 }
