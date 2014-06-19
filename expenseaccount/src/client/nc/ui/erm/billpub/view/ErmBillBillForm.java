@@ -725,7 +725,7 @@ public class ErmBillBillForm extends ERMBillForm {
 	
 	public void filtJkbx() {
 		Object appstatus = getBillCardPanel().getHeadItem(JKBXHeaderVO.SPZT).getValueObject();
-		if ((appstatus != null && (IBillStatus.COMMIT == (Integer) appstatus))) {
+		if ((appstatus != null && (IBillStatus.COMMIT == (Integer) appstatus || IBillStatus.CHECKGOING == (Integer) appstatus))) {
 			// 审批状态是提交态时，不做处理
 			return;
 		}
