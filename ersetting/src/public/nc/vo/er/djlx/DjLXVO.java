@@ -64,7 +64,7 @@ public class DjLXVO extends SuperVO {
 
 	private UFBoolean isbankrecive;
 
-	private UFBoolean isqr;
+	private UFBoolean isqr = UFBoolean.TRUE;
 
 	private UFBoolean iscorresp;
 
@@ -138,7 +138,7 @@ public class DjLXVO extends SuperVO {
 	 * V65-×Ô¶¯½áËã
 	 * @return
 	 */
-	private UFBoolean autosettle;
+	private UFBoolean autosettle = UFBoolean.TRUE;
 	public UFBoolean getAutosettle() {
 		return autosettle;
 	}
