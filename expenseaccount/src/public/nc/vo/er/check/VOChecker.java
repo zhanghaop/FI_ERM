@@ -712,7 +712,7 @@ public class VOChecker {
 				String billtype = parentVO.getDjdl().equals(BXConstans.BX_DJDL) ? BXConstans.BX_DJLXBM : BXConstans.JK_DJLXBM;
 				String userid = InvocationInfoProxy.getInstance().getUserId();
 				String pk_busiflowValue = pFConfig.retBusitypeCanStart(billtype, trade_type, parentVO.getPk_org(), userid);
-				if (parentVO.getDjdl().equals(BXConstans.BX_DJDL)) {
+				if (parentVO.getDjdl().equals(BXConstans.BX_DJDL) || parentVO.getDjdl().equals(BXConstans.JK_DJDL)) {
 					if (pk_busiflowValue == null) {
 						throw ExceptionHandler.createException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
 								"2011v61013_0", "02011v61013-0061")/*
