@@ -64,7 +64,7 @@ public class DjLXVO extends SuperVO {
 
 	private UFBoolean isbankrecive;
 
-	private UFBoolean isqr = UFBoolean.TRUE;
+	private UFBoolean isqr = UFBoolean.FALSE;
 
 	private UFBoolean iscorresp;
 
