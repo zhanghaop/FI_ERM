@@ -88,7 +88,7 @@ public class SettleUtil {
 			
 			DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + head.getPk_group() + "' and djlxbm = '" + head.getDjlxbm() + "'");
 			if (vos != null && vos.length != 0) {
-				isAuto = vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue();
+				isAuto = vos[0].isAutoSettle();
 			}
 		} catch (BusinessException e) {
 			throw new BusinessRuntimeException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000403")/*

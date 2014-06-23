@@ -87,6 +87,11 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 		String updateDjlx = " update er_djlx set bxtype = 1  where djdl = 'bx' and bxtype is null ";
 		getBaseDAO().executeUpdate(updateDjlx);
 		Logger.debug(updateDjlx);
+		
+		// 交易类型修改,手工结算设置默认值为是
+		String updateDjlx2 = " update er_djlx set autosettle = 'Y' where djdl in ('jk','bx') and autosettle is null;";
+		getBaseDAO().executeUpdate(updateDjlx2);
+		Logger.debug(updateDjlx2);
 	}
 
 	@Override

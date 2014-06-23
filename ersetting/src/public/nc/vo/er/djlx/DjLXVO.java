@@ -135,17 +135,30 @@ public class DjLXVO extends SuperVO {
 	public static final String BXTYPE = "bxtype";
 	
 	/**
-	 * V65-自动结算
+	 * V65-手工结算（true标题手工结算，false表示自动结算）
 	 * @return
 	 */
-	private UFBoolean autosettle = UFBoolean.TRUE;
-	public UFBoolean getAutosettle() {
-		return autosettle;
+	private UFBoolean manualsettle = UFBoolean.TRUE;
+	
+	public static final String MANUALSETTLE="manualsettle";
+	
+	public UFBoolean getManualsettle() {
+		return manualsettle;
 	}
-	public void setAutosettle(UFBoolean autosettle) {
-		this.autosettle = autosettle;
+	public void setManualsettle(UFBoolean manualsettle) {
+		this.manualsettle = manualsettle;
 	}
-	public static final String AUTOSETTLE="autosettle";
+	/**
+	 * 是否自动结算
+	 * <br>这里提出一个方法，供外部使用
+	 * @return
+	 */
+	public boolean isAutoSettle() {
+		if(manualsettle == null || !manualsettle.booleanValue()){
+			return true;
+		}
+		return false;
+	}
 	
 	public UFBoolean getCreatCashflows() {
 		return creatCashflows;

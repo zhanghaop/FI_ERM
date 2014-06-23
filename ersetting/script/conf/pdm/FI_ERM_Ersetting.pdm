@@ -5808,12 +5808,12 @@ APPROVED	</a:ListOfValues>
 </o:Column>
 <o:Column Id="o225">
 <a:ObjectID>087C97A6-2B37-46A2-906F-A29831071911</a:ObjectID>
-<a:Name>是否签字确认</a:Name>
+<a:Name>手工签字</a:Name>
 <a:Code>isqr</a:Code>
 <a:CreationDate>1218674823</a:CreationDate>
 <a:Creator>twei</a:Creator>
-<a:ModificationDate>1268987757</a:ModificationDate>
-<a:Modifier>liansg</a:Modifier>
+<a:ModificationDate>1403503917</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
 <a:Comment>Y/N</a:Comment>
 <a:DataType>char(1)</a:DataType>
 <a:Length>1</a:Length>
@@ -5824,10 +5824,10 @@ APPROVED	</a:ListOfValues>
 <a:Code>iscasign</a:Code>
 <a:CreationDate>1218674823</a:CreationDate>
 <a:Creator>twei</a:Creator>
-<a:ModificationDate>1268987757</a:ModificationDate>
-<a:Modifier>liansg</a:Modifier>
+<a:ModificationDate>1403503955</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
 <a:Comment>Y/N</a:Comment>
-<a:DefaultValue>&#39;N&#39;</a:DefaultValue>
+<a:DefaultValue>N</a:DefaultValue>
 <a:DataType>char(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>
@@ -6076,12 +6076,13 @@ APPROVED	</a:ListOfValues>
 </o:Column>
 <o:Column Id="o248">
 <a:ObjectID>4FEA4B26-EF37-4355-8AED-8D1F9E27304D</a:ObjectID>
-<a:Name>自动结算</a:Name>
-<a:Code>autosettle</a:Code>
+<a:Name>手工结算</a:Name>
+<a:Code>manualsettle</a:Code>
 <a:CreationDate>1398066488</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1398066488</a:ModificationDate>
-<a:Modifier>wangled</a:Modifier>
+<a:ModificationDate>1403503941</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>N</a:DefaultValue>
 <a:DataType>char(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>

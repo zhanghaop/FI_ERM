@@ -77,9 +77,9 @@ public class BxITranstypeEditorImp implements ITranstypeEditor {
 			}
 			boolean isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(context.getTranstype().getPk_group(), context.getTranstype().getPk_billtypecode(),ErmDjlxConst.BXTYPE_ADJUST);
 			if(isAdjust){
-				getcardpanel().getBillCardPanelDj().getHeadItem("autosettle").setShow(false);
+				getcardpanel().getBillCardPanelDj().getHeadItem("manualsettle").setShow(false);
 			}else{
-				getcardpanel().getBillCardPanelDj().getHeadItem("autosettle").setShow(true);
+				getcardpanel().getBillCardPanelDj().getHeadItem("manualsettle").setShow(true);
 
 			}
 		}

@@ -19,11 +19,12 @@ public class ErmCmpAutoSettleServiceImpl implements IBusi4CMPAutoSettleServcie {
 	 */
 	public boolean isAutoSettle(String pk_group, String pk_tradetype, SettlementAggVO... settlementAggVOs) throws BusinessException {
 		boolean isAutoSettle = false;
+		
 		DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, "pk_group = '" + pk_group + "' and djlxbm = '" + pk_tradetype + "'");
 		if (vos == null || vos.length == 0) {
 			return false;
 		} else {
-			isAutoSettle = vos[0].getAutosettle() == null ? false : vos[0].getAutosettle().booleanValue();
+			isAutoSettle = vos[0].isAutoSettle();
 		}
 		return isAutoSettle;
 	}

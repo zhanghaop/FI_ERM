@@ -407,7 +407,7 @@ defcurrency nchar(20) null
 isbankrecive nchar(1) null 
 /*是否银行托收*/,
 isqr nchar(1) null 
-/*是否签字确认*/,
+/*手工签字*/,
 iscasign nchar(1) null default 'N' 
 /*是否数字签名*/,
 iscorresp nchar(1) null 
@@ -452,8 +452,8 @@ parent_billtype nvarchar(50) null
 /*所属单据类型*/,
 bxtype int null 
 /*报销费用类型*/,
-autosettle nchar(1) null 
-/*自动结算*/,
+manualsettle nchar(1) null default 'N' 
+/*手工结算*/,
  constraint pk_er_djlx primary key (djlxoid),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
