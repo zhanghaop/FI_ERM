@@ -1,5 +1,6 @@
 package nc.ui.erm.billquery.action;
 
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +9,11 @@ import java.util.List;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.ui.erm.util.ErUiUtil;
-import nc.ui.uif2.NCAction;
+import nc.ui.pub.beans.MessageDialog;
+import nc.ui.pub.beans.UIDialog;
+import nc.ui.pub.beans.progress.IProgressMonitor;
+import nc.ui.uif2.NCAsynAction;
+import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -19,14 +24,14 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 /**
  * 借款报销单作废按钮
- * @author wangled
  *
  */
-public class InvalidAction extends NCAction {
-
+public class InvalidAction extends NCAsynAction {
 	private static final long serialVersionUID = 1L;
 	private BillManageModel model;
 	
+	private TPAProgressUtil tpaProgressUtil;
+	private IProgressMonitor monitor = null;
 	
 	public InvalidAction() {
 		setCode("Invalid");
@@ -53,49 +58,6 @@ public class InvalidAction extends NCAction {
 		
 		//界面提示
 		ErUiUtil.showBatchResults(getModel().getContext(), returnMsgs);
-		
-//		boolean existSuccess = true;
-//		boolean exist = false;
-//		
-//		JKBXVO[] jkbxVos = Arrays.asList(vos).toArray(new JKBXVO[0]);
-//		StringBuffer msg = new StringBuffer();
-//		List<JKBXVO> dealVo = new ArrayList<JKBXVO>();
-//		
-//		for (int i = 0; i < jkbxVos.length; i++) {
-//			if ((BXStatusConst.DJZT_Saved != ((JKBXVO) jkbxVos[i]).getParentVO().getDjzt().intValue())) {
-//				existSuccess = false;
-//				msg.append(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-//						"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-//						"0201107-0177")).append("\r\n");
-//						continue;
-//			}
-//			dealVo.add(jkbxVos[i]);
-//		}
-//		
-//		if (dealVo != null && dealVo.size() != 0) {
-//			try{
-//				
-//				List<JKBXVO> returnVo = NCLocator.getInstance().lookup(IBXBillPrivate.class).dealInvalid(dealVo);
-//				
-//				exist = true;//有成功的
-//				//
-//				getModel().directlyUpdate(returnVo.toArray(new AggregatedValueObject[returnVo.size()]));
-//			}catch(BusinessException e){
-//				existSuccess = false;
-//				msg.append(e.getMessage());
-//			}
-//		}
-//		
-//		
-//		if (existSuccess) {
-//			ShowStatusBarMsgUtil.showStatusBarMsg(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0", "0201107-0178"),getModel().getContext());
-//		} else if(!existSuccess && exist){
-//			ShowStatusBarMsgUtil.showErrorMsg(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0", "0201107-0179"), msg.toString(),
-//					getModel().getContext());
-//		} else if(!existSuccess && !exist){
-//			ShowStatusBarMsgUtil.showErrorMsg(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0", "0201107-0180"), msg.toString(),
-//					getModel().getContext());
-//		}
 	}
 	
 	private MessageVO[] invalidOneByOne(JKBXVO[] vos) throws Exception {
@@ -145,5 +107,51 @@ public class InvalidAction extends NCAction {
 	public void setModel(BillManageModel model) {
 		this.model = model;
 		this.model.addAppEventListener(this);
+	}
+	
+	
+	@Override
+	public boolean beforeStartDoAction(ActionEvent actionEvent) throws Exception {
+		boolean ret = UIDialog.ID_YES == showConfirmDisableDialog(model.getContext().getEntranceUI());
+		if(ret){
+			if (monitor != null && !monitor.isDone()) {
+				return false;
+			}
+			monitor = getTpaProgressUtil().getTPAProgressMonitor();
+			monitor.beginTask("invalid", -1);
+			monitor.setProcessInfo("invalid");
+		}
+		return ret;
+	}
+	
+	@Override
+	public void doAfterSuccess(ActionEvent actionEvent) {
+		if (monitor != null) {
+			monitor.done();
+			monitor = null;
+		}
+	}
+
+	public TPAProgressUtil getTpaProgressUtil() {
+		if (this.tpaProgressUtil == null) {
+			tpaProgressUtil = new TPAProgressUtil();
+			tpaProgressUtil.setContext(getModel().getContext());
+		}
+		return tpaProgressUtil;
+	}
+
+	@Override
+	public boolean doAfterFailure(ActionEvent actionEvent, Throwable ex) {
+		if (monitor != null) {
+			monitor.done();
+			monitor = null;
+		}
+		return true;
+	}
+	
+	public int showConfirmDisableDialog(Container parent){
+		String TITLE = "确认作废";
+		String QUESTION = "是否确认作废?";
+		return MessageDialog.showYesNoDlg(parent, TITLE, QUESTION, UIDialog.ID_NO);
 	}
 }

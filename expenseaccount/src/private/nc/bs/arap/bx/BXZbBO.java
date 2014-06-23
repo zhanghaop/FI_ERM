@@ -36,6 +36,7 @@ import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.ISqdlrKeyword;
 import nc.itf.fi.pub.Currency;
 import nc.itf.fipub.summary.ISummaryQueryService;
+import nc.itf.uap.pf.IWorkflowMachine;
 import nc.jdbc.framework.ConnectionFactory;
 import nc.jdbc.framework.JdbcSession;
 import nc.jdbc.framework.PersistenceManager;
@@ -1215,6 +1216,8 @@ public class BXZbBO {
 		// 处理前插件动作
 		afterActInf(new JKBXVO[] { vo }, MESSAGE_INVALID);
 		
+		// 删除审批流
+		NCLocator.getInstance().lookup(IWorkflowMachine.class).deleteCheckFlow(vo.getParentVO().getDjlxbm(), vo.getParentVO().getPrimaryKey(), vo, InvocationInfoProxy.getInstance().getUserId());
 		return vo;
 	}
 
