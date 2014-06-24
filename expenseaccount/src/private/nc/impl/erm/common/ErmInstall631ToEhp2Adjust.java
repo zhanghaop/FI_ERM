@@ -89,7 +89,7 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 		Logger.debug(updateDjlx);
 		
 		// 交易类型修改,手工结算设置默认值为是
-		String updateDjlx2 = " update er_djlx set autosettle = 'Y' where djdl in ('jk','bx') and autosettle is null;";
+		String updateDjlx2 = " update er_djlx set manualsettle = 'Y' where djdl in ('jk','bx') and manualsettle is null;";
 		getBaseDAO().executeUpdate(updateDjlx2);
 		Logger.debug(updateDjlx2);
 	}

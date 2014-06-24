@@ -134,9 +134,9 @@ public abstract class ErmBaseSqlCreator {
 		String strRtn = "";
 		if (IPubReportConstants.BILL_STATUS_ALL.equals(billStatus)) {
 			if (!isLoan) {//删除和作废单据不能查出（借款）
-				strRtn = " and " + getAlias("er_bxzb") + ".djzt not in (0, 4)";
+				strRtn = " and " + getAlias("er_bxzb") + ".djzt not in (0, -1)";
 			} else {
-				strRtn = " and " + getAlias("er_jkzb") + ".djzt not in (0, 4) ";
+				strRtn = " and " + getAlias("er_jkzb") + ".djzt not in (0, -1) ";
 			}
 		} else if (IPubReportConstants.BILL_STATUS_SAVE.equals(billStatus)) {
 			if (!isLoan) {
