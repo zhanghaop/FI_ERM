@@ -31,5 +31,11 @@ public interface IFieldContrastQryService {
 	 */
 	public FieldcontrastVO[] qryPredataVOs() throws BusinessException;
 	
-
+	/**
+	 * 查询用户自定义项被单据模板使用情况
+	 * @return
+	 * @throws BusinessException
+	 */
+	public String getUserDefItemUseInfo() throws BusinessException;
+	
 }

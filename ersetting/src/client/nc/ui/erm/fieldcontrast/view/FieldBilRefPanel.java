@@ -1,17 +1,26 @@
 package nc.ui.erm.fieldcontrast.view;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import nc.bs.erm.util.ErmBillTypeUtil;
+import nc.bs.framework.common.NCLocator;
+import nc.bs.logging.Logger;
+import nc.itf.erm.fieldcontrast.IFieldContrastQryService;
 import nc.ui.pub.beans.RefEditEvent;
 import nc.ui.pub.beans.RefEditListener;
 import nc.ui.pub.beans.UIComboBox;
+import nc.ui.pub.beans.UIDialog;
+import nc.ui.pub.beans.UIDialogFactory;
 import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIRefPane;
+import nc.ui.pub.beans.UITextAreaScrollPane;
 import nc.ui.pub.beans.ValueChangedEvent;
 import nc.ui.pub.beans.ValueChangedListener;
 import nc.ui.uif2.AppEvent;
@@ -56,6 +65,55 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 		add(jLabel);
 		add(getDjlxRef());
 		setSize(639, 363);
+		
+		bLabel.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int clickCount = e.getClickCount();
+				Logger.error("+++++++++clickCount++++++++:"+clickCount);
+				if(clickCount > 3){
+					try {
+						UIDialog dlg = UIDialogFactory.newDialogInstance(UIDialog.class, FieldBilRefPanel.this,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("voucherclient1_0","02002005-0133")/*@res "系统信息"*/);
+						dlg.getContentPane().setLayout(new BorderLayout());
+						dlg.setResizable(true);
+						UITextAreaScrollPane textArea = new UITextAreaScrollPane();
+						dlg.getContentPane().add(textArea);
+						
+						IFieldContrastQryService qrySer = NCLocator.getInstance().lookup(IFieldContrastQryService.class);
+						
+						textArea.setText(qrySer.getUserDefItemUseInfo());
+						dlg.showModal();
+					} catch (Exception ex) {
+						Logger.error(ex.getMessage(), ex);
+					}
+				}
+			}
+		});
 	}
 
 	public UIRefPane getDjlxRef() {
