@@ -1188,10 +1188,13 @@ public class BXZbBO {
 		// 处理前插件动作
 		beforeActInf(new JKBXVO[] { vo }, MESSAGE_INVALID);
 		
-		//更新
+		//作废状态
 		vo.getParentVO().setDjzt(BXStatusConst.DJZT_Invalid);
-		updateHeaders(new JKBXHeaderVO[]{vo.getParentVO()}, new String[]{JKBXHeaderVO.DJZT});
-		
+		// 取服务器事件作为修改时间
+		AuditInfoUtil.updateData(vo.getParentVO());
+		//更新
+		updateHeaders(new JKBXHeaderVO[] { vo.getParentVO() }, new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.MODIFIER, JKBXHeaderVO.MODIFIEDTIME });
+
 		// 判断CMP产品是否启用
 		boolean isCmpInstalled = BXZbBO.isCmpInstall(vo.getParentVO());
 
