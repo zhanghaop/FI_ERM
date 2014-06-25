@@ -145,7 +145,7 @@ public class SettleUtil {
 			msg.setLastOperatorDate(zbvo.getParentVO().getOperationDate());
 			msg.setAutoSign(isAutoSign(djlx));
 			if(head.getRed_status() != null && head.getRed_status() == BXStatusConst.RED_STATUS_RED){
-				msg.setAutoSign(true);//红冲单据自动结算
+				msg.setAutoSettle(true);//红冲单据自动结算
 			}
 			
 			msg.setBillcode(head.getDjbh());
