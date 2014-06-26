@@ -11,6 +11,7 @@ import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIDialog;
 import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.pub.bill.IBillItem;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.bx.util.BXConstans;
@@ -19,6 +20,7 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.fipub.exception.ExceptionHandler;
+import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDouble;
 
@@ -32,8 +34,10 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
     public void doAction(ActionEvent e) throws Exception {
     	
     	BillCardPanel billCardPanel = ((ErmBillBillForm) getEditor()).getBillCardPanel();
-		String tableCode = (billCardPanel.getBillData().getBodyTableCodes())[0];
-//		boolean showing = billCardPanel.getBillTable(tableCode).isShowing();
+		//String tableCode = (billCardPanel.getBillData().getBodyTableCodes())[0];
+    	BillTabVO[] billTabVOs = billCardPanel.getBillData().getBillTabVOs(IBillItem.BODY);
+
+		//		boolean showing = billCardPanel.getBillTable(tableCode).isShowing();
 //    	if(!showing){
 //    		//单据的表体没有页签时，在修改保存时，将业务页签的值清空，在后面重新根据表头的值生成表体
 //    		billCardPanel.getBillModel(tableCode).clearBodyData();
@@ -42,7 +46,12 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 		//ehp2报销单和还款单都不过滤金额为0的行
 		DjLXVO djlxVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
 		if(djlxVO!=null && BXConstans.JK_DJDL.equals(djlxVO.getDjdl())){
-			delBlankLine(billCardPanel, tableCode);
+			for (BillTabVO billTabVO : billTabVOs) {
+				String metaDataPath = billTabVO.getMetadatapath();
+				if (metaDataPath != null&& BXConstans.JK_BUSITEM.equals(metaDataPath)) {
+					delBlankLine(billCardPanel, billTabVO.getTabcode());
+				}
+			}
 		}
 		
 		JKBXVO value = (JKBXVO)getEditor().getValue();
