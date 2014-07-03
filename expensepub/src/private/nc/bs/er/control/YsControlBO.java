@@ -17,7 +17,6 @@ import nc.vo.er.exception.BugetAlarmBusinessException;
 import nc.vo.er.pub.IFYControl;
 import nc.vo.erm.control.YsControlVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
 import nc.vo.pub.BusinessException;
@@ -228,8 +227,7 @@ public class YsControlBO {
 		}
 		Vector<IAccessableBusiVO> busiVoVector = new Vector<IAccessableBusiVO>();
 		for (YsControlVO vo : controlVos) {
-			FiBillAccessableBusiVOProxy busiVOProxy = new FiBillAccessableBusiVOProxy(vo);
-			busiVoVector.addElement(busiVOProxy);
+			busiVoVector.addElement(vo);
 		}
 		if (busiVoVector == null || busiVoVector.size() == 0) {
 			return null;

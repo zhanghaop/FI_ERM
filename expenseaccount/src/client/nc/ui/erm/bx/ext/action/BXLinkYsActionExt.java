@@ -29,15 +29,12 @@ import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.erm.costshare.ext.CShareMonthVO;
 import nc.vo.erm.costshare.ext.CostShareYsControlVOExt;
 import nc.vo.erm.verifynew.BusinessShowException;
-import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.tb.control.DataRuleVO;
 import nc.vo.tb.obj.NtbParamVO;
 
-@SuppressWarnings("restriction")
 public class BXLinkYsActionExt extends LinkYsAction {
 	private static final long serialVersionUID = 1L;
 	
@@ -116,22 +113,13 @@ public class BXLinkYsActionExt extends LinkYsAction {
 		if (ruleVos == null || ruleVos.length == 0) {
 			return null;
 		}
-		List<FiBillAccessableBusiVOProxy> voProxys = new ArrayList<FiBillAccessableBusiVOProxy>();
 		
 		YsControlVO[] controlVos =  ErBudgetUtil.getCtrlVOs(items, true, ruleVos);
 
-		if (controlVos != null) {
-			for (YsControlVO controlVo : controlVos) {
-				voProxys.add(getFiBillAccessableBusiVOProxy(controlVo, controlVo.getParentBillType()));
-			}
+		if(controlVos == null || controlVos.length == 0){
+			return null;
 		}
-		return ErmProxy.getILinkQuery().getLinkDatas(voProxys.toArray(new FiBillAccessableBusiVOProxy[] {}));
-	}
-	
-	private FiBillAccessableBusiVOProxy getFiBillAccessableBusiVOProxy(FiBillAccessableBusiVO vo, String parentBillType) {
-		FiBillAccessableBusiVOProxy voProxy;
-		voProxy = new FiBillAccessableBusiVOProxy(vo);
-		return voProxy;
+		return ErmProxy.getILinkQuery().getLinkDatas(controlVos);
 	}
 	
 	/**

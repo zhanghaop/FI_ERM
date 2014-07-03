@@ -16,7 +16,6 @@ import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.tb.control.DataRuleVO;
@@ -70,7 +69,6 @@ public class ErmMtAppFlowCheckInfo {
 	 */
 	public static NtbCtlInfoVO doNtbCheck(AggMatterAppVO vo) throws BusinessException {
 		Vector<IAccessableBusiVO> iABusiVoVector = new Vector<IAccessableBusiVO>();
-		FiBillAccessableBusiVOProxy voProxyTemp = null;
 
 		String actionCode = BXConstans.ERM_NTB_APPROVE_KEY;
 		MatterAppVO head = vo.getParentVO();
@@ -85,8 +83,7 @@ public class ErmMtAppFlowCheckInfo {
 		YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(ps, false, ruleVos);
 
 		for (YsControlVO item : controlVos) {
-			voProxyTemp = new FiBillAccessableBusiVOProxy(item);
-			iABusiVoVector.addElement(voProxyTemp);
+			iABusiVoVector.addElement(item);
 		}
 
 		if (iABusiVoVector == null || iABusiVoVector.size() < 1)

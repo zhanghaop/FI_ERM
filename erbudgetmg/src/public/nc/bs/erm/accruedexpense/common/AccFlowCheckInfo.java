@@ -13,7 +13,6 @@ import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.control.YsControlVO;
 import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.tb.control.DataRuleVO;
@@ -59,7 +58,6 @@ public class AccFlowCheckInfo {
 	 */
 	public static NtbCtlInfoVO doNtbCheck(AggAccruedBillVO vo) throws BusinessException {
 		Vector<IAccessableBusiVO> iABusiVoVector = new Vector<IAccessableBusiVO>();
-		FiBillAccessableBusiVOProxy voProxyTemp = null;
 
 		String actionCode = BXConstans.ERM_NTB_APPROVE_KEY;
 		AccruedVO head = vo.getParentVO();
@@ -74,8 +72,7 @@ public class AccFlowCheckInfo {
 		YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(ps, false, ruleVos);
 
 		for (YsControlVO item : controlVos) {
-			voProxyTemp = new FiBillAccessableBusiVOProxy(item);
-			iABusiVoVector.addElement(voProxyTemp);
+			iABusiVoVector.addElement(item);
 		}
 
 		if (iABusiVoVector == null || iABusiVoVector.size() < 1)

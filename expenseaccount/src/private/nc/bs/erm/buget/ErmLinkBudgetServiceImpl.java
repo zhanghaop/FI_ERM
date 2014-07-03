@@ -1,8 +1,5 @@
 package nc.bs.erm.buget;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nc.bs.erm.util.ErBudgetUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -19,8 +16,6 @@ import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CostShareVO;
 import nc.vo.erm.util.ErVOUtils;
-import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.tb.control.DataRuleVO;
@@ -91,27 +86,14 @@ public class ErmLinkBudgetServiceImpl implements IErmLinkBudgetService {
 		if (ruleVos == null || ruleVos.length == 0) {
 			return null;
 		}
-		List<FiBillAccessableBusiVOProxy> voProxys = new ArrayList<FiBillAccessableBusiVOProxy>();
 		
 		YsControlVO[] controlVos =  ErBudgetUtil.getCtrlVOs(items, true, ruleVos);
 
-		if (controlVos != null) {
-			for (YsControlVO controlVo : controlVos) {
-				voProxys.add(getFiBillAccessableBusiVOProxy(controlVo, controlVo.getParentBillType()));
-			}
-		}
-		
-		if(voProxys.size() == 0){
+		if(controlVos == null || controlVos.length == 0){
 			return null;
 		}
 		
-		return ErmProxy.getILinkQuery().getLinkDatas(voProxys.toArray(new FiBillAccessableBusiVOProxy[] {}));
-	}
-	
-	private FiBillAccessableBusiVOProxy getFiBillAccessableBusiVOProxy(FiBillAccessableBusiVO vo, String parentBillType) {
-		FiBillAccessableBusiVOProxy voProxy;
-		voProxy = new FiBillAccessableBusiVOProxy(vo);
-		return voProxy;
+		return ErmProxy.getILinkQuery().getLinkDatas(controlVos);
 	}
 	
 	private JKBXVO retrieveChidren(JKBXVO zbvo) throws BusinessException {

@@ -9,7 +9,6 @@ import nc.bs.erm.util.ErBudgetUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.framework.common.NCLocator;
-import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBudgetControl;
 import nc.itf.tb.control.ILinkQuery;
 import nc.ui.uif2.DefaultExceptionHanler;
@@ -25,7 +24,6 @@ import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MatterAppYsControlVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.erm.verifynew.BusinessShowException;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.tb.control.DataRuleVO;
@@ -36,9 +34,8 @@ import nc.vo.trade.pub.IBillStatus;
  * @author chenshuaia
  * 
  *         联查预算
- *		@modify 2014-3-11 支持暂存联查预算 
+ * @modify 2014-3-11 支持暂存联查预算
  */
-@SuppressWarnings({ "serial", "restriction" })
 public class LinkBudgetAction extends NCAction {
 	private BillManageModel model;
 
@@ -66,8 +63,11 @@ public class LinkBudgetAction extends NCAction {
 
 		boolean istbbused = ErUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 		if (!istbbused) {
-			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-					"0201212-0014")/* @res "没有安装预算产品，不能联查预算执行情况！" */);
+			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0014")/*
+																															 * @
+																															 * res
+																															 * "没有安装预算产品，不能联查预算执行情况！"
+																															 */);
 		}
 
 		selectvo = (AggMatterAppVO) selectvo.clone();// 克隆
@@ -81,13 +81,12 @@ public class LinkBudgetAction extends NCAction {
 			actionCode = BXConstans.ERM_NTB_SAVE_KEY;
 		}
 
-		List<FiBillAccessableBusiVOProxy> voProxys = new ArrayList<FiBillAccessableBusiVOProxy>();
 		List<MatterAppYsControlVO> items = new ArrayList<MatterAppYsControlVO>();
 
 		// 调用预算接口查询控制策略。如果返回值为空表示无控制策略，不控制。最后一个参数为false，这样就不会查找下游策略
-		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
-				.queryControlTactics(selectvo.getParentVO().getPk_tradetype(), actionCode, false);
+		DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class).queryControlTactics(selectvo.getParentVO().getPk_tradetype(), actionCode, false);
 
+		YsControlVO[] controlVos = null;
 		if (ruleVos != null && ruleVos.length > 0) {
 			MatterAppVO headvo = selectvo.getParentVO();
 			CircularlyAccessibleValueObject[] dtailvos = selectvo.getChildrenVO();
@@ -97,33 +96,31 @@ public class LinkBudgetAction extends NCAction {
 				items.add(controlVo);
 			}
 
-			YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(items.toArray(new MatterAppYsControlVO[] {}), true,
-					ruleVos);
+			controlVos = ErBudgetUtil.getCtrlVOs(items.toArray(new MatterAppYsControlVO[] {}), true, ruleVos);
 
-			if (controlVos != null) {
-				for (YsControlVO vo : controlVos) {
-					voProxys.add(new FiBillAccessableBusiVOProxy(vo));
-				}
-			}
 		}
 
-		if (voProxys.size() == 0) {
-			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-					"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+		if (controlVos == null || controlVos.length == 0) {
+			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0015")/*
+																															 * @
+																															 * res
+																															 * "没有符合条件的预算数据!"
+																															 */);
 		}
 
 		try {
-			NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName()))
-					.getLinkDatas(voProxys.toArray(new IAccessableBusiVO[0]));
-			NtbParamVOChooser chooser = new NtbParamVOChooser(getModel().getContext().getEntranceUI(),
-					nc.ui.ml.NCLangRes.getInstance().getStrByID("2006030102", "UPP2006030102-000430")/**
+			NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName())).getLinkDatas(controlVos);
+			NtbParamVOChooser chooser = new NtbParamVOChooser(getModel().getContext().getEntranceUI(), nc.ui.ml.NCLangRes.getInstance().getStrByID("2006030102", "UPP2006030102-000430")/**
 			 * @res
 			 *      "预算执行情况"
 			 */
 			);
 			if (null == vos || vos.length == 0) {
-				throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-						"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+				throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0015")/*
+																																 * @
+																																 * res
+																																 * "没有符合条件的预算数据!"
+																																 */);
 			}
 
 			chooser.setParamVOs(vos);
@@ -136,10 +133,11 @@ public class LinkBudgetAction extends NCAction {
 
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("2011000_0", null, "02011000-0040",
-				null, new String[] { this.getBtnName() })/*
-														 * @ res "{0}失败！"
-														 */;
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("2011000_0", null, "02011000-0040", null, new String[] { this.getBtnName() })/*
+																																							 * @
+																																							 * res
+																																							 * "{0}失败！"
+																																							 */;
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
 		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(null);
@@ -152,12 +150,12 @@ public class LinkBudgetAction extends NCAction {
 		}
 
 		switch (billStatus) {
-			case ErmMatterAppConst.BILLSTATUS_SAVED:
-				return BXConstans.ERM_NTB_SAVE_KEY;
-			case ErmMatterAppConst.BILLSTATUS_APPROVED:
-				return BXConstans.ERM_NTB_APPROVE_KEY;
-			default:
-				return null;
+		case ErmMatterAppConst.BILLSTATUS_SAVED:
+			return BXConstans.ERM_NTB_SAVE_KEY;
+		case ErmMatterAppConst.BILLSTATUS_APPROVED:
+			return BXConstans.ERM_NTB_APPROVE_KEY;
+		default:
+			return null;
 		}
 	}
 

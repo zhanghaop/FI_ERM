@@ -9,7 +9,6 @@ import nc.bs.erm.util.ErBudgetUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.framework.common.NCLocator;
-import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBudgetControl;
 import nc.itf.tb.control.ILinkQuery;
 import nc.ui.uif2.NCAction;
@@ -24,7 +23,6 @@ import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.control.YsControlVO;
 import nc.vo.erm.verifynew.BusinessShowException;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.tb.control.DataRuleVO;
 import nc.vo.tb.obj.NtbParamVO;
@@ -34,7 +32,6 @@ import nc.vo.trade.pub.IBillStatus;
  * 联查预算按钮
  *
  */
-@SuppressWarnings({ "restriction" })
 public class AccLinkBudgetAction extends NCAction {
 
 	private static final long serialVersionUID = 1L;
@@ -57,7 +54,9 @@ public class AccLinkBudgetAction extends NCAction {
 			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
 					"0201212-0014")/* @res "没有安装预算产品，不能联查预算执行情况！" */);
 		}
-
+		
+		YsControlVO[] controlVos = null;
+		
 		selectvo = (AggAccruedBillVO) selectvo.clone();// 克隆
 		String actionCode = getActionCode(selectvo.getParentVO());
 		if (actionCode == null) {//其他状态默认设置为保存
@@ -67,7 +66,6 @@ public class AccLinkBudgetAction extends NCAction {
 			actionCode = BXConstans.ERM_NTB_SAVE_KEY;
 		}
 
-		List<FiBillAccessableBusiVOProxy> voProxys = new ArrayList<FiBillAccessableBusiVOProxy>();
 		List<AccruedBillYsControlVO> items = new ArrayList<AccruedBillYsControlVO>();
 
 		// 调用预算接口查询控制策略。如果返回值为空表示无控制策略，不控制。最后一个参数为false，这样就不会查找下游策略
@@ -82,23 +80,19 @@ public class AccLinkBudgetAction extends NCAction {
 				AccruedBillYsControlVO controlVo = new AccruedBillYsControlVO(headvo, (AccruedDetailVO) dtailvos[j]);
 				items.add(controlVo);
 			}
-			YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(items.toArray(new AccruedBillYsControlVO[] {}), true,
+			
+			controlVos = ErBudgetUtil.getCtrlVOs(items.toArray(new AccruedBillYsControlVO[] {}), true,
 					ruleVos);
 
-			if (controlVos != null) {
-				for (YsControlVO vo : controlVos) {
-					voProxys.add(new FiBillAccessableBusiVOProxy(vo));
-				}
-			}
 		}
 
-		if (voProxys.size() == 0) {
+		if (controlVos == null || controlVos.length == 0) {
 			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
 					"0201212-0015")/* @res "没有符合条件的预算数据!" */);
 		}
 		try {
 			NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName()))
-					.getLinkDatas(voProxys.toArray(new IAccessableBusiVO[0]));
+					.getLinkDatas(controlVos);
 			NtbParamVOChooser chooser = new NtbParamVOChooser(getModel().getContext().getEntranceUI(),
 					nc.ui.ml.NCLangRes.getInstance().getStrByID("2006030102", "UPP2006030102-000430")/**
 			 * @res

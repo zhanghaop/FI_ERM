@@ -12,7 +12,6 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.matterapp.ext.IErmMtAppMonthQueryServiceExt;
-import nc.itf.tb.control.IAccessableBusiVO;
 import nc.itf.tb.control.IBudgetControl;
 import nc.itf.tb.control.ILinkQuery;
 import nc.ui.uif2.DefaultExceptionHanler;
@@ -30,8 +29,6 @@ import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.erm.matterapp.ext.MatterAppYsControlVOExt;
 import nc.vo.erm.matterapp.ext.MtappMonthExtVO;
 import nc.vo.erm.verifynew.BusinessShowException;
-import nc.vo.fibill.outer.FiBillAccessableBusiVO;
-import nc.vo.fibill.outer.FiBillAccessableBusiVOProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.tb.control.DataRuleVO;
 import nc.vo.tb.obj.NtbParamVO;
@@ -70,49 +67,56 @@ public class LinkBudgetActionExt extends NCAction {
 
 		boolean istbbused = ErUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 		if (!istbbused) {
-			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-					"0201212-0014")/* @res "没有安装预算产品，不能联查预算执行情况！" */);
+			throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0014")/*
+																															 * @
+																															 * res
+																															 * "没有安装预算产品，不能联查预算执行情况！"
+																															 */);
 		} else {
-			List<FiBillAccessableBusiVOProxy> voProxys = new ArrayList<FiBillAccessableBusiVOProxy>();
-
 			String actionCode = getActionCode(selectvo.getParentVO());
 
 			if (actionCode == null) {
-				throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-						"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+				throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0015")/*
+																																 * @
+																																 * res
+																																 * "没有符合条件的预算数据!"
+																																 */);
 			}
 
 			// 调用预算接口查询控制策略。如果返回值为空表示无控制策略，不控制。最后一个参数为false，这样就不会查找下游策略
-			DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class)
-					.queryControlTactics(selectvo.getParentVO().getPk_tradetype(), actionCode, false);
-			
-			if (ruleVos != null && ruleVos.length > 0) {
-				
-				IFYControl[] ysvos = getMtAppYsControlVOs(selectvo);
-				
-				YsControlVO[] controlVos = ErBudgetUtil.getCtrlVOs(ysvos, true,
-						ruleVos);
+			DataRuleVO[] ruleVos = NCLocator.getInstance().lookup(IBudgetControl.class).queryControlTactics(selectvo.getParentVO().getPk_tradetype(), actionCode, false);
 
-				if (controlVos != null) {
-					for (YsControlVO vo : controlVos) {
-						voProxys.add(getFiBillAccessableBusiVOProxy(vo, vo.getParentBillType()));
-					}
-				}
+			YsControlVO[] controlVos = null;
+			if (ruleVos != null && ruleVos.length > 0) {
+
+				IFYControl[] ysvos = getMtAppYsControlVOs(selectvo);
+
+				controlVos = ErBudgetUtil.getCtrlVOs(ysvos, true, ruleVos);
+
+			}
+
+			if (controlVos == null || controlVos.length == 0) {
+				throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0015")/*
+																																 * @
+																																 * res
+																																 * "没有符合条件的预算数据!"
+																																 */);
 			}
 
 			try {
 				// list voProxys
-				NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName()))
-						.getLinkDatas(voProxys.toArray(new IAccessableBusiVO[voProxys.size()]));
-				NtbParamVOChooser chooser = new NtbParamVOChooser(getModel().getContext().getEntranceUI(),
-						nc.ui.ml.NCLangRes.getInstance().getStrByID("2006030102", "UPP2006030102-000430")/**
+				NtbParamVO[] vos = ((ILinkQuery) NCLocator.getInstance().lookup(ILinkQuery.class.getName())).getLinkDatas(controlVos);
+				NtbParamVOChooser chooser = new NtbParamVOChooser(getModel().getContext().getEntranceUI(), nc.ui.ml.NCLangRes.getInstance().getStrByID("2006030102", "UPP2006030102-000430")/**
 				 * @res
 				 *      "预算执行情况"
 				 */
 				);
 				if (null == vos || vos.length == 0) {
-					throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-							"0201212-0015")/* @res "没有符合条件的预算数据!" */);
+					throw new BusinessShowException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0015")/*
+																																	 * @
+																																	 * res
+																																	 * "没有符合条件的预算数据!"
+																																	 */);
 				}
 
 				chooser.setParamVOs(vos);
@@ -123,7 +127,7 @@ public class LinkBudgetActionExt extends NCAction {
 		}
 
 	}
-	
+
 	/**
 	 * 根据费用申请单包装预算控制vos，分期分摊占用预算
 	 * 
@@ -132,7 +136,7 @@ public class LinkBudgetActionExt extends NCAction {
 	 * @throws BusinessException
 	 */
 	private IFYControl[] getMtAppYsControlVOs(AggMatterAppVO vo) throws BusinessException {
-		
+
 		List<IFYControl> list = new ArrayList<IFYControl>();
 		// 包装ys控制vo
 		MatterAppVO headvo = vo.getParentVO();
@@ -146,7 +150,7 @@ public class LinkBudgetActionExt extends NCAction {
 		boolean isclosed = headvo.getClose_status() == ErmMatterAppConst.CLOSESTATUS_Y;
 		for (int j = 0; j < dtailvos.length; j++) {
 			detailvoMap.put(dtailvos[j].getPrimaryKey(), dtailvos[j]);
-			if(isclosed){
+			if (isclosed) {
 				// 关闭状态的申请单，还需要联查关闭期间的预算
 				MatterAppYsControlVOExt controlvo = new MatterAppYsControlVOExt(headvo, dtailvos[j]);
 				controlvo.setYsDate(headvo.getClosedate());
@@ -162,35 +166,30 @@ public class LinkBudgetActionExt extends NCAction {
 				list.add(controlvo);
 			}
 		}
-		
+
 		return list.toArray(new IFYControl[list.size()]);
 	}
-	
+
 	@Override
 	protected void processExceptionHandler(Exception ex) {
-		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString(
-				"2011000_0", null, "02011000-0040", null,
-				new String[] { this.getBtnName() })/*
-													 * @ res "{0}失败！"
-													 */;
-		((DefaultExceptionHanler)getExceptionHandler()).setErrormsg(errorMsg);
+		String errorMsg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("2011000_0", null, "02011000-0040", null, new String[] { this.getBtnName() })/*
+																																							 * @
+																																							 * res
+																																							 * "{0}失败！"
+																																							 */;
+		((DefaultExceptionHanler) getExceptionHandler()).setErrormsg(errorMsg);
 		super.processExceptionHandler(ex);
-	}
-
-	private FiBillAccessableBusiVOProxy getFiBillAccessableBusiVOProxy(FiBillAccessableBusiVO vo, String parentBillType) {
-		FiBillAccessableBusiVOProxy voProxy = new FiBillAccessableBusiVOProxy(vo);
-		return voProxy;
 	}
 
 	private String getActionCode(MatterAppVO vo) {
 		int billStatus = vo.getBillstatus();
 		switch (billStatus) {
-			case ErmMatterAppConst.BILLSTATUS_SAVED:
-				return BXConstans.ERM_NTB_SAVE_KEY;
-			case ErmMatterAppConst.BILLSTATUS_APPROVED:
-				return BXConstans.ERM_NTB_APPROVE_KEY;
-			default:
-				return null;
+		case ErmMatterAppConst.BILLSTATUS_SAVED:
+			return BXConstans.ERM_NTB_SAVE_KEY;
+		case ErmMatterAppConst.BILLSTATUS_APPROVED:
+			return BXConstans.ERM_NTB_APPROVE_KEY;
+		default:
+			return null;
 		}
 	}
 
