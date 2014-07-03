@@ -89,9 +89,9 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		
 		//委托办理支付成功时生成凭证
 		if (voList.get(0).getPayflag().intValue() == BXStatusConst.PAYFLAG_PayFinish) {
-			String param = SysinitAccessor.getInstance().getParaString(
-					voList.get(0).getPk_org(), "CMP37");
-			if (BXStatusConst.VounterCondition_ZF.equals(param)) {
+//			String param = SysinitAccessor.getInstance().getParaString(
+//					voList.get(0).getPk_org(), "CMP37");
+			if (SettleUtil.isJsToFip(voList.get(0))) {
 				List<JKBXVO> jkbxvo = NCLocator.getInstance()
 						.lookup(IBXBillPrivate.class).retriveItems(voList);
 				forwardToFip(BXZbBO.MESSAGE_SETTLE, jkbxvo);// 生成凭证的正向操作
@@ -150,8 +150,8 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		else if (BusiStatus.EffectNever.equals(trans.getTo())) {
 			flag = BXZbBO.MESSAGE_UNSETTLE;
 		}
-		String param = SysinitAccessor.getInstance().getParaString(jkbxVO.getParentVO().getPk_org(), "CMP37");
-		if(BXStatusConst.VounterCondition_QZ.equals(param)){
+		//String param = SysinitAccessor.getInstance().getParaString(jkbxVO.getParentVO().getPk_org(), "CMP37");
+		if(!SettleUtil.isJsToFip(jkbxVO.getParentVO())){
 			if(BXZbBO.MESSAGE_SETTLE.equals(flag) && 
 					(jkbxVO.getParentVO().getVouchertag()==null 
 							||jkbxVO.getParentVO().getVouchertag()==BXStatusConst.SXFlag )){
@@ -414,9 +414,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			
 			//网银支付支付完成时处理生成凭证
 			if(head.getPayflag().intValue()==BXStatusConst.PAYFLAG_PayFinish){
-				String param = SysinitAccessor.getInstance().getParaString(head.getPk_org(), "CMP37");
-				if(BXStatusConst.VounterCondition_ZF.equals(param)){
-				
+				if(SettleUtil.isJsToFip(jkbxVO.getParentVO())){
 					List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(IBXBillPrivate.class).retriveItems(voList);
 					forwardToFip(BXZbBO.MESSAGE_SETTLE,jkbxvo);//生成凭证的正向操作
 				}
@@ -482,15 +480,15 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		List<JKBXHeaderVO> voList = new ArrayList<JKBXHeaderVO>();
 		
 		String flag = !isOpp ? BXZbBO.MESSAGE_SETTLE : BXZbBO.MESSAGE_UNSETTLE;
-		String param = null;
+		JKBXHeaderVO head = null;
 		for (String id : idList) {
 			List<JKBXHeaderVO> name = new BXZbBO().queryHeadersByPrimaryKeys(new String[] { id }, BXConstans.BX_DJDL);
 			if (name == null || name.size() == 0) {
 				name = new BXZbBO().queryHeadersByPrimaryKeys(new String[] { id }, BXConstans.JK_DJDL);
 			}
 			
-			JKBXHeaderVO head = name.get(0);
-			param = SysinitAccessor.getInstance().getParaString(head.getPk_org(), "CMP37");
+			head = name.get(0);
+			//param = SysinitAccessor.getInstance().getParaString(head.getPk_org(), "CMP37");
 			head.setPk_jkbx(id);
 			head.setPayflag(isOpp ? CMPExecStatus.UNPayed.getStatus() : CMPExecStatus.PayFinish.getStatus());
 			head.setPaydate(isOpp ? null : operateDate);
@@ -500,7 +498,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		
 		//根据表头查询整个聚合VO
 		List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(IBXBillPrivate.class).retriveItems(voList);
-		if(BXStatusConst.VounterCondition_ZF.equals(param)){
+		if(SettleUtil.isJsToFip(head)){
 			// 发送会计平台
 			if(!isOpp){
 				//
