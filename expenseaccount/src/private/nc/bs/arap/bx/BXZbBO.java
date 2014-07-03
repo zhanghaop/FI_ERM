@@ -1470,7 +1470,8 @@ public class BXZbBO {
 		//reVO.setRelationID(headVO.getPk());
 		reVO.setRelationID(headVO.getPk()+"_"+headVO.getVouchertag());
 		reVO.setPk_system(BXConstans.ERM_PRODUCT_CODE_Lower);
-		reVO.setBusidate(headVO.getJsrq() == null ? new UFDate() : headVO.getJsrq());
+		
+		reVO.setBusidate(headVO.getJsrq() == null ? new UFDate(InvocationInfoProxy.getInstance().getBizDateTime()) : headVO.getJsrq());
 		reVO.setPk_billtype(headVO.getDjlxbm());
 		reVO.setPk_operator(headVO.getOperator());
 		reVO.setFreedef1(headVO.getDjbh());

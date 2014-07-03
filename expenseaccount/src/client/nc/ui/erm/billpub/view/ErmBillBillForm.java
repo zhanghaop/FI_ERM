@@ -1009,11 +1009,10 @@ public class ErmBillBillForm extends ERMBillForm {
 		}
 		if(selectedData != null){//提高效率
 			setValue(selectedData);
+			helper.initCostPageShow(getModel().getUiState());
 		}else{
 			this.getBillCardPanel().getBillData().clearViewData();
 		}
-		
-		helper.initCostPageShow(getModel().getUiState());
 	}
 	@Override
 	public void setValue(Object object) {

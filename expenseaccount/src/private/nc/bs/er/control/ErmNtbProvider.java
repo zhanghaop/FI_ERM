@@ -103,8 +103,8 @@ public class ErmNtbProvider implements IBusiSysExecDataProvider {
 				try {
 					list  = (List<Object[]>) dao.executeQuery(sqls[i], new ArrayListProcessor());				
 				}catch (Exception e) {
+					nc.bs.logging.Log.getInstance(this.getClass()).error("erm ntb sql:" + sqls[i]);
 					ExceptionHandler.handleException(e);
-					nc.bs.logging.Log.getInstance(this.getClass()).debug("erm ntb sql:" + sqls[i]);
 				}
 				if (list != null && list.size() == 1) {
 					Object[] obj = list.get(0);
