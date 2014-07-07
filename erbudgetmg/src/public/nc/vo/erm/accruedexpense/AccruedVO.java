@@ -5,6 +5,7 @@
 package nc.vo.erm.accruedexpense;
 
 import nc.vo.pub.*;
+import nc.vo.pub.lang.UFBoolean;
 
 /**
  * <b> 在此处简要描述此类的功能 </b>
@@ -96,6 +97,9 @@ public class AccruedVO extends SuperVO {
 	private nc.vo.pub.lang.UFDateTime ts;
 
 	private java.lang.Integer redflag;
+	//add 2014-07-07
+	public String imag_status;//影像状态
+	public UFBoolean isneedimag;//需要影像扫描
 
 	public static final String PK_ACCRUED_BILL = "pk_accrued_bill";
 	public static final String PK_GROUP = "pk_group";
@@ -172,6 +176,10 @@ public class AccruedVO extends SuperVO {
 	public static final String HASNTBCHECK = "hasntbcheck";
 	public static final String WARNINGMSG = "warningmsg";
 	public static final String REDFLAG = "redflag";
+	public static final String IMAG_STATUS = "imag_status";
+	public static final String ISNEEDIMAG = "isneedimag";
+	
+	
 
 	/**
 	 * 属性pk_accrued_bill的Getter方法.属性名：主键 创建日期:
@@ -1576,6 +1584,23 @@ public class AccruedVO extends SuperVO {
 	public void setRedflag(java.lang.Integer redflag) {
 		this.redflag = redflag;
 	}
+
+	public String getImag_status() {
+		return imag_status;
+	}
+
+	public void setImag_status(String imag_status) {
+		this.imag_status = imag_status;
+	}
+
+	public UFBoolean getIsneedimag() {
+		return isneedimag;
+	}
+
+	public void setIsneedimag(UFBoolean isneedimag) {
+		this.isneedimag = isneedimag;
+	}
+
 
 	/**
 	 * 属性dr的Getter方法.属性名：dr 创建日期:

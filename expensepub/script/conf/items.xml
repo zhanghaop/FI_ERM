@@ -735,4 +735,13 @@
 		<grpField></grpField>
 		<fixedWhere>pk_module = '2011'</fixedWhere>
 	</item>
+	<item>
+		<itemKey>pub_workflowgadget</itemKey>
+		<itemName>流程组件</itemName>
+		<itemRule>pub_workflowgadget</itemRule>
+		<sysField></sysField>
+		<corpField></corpField>
+		<grpField></grpField>
+		<fixedWhere>billtype in ('263X','264X','261X','262X')</fixedWhere>
+	</item>
 </items>

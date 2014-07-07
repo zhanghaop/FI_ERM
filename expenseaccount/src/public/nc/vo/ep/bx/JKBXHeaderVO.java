@@ -825,6 +825,7 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	//ehp2加入
 	public Integer paytarget; //收款对象
 	public Integer vouchertag; //凭证标志
+	
 	public Integer getVouchertag() {
 		return vouchertag;
 	}
@@ -832,6 +833,29 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public void setVouchertag(Integer vouchertag) {
 		this.vouchertag = vouchertag;
 	}
+	//add 2014-07-07
+	public String imag_status;//影像状态
+	public UFBoolean isneedimag;//需要影像扫描
+	
+	public static final String IMAG_STATUS = "imag_status";
+	public static final String ISNEEDIMAG = "isneedimag";
+	
+	public String getImag_status() {
+		return imag_status;
+	}
+
+	public void setImag_status(String imag_status) {
+		this.imag_status = imag_status;
+	}
+
+	public UFBoolean getIsneedimag() {
+		return isneedimag;
+	}
+
+	public void setIsneedimag(UFBoolean isneedimag) {
+		this.isneedimag = isneedimag;
+	}
+
 	//ehp3加入
 	public Integer red_status;//红冲标志
 	public String redbillpk;//红冲单据主键

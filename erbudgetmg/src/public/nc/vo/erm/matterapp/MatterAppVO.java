@@ -122,7 +122,13 @@ public class MatterAppVO extends SuperVO {
 	
 	//add 65 ehp2 2014-1-9
 	private String apply_org;//申请单位
-
+	
+	//add 2014-07-07
+	public String imag_status;//影像状态
+	public UFBoolean isneedimag;//需要影像扫描
+	
+	public static final String IMAG_STATUS = "imag_status";
+	public static final String ISNEEDIMAG = "isneedimag";
 	public static final String ISCOSTSHARE = "iscostshare";
 	public static final String PK_MTAPP_BILL = "pk_mtapp_bill";
 	public static final String PK_BILLTYPE = "pk_billtype";
@@ -2015,5 +2021,21 @@ public class MatterAppVO extends SuperVO {
 
 	public void setApply_org(String apply_org) {
 		this.apply_org = apply_org;
+	}
+	
+	public String getImag_status() {
+		return imag_status;
+	}
+
+	public void setImag_status(String imag_status) {
+		this.imag_status = imag_status;
+	}
+
+	public UFBoolean getIsneedimag() {
+		return isneedimag;
+	}
+
+	public void setIsneedimag(UFBoolean isneedimag) {
+		this.isneedimag = isneedimag;
 	}
 }

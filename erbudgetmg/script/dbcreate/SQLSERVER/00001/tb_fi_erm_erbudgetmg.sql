@@ -515,6 +515,10 @@ max_amount decimal(28,8) null
 /*允许报销最大金额*/,
 iscostshare nchar(1) null 
 /*是否分摊*/,
+imag_status nvarchar(2) null 
+/*影像状态*/,
+isneedimag char[1] null 
+/*需要影像扫描*/,
  constraint pk_er_mtapp_bill primary key (pk_mtapp_bill),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -835,6 +839,10 @@ auditman nvarchar(20) null default '~'
 /*审批流发起人*/,
 redflag int null 
 /*红冲标志*/,
+imag_status nvarchar(2) null 
+/*影像状态*/,
+isneedimag char[1] null 
+/*需要影像扫描*/,
  constraint pk_er_accrued primary key (pk_accrued_bill),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
