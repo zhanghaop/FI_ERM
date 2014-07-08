@@ -1,6 +1,9 @@
 insert into pub_sysinittemp(pk_sysinittemp,afterclass,checkclass,dataclass,dataoriginflag,defaultvalue,domainflag,dr,editcomponentctrlclass,groupcode,groupname,initcode,initname,mainflag,mutexflag,orgtypeconvertmode,paratype,pk_orgtype,pk_refinfo,remark,showflag,stateflag,sysflag,sysindex,ts,valuelist,valuetype) values('1001Z31000000000CAWI',null,null,null,0,'N','2011',null,null,'~',null,'ER14','申请人与借款报销人是否必须一致','N',0,'FINANCEORGTYPE000000','business','FINANCEORGTYPE000000','~',null,'Y',3,'N',14,'2014-04-29 09:52:14','是,否',1)
 go
 
+insert into pub_sysinittemp(pk_sysinittemp,afterclass,checkclass,dataclass,dataoriginflag,defaultvalue,domainflag,dr,editcomponentctrlclass,groupcode,groupname,initcode,initname,mainflag,mutexflag,orgtypeconvertmode,paratype,pk_orgtype,pk_refinfo,remark,showflag,stateflag,sysflag,sysindex,ts,valuelist,valuetype) values('1001Z310000000005JUO',null,null,null,0,'1','2011',null,null,'~',null,'ER15','费用单据流程类型','N',0,'FINANCEORGTYPE000000','business','FINANCEORGTYPE000000','~',null,'Y',1,'N',15,'2014-07-08 10:29:09','I,审批流,工作流',2)
+go
+
 insert into pub_sysinittemp(pk_sysinittemp,afterclass,checkclass,dataclass,dataoriginflag,defaultvalue,domainflag,dr,editcomponentctrlclass,groupcode,groupname,initcode,initname,mainflag,mutexflag,orgtypeconvertmode,paratype,pk_orgtype,pk_refinfo,remark,showflag,stateflag,sysflag,sysindex,ts,valuelist,valuetype) values('0001Z310000000001CM5',null,null,null,null,'借款报销人','2011',0,null,null,null,'ER1','审批流起点人','N',0,'GROUPORGTYPE00000000',null,'GROUPORGTYPE00000000',null,null,'Y',1,'N',1,'2014-04-29 09:52:14','I,录入人,借款报销人',2)
 go
 

@@ -1,41 +1,25 @@
 package nc.ui.erm.billpub.action;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import nc.bs.dao.BaseDAO;
 import nc.bs.erm.util.action.ErmActionConst;
-import nc.bs.framework.common.NCLocator;
-import nc.bs.pf.pub.PfDataCache;
-import nc.itf.er.reimtype.IReimTypeService;
-import nc.itf.org.IFinanceOrgQryService;
-import nc.itf.org.IGroupQryService;
-import nc.itf.org.IOrgUnitQryService;
-import nc.ui.erm.util.ErUiUtil;
+import nc.pubitf.para.SysInitQuery;
 import nc.ui.pub.workflownote.FlowStateDlg;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
-import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.er.reimrule.ReimRuleDimVO;
-import nc.vo.org.FinanceOrgTreeVO;
-import nc.vo.org.GroupVO;
-import nc.vo.org.OrgVO;
+import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
 
-public class LinkAppStatusAction extends NCAction{
+public class LinkAppStatusAction extends NCAction {
 	private static final long serialVersionUID = 1L;
 	private BillManageModel model;
 	private BillForm editor;
-	
-	public LinkAppStatusAction(){
+
+	public LinkAppStatusAction() {
 		super();
 		setCode(ErmActionConst.LINKAPPSTATUS);
 		setBtnName(ErmActionConst.getLinkAppStatusName());
@@ -47,19 +31,14 @@ public class LinkAppStatusAction extends NCAction{
 
 		if (selectedVO == null || selectedVO.getParentVO().getPk_jkbx() == null)
 			return;
-//		NCLocator.getInstance().lookup(IReimTypeService.class).saveReimRule(null, 
-//				null,null,null);
-//		ErmFlowCheckInfo check = new ErmFlowCheckInfo();
-//		if(check.checkReimRule(selectedVO)== UFBoolean.TRUE)
-//			ShowStatusBarMsgUtil.showErrorMsg("错误","超标准", getModel().getContext());
+
 		String pk_jkbx = selectedVO.getParentVO().getPk_jkbx();
 		String djlxbm = selectedVO.getParentVO().getDjlxbm();
 
-		FlowStateDlg app = new FlowStateDlg(getEditor(), djlxbm, pk_jkbx, WorkflowTypeEnum.Approveflow.getIntValue());
-
+		FlowStateDlg app = new FlowStateDlg(getEditor(), djlxbm, pk_jkbx, getWorkFlowType(selectedVO.getParentVO().getPk_org()));
 		app.showModal();
 	}
-	
+
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
@@ -68,7 +47,7 @@ public class LinkAppStatusAction extends NCAction{
 		}
 		return true;
 	}
-	
+
 	public BillManageModel getModel() {
 		return model;
 	}
@@ -86,6 +65,23 @@ public class LinkAppStatusAction extends NCAction{
 	public void setEditor(BillForm editor) {
 		this.editor = editor;
 	}
-	
-	
+
+	/**
+	 * 获取动作脚本类型
+	 * 
+	 * @param pk_org
+	 * @return
+	 */
+	protected int getWorkFlowType(String pk_org) {
+		int flowtype = WorkflowTypeEnum.Approveflow.getIntValue();
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				flowtype = WorkflowTypeEnum.Workflow.getIntValue();
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return flowtype;
+	}
 }

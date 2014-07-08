@@ -38,7 +38,7 @@ public class AuditAction extends ErmAuditAction {
 	private static final long serialVersionUID = 1L;
 
 	private BxApproveBtnStatusListener auditstausListener;
-
+	
 	public AuditAction() {
 		super();
 	}
@@ -174,9 +174,11 @@ public class AuditAction extends ErmAuditAction {
 		JKBXVO bxvo = (JKBXVO) appVO;
 		JKBXHeaderVO head = bxvo.getParentVO();
 		MessageVO result = null;
+		
+		String actionName = getActionCode(head.getPk_org());
 		try {
 			// 审核动作处理
-			Object msgReturn = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), "APPROVE"
+			Object msgReturn = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), actionName
 					+ WorkbenchEnvironment.getInstance().getLoginUser().getCuserid(), head.getDjlxbm(), bxvo, null,
 					null, null, null);
 

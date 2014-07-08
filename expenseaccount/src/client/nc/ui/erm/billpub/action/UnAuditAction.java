@@ -7,25 +7,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
-
-import javax.swing.JComponent;
 
 import nc.bs.ml.NCLangResOnserver;
 import nc.bs.uif2.IActionCode;
 import nc.desktop.ui.WorkbenchEnvironment;
-import nc.ui.er.pub.MessageLog;
+import nc.pubitf.para.SysInitQuery;
 import nc.ui.erm.billpub.btnstatus.BxApproveBtnStatusListener;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.progress.IProgressMonitor;
 import nc.ui.pub.pf.PfUtilClient;
 import nc.ui.uif2.NCAsynAction;
-import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.cmp.exception.CmpAuthorizationException;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -36,10 +33,8 @@ import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
+import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.uap.pf.PFBusinessException;
-import nc.vo.uif2.LoginContext;
-
-import org.apache.commons.lang.ArrayUtils;
 
 public class UnAuditAction extends NCAsynAction {
 	private static final long serialVersionUID = 1L;
@@ -92,7 +87,6 @@ public class UnAuditAction extends NCAsynAction {
 			for (JKBXVO bxvo : auditVOs) {
 				MessageVO msg = unAudit(bxvo);
 				resultList.add(msg);
-
 			}
 
 			List<AggregatedValueObject> resultVos = ErUiUtil.combineMsgs(msgs, resultList.toArray(new MessageVO[0]));
@@ -111,16 +105,16 @@ public class UnAuditAction extends NCAsynAction {
 	 */
 	private MessageVO unAudit(JKBXVO bxvo) {
 		JKBXHeaderVO head = bxvo.getParentVO();
-
+		String actionType = getActionCode(bxvo.getParentVO().getPk_org());
 		MessageVO result = null;
 		try {
 			// 反审核动作处理
-			Object msgReturn = PfUtilClient.runAction(getEditor(), "UNAPPROVE"
+			Object msgReturn = PfUtilClient.runAction(getEditor(), actionType
 					+ WorkbenchEnvironment.getInstance().getLoginUser().getCuserid(), head.getDjlxbm(), bxvo, null,
 					null, null, null);
 
 			if (msgReturn == null) {
-				result = new MessageVO(bxvo, ActionUtils.AUDIT, false, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+				result = new MessageVO(bxvo, ActionUtils.UNAUDIT, false, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
 						.getStrByID("2011", "UPP2011-000339")/*
 															 * @res "用户取消操作"
 															 */);
@@ -129,7 +123,7 @@ public class UnAuditAction extends NCAsynAction {
 					MessageVO[] msgVos = (MessageVO[]) msgReturn;
 					result = msgVos[0];
 				} else if (msgReturn instanceof JKBXVO) {
-					result = new MessageVO((JKBXVO) msgReturn, ActionUtils.AUDIT);
+					result = new MessageVO((JKBXVO) msgReturn, ActionUtils.UNAUDIT);
 				}
 			}
 		} catch (nc.vo.cmp.exception.CmpAuthorizationException exp) {
@@ -222,6 +216,24 @@ public class UnAuditAction extends NCAsynAction {
 
 		return msgVO;
 	}
+	
+	/**
+	 * 获取动作脚本类型
+	 * @param pk_org
+	 * @return
+	 */
+	protected String getActionCode(String pk_org) {
+		String actionCode = IPFActionName.UNAPPROVE;
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				actionCode = IPFActionName.ROLLBACK;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
+	}
 
 	public BillManageModel getModel() {
 		return model;
@@ -251,40 +263,6 @@ public class UnAuditAction extends NCAsynAction {
 
 	public void setAuditstausListener(BxApproveBtnStatusListener auditstausListener) {
 		this.auditstausListener = auditstausListener;
-	}
-
-	/**
-	 * 审批批处理结果显示
-	 * 
-	 * @param context
-	 * @param messageVos
-	 * @throws BusinessException
-	 */
-	public void showBatchResults(LoginContext context, MessageVO[] messageVos) throws BusinessException {
-		if (ArrayUtils.isEmpty(messageVos))
-			return;
-
-		Vector<String> v = new Vector<String>();
-		for (MessageVO messagevo : messageVos) {
-			if (messagevo == null)
-				continue;
-			v.addElement(messagevo.toString());
-		}
-		if (v.size() > 1) {
-			JComponent parent = context.getEntranceUI();
-			MessageLog f = new MessageLog(parent);
-			Double w = Double.valueOf((parent.getToolkit().getScreenSize().getWidth() - f.getWidth()) / 2);
-			Double h = Double.valueOf((parent.getToolkit().getScreenSize().getHeight() - f.getHeight()) / 2);
-			f.setLocation(w.intValue(), h.intValue());
-			f.f_setText(v);
-			f.showModal();
-		} else if (v.size() == 1) {
-			if (messageVos[0].isSuccess()) {
-				ShowStatusBarMsgUtil.showStatusBarMsg(v.get(0), context);
-			} else {
-				throw new BusinessException(v.get(0));
-			}
-		}
 	}
 
 	@Override

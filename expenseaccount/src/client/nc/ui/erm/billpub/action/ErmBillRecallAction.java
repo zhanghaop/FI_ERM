@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.uif2.IActionCode;
+import nc.pubitf.para.SysInitQuery;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.pf.PfUtilClient;
 import nc.ui.uif2.DefaultExceptionHanler;
@@ -13,6 +14,7 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -20,6 +22,7 @@ import nc.vo.er.check.VOStatusChecker;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
+import nc.vo.pub.BusinessException;
 import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.trade.pub.IBillStatus;
 
@@ -104,9 +107,10 @@ public class ErmBillRecallAction extends NCAction {
 
 	private MessageVO recallSingle(JKBXVO appVO) throws Exception {
 		MessageVO result = null;
+		String actionType = getActionCode(appVO.getParentVO().getPk_org());
 		try {
 			JKBXVO vo = (JKBXVO) PfUtilClient.runAction(getModel().getContext().getEntranceUI(),
-					IPFActionName.UNSAVE, appVO.getParentVO().getDjlxbm(), appVO, null, null, null, null);
+					actionType, appVO.getParentVO().getDjlxbm(), appVO, null, null, null, null);
 			result = new MessageVO(vo, ActionUtils.RECALL);
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);
@@ -186,5 +190,23 @@ public class ErmBillRecallAction extends NCAction {
 
 	public void setResourceCode(String resourceCode) {
 		this.resourceCode = resourceCode;
+	}
+	
+	/**
+	 * 获取动作脚本类型
+	 * @param pk_org
+	 * @return
+	 */
+	protected String getActionCode(String pk_org) {
+		String actionCode = IPFActionName.UNSAVE;
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				actionCode = IPFActionName.RECALL;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
 	}
 }

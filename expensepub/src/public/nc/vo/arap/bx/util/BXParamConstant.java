@@ -51,6 +51,12 @@ public class BXParamConstant {
 	public final static String ER_PF_STARTER_CREATOR = "1";// 审批流起点人-录入人
 
 	public final static String ER_PF_STARTER_BILLMAKER = "2";// 审批流起点人-借款报销人
+	
+	public static String ER_FLOW_TYPE = "ER15"; //费用单据流程类型
+
+	public final static String ER_FLOW_TYPE_APPROVEFLOW = "1";// 审批流
+
+	public final static String ER_FLOW_TYPE_WORKFLOW = "2";// 工作流
 
 	/**
 	 * 费用申请单控制环节

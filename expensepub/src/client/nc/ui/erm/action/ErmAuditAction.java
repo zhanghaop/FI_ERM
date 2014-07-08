@@ -11,6 +11,7 @@ import nc.bs.uif2.IActionCode;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.itf.uap.pf.IplatFormEntry;
+import nc.pubitf.para.SysInitQuery;
 import nc.uap.rbac.core.dataperm.DataPermissionFacade;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pf.change.PfUtilUITools;
@@ -25,6 +26,7 @@ import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.matterapp.MatterAppVO;
@@ -34,6 +36,7 @@ import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pf.change.PfUtilBaseTools;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.pub.workflownote.WorkflownoteVO;
 import nc.vo.uap.pf.PfProcessBatchRetObject;
 import nc.vo.uif2.LoginContext;
@@ -59,6 +62,8 @@ public abstract class ErmAuditAction extends NCAsynAction {
 	private BillManageModel model;
 
 	private BillForm editor;
+	
+	private String actionCode = IPFActionName.APPROVE;
 
 	/**
 	 * 审批结果信息
@@ -118,8 +123,9 @@ public abstract class ErmAuditAction extends NCAsynAction {
 
 		PfProcessBatchRetObject retObject = null;
 		try {
+			String actionName = getActionCode((String) auditVOs.get(0).getParentVO().getAttributeValue("pk_org"));
 			// 批量审批
-			retObject = PfUtilClient.runBatchNew(getModel().getContext().getEntranceUI(), "APPROVE", tradeType,
+			retObject = PfUtilClient.runBatchNew(getModel().getContext().getEntranceUI(), actionName, tradeType,
 					auditVOs.toArray(new AggregatedValueObject[0]), null, null, null);
 		} catch (Exception ex) {
 			ExceptionHandler.handleException(ex);
@@ -181,6 +187,8 @@ public abstract class ErmAuditAction extends NCAsynAction {
 			return null;
 		}
 
+		String actionName = getActionCode((String) auditVOs.get(0).getParentVO().getAttributeValue("pk_org")) + WorkbenchEnvironment.getInstance().getLoginUser().getCuserid();
+
 		for (Map.Entry<String, List<AggregatedValueObject>> entry : typeMap.entrySet()) {
 			List<AggregatedValueObject> aggVosTmepList = entry.getValue();
 			PfProcessBatchRetObject retObject = null;
@@ -192,12 +200,8 @@ public abstract class ErmAuditAction extends NCAsynAction {
 				WorkflownoteVO currNote = (WorkflownoteVO) noteVO.clone();
 				currParam.put(PfUtilBaseTools.PARAM_WORKNOTE, currNote);
 				currParam.put(PfUtilBaseTools.PARAM_BATCH, PfUtilBaseTools.PARAM_BATCH);
-
-				String actionName = "APPROVE" + WorkbenchEnvironment.getInstance().getLoginUser().getCuserid();
 				IplatFormEntry platFormService = NCLocator.getInstance().lookup(IplatFormEntry.class);
-
-				retObject = (PfProcessBatchRetObject) platFormService.processBatch(actionName, billType, currNote,
-						aggVosTmepList.toArray(new AggregatedValueObject[0]), null, currParam);// 批量审批
+				retObject = (PfProcessBatchRetObject) platFormService.processBatch(actionName, billType, currNote, aggVosTmepList.toArray(new AggregatedValueObject[0]), null, currParam);// 批量审批
 			} catch (Exception ex) {
 				MessageVO messageVo = new MessageVO(aggVosTmepList.get(0), ActionUtils.AUDIT);
 				messageVo.setSuccess(false);
@@ -375,5 +379,22 @@ public abstract class ErmAuditAction extends NCAsynAction {
 			monitor = null;
 		}
 		return true;
+	}
+	
+	/**
+	 * 获取动作脚本类型
+	 * @param pk_org
+	 * @return
+	 */
+	protected String getActionCode(String pk_org) {
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {// 借款报销单位
+				actionCode = IPFActionName.SIGNAL;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
 	}
 }
