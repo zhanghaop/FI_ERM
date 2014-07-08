@@ -9,6 +9,7 @@ import java.util.Map;
 
 import nc.bs.arap.bx.BusiLogUtil;
 import nc.bs.businessevent.EventDispatcher;
+import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.erm.accruedexpense.check.AccruedBillVOChecker;
@@ -29,6 +30,7 @@ import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.common.MessageVO;
+import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fipub.billcode.FinanceBillCodeInfo;
 import nc.vo.fipub.billcode.FinanceBillCodeUtils;
 import nc.vo.pub.AggregatedValueObject;
@@ -89,6 +91,34 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		
 		// 返回
 		return vo;
+	}
+	
+	public AggAccruedBillVO invalidBill(AggAccruedBillVO aggvo)throws BusinessException{
+		if (aggvo == null) {
+			return null; 
+		}
+		// 删除加锁
+		pklockOperate(aggvo);
+		// 版本校验
+		BDVersionValidationUtil.validateVersion(aggvo);
+				
+		AccruedBillVOChecker vochecker = new AccruedBillVOChecker();
+		vochecker.checkInvalid(aggvo);
+		
+		// 删除前事件处理
+		fireBeforeDeleteEvent(aggvo);
+		
+		//作废状态
+		aggvo.getParentVO().setBillstatus(ErmAccruedBillConst.BILLSTATUS_INVALID);
+		// 取服务器事件作为修改时间
+		AuditInfoUtil.updateData(aggvo.getParentVO());
+		new BaseDAO().updateVOArray(new AccruedVO[]{aggvo.getParentVO()} , new String[] { MatterAppVO.BILLSTATUS, MatterAppVO.MODIFIER, MatterAppVO.MODIFIEDTIME });
+		
+		// 修改后事件处理
+		fireAfterDeleteEvent(aggvo);
+		
+		return aggvo;
+		
 	}
 
 	public AggAccruedBillVO insertVO(AggAccruedBillVO aggvo) throws BusinessException {

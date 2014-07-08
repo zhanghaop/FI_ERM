@@ -5,6 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
+import nc.bs.erm.matterapp.check.VOStatusChecker;
 import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
@@ -54,6 +55,19 @@ public class AccruedBillVOChecker {
 			
 			// 校验关帐
 			checkErmIsCloseAcc(aggvo);
+		}
+	}
+	
+	/**
+	 * 作废单据校验
+	 * @param vo
+	 * @throws BusinessException
+	 */
+	public void checkInvalid(AggAccruedBillVO vo) throws BusinessException {
+		// 作废单据时，状态控制
+		String msgs = VOStatusChecker.checkBillStatus(vo.getParentVO().getBillstatus(), ActionUtils.INVALID, new int[] { ErmAccruedBillConst.BILLSTATUS_SAVED});
+		if (msgs != null && msgs.trim().length() != 0) {
+			throw new DataValidateException(msgs);
 		}
 	}
 	

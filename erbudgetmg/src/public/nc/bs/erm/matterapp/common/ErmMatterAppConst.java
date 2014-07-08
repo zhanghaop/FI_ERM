@@ -58,6 +58,7 @@ public class ErmMatterAppConst {
 	public static final int BILLSTATUS_TEMPSAVED = 0;  //单据状态——暂存
 	public static final int BILLSTATUS_SAVED = 1;	//单据状态——保存
 	public static final int BILLSTATUS_APPROVED = 3;	//已审批
+	public static final int BILLSTATUS_INVALID = -1;	//作废
 	
 	public static final String BILLSTATUS_TEMPSAVED_NAME = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
 			"201212_0", "0201212-0079")/* @res "暂存" */;// 单据状态——暂存

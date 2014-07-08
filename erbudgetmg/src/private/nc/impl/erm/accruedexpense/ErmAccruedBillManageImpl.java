@@ -43,5 +43,12 @@ public class ErmAccruedBillManageImpl implements IErmAccruedBillManage {
 	public AggAccruedBillVO unRedbackVO(AggAccruedBillVO vo) throws BusinessException {
 		return new ErmAccruedBillBO().unRedbackVO(vo);
 	}
+
+	@Override
+	public AggAccruedBillVO invalidBill(AggAccruedBillVO vo) throws BusinessException {
+		// TODO Auto-generated method stub
+		return new ErmAccruedBillBO().invalidBill(vo);
+	}
+	
 	
 }

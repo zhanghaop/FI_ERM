@@ -29,6 +29,11 @@ public class ErmMatterAppBillManageImpl implements IErmMatterAppBillManage {
 	}
 
 	@Override
+	public AggMatterAppVO invalidBill(AggMatterAppVO vo) throws BusinessException {
+		return new ErmMatterAppBO().invalidBill(vo);
+	}
+
+	@Override
 	public MatterAppVO updatePrintInfo(MatterAppVO vo) throws BusinessException {
 		return new ErmMatterAppBO().updatePrintInfo(vo);
 	}

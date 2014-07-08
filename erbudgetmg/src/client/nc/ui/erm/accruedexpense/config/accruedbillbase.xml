@@ -10,7 +10,7 @@
 	<bean id="exceptionHandler" class="nc.ui.uif2.DefaultExceptionHanler">
 		<property name="context" ref="context" />
 	</bean>
-
+	
 	<!-- 对象转换器工厂，由此获取操作对象的特征信息 -->
 	<bean id="boadatorfactory" class="nc.vo.bd.meta.BDObjectAdpaterFactory" />
 
@@ -19,6 +19,10 @@
 		<property name="service" ref="modelService" />
 		<property name="businessObjectAdapterFactory" ref="boadatorfactory" />
 		<property name="context" ref="context" />
+	</bean>
+	
+	<bean id="invalaction" class="nc.ui.erm.accruedexpense.actions.InvalidAction">
+		<property name="model" ref="manageAppModel" />
 	</bean>
 
 	<!-- 数据模型管理器，主要负责各种方式的模型初始化 -->

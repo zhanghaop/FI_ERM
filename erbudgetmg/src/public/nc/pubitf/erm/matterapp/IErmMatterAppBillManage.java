@@ -50,4 +50,12 @@ public interface IErmMatterAppBillManage {
 	 * @throws BusinessException
 	 */
 	public MatterAppVO updatePrintInfo(MatterAppVO vo) throws BusinessException;
+	
+	/**
+	 * ×÷·Ï
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 */
+	public AggMatterAppVO invalidBill(AggMatterAppVO vo) throws BusinessException;
 }

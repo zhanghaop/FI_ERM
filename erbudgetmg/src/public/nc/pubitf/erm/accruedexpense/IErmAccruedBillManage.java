@@ -68,4 +68,10 @@ public interface IErmAccruedBillManage {
 	 * @throws BusinessException
 	 */
 	public AggAccruedBillVO unRedbackVO(AggAccruedBillVO vo) throws BusinessException;
+	
+	/**
+	 * Ô¤Ìáµ¥×÷·Ï
+	 */
+	public AggAccruedBillVO invalidBill(AggAccruedBillVO vo) throws BusinessException;
+
 }

@@ -12,6 +12,7 @@ import nc.pubitf.para.SysInitQuery;
 import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
@@ -474,6 +475,14 @@ public class MatterAppVOChecker {
 		for (int i = 0; i < vos.length; i++) {
 			MatterAppVO head = (MatterAppVO) vos[i].getParentVO();
 			VOStatusChecker.checkOpenBillStatus(head);
+		}
+	}
+	
+	public void checkInvalid(AggMatterAppVO vo) throws BusinessException{
+		// 作废单据时，状态控制
+		String msgs = VOStatusChecker.checkBillStatus(vo.getParentVO().getBillstatus(), ActionUtils.INVALID, new int[] { ErmMatterAppConst.BILLSTATUS_SAVED });
+		if (msgs != null && msgs.trim().length() != 0) {
+			throw new DataValidateException(msgs);
 		}
 	}
 }

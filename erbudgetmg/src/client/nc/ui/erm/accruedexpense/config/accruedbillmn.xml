@@ -32,6 +32,7 @@
 				<ref bean="commitGroupAction" />
 				<ref bean="auditGroupAction" />
 				<ref bean="documentaction" />
+				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
 				<ref bean="nullAction" />
@@ -63,6 +64,7 @@
 				<ref bean="commitGroupAction" />
 				<ref bean="auditGroupAction" />
 				<ref bean="documentaction" />
+				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="redbackAction" />
 				<ref bean="nullAction" />

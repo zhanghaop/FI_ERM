@@ -32,7 +32,10 @@
 		<property name="pageModel" ref="paginationModel" />
 		<property name="exceptionHandler" ref="exceptionHandler" />
 	</bean>
-
+	
+	<bean id="invalaction" class="nc.ui.erm.matterapp.actions.InvalidAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
 	<!-- 界面元素 ########################################################### -->
 	<!-- 列表控件的取值策略 -->
 	<bean id="componentValueManager"

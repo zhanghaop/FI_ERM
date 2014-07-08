@@ -28,4 +28,9 @@ public class MatterAppBillStatusEnum extends MDEnum {
 	 * ÒÑÉóÅú
 	 */
 	public static final MatterAppBillStatusEnum APPROVED = MDEnum.valueOf(MatterAppBillStatusEnum.class, 3);
+
+	/**
+	 * ×÷·Ï
+	 */
+	public static final MatterAppBillStatusEnum INVALID = MDEnum.valueOf(MatterAppBillStatusEnum.class, -1);
 }

@@ -52,6 +52,18 @@ go
 insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z31000000000TTAY',0,'ERM1040','暂存修改后',null,null,null,null,null,null,'2011','e3167d31-9694-4ea1-873f-2ffafd8fbed8','费用申请单',null,null,null,null,null,'2014-04-29 09:52:22')
 go
 
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000005FZO',0,'ERM1042','作废前',null,null,null,null,null,null,'2011','e3167d31-9694-4ea1-873f-2ffafd8fbed8','费用申请单',null,null,null,null,null,'2014-07-07 10:23:55')
+go
+
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000005FZP',0,'ERM1043','作废后',null,null,null,null,null,null,'2011','e3167d31-9694-4ea1-873f-2ffafd8fbed8','费用申请单',null,null,null,null,null,'2014-07-07 10:24:22')
+go
+
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000005KMA',0,'ERM1042','作废前',null,null,null,null,null,null,'2011','61a2bcdb-e040-44d7-949a-54aa632591f5','预提单',null,null,null,null,null,'2014-07-08 09:40:38')
+go
+
+insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z310000000005KMB',0,'ERM1043','作废后',null,null,null,null,null,null,'2011','61a2bcdb-e040-44d7-949a-54aa632591f5','预提单',null,null,null,null,null,'2014-07-08 09:41:16')
+go
+
 insert into pub_eventtype(pk_eventtype,dr,eventtypecode,eventtypename,eventtypename2,eventtypename3,eventtypename4,eventtypename5,eventtypename6,note,owner,sourceid,sourcename,sourcename2,sourcename3,sourcename4,sourcename5,sourcename6,ts) values('1001Z31000000001ZZ1W',0,'ERM2003','删除红冲前',null,null,null,null,null,null,'2011','61a2bcdb-e040-44d7-949a-54aa632591f5','预提单',null,null,null,null,null,'2014-04-29 09:52:22')
 go
 

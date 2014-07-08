@@ -11,6 +11,7 @@ import java.util.Map;
 
 import nc.bs.arap.bx.BusiLogUtil;
 import nc.bs.businessevent.EventDispatcher;
+import nc.bs.dao.BaseDAO;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.er.util.SqlUtil;
 import nc.bs.erm.event.ErmBusinessEvent;
@@ -25,6 +26,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.CheckStatusCallbackContext;
 import nc.bs.pub.pf.ICheckStatusCallback;
 import nc.itf.fi.pub.Currency;
+import nc.itf.uap.pf.IWorkflowMachine;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.vo.arap.bx.util.ActionUtils;
@@ -138,7 +140,43 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		// 返回
 		return vo;
 	}
-
+	
+	/**
+	 * 单据作废
+	 * @param vo
+	 * @return
+	 * @throws BusinessException
+	 */
+	public AggMatterAppVO invalidBill(AggMatterAppVO vo) throws BusinessException {
+		if(vo == null){
+			return null;
+		}
+		retriveItems(new AggMatterAppVO []{vo});
+		// 修改加锁
+		pklockOperate(vo);
+		// 版本校验
+		BDVersionValidationUtil.validateVersion(vo.getParentVO());
+		
+		new MatterAppVOChecker().checkInvalid(vo);
+		
+		// 删除前事件处理
+		fireBeforeDeleteEvent(vo);
+		//作废状态
+		vo.getParentVO().setBillstatus(ErmMatterAppConst.BILLSTATUS_INVALID);
+		// 取服务器事件作为修改时间
+		AuditInfoUtil.updateData(vo.getParentVO());
+		
+		//更新字段
+		new BaseDAO().updateVOArray(new MatterAppVO[] { vo.getParentVO() }, new String[] { MatterAppVO.BILLSTATUS, MatterAppVO.MODIFIER, MatterAppVO.MODIFIEDTIME });
+		
+		// 修改后事件处理
+		fireAfterDeleteEvent(vo);
+		
+		// 删除审批流
+		NCLocator.getInstance().lookup(IWorkflowMachine.class).deleteCheckFlow(vo.getParentVO().getPk_tradetype(), vo.getParentVO().getPrimaryKey(), vo, InvocationInfoProxy.getInstance().getUserId());
+		return vo;
+	}
+	
 	/**
 	 * 补充children
 	 * 
