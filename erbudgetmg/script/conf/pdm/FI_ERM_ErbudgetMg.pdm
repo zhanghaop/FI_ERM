@@ -4462,8 +4462,8 @@ TableComment 0 Arial Unicode MS,8,N</a:FontList>
 <a:Code>er_mtapp_bill</a:Code>
 <a:CreationDate>1356485169</a:CreationDate>
 <a:Creator>lvhj</a:Creator>
-<a:ModificationDate>1404716357</a:ModificationDate>
-<a:Modifier>shengqy</a:Modifier>
+<a:ModificationDate>1404953296</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
 <c:Columns>
 <o:Column Id="o187">
 <a:ObjectID>BA1FD9B2-C3CF-4DE2-9E4C-E3A4E143FF61</a:ObjectID>
@@ -5477,9 +5477,9 @@ TableComment 0 Arial Unicode MS,8,N</a:FontList>
 <a:Code>isneedimag</a:Code>
 <a:CreationDate>1404716357</a:CreationDate>
 <a:Creator>shengqy</a:Creator>
-<a:ModificationDate>1404716357</a:ModificationDate>
-<a:Modifier>shengqy</a:Modifier>
-<a:DataType>char[1]</a:DataType>
+<a:ModificationDate>1404953296</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>CHAR(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>
 </c:Columns>
@@ -7321,9 +7321,9 @@ TableComment 0 Arial Unicode MS,8,N</a:FontList>
 <a:Code>isneedimag</a:Code>
 <a:CreationDate>1404716412</a:CreationDate>
 <a:Creator>shengqy</a:Creator>
-<a:ModificationDate>1404716412</a:ModificationDate>
-<a:Modifier>shengqy</a:Modifier>
-<a:DataType>char[1]</a:DataType>
+<a:ModificationDate>1404953349</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>CHAR(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>
 </c:Columns>

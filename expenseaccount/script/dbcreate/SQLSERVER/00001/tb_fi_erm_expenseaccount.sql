@@ -270,10 +270,10 @@ red_status int(1) null default 0
 /*红冲标志*/,
 redbillpk nchar(20) null 
 /*红冲单据主键*/,
+isneedimag nchar(1) null 
+/*需要影像扫描*/,
 imag_status nvarchar(2) null 
 /*影像状态*/,
-isneedimag char[1] null 
-/*需要影像扫描*/,
  constraint pk_er_jkzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -838,7 +838,7 @@ redbillpk nchar(20) null
 /*红冲单据主键*/,
 imag_status nvarchar(2) null 
 /*影像状态*/,
-isneedimag char[1] null 
+isneedimag nchar(1) null 
 /*需要影像扫描*/,
  constraint pk_er_bxzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),

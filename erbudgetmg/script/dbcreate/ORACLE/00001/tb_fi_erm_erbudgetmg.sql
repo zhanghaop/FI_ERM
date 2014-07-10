@@ -511,7 +511,7 @@ iscostshare char(1) null
 /*是否分摊*/,
 imag_status varchar2(2) null 
 /*影像状态*/,
-isneedimag char[1] null 
+isneedimag char(1) null 
 /*需要影像扫描*/,
  constraint pk_er_mtapp_bill primary key (pk_mtapp_bill),
  ts char(19) default to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
@@ -832,7 +832,7 @@ redflag integer null
 /*红冲标志*/,
 imag_status varchar2(2) null 
 /*影像状态*/,
-isneedimag char[1] null 
+isneedimag char(1) null 
 /*需要影像扫描*/,
  constraint pk_er_accrued primary key (pk_accrued_bill),
  ts char(19) default to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),

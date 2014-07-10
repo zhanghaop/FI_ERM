@@ -712,8 +712,8 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>er_jkzb</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1404716060</a:ModificationDate>
-<a:Modifier>shengqy</a:Modifier>
+<a:ModificationDate>1404953448</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
 <c:Columns>
 <o:Column Id="o6">
 <a:ObjectID>5A8AD15F-A2FA-4329-B92B-7D02BF68FB4E</a:ObjectID>
@@ -2262,6 +2262,17 @@ PhysOpts=</a:ModelOptionsText>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o141">
+<a:ObjectID>DE9EF462-084F-4FF3-B374-8E7CA58FC0BA</a:ObjectID>
+<a:Name>需要影像扫描</a:Name>
+<a:Code>isneedimag</a:Code>
+<a:CreationDate>1404716060</a:CreationDate>
+<a:Creator>shengqy</a:Creator>
+<a:ModificationDate>1404953396</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>char(1)</a:DataType>
+<a:Length>1</a:Length>
+</o:Column>
+<o:Column Id="o142">
 <a:ObjectID>31D15C5F-6A78-4B47-8DD3-BD501F6611C9</a:ObjectID>
 <a:Name>影像状态</a:Name>
 <a:Code>imag_status</a:Code>
@@ -2271,17 +2282,6 @@ PhysOpts=</a:ModelOptionsText>
 <a:Modifier>shengqy</a:Modifier>
 <a:DataType>varchar(2)</a:DataType>
 <a:Length>2</a:Length>
-</o:Column>
-<o:Column Id="o142">
-<a:ObjectID>DE9EF462-084F-4FF3-B374-8E7CA58FC0BA</a:ObjectID>
-<a:Name>需要影像扫描</a:Name>
-<a:Code>isneedimag</a:Code>
-<a:CreationDate>1404716060</a:CreationDate>
-<a:Creator>shengqy</a:Creator>
-<a:ModificationDate>1404716060</a:ModificationDate>
-<a:Modifier>shengqy</a:Modifier>
-<a:DataType>char[1]</a:DataType>
-<a:Length>1</a:Length>
 </o:Column>
 </c:Columns>
 <c:Keys>
@@ -5653,9 +5653,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>isneedimag</a:Code>
 <a:CreationDate>1404716128</a:CreationDate>
 <a:Creator>shengqy</a:Creator>
-<a:ModificationDate>1404716128</a:ModificationDate>
-<a:Modifier>shengqy</a:Modifier>
-<a:DataType>char[1]</a:DataType>
+<a:ModificationDate>1404953468</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>CHAR(1)</a:DataType>
 <a:Length>1</a:Length>
 </o:Column>
 </c:Columns>
