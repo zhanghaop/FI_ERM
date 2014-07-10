@@ -422,10 +422,11 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	private void setDefaultValue4redback(AggAccruedBillVO redbackVO,AggAccruedBillVO aggvo) throws BusinessException {
 		AccruedVO head = redbackVO.getParentVO();
 		String userid = BXBsUtil.getBsLoginUser();
-		String pk_psndoc = BXBsUtil.getPk_psndoc(userid);
-		head.setOperator(pk_psndoc);
-		head.setOperator_dept(BXBsUtil.getPsnPk_dept(pk_psndoc));
-		head.setOperator_org(BXBsUtil.getPsnPk_org(pk_psndoc));
+//		String pk_psndoc = BXBsUtil.getPk_psndoc(userid);
+		// ehp3之后，红字单据上的经办人信息从蓝字单据上带出
+//		head.setOperator(pk_psndoc);
+//		head.setOperator_dept(BXBsUtil.getPsnPk_dept(pk_psndoc));
+//		head.setOperator_org(BXBsUtil.getPsnPk_org(pk_psndoc));
 		
 		head.setRest_amount(UFDouble.ZERO_DBL);
 		head.setOrg_rest_amount(UFDouble.ZERO_DBL);
