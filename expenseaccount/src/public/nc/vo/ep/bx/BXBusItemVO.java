@@ -98,6 +98,15 @@ public class BXBusItemVO extends SuperVO {
 	private String custaccount;//客商银行帐户
 	private String freecust ; //散户
 	private String freeaccount;//散户银行帐户
+	private String fctno;//合同号
+	
+	public String getFctno(){
+		return fctno;
+	}
+	
+	public void setFctno(String fctno){
+		this.fctno = fctno;
+	}
 
 	public Integer getPaytarget() {
 		return paytarget;
