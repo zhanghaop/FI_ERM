@@ -554,6 +554,8 @@ dwbm nvarchar(20) null
 /*报销人单位*/,
 deptid nvarchar(20) null 
 /*报销人部门*/,
+fctno nvarchar(20) null 
+/*合同号*/,
  constraint pk_er_busitem primary key (pk_busitem),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0

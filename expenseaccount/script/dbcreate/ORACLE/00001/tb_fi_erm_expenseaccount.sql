@@ -551,6 +551,8 @@ dwbm varchar2(20) null
 /*报销人单位*/,
 deptid varchar2(20) null 
 /*报销人部门*/,
+fctno varchar2(20) null 
+/*合同号*/,
  constraint pk_er_busitem primary key (pk_busitem),
  ts char(19) default to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
 dr number(10) default 0
