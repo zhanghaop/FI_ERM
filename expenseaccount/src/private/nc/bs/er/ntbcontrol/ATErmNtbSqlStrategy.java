@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.annotation.ErmBusinessDef;
+import nc.bs.erm.common.ErmBillConst;
 import nc.bs.erm.expamortize.ExpAmoritizeConst;
 import nc.itf.tb.control.IFormulaFuncName;
 import nc.vo.arap.bx.util.BXConstans;
@@ -79,6 +80,7 @@ public class ATErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			}
 			
 			sql.append(" at1.pk_billtype djlxbm, at1.bzbm, proc1.amortize_date djrq, proc1.amortize_date shrq, ");
+			sql.append(" '" + ErmBillConst.Expamoritize_BILLTYPE + "' pk_billtype, at1.pk_expamtinfo pk_jkbx ,");
 			sql.append(" proc1.amortize_date jsrq, '' zy, at1.bx_billno djbh, at1.pk_group pk_group, assume_org pk_org,");
 			sql.append(" proc1.curr_globalamount globalbbje, proc1.curr_groupamount groupbbje, proc1.curr_orgamount bbje, proc1.curr_amount ybje ");
 

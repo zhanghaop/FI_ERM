@@ -9,6 +9,7 @@ import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.erm.annotation.ErmBusinessDef;
+import nc.bs.erm.common.ErmBillConst;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.erm.util.ErBudgetUtil;
 import nc.bs.framework.common.NCLocator;
@@ -229,6 +230,7 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		if (isDetail) {
 			sql.append("ma.pk_tradetype djlxbm, ma.pk_currtype bzbm,ma.billdate djrq,ma.approvetime shrq," +
 						"ma.approvetime jsrq, ma.reason zy, ma.billno djbh,ma.pk_group pk_group,ma.pk_org pk_org,");
+			sql.append(" '" + ErmBillConst.MatterApp_BILLTYPE+ "' pk_billtype, ma.pk_mtapp_bill pk_jkbx ,");
 			sql.append(" -pf.global_fy_amount globalbbje,-pf.group_fy_amount groupbbje, -pf.org_fy_amount bbje,-pf.fy_amount ybje ");
 		} else {
 			// 631不处理借款单、冲借款占用申请单的预算，且费用金额定位为下游单据执行数与费用申请单余额的小值，所以不管预占还是执行都应该按照费用金额查询
@@ -335,10 +337,10 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			
 			sql.append(" ma.pk_tradetype djlxbm, ma.pk_currtype bzbm, ma.billdate djrq, ma.approvetime shrq,");
 			sql.append(" ma.approvetime jsrq, ma.reason zy, ma.billno djbh, ma.pk_group pk_group,");
+			sql.append(" '" + ErmBillConst.MatterApp_BILLTYPE + "' pk_billtype, ma.pk_mtapp_bill pk_jkbx ,");
 			
 			sql.append(" (case when ma.close_status = 1 and mad.global_rest_amount > 0 then (mad.global_amount - mad.global_rest_amount) ");
 			sql.append(" else mad.global_amount end) globalbbje,");
-			
 			
 			sql.append(" (case when ma.close_status = 1 and mad.group_rest_amount > 0 then (mad.group_amount - mad.group_rest_amount) " );
 			sql.append(" else mad.group_amount end) groupbbje, ");

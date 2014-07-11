@@ -29,26 +29,14 @@
 		<property name="showTotalLine" value="true"></property>
 		<property name="nodekey" value="20110BLB"></property>
 	</bean>
+	
+	<!-- 按钮 -->
+	<bean id="linkQueryAction" class="nc.ui.erm.budgetlink.action.LinkErmBillAction">
+		<property name="model" ref="billManageModel" />
+		<property name="editor" ref="listView" />
+	</bean>
 
 	<!-- ################################ 功能按钮 ################################ -->
-
-	<!-- 监听器(Mediator)(可选) -->
-	<!-- 
-	<bean id="appEventHandlerMediator" class="nc.ui.pubapp.uif2app.model.AppEventHandlerMediator">
-		<property name="model" ref="billManageModel"></property>
-		<property name="handlerMap">
-			<map>
-				<entry key="nc.ui.pubapp.uif2app.event.list.ListBodyRowChangedEvent">
-					<list>
-						<bean id="bodyRowChangeHandler" class="nc.ui.arap.recpaystatement.action.BillListViewBodyRowChangeHandler">
-							<property name="listView" ref="listView"></property>
-						</bean>
-					</list>
-				</entry>
-			</map>
-		</property>
-	</bean>
- 	-->
 
     <bean id="InitDataListener" class="nc.ui.erm.budgetlink.listener.LinkQueryInitDataListener">
 		<property name="context" ref="context"></property>
@@ -66,10 +54,7 @@
 		<property name="model" ref="billManageModel"></property>
 		<property name="actions">
 			<list>
-				<!--
-				<ref bean="queryAction"></ref>
 				<ref bean="linkQueryAction"></ref>
-				-->
 			</list>
 		</property>
 	</bean>

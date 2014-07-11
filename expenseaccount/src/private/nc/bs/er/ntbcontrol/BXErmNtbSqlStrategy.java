@@ -110,6 +110,7 @@ public class BXErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			}
 			
 			sql.append("zb.djlxbm djlxbm, zb.bzbm bzbm, zb.djrq djrq, zb.shrq  shrq, zb.jsrq jsrq, zb.zy zy, zb.djbh djbh, zb.pk_group pk_group,");
+			sql.append(" '" + BXConstans.BX_DJLXBM + "' pk_billtype, zb.pk_jkbx pk_jkbx ,");
 			sql.append(" fb.globalbbje globalbbje,fb.groupbbje groupbbje, fb.bbje bbje,fb.ybje ybje ");
 		} else {
 			sql.append(" sum(fb.globalbbje) globalbbje,sum(fb.groupbbje) groupbbje, sum(fb.bbje) bbje,sum(fb.ybje) ybje ");

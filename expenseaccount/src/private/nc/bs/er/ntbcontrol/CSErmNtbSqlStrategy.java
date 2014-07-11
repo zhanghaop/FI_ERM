@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.erm.annotation.ErmBusinessDef;
+import nc.bs.erm.common.ErmBillConst;
 import nc.bs.erm.costshare.IErmCostShareConst;
 import nc.bs.erm.util.ErmDjlxConst;
 import nc.itf.tb.control.IFormulaFuncName;
@@ -112,6 +113,7 @@ public class CSErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			
 			sql.append("cs.pk_tradetype djlxbm, cs.bzbm bzbm, cs.billdate djrq, cs.approvedate  shrq, ");
 			sql.append("cs.approvedate jsrq, cs.zy zy, cs.billno djbh, cs.pk_group pk_group, ");
+			sql.append(" '" + ErmBillConst.CostShare_BILLTYPE + "' pk_billtype, cs.pk_costshare pk_jkbx ,");
 			sql.append(" csd.globalbbje globalbbje,csd.groupbbje groupbbje, csd.bbje bbje,csd.assume_amount ybje ");
 		} else {
 			sql.append(" sum(csd.globalbbje) globalbbje,sum(csd.groupbbje) groupbbje, sum(csd.bbje) bbje,sum(csd.assume_amount) ybje ");

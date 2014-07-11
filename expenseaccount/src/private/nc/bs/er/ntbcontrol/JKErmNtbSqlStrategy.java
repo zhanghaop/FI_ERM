@@ -183,6 +183,7 @@ public class JKErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			}
 			//冲借款，保存时用费用原币金额；生效时取冲借款金额
 			sql.append("zb.djlxbm djlxbm, zb.bzbm bzbm, zb.djrq djrq, zb.shrq  shrq, zb.jsrq jsrq, zb.zy zy, zb.djbh djbh, zb.pk_group pk_group,");
+			sql.append(" '" + BXConstans.BX_DJLXBM+ "' pk_billtype, zb.pk_jkbx pk_jkbx ,");
 			if (IFormulaFuncName.PREFIND.equals(getNtbParam().getMethodCode())) {// 预占用
 				sql.append(" -cst.GLOBALFYBBJE globalbbje,-cst.GROUPFYBBJE groupbbje, -cst.FYBBJE bbje,-cst.FYYBJE ybje ");
 			} else {
@@ -295,6 +296,7 @@ public class JKErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 			}
 			
 			sql.append("zb.djlxbm djlxbm, zb.bzbm bzbm, zb.djrq djrq, zb.shrq  shrq, zb.jsrq jsrq, zb.zy zy, zb.djbh djbh, zb.pk_group pk_group,");
+			sql.append(" '" + BXConstans.JK_DJLXBM + "' pk_billtype, zb.pk_jkbx pk_jkbx, ");
 			sql.append(" fb.globalbbje globalbbje,fb.groupbbje groupbbje, fb.bbje bbje,fb.ybje ybje ");
 		} else {
 			sql.append(" sum(fb.globalbbje) globalbbje,sum(fb.groupbbje) groupbbje, sum(fb.bbje) bbje,sum(fb.ybje) ybje ");

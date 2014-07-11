@@ -92,6 +92,7 @@ public class ACErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 
 			sql.append("ac.pk_tradetype djlxbm, ac.pk_currtype bzbm, ac.billdate djrq, ac.approvetime  shrq, ");
 			sql.append("ac.approvetime jsrq, ac.reason zy, ac.billno djbh, ac.pk_group pk_group, ");
+			sql.append(" '" + ErmBillConst.AccruedBill_Billtype + "' pk_billtype, ac.pk_accrued_bill pk_jkbx ,");
 			sql.append(" acd.global_amount globalbbje,acd.group_amount groupbbje, acd.org_amount bbje,acd.amount ybje ");
 		} else {
 			sql.append(" sum(acd.global_amount) globalbbje,sum(acd.group_amount) groupbbje, sum(acd.org_amount) bbje,sum(acd.amount) ybje ");
