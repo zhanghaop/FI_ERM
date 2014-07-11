@@ -1581,17 +1581,18 @@ public class ArapBXBillPrivateImp implements IBXBillPrivate {
 		
 		for (JKBXVO vo : jkbxvo) {
 			if(BXStatusConst.SXBZ_VALID==vo.getParentVO().getSxbz()){
-				if(vo.getParentVO().getVouchertag()!= null 
-						&& (BXStatusConst.ZGDeal==vo.getParentVO().getVouchertag()
-						|| BXStatusConst.ZGMEFlag==vo.getParentVO().getVouchertag())){
-					vo.getParentVO().setVouchertag(BXStatusConst.ZGMEFlag);//生效的单据有暂估或月末暂估,月末暂估凭证
-				}
+//				if(vo.getParentVO().getVouchertag()!= null 
+//						&& (BXStatusConst.ZGDeal==vo.getParentVO().getVouchertag()
+//						|| BXStatusConst.ZGMEFlag==vo.getParentVO().getVouchertag())){
+//					//vo.getParentVO().setVouchertag(BXStatusConst.ZGMEFlag);//生效的单据有暂估或月末暂估,月末暂估凭证
+//				}
 				if(vo.getParentVO().getVouchertag()==null || BXStatusConst.MEDeal==vo.getParentVO().getVouchertag()){
 					vo.getParentVO().setVouchertag(BXStatusConst.MEDeal);//生效的单据没有暂估，月末凭证
 				}
-			}else{
-				vo.getParentVO().setVouchertag(BXStatusConst.ZGDeal);//未生效的单据是暂估凭证
 			}
+//			else{
+//				//vo.getParentVO().setVouchertag(BXStatusConst.ZGDeal);//未生效的单据是暂估凭证
+//			}
 			header.add(vo.getParentVO());
 		}
 		getBaseDAO().updateVOArray(header.toArray(new JKBXHeaderVO[]{}), new String[]{JKBXHeaderVO.VOUCHERTAG});

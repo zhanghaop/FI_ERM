@@ -9,7 +9,6 @@ import java.util.Map;
 
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
-import nc.itf.uap.busibean.SysinitAccessor;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.model.BillManageModel;
@@ -53,11 +52,9 @@ public class DealVoucherAction extends NCAction {
 		JKBXVO[] jkbxVos = Arrays.asList(vos).toArray(new JKBXVO[0]);
 		StringBuffer msg = new StringBuffer();
 		List<JKBXVO> dealVo = new ArrayList<JKBXVO>();
-		
-		//TODO : 发版前要替换回来
-		//existSuccess = dealBillBaseVersion(existSuccess, jkbxVos, msg, dealVo);
-		
-		existSuccess = dealBillForCWZX(existSuccess, jkbxVos, msg, dealVo);
+
+		//使用于通版
+		existSuccess = dealBillBaseVersion(existSuccess, jkbxVos, msg, dealVo);
 		
 		
 		if (dealVo != null && dealVo.size() != 0) {
@@ -111,7 +108,7 @@ public class DealVoucherAction extends NCAction {
 	}
 
 	/**
-	 * ehp2 : 创维专项处理，发版后不再使用（可以对生效的单据生成月末凭证，对未生效的单据生成暂估凭证）
+	 * ehp2 : 适用通版
 	 * @param existSuccess
 	 * @param jkbxVos
 	 * @param msg
@@ -119,7 +116,7 @@ public class DealVoucherAction extends NCAction {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private boolean dealBillForCWZX(boolean existSuccess, JKBXVO[] jkbxVos,
+	private boolean dealBillBaseVersion(boolean existSuccess, JKBXVO[] jkbxVos,
 			StringBuffer msg, List<JKBXVO> dealVo) throws BusinessException {
 		
 		Map<String, JKBXHeaderVO> ExistBill = checkBillExist(jkbxVos);
@@ -150,19 +147,7 @@ public class DealVoucherAction extends NCAction {
 					"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955")).append("\r\n");
 					continue;
 				}
-				//对于生效的单据，并且凭证标志不是暂估时，提示提示生成凭证
-//				if(((Integer.valueOf(BXStatusConst.SXBZ_VALID).equals(jkbxVos[i].getParentVO().getSxbz()) 
-//					&& jkbxVos[i].getParentVO().getVouchertag()!=null && jkbxVos[i].getParentVO().getVouchertag()!=BXStatusConst.ZGDeal )
-//					)
-//					|| (!Integer.valueOf(BXStatusConst.SXBZ_VALID).equals(jkbxVos[i].getParentVO().getSxbz())
-//					&& jkbxVos[i].getParentVO().getVouchertag()!=null && jkbxVos[i].getParentVO().getVouchertag()==BXStatusConst.ZGDeal)){
-//					existSuccess = false;
-//					msg.append(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-//					"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-//					"0201107-0168")).append("\r\n");
-//					continue;
-//				}
-				
+
 				dealVo.add(jkbxVos[i]);//需要传会计平台的单据
 			}else{
 				continue;
@@ -171,58 +156,6 @@ public class DealVoucherAction extends NCAction {
 		return existSuccess;
 	}
 	
-	/**
-	 * TODO
-	 * ehp2 : 通版的内容，在发版前需要替换回来 2014-03-12 (不要删除)
-	 * @param existSuccess
-	 * @param jkbxVos
-	 * @param msg
-	 * @param dealVo
-	 * @return
-	 * @throws BusinessException
-	 */
-	private boolean dealBillBaseVersion(boolean existSuccess, JKBXVO[] jkbxVos,
-			StringBuffer msg, List<JKBXVO> dealVo) throws BusinessException {
-		
-		Map<String, JKBXHeaderVO> ExistBill = checkBillExist(jkbxVos);
-		for (int i = 0; i < jkbxVos.length; i++) {
-			//String param = SysinitAccessor.getInstance().getParaString(jkbxVos[i].getParentVO().getPk_org(), "CMP37");
-			if(SettleUtil.isJsToFip(jkbxVos[i].getParentVO())){
-				//对于单据的并发校验
-				if(!ExistBill.containsKey(jkbxVos[i].getParentVO().getPk_jkbx())){
-					existSuccess = false;
-					msg.append(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-					"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.ui.ml.NCLangRes.getInstance().getStrByID("2011",
-					"UPP2011-000954")).append("\r\n");
-					continue;
-				}
-				
-				if(!Integer.valueOf(BXStatusConst.SXBZ_VALID).equals(jkbxVos[i].getParentVO().getSxbz())){//未生效的单据
-					existSuccess = false;
-					msg.append(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-					"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-					"0201107-0167")).append("\r\n");
-					continue;
-				
-				}
-				if(Integer.valueOf(BXStatusConst.SXBZ_VALID).equals(jkbxVos[i].getParentVO().getSxbz()) 
-						&& (jkbxVos[i].getParentVO().getVouchertag()!=null) 
-						){
-					existSuccess = false;
-					msg.append(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-					"0201107-0166") + jkbxVos[i].getParentVO().getDjbh() + " "+nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0",
-					"0201107-0168")).append("\r\n");
-					continue;
-				
-				}
-				dealVo.add(jkbxVos[i]);//需要传会计平台的单据
-			}else{
-				continue;
-			}
-		}
-		return existSuccess;
-	}
-
 	public BillManageModel getModel() {
 		return model;
 	}
