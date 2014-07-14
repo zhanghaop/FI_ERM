@@ -83,8 +83,13 @@ public class AccEditAction extends EditAction {
 
 		AggAccruedBillVO aggVo = (AggAccruedBillVO) getModel().getSelectedData();
 		AccruedVO parentVo = aggVo.getParentVO();
-
+		
+		
 		Integer spzt = parentVo.getApprstatus();
+		Integer billstatus = parentVo.getBillstatus();
+		if(billstatus.equals(ErmAccruedBillConst.BILLSTATUS_INVALID)){
+			return false;
+		}
 		if (spzt.equals(IPfRetCheckInfo.PASSING) || spzt.equals(IPfRetCheckInfo.NOPASS)) {
 			return false;
 		}

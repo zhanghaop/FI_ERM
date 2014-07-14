@@ -91,6 +91,10 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 		MatterAppVO parentVo = aggVo.getParentVO();
 		
 		Integer spzt = parentVo.getApprstatus();
+		Integer billstatus = parentVo.getBillstatus();
+		if(billstatus.equals(ErmMatterAppConst.BILLSTATUS_INVALID)){
+			return false;
+		}
 		if(spzt.equals(IPfRetCheckInfo.PASSING) || spzt.equals(IPfRetCheckInfo.NOPASS)){
 			return false;
 		}
