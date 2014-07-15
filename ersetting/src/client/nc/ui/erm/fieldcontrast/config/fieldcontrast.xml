@@ -35,6 +35,7 @@
 		init-method="initUI">
 		<property name="nodekey" value="fieldctrst" />
 		<property name="model" ref="fieldContrastModel" />
+		<property name="billRefPanel" ref="fieldBilRefPanel" />
 	</bean>
 
 	<bean id="fieldBilRefPanel" class="nc.ui.erm.fieldcontrast.view.FieldBilRefPanel" init-method="initUI">

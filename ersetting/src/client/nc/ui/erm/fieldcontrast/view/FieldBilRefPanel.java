@@ -32,8 +32,7 @@ import nc.ui.uif2.model.BatchBillTableModel;
 import nc.vo.bx.pub.ref.BXBilltypeRefModel;
 import nc.vo.ep.bx.BilltypeRuleVO;
 
-
-public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,ItemListener ,AppEventListener{
+public class FieldBilRefPanel extends UIPanel implements ValueChangedListener, ItemListener, AppEventListener {
 
 	private static final long serialVersionUID = 1L;
 	private UIRefPane djlxRef;
@@ -41,23 +40,38 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 	private UILabel bLabel;
 	private UIComboBox bcombobox;
 	private BatchBillTableModel model;
-	public final static String ITEMCHANGED="Item_Changed";
-	public final static String CTRLCHANGED="CtrlObj_Changed";
-	public final static int CTRLSTATE= -1;//控制维度
-	public final static int SHARESTATE= 0;//分摊对象
+	public final static String ITEMCHANGED = "Item_Changed";
+	public final static String CTRLCHANGED = "CtrlObj_Changed";
+	public final static int CTRLSTATE = -1;// 控制维度
+	public final static int SHARESTATE = 0;// 分摊对象
+	public final static int BUDGETSTATE = 1;// 预算字段
 
-	public void initUI(){
+	public void initUI() {
 		FlowLayout flowLayout1 = new FlowLayout();
 		flowLayout1.setAlignment(FlowLayout.LEFT);
 		bLabel = new UILabel();
-		bLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0007")/*@res "业务场景"*/);
-	    bcombobox = new UIComboBox();
-	    bcombobox.setPreferredSize(new Dimension(160, bcombobox.getHeight()));
-//        bcombobox.addItem(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0008")/*@res "控制维度"*/);
-        bcombobox.addItem(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0009")/*@res "分摊对象"*/);
-        bcombobox.addItemListener(this);
+		bLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0", "0201100-0007")/*
+																										 * @
+																										 * res
+																										 * "业务场景"
+																										 */);
+		bcombobox = new UIComboBox();
+		bcombobox.setPreferredSize(new Dimension(160, bcombobox.getHeight()));
+		// bcombobox.addItem(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0008")/*@res
+		// "控制维度"*/);
+		bcombobox.addItem(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0", "0201100-0009")/*
+																											 * @
+																											 * res
+																											 * "分摊对象"
+																											 */);
+//		bcombobox.addItem("预算维度对照");
+		bcombobox.addItemListener(this);
 		jLabel = new UILabel();
-		jLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0","0201100-0010")/*@res "控制对象"*/);
+		jLabel.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201100_0", "0201100-0010")/*
+																										 * @
+																										 * res
+																										 * "控制对象"
+																										 */);
 		setLayout(flowLayout1);
 		setName("contrastfieldpane");
 		add(bLabel);
@@ -65,47 +79,44 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 		add(jLabel);
 		add(getDjlxRef());
 		setSize(639, 363);
-		
-		bLabel.addMouseListener(new MouseListener() {
 
+		// 附加隐藏功能，用于查看报销单自定义项被使用情况
+		bLabel.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int clickCount = e.getClickCount();
-				Logger.error("+++++++++clickCount++++++++:"+clickCount);
-				if(clickCount > 3){
+				Logger.error("+++++++++clickCount++++++++:" + clickCount);
+				if (clickCount > 3) {
 					try {
-						UIDialog dlg = UIDialogFactory.newDialogInstance(UIDialog.class, FieldBilRefPanel.this,nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("voucherclient1_0","02002005-0133")/*@res "系统信息"*/);
+						UIDialog dlg = UIDialogFactory.newDialogInstance(UIDialog.class, FieldBilRefPanel.this,
+								nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("voucherclient1_0", "02002005-0133")/*
+																														 * @
+																														 * res
+																														 * "系统信息"
+																														 */);
 						dlg.getContentPane().setLayout(new BorderLayout());
 						dlg.setResizable(true);
 						UITextAreaScrollPane textArea = new UITextAreaScrollPane();
 						dlg.getContentPane().add(textArea);
-						
+
 						IFieldContrastQryService qrySer = NCLocator.getInstance().lookup(IFieldContrastQryService.class);
-						
+
 						textArea.setText(qrySer.getUserDefItemUseInfo());
 						dlg.showModal();
 					} catch (Exception ex) {
@@ -126,33 +137,30 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 			this.djlxRef.setRefModel(new BXBilltypeRefModel());
 			this.djlxRef.setPreferredSize(new Dimension(160, djlxRef.getHeight()));
 			djlxRef.addValueChangedListener(this);
-		}
-		djlxRef.addRefEditListener(new RefEditListener() {
-
-			@Override
-			public boolean beforeEdit(RefEditEvent event) {
-				if (getBcombobox().getSelectedIndex() == CTRLSTATE) {// 控制维度
-					String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(null,true);
-					String wherePart = insql +"and isnull(islock,'N') ='N' and  ( pk_group='"
-									+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
-					djlxRef.getRefModel().setWherePart(wherePart);
-//					djlxRef.getRefModel().setWherePart(
-//					"  ncbrcode in ('bx','jk') and pk_billtypecode <> '2647' and isnull(islock,'N') ='N' and  ( pk_group='"
-//							+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )");
-				} else if (getBcombobox().getSelectedIndex() == SHARESTATE) {// 分摊对象
-					BilltypeRuleVO rulevo = ErmBillTypeUtil.getBilltypeRuleVO(BilltypeRuleVO.FIELDCONTRAST_SHARESTATE);
-					String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(rulevo,true);
-					String wheresql = insql +"and isnull(islock,'N') ='N' and  ( pk_group='"
-					+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
-					djlxRef.getRefModel().setWherePart(wheresql);
-//					djlxRef.getRefModel().setWherePart(
-//							"  ncbrcode in ('bx','jk','cs') and pk_billtypecode <> '2647' and isnull(islock,'N') ='N' and  ( pk_group='"
-//									+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )");
+			
+			djlxRef.addRefEditListener(new RefEditListener() {
+				@Override
+				public boolean beforeEdit(RefEditEvent event) {
+					if (getBcombobox().getSelectedIndex() == CTRLSTATE) {// 控制维度
+						String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(null, true);
+						String wherePart = insql + "and isnull(islock,'N') ='N' and  ( pk_group='" + getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
+						djlxRef.getRefModel().setWherePart(wherePart);
+					} else if (getBcombobox().getSelectedIndex() == SHARESTATE) {// 分摊对象
+						BilltypeRuleVO rulevo = ErmBillTypeUtil.getBilltypeRuleVO(BilltypeRuleVO.FIELDCONTRAST_SHARESTATE);
+						String insql = ErmBillTypeUtil.getBilltypeRuleWhereSql(rulevo, true);
+						String wheresql = insql + "and isnull(islock,'N') ='N' and  ( pk_group='" + getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
+						djlxRef.getRefModel().setWherePart(wheresql);
+					} else if (getBcombobox().getSelectedIndex() == BUDGETSTATE) {// 预算控制
+						String wheresql = " pk_billtypecode in (select distinct(src_billtype) from ER_FIELDCONTRAST where ER_FIELDCONTRAST.APP_SCENE = 1) and  ( pk_group='"
+								+ getModel().getContext().getPk_group() + "' or pk_org='GLOBLE00000000000000' )";
+						djlxRef.getRefModel().setWherePart(wheresql);
+					}
+					return true;
 				}
-				return true;
-			}
 
-		});
+			});
+		}
+		
 		return djlxRef;
 	}
 
@@ -180,16 +188,16 @@ public class FieldBilRefPanel extends UIPanel implements ValueChangedListener,It
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if(ItemEvent.SELECTED ==e.getStateChange()){
+		if (ItemEvent.SELECTED == e.getStateChange()) {
 			getModel().fireEvent(new AppEvent(ITEMCHANGED, this, getBcombobox().getSelectedIndex()));
 		}
 	}
 
 	@Override
 	public void handleEvent(AppEvent event) {
-		if(AppEventConst.UISTATE_CHANGED.equals(event.getType())){
-			UIStateChangeEvent newState =  (UIStateChangeEvent) event;
-			boolean newUIState = !(UIState.EDIT == newState.getNewState()|| UIState.ADD == newState.getNewState());
+		if (AppEventConst.UISTATE_CHANGED.equals(event.getType())) {
+			UIStateChangeEvent newState = (UIStateChangeEvent) event;
+			boolean newUIState = !(UIState.EDIT == newState.getNewState() || UIState.ADD == newState.getNewState());
 			getDjlxRef().setEnabled(newUIState);
 			getBcombobox().setEnabled(newUIState);
 		}

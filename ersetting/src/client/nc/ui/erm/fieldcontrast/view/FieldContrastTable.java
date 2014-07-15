@@ -15,6 +15,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.bs.pf.pub.PfDataCache;
 import nc.itf.erm.fieldcontrast.IFieldContrastQryService;
+import nc.itf.org.IOrgConst;
 import nc.md.MDBaseQueryFacade;
 import nc.md.model.IBean;
 import nc.md.model.IComponent;
@@ -44,13 +45,14 @@ public class FieldContrastTable extends BatchBillTable {
 	private MDPropertyRefPane desRefPane;
 	private MDPropertyRefPane desShareRefPane;
 	private String srcEntityid;
-	private String srcBillType;
 	private String desBillType;
 	private int itemState = FieldBilRefPanel.SHARESTATE;
 	private String CSChildPath = "costsharedetail";
 	private static final String CSRule_BeanID = "8c16817a-0d13-49ef-930c-fb3a7f932cd8"; /*费用分摊规则元数据ID*/
 	private static final String MA_BeanID = "e3167d31-9694-4ea1-873f-2ffafd8fbed8"; /*费用申请单元数据ID*/
 	private Map<String, MDPropertyRefPane> srcRefPaneMap = new HashMap<String, MDPropertyRefPane>();
+	
+	FieldBilRefPanel billRefPanel = null;
 
 	@Override
 	public void initUI() {
@@ -121,18 +123,20 @@ public class FieldContrastTable extends BatchBillTable {
 
 	public void setValue(Object object) {
 		super.setValue(object);
-		for (int i = 0; i < getBillCardPanel().getBillTable().getRowCount(); i++) {
-			// 根据billtype+fieldcode取元数据中的多语名称显示。
-			String srcbilltype = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.SRC_BILLTYPE);
-			String srcfieldcode = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.SRC_FIELDCODE);
-			String srcVal = MDUtil.ConvertPathToDisplayName(getEntitybean(srcbilltype), srcfieldcode);
-			String desbilltype = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.DES_BILLTYPE);
-			String desfieldcode = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.DES_FIELDCODE);
-			String desVal = MDUtil.ConvertPathToDisplayName(getEntitybean(desbilltype), desfieldcode);
-			getBillCardPanel().setBodyValueAt(srcVal, i, SRC_FIELD);
-			getBillCardPanel().setBodyValueAt(desVal, i, DES_FIELD);
-			if (FieldBilRefPanel.SHARESTATE == itemState) {
-				getBillCardPanel().setBodyValueAt("~", i, FieldcontrastVO.DES_BILLTYPE);
+		if(getItemState() != FieldBilRefPanel.BUDGETSTATE){
+			for (int i = 0; i < getBillCardPanel().getBillTable().getRowCount(); i++) {
+				// 根据billtype+fieldcode取元数据中的多语名称显示。
+				String srcbilltype = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.SRC_BILLTYPE);
+				String srcfieldcode = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.SRC_FIELDCODE);
+				String srcVal = MDUtil.ConvertPathToDisplayName(getEntitybean(srcbilltype), srcfieldcode);
+				String desbilltype = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.DES_BILLTYPE);
+				String desfieldcode = (String) getBillCardPanel().getBodyValueAt(i, FieldcontrastVO.DES_FIELDCODE);
+				String desVal = MDUtil.ConvertPathToDisplayName(getEntitybean(desbilltype), desfieldcode);
+				getBillCardPanel().setBodyValueAt(srcVal, i, SRC_FIELD);
+				getBillCardPanel().setBodyValueAt(desVal, i, DES_FIELD);
+				if (FieldBilRefPanel.SHARESTATE == itemState) {
+					getBillCardPanel().setBodyValueAt("~", i, FieldcontrastVO.DES_BILLTYPE);
+				}
 			}
 		}
 	}
@@ -172,8 +176,6 @@ public class FieldContrastTable extends BatchBillTable {
 				fieldname = entry.getValue();
 				cardPanel.setBodyValueAt(fieldname, e.getRow(), FieldcontrastVO.DES_FIELDNAME);
 				cardPanel.setBodyValueAt(fieldcode, e.getRow(), FieldcontrastVO.DES_FIELDCODE);
-				// cardPanel.setBodyValueAt(getDesBillType(), e.getRow(),
-				// FieldcontrastVO.DES_BILLTYPE);
 			}
 		}
 	}
@@ -204,12 +206,32 @@ public class FieldContrastTable extends BatchBillTable {
 	}
 
 	private void itemChanged(AppEvent event) {
+		getBillRefPanel().getDjlxRef().getRefModel().clearData();
+		getBillRefPanel().getDjlxRef().getUITextField().setValue(null);
+
 		Integer contextObject = (Integer) event.getContextObject();
 		setShowField(contextObject);
 		initModelData();
 	}
 
 	private void setShowField(Integer itemState) {
+		if(itemState == 1){
+			getBillCardPanel().getBodyItem(FieldcontrastVO.DES_FIELDCODE).setShow(true);
+			getBillCardPanel().getBodyItem(FieldcontrastVO.SRC_FIELDCODE).setShow(true);
+			getBillCardPanel().getBodyItem(SRC_FIELD).setShow(false);
+			getBillCardPanel().getBodyItem(DES_FIELD).setShow(false);
+			getBillCardPanel().getBodyItem(FieldcontrastVO.SRC_BUSITYPE).setShow(false);
+			getBillCardPanel().getBodyItem(FieldcontrastVO.SRC_BUSITYPE).setNull(false);
+			getBillCardPanel().getBodyItem(FieldcontrastVO.SRC_BILLTYPE).setNull(false);
+			getBillCardPanel().getBodyItem(FieldcontrastVO.DES_BILLTYPE).setNull(false);
+			getBillCardPanel().initPanelByPos(IBillItem.BODY);
+			return;
+		}
+		
+		getBillCardPanel().getBodyItem(SRC_FIELD).setShow(true);
+		getBillCardPanel().getBodyItem(DES_FIELD).setShow(true);
+		getBillCardPanel().getBodyItem(FieldcontrastVO.DES_FIELDCODE).setShow(false);
+		getBillCardPanel().getBodyItem(FieldcontrastVO.SRC_FIELDCODE).setShow(false);
 		if (FieldBilRefPanel.CTRLSTATE == itemState) {
 			itemState = FieldBilRefPanel.CTRLSTATE;
 			// 设置显示/隐藏字段
@@ -260,7 +282,7 @@ public class FieldContrastTable extends BatchBillTable {
 		// 重置渲染器
 		getBillCardPanel().getBodyPanel().setTableCellEditor(DES_FIELD,
 				new BillCellEditor(FieldBilRefPanel.CTRLSTATE == itemState ? getCtrlDesRefPane() : getDesShareRefPane()));
-		if (srcBillType != null) {
+		if (getSrcBillType() != null) {
 			getBillCardPanel().getBodyPanel().setTableCellEditor(SRC_FIELD, new BillCellEditor(getSrcRefPane()));
 		}
 	}
@@ -294,36 +316,53 @@ public class FieldContrastTable extends BatchBillTable {
 			mdref.getRefModel().setSelectedData(vecSelectedData);
 			mdref.getDialog().getEntityTree().setSelectionPath(null);
 		}
+		
+		if(getItemState() == FieldBilRefPanel.BUDGETSTATE){
+			String pk = ((FieldcontrastVO) getModel().getSelectedData()).getPk_fieldcontrast();
+			if(pk != null && pk.startsWith("contZ3")){
+				return false;
+			}
+			
+			this.getBillCardPanel().setBodyValueAt("~", e.getRow(), FieldcontrastVO.DES_BILLTYPE);
+		}
+		
 		return super.beforeEdit(e);
 	}
 	
 	private void ctrlValueChanged(AppEvent event) {
-		if (event.getContextObject() != null) {
-			try {
-				srcBillType = ((String[]) event.getContextObject())[0];
-				String billcomponent = PfDataCache.getBillType(srcBillType).getComponent();
-				IComponent icom = MDBaseQueryFacade.getInstance().getComponentByName(billcomponent);
-				// 重置
-				srcEntityid = icom.getPrimaryBusinessEntity().getID();
-				getBillCardPanel().getBodyPanel().setTableCellEditor(SRC_FIELD, new BillCellEditor(getSrcRefPane()));
-			} catch (Exception e) {
-				Logger.error(e.getMessage(), e);
-			}
-		} else {
-			srcBillType = null;
+		int selectedIndex = billRefPanel.getBcombobox().getSelectedIndex();
+		if(selectedIndex == FieldBilRefPanel.SHARESTATE){
+			if (event.getContextObject() != null) {
+				try {
+					String billcomponent = PfDataCache.getBillType(getSrcBillType()).getComponent();
+					IComponent icom = MDBaseQueryFacade.getInstance().getComponentByName(billcomponent);
+					// 重置
+					srcEntityid = icom.getPrimaryBusinessEntity().getID();
+					getBillCardPanel().getBodyPanel().setTableCellEditor(SRC_FIELD, new BillCellEditor(getSrcRefPane()));
+				} catch (Exception e) {
+					Logger.error(e.getMessage(), e);
+				}
+			} 
 		}
+		
 		initModelData();
 	}
 
 	public void initModelData() {
 		FieldcontrastVO[] rs = null;
-		if (srcBillType != null) {
+		if (getSrcBillType() != null) {
 			IFieldContrastQryService qrySer = NCLocator.getInstance().lookup(IFieldContrastQryService.class);
 			Integer app_scene = FieldBilRefPanel.CTRLSTATE == itemState ? ErmBillFieldContrastCache.FieldContrast_SCENE_MatterAppCtrlField
 					: ErmBillFieldContrastCache.FieldContrast_SCENE_SHARERULEField;
 			String pk_org = getModel().getContext().getPk_org();
+			
+			if(getItemState() == FieldBilRefPanel.BUDGETSTATE){
+				app_scene = ErmBillFieldContrastCache.FieldContrast_SCENE_BudGetField;
+				pk_org = IOrgConst.GLOBEORG;
+			}
+			
 			try {
-				rs = qrySer.qryVOs(pk_org, app_scene, srcBillType);
+				rs = qrySer.qryVOs(pk_org, app_scene, getSrcBillType());
 			} catch (BusinessException e) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -358,11 +397,20 @@ public class FieldContrastTable extends BatchBillTable {
 	}
 
 	public String getSrcBillType() {
+		String srcBillType = (String)billRefPanel.getDjlxRef().getRefModel().getValue("pk_billtypecode");
+		return srcBillType;
+	}
+	
+	public int getItemState() {
+		Integer srcBillType = (Integer)billRefPanel.getBcombobox().getSelectedIndex();
 		return srcBillType;
 	}
 
-	public void setSrcBillType(String srcBillType) {
-		this.srcBillType = srcBillType;
+	public FieldBilRefPanel getBillRefPanel() {
+		return billRefPanel;
 	}
 
+	public void setBillRefPanel(FieldBilRefPanel billRefPanel) {
+		this.billRefPanel = billRefPanel;
+	}
 }

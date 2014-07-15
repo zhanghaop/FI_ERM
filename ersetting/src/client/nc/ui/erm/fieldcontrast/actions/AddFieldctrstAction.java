@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 
 import nc.bs.erm.cache.ErmBillFieldContrastCache;
 import nc.bs.erm.common.ErmBillConst;
+import nc.itf.org.IOrgConst;
 import nc.ui.erm.fieldcontrast.view.FieldBilRefPanel;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.actions.batch.BatchAddLineAction;
@@ -35,9 +36,17 @@ public class AddFieldctrstAction extends BatchAddLineAction {
 				}else{
 					vo.setSrc_busitype(ErmBillConst.MatterApp_MDCODE_DETAIL);
 				}
+				
+				vo.setPk_org(getModel().getContext().getPk_org());
+				vo.setPk_group(getModel().getContext().getPk_group());
+			}else if(FieldBilRefPanel.BUDGETSTATE == refPanel.getBcombobox().getSelectedIndex()){
+				vo.setPk_org(IOrgConst.GLOBEORG);
+				vo.setPk_group(IOrgConst.GLOBEORG);
+				String srcBillType = (String)refPanel.getDjlxRef().getRefModel().getValue("pk_billtypecode");
+				vo.setSrc_billtype(srcBillType);
+				vo.setDes_billtype("~");
+				vo.setApp_scene(ErmBillFieldContrastCache.FieldContrast_SCENE_BudGetField);
 			}
-			vo.setPk_org(getModel().getContext().getPk_org());
-			vo.setPk_group(getModel().getContext().getPk_group());
 		}
 	}
 
