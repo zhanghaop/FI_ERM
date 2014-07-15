@@ -23,7 +23,7 @@ public class ErmExportAction extends ExportAction {
 			JKBXVO[] selectedData = Arrays.asList(selectedOperaDatas).toArray(new JKBXVO[0]);
 			for(JKBXVO jkbxvo : selectedData ){
 				if(jkbxvo.getParentVO().getPk_item()== null
-						&& jkbxvo.getParentVO().getDjzt().intValue()!=BXStatusConst.DJZT_Invalid){//不是拉单的借款报销单
+						){//不是拉单的借款报销单
 					flag = true ;
 				}
 			}
