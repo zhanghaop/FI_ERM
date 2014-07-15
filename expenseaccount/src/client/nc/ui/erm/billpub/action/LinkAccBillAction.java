@@ -11,7 +11,6 @@ import nc.bs.erm.common.ErmConst;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.funcnode.ui.FuncletInitData;
 import nc.ui.pub.linkoperate.ILinkType;
-import nc.ui.uap.sf.SFClientUtil;
 import nc.ui.uap.sf.SFClientUtil2;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
@@ -20,7 +19,6 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.link.LinkQuery;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
-import nc.vo.hbbb.vouch.VoucherLinkQryVO;
 import nc.vo.pub.BusinessException;
 
 public class LinkAccBillAction extends NCAction {
