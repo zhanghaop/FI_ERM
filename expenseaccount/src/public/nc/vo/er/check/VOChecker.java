@@ -763,7 +763,7 @@ public class VOChecker {
 		prepare(bxvo);
 
 		JKBXHeaderVO parentVO = bxvo.getParentVO();
-		BXBusItemVO[] childrenVO = bxvo.getBxBusItemVOS();
+		//BXBusItemVO[] childrenVO = bxvo.getBxBusItemVOS();
 		if (!parentVO.isInit()) {
 			// 校验表头合法性
 			checkValidHeader(parentVO);
@@ -1293,7 +1293,19 @@ public class VOChecker {
 			if(busItemVOs[0].getPk_brand()!= null){
 				bxvo.getParentVO().setPk_brand(busItemVOs[0].getPk_brand());
 			}
-			
+			//将支付对象的信息带到表头 
+			if(busItemVOs[0].getPaytarget()!=null && bxvo.getParentVO().getPaytarget()==null){
+				bxvo.getParentVO().setPaytarget(busItemVOs[0].getPaytarget());
+			}
+			if(busItemVOs[0].getHbbm()!=null && bxvo.getParentVO().getHbbm()==null){
+				bxvo.getParentVO().setHbbm(busItemVOs[0].getHbbm());
+			}
+			if(busItemVOs[0].getCustomer()!=null && bxvo.getParentVO().getCustomer()==null){
+				bxvo.getParentVO().setCustomer(busItemVOs[0].getCustomer());
+			}
+			if(busItemVOs[0].getReceiver()!=null && bxvo.getParentVO().getReceiver()==null){
+				bxvo.getParentVO().setReceiver(busItemVOs[0].getReceiver());
+			}
 			
 			for (BXBusItemVO item : busItemVOs) {
 

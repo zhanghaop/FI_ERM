@@ -76,7 +76,7 @@ public class ERMBillCheckValidator implements Validator {
 				// 报销单如果存在冲借款信息，不可以有小于的业务行
 				checkBillContrast(bxvo);
 				//校验收款对象相关信息:对与还款单和调整单不做处理
-				checkBillPaytargetInfo(bxvo);
+				//checkBillPaytargetInfo(bxvo);(在后台来做校验)
 				//报销核销预提单时，报销金额必须等于总核销预提金额
 				checkAccruedVerify(bxvo);
 			} else {
@@ -112,6 +112,7 @@ public class ERMBillCheckValidator implements Validator {
 	 * 校验收款对象相关信息:对与还款单和调整单不做处理
 	 * @param bxvo
 	 */
+	@SuppressWarnings("unused")
 	private void checkBillPaytargetInfo(JKBXVO bxvo) throws BusinessException {
 		// 费用调整单不控制合计金额为0、负数
 		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();

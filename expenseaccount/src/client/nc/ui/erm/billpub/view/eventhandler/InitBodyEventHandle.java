@@ -494,17 +494,24 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 				getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.SKYHZH);
 				setDefaultSkyhzhByReceiver(e.getTableCode(), e.getRow());
 			} else if (e.getKey().equals(BXBusItemVO.HBBM) || e.getKey().equals(BXBusItemVO.CUSTOMER)) {
-				getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.CUSTACCOUNT);
-				getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.FREECUST);
-				getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), "freecust.bankaccount");
+				DefaultConstEnum bodyItemStrValue =(DefaultConstEnum)getBillCardPanel().getBillModel().getValueObjectAt(e.getRow(),BXBusItemVO.PAYTARGET);
+				Integer paytarget = (Integer) bodyItemStrValue.getValue();
 				if (e.getKey().equals(BXBusItemVO.HBBM)) {
-//					getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.CUSTOMER);
-					// 设置供应商 的银行帐户
-					setDefaultCustaccountBySupplier(e.getTableCode(), e.getRow());
+					if(paytarget.compareTo(1)==0){
+						getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.CUSTACCOUNT);
+						getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.FREECUST);
+						getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), "freecust.bankaccount");
+						// 设置供应商 的银行帐户
+						setDefaultCustaccountBySupplier(e.getTableCode(), e.getRow());
+					}
 				} else {
-//					getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.HBBM);
-					// 设置客户 的银行帐户
-					setDefaultCustaccountByCustomer(e.getTableCode(), e.getRow());
+					if(paytarget.compareTo(2)==0){
+						getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.CUSTACCOUNT);
+						getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), BXBusItemVO.FREECUST);
+						getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null, e.getRow(), "freecust.bankaccount");
+						// 设置客户 的银行帐户
+						setDefaultCustaccountByCustomer(e.getTableCode(), e.getRow());
+					}
 				}
 			}
 			if (bodyEventHandleUtil.getUserdefine(IBillItem.BODY, bodyItem.getKey(), 2) != null) {
