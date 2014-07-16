@@ -1,27 +1,27 @@
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VWU',null,0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0013','arap_jkzb',0,'会议费借款单','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJ6',null,0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0013','arap_jkzb',0,'会议费借款单','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VWV',null,0,'erm.jk_busitem','jk_busitem',null,'1001Z31000000000E958','~',1,1,'120110melb0012','jk_busitem',0,'业务信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJ7',null,0,'erm.jk_busitem','jk_busitem',null,'1001Z31000000000E958','~',1,1,'120110melb0012','jk_busitem',0,'业务信息','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VWW',null,0,'erm.jkzb',null,1,'1001Z31000000000E958','~',2,2,'120110melb0014','tail',0,'表尾信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJ8',null,0,'erm.jkzb',null,1,'1001Z31000000000E958','~',2,2,'120110melb0014','tail',0,'表尾信息','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VWX','tail',0,'erm.jkzb',null,1,'1001Z31000000000E958','~',2,2,'UC001-0000095','audit',1,'审计信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJ9','tail',0,'erm.jkzb',null,1,'1001Z31000000000E958','~',2,2,'UC001-0000095','audit',1,'审计信息','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VWY',null,0,'erm.jkcontrast','jk_contrast',null,'1001Z31000000000E958','~',1,1,'120110melb0015','er_bxcontrast',1,'冲销明细','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJA',null,0,'erm.jkcontrast','jk_contrast',null,'1001Z31000000000E958','~',1,1,'120110melb0015','er_bxcontrast',1,'冲销明细','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VWZ','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0061','zfdwbm',1,'支付单位信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJB','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0061','zfdwbm',1,'支付单位信息','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VX0','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0017','fydwbm',2,'费用承担单位信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJC','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0017','fydwbm',2,'费用承担单位信息','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VX1','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0018','dwbm',3,'借款人信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJD','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0018','dwbm',3,'借款人信息','2014-07-09 15:03:19',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000001VX2','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0063','bx_receiver',4,'收款信息','2014-05-05 15:12:07',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QJE','arap_jkzb',0,'erm.jkzb',null,null,'1001Z31000000000E958','~',0,0,'120110melb0063','bx_receiver',4,'收款信息','2014-07-09 15:03:19',null,null,null)
 go
 
