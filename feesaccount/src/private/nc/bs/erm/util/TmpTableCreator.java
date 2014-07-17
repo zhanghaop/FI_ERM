@@ -22,6 +22,10 @@ public class TmpTableCreator {
 			throws SQLException {
 		String[] types = new String[colTypes.length];
 		for (int i = 0; i < colTypes.length; i++) {
+			if(colNames[i] != null && colNames[i].trim().equalsIgnoreCase("reason")){
+				types[i] = "varchar(250)";
+				continue;
+			}
 			switch (colTypes[i]) {
 			case Types.VARCHAR:
 				types[i] = "varchar(100)";
