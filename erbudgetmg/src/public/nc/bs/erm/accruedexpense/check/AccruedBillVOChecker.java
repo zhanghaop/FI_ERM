@@ -350,7 +350,7 @@ public class AccruedBillVOChecker {
 		AccruedVO head = vo.getParentVO();
 		String pk_group = head.getPk_group();
 		String pk_org = head.getPk_org();
-		UFDate billdate = head.getBilldate();
+		UFDate billdate = head.getApprovetime().getDate();
 		AccperiodmonthVO accperiodmonthVO = ErAccperiodUtil.getAccperiodmonthByUFDate(pk_org, billdate);
 		String pk_accperiodmonth = accperiodmonthVO.getPk_accperiodmonth();
 		String pk_accperiodscheme = accperiodmonthVO.getPk_accperiodscheme();
@@ -359,9 +359,9 @@ public class AccruedBillVOChecker {
 		if (ermCloseAccBook != null && ermCloseAccBook.length > 0) {
 			BatchCloseAccBookVO accvo = ermCloseAccBook[0];
 			if (accvo.getIsendacc().equals(UFBoolean.TRUE)) {
-				msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0138")/*
+				msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0", "02011001-0025")/*
 																											 * @res
-																											 * "这个会计期间费用管理已经结账，不可以审批"
+																											 * "这个会计期间费用管理已经结账，不可以进行该操作"
 																											 */);
 			}
 		}
