@@ -16,11 +16,11 @@ import nc.vo.trade.pub.HYBillVO;
 import nc.vo.trade.pub.IExAggVO;
 
 /**
- * 
+ *
  * 单子表/单表头/单表体聚合VO
- * 
+ *
  * 创建日期:
- * 
+ *
  * @author
  * @version NCPrj ??
  */
@@ -152,7 +152,7 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 
 	/**
 	 * 初始化表体页签中的字段为多选 费用承担单位， 费用承担部门，收支项目，利润中心，成本中心，核算要素，项目，项目任务，客户，供应商，品牌，产品线
-	 * 
+	 *
 	 * @return
 	 */
 	public static String[] getBodyMultiSelectedItems() {
@@ -192,14 +192,14 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 		System.arraycopy(tableVO, 0, childs, 0, tableVO.length);
 		return childs;
 	}
-	
+
 	public void setAccruedVerifyVO(AccruedVerifyVO[] accruedVerifyVO) {
 		setTableVO(getTableCodes()[1], accruedVerifyVO);
 	}
-	
+
 	/**
 	 * 返回每个子表的VO数组 创建日期：
-	 * 
+	 *
 	 * @return CircularlyAccessibleValueObject[]
 	 */
 	public CircularlyAccessibleValueObject[] getTableVO(String tableCode) {
@@ -209,7 +209,7 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 
 	/**
 	 * 返回多个子表的编码 必须与单据模版的页签编码对应 创建日期：
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getTableCodes() {
@@ -301,7 +301,7 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 
 	@Override
 	public String[] getTableNames() {
-		return new String[] { "预提明细", "预提核销明细", };
+		return new String[] {  "预提明细"/* -=notranslate=- */, "预提核销明细"/* -=notranslate=- */,  };
 	}
 
 	@Override
@@ -317,7 +317,7 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 
 	/**
 	 * 获取全部子表页签信息，包括动态扩展的子表
-	 * 
+	 *
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -425,7 +425,7 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 	public static String[] getRedbackClearBodyFields() {
 		return redbackClearBodyFields;
 	}
-	
-	
+
+
 
 }

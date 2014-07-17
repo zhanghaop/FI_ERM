@@ -37,7 +37,7 @@ public class AccruedBillVOChecker {
 
 	/**
 	 * 保存(后台)校验
-	 * 
+	 *
 	 * @param aggvo
 	 * @throws BusinessException
 	 */
@@ -52,12 +52,12 @@ public class AccruedBillVOChecker {
 			// 交叉校验
 			new FipubCrossCheckRuleChecker().check(aggvo.getParentVO().getPk_org(), aggvo.getParentVO()
 					.getPk_tradetype(), aggvo);
-			
+
 			// 校验关帐
 			checkErmIsCloseAcc(aggvo);
 		}
 	}
-	
+
 	/**
 	 * 作废单据校验
 	 * @param vo
@@ -70,10 +70,10 @@ public class AccruedBillVOChecker {
 			throw new DataValidateException(msgs);
 		}
 	}
-	
+
 	/**
 	 * 保存(后台)校验
-	 * 
+	 *
 	 * @param aggvo
 	 * @throws BusinessException
 	 */
@@ -88,7 +88,7 @@ public class AccruedBillVOChecker {
 
 	/**
 	 * 前台校验
-	 * 
+	 *
 	 * @param vo
 	 * @throws BusinessException
 	 */
@@ -117,7 +117,7 @@ public class AccruedBillVOChecker {
 
 	/**
 	 * 删除校验
-	 * 
+	 *
 	 * @param aggvos
 	 */
 	public void checkDelete(AggAccruedBillVO[] aggvos) throws BusinessException {
@@ -126,7 +126,7 @@ public class AccruedBillVOChecker {
 					"0201212-0050")/* @res "没有有效单据!不能进行该操作!" */);
 		}
 
-		
+
 		for (int i = 0; i < aggvos.length; i++) {
 			AccruedVO head = aggvos[i].getParentVO();
 			AccruedBillVOStatusChecker.checkDeleteStatus(head);
@@ -135,37 +135,37 @@ public class AccruedBillVOChecker {
 				checkErmIsCloseAcc(aggvos[i]);
 			}
 			if (aggvos[i].getParentVO().getApprstatus() != IBillStatus.FREE) {
-				throw new BusinessException("此单据审批状态不是自由态，不能删除");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0015")/*@res "此单据审批状态不是自由态，不能删除"*/);
 			}
 		}
 	}
-	
+
 	/**
 	 * 红冲校验
 	 * @param aggvo
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
 	public void checkRedback(AggAccruedBillVO aggvo) throws BusinessException{
 		AccruedVO parentVo = aggvo.getParentVO();
 
 		if (ErmAccruedBillConst.EFFECTSTATUS_VALID != parentVo.getEffectstatus()) {
-			throw new BusinessException("单据未生效，不能进行该操作");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0016")/*@res "单据未生效，不能进行该操作"*/);
 		}
 		if (UFDouble.ZERO_DBL.compareTo(parentVo.getRest_amount()) == 0) {
-			throw  new BusinessException("单据没有可用余额，不能进行该操作");
+			throw  new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0017")/*@res "单据没有可用余额，不能进行该操作"*/);
 		}
 		if (parentVo.getRedflag() != null && ErmAccruedBillConst.REDFLAG_REDED == parentVo.getRedflag()) {
-			throw new BusinessException("此单据已被红冲，不能进行该操作");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0018")/*@res "此单据已被红冲，不能进行该操作"*/);
 		}
 		if(parentVo.getRedflag() != null && ErmAccruedBillConst.REDFLAG_RED == parentVo.getRedflag()){
-			throw new BusinessException("红冲单据，不能进行该操作");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0019")/*@res "红冲单据，不能进行该操作"*/);
 		}
 		boolean isExist = NCLocator.getInstance().lookup(IErmAccruedBillVerifyService.class).isExistAccruedVerifyEffectStatusNo(
 				aggvo.getParentVO().getPk_accrued_bill());
 		if(isExist){
-			throw new BusinessException("核销此预提单的报销单未生效，不能进行该操作");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0020")/*@res "核销此预提单的报销单未生效，不能进行该操作"*/);
 		}
-		
+
 		// 校验关帐
 		checkErmIsCloseAcc(aggvo);
 		// 校验结账
@@ -175,16 +175,16 @@ public class AccruedBillVOChecker {
 	/**
 	 * 删除红冲校验
 	 * @param aggvo
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
 	public void checkUnRedback(AggAccruedBillVO aggvo) throws BusinessException{
 		// 校验关帐
 		checkErmIsCloseAcc(aggvo);
 	}
-	
+
 	/**
 	 * 提交校验
-	 * 
+	 *
 	 * @param aggvos
 	 */
 	public void checkCommit(AggAccruedBillVO[] aggvos) throws BusinessException {
@@ -201,7 +201,7 @@ public class AccruedBillVOChecker {
 
 	/**
 	 * 收回校验
-	 * 
+	 *
 	 * @param aggvos
 	 */
 	public void checkRecall(AggAccruedBillVO[] aggvos) throws BusinessException {
@@ -218,7 +218,7 @@ public class AccruedBillVOChecker {
 
 	/**
 	 * 审批校验
-	 * 
+	 *
 	 * @param aggvos
 	 */
 	public void checkApprove(AggAccruedBillVO[] aggvos) throws BusinessException {
@@ -228,7 +228,7 @@ public class AccruedBillVOChecker {
 		}
 		// 校验结账
 		checkErmIsEndAcc(aggvos[0]);
-		
+
 		for (int i = 0; i < aggvos.length; i++) {
 			AccruedVO head = (AccruedVO) aggvos[i].getParentVO();
 			if (head.getApprovetime() == null) {
@@ -245,20 +245,20 @@ public class AccruedBillVOChecker {
 				throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
 						"0201212-0098")/* @res "单据审核日期不得早于单据日期!" */);
 			}
-			
+
 			if (head.getApprstatus() == IBillStatus.FREE) {
 				throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("201212_0",
 						"单据未提交，不能进行审批!", "0201212-0104"));
 			}
 
 			AccruedBillVOStatusChecker.checkApproveStatus(head);
-		
+
 		}
 	}
 
 	/**
 	 * 取消审批校验
-	 * 
+	 *
 	 * @param vos
 	 */
 	public void checkunApprove(AggAccruedBillVO[] aggvos) throws BusinessException {
@@ -274,14 +274,14 @@ public class AccruedBillVOChecker {
 			// 核销明细中有值时，不能反审
 			CircularlyAccessibleValueObject[] children = aggvos[i].getAccruedVerifyVO();
 			if (!ArrayUtils.isEmpty(children)) {
-				throw new BusinessException("此单据存在核销明细，不能反审");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0022")/*@res "此单据存在核销明细，不能反审"*/);
 			}
 			if (aggvos[i].getParentVO().getRedflag() != null) {
 				int redFlag = aggvos[i].getParentVO().getRedflag();
 				if (redFlag == ErmAccruedBillConst.REDFLAG_REDED) {
-					throw new BusinessException("此单据已经被红冲，不能反审");
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0023")/*@res "此单据已经被红冲，不能反审"*/);
 				} else if (redFlag == ErmAccruedBillConst.REDFLAG_RED) {
-					throw new BusinessException("此单据是红冲单据，不能反审");
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0024")/*@res "此单据是红冲单据，不能反审"*/);
 				}
 			}
 		}
@@ -319,10 +319,10 @@ public class AccruedBillVOChecker {
 		}
 
 	}
-	
+
 	/**
 	 * 后台检查报销管理模块是否关账
-	 * 
+	 *
 	 * @param bxvo单据VO
 	 * @throws BusinessException
 	 */
@@ -338,7 +338,7 @@ public class AccruedBillVOChecker {
 									 */);
 		}
 	}
-	
+
 	/**
 	 * 检查报销管理模块是否结账
 	 * @param vo
@@ -453,7 +453,7 @@ public class AccruedBillVOChecker {
 
 	/**
 	 * 校验汇率
-	 * 
+	 *
 	 * @param aggvo
 	 * @throws BusinessException
 	 */

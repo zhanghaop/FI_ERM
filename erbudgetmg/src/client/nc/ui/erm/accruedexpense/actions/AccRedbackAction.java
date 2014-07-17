@@ -33,7 +33,7 @@ public class AccRedbackAction extends NCAction {
 		if (aggvo != null && aggvo.getParent() != null) {
 			AggregatedValueObject billvo = NCLocator.getInstance().lookup(IErmAccruedBillManage.class).redbackVO(aggvo);
 			getModel().directlyAdd(billvo);
-			ShowStatusBarMsgUtil.showStatusBarMsg("操作成功", getModel().getContext());
+			ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0001")/*@res "操作成功"*/, getModel().getContext());
 		}
 	}
 
@@ -58,7 +58,7 @@ public class AccRedbackAction extends NCAction {
 						.getRedflag())) {
 			return false;
 		}
-		
+
 		return true;
 	}
 

@@ -20,10 +20,10 @@ import nc.vo.pub.BusinessException;
 public class AccLinkBxBillAction extends NCAction {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private BillManageModel model;
 	private BillForm editor;
-	
+
 	public AccLinkBxBillAction(){
 		setCode(ErmActionConst.LINKBX);
 		setBtnName(ErmActionConst.getLinkBxName());
@@ -36,20 +36,20 @@ public class AccLinkBxBillAction extends NCAction {
 			return;
 		}
 		if(ArrayUtils.isEmpty(selectedData.getAccruedVerifyVO())){
-			throw new BusinessException("此单据无核销明细，不能联查报销单");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0000")/*@res "此单据无核销明细，不能联查报销单"*/);
 		}
-		List<String> bxpks=new ArrayList<String>(); 
+		List<String> bxpks=new ArrayList<String>();
 		for (AccruedVerifyVO verifyVO : selectedData.getAccruedVerifyVO()) {
 			if (!bxpks.contains(verifyVO.getPk_bxd())) {
 				bxpks.add(verifyVO.getPk_bxd());
 			}
 		}
-		
+
 		LinkQuery linkQuery = new LinkQuery(BXConstans.BX_DJDL, bxpks.toArray(new String[]{}));
 
 		SFClientUtil.openLinkedQueryDialog(BXConstans.BXMNG_NODECODE, getEditor(), linkQuery);
-		
-		
+
+
 	}
 
 	@Override
@@ -79,6 +79,6 @@ public class AccLinkBxBillAction extends NCAction {
 	public void setEditor(BillForm editor) {
 		this.editor = editor;
 	}
-	
-	
+
+
 }

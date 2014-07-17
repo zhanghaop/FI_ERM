@@ -32,12 +32,12 @@ public class InvalidAction extends NCAsynAction{
 	private BillManageModel model;
 	private TPAProgressUtil tpaProgressUtil;
 	private IProgressMonitor monitor = null;
-	
+
 	public InvalidAction() {
 		setCode("Invalid");
 		this.setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0175")/*@res "作废"*/);
 	}
-	
+
 	@Override
 	public void doAction(ActionEvent arg0) throws Exception {
 		Object[] vos = (Object[]) getModel().getSelectedOperaDatas();
@@ -45,20 +45,20 @@ public class InvalidAction extends NCAsynAction{
 			throw new BusinessException(nc.ui.ml.NCLangRes.getInstance().getStrByID("201107_0","0201107-0176")/* @res "没有可作废的单据,操作失败"*/);
 		}
 		AggAccruedBillVO[] accruedBill = Arrays.asList(vos).toArray(new AggAccruedBillVO[0]);
-		
+
 		MessageVO[] msgs = new MessageVO[accruedBill.length];
-		
+
 		MessageVO[] returnMsgs = invalidOneByOne(accruedBill);
-		
+
 		List<AggregatedValueObject> successVos = ErUiUtil.combineMsgs(msgs, returnMsgs);
-		
+
 		//更新界面数据
 		getModel().directlyUpdate(successVos.toArray(new AggregatedValueObject[] {}));
-		
+
 		//界面提示
 		ErUiUtil.showBatchResults(getModel().getContext(), returnMsgs);
 	}
-	
+
 	private MessageVO[] invalidOneByOne(AggAccruedBillVO[] accruedBill) {
 		List<MessageVO> resultList = new ArrayList<MessageVO>();
 		for (AggAccruedBillVO aggVo : accruedBill) {
@@ -95,7 +95,7 @@ public class InvalidAction extends NCAsynAction{
 		}
 		return ret;
 	}
-	
+
 	public TPAProgressUtil getTpaProgressUtil() {
 		if (this.tpaProgressUtil == null) {
 			tpaProgressUtil = new TPAProgressUtil();
@@ -144,10 +144,10 @@ public class InvalidAction extends NCAsynAction{
 		}
 		return inenable;
 	}
-	
+
 	public int showConfirmDisableDialog(Container parent){
-		String TITLE = "确认作废";
-		String QUESTION = "是否确认作废?";
+		String TITLE = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0003")/*@res "确认作废"*/;
+		String QUESTION = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0004")/*@res "是否确认作废?"*/;
 		return MessageDialog.showYesNoDlg(parent, TITLE, QUESTION, UIDialog.ID_NO);
 	}
 }

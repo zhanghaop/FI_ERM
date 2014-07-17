@@ -59,10 +59,10 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	public AggAccruedBillVO tempSave(AggAccruedBillVO vo) throws BusinessException {
 		// 修改加锁
 		pklockOperate(vo);
-		
+
 		// 查询修改前的vo
 		IErmAccruedBillQuery qryService = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
-		
+
 		AggAccruedBillVO oldvo = null;
 		if (vo.getParentVO().getStatus() != VOStatus.NEW) {
 			oldvo = qryService.queryBillByPk(vo.getParentVO().getPrimaryKey());
@@ -71,15 +71,15 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 				fillUpChildren(vo, oldvo);
 			}
 		}
-		
+
 		// 获取单据号
 		createBillNo(vo);
-		
+
 		prepareVoValue(vo);
-		
+
 		// 设置暂存状态
 		vo.getParentVO().setAttributeValue(AccruedVO.BILLSTATUS, ErmAccruedBillConst.BILLSTATUS_TEMPSAVED);
-		
+
 		// 设置审计信息
 		if (vo.getParentVO().getPk_accrued_bill() != null) {
 			AuditInfoUtil.updateData(vo.getParentVO());
@@ -88,37 +88,37 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		}
 		// 更新保存
 		vo = getDAO().updateVO(vo);
-		
+
 		// 返回
 		return vo;
 	}
-	
+
 	public AggAccruedBillVO invalidBill(AggAccruedBillVO aggvo)throws BusinessException{
 		if (aggvo == null) {
-			return null; 
+			return null;
 		}
 		// 删除加锁
 		pklockOperate(aggvo);
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(aggvo);
-				
+
 		AccruedBillVOChecker vochecker = new AccruedBillVOChecker();
 		vochecker.checkInvalid(aggvo);
-		
+
 		// 删除前事件处理
 		fireBeforeDeleteEvent(aggvo);
-		
+
 		//作废状态
 		aggvo.getParentVO().setBillstatus(ErmAccruedBillConst.BILLSTATUS_INVALID);
 		// 取服务器事件作为修改时间
 		AuditInfoUtil.updateData(aggvo.getParentVO());
 		new BaseDAO().updateVOArray(new AccruedVO[]{aggvo.getParentVO()} , new String[] { MatterAppVO.BILLSTATUS, MatterAppVO.MODIFIER, MatterAppVO.MODIFIEDTIME });
-		
+
 		// 修改后事件处理
 		fireAfterDeleteEvent(aggvo);
-		
+
 		return aggvo;
-		
+
 	}
 
 	public AggAccruedBillVO insertVO(AggAccruedBillVO aggvo) throws BusinessException {
@@ -268,32 +268,32 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 			detailvo.setGlobal_rest_amount(detailvo.getGlobal_amount());
 		}
 	}
-	
+
 
 	public AggAccruedBillVO unRedbackVO(AggAccruedBillVO aggvo) throws BusinessException {
 		// 修改加锁
 		pklockOperate(aggvo);
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(aggvo.getParentVO());
-		
+
 		//补齐信息
 		fillUpAggAccruedBillVO(aggvo);
-		
+
 		// vo校验
 		new AccruedBillVOChecker().checkUnRedback(aggvo);
-		
+
 		// 删除红冲前事件处理
 		fireBeforeUnRedbackEvent(aggvo);
-		
+
 		// 删除红冲单据
 		getDAO().deleteVOs(new AggAccruedBillVO[]{aggvo});
-		
+
 		// 删除红冲后事件处理
 		fireAfterUnRedbackEvent(aggvo);
-		
+
 		// 回写原预提单
 		unRedbackOldAccruedBill(aggvo);
-		
+
 		return aggvo;
 	}
 
@@ -310,7 +310,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		//查询原预提单
 		String src_accruedpk = aggvo.getChildrenVO()[0].getSrc_accruedpk();
 		AggAccruedBillVO oldvo = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class).queryBillByPk(src_accruedpk);
-		
+
 		AccruedVO parent = oldvo.getParentVO();
 		// 删除红冲单据后，原预提单红冲标志置空
 		parent.setRedflag(ErmAccruedBillConst.REDFLAG_NO);
@@ -319,7 +319,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		parent.setGroup_rest_amount(parent.getGroup_amount().sub(parent.getGroup_verify_amount()));
 		parent.setGlobal_rest_amount(parent.getGlobal_amount().sub(parent.getGlobal_verify_amount()));
 		parent.setPredict_rest_amount(parent.getRest_amount());
-		
+
 		for(AccruedDetailVO child : oldvo.getChildrenVO()){
 			child.setRest_amount(child.getAmount().sub(child.getVerify_amount()));
 			child.setOrg_rest_amount(child.getOrg_amount().sub(child.getOrg_verify_amount()));
@@ -330,7 +330,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		// 回写原预提单
 		getDAO().getBaseDAO().updateVO(oldvo.getParentVO());
 		getDAO().getBaseDAO().updateVOArray(oldvo.getChildrenVO());
-		
+
 	}
 
 	public AggAccruedBillVO redbackVO(AggAccruedBillVO aggvo) throws BusinessException {
@@ -343,24 +343,24 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		// 红冲校验
 		new AccruedBillVOChecker().checkRedback(aggvo);
 		AggAccruedBillVO redbackVO = getRedbackVO(aggvo);
-		
+
 		// 红冲前事件处理
 		fireBeforeRedbackEvent(redbackVO);
-		
+
 		// 插入红冲单据
 		getDAO().insertVO(redbackVO);
-		
+
 		//红冲后事件处理
 		fireAfterRedbackEvent(redbackVO);
-		
+
 		// 回写原预提单状态和金额
 		redbackOldAccruedBill(aggvo);
-		
+
 		redbackVO.getParentVO().setHasntbcheck(UFBoolean.FALSE);
-		
+
 		return redbackVO;
 	}
-	
+
 	private void filtAggAccruedBillVO(AggAccruedBillVO aggvo) throws BusinessException{
 		AccruedDetailVO[] oldChildren = aggvo.getChildrenVO();
 		List<AccruedDetailVO> newChildren = new ArrayList<AccruedDetailVO>();
@@ -371,16 +371,16 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 				}
 			}
 			if (newChildren.size() == 0) {
-				throw new BusinessException("单据无可用余额,不能进行红冲操作");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0009")/*@res "单据无可用余额,不能进行红冲操作"*/);
 			}
 			if (newChildren.size() != oldChildren.length) {
 				aggvo.setChildrenVO(newChildren.toArray(new AccruedDetailVO[newChildren.size()]));
 			}
 		}else{
-			throw new BusinessException("单据无表体,不能进行红冲操作");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0010")/*@res "单据无表体,不能进行红冲操作"*/);
 		}
 	}
-	
+
 	private void redbackOldAccruedBill(AggAccruedBillVO aggvo) throws DAOException {
 		// 进行红冲的原预提单相关字段更新，注意此时aggvo只是可以进行红冲的aggvo,表体已过滤掉不可红冲行
 		//红冲标志-被红冲
@@ -417,7 +417,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	/**
 	 * 红冲设置默认值
 	 * @param redbackVO
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
 	private void setDefaultValue4redback(AggAccruedBillVO redbackVO,AggAccruedBillVO aggvo) throws BusinessException {
 		AccruedVO head = redbackVO.getParentVO();
@@ -427,7 +427,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 //		head.setOperator(pk_psndoc);
 //		head.setOperator_dept(BXBsUtil.getPsnPk_dept(pk_psndoc));
 //		head.setOperator_org(BXBsUtil.getPsnPk_org(pk_psndoc));
-		
+
 		head.setRest_amount(UFDouble.ZERO_DBL);
 		head.setOrg_rest_amount(UFDouble.ZERO_DBL);
 		head.setGroup_rest_amount(UFDouble.ZERO_DBL);
@@ -437,24 +437,24 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		head.setGlobal_verify_amount(UFDouble.ZERO_DBL);
 		head.setVerify_amount(UFDouble.ZERO_DBL);
 		head.setPredict_rest_amount(UFDouble.ZERO_DBL);
-		
+
 		UFDateTime currTime = BXBsUtil.getBsLoginDate();
 		head.setCreationtime(currTime);
 		head.setApprovetime(currTime);
 		head.setBilldate(currTime.getDate());
-		
+
 		head.setCreator(userid);
 		head.setApprover(userid);
-		
+
 		head.setBillstatus(ErmMatterAppConst.BILLSTATUS_APPROVED );//已审批
 		head.setEffectstatus(ErmMatterAppConst.EFFECTSTATUS_VALID );//已生效
 		head.setApprstatus(IBillStatus.CHECKPASS);//审批通过
-		
+
 		head.setStatus(VOStatus.NEW);
 		createBillNo(redbackVO);
 		// 红冲标志-红冲
 		head.setRedflag(ErmAccruedBillConst.REDFLAG_RED);
-		
+
 		for(AccruedDetailVO child : redbackVO.getChildrenVO()){
 			// 注意红冲后的单据表体行的金额应为原预提单行余额的负数，而非直接取金额的负数
 			child.setAmount(new UFDouble("-1").multiply(child.getRest_amount()));
@@ -470,14 +470,14 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 			child.setGroup_verify_amount(UFDouble.ZERO_DBL);
 			child.setGlobal_verify_amount(UFDouble.ZERO_DBL);
 			child.setPredict_rest_amount(UFDouble.ZERO_DBL);
-			
+
 			child.setSrctype(aggvo.getParentVO().getPk_billtype());
 			child.setSrc_accruedpk(aggvo.getParentVO().getPk_accrued_bill());
 			child.setStatus(VOStatus.NEW);
 		}
 		// 表体原币金额合计到表头
 		ErmAccruedBillUtils.sumBodyAmount2Head(redbackVO);
-		
+
 		// 再根据汇率重新计算组织、集团、全局金额
 		ErmAccruedBillUtils.resetHeadAmounts(head);
 	}
@@ -580,7 +580,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 
 	/**
 	 * 加主键锁
-	 * 
+	 *
 	 * @param vos
 	 * @throws BusinessException
 	 */
@@ -591,7 +591,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 
 	/**
 	 * 主表加锁
-	 * 
+	 *
 	 * @param vos
 	 * @throws BusinessException
 	 */
@@ -644,7 +644,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 
 		// 审核后事件处理
 		fireAfterApproveEvent(aggvo);
-		
+
 		// 恢复预算控制标记
 		aggvo.getParentVO().setHasntbcheck(UFBoolean.FALSE);
 	}
@@ -694,10 +694,10 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 				new AggAccruedBillVO[] { aggvo },
 				new String[] { AccruedVO.APPRSTATUS, AccruedVO.EFFECTSTATUS, AccruedVO.BILLSTATUS,
 						AccruedVO.APPROVER, AccruedVO.APPROVETIME });
-		
+
 		// 取消审核后事件处理
 		fireAfterUnApproveEvent(aggvo);
-		
+
 		//恢复预算控制标记
 		aggvo.getParentVO().setHasntbcheck(UFBoolean.FALSE);
 	}
@@ -729,7 +729,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 
 	/**
 	 * 设置预提单主表属性值
-	 * 
+	 *
 	 * @param vos
 	 * @param attributeName
 	 * @param attributeValue
@@ -764,7 +764,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		getDAO().updateAggVOsByHeadFields(aggvos, new String[] { AccruedVO.BILLSTATUS, AccruedVO.APPRSTATUS });
 		return aggvos;
 	}
-	
+
 	public AccruedVO updatePrintInfo(AccruedVO vo) throws BusinessException {
 		// 加锁
 		ErLockUtil.lockVOByPk(ErmAccruedBillConst.Accrued_Lock_Key, vo);
@@ -781,10 +781,10 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		FinanceBillCodeUtils util = new FinanceBillCodeUtils(info);
 		util.createBillCode(new AggregatedValueObject[] { aggvo });
 	}
-	
+
 	/**
 	 * 退换单据号
-	 * 
+	 *
 	 * @param aggAccruedBillVOs
 	 */
 	private void returnBillno(AggAccruedBillVO[] aggvos) {
@@ -793,7 +793,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		FinanceBillCodeUtils util = new FinanceBillCodeUtils(info);
 		util.returnBillCode(aggvos);
 	}
-	
+
 	/**
 	 * 审批流中回写审批流信息状态
 	 */
@@ -895,7 +895,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
 				ErmEventType.TYPE_REDBACK_AFTER, aggvos));
 	}
-	
+
 	protected void fireBeforeUnRedbackEvent(AggAccruedBillVO... aggvos) throws BusinessException {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
 				ErmEventType.TYPE_UNREDBACK_BEFORE, aggvos));
@@ -905,7 +905,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
 				ErmEventType.TYPE_UNREDBACK_AFTER, aggvos));
 	}
-	
+
 	protected void fireBeforeUnApproveEvent(AggAccruedBillVO... aggvos) throws BusinessException {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
 				ErmEventType.TYPE_UNSIGN_BEFORE, aggvos));
@@ -922,7 +922,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		}
 		return true;
 	}
-	
+
 	private AggAccruedBillVO[] queryOldVOsByVOs(AggAccruedBillVO... vos) throws BusinessException {
 		String[] pks = new String[vos.length];
 		for (int i = 0; i < vos.length; i++) {

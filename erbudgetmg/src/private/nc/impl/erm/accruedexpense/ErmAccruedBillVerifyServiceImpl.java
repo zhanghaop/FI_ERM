@@ -162,10 +162,10 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 		}
 
 	}
-	
+
 	/**
 	 * 重新计算预提明细页签核销本币金额
-	 * 
+	 *
 	 * @throws BusinessException
 	 */
 	public void resetBodyVerifyAmounts(AccruedVerifyVO verifyVo, AccruedDetailVO detailVo, AccruedVO parentVo)
@@ -199,7 +199,7 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 
 	/**
 	 * 计算处理保存的核销明细
-	 * 
+	 *
 	 * @param vos
 	 * @param parentDataMap
 	 * @param detailDataMap
@@ -251,7 +251,7 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 
 	/**
 	 * 计算处理删除的核销明细
-	 * 
+	 *
 	 * @param delvos
 	 * @param parentDataMap
 	 * @param detailDataMap
@@ -373,7 +373,7 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 
 	/**
 	 * 计算处理生效/取消生效的核销明细
-	 * 
+	 *
 	 * @param isEffect
 	 * @param vos
 	 * @param parentDataMap
@@ -459,7 +459,7 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 			}
 			// 前面设置完表头原币金额后，最后根据表头汇率重新计算金额
 			ErmAccruedBillUtils.resetHeadAmounts(parentVO);
-			
+
 			// 检查金额合法性
 			checkRestAmount(detailVO, AccruedVO.REST_AMOUNT);
 
@@ -467,13 +467,13 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 			parentUpdateMap.put(pk_accrued_bill, parentVO);
 		}
 	}
-	
 
-	
+
+
 
 	/**
 	 * 并发控制，加锁、版本校验
-	 * 
+	 *
 	 * @param vos
 	 * @param delvos
 	 * @return
@@ -498,13 +498,13 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 				String tempts = newTsMap.get(pk_accrued_bill);
 				UFDateTime ts = accruedVerifyVO.getTs();
 				if (ts == null) {
-					throw new BusinessException("预提核销明细时间戳无效，请检查");
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0011")/*@res "预提核销明细时间戳无效，请检查"*/);
 				}
 				if (tempts == null) {
 					newTsMap.put(pk_accrued_bill, ts.toString());
 				} else {
 					if (tempts != null && !tempts.equals(ts.toString())) {
-						throw new BusinessException("预提核销明细时间戳不同，不可同时核销相同预提单");
+						throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0012")/*@res "预提核销明细时间戳不同，不可同时核销相同预提单"*/);
 					}
 				}
 				headPks.add(pk_accrued_bill);
@@ -550,10 +550,10 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 	private void checkRestAmount(AccruedDetailVO detailVO, String amountField) throws BusinessException {
 		UFDouble rest_amount = (UFDouble) detailVO.getAttributeValue(amountField);
 		if (rest_amount.compareTo(UFDouble.ZERO_DBL) < 0) {// 预计余额小于0的情况下
-			throw new BusinessException("预提单余额不足，请重新核销预提!");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0013")/*@res "预提单余额不足，请重新核销预提!"*/);
 		}
 		if (rest_amount.compareTo(detailVO.getAmount()) > 0) {// 预计余额大于预提单金额情况
-			throw new BusinessException("保存核销预提金额失败，核销预提的金额超出预提单的余额！");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0014")/*@res "保存核销预提金额失败，核销预提的金额超出预提单的余额！"*/);
 		}
 	}
 
@@ -570,7 +570,7 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 			sqlwhere += " and " + queryvo.getWhere();
 		}
 		AggAccruedBillVO[] aggvos = new ErmAccruedBillQueryImpl().queryBillByWhere(sqlwhere);
-		
+
 		// 合并、补充已经核销的明细
 		aggvos = combianVerifyVOs(queryvo, aggvos);
 		// 过滤预提单表体无预计余额的行
@@ -610,7 +610,7 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 
 	/**
 	 * 合并、补充已经核销的明细
-	 * 
+	 *
 	 * @param queryvo
 	 * @param aggvos
 	 * @return
@@ -694,11 +694,11 @@ public class ErmAccruedBillVerifyServiceImpl implements IErmAccruedBillVerifySer
 
 	/**
 	 * 补充查询，已经被核销不在查询记录中的数据
-	 * 
+	 *
 	 * @param aggvos
 	 * @param querylist
 	 * @param queryVerifyMap
-	 * @param oldverifyMap 
+	 * @param oldverifyMap
 	 * @return
 	 * @throws BusinessException
 	 */

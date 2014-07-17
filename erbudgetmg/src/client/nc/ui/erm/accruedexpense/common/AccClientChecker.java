@@ -26,7 +26,7 @@ import nc.vo.pub.lang.UFDouble;
 public class AccClientChecker {
 	/**
 	 * 前台校验
-	 * 
+	 *
 	 * @param aggVo
 	 * @throws BusinessException
 	 */
@@ -39,14 +39,14 @@ public class AccClientChecker {
 
 		// 表体重复行校验
 		checkRepeatRow(newAggVo, panel);
-		
+
 		//表0字段校验
 		checkZeroFieldRow(panel);
 	}
-	
+
 	/**
 	 * 校验为0的表体字段
-	 * 
+	 *
 	 * @param panel
 	 * @throws NullFieldException
 	 */
@@ -99,7 +99,7 @@ public class AccClientChecker {
 
 	/**
 	 * 补充children
-	 * 
+	 *
 	 * @param vo
 	 * @param oldvo
 	 */
@@ -142,7 +142,7 @@ public class AccClientChecker {
 
 	/**
 	 * 校验重复行
-	 * 
+	 *
 	 * @param aggVo
 	 * @param panel
 	 * @throws ValidationException
@@ -205,7 +205,7 @@ public class AccClientChecker {
 			if (errorMesg.length() > 0) {
 				// 存在重复行，抛出异常
 
-				throw new ValidationException("预提单存在重复行 "+errorMesg.toString()+"请修改");
+				throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0007")/*@res "预提单存在重复行 "*/+errorMesg.toString()+nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0008")/*@res "请修改"*/);
 //				throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
 //						"0201212-0024", null, new String[] { errorMesg.toString() })/*
 
