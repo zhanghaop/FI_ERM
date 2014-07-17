@@ -32,6 +32,7 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.pub.IBillStatus;
+import nc.vo.util.AuditInfoUtil;
 
 public class AccruedBillVOChecker {
 
@@ -350,7 +351,12 @@ public class AccruedBillVOChecker {
 		AccruedVO head = vo.getParentVO();
 		String pk_group = head.getPk_group();
 		String pk_org = head.getPk_org();
-		UFDate billdate = head.getApprovetime().getDate();
+		
+		UFDate billdate = AuditInfoUtil.getCurrentTime().getDate();
+		if(head.getApprovetime() != null){
+			billdate = head.getApprovetime().getDate();
+		}
+		
 		AccperiodmonthVO accperiodmonthVO = ErAccperiodUtil.getAccperiodmonthByUFDate(pk_org, billdate);
 		String pk_accperiodmonth = accperiodmonthVO.getPk_accperiodmonth();
 		String pk_accperiodscheme = accperiodmonthVO.getPk_accperiodscheme();
