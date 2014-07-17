@@ -3,8 +3,8 @@ package nc.bs.erm.eventlistener;
 import nc.bs.businessevent.IBusinessEvent;
 import nc.bs.businessevent.IBusinessListener;
 import nc.bs.erm.event.ErmBusinessEvent;
-import nc.bs.erm.event.ErmEventType;
 import nc.bs.erm.event.ErmBusinessEvent.ErmCommonUserObj;
+import nc.bs.erm.event.ErmEventType;
 import nc.bs.erm.util.ErAccperiodUtil;
 import nc.util.erm.closeacc.CloseAccUtil;
 import nc.vo.bd.period2.AccperiodmonthVO;
@@ -14,6 +14,7 @@ import nc.vo.org.BatchCloseAccBookVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.util.AuditInfoUtil;
 /**
  * 借款报销取消生效时需要校验结账情况
  * @author wangled
@@ -33,7 +34,11 @@ public class ErmBxJkUnApproveListener  implements IBusinessListener{
 			JKBXHeaderVO vo=vos[0].getParentVO();
 			String pk_group=vo.getPk_group();
 			String pk_org=vo.getPk_org();
-			UFDate djrq=vo.getDjrq();
+			UFDate djrq=vo.getJsrq();//按签字日期控制
+			if(djrq == null){
+				djrq = AuditInfoUtil.getCurrentTime().getDate();
+			}
+			
 			AccperiodmonthVO accperiodmonthVO=ErAccperiodUtil.getAccperiodmonthByUFDate(pk_org, djrq);
 			String pk_accperiodmonth=accperiodmonthVO.getPk_accperiodmonth();
 			String pk_accperiodscheme = accperiodmonthVO.getPk_accperiodscheme();

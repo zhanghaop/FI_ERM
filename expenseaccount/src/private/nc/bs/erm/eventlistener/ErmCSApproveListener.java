@@ -14,6 +14,7 @@ import nc.vo.org.BatchCloseAccBookVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.util.AuditInfoUtil;
 
 /**
  * 费用结账审批前和反审批前需要校验结账情况
@@ -34,7 +35,11 @@ public class ErmCSApproveListener implements IBusinessListener {
 			CostShareVO vo = (CostShareVO) vos[0].getParentVO();
 			String pk_group = vo.getPk_group();
 			String pk_org = vo.getPk_org();
-			UFDate djrq = vo.getBilldate();
+			UFDate djrq = vo.getApprovedate();
+			if(djrq == null){
+				djrq = AuditInfoUtil.getCurrentTime().getDate();
+			}
+			
 			AccperiodmonthVO accperiodmonthVO = ErAccperiodUtil
 					.getAccperiodmonthByUFDate(pk_org, djrq);
 			String pk_accperiodmonth = accperiodmonthVO.getPk_accperiodmonth();
