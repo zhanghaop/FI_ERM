@@ -22,7 +22,7 @@ public class BXStatusConst {
 	public static final int STATUS_NOTVALID = 0;   //可用状态
 	public static final int STATUS_VALID = 1;	  //不可用状态
 	
-	public static final int RED_STATUS_NOMAL = 0; //可用状态
+	public static final Integer RED_STATUS_NOMAL = null; //一般单据
 	public static final int RED_STATUS_RED = 1;	  //红冲
 	public static final int RED_STATUS_REDED = 2; //被红冲
 	
