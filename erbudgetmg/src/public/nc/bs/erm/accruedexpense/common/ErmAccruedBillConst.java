@@ -31,7 +31,7 @@ public class ErmAccruedBillConst {
 	/**
 	 * 红冲标志-一般单据
 	 */
-	public static final int REDFLAG_NO = 0;
+	public static final Integer REDFLAG_NO = null;
 
 	
 	public static final int EFFECTSTATUS_NO = 0; // 生效标志——未生效
