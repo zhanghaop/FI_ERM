@@ -29,8 +29,6 @@ import nc.vo.fi.pub.SqlUtils;
 import nc.vo.pub.BusinessException;
 
 public class BillQueryModelDataManager extends ERMModelDataManager {
-	private static final long serialVersionUID = 1L;
-
 	@Override
 	public Object[] queryData(ModelDataDescriptor modelDataDescriptor) {
 		String sqlWhere = getSqlWhere();
@@ -118,6 +116,9 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
 	 */
 	private String getWhereSql(IQueryScheme queryScheme) {
 		String whereCondition = queryScheme.getWhereSQLOnly();
+		//单据查询节点单独处理，截取不包含数据权限的sql
+		whereCondition=dealDataPowerSql(whereCondition);
+		
 		StringBuffer sqlWhere = new StringBuffer();
 
 		if (whereCondition != null) {
@@ -152,5 +153,22 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
 		}
 
 		return sqlWhere.toString();
+	}
+  
+   /**
+   * 单据查询节点不要数据权限
+   * @param whereCondition
+   * @return
+   */
+	private String dealDataPowerSql(String whereCondition) {
+		int indexOf = whereCondition.indexOf("ZDP_");//取第一个数据权限索引的下标 
+		if(indexOf!=-1){
+			String tempsql = (String) whereCondition.subSequence(0, indexOf);//不包含数据权限的sql
+			String lowerCase = tempsql.toLowerCase();
+			int lastIndexOf = lowerCase.lastIndexOf("and");//找到最后一个and的下标 
+			return whereCondition.substring(0, lastIndexOf);
+		}else{
+			return whereCondition;
+		}
 	}
 }
