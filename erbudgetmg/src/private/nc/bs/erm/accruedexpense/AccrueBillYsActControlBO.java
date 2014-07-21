@@ -59,7 +59,7 @@ public class AccrueBillYsActControlBO {
 				}
 				
 				Integer redflag = head.getRedflag() == null ? ErmAccruedBillConst.REDFLAG_NO:head.getRedflag();
-				if(redflag == ErmAccruedBillConst.REDFLAG_RED){
+				if(redflag != null && redflag == ErmAccruedBillConst.REDFLAG_RED){
 					if(isContray){
 						ysControlBO.setYsControlType(null);//ºì³åµ¥¾Ý
 					}else{
