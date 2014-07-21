@@ -24,6 +24,12 @@ public class TransTypeUtil {
 	public static String getTranstype(AbstractAppModel model) {
 		JComponent comp = model.getContext().getEntranceUI();
 		String tempBilltype = null;
+		if(BXConstans.BXCLFJK_CODE.equals(model.getContext().getNodeCode())){
+			return BXConstans.BILLTYPECODE_CLFJK;
+		}
+		if(BXConstans.BXCLFBX_CODE.equals(model.getContext().getNodeCode())){
+			return BXConstans.BILLTYPECODE_CLFBX;
+		}
 		if (comp instanceof AbstractFunclet) {
 			if (((AbstractFunclet) comp).getFuncletContext() == null) {// 导入导出时会出现为空情况
 				IFuncRegisterQueryService service = NCLocator.getInstance().lookup(IFuncRegisterQueryService.class);
