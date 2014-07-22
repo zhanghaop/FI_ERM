@@ -22,12 +22,14 @@ import nc.ui.trade.excelimport.convertor.DefaultDataConvertor;
 import nc.ui.trade.excelimport.convertor.IRefValueGetter;
 import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.ui.uif2.model.BillManageModel;
+import nc.vo.erm.accruedexpense.AccruedDetailVO;
 import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.ExtendedAggregatedValueObject;
 import nc.vo.trade.excelimport.processor.IVOProcessor;
 
 public class AccImportablePanel extends ErmImportablePanel {
+	
 
 	public AccImportablePanel(String title, AbstractUIAppModel appModel, String configPath) {
 		super(title, appModel, configPath);
@@ -113,6 +115,10 @@ public class AccImportablePanel extends ErmImportablePanel {
 	
 	@Override
 	public void setValue(Object obj) {
+		// 特殊处理费用承担单位字段的显示属性（只有在费用承担单位显示时，导入才走费用承担单位的编辑后事件，才会计算汇率）
+		getEditorBillCardPanel().getBodyItem(ErmAccruedBillConst.Accrued_MDCODE_DETAIL,
+				AccruedDetailVO.ASSUME_ORG).setShow(true);
+		getEditorBillCardPanel().initPanelByPos(IBillItem.BODY);
 		super.setValue(obj);
 	}
 
