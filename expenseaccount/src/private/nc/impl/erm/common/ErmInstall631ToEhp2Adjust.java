@@ -562,7 +562,7 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 		Logger.debug("¾É°æ±¾£º" + oldVersion);
 		Logger.debug("ÐÂ°æ±¾£º" + newVersion);
 		return oldVersion != null && oldVersion.trim().startsWith("6.31") && newVersion != null
-				&& newVersion.startsWith("6.3") && (newVersion.endsWith("EHP2") || newVersion.endsWith("EHP3"));
+				&& newVersion.startsWith("6.3") && (newVersion.endsWith("EHP2") || newVersion.startsWith("6.35"));
 	}
 	
 	private BaseDAO getBaseDAO() {
