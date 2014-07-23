@@ -92,7 +92,8 @@
 		<grpField></grpField>
 		<fixedWhere>(funcode like '2011%')</fixedWhere>
 	</item>
-
+	
+	<!--  by chenshuai 暂时没有快捷键
 	<item>
 		<itemKey>0015</itemKey>
 		<itemName>快捷键</itemName>
@@ -102,6 +103,8 @@
 		<grpField></grpField>
 		<fixedWhere>fun_code like '2011%'</fixedWhere>
 	</item>
+	-->
+	<!--  by chenshuai 通过元数据控制引用关系
 	<item>
 		<itemKey>0016</itemKey>
 		<itemName>引用关系</itemName>
@@ -111,8 +114,9 @@
 		<grpField></grpField>
 		<fixedWhere>referencingtablename like 'er_%'</fixedWhere>
 	</item>
-	<!-- by lvhj
+	-->
 	
+	<!-- by lvhj
 	<item>
 		<itemKey>0003</itemKey>
 		<itemName>业务类型</itemName>
