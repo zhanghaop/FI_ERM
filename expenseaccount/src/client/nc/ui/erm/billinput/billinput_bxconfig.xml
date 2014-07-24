@@ -128,7 +128,7 @@
 				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
@@ -173,7 +173,7 @@
 				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
@@ -186,8 +186,7 @@
 		</property>
 	</bean>
 	
-	<bean id="editor" class="nc.ui.erm.billpub.view.ErmBillBillForm"
-		init-method="initUI">
+	<bean id="editor" class="nc.ui.erm.billpub.view.ErmBillBillForm" init-method="initUI">
 		<property name="model" ref="manageAppModel" />
 		<property name="showTotalLine" value="true" />
 		<property name="templateContainer" ref="templateContainer" />
@@ -195,6 +194,7 @@
 		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
 		<property name="tabSingleShow" value="false" />
 		<property name="rapidShareAction" ref="rapidshareaction"/>
+		<property name="codebarPanel" ref="cardCodeBarPanel"/>
 		<property name="contrastaction" ref="contrastaction" />
 		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">

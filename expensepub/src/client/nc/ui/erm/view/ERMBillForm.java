@@ -1,15 +1,19 @@
 package nc.ui.erm.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 
 import nc.bs.uif2.IActionCode;
 import nc.funcnode.ui.action.INCAction;
 import nc.ui.erm.model.ERMBillManageModel;
+import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.bill.BillData;
 import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.pub.bill.IBillItem;
@@ -45,7 +49,7 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 
 	private boolean showOrgPanel = true;
 	private ERMOrgPane billOrgPanel;
-	
+	private CodebarBillFormPanel codebarPanel;
 	/**
 	 * 表体按钮编码与对应位置的映射 <br>
 	 * 
@@ -94,7 +98,8 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 			// 有组织面板，则billform不需要再获取焦点
 			setRequestFocus(false);
 		}
-		
+		if(getCodebarPanel()!=null)//如果有快捷码  则显示为快捷码区域
+			add(getCodebarBillPanel(), BorderLayout.NORTH);
 		processPopupMenu();
 		
 		// 参考pubapp处理扩展事件，为了不影响原产品实现，处理扩展事件的model使用ERMBillManageModel的getAppModelExDelegate
@@ -107,6 +112,29 @@ public class ERMBillForm extends BillForm implements ITabbedPaneAwareComponent, 
 		// 派发界面初始化事件
 		CardPanelLoadEvent e = new CardPanelLoadEvent(this.getBillCardPanel());
 		ermmodel.fireExtEvent(e);
+	}
+	
+	public UIPanel getCodebarBillPanel() {
+		UIPanel billPanel = new UIPanel();
+		billPanel.setPreferredSize(new Dimension(500, 30));
+		billPanel.setLayout(new BorderLayout());
+		if (isShowOrgPanel()) {
+			getBillOrgPanel().setBorder(null);
+			billPanel.add(getBillOrgPanel(),BorderLayout.WEST);
+			// 有组织面板，则billform不需要再获取焦点
+			setRequestFocus(false);
+		}
+		billPanel.add(getCodebarPanel(),BorderLayout.EAST);
+		billPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.gray));
+		return billPanel;
+	}
+	
+	public void setCodebarPanel(CodebarBillFormPanel codebarPanel) {
+		this.codebarPanel = codebarPanel;
+	}
+
+	public CodebarBillFormPanel getCodebarPanel(){
+		return codebarPanel;
 	}
 
 	public void setBillData(BillTempletVO template) {

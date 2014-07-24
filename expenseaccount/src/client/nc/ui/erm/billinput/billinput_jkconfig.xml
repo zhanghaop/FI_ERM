@@ -120,7 +120,7 @@
 				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
@@ -161,7 +161,7 @@
 				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
@@ -182,6 +182,7 @@
 		<property name="closingListener" ref="ClosingListener" />
 		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
 		<property name="tabSingleShow" value="false" />
+		<property name="codebarPanel" ref="cardCodeBarPanel"/>
 		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">
 			<map>

@@ -30,7 +30,7 @@ public class BXBusItemDAO extends BXSuperDAO {
 	@SuppressWarnings("unchecked")
 	public BXBusItemVO[] queryByBXVOPks(String[] pks,boolean isQueryJK) throws DAOException, SQLException, MetaDataException {
 		String sql = SqlUtils.getInStr(BXBusItemVO.PK_JKBX, pks);
-		sql += " and dr=0 order by rowno ";
+		sql += " and dr=0";
 		Collection<BXBusItemVO> result = null;
 		if(isQueryJK){
 			result = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(
@@ -43,9 +43,7 @@ public class BXBusItemDAO extends BXSuperDAO {
 		if (result != null) {
 			return result.toArray(new BXBusItemVO[] {});
 		}
-
 		return null;
-
 	}
 
 	@SuppressWarnings("unchecked")

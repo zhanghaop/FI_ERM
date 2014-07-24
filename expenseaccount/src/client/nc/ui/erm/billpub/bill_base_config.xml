@@ -91,7 +91,12 @@
 
 	<!-- 界面元素 ########################################################### -->
 	<!-- 查询方案 -->
-	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+	<bean id="listInfoPanel" class="nc.ui.erm.view.CodebarToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<!-- 卡片界面快捷码 -->
+	<bean id="cardCodeBarPanel" class="nc.ui.erm.view.CodebarBillFormPanel" >
 		<property name="model" ref="manageAppModel" />
 	</bean>
 
@@ -206,6 +211,7 @@
 		<property name="userdefitemPreparator" ref="userdefitemCardPreparator"/>
 		<property name="tabSingleShow" value="false" />
 		<property name="contrastaction" ref="contrastaction" />
+		<property name="codebarPanel" ref="cardCodeBarPanel"/>
 		<property name="execeptionHandler" ref="execeptionHandler"/>
 		<property name="bodyActionMap">
 			<map>
@@ -291,7 +297,7 @@
 
 				<ref bean="nullAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 
 				<ref bean="nullAction"/>
 				<ref bean="linkbxbillaction"/>
@@ -343,7 +349,7 @@
 
 				<ref bean="nullAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 
 				<ref bean="nullAction"/>
 				<ref bean="linkbxbillaction"/>
@@ -578,11 +584,13 @@
 			</bean>
 		</property>
 		<property name="code" value="billAssistant" />
+		
 		<property name="actions">
 			<list>
 				<ref bean="codebaraction" />
 			</list>
 		</property>
+		
 	</bean>
 
 	<!-- 联查报销单 -->

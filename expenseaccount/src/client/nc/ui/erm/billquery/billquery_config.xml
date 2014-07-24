@@ -60,7 +60,7 @@
 				
 				<ref bean="nullAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
@@ -81,7 +81,7 @@
 				
 				<ref bean="nullAction"/>
 				<ref bean="documentaction"/>
-				<ref bean="assistantAction"/>
+				<!--ref bean="assistantAction"/-->
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
