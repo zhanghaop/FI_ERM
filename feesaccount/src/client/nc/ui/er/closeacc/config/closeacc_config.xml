@@ -34,7 +34,6 @@
 		<property name="rightView" ref="rightView" />
 		<property name="listView"  ref="listView"/>
 		<property name="toporgpane" ref="toporgpane"></property>
-		<property name="topperiodpane" ref="topperiodpane"></property>
 		<property name="toppane" ref="toppane"></property>
 		<property name="exceptionHandler" ref="execeptionHandler" />
 	</bean>
@@ -43,7 +42,6 @@
 	<bean id="toppane" class="nc.ui.erm.closeacc.view.CloseAccPanel"
 		init-method="initUI">
 		<property name="toporgpane" ref="toporgpane"></property>
-		<property name="topperiodpane" ref="topperiodpane"></property>
 		<property name="modelmanager" ref="modelDataManager"></property>
 				<property name="model">
 			<ref bean="manageAppModel" />
@@ -53,7 +51,6 @@
 	<bean id="toporgpane" class="nc.ui.erm.closeacc.view.CloseAccFinOrgPanel"
 		init-method="initUI">
 		<property name="dataManager" ref="modelDataManager"></property>
-		<property name="topperiodpane" ref="topperiodpane"></property>
 		<property name="model">
 			<ref bean="manageAppModel" />
 		</property>
@@ -65,14 +62,7 @@
 			</bean>
 		</property>
 	</bean>
-
-	<bean id="topperiodpane" class="nc.ui.erm.closeacc.view.CloseAccPeriodPanel"
-		init-method="initUI">
-		<property name="modelmanager" ref="modelDataManager"></property>
-		<property name="model"><ref bean="manageAppModel" />
-		</property>
-	</bean>
-
+	
 	<!-- 列表视图 -->
 	<bean id="listView" class="nc.ui.erm.closeacc.view.CloseAccListView"
 		init-method="initUI">

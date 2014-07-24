@@ -2,23 +2,14 @@ package nc.ui.erm.closeacc.view;
 
 import java.awt.Dimension;
 
-import nc.bd.accperiod.AccperiodParamAccessor;
-import nc.bd.accperiod.InvalidAccperiodExcetion;
-import nc.bs.logging.Logger;
-import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.org.IOrgConst;
-import nc.pubitf.accperiod.AccountCalendar;
 import nc.ui.bd.pub.BDOrgPanel;
-import nc.ui.bd.ref.model.AccperiodYearRefModel;
-import nc.ui.erm.closeacc.model.CloseAccManageModel;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.org.closeaccbook.CloseAccModelServicer;
 import nc.ui.org.ref.FinanceOrgDefaultRefTreeModel;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.beans.ValueChangedEvent;
-import nc.vo.bd.period.AccperiodVO;
 import nc.vo.org.util.OrgTypeManager;
-import nc.vo.pub.lang.UFDate;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -29,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @SuppressWarnings("serial")
 public class CloseAccFinOrgPanel extends BDOrgPanel {
-	private CloseAccPeriodPanel topperiodpane = null;
+//	private CloseAccPeriodPanel topperiodpane = null;
 	private UIRefPane refPane = null;
 	
 	public CloseAccFinOrgPanel() {
@@ -44,49 +35,50 @@ public class CloseAccFinOrgPanel extends BDOrgPanel {
 
 	public void valueChanged(ValueChangedEvent event) {
 		try {
-			String[] orgPks = getRefPane().getRefPKs();if(orgPks !=null){
-                	getDataManager().initModel();
-                }
+			String[] orgPks = getRefPane().getRefPKs();
+			if (orgPks != null) {
+				getDataManager().initModel();
+			}
 		} catch (Exception e) {
 			exceptionHandler.handlerExeption(e);
 		}
 	}
 
-	@SuppressWarnings("unused")
-	@Deprecated
-	private void getData(String pk_org) {
-	    String pkAccScheme = AccperiodParamAccessor.getInstance().getAccperiodschemePkByPk_org(pk_org);
-        //设置会计年度的过滤条件
-        ((AccperiodYearRefModel) getTopperiodpane().getRefModel())
-                .setPk_accperiodscheme(pkAccScheme);
-        UFDate curDate = WorkbenchEnvironment.getInstance().getBusiDate();
-	    AccountCalendar calendar = AccountCalendar.getInstanceByPk_org(pk_org);
-        AccperiodVO accperiodVO = null;
-		try {
-            calendar.setDate(curDate);
-            accperiodVO = calendar.getYearVO();
-        } catch (InvalidAccperiodExcetion e) {
-            Logger.error(e.getMessage(), e);
-        }
-		if (accperiodVO != null) {
-		    getTopperiodpane().getRefPane().setPK(accperiodVO.getPk_accperiod());
-		    ((CloseAccManageModel) getModel()).setPk_accperiod(accperiodVO.getPk_accperiod());
-		    getModel().getContext().setPk_org(pk_org);
-		    //将组织的启用期间查出
-		    getDataManager().initModel();
-		} else {
-		    getTopperiodpane().getRefPane().setPK(null);
-		}
+//	@SuppressWarnings("unused")
+//	@Deprecated
+//	private void getData(String pk_org) {
+//	    String pkAccScheme = AccperiodParamAccessor.getInstance().getAccperiodschemePkByPk_org(pk_org);
+//        //设置会计年度的过滤条件
+//        ((AccperiodYearRefModel) getTopperiodpane().getRefModel())
+//                .setPk_accperiodscheme(pkAccScheme);
+//        UFDate curDate = WorkbenchEnvironment.getInstance().getBusiDate();
+//	    AccountCalendar calendar = AccountCalendar.getInstanceByPk_org(pk_org);
+//        AccperiodVO accperiodVO = null;
+//		try {
+//            calendar.setDate(curDate);
+//            accperiodVO = calendar.getYearVO();
+//        } catch (InvalidAccperiodExcetion e) {
+//            Logger.error(e.getMessage(), e);
+//        }
+//		if (accperiodVO != null) {
+//		    getTopperiodpane().getRefPane().setPK(accperiodVO.getPk_accperiod());
+//		    ((CloseAccManageModel) getModel()).setPk_accperiod(accperiodVO.getPk_accperiod());
+//		    getModel().getContext().setPk_org(pk_org);
+//		    //将组织的启用期间查出
+//		    getDataManager().initModel();
+//		} else {
+//		    getTopperiodpane().getRefPane().setPK(null);
+//		}
+//
+//	}
 
-	}
-
-	public CloseAccPeriodPanel getTopperiodpane() {
-		return topperiodpane;
-	}
-
-	public void setTopperiodpane(CloseAccPeriodPanel topperiodpane) {
-		this.topperiodpane = topperiodpane;
-	}
+//	public CloseAccPeriodPanel getTopperiodpane() {
+//		return topperiodpane;
+//	}
+//
+//	public void setTopperiodpane(CloseAccPeriodPanel topperiodpane) {
+//		this.topperiodpane = topperiodpane;
+//	}
 	
 	public CloseAccModelServicer getSerivce() {
 		return new  CloseAccModelServicer() ;
@@ -143,15 +135,7 @@ public class CloseAccFinOrgPanel extends BDOrgPanel {
     
     @Override
     protected void initDefaultOrg() {
-//        AbstractUIAppModel model = getModel();
-//        String defOrgPk = ErUiUtil.getDefaultPsnOrg();
         String defOrgPk = ErUiUtil.getDefaultOrgUnit();//取个性化中心的值
         getRefPane().setPK(defOrgPk);
-//        if (model.getContext().getPk_org() != null) {
-//            getRefPane().setPK(model.getContext().getPk_org());
-//        } else {
-//            getData(null);
-//        }
     }
-
 }

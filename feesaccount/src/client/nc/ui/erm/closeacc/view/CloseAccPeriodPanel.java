@@ -16,6 +16,7 @@ import nc.vo.pub.lang.UFDate;
  *
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class CloseAccPeriodPanel extends RefPanel{
 
 	public CloseAccPeriodPanel() {

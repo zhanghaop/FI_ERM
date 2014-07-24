@@ -33,7 +33,6 @@ public class CloseAccDataManager implements IQueryAndRefreshManager,
     private CloseAccManageModel model;
     private CloseaccDesInfoPanel rightView;
 	private JPanel toporgpane;
-	private JPanel topperiodpane;
 	private JPanel toppane;
 
 
@@ -136,14 +135,6 @@ public class CloseAccDataManager implements IQueryAndRefreshManager,
         this.model = model;
     }
 
-	public JPanel getTopperiodpane() {
-		return topperiodpane;
-	}
-
-	public void setTopperiodpane(JPanel topperiodpane) {
-		this.topperiodpane = topperiodpane;
-	}
-
 	public JPanel getToppane() {
 		return toppane;
 	}
@@ -159,9 +150,4 @@ public class CloseAccDataManager implements IQueryAndRefreshManager,
 	public void setListView(CloseAccListView listView) {
 		this.listView = listView;
 	}
-	
-	
-    
-    
-
 }
