@@ -65,7 +65,6 @@ import nc.vo.pub.lang.UFDouble;
 
 import org.apache.commons.lang.ArrayUtils;
 
-@SuppressWarnings("restriction")
 public class ErmBillBillFormHelper {
 	private ErmBillBillForm editor = null;
 	private HeadAfterEditUtil afterEditUtil = null;
@@ -856,8 +855,7 @@ public class ErmBillBillFormHelper {
 			String metaDataPath = billTabVO.getMetadatapath();
 			//只处理业务页签
 			if(metaDataPath != null && !(BXConstans.ER_BUSITEM.equals(metaDataPath) 
-					|| BXConstans.JK_BUSITEM.equals(metaDataPath))
-					|| BXConstans.AccruedVerify_PAGE.equals(tableCode)){
+					|| BXConstans.JK_BUSITEM.equals(metaDataPath))){
 				continue;
 			}
 			
