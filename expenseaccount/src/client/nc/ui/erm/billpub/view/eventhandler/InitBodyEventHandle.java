@@ -216,7 +216,7 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 		
 		int accclass = IBankAccConstant.ACCCLASS_SUPPLIER;
 		String pk_custsup = null;
-		if (bodyEventHandleUtil.getHeadItemStrValue(JKBXHeaderVO.DJLXBM).startsWith("264")) {
+		if (isBxBill()) {
 			Integer paytarget = (Integer) getBodyItemValue(e.getTableCode(), e.getRow(), BXBusItemVO.PAYTARGET);
 			if (paytarget == null) {
 				paytarget = (Integer) getHeadValue(JKBXHeaderVO.PAYTARGET);
@@ -590,17 +590,23 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 	 * 收款人更换时，设置默认个人银行账户
 	 */
 	private void setDefaultSkyhzhByReceiver(String tablecode, int row) {
-		String receiver = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.RECEIVER, tablecode);
-		// 自动带出收款银行帐号
-		try {
-			String key = UserBankAccVoCall.USERBANKACC_VOCALL + receiver;
-			if (WorkbenchEnvironment.getInstance().getClientCache(key) != null) {
-				BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
-				if (vos != null && vos.length > 0 && vos[0] != null) {
-					getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(vos[0].getPk_bankaccsub(), row, BXBusItemVO.SKYHZH);
+		if(isBxBill()){
+			Integer payTarget = getBillPayTarget(row);
+			if(payTarget != null && payTarget.equals(Integer.valueOf(0))){
+				String receiver = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.RECEIVER, tablecode);
+				// 自动带出收款银行帐号
+				try {
+					String key = UserBankAccVoCall.USERBANKACC_VOCALL + receiver;
+					if (WorkbenchEnvironment.getInstance().getClientCache(key) != null) {
+						BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
+						if (vos != null && vos.length > 0 && vos[0] != null) {
+							getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(vos[0].getPk_bankaccsub(), row, BXBusItemVO.SKYHZH);
+						}
+					}
+				} catch (Exception e) {
+					ExceptionHandler.consume(e);
 				}
 			}
-		} catch (Exception e) {
 		}
 	}
 
@@ -611,19 +617,17 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 	 * @param row
 	 */
 	private void setDefaultCustaccountBySupplier(String tablecode, int row) {
-		Integer paytarget = (Integer) getBodyItemValue(tablecode, row, BXBusItemVO.PAYTARGET);
-		if (paytarget == null) {
-			paytarget = (Integer) getHeadValue(JKBXHeaderVO.PAYTARGET);
-		}
-		
-		if(paytarget != null && paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM){
-			String customer = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.HBBM, tablecode);
-			ISupplierPubService service = (ISupplierPubService) NCLocator.getInstance().lookup(ISupplierPubService.class.getName());
-			try {
-				String custaccount = service.getDefaultBankAcc(customer);
-				getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(custaccount, row, BXBusItemVO.CUSTACCOUNT);
-			} catch (Exception ex) {
-				Log.getInstance(this.getClass()).error(ex);
+		if(isBxBill()){
+			Integer payTarget = getBillPayTarget(row);
+			if(payTarget != null && payTarget.equals(Integer.valueOf(1))){
+				String customer = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.HBBM, tablecode);
+				ISupplierPubService service = (ISupplierPubService) NCLocator.getInstance().lookup(ISupplierPubService.class.getName());
+				try {
+					String custaccount = service.getDefaultBankAcc(customer);
+					getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(custaccount, row, BXBusItemVO.CUSTACCOUNT);
+				} catch (Exception ex) {
+					Log.getInstance(this.getClass()).error(ex);
+				}
 			}
 		}
 	}
@@ -632,19 +636,17 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 	 * 通过客户过滤对应客商的银行账号(仅报销单，借款单表体界面不能录入)
 	 */
 	private void setDefaultCustaccountByCustomer(String tablecode, int row) {
-		Integer paytarget = (Integer) getBodyItemValue(tablecode, row, BXBusItemVO.PAYTARGET);
-		if (paytarget == null) {
-			paytarget = (Integer) getHeadValue(JKBXHeaderVO.PAYTARGET);
-		}
-		
-		if(paytarget != null && paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER){
-			String customer = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.CUSTOMER, tablecode);
-			ICustomerPubService service = (ICustomerPubService) NCLocator.getInstance().lookup(ICustomerPubService.class.getName());
-			try {
-				String custaccount = service.getDefaultBankAcc(customer);
-				getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(custaccount, row, BXBusItemVO.CUSTACCOUNT);
-			} catch (Exception ex) {
-				Log.getInstance(this.getClass()).error(ex);
+		if(isBxBill()){
+			Integer payTarget = getBillPayTarget(row);
+			if(payTarget != null && payTarget.equals(Integer.valueOf(2))){
+				String customer = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.CUSTOMER, tablecode);
+				ICustomerPubService service = (ICustomerPubService) NCLocator.getInstance().lookup(ICustomerPubService.class.getName());
+				try {
+					String custaccount = service.getDefaultBankAcc(customer);
+					getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(custaccount, row, BXBusItemVO.CUSTACCOUNT);
+				} catch (Exception ex) {
+					Log.getInstance(this.getClass()).error(ex);
+				}
 			}
 		}
 	}
@@ -923,5 +925,17 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 		} else {
 			return getHeadValue(JKBXHeaderVO.ISCUSUPPLIER) == null || !(Boolean) getHeadValue(JKBXHeaderVO.ISCUSUPPLIER);
 		}
+	}
+	
+	private Integer getBillPayTarget(int row) {
+		Integer result = null;
+		DefaultConstEnum bodyItemStrValue = (DefaultConstEnum) getBillCardPanel().getBillModel().getValueObjectAt(row, BXBusItemVO.PAYTARGET);
+		if(bodyItemStrValue != null){
+			result = (Integer)bodyItemStrValue.getValue();
+		}else{
+			result = (Integer)getHeadValue(JKBXHeaderVO.PAYTARGET);
+		}
+		
+		return result;
 	}
 }

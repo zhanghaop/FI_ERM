@@ -856,7 +856,8 @@ public class ErmBillBillFormHelper {
 			String metaDataPath = billTabVO.getMetadatapath();
 			//只处理业务页签
 			if(metaDataPath != null && !(BXConstans.ER_BUSITEM.equals(metaDataPath) 
-					|| BXConstans.JK_BUSITEM.equals(metaDataPath))){
+					|| BXConstans.JK_BUSITEM.equals(metaDataPath))
+					|| BXConstans.AccruedVerify_PAGE.equals(tableCode)){
 				continue;
 			}
 			

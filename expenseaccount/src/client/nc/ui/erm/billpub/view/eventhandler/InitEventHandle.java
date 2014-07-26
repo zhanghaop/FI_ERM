@@ -65,6 +65,7 @@ import nc.vo.jcom.lang.StringUtil;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
+import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
@@ -280,43 +281,67 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(true);
 			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(false);
 			
-			if(isEdit){
-				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue(BXBusItemVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue("freecust.bankaccount", null);
-			}
+			
 		}else if(paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM){// 收款对象供应商
 			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(false);
 			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(true);
 			
-			if(isEdit){
-				setHeadValue(JKBXHeaderVO.SKYHZH, null);
-				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue(BXBusItemVO.SKYHZH, null);
-				helper.changeBusItemValue(BXBusItemVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue("freecust.bankaccount", null);
-			}
 		}else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER){// 收款对象客户
 			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(false);
 			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(true);
 			
-			if(isEdit){
-				setHeadValue(JKBXHeaderVO.SKYHZH, null);
-				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue(BXBusItemVO.SKYHZH, null);
-				helper.changeBusItemValue(BXBusItemVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue("freecust.bankaccount", null);
-			}
 		}else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_OTHER){// 收款对象对外
 			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(false);
 			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(false);
+		}
+		
+		if(isEdit){
+			setBillItemNull(new String[]{JKBXHeaderVO.SKYHZH,JKBXHeaderVO.CUSTACCOUNT}, 
+					new String[]{BXBusItemVO.SKYHZH ,BXBusItemVO.CUSTACCOUNT, "freecust.bankaccount"});
+		}
+	}
+	
+	private void setBillItemNull(String[] headFields, String[] bodyFields){
+		
+		if(headFields != null){
+			for(String headField : headFields){
+				BillItem item = getBillCardPanel().getHeadItem(headField);
+				if(item != null){
+					item.setValue(null);
+				}
+			}
+		}
+		
+		if(bodyFields != null && bodyFields.length > 0){
+			String defaultMetaDataPath = BXConstans.ER_BUSITEM;//元数据路径
+			if (!isBxBill()) {
+				defaultMetaDataPath = BXConstans.JK_BUSITEM;
+			}
 
-			if(isEdit){
-				setHeadValue(JKBXHeaderVO.SKYHZH, null);
-				setHeadValue(JKBXHeaderVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue(BXBusItemVO.SKYHZH, null);
-				helper.changeBusItemValue(BXBusItemVO.CUSTACCOUNT, null);
-				helper.changeBusItemValue("freecust.bankaccount", null);
+			BillTabVO[] billTabVOs = getBillCardPanel().getBillData().getBillTabVOs(IBillItem.BODY);
+			
+			if (billTabVOs != null && billTabVOs.length > 0) {
+				for (BillTabVO billTabVO : billTabVOs) {
+					String metaDataPath = billTabVO.getMetadatapath();//metaDataPath 为null的时候，说明是自定义页签，默认为业务行
+					if (metaDataPath != null && !defaultMetaDataPath.equals(metaDataPath)) {
+						continue;
+					}
+					
+					BillModel billModel = getBillCardPanel().getBillModel(billTabVO.getTabcode());
+					
+					int rowCount = 0;
+					if(billModel != null){
+						rowCount = billModel.getRowCount();
+					}
+					for(int i = 0; i < rowCount ; i++){
+						for(String bodyField : bodyFields){
+							getBillCardPanel().setBodyValueAt(null, i, bodyField, billTabVO.getTabcode());
+							billModel.execEditFormulaByKey(i, bodyField);
+						}
+					}
+					
+					billModel.execLoadFormula();
+				}
 			}
 		}
 	}
@@ -510,9 +535,9 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 
 	
 	private void afterEditCustomer() {
-		setHeadValue(JKBXHeaderVO.FREECUST, null);
-		if(!isBxBill()){
+		if(!isBxBill()){//借款单客户和供应商不能共存
 			setHeadValue(JKBXHeaderVO.HBBM, null);
+			setHeadValue(JKBXHeaderVO.FREECUST, null);
 			setHeadValue(JKBXHeaderVO.CUSTACCOUNT, null);
 		}
 		// 根据客户设置默认客商银行账户
