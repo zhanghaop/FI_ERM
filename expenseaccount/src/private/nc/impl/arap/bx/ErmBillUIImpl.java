@@ -91,8 +91,10 @@ public class ErmBillUIImpl implements IErmBillUIPublic{
 		if(jkbxvo.getParentVO().getPk_org() != null){
 			IPFConfig pFConfig = NCLocator.getInstance().lookup(IPFConfig.class);
 			String billtype = BXConstans.BX_DJDL.equals(jkbxvo.getParentVO().getDjdl()) ? BXConstans.BX_DJLXBM : BXConstans.JK_DJLXBM;
+			//结算委托付款只支持按交易类型去查驱动，所以这里改为按照具体交易类型去查业务类型
+			String transtype = jkbxvo.getParentVO().getDjlxbm();
 			String userid = InvocationInfoProxy.getInstance().getUserId();
-			String pk_busiflowValue = pFConfig.retBusitypeCanStart(billtype, null, jkbxvo.getParentVO().getPk_org(), userid);
+			String pk_busiflowValue = pFConfig.retBusitypeCanStart(billtype, transtype, jkbxvo.getParentVO().getPk_org(), userid);
 			
 			jkbxvo.getParentVO().setBusitype(pk_busiflowValue);
 		}
