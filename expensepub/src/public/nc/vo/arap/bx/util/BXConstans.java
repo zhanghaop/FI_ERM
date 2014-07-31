@@ -310,7 +310,7 @@ public interface BXConstans {
 	public final String MACTRLSCHEMA_U = "20110MCS";      // 费用申请单控制规则设置-组织级节点
 	
 	
-	public final String[] JKBX_COMNODES=new String[]{BXMNG_NODECODE,BXBILL_QUERY,BXLR_QCCODE,BXINIT_NODECODE_G,BXINIT_NODECODE_G};
+	public final String[] JKBX_COMNODES=new String[]{BXMNG_NODECODE,BXBILL_QUERY,BXLR_QCCODE,BXINIT_NODECODE_G,BXINIT_NODECODE_U};
 
 	public final String BXCLFJK_CODE="20110ETLB";         //差旅费借款单据录入节点
 	public final String BXMELB_CODE = "20110MELB";        //会议费借款单据录入节点
