@@ -237,6 +237,7 @@ public class RuleTable extends BatchBillTable implements IComponentWithActions {
 					getTreemodel().getContext().getPk_group(),pk_org,reimRuleVOs);
 		}
 		else{
+			//将核心控制项所对应的控制配置提取出来，重新对所有的标准分配控制项
 			List<SuperVO> vos1 = new ArrayList<SuperVO>();
 			StringBuilder cents = new StringBuilder();
 			for(SuperVO vo:vos){

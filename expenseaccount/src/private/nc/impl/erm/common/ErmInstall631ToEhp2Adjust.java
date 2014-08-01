@@ -585,6 +585,7 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public void doSetGroupOrgReimDimension() throws DAOException{
 		//给现有集团和组织都设置默认维度
 		ListResultSetProcessor processor = new ListResultSetProcessor();
@@ -640,48 +641,41 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 	public void doSetXmlToDimension(){
 		GroupVO[] groups;
 		try {
-			groups = NCLocator.getInstance().lookup(IGroupQryService.class).
-								queryAllGroupVOs();
+			groups = NCLocator.getInstance().lookup(IGroupQryService.class).queryAllGroupVOs();
 			if(groups==null || groups.length==0)
 				return;
 			//读配置文件配置组织级
 			for(GroupVO groupVO:groups){
 				String pk_group = groupVO.getPk_group();
-				OrgVO[] orgvos = NCLocator.getInstance().lookup(IOrgUnitQryService.class)
-								.queryAllOrgVOsByGroupID(pk_group,false,false);
-				if(orgvos==null || orgvos.length==0)
-					continue;
-				//若该集团下有组织，则设置默认值
-				for(OrgVO orgvo:orgvos){
-					String pk_org = orgvo.getPk_org();
-					setXmlToDimension(pk_group,pk_org);
-				}
+//				OrgVO[] orgvos = NCLocator.getInstance().lookup(IOrgUnitQryService.class)
+//								.queryAllOrgVOsByGroupID(pk_group,false,false);
+//				if(orgvos==null || orgvos.length==0)
+//					continue;
+//				//若该集团下有组织，则设置默认值
+//				for(OrgVO orgvo:orgvos){
+//					String pk_org = orgvo.getPk_org();
+					setXmlToDimension(pk_group);
+//				}
 			}
 		}catch (BusinessException ex) {
 			ExceptionHandler.consume(ex);
 		}
 	}
 	
-	 private class ListResultSetProcessor
-     implements ResultSetProcessor
-     {
-
-		/**
-		 * 
-		 */
+	private class ListResultSetProcessor implements ResultSetProcessor {
 		private static final long serialVersionUID = 1L;
-
 		@Override
 		public Object handleResultSet(ResultSet rs) throws SQLException {
 			List<String> topPks = new ArrayList<String>();
-			while(rs.next()){
+			while (rs.next()) {
 				topPks.add(rs.getString(1));
 			}
-	        return topPks;
-	     }
-     }
+			return topPks;
+		}
+	}
+	 
 	@SuppressWarnings("unchecked")
-	private void setXmlToDimension(String pk_group,String pk_org) throws DAOException{
+	private void setXmlToDimension(String pk_group) throws DAOException{
 		//读配置文件写入报销标准维度
 		int orders;
 		ListResultSetProcessor processor = new ListResultSetProcessor();
@@ -705,7 +699,7 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 					orders++;
 					dimvo.setShowflag(UFBoolean.FALSE);
 					dimvo.setPk_group(pk_group);
-					dimvo.setPk_org(pk_org);
+					dimvo.setPk_org(ReimRulerVO.PKORG);
 					dimvo.setPk_billtype(djlxbm);
 					dimvo.setDatatype("BS000010000100001001");
 					String reftype = def.getReftype();
