@@ -52,7 +52,7 @@ public class BugetLinkBOImpl implements IBugetLinkBO {
 					vo.setGr_loc(rs.getBigDecimal(JKBXHeaderVO.GROUPBBJE) == null ? null : new UFDouble(rs.getBigDecimal(JKBXHeaderVO.GROUPBBJE)));
 					vo.setGl_loc(rs.getBigDecimal(JKBXHeaderVO.GLOBALBBJE) == null ? null : new UFDouble(rs.getBigDecimal(JKBXHeaderVO.GLOBALBBJE)));
 
-					vo.setPk_billtype(rs.getString("pk_billtype"));
+					vo.setPk_djlx(rs.getString("pk_billtype"));
 					vo.setPk_jkbx(rs.getString(JKBXHeaderVO.PK_JKBX));
 					ccbo.dealLinkQuerydigit(vo);
 					result.add(vo);

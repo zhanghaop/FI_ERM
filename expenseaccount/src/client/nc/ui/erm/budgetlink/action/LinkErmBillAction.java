@@ -35,23 +35,23 @@ public class LinkErmBillAction extends NCAction {
 		BxDetailLinkQueryVO selectedData = (BxDetailLinkQueryVO) getModel().getSelectedData();
         if(selectedData!=null){
         	String nodeCode = null;
-        	if(selectedData.getPk_billtype().equals(BXConstans.BX_DJLXBM)){//报销单
+        	if(selectedData.getPk_djlx().equals(BXConstans.BX_DJLXBM)){//报销单
         		nodeCode = BXConstans.BXMNG_NODECODE;
-        	}else if(selectedData.getPk_billtype().equals(BXConstans.JK_DJLXBM)){//借款单
+        	}else if(selectedData.getPk_djlx().equals(BXConstans.JK_DJLXBM)){//借款单
         		nodeCode = BXConstans.BXMNG_NODECODE;
-        	}else if(selectedData.getPk_billtype().equals(ErmBillConst.MatterApp_BILLTYPE)){//申请单
+        	}else if(selectedData.getPk_djlx().equals(ErmBillConst.MatterApp_BILLTYPE)){//申请单
         		nodeCode = ErmBillConst.MatterApp_FUNCODE;
-        	}else if(selectedData.getPk_billtype().equals(ErmBillConst.AccruedBill_Billtype)){//预提单
+        	}else if(selectedData.getPk_djlx().equals(ErmBillConst.AccruedBill_Billtype)){//预提单
         		nodeCode = ErmBillConst.ACC_NODECODE_MN;
-        	}else if(selectedData.getPk_billtype().equals(ErmBillConst.CostShare_BILLTYPE)){//结转单
+        	}else if(selectedData.getPk_djlx().equals(ErmBillConst.CostShare_BILLTYPE)){//结转单
         		nodeCode = ErmBillConst.CostShare_FUNCODE;
-        	}else if(selectedData.getPk_billtype().equals(ErmBillConst.Expamoritize_BILLTYPE)){//摊销信息
+        	}else if(selectedData.getPk_djlx().equals(ErmBillConst.Expamoritize_BILLTYPE)){//摊销信息
         		nodeCode = BXConstans.EXPAMORTIZE_NODE;
         	}else{
-        		throw new BusinessException("不支持该单据类型单据联查[" + selectedData.getPk_billtype() + "]");
+        		throw new BusinessException("不支持该单据类型单据联查[" + selectedData.getPk_djlx() + "]");
         	}
         	
-        	LinkQuery linkQuery = new LinkQuery(selectedData.getPk_billtype(), new String[]{selectedData.getPk_jkbx()});
+        	LinkQuery linkQuery = new LinkQuery(selectedData.getPk_djlx(), new String[]{selectedData.getPk_jkbx()});
     		SFClientUtil.openLinkedQueryDialog(nodeCode, getEditor(), linkQuery);
         }
 	}

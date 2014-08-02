@@ -49,6 +49,9 @@ public class BxDetailLinkQueryVO extends SuperVO {
 	private java.lang.String djbh;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
+	
+	//add 633
+	private java.lang.String pk_djlx;//单据类型 264X等
 
 	
 	public static final String PK_DETAILLINKQUERY = "pk_detaillinkquery";
@@ -675,7 +678,12 @@ public class BxDetailLinkQueryVO extends SuperVO {
 	public void setOri(UFDouble ori) {
 		this.ori = ori;
 	}
-	
+	public java.lang.String getPk_djlx() {
+		return pk_djlx;
+	}
+	public void setPk_djlx(java.lang.String pk_djlx) {
+		this.pk_djlx = pk_djlx;
+	}
 } 
 
 
