@@ -13,6 +13,7 @@ import nc.erm.pub.conversion.ErmBillCostConver;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountApproveService;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountManageService;
 import nc.pubitf.erm.expenseaccount.IErmExpenseaccountQueryService;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.expenseaccount.ExpenseAccountVO;
 import nc.vo.pub.BusinessException;
@@ -84,6 +85,10 @@ public class ErmExpAccListener implements IBusinessListener {
 					.queryBySrcID(srcIDS);
 			if (accountVOs == null) {
 				return;
+			}
+			
+			for (int i = 0; i < accountVOs.length; i++) {
+				accountVOs[i].setBillstatus(BXStatusConst.DJZT_Saved);
 			}
 
 			NCLocator.getInstance().lookup(IErmExpenseaccountApproveService.class).unsignVOs(accountVOs);
