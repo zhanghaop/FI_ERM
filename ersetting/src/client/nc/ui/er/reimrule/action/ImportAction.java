@@ -15,21 +15,19 @@ import nc.vo.er.reimrule.ReimRulerVO;
 
 import org.apache.commons.lang.ArrayUtils;
 
-
 /**
  * 数据导入动作
  * 
  * @author lkp
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class ImportAction extends NCAction {
-	
+
 	private AbstractUIAppModel model = null;
 	private BatchBillTable editor;
-	
-	public ImportAction()
-	{
+
+	public ImportAction() {
 		ActionInitializer.initializeAction(this, IActionCode.IMPORT);
 	}
 
@@ -37,31 +35,28 @@ public class ImportAction extends NCAction {
 	public void doAction(ActionEvent e) throws Exception {
 		ReimRulerVO[] reimrules = null;
 		ReimRulerVO[] reimrulesAll = null;
-		String currentBodyTableCode = this.getBillCardPanel()
-				.getCurrentBodyTableCode();
-		ReimRulerVO[] reimRuleVos = (ReimRulerVO[]) this.getBillCardPanel()
-				.getBillData().getBodyValueVOs(currentBodyTableCode,
-						ReimRulerVO.class.getName());
-		ImportExcelDialog impDialog = new ImportExcelDialog(getEditor(),getBillCardPanel());
+		String currentBodyTableCode = this.getBillCardPanel().getCurrentBodyTableCode();
+		ReimRulerVO[] reimRuleVos = (ReimRulerVO[]) this.getBillCardPanel().getBillData().getBodyValueVOs(currentBodyTableCode, ReimRulerVO.class.getName());
+		ImportExcelDialog impDialog = new ImportExcelDialog(getEditor(), getBillCardPanel());
 		if (impDialog.showModal() == UIDialog.ID_OK) {
 
 			reimrules = impDialog.importFromExcel();
-			// impDialog.setVisible(true);
-			// 如果为覆盖方式合并VO
-			reimrulesAll = (ReimRulerVO[]) ArrayUtils.addAll(reimRuleVos,
-					reimrules);
-			getBillCardPanel().getBillData().clearViewData();
+			reimrulesAll = (ReimRulerVO[]) ArrayUtils.addAll(reimRuleVos, reimrules);
+
+			int rowCount = editor.getModel().getRowCount();
+			if (rowCount > 0) {
+				for (int i = rowCount - 1; i >= 0; i--) {
+					editor.getModel().delLine(i);
+				}
+			}
+
 			if (reimrules != null) {
 				if (impDialog.isRBIncrement()) {
-					// getBillCardPanel().getBillData().setBodyValueVO(reimRuleVos);
-					getBillCardPanel().getBillData().setBodyValueVO(
-							reimrulesAll);
-				} else
-					getBillCardPanel().getBillData().setBodyValueVO(reimrules);
-
-			} 
-			else
-				getBillCardPanel().getBillData().setBodyValueVO(null);
+					editor.getModel().addLines(reimrulesAll);
+				} else {
+					editor.getModel().addLines(reimrules);
+				}
+			}
 			getBillCardPanel().getBillModel().loadLoadRelationItemValue();
 		}
 	}
@@ -74,16 +69,16 @@ public class ImportAction extends NCAction {
 		this.model = model;
 		this.model.addAppEventListener(this);
 	}
-	
-	
+
 	@Override
 	protected boolean isActionEnable() {
 		return model.getUiState() == UIState.EDIT;
 	}
-	
-	public BillCardPanel getBillCardPanel(){
+
+	public BillCardPanel getBillCardPanel() {
 		return getEditor().getBillCardPanel();
 	}
+
 	public BatchBillTable getEditor() {
 		return editor;
 	}
