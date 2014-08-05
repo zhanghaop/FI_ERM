@@ -154,10 +154,13 @@ public class ErVOUtils {
 				BXBusItemVO item = childrenVO[i];
 				String[] attributeNames = item.getAttributeNames();
 				for (String attr : attributeNames) {
-					if(attr.equals("cashproj") || attr.equals("jkbxr") || attr.equals("cashitem")){
+					if(attr.equals("cashproj") || attr.equals("jkbxr") || attr.equals("cashitem")
+							|| attr.equals(BXBusItemVO.DWBM) || attr.equals(BXBusItemVO.DEPTID)){
 						continue;
 					}
-					vos[i].setAttributeValue(attr, item.getAttributeValue(attr));
+					if(item.getAttributeValue(attr) != null){
+						vos[i].setAttributeValue(attr, item.getAttributeValue(attr));
+					}
 				}
 				//事项审批 关联表 arap_item_clb
 				vos[i].setPk_jkbx(parentVO.getPk_jkbx());
