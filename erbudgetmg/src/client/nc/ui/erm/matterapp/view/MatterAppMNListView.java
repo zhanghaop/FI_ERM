@@ -18,16 +18,20 @@ import nc.ui.erm.matterapp.common.MatterAppUiUtil;
 import nc.ui.erm.matterapp.model.MAppModel;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.erm.view.ERMBillListView;
+import nc.ui.pub.beans.constenum.DefaultConstEnum;
+import nc.ui.pub.beans.constenum.IConstEnum;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillListData;
 import nc.ui.pub.bill.BillMouseEnent;
 import nc.ui.pub.bill.BillTableCellRenderer;
 import nc.ui.pub.bill.BillTableMouseListener;
 import nc.ui.pub.bill.IBillItem;
+import nc.ui.pub.bill.IGetBillRelationItemValue;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.extendconfig.ErmExtendConfigVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
+import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.ml.MultiLangUtil;
 import nc.vo.pub.BusinessException;
@@ -74,7 +78,23 @@ public class MatterAppMNListView extends ERMBillListView implements BillTableMou
 
 		// 设置交易类型名称、事由的显示
 		resetSpecialItemCellRender();
-
+		
+		// 表体事由的特殊处理，处理现实问题
+		BillItem bodyItem = this.billListPanel.getBodyItem(MtAppDetailVO.REASON);
+		if (bodyItem != null) {
+			bodyItem.setGetBillRelationItemValue(new IGetBillRelationItemValue() {
+				@Override
+				public IConstEnum[] getRelationItemValue(ArrayList<IConstEnum> ies, String[] id) {
+					DefaultConstEnum[] ss = new DefaultConstEnum[1];
+					Object[] s = new Object[id.length];
+					for (int i = 0; i < s.length; i++) {
+						s[i] = id[i];
+					}
+					ss[0] = new DefaultConstEnum(s, MtAppDetailVO.REASON);
+					return ss;
+				}
+			});
+		}
 	}
 
 	@Override

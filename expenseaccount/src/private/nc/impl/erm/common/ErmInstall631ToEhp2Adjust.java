@@ -528,12 +528,12 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 	
 	private void insertDjlx(String[] pk_groups) throws BusinessException {
 		// 先删除，后插入，防止升级过程出错重复插入
-		String delSql = "delete from er_djlx where (djlxbm = '2621' or djlxbm = '264a' or djlxbm = '265a')  and "
+		String delSql = "delete from er_djlx where (djlxbm = '2621' or djlxbm = '264a' or djlxbm = '265a' or djlxbm = '264c')  and "
 				+ SqlUtils.getInStr("pk_group", pk_groups, true);
 		getBaseDAO().executeUpdate(delSql);
 
 		DjLXVO[] sourcevos = NCLocator.getInstance().lookup(IArapBillTypePublic.class)
-				.queryByWhereStr(" pk_group='@@@@'" + " and (djdl in ('ac') or djlxbm = '264a' or djlxbm = '265a') ");
+				.queryByWhereStr(" pk_group='@@@@'" + " and (djdl in ('ac') or djlxbm = '264a' or djlxbm = '265a' or djlxbm = '264c') ");
 
 		List<DjLXVO> result = new ArrayList<DjLXVO>();
 		// 增加对应集团的交易类型
