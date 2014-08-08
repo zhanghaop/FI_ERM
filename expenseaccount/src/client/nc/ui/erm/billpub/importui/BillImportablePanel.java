@@ -18,6 +18,7 @@ import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.trade.excelimport.ExportDataInfo;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
+import nc.ui.erm.excel.BankRefValueGetter;
 import nc.ui.erm.excel.ErmBillItemValue;
 import nc.ui.erm.excel.ErmImportablePanel;
 import nc.ui.erm.excel.ReasonRefValueGetter;
@@ -272,6 +273,11 @@ public class BillImportablePanel extends ErmImportablePanel {
 		if(inputItemMap.get(JKBXHeaderVO.ZY) != null){//事由特殊处理，交易类型的pk设置为code
 			refValueGetterMap.put(inputItemMap.get(JKBXHeaderVO.ZY), new ReasonRefValueGetter());
 		}
+		
+		if(inputItemMap.get(JKBXHeaderVO.FKYHZH) != null){//事由特殊处理，交易类型的pk设置为code
+			refValueGetterMap.put(inputItemMap.get(JKBXHeaderVO.FKYHZH), new BankRefValueGetter());
+		}
+		
 		((DefaultDataConvertor) getDataConvertor()).setRefValueGetterMap(refValueGetterMap);
 	}
 
