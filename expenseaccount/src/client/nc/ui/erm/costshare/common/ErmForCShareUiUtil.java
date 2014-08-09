@@ -1196,23 +1196,26 @@ public class ErmForCShareUiUtil {
 		}
 		int rowCount = billCard.getBillModel(BXConstans.CSHARE_PAGE).getRowCount();
 		Object headValue = billCard.getHeadItem(eventKey).getValueObject();
-		
+
 		if (eventKey.equals(JKBXHeaderVO.DJRQ)) {
 			// 费用调整单编辑制单日期情况，同步变更分摊明细行全部预算占用日期
 			String pk_group = (String) billCard.getHeadItem(JKBXHeaderVO.PK_GROUP).getValueObject();
 			String djlxbm = (String) billCard.getHeadItem(JKBXHeaderVO.DJLXBM).getValueObject();
-			
+
 			boolean isAdjust = false;
 			try {
 				isAdjust = ErmDjlxCache.getInstance().isNeedBxtype(pk_group, djlxbm, ErmDjlxConst.BXTYPE_ADJUST);
 			} catch (BusinessException e1) {
 				ExceptionHandler.consume(e1);
 			}
-			
-			if(isAdjust){
+
+			if (isAdjust) {
 				for (int i = 0; i < rowCount; i++) {
-					billCard.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(
-							headValue, i, CShareDetailVO.YSDATE);
+					billCard.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(headValue, i, CShareDetailVO.YSDATE);
+					int rowstatus = billCard.getBillModel(BXConstans.CSHARE_PAGE).getRowState(i);
+					if (rowstatus == BillModel.NORMAL) {
+						billCard.getBillModel(BXConstans.CSHARE_PAGE).setRowState(i, BillModel.MODIFICATION);
+					}
 				}
 			}
 		}

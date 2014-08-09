@@ -132,56 +132,55 @@ public class BillImportablePanel extends ErmImportablePanel {
 		
 		dealBillConstPageItem(inputItemMap, bodyItemKeys3);
 	}
+
 	/**
 	 * 报销单的处理
+	 * 
 	 * @param inputItemMap
 	 * @return
 	 */
 	private Map<String, InputItem> getbxInputitems(Map<String, InputItem> inputItemMap) {
-		Set<String>  headItemKeys =  Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-				JKBXHeaderVO.TOTAL,JKBXHeaderVO.PK_ORG_V,
-				JKBXHeaderVO.DJBH,JKBXHeaderVO.DJLXBM,JKBXHeaderVO.DJZT,JKBXHeaderVO.SPZT,
-				JKBXHeaderVO.SXBZ,JKBXHeaderVO.ISCOSTSHARE,JKBXHeaderVO.ISEXPAMT)));
-		
-		//表体分摊页签
-		Set<String> bodyItemKeys = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-				CShareDetailVO.ASSUME_ORG,CShareDetailVO.ASSUME_AMOUNT,CShareDetailVO.ASSUME_DEPT)));
-		
-		//表体业务页签
-		Set<String> bodyItemKeys2 = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(BXBusItemVO.AMOUNT)));
-		
-		//表体冲销页签
-		Set<String> bodyItemKeys3 = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-				BxcontrastVO.YBJE,BxcontrastVO.BBJE,BxcontrastVO.CJKYBJE,BxcontrastVO.JKBXR,BxcontrastVO.SZXMID,
-				BxcontrastVO.JOBID,BxcontrastVO.HKYBJE)));
-		
-		dealBillHeadItem(inputItemMap, headItemKeys);
-		
-		dealBillConstPageItem(inputItemMap, bodyItemKeys3);
+		Set<String> headItemKeys = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(JKBXHeaderVO.TOTAL, JKBXHeaderVO.PK_ORG_V, JKBXHeaderVO.DJBH, JKBXHeaderVO.DJLXBM, JKBXHeaderVO.DJZT,
+				JKBXHeaderVO.SPZT, JKBXHeaderVO.SXBZ, JKBXHeaderVO.ISCOSTSHARE, JKBXHeaderVO.ISEXPAMT)));
+		// 表体业务页签
+		Set<String> bodyItemKeys = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(BXBusItemVO.AMOUNT)));
 
-		for(String bodyKey : bodyItemKeys){
-			BillItem bodyItem = getEditorBillCardPanel().getBodyItem(BXConstans.CSHARE_PAGE, bodyKey);
-			if (bodyItem != null) {
-				InputItem item = new ErmBillItemValue(bodyItem, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE);
-				inputItemMap.put(BXConstans.CSHARE_PAGE + "_" + bodyKey, item);
-			}
-		}
-		
-		//多个业务页签
+		// 表体分摊页签
+		Set<String> csBodyItemKeys = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(CShareDetailVO.ASSUME_ORG, CShareDetailVO.ASSUME_DEPT, CShareDetailVO.ASSUME_AMOUNT)));
+
+		// 表体冲销页签
+		Set<String> contrastBodyItemKeys = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(BxcontrastVO.YBJE, BxcontrastVO.BBJE, BxcontrastVO.CJKYBJE, BxcontrastVO.JKBXR,
+				BxcontrastVO.SZXMID, BxcontrastVO.JOBID, BxcontrastVO.HKYBJE)));
+
+		dealBillHeadItem(inputItemMap, headItemKeys);
+		dealBillConstPageItem(inputItemMap, contrastBodyItemKeys);
+
+		// 多个业务页签
 		BillTabVO[] billTabVOs = getEditorBillCardPanel().getBillData().getBillTabVOs(IBillItem.BODY);
 		for (BillTabVO billTabVO : billTabVOs) {
-			 String metadatapath = billTabVO.getMetadatapath();
-			 if(metadatapath!=null && BXConstans.ER_BUSITEM.equals(metadatapath)){
-				 for(String bodyKey : bodyItemKeys2){
-					 BillItem bodyItem = getEditorBillCardPanel().getBodyItem(billTabVO.getTabcode(), bodyKey);
-					 if (bodyItem != null) {
-						 InputItem item = new ErmBillItemValue(bodyItem, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
-						 inputItemMap.put(billTabVO.getTabcode() + "_" + bodyKey, item);
-					 }
-				 }
-			 }
+			String metadatapath = billTabVO.getMetadatapath();
+			if (metadatapath != null && BXConstans.ER_BUSITEM.equals(metadatapath)) {
+				for (String bodyKey : bodyItemKeys) {
+					BillItem bodyItem = getEditorBillCardPanel().getBodyItem(billTabVO.getTabcode(), bodyKey);
+					if (bodyItem != null) {
+						InputItem item = new ErmBillItemValue(bodyItem, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+						inputItemMap.put(billTabVO.getTabcode() + "_" + bodyKey, item);
+					}
+				}
+			}
 		}
-		
+
+		for (String bodyKey : csBodyItemKeys) {
+			BillItem bodyItem = getEditorBillCardPanel().getBodyItem(BXConstans.CSHARE_PAGE, bodyKey);
+			if (bodyItem != null) {
+				String mapKey = BXConstans.CSHARE_PAGE + "_" + bodyKey;
+				if (inputItemMap.get(mapKey) == null) {
+					InputItem item = new ErmBillItemValue(bodyItem, Boolean.FALSE, Boolean.TRUE, Boolean.TRUE);
+					inputItemMap.put(mapKey, item);
+				}
+			}
+		}
+
 		return inputItemMap;
 	}
 

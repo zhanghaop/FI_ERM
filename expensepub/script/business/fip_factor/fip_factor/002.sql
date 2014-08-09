@@ -1,21 +1,3 @@
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('3001Z31000000000VUN7',null,'~',0,'$amtdetails.jobid',null,'~','266X','0001Z31000000000HIAD','0001Z310000000000NX9','~','erm','2013-08-05 13:55:25')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('3001Z31000000000VUN8',null,'~',0,'$amtdetails.pk_resacostcenter',null,'~','266X','0001Z31000000000HIAE','0001Z310000000000NX9','~','erm','2013-08-05 13:57:49')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('3001Z31000000000VUN9',null,'~',0,'$amtdetails.hbbm',null,'~','266X','0001Z31000000000HIAB','0001Z310000000000NX9','~','erm','2013-08-05 13:57:49')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('3001Z31000000000VUNB',null,'~',0,'$bzbm',null,'~','266X','0001Z31000000000HIAA','0001Z310000000000NX9','~','erm','2013-08-05 13:58:39')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('3001Z31000000000VUNA',null,'~',0,'$amtdetails.assume_dept',null,'~','266X','0001Z31000000000HIA2','0001Z310000000000NX9','~','erm','2013-08-05 13:57:49')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('3001Z31000000000VUN6',null,'~',0,'$amtdetails.pk_iobsclass',null,'~','266X','0001Z31000000000HIA5','0001Z310000000000NX9','~','erm','2013-08-05 13:55:25')
-go
-
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000E9OX',null,'~',0,'$mtapp_detail.assume_org',null,'~','261X','0001Z31000000000HIA8','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
