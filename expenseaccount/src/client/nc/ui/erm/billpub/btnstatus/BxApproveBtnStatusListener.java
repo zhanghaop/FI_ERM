@@ -145,17 +145,18 @@ public class BxApproveBtnStatusListener
         	return false;
         }
 
-        //审批中， 反审核按钮可用
+        //审批中、审批结束， 反审核按钮可用
 		if (vo.getParentVO().getSpzt() != null
-				&& (vo.getParentVO().getSpzt() == IPfRetCheckInfo.GOINGON || vo
-						.getParentVO().getSpzt() == IPfRetCheckInfo.NOPASS)) {
+				&& (vo.getParentVO().getSpzt() == IPfRetCheckInfo.GOINGON 
+				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.NOPASS)
+				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.PASSING) {
 			return true;
         }
         
-        //单据尚未审核，反审核不可用
-        if (vo.getParentVO().getDjzt() < BXStatusConst.DJZT_Verified) {
-            return false;
-        }
+//        //单据尚未审核，反审核不可用
+//        if (vo.getParentVO().getDjzt() < BXStatusConst.DJZT_Verified) {
+//            return false;
+//        }
         
         // 单据已经审核通过了，反审核按钮可用
         if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved ) {

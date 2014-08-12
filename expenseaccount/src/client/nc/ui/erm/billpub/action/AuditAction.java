@@ -145,9 +145,9 @@ public class AuditAction extends ErmAuditAction {
 			return msgVO;
 		}
 		
-		if(head.getDjzt().intValue()==BXStatusConst.DJZT_Invalid){
+		if (head.getDjzt().intValue() == BXStatusConst.DJZT_Invalid) {
 			msgVO.setSuccess(false);
-			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UPP2011-000955"));
+			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955"));
 			return msgVO;
 		}
 		

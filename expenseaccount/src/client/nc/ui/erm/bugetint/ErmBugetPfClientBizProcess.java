@@ -66,6 +66,9 @@ public class ErmBugetPfClientBizProcess implements IPFClientBizProcess {
 
 	private String matterAppBudgetControl_id = "isMaBudgetControl";
 	private String matterAppBudgetControl_name = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0033")/*@res "是否进行费用申请单控制"*/;
+	
+	private String isWorkFlowFinalNode_id = "isWorkFlowFinalNode";
+	private String isWorkFlowFinalNode_name = "是否流程最后环节(y/n)";
 
 	public PFClientBizRetObj execute(Container parent, PfClientBizProcessContext context) {
 		PFClientBizRetObj result = new PFClientBizRetObj();
@@ -203,6 +206,8 @@ public class ErmBugetPfClientBizProcess implements IPFClientBizProcess {
 
 	public DataField[] getApplicationArgs() {
 		List<DataField> dataFieldList = new ArrayList<DataField>();
+		
+		dataFieldList.add(new DataField(isWorkFlowFinalNode_id, isWorkFlowFinalNode_name, BasicType.BOOLEAN));
 		//判断预算产品是否启用
 		boolean istbbused = BXUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 		if(istbbused){
@@ -214,7 +219,7 @@ public class ErmBugetPfClientBizProcess implements IPFClientBizProcess {
 		if(isPimused){
 			dataFieldList.add(new DataField(projBudgetControl_id, projBudgetControl_name, BasicType.BOOLEAN));
 		}
-
+		
 		dataFieldList.add(new DataField(matterAppBudgetControl_id, matterAppBudgetControl_name, BasicType.BOOLEAN));
 		return dataFieldList.toArray(new DataField[]{});
 	}

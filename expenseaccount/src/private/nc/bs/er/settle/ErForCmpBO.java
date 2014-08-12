@@ -12,12 +12,10 @@ import nc.bs.dao.BaseDAO;
 import nc.bs.er.djlx.DjLXDMO;
 import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.NCLocator;
-import nc.bs.pf.pub.PfDataCache;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.cmp.busi.ISettleNotifyPayTypeBusiBillService;
 import nc.itf.cmp.settlement.ISettlement;
 import nc.itf.er.pub.IArapBillTypePublic;
-import nc.itf.uap.busibean.SysinitAccessor;
 import nc.pubitf.fip.service.IFipBillQueryService;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -570,15 +568,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 
 
 	public List<SettlementBodyVO> autoBX(List<SettlementBodyVO> bodyList) throws BusinessException {
-		if (bodyList == null)
-			return null;
-		List<SettlementBodyVO> result = new ArrayList<SettlementBodyVO>();
-		for (SettlementBodyVO vo : bodyList) {
-			if (PfDataCache.getBillType(vo.getPk_billtype()).getParentbilltype().equals(BXConstans.BX_DJLXBM)) {
-				result.add(vo);
-			}
-		}
-		return result;
+		return bodyList;
 	}
 
 	public List<SettlementBodyVO> autoUsed(List<SettlementBodyVO> bodyList) throws BusinessException {

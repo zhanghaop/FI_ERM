@@ -650,11 +650,9 @@ public class BXZbBO {
 			if (!isCmpInstalled) {
 				unSettle(new JKBXVO[] { bxvo });
 				// 删除凭证
-				if((headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
-						||headerVO.isAdjustBxd()
-						){
-					effectToFip(bxvo, MESSAGE_UNSETTLE);
-				}
+//				if ((headerVO.getPayflag() != null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST) || headerVO.isAdjustBxd()) {
+				effectToFip(bxvo, MESSAGE_UNSETTLE);
+//				}
 			} else {
 				// 安装了结算的反审核
 				new ErForCmpBO().invokeCmp(bxvo, shrq, billStatus);
