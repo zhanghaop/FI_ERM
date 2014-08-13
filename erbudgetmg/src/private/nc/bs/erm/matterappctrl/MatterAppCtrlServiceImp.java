@@ -13,6 +13,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.mactrlschema.IErmMappCtrlBillQuery;
 import nc.itf.uap.pf.IPfExchangeService;
 import nc.pubitf.erm.matterappctrl.IMatterAppCtrlService;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -120,6 +121,28 @@ public class MatterAppCtrlServiceImp implements IMatterAppCtrlService {
 							if (item.getAttributeValue(field) == null) {
 								item.setAttributeValue(field, parentVO.getAttributeValue(field));
 							}
+						}
+					}
+					
+					if(des_billtype.startsWith(BXConstans.BX_PREFIX)){
+						if (item.getAttributeValue(BXBusItemVO.PAYTARGET) == null) {
+							item.setAttributeValue(BXBusItemVO.PAYTARGET, parentVO.getAttributeValue(BXBusItemVO.PAYTARGET));
+						}
+						
+						if (item.getAttributeValue(BXBusItemVO.RECEIVER) == null) {
+							item.setAttributeValue(BXBusItemVO.RECEIVER, parentVO.getAttributeValue(BXBusItemVO.RECEIVER));
+						}
+						
+						if (item.getAttributeValue(BXBusItemVO.CUSTOMER) == null) {
+							item.setAttributeValue(BXBusItemVO.CUSTOMER, parentVO.getAttributeValue(BXBusItemVO.CUSTOMER));
+						}
+						
+						if (item.getAttributeValue(BXBusItemVO.HBBM) == null) {
+							item.setAttributeValue(BXBusItemVO.HBBM, parentVO.getAttributeValue(BXBusItemVO.HBBM));
+						}
+						
+						if (item.getAttributeValue(BXBusItemVO.FREECUST) == null) {
+							item.setAttributeValue(BXBusItemVO.FREECUST, parentVO.getAttributeValue(BXBusItemVO.FREECUST));
 						}
 					}
 				}

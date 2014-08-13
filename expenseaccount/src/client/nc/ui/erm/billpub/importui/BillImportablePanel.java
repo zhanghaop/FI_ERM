@@ -109,6 +109,7 @@ public class BillImportablePanel extends ErmImportablePanel {
 		
 		resultInputItemList.addAll(inputItemMap.values());
 		processSpecialItems(inputItemMap);
+		
 		return resultInputItemList;
 	}
 
@@ -253,10 +254,11 @@ public class BillImportablePanel extends ErmImportablePanel {
 		Map<String, InputItem> inputItemMap = new LinkedHashMap<String, InputItem>();
 		for (InputItem item : defaultInputItemList) {
 			if (item.getPos() == IBillItem.BODY) {
-				inputItemMap.put(item.getTabCode() + "_" + item.getItemKey(), item);
-				
+				BillItem billItem = getEditorBillData().getBodyItem(item.getTabCode(), item.getItemKey());
+				inputItemMap.put(item.getTabCode() + "_" + item.getItemKey(), new ErmBillItemValue(billItem));
 			} else {
-				inputItemMap.put(item.getItemKey(), item);
+				BillItem billItem = getEditorBillData().getHeadTailItem(item.getItemKey());
+				inputItemMap.put(item.getItemKey(), new ErmBillItemValue(billItem));
 			}
 		}
 		return inputItemMap;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmDjlxConst;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -117,7 +118,7 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
 	private String getWhereSql(IQueryScheme queryScheme) {
 		String whereCondition = queryScheme.getWhereSQLOnly();
 		//单据查询节点单独处理，截取不包含数据权限的sql
-		whereCondition=dealDataPowerSql(whereCondition);
+		whereCondition = dealDataPowerSql(whereCondition);
 		
 		StringBuffer sqlWhere = new StringBuffer();
 
@@ -161,14 +162,6 @@ public class BillQueryModelDataManager extends ERMModelDataManager {
    * @return
    */
 	private String dealDataPowerSql(String whereCondition) {
-		int indexOf = whereCondition.indexOf("ZDP_");//取第一个数据权限索引的下标 
-		if(indexOf!=-1){
-			String tempsql = (String) whereCondition.subSequence(0, indexOf);//不包含数据权限的sql
-			String lowerCase = tempsql.toLowerCase();
-			int lastIndexOf = lowerCase.lastIndexOf("and");//找到最后一个and的下标 
-			return whereCondition.substring(0, lastIndexOf);
-		}else{
-			return whereCondition;
-		}
+		return ErUtil.getQueryNomalSql(whereCondition);
 	}
 }

@@ -247,5 +247,50 @@ public class ErUtil {
         }
         return pksOrg;
     }
+    
+    
+    /**
+	 * 获取数据权限sql
+	 * 
+	 * @param queryScheme
+	 * @return
+	 */
+	public static String getQueryPowerSql(String whereCondition) {
+		if (whereCondition == null) {
+			return "";
+		}
 
+		int indexOf = whereCondition.indexOf("ZDP_");// 取第一个数据权限索引的下标
+		if (indexOf != -1) {
+			String tempsql = (String) whereCondition.subSequence(0, indexOf);// 不包含数据权限的s
+
+			String lowerCase = tempsql.toLowerCase();
+			int lastIndexOf = lowerCase.lastIndexOf("and");// 找到最后一个and的下标
+			String powerSql = whereCondition.substring(lastIndexOf + 3);
+			return powerSql;
+		}
+
+		return "";
+	}
+
+	/**
+	 * 获取无数据权限的sql
+	 * 
+	 * @param queryScheme
+	 * @return
+	 */
+	public static String getQueryNomalSql(String whereCondition) {
+		if (whereCondition == null) {
+			return "";
+		}
+
+		String powerSql = getQueryPowerSql(whereCondition);
+		if (powerSql != null && powerSql.trim().length() > 0) {
+			String tempSql = whereCondition.replace(powerSql, "");
+
+			return tempSql.substring(0, tempSql.toLowerCase().lastIndexOf("and"));
+		}
+
+		return whereCondition;
+	}
 }

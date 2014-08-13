@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
-import nc.vo.fi.pub.SqlUtils;
 import nc.bs.erm.accruedexpense.common.AccruedBillQueryCondition;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.accruedexpense.IErmAccruedBillQueryPrivate;
 import nc.itf.erm.prv.IErmBsCommonService;
@@ -18,6 +18,7 @@ import nc.pubitf.rbac.IUserPubService;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.utils.VOUtil;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
@@ -161,7 +162,11 @@ public class ErmAccruedBillQueryImpl implements IErmAccruedBillQuery, IErmAccrue
 		}
 
 		if (condvo.getWhereSql() != null) {
-			whereSql.append(" and " + condvo.getWhereSql());
+			if(ErmAccruedBillConst.ACC_NODECODE_QRY.equals(condvo.getNodeCode())){//查询去除数据权限
+				whereSql.append(" and " + ErUtil.getQueryNomalSql(condvo.getWhereSql()));
+			}else{
+				whereSql.append(" and " + condvo.getWhereSql());
+			}
 		}
 
 		whereSql.append(" order by " + AccruedTable_alis + AccruedVO.BILLDATE + " desc, ");

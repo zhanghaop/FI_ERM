@@ -15,6 +15,7 @@ import nc.bs.er.util.BXBsUtil;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.erm.matterapp.common.MatterAppQueryCondition;
 import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
@@ -141,7 +142,11 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery, IErmMa
 		}
 
 		if (condVo.getWhereSql() != null) {
-			whereSql.append(" and " + condVo.getWhereSql());
+			if(ErmMatterAppConst.MAPP_NODECODE_QY.equals(condVo.getNodeCode())){
+				whereSql.append(" and " + ErUtil.getQueryNomalSql(condVo.getWhereSql()));//查询去除数据权限
+			}else{
+				whereSql.append(" and " + condVo.getWhereSql());
+			}
 		}
 
 		whereSql.append(" order by " + Mtapptable_alis + MatterAppVO.BILLDATE + " desc, ");
@@ -498,3 +503,4 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery, IErmMa
 		return result == null ? null : result.toArray(new AggMatterAppVO[result.size()]);
 	}
 }
+
