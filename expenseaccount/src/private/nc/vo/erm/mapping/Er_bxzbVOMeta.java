@@ -174,7 +174,11 @@ public class Er_bxzbVOMeta extends ArapBaseMappingMeta {
 		/*是否拉分摊申请单标志*/
 		"ismashare"/*138*/,
 		"paytarget",/*收款对象*/
-		"vouchertag"/*凭证标志*/
+		"vouchertag",/*凭证标志*/
+		
+		/*635共享服务加入影像*/
+		"imag_status",/*影像状态*/
+		"isneedimag"/*是否影像扫描*/
 		};
     
     setTabName("er_bxzb");//表名
@@ -322,7 +326,11 @@ public class Er_bxzbVOMeta extends ArapBaseMappingMeta {
 	TYPE_STRING,/*来源单据类型*/
 	TYPE_BOOLEAN,/*是否拉分摊申请单标志*/
 	TYPE_INT,/*收款对象 */
-	TYPE_INT/*凭证标志 */
+	TYPE_INT,/*凭证标志 */
+	
+	/*635共享服务加入影像*/	
+	TYPE_STRING,/*影像状态*/
+	TYPE_BOOLEAN/*是否影像扫描*/
 	});//数据类型
 }
 }
