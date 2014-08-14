@@ -7,10 +7,10 @@ import java.util.List;
 
 import nc.bs.erm.util.CacheUtil;
 import nc.bs.erm.util.ErmDjlxConst;
+import nc.bs.pf.pub.PfDataCache;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.uif2.components.TreePanel;
 import nc.vo.er.djlx.DjLXVO;
-import nc.vo.ml.MultiLangContext;
 import nc.vo.pub.BusinessException;
 
 public class ReimRuleTreePanel extends TreePanel {
@@ -27,12 +27,15 @@ public class ReimRuleTreePanel extends TreePanel {
 			vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
 					"pk_group = '"+ErUiUtil.getPK_group()+"' and djdl in('jk','bx')");
 			for(DjLXVO vo:vos){
-				if(vo.getAttributeValue(getMultiFieldName("djlxmc")) == null){
-					//当billtypename多语字段值为空时，手动赋值为~的值（防止自定义交易类型未录制多语时，构建数报空指针）
-					vo.setAttributeValue(getMultiFieldName("djlxmc"), vo.getDjlxmc());
-				}
-				if(vo.getBxtype()==null || vo.getBxtype() != ErmDjlxConst.BXTYPE_ADJUST)
+//				if(vo.getAttributeValue(getMultiFieldName("djlxmc")) == null){
+//					//当billtypename多语字段值为空时，手动赋值为~的值（防止自定义交易类型未录制多语时，构建数报空指针）
+//					vo.setAttributeValue(getMultiFieldName("djlxmc"), vo.getDjlxmc());
+//				}
+				
+				vo.setAttributeValue("djlxmc", getMultiFieldName(vo.getDjlxbm()));//多语处理
+				if(vo.getBxtype()==null || vo.getBxtype() != ErmDjlxConst.BXTYPE_ADJUST){
 					list.add(vo);
+				}
 			}
 			DjLXVO[] toArray = list.toArray(new DjLXVO[] {});
 			Arrays.sort(toArray, new Comparator<DjLXVO>() {
@@ -51,11 +54,8 @@ public class ReimRuleTreePanel extends TreePanel {
 	 * @param namefield
 	 * @return
 	 */
-	private String getMultiFieldName(String namefield) {
-		int intValue = MultiLangContext.getInstance().getCurrentLangSeq().intValue();
-		if(intValue>1){
-			namefield=namefield+intValue;
-		}
-		return namefield;
+	private String getMultiFieldName(String tradeTypeCode) {
+		String billtypenameOfCurrLang = PfDataCache.getBillTypeInfo(tradeTypeCode).getBilltypenameOfCurrLang();
+		return billtypenameOfCurrLang == null ? "" : billtypenameOfCurrLang;
 	}
 }

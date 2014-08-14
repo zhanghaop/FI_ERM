@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.action.ErmActionConst;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.IActionCode;
 import nc.itf.er.reimtype.IReimTypeService;
@@ -41,7 +42,7 @@ public class CopyAction extends NCAction {
 	
 	public CopyAction() {
 		ActionInitializer.initializeAction(this, IActionCode.COPY);
-		setBtnName("¿ìËÙ¸´ÖÆ");
+		setBtnName(ErmActionConst.getQuickCopyAccName());
 	}
 	
 	public CopyDialog getCopyDialog() {

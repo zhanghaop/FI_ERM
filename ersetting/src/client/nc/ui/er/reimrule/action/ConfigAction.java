@@ -3,6 +3,7 @@ package nc.ui.er.reimrule.action;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
+import nc.bs.erm.util.action.ErmActionConst;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.funcnode.ui.FuncletInitData;
 import nc.ui.er.reimrule.dialog.BatchEditDialog;
@@ -23,8 +24,8 @@ public class ConfigAction extends ControlAction {
 	private static final long serialVersionUID = -2886050746728516317L;
 	public ConfigAction() {
 		super();
-		setCode("Config");
-		setBtnName("≈‰÷√");
+		setCode(ErmActionConst.Config);//≈‰÷√∞¥≈•
+		setBtnName(ErmActionConst.getConfigName());
 	}
 	
 	@SuppressWarnings("restriction")

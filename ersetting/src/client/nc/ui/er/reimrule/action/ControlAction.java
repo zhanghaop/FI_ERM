@@ -3,6 +3,7 @@ package nc.ui.er.reimrule.action;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
+import nc.bs.erm.util.action.ErmActionConst;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.funcnode.ui.FuncletInitData;
 import nc.ui.er.reimrule.dialog.BatchEditDialog;
@@ -36,11 +37,10 @@ public class ControlAction extends NCAction {
 	
 	public ControlAction() {
 		super();
-		setCode("Control");
-		setBtnName("控制设置");
+		setCode(ErmActionConst.Control);//控制设置
+		setBtnName(ErmActionConst.getControlName());
 	}
 	
-	@SuppressWarnings("restriction")
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		BatchEditDialog dialog = new BatchEditDialog(this.getModel().getContext().getEntranceUI());
