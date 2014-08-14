@@ -22,7 +22,7 @@ go
 insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QHN','arap_bxzb',0,'erm.bxzb',null,null,'1001Z31000000000EHM5','~',0,0,'120110pea0013','fydwbm',2,'费用承担单位信息','2014-07-09 14:54:31',null,null,null)
 go
 
-insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QHO',null,0,'erm.bx_accrued_verify','accrued_verify',null,'1001Z31000000000EHM5','~',1,1,null,'accrued_verify',3,'核销预提明细','2014-07-09 14:54:31',null,null,null)
+insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QHO',null,0,'erm.bx_accrued_verify','accrued_verify',null,'1001Z31000000000EHM5','~',1,1,'12011026210002','accrued_verify',3,'核销预提明细','2014-07-09 14:54:31',null,null,null)
 go
 
 insert into pub_billtemplet_t(pk_billtemplet_t,basetab,dr,metadataclass,metadatapath,mixindex,pk_billtemplet,pk_layout,pos,position,resid,tabcode,tabindex,tabname,ts,vdef1,vdef2,vdef3) values('1001Z310000000005QHP','arap_bxzb',0,null,null,null,'1001Z31000000000EHM5','~',0,0,'120110pea0014','dwbm',3,'报销人信息','2014-07-09 14:54:31',null,null,null)
