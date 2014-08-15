@@ -7,8 +7,10 @@ import java.util.List;
 
 import nc.bs.er.util.BXDataPermissionChkUtil;
 import nc.bs.pub.compiler.AbstractCompiler2;
+import nc.pubitf.para.SysInitQuery;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.ep.bx.BXVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.common.MessageVO;
@@ -17,6 +19,7 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.change.PublicHeadVO;
 import nc.vo.pub.compiler.PfParameterVO;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.uap.pf.PFBusinessException;
 import nc.vo.wfengine.core.data.DataField;
 
@@ -72,13 +75,14 @@ public class N_264X_APPROVE extends AbstractCompiler2 {
 			Object bflag = procActionFlow(vo);
 			
 			if (bflag == null) {
-				if(isWorkFlowFinalNode(vo)){
+				String paraString = SysInitQuery.getParaString(bxvo.getParentVO().getPk_org(), BXParamConstant.ER_FLOW_TYPE);
+				if (paraString == null || BXParamConstant.ER_FLOW_TYPE_APPROVEFLOW.equals(paraString) || isWorkFlowFinalNode(vo)) {
 					auditVOs.add(bxvo);
-				}else{
-					fMsgs.add(new MessageVO(bxvo,ActionUtils.AUDIT));
+				} else {
+					fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
 				}
 			} else {
-				fMsgs.add(new MessageVO(bxvo,ActionUtils.AUDIT));
+				fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
 			}
 
 			setParameter("billVO", auditVOs.toArray(new JKBXVO[] {}));

@@ -1400,8 +1400,15 @@ public class VOChecker {
 			parentVO.setPayflag(BXStatusConst.PAYFLAG_None);
 		}
 
-		if (parentVO.getDjdl() == null || parentVO.getDjzt() == null)
+		if (parentVO.getDjdl() == null || parentVO.getDjzt() == null){
 			return;
+		}
+		
+		if(parentVO.getDjdl().equals(BXConstans.BX_DJDL)){
+			parentVO.setPk_billtype(BXConstans.BX_DJLXBM);
+		}else {
+			parentVO.setPk_billtype(BXConstans.JK_DJLXBM);
+		}
 
 		if (parentVO.getPk_group() == null && parentVO.isInit()) {
 			parentVO.setPk_group(BXConstans.GROUP_CODE);

@@ -736,7 +736,15 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 
 	// begin-- added by chendya@ufida.com.cn 组织和部门新增版本化信息
 	
-
+	//V635增加 单据类型
+	private java.lang.String pk_billtype;
+	
+	
+	/**
+	 * 	单据类型
+	 */
+	public static String PK_BILLTYPE = "pk_billtype";
+	
 	/**
 	 * 利润中心版本化
 	 */
@@ -2562,7 +2570,6 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	 *            String
 	 */
 	public void setDjdl(String newDjdl) {
-
 		djdl = newDjdl;
 	}
 
@@ -4138,6 +4145,14 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 		pk_brand = pkBrand;
 	}
 	
+	public java.lang.String getPk_billtype() {
+		return pk_billtype;
+	}
+
+	public void setPk_billtype(java.lang.String pk_billtype) {
+		this.pk_billtype = pk_billtype;
+	}
+
 	@Override
 	public String getWorkFlowBillPk() {
 		return getPk();

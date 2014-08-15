@@ -167,14 +167,29 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 		// 借款单"委托办理"动作升级
         updateJKBillAction();
 		
-        // 借款单支持委托付款，升级bd_billtype表
+        // 借款单支持委托付款，升级bd_billtype表633
         updateBillTypeForwardBill();
+        
+        // 借款单支持委托付款，升级bd_billtype表633
+        updateJKBXBillType();
 		
 		Logger.debug("*************************************");
 		Logger.debug("******** 报销管理模块升级6.31升级到6.3EHP2开始更新信息结束" + getClass().getName() + "**********");
 		Logger.debug("*************************************");
 	}
 	
+	// 635借款报销单加入单据类型字段
+	private void updateJKBXBillType() throws DAOException {
+		String updateSql = " update er_bxzb set PK_BILLTYPE = '264X' ";
+		getBaseDAO().executeUpdate(updateSql);
+		Logger.debug(updateSql);
+
+		String updateSql2 = " update er_jkzb set pk_billtype = '263X' ";
+		getBaseDAO().executeUpdate(updateSql2);
+		Logger.debug(updateSql2);
+	}
+	
+	//633加入借款单支持委托付款
 	private void updateBillTypeForwardBill() throws DAOException {
 		String updateSql = "update bd_billtype set forwardbilltype='36J1' where pk_billtypecode like '263%'";
 		getBaseDAO().executeUpdate(updateSql);

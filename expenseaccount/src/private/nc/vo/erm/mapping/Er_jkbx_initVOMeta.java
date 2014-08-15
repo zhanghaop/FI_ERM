@@ -166,11 +166,7 @@ public class Er_jkbx_initVOMeta extends ArapBaseMappingMeta {
 		"iscusupplier",/*对公支付*/
 		"pk_proline",/*产品线*/
 		"pk_brand",/*品牌*/
-		"paytarget",/*收款对象*/
-		
-		/*635共享服务加入影像*/
-		"imag_status",/*影像状态*/
-		"isneedimag"/*是否影像扫描*/
+		"paytarget"/*收款对象*/
 		};
 
 		setTabName("er_jkbx_init");// 表名
@@ -314,11 +310,7 @@ public class Er_jkbx_initVOMeta extends ArapBaseMappingMeta {
 		TYPE_BOOLEAN,/*对公支付*/
 		TYPE_STRING,/*产品线*/
 		TYPE_STRING,/*品牌*/
-		TYPE_INT,/*收款对象 */
-		
-		/*635共享服务加入影像*/	
-		TYPE_STRING,/*影像状态*/
-		TYPE_BOOLEAN/*是否影像扫描*/
+		TYPE_INT /*收款对象 */
 		});// 数据类型
 	}
 }

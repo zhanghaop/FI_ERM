@@ -273,6 +273,8 @@ isneedimag char(1) null
 /*需要影像扫描*/,
 imag_status varchar(2) null 
 /*影像状态*/,
+pk_billtype varchar(20) null 
+/*单据类型*/,
  constraint pk_er_jkzb primary key (pk_jkbx),
  ts char(19) null,
 dr smallint null default 0
@@ -838,6 +840,8 @@ imag_status varchar(2) null
 /*影像状态*/,
 isneedimag char(1) null 
 /*需要影像扫描*/,
+pk_billtype varchar(20) null 
+/*单据类型*/,
  constraint pk_er_bxzb primary key (pk_jkbx),
  ts char(19) null,
 dr smallint null default 0
