@@ -223,12 +223,6 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000ZSL6',0,'2011050704',null,'N',null,'2011500704','申请部门+申请人费用申请执行情况查询','1004ZZ10000000000FFL','D2011500704','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000006AYR',0,'20110ETEA000',null,'N','transtype','2011200210','差旅费报销单','1004ZZ10000000000FFL',null,'2014-04-29 09:53:14')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000003R44',0,'20110ETEA000',null,'N','transtype','2011200211','差旅费报销单','1004ZZ10000000000FFL',null,'2014-05-27 11:01:07')
-go
-
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001NV3D',0,'20110ACCMN',null,'N',null,'20110702','费用预提单管理','1004ZZ10000000000FFL','D20110702','2014-03-12 17:03:46')
 go
 

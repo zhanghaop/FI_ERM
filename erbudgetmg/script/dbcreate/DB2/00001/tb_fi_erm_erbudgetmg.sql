@@ -513,6 +513,8 @@ imag_status varchar(2) null
 /*Ó°Ïñ×´Ì¬*/,
 isneedimag char(1) null 
 /*ĞèÒªÓ°ÏñÉ¨Ãè*/,
+isexpedited char(1) null 
+/*½ô¼±*/,
  constraint pk_er_mtapp_bill primary key (pk_mtapp_bill),
  ts char(19) null,
 dr smallint null default 0
@@ -834,6 +836,8 @@ imag_status varchar(2) null
 /*Ó°Ïñ×´Ì¬*/,
 isneedimag char(1) null 
 /*ĞèÒªÓ°ÏñÉ¨Ãè*/,
+isexpedited char(1) null 
+/*½ô¼±*/,
  constraint pk_er_accrued primary key (pk_accrued_bill),
  ts char(19) null,
 dr smallint null default 0

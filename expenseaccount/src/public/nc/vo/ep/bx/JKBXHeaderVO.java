@@ -736,15 +736,6 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 
 	// begin-- added by chendya@ufida.com.cn 组织和部门新增版本化信息
 	
-	//V635增加 单据类型
-	private java.lang.String pk_billtype;
-	
-	
-	/**
-	 * 	单据类型
-	 */
-	public static String PK_BILLTYPE = "pk_billtype";
-	
 	/**
 	 * 利润中心版本化
 	 */
@@ -790,7 +781,6 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	 * (借款/报销)费用承担单位版本化
 	 */
 	public String fydwbm_v;
-
 	// --end
 
 	// v6新增
@@ -823,92 +813,43 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	
 	public UFBoolean iscusupplier = UFBoolean.FALSE;//对公支付
 	public static final String ISCUSUPPLIER = "iscusupplier";
+	
 	//v631加入
 	public String pk_proline;//产品线
 	public String pk_brand;//品牌
 	
-	public static final String PK_PROLINE = "pk_proline";//产品线
-	public static final String PK_BRAND = "pk_brand";//品牌
+	// ehp2加入
+	public Integer paytarget; // 收款对象
+	public Integer vouchertag; // 凭证标志
+	public UFDate  tbb_period ;//预算占用期间
 	
-	//ehp2加入
-	public Integer paytarget; //收款对象
-	public Integer vouchertag; //凭证标志
-	
-	public Integer getVouchertag() {
-		return vouchertag;
-	}
-
-	public void setVouchertag(Integer vouchertag) {
-		this.vouchertag = vouchertag;
-	}
-	//add 2014-07-07
-	public String imag_status;//影像状态
-	public UFBoolean isneedimag;//需要影像扫描
-	
-	public static final String IMAG_STATUS = "imag_status";
-	public static final String ISNEEDIMAG = "isneedimag";
-	
-	public String getImag_status() {
-		return imag_status;
-	}
-
-	public void setImag_status(String imag_status) {
-		this.imag_status = imag_status;
-	}
-
-	public UFBoolean getIsneedimag() {
-		return isneedimag;
-	}
-
-	public void setIsneedimag(UFBoolean isneedimag) {
-		this.isneedimag = isneedimag;
-	}
-
 	//ehp3加入
 	public Integer red_status;//红冲标志
 	public String redbillpk;//红冲单据主键
 
+	//add 2014-07-07 V635
+	public String imag_status;// 影像状态
+	public UFBoolean isneedimag;// 需要影像扫描
+	private java.lang.String pk_billtype;//单据类型
+	public UFBoolean isexpedited;//紧急
+	
+	public static final String PK_PROLINE = "pk_proline";//产品线
+	public static final String PK_BRAND = "pk_brand";//品牌
+	
 	public static final String RED_STATUS = "red_status";//红冲状态
 	public static final String REDBILLPK = "redbillpk";//红冲pk
 	
-	public Integer getRed_status() {
-		return red_status;
-	}
-
-	public void setRed_status(Integer red_status) {
-		this.red_status = red_status;
-	}
-
-	public String getRedbillpk() {
-		return redbillpk;
-	}
-
-	public void setRedbillpk(String redbillpk) {
-		this.redbillpk = redbillpk;
-	}
-
-	public UFDate  tbb_period ;//预算占用期间
-	public UFDate getTbb_period() {
-		return tbb_period;
-	}
-
-	public void setTbb_period(UFDate tbbPeriod) {
-		tbb_period = tbbPeriod;
-	}
-
-	public Integer getPaytarget() {
-		return paytarget;
-	}
-	
-	public void setPaytarget(Integer paytarget) {
-		this.paytarget = paytarget;
-	}
 	public static final String PAYTARGET = "paytarget";
 	public static final String TBB_PERIOD = "tbb_period";
 	public static final String VOUCHERTAG = "vouchertag";
 	
-	// v6新增
+	public static final String IMAG_STATUS = "imag_status";
+	public static final String ISNEEDIMAG = "isneedimag";
+	public static String PK_BILLTYPE = "pk_billtype";//单据类型
+	public static String ISEXPEDITED = "isexpedited";//紧急
+	
 
+	// v6新增
 	public static final String GLOBALCJKBBJE = "globalcjkbbje";
 	public static final String GLOBALHKBBJE = "globalhkbbje";
 	public static final String GLOBALZFBBJE = "globalzfbbje";
@@ -4163,6 +4104,70 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 		return getDjlxbm();
 	}
 	
+	public Integer getVouchertag() {
+		return vouchertag;
+	}
+
+	public void setVouchertag(Integer vouchertag) {
+		this.vouchertag = vouchertag;
+	}
+	
+	public String getImag_status() {
+		return imag_status;
+	}
+
+	public void setImag_status(String imag_status) {
+		this.imag_status = imag_status;
+	}
+
+	public UFBoolean getIsneedimag() {
+		return isneedimag;
+	}
+
+	public void setIsneedimag(UFBoolean isneedimag) {
+		this.isneedimag = isneedimag;
+	}
+
+	public Integer getRed_status() {
+		return red_status;
+	}
+
+	public void setRed_status(Integer red_status) {
+		this.red_status = red_status;
+	}
+
+	public String getRedbillpk() {
+		return redbillpk;
+	}
+
+	public void setRedbillpk(String redbillpk) {
+		this.redbillpk = redbillpk;
+	}
+
+	public UFDate getTbb_period() {
+		return tbb_period;
+	}
+
+	public void setTbb_period(UFDate tbbPeriod) {
+		tbb_period = tbbPeriod;
+	}
+
+	public Integer getPaytarget() {
+		return paytarget;
+	}
+	
+	public void setPaytarget(Integer paytarget) {
+		this.paytarget = paytarget;
+	}
+	
+	public UFBoolean getIsexpedited() {
+		return isexpedited;
+	}
+
+	public void setIsexpedited(UFBoolean isexpedited) {
+		this.isexpedited = isexpedited;
+	}
+
 	public void combineVO(JKBXHeaderVO vo){
 		if(this.pk_item == null && this.isLoadInitBill == false){
 			// 非拉单且不加载常用单据情况，根据单据模板的设置冲掉vo中的默认值

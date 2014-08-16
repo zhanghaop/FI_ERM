@@ -100,6 +100,8 @@ public class AccruedVO extends SuperVO {
 	//add 2014-07-07
 	public String imag_status;//影像状态
 	public UFBoolean isneedimag;//需要影像扫描
+	public UFBoolean isexpedited;//紧急
+	
 
 	public static final String PK_ACCRUED_BILL = "pk_accrued_bill";
 	public static final String PK_GROUP = "pk_group";
@@ -178,8 +180,7 @@ public class AccruedVO extends SuperVO {
 	public static final String REDFLAG = "redflag";
 	public static final String IMAG_STATUS = "imag_status";
 	public static final String ISNEEDIMAG = "isneedimag";
-	
-	
+	public static final String ISEXPEDITED = "isexpedited";
 
 	/**
 	 * 属性pk_accrued_bill的Getter方法.属性名：主键 创建日期:
@@ -1600,7 +1601,14 @@ public class AccruedVO extends SuperVO {
 	public void setIsneedimag(UFBoolean isneedimag) {
 		this.isneedimag = isneedimag;
 	}
+	
+	public UFBoolean getIsexpedited() {
+		return isexpedited;
+	}
 
+	public void setIsexpedited(UFBoolean isexpedited) {
+		this.isexpedited = isexpedited;
+	}
 
 	/**
 	 * 属性dr的Getter方法.属性名：dr 创建日期:
@@ -1687,7 +1695,7 @@ public class AccruedVO extends SuperVO {
 	public static java.lang.String getDefaultTableName() {
 		return "er_accrued";
 	}
-
+	
 	/**
 	 * 按照默认方式创建构造子.
 	 * 

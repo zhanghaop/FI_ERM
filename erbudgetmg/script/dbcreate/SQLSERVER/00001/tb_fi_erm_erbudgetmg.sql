@@ -519,6 +519,8 @@ imag_status nvarchar(2) null
 /*Ó°Ïñ×´Ì¬*/,
 isneedimag nchar(1) null 
 /*ĞèÒªÓ°ÏñÉ¨Ãè*/,
+isexpedited nchar(1) null 
+/*½ô¼±*/,
  constraint pk_er_mtapp_bill primary key (pk_mtapp_bill),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -843,6 +845,8 @@ imag_status nvarchar(2) null
 /*Ó°Ïñ×´Ì¬*/,
 isneedimag nchar(1) null 
 /*ĞèÒªÓ°ÏñÉ¨Ãè*/,
+isexpedited nchar(1) null 
+/*½ô¼±*/,
  constraint pk_er_accrued primary key (pk_accrued_bill),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0

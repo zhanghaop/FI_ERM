@@ -179,7 +179,8 @@ public class Er_bxzbVOMeta extends ArapBaseMappingMeta {
 		/*635共享服务加入影像*/
 		"imag_status",/*影像状态*/
 		"isneedimag",/*是否影像扫描*/
-		"pk_billtype"/*单据类型*/
+		"pk_billtype",/*单据类型*/
+		"isexpedited"/*紧急*/
 		};
     
     setTabName("er_bxzb");//表名
@@ -332,7 +333,8 @@ public class Er_bxzbVOMeta extends ArapBaseMappingMeta {
 	/*635共享服务加入影像*/	
 	TYPE_STRING,/*影像状态*/
 	TYPE_BOOLEAN,/*是否影像扫描*/
-	TYPE_STRING/*单据类型*/
+	TYPE_STRING,/*单据类型*/
+	TYPE_BOOLEAN/*紧急*/
 	});//数据类型
 }
 }

@@ -276,6 +276,8 @@ imag_status nvarchar(2) null
 /*影像状态*/,
 pk_billtype nvarchar(20) null 
 /*单据类型*/,
+isexpedited nchar(1) null 
+/*紧急*/,
  constraint pk_er_jkzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -846,6 +848,8 @@ isneedimag nchar(1) null
 /*需要影像扫描*/,
 pk_billtype nvarchar(20) null 
 /*单据类型*/,
+isexpedited nchar(1) null 
+/*紧急*/,
  constraint pk_er_bxzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0

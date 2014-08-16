@@ -117,15 +117,13 @@ public class MatterAppVO extends SuperVO {
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
 
-	public UFBoolean iscostshare = UFBoolean.FALSE;// 分摊标志
-	private UFBoolean isignoreatpcheck = UFBoolean.FALSE;// 可用量是否跳过检查（营销费用）
-	
 	//add 65 ehp2 2014-1-9
 	private String apply_org;//申请单位
 	
-	//add 2014-07-07
+	//add 2014-07-07 V635
 	public String imag_status;//影像状态
 	public UFBoolean isneedimag;//需要影像扫描
+	public UFBoolean isexpedited;//紧急
 	
 	public static final String IMAG_STATUS = "imag_status";
 	public static final String ISNEEDIMAG = "isneedimag";
@@ -218,10 +216,12 @@ public class MatterAppVO extends SuperVO {
 	public static final String CENTER_DEPT = "center_dept";
 	public static final String USABLE_AMOUT = "usable_amout";
 	public static final String MAX_AMOUNT = "max_amount";
-	
 	public static final String ISIGNOREATPCHECK = "isignoreatpcheck";
-	
 	public static final String APPLY_ORG = "apply_org";
+	public static final String ISEXPEDITED = "isexpedited";
+	
+	public UFBoolean iscostshare = UFBoolean.FALSE;// 分摊标志
+	private UFBoolean isignoreatpcheck = UFBoolean.FALSE;// 可用量是否跳过检查（营销费用）
 	/**
 	 * 属性pk_mtapp_bill的Getter方法.属性名：主键 创建日期:
 	 * 
@@ -2037,5 +2037,13 @@ public class MatterAppVO extends SuperVO {
 
 	public void setIsneedimag(UFBoolean isneedimag) {
 		this.isneedimag = isneedimag;
+	}
+
+	public UFBoolean getIsexpedited() {
+		return isexpedited;
+	}
+
+	public void setIsexpedited(UFBoolean isexpedited) {
+		this.isexpedited = isexpedited;
 	}
 }
