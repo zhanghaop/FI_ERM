@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import nc.bs.framework.common.NCLocator;
-import nc.bs.logging.Logger;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.ui.erm.view.ErmToftPanel;
@@ -60,11 +59,6 @@ public class MergePfAction extends NCAction {
 		validate(selectedvos);
 
 		Map<String, List<String>> temp = new HashMap<String, List<String>>();
-//		List<String> selectedPK = new ArrayList<String>();
-//
-//		for (JKBXVO vo : selectedvos) {
-//			selectedPK.add(vo.getParentVO().getPk_jkbx());
-//		}
 
 		try {
 			checkTs(selectedvos);
@@ -105,8 +99,9 @@ public class MergePfAction extends NCAction {
 			if (ex instanceof java.lang.reflect.InvocationTargetException) {
 				ExceptionHandler.handleException((Exception) ((java.lang.reflect.InvocationTargetException) ex)
 						.getTargetException());
+			}else{
+				ExceptionHandler.handleException(ex);
 			}
-			Logger.error(ex.getMessage(), ex);
 		}
 	}
 
