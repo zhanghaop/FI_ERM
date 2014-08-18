@@ -95,18 +95,18 @@ public class ControlTable extends BatchBillTable implements IComponentWithAction
 	}
 	
 	//报销单元数据选择对话框
-	private static MDPropertyRefPane bxBillRefPane = null;
+	private MDPropertyRefPane bxBillRefPane = null;
 	/*报销单元数据ID*/
 	private static String bx_beanid = "d9b9f860-4dc7-47fa-a7d5-7a5d91f39290";
 	
 	//借款单元数据选择对话框
-	private static MDPropertyRefPane jkBillRefPane = null;
+	private MDPropertyRefPane jkBillRefPane = null;
 	/*借款单元数据ID*/
 	private static String jk_beanid = "e0499b58-c604-48a6-825b-9a7e4d6dacca";
 	// 定义公式参照 and show Formula referPane
-	private static MDFormulaRefPane jk_referPanlFormula = null;
+	private MDFormulaRefPane jk_referPanlFormula = null;
 	// 定义公式参照 and show Formula referPane
-	private static MDFormulaRefPane bx_referPanlFormula = null;
+	private MDFormulaRefPane bx_referPanlFormula = null;
 	//报销单对应项元数据编辑器
 	public MDPropertyRefPane getBXBillRefPane() {
 		if (bxBillRefPane == null) {

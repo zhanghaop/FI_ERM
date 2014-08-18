@@ -214,11 +214,6 @@ public class AccUnAuditAction extends NCAsynAction {
 			monitor.done();
 			monitor = null;
 		}
-
-		if (monitor != null) {
-			monitor.done();
-			monitor = null;
-		}
 	}
 
 	public TPAProgressUtil getTpaProgressUtil() {

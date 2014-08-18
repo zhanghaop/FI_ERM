@@ -388,7 +388,7 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 					getBillCardPanel().setBodyValueAt(amount, e.getRow(), vo.getItemkey());
 					getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(), vo.getItemkey());
 				}
-				Integer row = new Integer(e.getRow());
+				Integer row = Integer.valueOf(e.getRow());
 				if (amount > standard) {
 					if (vo.getTip() == 1) {
 						MessageDialog.showHintDlg(null, "超标准", "第" + (e.getRow() + 1) + "行所填金额超过标准允许的最大金额!");

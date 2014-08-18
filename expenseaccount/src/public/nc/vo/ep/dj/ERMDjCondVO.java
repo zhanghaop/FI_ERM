@@ -2,19 +2,20 @@ package nc.vo.ep.dj;
 
 /**
  * 费用查询条件VO
+ * 
  * @author wangled
- *
+ * 
  */
 public class ERMDjCondVO implements java.io.Serializable {
 	private static final long serialVersionUID = 7641757221432876655L;
-	public final static Integer Voucher_All=new Integer(-1);
-    public final static Integer Voucher_NotCreated=new Integer(1);
-    public final static Integer Voucher_Created=new Integer(2);
-    public final static Integer Voucher_Singed=new Integer(3);
-	
-    public Integer[] VoucherFlags = null;
-    public boolean isLinkPz=false;
-    public boolean isjs = true;//是否结算
+	public final static Integer Voucher_All = Integer.valueOf(-1);
+	public final static Integer Voucher_NotCreated = Integer.valueOf(1);
+	public final static Integer Voucher_Created = Integer.valueOf(2);
+	public final static Integer Voucher_Singed = Integer.valueOf(3);
+
+	public Integer[] VoucherFlags = null;
+	public boolean isLinkPz = false;
+	public boolean isjs = true;// 是否结算
 
 	public Integer[] getVoucherFlags() {
 		return VoucherFlags;

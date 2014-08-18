@@ -4,8 +4,8 @@ import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 
-public class ReimRuleVO extends SuperVO implements Comparable{
-	
+public class ReimRuleVO extends SuperVO implements Comparable {
+
 	public static final String REMRULE_SPLITER = "@";
 	public static final String Reim_body_key = "body@";
 	public static final String Reim_head_key = "head@";
@@ -33,7 +33,7 @@ public class ReimRuleVO extends SuperVO implements Comparable{
 	private String def8;
 	private String def9;
 	private String def10;
-	
+
 	private String def1_name;
 	private String def2_name;
 	private String def3_name;
@@ -44,7 +44,7 @@ public class ReimRuleVO extends SuperVO implements Comparable{
 	private String def8_name;
 	private String def9_name;
 	private String def10_name;
-	
+
 	private String pk_deptid;
 	private String pk_psn;
 	private String pk_currtype;
@@ -55,9 +55,7 @@ public class ReimRuleVO extends SuperVO implements Comparable{
 	private String validateformula;
 	private UFDateTime ts;
 	private Integer dr;
-	
-	
-	
+
 	public Integer getDr() {
 		return dr;
 	}
@@ -186,7 +184,6 @@ public class ReimRuleVO extends SuperVO implements Comparable{
 		this.priority = priority;
 	}
 
-
 	public String getDef1() {
 		return def1;
 	}
@@ -291,17 +288,17 @@ public class ReimRuleVO extends SuperVO implements Comparable{
 	}
 
 	public int compareTo(Object o) {
-		if(o ==null || ! (o instanceof ReimRuleVO))
+		if (o == null || !(o instanceof ReimRuleVO))
 			return -1;
-		ReimRuleVO rule=(ReimRuleVO)o;
-		if(rule.getPk_expensetype().equals(getPk_expensetype())){
-			if(priority==null)
-				priority=new Integer(0);
+		ReimRuleVO rule = (ReimRuleVO) o;
+		if (rule.getPk_expensetype().equals(getPk_expensetype())) {
+			if (priority == null)
+				priority = Integer.valueOf(0);
 			Integer priority2 = rule.getPriority();
-			if(priority2==null)
-				priority2=new Integer(0);
-			return priority-priority2;
-		}else{
+			if (priority2 == null)
+				priority2 = Integer.valueOf(0);
+			return priority - priority2;
+		} else {
 			return rule.getPk_expensetype().compareTo(getPk_expensetype());
 		}
 	}

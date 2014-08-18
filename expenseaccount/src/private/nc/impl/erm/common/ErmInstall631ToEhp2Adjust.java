@@ -24,6 +24,9 @@ import nc.itf.fip.initdata.IFipInitDataService;
 import nc.itf.org.IGroupQryService;
 import nc.itf.org.IOrgUnitQryService;
 import nc.itf.uap.pf.IWorkflowUpgrade;
+import nc.jdbc.framework.JdbcSession;
+import nc.jdbc.framework.PersistenceManager;
+import nc.jdbc.framework.exception.DbException;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ColumnListProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
@@ -899,12 +902,43 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 						"update er_reimruler set showitem='报销单业务行.自定义项10',showitem_name='er_busitem.defitem10' ,controlitem='报销单业务行.自定义项7',controlitem_name='er_busitem.defitem7' ,controlflag='1' where pk_billtype ='2641' and PK_EXPENSETYPE_NAME ='交通费'",
 						"update er_reimruler set showitem='报销单业务行.自定义项11',showitem_name='er_busitem.defitem11' ,  controlitem='报销单业务行.自定义项8',controlitem_name='er_busitem.defitem8' ,  controlflag='1' ,  controlformula='defitem11*defitem9' where pk_billtype ='2641' and PK_EXPENSETYPE_NAME ='出差补贴'",
 						"update er_reimruler set showitem='报销单业务行.自定义项7',showitem_name='er_busitem.defitem7' ,  controlflag='1' where pk_billtype ='2643' and PK_EXPENSETYPE_NAME ='出差通讯费'"};
-				for(String sql:sqls){
-					getBaseDAO().executeUpdate(sql);
-				}
+//				for(String sql:sqls){
+//					getBaseDAO().executeUpdate(sql);
+//				}
+				
+				batchUpdate(sqls);
 			}
 		}catch (BusinessException e) {
 			ExceptionHandler.consume(e);
 		}
 	}
+	
+	/**
+	 * 批量执行sql
+	 * @param sqls
+	 * @return
+	 * @throws DAOException
+	 */
+	private int batchUpdate(String[] sqls) throws DAOException {
+        PersistenceManager manager = null;
+        int value;
+        try {
+            manager = PersistenceManager.getInstance();
+            manager.setMaxRows(100000);
+            manager.setAddTimeStamp(true);
+            JdbcSession session = manager.getJdbcSession();
+            
+            for(String sql : sqls){
+            	session.addBatch(sql);
+            }
+            value = session.executeBatch();
+        } catch (DbException e) {
+            Logger.error(e.getMessage(), e);
+            throw new DAOException(e.getMessage());
+        } finally {
+            if (manager != null)
+                manager.release();
+        }
+        return value;
+    }
 }
