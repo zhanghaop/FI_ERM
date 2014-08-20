@@ -278,7 +278,15 @@
 								<property name="tabs">
 									<list>
 										<bean class="nc.ui.uif2.tangramlayout.node.CNode">
-											<property name="name" value="报销标准" />
+											<property name="name">
+												<bean class="nc.ui.uif2.I18nFB ">
+													<property name="resDir" value="common"></property>
+													<property name="resId" value="UPT2011-000519">
+													</property>
+													<property name="defaultValue" value="报销标准">
+													</property>
+												</bean>
+											</property>  
 											<property name="component" ref="ruleTable" />
 										</bean>
 									</list>
