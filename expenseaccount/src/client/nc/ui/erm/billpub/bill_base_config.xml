@@ -191,8 +191,14 @@
 	
 	<bean id="importexportActionGroup" class="nc.funcnode.ui.action.MenuAction">
 		<property name="code" value="ImportExportMenu" />
-		<property name="name" value="导入导出" />
-			<property name="actions">
+		<property name="name">
+			<bean class="nc.ui.uif2.I18nFB ">
+				<property name="resDir" value="201212_0"></property>
+				<property name="resId" value="0201212-0101"></property>
+				<property name="defaultValue" value="导入导出"></property>
+			</bean>
+		</property>
+		<property name="actions">
 			<list>
 				<ref bean="importAction" />
 				<ref bean="nullAction" />
