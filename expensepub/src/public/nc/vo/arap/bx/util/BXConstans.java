@@ -117,6 +117,9 @@ public interface BXConstans {
 	 */
 	public final String AccruedVerify_PAGE = "accrued_verify";
 	
+	public final String AccruedVerify_TABLECODE = "er_accrued_verify";
+	
+	
 	public final String AccruedVerify_Metadatapath = "accrued_verify";
 	
 	/**

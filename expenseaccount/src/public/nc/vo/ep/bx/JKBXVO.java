@@ -306,7 +306,7 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 				cShareDetailVo[i] = (CShareDetailVO) values[i];
 			}
 
-		} else if (BXConstans.AccruedVerify_Metadatapath.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
+		} else if (BXConstans.AccruedVerify_TABLECODE.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
 			accruedVerifyVO = new AccruedVerifyVO[values.length];
 			for (int i = 0; i < values.length; i++) {
 				accruedVerifyVO[i] = (AccruedVerifyVO) values[i];
