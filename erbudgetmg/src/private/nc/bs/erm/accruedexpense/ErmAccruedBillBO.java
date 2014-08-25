@@ -489,7 +489,12 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 
 		parentVo.setPk_billtype(ErmAccruedBillConst.AccruedBill_Billtype);
 		if (parentVo.getOperator() != null) {
-			parentVo.setAuditman(BXBsUtil.getCuserIdByPK_psndoc(parentVo.getOperator()));
+			String auditUser = BXBsUtil.getCuserIdByPK_psndoc(parentVo.getOperator());
+			if(auditUser != null){
+				parentVo.setAuditman(auditUser);
+			}else {
+				throw new BusinessException("经办人未关联用户！");
+			}
 		}
 		// 用金额补齐预计余额和余额
 		parentVo.setPredict_rest_amount(parentVo.getAmount());
