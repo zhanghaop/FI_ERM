@@ -83,6 +83,10 @@ public class ERMOrgPane extends UIPanel implements AppEventListener  {
 	}
 
 	public void setPkOrg(Object pk_org){
+		String pk = getRefPane().getRefModel().getPkValue();
+		if(pk != null && pk.equals(pk_org)){
+			return;
+		}
 		getRefPane().setPK(pk_org);
 		getRefPane().setRefValue();
 	}

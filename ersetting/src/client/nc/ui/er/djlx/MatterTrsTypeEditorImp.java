@@ -62,7 +62,9 @@ public class MatterTrsTypeEditorImp extends AbstractTranstypeEditor implements I
 		default:
 			break;
 		}
+		//更新前台缓存
 		DBCacheFacade.refreshTable(DjLXVO.getDefaultTableName());
+		DBCacheFacade.refreshTable(new nc.vo.pub.billtype.BilltypeVO().getTableName());
 	}
 
 	private void qryTransobj(EditorContext ec) throws BusinessException {

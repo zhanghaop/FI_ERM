@@ -269,7 +269,7 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 			return contrastVO;
 		} else if (BXConstans.CSHARE_PAGE.equals(tableCode) || "costsharedetail".equals(tableCode)) {
 			return cShareDetailVo;
-		} else if (BXConstans.AccruedVerify_Metadatapath.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
+		} else if (BXConstans.AccruedVerify_TABLECODE.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
 			return accruedVerifyVO;
 		}else if(BXConstans.Tbb_PAGE.equals(tableCode)){
 			return bxtbbDetailVO;

@@ -295,11 +295,17 @@ public class ErmReportDataAdjustor extends FipubReportDataAdjustor {
         HeaderModel headerModel = formatModel.getColumnHeaderModel();
         int nHeaderIndex = 0;
         for (Header header : headerModel.getHeaders()) {
+        	//当列被隐藏,即列的长度为0时，对应的列如果有变量字段，则需要合并单元格，达到不被隐藏
             if (header.getSize() == TableStyle.MINHEADER) {
 //                int extRow = reportModel.getExtendAreaModel().getExtendAreaCells()[0].getArea().getStart().getRow();
                 for (nStartRow = 1; nStartRow < extRow; nStartRow++) {
                     List<Cell> rowList = cells.get(nStartRow);
-
+                    
+                    //第一次合并后，cell为null，则不需要合并，解决连续合并造成问题
+                    if(rowList.get(nHeaderIndex) == null){
+                    	continue;
+                    }
+                    
                     Cell pre = rowList.get(nHeaderIndex - 1);
                     Cell next = rowList.get(nHeaderIndex + 1);
                     ReportVariable preVar = null;
