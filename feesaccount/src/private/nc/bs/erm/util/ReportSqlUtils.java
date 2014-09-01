@@ -110,31 +110,26 @@ public class ReportSqlUtils {
 	 * 
 	 * @param userID 用户主键<br>
 	 * @param pk_group 集团主键<br>
+	 * @param qryObjMeta 查询对象注册map<br>
 	 * @param resCodes 权限资源实体编码数组，参考nc.itf.bd.pub.IBDResourceIDConst<br>
 	 * @param operationCode, "" 操作(场景)编码<br>
 	 * @return String<br>
 	 * @throws BusinessException<br>
 	 */
-	public static String getDataPermissionSql(String userID, String pk_group, String[] resCodes,
+	public static String getDataPermissionSql(String userID, String pk_group, Map<String, String> qryObjMeta,
 			String operationCode) throws BusinessException {
 		StringBuffer powerSqlBuffer = new StringBuffer("");
-		if (StringUtils.isEmpty(userID) || StringUtils.isEmpty(pk_group) || resCodes == null
-				|| resCodes.length == 0) {
-			return powerSqlBuffer.toString();
-		}
 
 		Map<String, String> filter = new HashMap<String, String>();
-		String powerSql = null;
-		Map<String, String> map = null;
-		for (String resCode : resCodes) {
-		    if (filter.containsKey(resCode)) {
+		for (String resCode : (String[])qryObjMeta.values().toArray(new String[0])) {
+		    if (filter.containsKey(resCode)) {//避免重复
 		        continue;
 		    } else {
 		        filter.put(resCode, null);
 		    }
-			map = getPowerAlias(resCode);
-			powerSql = getDataRefSQLWherePart(userID, pk_group, resCode, operationCode, map
-					.get("table"), map.get("column"));
+		    
+			Map<String, String> powerAliasMap = getPowerAlias(resCode, qryObjMeta);
+			String powerSql = getDataRefSQLWherePart(userID, pk_group, resCode, operationCode, powerAliasMap.get("table"), powerAliasMap.get("column"));
 			if (StringUtils.isEmpty(powerSql)) {
 				continue;
 			}
@@ -163,10 +158,9 @@ public class ReportSqlUtils {
 		}
 		
 		Iterator<Entry<String, String>> iter = fieldMap.entrySet().iterator();
-		String powerSql = null;
 		while (iter.hasNext()) {
 			Map.Entry<String,String> entry = iter.next();
-			powerSql = getDataRefSQLWherePart(userID, pk_group, entry.getValue(), operationCode, getAlias("er_jkzb"),
+			String powerSql  = getDataRefSQLWherePart(userID, pk_group, entry.getValue(), operationCode, getAlias("er_jkzb"),
 					entry.getKey());
 			if (StringUtils.isEmpty(powerSql)) {
 				continue;
@@ -227,8 +221,7 @@ public class ReportSqlUtils {
 	 */
 	public static Map<String,String> getErmQryObjectMetaID(String dsp_objtablename) throws BusinessException{
 		Map<String, String> map = new HashMap<String, String>();
-		List<QueryObjVO> voList = NCLocator.getInstance().lookup(IReportQueryObjRegQuery.class).getRegisteredQueryObjByClause("ownmodule = 'erm'  and dsp_objtablename = '" +dsp_objtablename+
-				"'");
+		List<QueryObjVO> voList = NCLocator.getInstance().lookup(IReportQueryObjRegQuery.class).getRegisteredQueryObjByClause("ownmodule = 'erm'  and dsp_objtablename = '" +dsp_objtablename+"'");
 		for(QueryObjVO vo: voList){
 			if(map.containsKey(vo.getQry_objfieldname())){
 				continue;
@@ -245,8 +238,8 @@ public class ReportSqlUtils {
 		return map;
 	}
 
-	private static Map<String, String> getPowerAlias(String resCode) throws BusinessException{
-		Map<String, String> metaIDMap = getErmQryObjectMetaID();
+	private static Map<String, String> getPowerAlias(String resCode,Map<String, String> metaIDMap) throws BusinessException{
+//		Map<String, String> metaIDMap = getErmQryObjectMetaID();
 		Iterator<Entry<String, String>> it = metaIDMap.entrySet().iterator();
 		String colName = null;
 		while (it.hasNext()) {

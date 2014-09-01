@@ -195,28 +195,27 @@ public abstract class ErmBaseSqlCreator {
 
 			// 处理查询模板SQL
 			if (!StringUtils.isEmpty(queryVO.getWhereSql())) {
-//				sqlBuffer.append(" and ").append(StringUtils.replace(queryVO.getWhereSql(), "zb.", tempAlias + "."));
 				String whereSql = queryVO.getWhereSql();
 				@SuppressWarnings("unchecked")
-                Map<String, Object> fieldSqlMap = (Map<String, Object>)queryVO.getUserObject().get("fieldSqlMap");
-                if (fieldSqlMap != null) {
-                    Iterator<Entry<String, Object>> iter = fieldSqlMap.entrySet().iterator();
-                    while (iter.hasNext()) {
-                        Entry<String, Object> entry = iter.next();
-                        if (isDetailField(entry.getKey())) {
-                            whereSql = whereSql.replaceAll("zb." + entry.getKey(), "fb." + entry.getKey());
-                        }
-                    }
-                }
-                sqlBuffer.append(" and ").append(StringUtils.replace(whereSql, "zb.", tempAlias + "."));
+				Map<String, Object> fieldSqlMap = (Map<String, Object>) queryVO.getUserObject().get("fieldSqlMap");
+				if (fieldSqlMap != null) {
+					Iterator<Entry<String, Object>> iter = fieldSqlMap.entrySet().iterator();
+					while (iter.hasNext()) {
+						Entry<String, Object> entry = iter.next();
+						if (isDetailField(entry.getKey())) {
+							whereSql = whereSql.replaceAll("zb." + entry.getKey(), "fb." + entry.getKey());
+						}
+					}
+				}
+				sqlBuffer.append(" and ").append(StringUtils.replace(whereSql, "zb.", tempAlias + "."));
 			}
 
 			Map<String,String> qryObjMeta = nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID(); 
-//			fileterQryObj(qryObjMeta);
-			// 处理查询数据权限
+
+			// 查询对象处理查询数据权限
 			String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
 					.getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
-					(String[])qryObjMeta.values().toArray(new String[0]), IPubReportConstants.FI_REPORT_REF_POWER);
+					qryObjMeta, IPubReportConstants.FI_REPORT_REF_POWER);
 
 			if (!StringUtils.isEmpty(powerSql)) {
 			    powerSql = convertToDetailSql(powerSql);

@@ -183,15 +183,6 @@ public abstract class ErmCSBaseSqlCreator {
 			if (!StringUtils.isEmpty(queryVO.getWhereSql())) {
 				sqlBuffer.append(" and ").append(StringUtils.replace(queryVO.getWhereSql(), "zb.", tempAlias + "."));
 			}
-
-			// 处理查询数据权限
-//			String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
-//					.getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
-//					IPubReportConstants.FI_REPORT_REF_POWER,dsp_objtablename);
-//
-//			if (!StringUtils.isEmpty(powerSql)) {
-//				sqlBuffer.append(powerSql);
-//			}
 			
 			Map<String,String> qryObjMeta = nc.bs.erm.util.ReportSqlUtils.getErmQryObjectMetaID(dsp_objtablename); 
 			if (this instanceof MatterappSQLCreator) {
@@ -201,7 +192,7 @@ public abstract class ErmCSBaseSqlCreator {
             // 处理查询数据权限
             String powerSql = ReportSqlUtils.getDataPermissionSql(ReportSqlUtils
                     .getUserIdForServer(), ReportSqlUtils.getPkGroupForServer(),
-                    (String[])qryObjMeta.values().toArray(new String[0]), IPubReportConstants.FI_REPORT_REF_POWER);
+                    qryObjMeta, IPubReportConstants.FI_REPORT_REF_POWER);
 
             if (!StringUtils.isEmpty(powerSql)) {
                 sqlBuffer.append(powerSql);
