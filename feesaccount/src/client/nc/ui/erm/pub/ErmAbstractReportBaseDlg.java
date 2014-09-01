@@ -177,6 +177,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
         String beanId = null;
         QueryTempletTotalVO totalVo = null;
         try {
+        	 //去除查询模板中的数据权限，由后台加入 
             totalVo = getQryCondEditor().getTotalVO();
             if (totalVo != null && totalVo.getTempletVO() != null) {
                 beanId = totalVo.getTempletVO().getMetaclass(); 

@@ -166,7 +166,8 @@ public class ERMBillCheckValidator implements Validator {
 	}
 
 	private void checkBillContrast(JKBXVO bxvo) throws BusinessException {
-		if(BXConstans.BXRB_CODE.equals(getModel().getContext().getNodeCode())){
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		if (BXConstans.BILLTYPECODE_RETURNBILL.equals(currentDjLXVO.getDjlxbm())){
 			BxcontrastVO[] contrastVO = bxvo.getContrastVO();
 			if(contrastVO==null || (contrastVO!=null && contrastVO.length==0)){
 				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl
@@ -660,7 +661,7 @@ public class ERMBillCheckValidator implements Validator {
 	private void checkValidHeader(JKBXHeaderVO parentVO) throws ValidationException {
 		parentVO.validate();
 		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
-		if (!BXConstans.BXRB_CODE.equals(getModel().getContext().getNodeCode())){
+		if (!BXConstans.BILLTYPECODE_RETURNBILL.equals(currentDjLXVO.getDjlxbm())){
 			//报销单允许录入负数行，但不可以为0
 			if(BXConstans.BX_DJDL.equals(currentDjLXVO.getDjdl())){
 				// 费用调整单不控制合计金额为0、负数
@@ -701,8 +702,8 @@ public class ERMBillCheckValidator implements Validator {
 						"02011002-0144")/* @res "表体页签信息不能为空!" */);
 			}
 		}
-		if (!BXConstans.BXRB_CODE.equals(getModel().getContext().getNodeCode())) {
-			DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		DjLXVO currentDjLXVO = ((ErmBillBillManageModel)getModel()).getCurrentDjLXVO();
+		if (!BXConstans.BILLTYPECODE_RETURNBILL.equals(currentDjLXVO.getDjlxbm())){
 			for(BXBusItemVO child : childrenVO){
 				//报销单允许录入负数行，但不可以为0
 				if(BXConstans.BX_DJDL.equals(currentDjLXVO.getDjdl())){
