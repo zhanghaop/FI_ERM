@@ -390,7 +390,7 @@ public abstract class ErmAuditAction extends NCAsynAction {
 	protected String getActionCode(String pk_org) {
 		try {
 			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
-			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {// 借款报销单位
+			if (paraString != null && BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {// 借款报销单位
 				actionCode = IPFActionName.SIGNAL;
 			}
 		} catch (BusinessException e) {

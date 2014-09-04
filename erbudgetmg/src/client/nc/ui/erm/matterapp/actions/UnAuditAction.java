@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.ml.NCLangResOnserver;
 import nc.bs.uif2.IActionCode;
 import nc.itf.uap.pf.metadata.IFlowBizItf;
@@ -116,7 +117,8 @@ public class UnAuditAction extends NCAsynAction {
 				return result;
 			}
 			
-			Object returnObj = (MessageVO[]) PfUtilClient.runAction(getBillForm().getParent(), "UNAPPROVE", appVO
+			String actionType = ErUtil.getUnApproveActionCode(appVO.getParentVO().getPk_org());
+			Object returnObj = (MessageVO[]) PfUtilClient.runAction(getBillForm().getParent(), actionType, appVO
 					.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
 			
 			if(returnObj ==null){//在审批过程中，弹出审核界面，然后直接点右上角的关闭

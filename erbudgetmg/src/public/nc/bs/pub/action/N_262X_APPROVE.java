@@ -3,6 +3,7 @@ package nc.bs.pub.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.compiler.AbstractCompiler2;
 import nc.bs.pub.compiler.IWorkFlowRet;
@@ -29,7 +30,13 @@ public class N_262X_APPROVE extends AbstractCompiler2 {
 			IWorkFlowRet bflag = (IWorkFlowRet) procActionFlow(paraVo);// 放入审批流
 
 			if (bflag == null) {
-				auditVOs.add(aggvo);
+				boolean isWorkFlow = ErUtil.isUseWorkFlow(aggvo.getParentVO().getPk_org());
+				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(paraVo);
+				if (!isWorkFlow || isWorkFlowFinalNode) {
+					auditVOs.add(aggvo);
+				} else {
+					fMsgs.add(new MessageVO(aggvo, ActionUtils.AUDIT));
+				}
 			} else {
 				aggvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(aggvo);
 				MessageVO unAuditVo = new MessageVO(aggvo, ActionUtils.AUDIT);

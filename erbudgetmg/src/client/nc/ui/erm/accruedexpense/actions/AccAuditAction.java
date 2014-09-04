@@ -33,8 +33,9 @@ public class AccAuditAction extends ErmAuditAction {
 	protected MessageVO approveSingle(AggregatedValueObject aggvo) throws Exception {
 		AggAccruedBillVO accbillvo = (AggAccruedBillVO) aggvo;
 		MessageVO result = null;
+		String actionName = getActionCode(accbillvo.getParentVO().getPk_org());
 		try {
-			Object returnObj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), "APPROVE", accbillvo
+			Object returnObj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), actionName, accbillvo
 					.getParentVO().getPk_tradetype(), aggvo, null, null, null, null);
 			if (returnObj == null) {// 在审批过程中，弹出审核界面，然后直接点右上角的关闭
 				result = new MessageVO(aggvo, ActionUtils.AUDIT);

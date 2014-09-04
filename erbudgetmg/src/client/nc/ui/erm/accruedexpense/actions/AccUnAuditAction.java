@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.ml.NCLangResOnserver;
 import nc.bs.uif2.IActionCode;
 import nc.itf.uap.pf.metadata.IFlowBizItf;
@@ -103,7 +104,9 @@ public class AccUnAuditAction extends NCAsynAction {
 				return result;
 			}
 			
-			Object returnObj =  PfUtilClient.runAction(getBillForm().getParent(), "UNAPPROVE", aggVo
+			String actionType = ErUtil.getUnApproveActionCode(aggVo.getParentVO().getPk_org());
+			
+			Object returnObj =  PfUtilClient.runAction(getBillForm().getParent(), actionType, aggVo
 					.getParentVO().getPk_tradetype(), aggVo, null, null, null, null);
 			
 			if(returnObj ==null){//在审批过程中，弹出审核界面，然后直接点右上角的关闭

@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import nc.bs.er.util.BXDataPermissionChkUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.pub.compiler.AbstractCompiler2;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -83,9 +84,14 @@ public class N_263X_APPROVE extends AbstractCompiler2 {
 //--end			
 			
 			Object bflag = procActionFlow(vo);
-			
 			if (bflag==null) {
-				auditVOs.add(bxvo);
+				boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
+				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
+				if (!isWorkFlow || isWorkFlowFinalNode) {
+					auditVOs.add(bxvo);
+				} else {
+					fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
+				}
 			}else{
 				fMsgs.add(new MessageVO( bxvo,ActionUtils.AUDIT));
 			}

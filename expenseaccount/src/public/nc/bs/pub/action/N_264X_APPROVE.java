@@ -2,15 +2,13 @@ package nc.bs.pub.action;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import nc.bs.er.util.BXDataPermissionChkUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.pub.compiler.AbstractCompiler2;
-import nc.pubitf.para.SysInitQuery;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.ep.bx.BXVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.common.MessageVO;
@@ -18,10 +16,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.change.PublicHeadVO;
 import nc.vo.pub.compiler.PfParameterVO;
-import nc.vo.pub.lang.UFBoolean;
-import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.uap.pf.PFBusinessException;
-import nc.vo.wfengine.core.data.DataField;
 
 /**
  * 备注：报销单的审核 单据动作执行中的动态执行类的动态执行类。
@@ -75,8 +70,9 @@ public class N_264X_APPROVE extends AbstractCompiler2 {
 			Object bflag = procActionFlow(vo);
 			
 			if (bflag == null) {
-				String paraString = SysInitQuery.getParaString(bxvo.getParentVO().getPk_org(), BXParamConstant.ER_FLOW_TYPE);
-				if (paraString == null || BXParamConstant.ER_FLOW_TYPE_APPROVEFLOW.equals(paraString) || isWorkFlowFinalNode(vo)) {
+				boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
+				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
+				if (!isWorkFlow || isWorkFlowFinalNode) {
 					auditVOs.add(bxvo);
 				} else {
 					fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
@@ -108,32 +104,6 @@ public class N_264X_APPROVE extends AbstractCompiler2 {
 		}
 	}
 	
-	/**
-	 * 是否流程最后环节
-	 * @param vo
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	private boolean isWorkFlowFinalNode(PfParameterVO vo) {
-		if(vo.m_workFlow == null){
-			return false;
-		}
-		
-		List argsList = vo.m_workFlow.getApplicationArgs();
-		if (argsList != null && argsList.size() > 0) {
-			for (Iterator iterator = argsList.iterator(); iterator.hasNext();) {
-				DataField df = (DataField) iterator.next();
-				Object value = df.getInitialValue();
-				if (value == null) {
-					continue;
-				}
-				if ("isWorkFlowFinalNode".equals(df.getName()) && UFBoolean.valueOf(value.toString()).booleanValue()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 	@Override
 	public String getCodeRemark() {
 		return "erm action script not allowed modify, all rights reserved!;";

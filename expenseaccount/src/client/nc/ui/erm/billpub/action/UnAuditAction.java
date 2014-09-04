@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.ml.NCLangResOnserver;
 import nc.bs.uif2.IActionCode;
 import nc.desktop.ui.WorkbenchEnvironment;
-import nc.pubitf.para.SysInitQuery;
 import nc.ui.erm.billpub.btnstatus.BxApproveBtnStatusListener;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.progress.IProgressMonitor;
@@ -22,7 +22,6 @@ import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
-import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.cmp.exception.CmpAuthorizationException;
 import nc.vo.ep.bx.JKBXHeaderVO;
@@ -33,7 +32,6 @@ import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
-import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.uap.pf.PFBusinessException;
 
 public class UnAuditAction extends NCAsynAction {
@@ -105,7 +103,7 @@ public class UnAuditAction extends NCAsynAction {
 	 */
 	private MessageVO unAudit(JKBXVO bxvo) {
 		JKBXHeaderVO head = bxvo.getParentVO();
-		String actionType = getActionCode(bxvo.getParentVO().getPk_org());
+		String actionType = ErUtil.getUnApproveActionCode(bxvo.getParentVO().getPk_org());
 		MessageVO result = null;
 		try {
 			// 反审核动作处理
@@ -217,24 +215,6 @@ public class UnAuditAction extends NCAsynAction {
 		return msgVO;
 	}
 	
-	/**
-	 * 获取动作脚本类型
-	 * @param pk_org
-	 * @return
-	 */
-	protected String getActionCode(String pk_org) {
-		String actionCode = IPFActionName.UNAPPROVE;
-		try {
-			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
-			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
-				actionCode = IPFActionName.ROLLBACK;
-			}
-		} catch (BusinessException e) {
-			ExceptionHandler.consume(e);
-		}
-		return actionCode;
-	}
-
 	public BillManageModel getModel() {
 		return model;
 	}

@@ -3,6 +3,7 @@ package nc.bs.erm.util;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,10 @@ import nc.itf.uap.sf.ICreateCorpQueryService;
 import nc.itf.uap.sf.IProductVersionQueryService;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.org.ICloseAccQryPubServicer;
+import nc.pubitf.para.SysInitQuery;
 import nc.pubitf.uapbd.CurrencyRateUtilHelper;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.ErmDataFinder;
 import nc.vo.bd.pub.NODE_TYPE;
 import nc.vo.er.exception.ExceptionHandler;
@@ -28,10 +31,14 @@ import nc.vo.fipub.report.ReportQueryCondVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.billtype.BilltypeVO;
+import nc.vo.pub.compiler.PfParameterVO;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.pub.rs.MemoryResultSet;
 import nc.vo.sm.install.ProductVersionVO;
 import nc.vo.trade.billsource.LightBillVO;
+import nc.vo.wfengine.core.data.DataField;
 
 public class ErUtil {
 	/**
@@ -292,5 +299,64 @@ public class ErUtil {
 		}
 
 		return whereCondition;
+	}
+	
+	/**
+	 * 获取动作脚本类型
+	 * @param pk_org
+	 * @return
+	 */
+	public static String getUnApproveActionCode(String pk_org) {
+		String actionCode = IPFActionName.UNAPPROVE;
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				actionCode = IPFActionName.ROLLBACK;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
+	}
+	
+	/**
+	 * 是否流程最后环节
+	 * @param vo
+	 * @return
+	 */
+	public static boolean isWorkFlowFinalNode(PfParameterVO vo) {
+		if(vo.m_workFlow == null){
+			return false;
+		}
+		
+		List argsList = vo.m_workFlow.getApplicationArgs();
+		if (argsList != null && argsList.size() > 0) {
+			for (Iterator iterator = argsList.iterator(); iterator.hasNext();) {
+				DataField df = (DataField) iterator.next();
+				Object value = df.getInitialValue();
+				if (value == null) {
+					continue;
+				}
+				if ("isWorkFlowFinalNode".equals(df.getName()) && UFBoolean.valueOf(value.toString()).booleanValue()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 是否流程最后环节
+	 * @param vo
+	 * @return
+	 * @throws BusinessException 
+	 */
+	public static boolean isUseWorkFlow(String pk_org) throws BusinessException {
+		String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+		if (paraString == null || BXParamConstant.ER_FLOW_TYPE_APPROVEFLOW.equals(paraString)) {
+			return false;
+		}
+		
+		return true;
 	}
 }
