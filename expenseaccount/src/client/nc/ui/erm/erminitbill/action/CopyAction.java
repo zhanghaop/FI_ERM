@@ -82,27 +82,28 @@ public class CopyAction extends NCAction{
 			copyJkbxVO.setChildrenVO(null);
 		}
 		
-		//表体pk清空
-		if(copyJkbxVO.getBxBusItemVOS()!=null){
-			for(BXBusItemVO itm:copyJkbxVO.getBxBusItemVOS()){
+		//初始化
+		initVO(copyJkbxVO);
+		
+		// 表体pk清空
+		if (copyJkbxVO.getBxBusItemVOS() != null) {
+			for (BXBusItemVO itm : copyJkbxVO.getBxBusItemVOS()) {
 				itm.setPk_jkbx(null);
 				itm.setPk_busitem(null);
 			}
 		}
-		
+
 		if (copyJkbxVO.getcShareDetailVo() != null) {
 			for (CShareDetailVO itm : copyJkbxVO.getcShareDetailVo()) {
 				itm.setPk_jkbx(null);
 				itm.setPk_cshare_detail(null);
 				itm.setPk_costshare(null);
+				itm.setYsdate(copyJkbxVO.getParentVO().getDjrq());
 			}
 		}
-		
-		//清空核销明细
+
+		// 清空核销明细
 		copyJkbxVO.setAccruedVerifyVO(null);
-		
-		//初始化
-		initVO(copyJkbxVO);
 
 		//设置vo到界面
 		getEditor().setValue(copyJkbxVO);

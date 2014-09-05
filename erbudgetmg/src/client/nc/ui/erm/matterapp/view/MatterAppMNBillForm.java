@@ -83,7 +83,6 @@ import nc.vo.trade.pub.IBillStatus;
  * @author chenshuaia
  * 
  */
-@SuppressWarnings("restriction")
 public class MatterAppMNBillForm extends AbstractMappBillForm {
 
 	private static final long serialVersionUID = 1L;
@@ -511,6 +510,14 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		filtBillCardItem();
 		this.setHeadRateBillFormEnable();
 		this.getBillCardPanel().getHeadItem(MatterAppVO.PK_TRADETYPE).setEnabled(false);
+
+		//申请单新增没有调用setValue方法，没有执行显示公式，这里调用
+		if(isAutoExecLoadFormula()){
+			execLoadFormula();
+		}
+		if(isAutoExecLoadRelationItem()){
+			this.getBillCardPanel().getBillData().loadLoadHeadRelation();
+		}
 	}
 
 	@Override
