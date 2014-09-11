@@ -116,6 +116,11 @@ public class MtAppDetailVO extends SuperVO {
 	private nc.vo.pub.lang.UFDouble max_amount;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
+	
+	// CRM使用，用来控制生成的申请单
+	private java.lang.String pk_crmdetail;
+
+	public static final String PK_CRMDETAIL = "pk_crmdetail";
 
 	public static final String PK_MTAPP_BILL = "pk_mtapp_bill";
 	public static final String PK_MTAPP_DETAIL = "pk_mtapp_detail";
@@ -1665,10 +1670,10 @@ public class MtAppDetailVO extends SuperVO {
 	}    
 	
 	public IVOMeta getMetaData() {
-		IVOMeta meta = VOMetaFactory.getInstance()
-				.getVOMeta("erm.mtapp_detail");
+		IVOMeta meta = VOMetaFactory.getInstance().getVOMeta("erm.mtapp_detail");
 		return meta;
 	}
+	
 	public String getUnAdjustKey() {
 		return unAdjustKey;
 	}
@@ -1681,7 +1686,12 @@ public class MtAppDetailVO extends SuperVO {
 	public void setAllFieldKey(String allFieldKey) {
 		this.allFieldKey = allFieldKey;
 	}
-
+	public java.lang.String getPk_crmdetail() {
+		return pk_crmdetail;
+	}
+	public void setPk_crmdetail(java.lang.String pk_crmdetail) {
+		this.pk_crmdetail = pk_crmdetail;
+	}
 } 
 
 

@@ -3,6 +3,9 @@
  * code generator for NC product. It is based on Velocity.     *
 \***************************************************************/
 package nc.vo.ep.bx;
+
+import nc.vo.pub.IVOMeta;
+import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 	
 
 /**
@@ -25,6 +28,11 @@ public class JKBusItemVO extends BXBusItemVO {
 		super(newPk_bxbusitem);
 	} 
 	
+	@Override
+    public IVOMeta getMetaData() {
+      IVOMeta meta = VOMetaFactory.getInstance().getVOMeta("erm.jk_busitem"); 
+      return meta;
+    }
 } 
 
 

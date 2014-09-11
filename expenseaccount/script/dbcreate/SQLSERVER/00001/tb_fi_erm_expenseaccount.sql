@@ -278,6 +278,10 @@ pk_billtype nvarchar(20) null
 /*单据类型*/,
 isexpedited nchar(1) null 
 /*紧急*/,
+pk_matters nvarchar(20) null default '~' 
+/*营销事项*/,
+pk_campaign nvarchar(20) null default '~' 
+/*营销活动*/,
  constraint pk_er_jkzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -560,6 +564,8 @@ deptid nvarchar(20) null
 /*报销人部门*/,
 fctno nvarchar(20) null 
 /*合同号*/,
+pk_crmdetail nvarchar(20) null default '~' 
+/*pk_crmdetail*/,
  constraint pk_er_busitem primary key (pk_busitem),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0
@@ -850,6 +856,10 @@ pk_billtype nvarchar(20) null
 /*单据类型*/,
 isexpedited nchar(1) null 
 /*紧急*/,
+pk_matters nvarchar(20) null default '~' 
+/*营销事项*/,
+pk_campaign nvarchar(20) null default '~' 
+/*营销活动*/,
  constraint pk_er_bxzb primary key (pk_jkbx),
  ts char(19) null default convert(char(19),getdate(),20),
 dr smallint null default 0

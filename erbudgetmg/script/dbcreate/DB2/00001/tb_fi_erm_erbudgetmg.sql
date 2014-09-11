@@ -299,6 +299,8 @@ pk_proline varchar(20) null default '~'
 /*产品线*/,
 pk_brand varchar(20) null default '~' 
 /*品牌*/,
+pk_crmdetail varchar(20) null default '~' 
+/*pk_crmdetail*/,
  constraint pk_er_mtapp_detail primary key (pk_mtapp_detail),
  ts char(19) null,
 dr smallint null default 0
@@ -515,6 +517,10 @@ isneedimag char(1) null
 /*需要影像扫描*/,
 isexpedited char(1) null 
 /*紧急*/,
+pk_matters varchar(20) null default '~' 
+/*营销事项*/,
+pk_campaign varchar(20) null default '~' 
+/*营销活动*/,
  constraint pk_er_mtapp_bill primary key (pk_mtapp_bill),
  ts char(19) null,
 dr smallint null default 0

@@ -120,11 +120,17 @@ public class MatterAppVO extends SuperVO {
 	//add 65 ehp2 2014-1-9
 	private String apply_org;//申请单位
 	
+	// v631加入 CRM
+	public String pk_matters;// 营销事项
+	public String pk_campaign;// 营销活动
+	
 	//add 2014-07-07 V635
 	public String imag_status;//影像状态
 	public UFBoolean isneedimag;//需要影像扫描
 	public UFBoolean isexpedited;//紧急
 	
+	public static final String PK_MATTERS = "pk_matters";// 营销事项
+	public static final String PK_CAMPAIGN = "pk_campaign";// 营销活动
 	public static final String IMAG_STATUS = "imag_status";
 	public static final String ISNEEDIMAG = "isneedimag";
 	public static final String ISCOSTSHARE = "iscostshare";
@@ -2045,5 +2051,21 @@ public class MatterAppVO extends SuperVO {
 
 	public void setIsexpedited(UFBoolean isexpedited) {
 		this.isexpedited = isexpedited;
+	}
+
+	public String getPk_matters() {
+		return pk_matters;
+	}
+
+	public void setPk_matters(String pk_matters) {
+		this.pk_matters = pk_matters;
+	}
+
+	public String getPk_campaign() {
+		return pk_campaign;
+	}
+
+	public void setPk_campaign(String pk_campaign) {
+		this.pk_campaign = pk_campaign;
 	}
 }

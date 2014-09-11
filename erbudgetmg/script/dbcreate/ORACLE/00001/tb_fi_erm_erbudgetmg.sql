@@ -299,6 +299,8 @@ pk_proline varchar2(20) default '~' null
 /*产品线*/,
 pk_brand varchar2(20) default '~' null 
 /*品牌*/,
+pk_crmdetail varchar2(20) default '~' null 
+/*pk_crmdetail*/,
  constraint pk_er_mtapp_detail primary key (pk_mtapp_detail),
  ts char(19) default to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
 dr number(10) default 0
@@ -515,6 +517,10 @@ isneedimag char(1) null
 /*需要影像扫描*/,
 isexpedited char(1) null 
 /*紧急*/,
+pk_matters varchar2(20) default '~' null 
+/*营销事项*/,
+pk_campaign varchar2(20) default '~' null 
+/*营销活动*/,
  constraint pk_er_mtapp_bill primary key (pk_mtapp_bill),
  ts char(19) default to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'),
 dr number(10) default 0

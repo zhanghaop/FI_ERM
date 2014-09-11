@@ -823,9 +823,12 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	public Integer vouchertag; // 凭证标志
 	public UFDate  tbb_period ;//预算占用期间
 	
-	//ehp3加入
-	public Integer red_status;//红冲标志
-	public String redbillpk;//红冲单据主键
+	// ehp3加入
+	public Integer red_status;// 红冲标志
+	public String redbillpk;// 红冲单据主键
+	// v633加入 CRM
+	public String pk_matters;// 营销事项
+	public String pk_campaign;// 营销活动
 
 	//add 2014-07-07 V635
 	public String imag_status;// 影像状态
@@ -835,9 +838,10 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 	
 	public static final String PK_PROLINE = "pk_proline";//产品线
 	public static final String PK_BRAND = "pk_brand";//品牌
-	
 	public static final String RED_STATUS = "red_status";//红冲状态
 	public static final String REDBILLPK = "redbillpk";//红冲pk
+	public static final String PK_MATTERS = "pk_matters";// 营销事项
+	public static final String PK_CAMPAIGN = "pk_campaign";// 营销活动
 	
 	public static final String PAYTARGET = "paytarget";
 	public static final String TBB_PERIOD = "tbb_period";
@@ -4166,6 +4170,22 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 
 	public void setIsexpedited(UFBoolean isexpedited) {
 		this.isexpedited = isexpedited;
+	}
+
+	public String getPk_matters() {
+		return pk_matters;
+	}
+
+	public void setPk_matters(String pk_matters) {
+		this.pk_matters = pk_matters;
+	}
+
+	public String getPk_campaign() {
+		return pk_campaign;
+	}
+
+	public void setPk_campaign(String pk_campaign) {
+		this.pk_campaign = pk_campaign;
 	}
 
 	public void combineVO(JKBXHeaderVO vo){

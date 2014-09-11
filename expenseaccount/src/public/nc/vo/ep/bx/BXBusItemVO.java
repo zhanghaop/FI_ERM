@@ -2,12 +2,15 @@ package nc.vo.ep.bx;
 
 import java.util.ArrayList;
 
+import nc.vo.pub.BeanHelper;
+import nc.vo.pub.IVOMeta;
 import nc.vo.pub.NullFieldException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pubapp.pattern.model.meta.entity.vo.VOMetaFactory;
 
 /**
  * 借款报销表体业务信息VO
@@ -80,7 +83,7 @@ public class BXBusItemVO extends SuperVO {
 	 * 来源类型，默认为费用申请单
 	 */
 	public static final String SRCTYPE = "srctype";
-
+	
 	private String pk_resacostcenter;// 成本中心
 	private String pk_checkele; // 核算要素
 	private String pk_pcorg; // 利润中心
@@ -99,6 +102,11 @@ public class BXBusItemVO extends SuperVO {
 	private String freecust ; //散户
 	private String freeaccount;//散户银行帐户
 	private String fctno;//合同号
+	
+	// CRM使用，用来控制生成的申请单
+	private java.lang.String pk_crmdetail;
+	
+	public static final String PK_CRMDETAIL = "pk_crmdetail";
 	
 	public String getFctno(){
 		return fctno;
@@ -187,14 +195,6 @@ public class BXBusItemVO extends SuperVO {
 	public void setDeptid(String deptid) {
 		this.deptid = deptid;
 	}
-
-//	public String getBxr() {
-//		return bxr;
-//	}
-//
-//	public void setBxr(String bxr) {
-//		this.bxr = bxr;
-//	}
 
 	public String getPk_bxcontrast() {
 		return pk_bxcontrast;
@@ -675,18 +675,6 @@ public class BXBusItemVO extends SuperVO {
 	 */
 	public void setGroupcjkbbje(UFDouble newGroupcjkbbje) {
 		this.groupcjkbbje = newGroupcjkbbje;
-	}
-
-	@Override
-	public Object getAttributeValue(String key) {
-		// 如果包含结算信息字段，从结算vo中取值
-		if (key.startsWith(SETTLE_BODY_PREFIX)) {
-			if (getSettleBodyVO() != null && key.indexOf(SETTLE_BODY_PREFIX) == 0) {
-				String atrr = key.substring(key.indexOf(SETTLE_BODY_PREFIX) + SETTLE_BODY_PREFIX.length());
-				return getSettleBodyVO().getAttributeValue(atrr);
-			}
-		}
-		return super.getAttributeValue(key);
 	}
 
 	// ---------------------------------end by chendya
@@ -2295,6 +2283,41 @@ public class BXBusItemVO extends SuperVO {
 	public static java.lang.String getDefaultTableName() {
 		return "er_busitem";
 	}
+	
+	@Override
+    public IVOMeta getMetaData() {
+      IVOMeta meta = VOMetaFactory.getInstance().getVOMeta("erm.er_busitem"); 
+      return meta;
+    }
+	
+	@Override
+	public void setAttributeValue(String name, Object value) {
+		if (BeanHelper.getMethod(this, name) != null) {
+			BeanHelper.setProperty(this, name, value);
+		} else {
+			super.setAttributeValue(name, value);
+		}
+	}
+	
+	@Override
+	public Object getAttributeValue(String key) {
+		// 如果包含结算信息字段，从结算vo中取值
+		if (key.startsWith(SETTLE_BODY_PREFIX)) {
+			if (getSettleBodyVO() != null && key.indexOf(SETTLE_BODY_PREFIX) == 0) {
+				String atrr = key.substring(key.indexOf(SETTLE_BODY_PREFIX) + SETTLE_BODY_PREFIX.length());
+				return getSettleBodyVO().getAttributeValue(atrr);
+			}
+		}
+		
+		Object result = null;
+		if(BeanHelper.getMethod(this, key) != null){
+			result = BeanHelper.getProperty(this, key);
+		}else{
+			result = super.getAttributeValue(key);
+		}
+		
+		return result;
+	}
 
 	/**
 	 * 按照默认方式创建构造子.
@@ -2508,4 +2531,11 @@ public class BXBusItemVO extends SuperVO {
 		this.pk_mtapp_detail = pk_mtapp_detail;
 	}
 
+	public java.lang.String getPk_crmdetail() {
+		return pk_crmdetail;
+	}
+
+	public void setPk_crmdetail(java.lang.String pk_crmdetail) {
+		this.pk_crmdetail = pk_crmdetail;
+	}
 }

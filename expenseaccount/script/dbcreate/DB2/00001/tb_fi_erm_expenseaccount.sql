@@ -277,6 +277,10 @@ pk_billtype varchar(20) null
 /*单据类型*/,
 isexpedited char(1) null 
 /*紧急*/,
+pk_matters varchar(20) null default '~' 
+/*营销事项*/,
+pk_campaign varchar(20) null default '~' 
+/*营销活动*/,
  constraint pk_er_jkzb primary key (pk_jkbx),
  ts char(19) null,
 dr smallint null default 0
@@ -557,6 +561,8 @@ deptid varchar(20) null
 /*报销人部门*/,
 fctno varchar(20) null 
 /*合同号*/,
+pk_crmdetail varchar(20) null default '~' 
+/*pk_crmdetail*/,
  constraint pk_er_busitem primary key (pk_busitem),
  ts char(19) null,
 dr smallint null default 0
@@ -846,6 +852,10 @@ pk_billtype varchar(20) null
 /*单据类型*/,
 isexpedited char(1) null 
 /*紧急*/,
+pk_matters varchar(20) null default '~' 
+/*营销事项*/,
+pk_campaign varchar(20) null default '~' 
+/*营销活动*/,
  constraint pk_er_bxzb primary key (pk_jkbx),
  ts char(19) null,
 dr smallint null default 0

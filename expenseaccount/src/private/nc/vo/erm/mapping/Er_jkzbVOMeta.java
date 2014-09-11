@@ -168,6 +168,8 @@ public class Er_jkzbVOMeta extends ArapBaseMappingMeta {
 				"srctype",/*来源单据类型*/
 				"ismashare",/*是否拉分摊申请单标志*/
 				"vouchertag",/*凭证标志*/
+				"pk_matters",/*营销事项*/
+				"pk_campaign",/*营销活动*/
 				
 				/*635共享服务加入影像*/
 				"imag_status",/*影像状态*/
@@ -323,7 +325,9 @@ public class Er_jkzbVOMeta extends ArapBaseMappingMeta {
 		TYPE_STRING,/*来源单据类型*/
 		TYPE_BOOLEAN,/*是否拉分摊申请单标志*/
 		TYPE_INT,/*凭证标志 */
-		
+		TYPE_STRING,/*营销事项*/
+		TYPE_STRING,/*营销活动*/
+
 		/*635共享服务加入影像*/	
 		TYPE_STRING,/*影像状态*/
 		TYPE_BOOLEAN,/*是否影像扫描*/
