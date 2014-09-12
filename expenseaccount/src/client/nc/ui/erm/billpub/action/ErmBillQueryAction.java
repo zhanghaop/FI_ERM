@@ -11,7 +11,9 @@ import nc.ui.querytemplate.filter.IFilter;
 import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.ui.querytemplate.value.IFieldValueElement;
 import nc.ui.uif2.AppEvent;
+import nc.ui.uif2.actions.DefaultQueryDelegator;
 import nc.ui.uif2.actions.QueryAction;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.dj.ERMDjCondVO;
 import nc.vo.querytemplate.queryscheme.SimpleQuerySchemeVO;
 
@@ -47,19 +49,31 @@ public class ErmBillQueryAction extends QueryAction {
 
 	@Override
 	protected IQueryConditionDLG getQueryCoinditionDLG() {
-		IQueryConditionDLG queryConditionDLG = super.getQueryCoinditionDLG();
+		IQueryConditionDLG queryConditionDLG = null;
+		
+		if(getQueryDelegator() instanceof DefaultQueryDelegator) {
+			queryConditionDLG = ((DefaultQueryDelegator) getQueryDelegator()).getIQueryDlg();
+			queryConditionDLG.getQryCondEditor().getQueryContext().setReloadQuickAreaValue(isReloadQuickAreaValue());
+			
+			//单据查询/管理/月末凭证自定义查询条件处理
+			String nodeCode = getModel().getContext().getNodeCode();
+			if(BXConstans.BXMNG_NODECODE.equals(nodeCode) || BXConstans.BXBILL_QUERY.equals(nodeCode)
+					|| BXConstans.MONTHEND_DEAL.equals(nodeCode)){
+				queryConditionDLG.getQryCondEditor().setDefQCVOProcessor(new ErmBxDefQCVOProcessor(queryConditionDLG.getTempInfo()));
+			}
+		} 
 
 		// 第一次调用时注册监听
 		if (isFirstCall) {
-			queryConditionDLG
-					.registerCriteriaEditorListener(new ErmBillCriteriaChangedListener(
-							getModel()));
+			queryConditionDLG.registerCriteriaEditorListener(new ErmBillCriteriaChangedListener(getModel()));
+			
+			
 			isFirstCall = false;
 		}
 		
 		return queryConditionDLG;
 	}
-
+	
 	@Override
 	public void handleEvent(AppEvent event) {
 		if (ERMBillManageModel.QueryScheme_CHANGED.equals(event.getType())) {
