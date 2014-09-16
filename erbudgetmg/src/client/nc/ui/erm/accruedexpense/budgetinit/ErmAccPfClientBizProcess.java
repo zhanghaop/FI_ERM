@@ -26,6 +26,9 @@ public class ErmAccPfClientBizProcess implements IPFClientBizProcess {
 	private String budgetControl_id = "isBudgetControl";
 	private String budgetControl_name = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0","02011002-0054")/*@res "是否控制预算"*/;
 	
+	private String isWorkFlowFinalNode_id = "isWorkFlowFinalNode";
+	private String isWorkFlowFinalNode_name = "是否流程最后环节(y/n)";
+	
 	@SuppressWarnings("unchecked")
 	public PFClientBizRetObj execute(Container parent, PfClientBizProcessContext context) {
 		PFClientBizRetObj result = new PFClientBizRetObj();
@@ -103,6 +106,8 @@ public class ErmAccPfClientBizProcess implements IPFClientBizProcess {
 
 	public DataField[] getApplicationArgs() {
 		List<DataField> dataFieldList = new ArrayList<DataField>();
+		
+		dataFieldList.add(new DataField(isWorkFlowFinalNode_id, isWorkFlowFinalNode_name, BasicType.BOOLEAN));
 		//判断预算产品是否启用
 		boolean istbbused = ErUtil.isProductTbbInstalled(BXConstans.TBB_FUNCODE);
 		if(istbbused){
