@@ -261,7 +261,7 @@ public class BodyEventHandleUtil {
 	 * @return
 	 */
 	public String getUserdefine(int pos, String key, int def) {
-		return BXUiUtil.getUserdefine(pos, key, def, getBillCardPanel());
+		return BXUiUtil.getUserdefine(pos, key, def, getBillCardPanel(),getBillCardPanel().getCurrentBodyTableCode());
 	}
 	
 	/**

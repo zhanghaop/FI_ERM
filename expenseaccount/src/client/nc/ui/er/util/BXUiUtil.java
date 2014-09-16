@@ -62,18 +62,6 @@ public class BXUiUtil {
 	 */
 	public static String getDjlxNameMultiLang(String djlxbm) {
 		return ErUiUtil.getDjlxNameMultiLang(djlxbm);
-//		String strByID = null;
-//		if (djlxbm != null) {
-//			String billtypecode = djlxbm;
-//			// 自定义的也处理
-//			String resId = "D" + billtypecode;
-//			strByID = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("billtype", resId);
-//
-//			if (resId.equals(strByID)) {// 多语内容取不到，说明是自定义的，且没设置多语，取默认的name
-//				strByID = PfDataCache.getBillTypeInfo(billtypecode).getBilltypenameOfCurrLang();
-//			}
-//		}
-//		return strByID;
 	}
 
 	/**
@@ -824,12 +812,14 @@ public class BXUiUtil {
 		}
 		if (null != defItems && defItems.length > 0) {
 			for (String key : defItems) {
-				String userdefine = getUserdefine(IBillItem.BODY, key, 1 ,panel);
-				//数量的自定义字段,不重新设置精度
-				if(userdefine !=null && BXConstans.DEFITEM_MOUNT.equals(userdefine)){
-					continue;
-				}
+
 				if (null != key) {
+					String userdefine = getUserdefine(IBillItem.BODY, key, 1, panel, tableCode);
+					// 数量的自定义字段,不重新设置精度
+					if (userdefine != null && BXConstans.DEFITEM_MOUNT.equals(userdefine)) {
+						continue;
+					}
+
 					if (panel.getBodyItem(tableCode, key) != null) {
 						panel.getBodyItem(tableCode, key).setDecimalDigits(decimalDigits);
 						BillModel model = panel.getBillModel(tableCode);
@@ -853,23 +843,29 @@ public class BXUiUtil {
 	 * 用户自定义
 	 * 
 	 * @param pos
+	 *            int HEAD = 0; // 表头 int BODY = 1; // 表体 int TAIL = 2; // 表尾
 	 * @param key
+	 *            字段key
 	 * @param def
+	 *            自定义属性索引
+	 * @param panel
+	 *            卡片panel
+	 * @param tablecode
+	 *            页签CODE
 	 * @return
 	 */
-	public static String getUserdefine(int pos, String key, int def,BillCardPanel panel) {
+	public static String getUserdefine(int pos, String key, int def, BillCardPanel panel, String tablecode) {
 		if (panel.getBillData().getBillTempletVO() == null
-				|| panel.getBillData().getBillTempletVO()
-						.getChildrenVO() == null) {
+				|| panel.getBillData().getBillTempletVO().getChildrenVO() == null) {
 			return null;
 		}
-		BillTempletBodyVO[] tbodyvos = (BillTempletBodyVO[]) panel
-				.getBillData().getBillTempletVO().getChildrenVO();
+		
+		//单据模板字表VO _b
+		BillTempletBodyVO[] tbodyvos = (BillTempletBodyVO[]) panel.getBillData().getBillTempletVO().getChildrenVO();
+		
 		for (BillTempletBodyVO bodyvo : tbodyvos) {
-			if((pos==0 && bodyvo.getItemkey().equals(key))
-					||
-					(bodyvo.getPos() == pos && bodyvo.getItemkey().equals(key)
-					&& bodyvo.getTableCode().equals(panel.getCurrentBodyTableCode()))){
+			// 表头不可重复，表体页签间可以重复
+			if (bodyvo.getPos() == pos && bodyvo.getItemkey().equals(key) && (pos == IBillItem.HEAD || pos == IBillItem.TAIL || bodyvo.getTableCode().equals(tablecode))) {
 				if (def == 1)
 					return bodyvo.getUserdefine1();
 				else if (def == 2)
