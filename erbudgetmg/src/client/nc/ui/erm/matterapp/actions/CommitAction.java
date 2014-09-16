@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.matterapp.check.VOStatusChecker;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.pf.PfUtilClient;
@@ -21,7 +22,6 @@ import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
-import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.trade.pub.IBillStatus;
 
 /**
@@ -94,7 +94,8 @@ public class CommitAction extends NCAction {
 	private MessageVO commitSingle(AggMatterAppVO appVO) throws Exception {
 		MessageVO result = null;
 		try {
-			Object obj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), IPFActionName.SAVE, appVO
+			String actionType = ErUtil.getCommitActionCode(appVO.getParentVO().getPk_org());
+			Object obj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), actionType, appVO
 					.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
 			if (obj == null) {
 				result = new MessageVO(appVO, ActionUtils.COMMIT);

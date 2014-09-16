@@ -39,6 +39,7 @@ import nc.vo.pub.rs.MemoryResultSet;
 import nc.vo.sm.install.ProductVersionVO;
 import nc.vo.trade.billsource.LightBillVO;
 import nc.vo.wfengine.core.data.DataField;
+import nc.vo.wfengine.definition.WorkflowTypeEnum;
 
 public class ErUtil {
 	/**
@@ -302,7 +303,31 @@ public class ErUtil {
 	}
 	
 	/**
-	 * 获取动作脚本类型
+	 * 获取审批动作code
+	 * 
+	 * @see IPFActionName.APPROVE
+	 * @see IPFActionName.SIGNAL
+	 * @param pk_org
+	 * @return
+	 */
+	public static String getApproveActionCode(String pk_org) {
+		String actionCode = IPFActionName.APPROVE;
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (paraString != null && BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {// 借款报销单位
+				actionCode = IPFActionName.SIGNAL;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
+	}
+	
+	/**
+	 * 获取反审动作脚本类型
+	 * 
+	 * @see IPFActionName.UNAPPROVE
+	 * @see IPFActionName.ROLLBACK
 	 * @param pk_org
 	 * @return
 	 */
@@ -320,10 +345,54 @@ public class ErUtil {
 	}
 	
 	/**
+	 * 获取提交动作脚本类型
+	 * 
+	 * @see IPFActionName.SAVE
+	 * @see IPFActionName.START
+	 * @param pk_org
+	 * @return
+	 */
+	public static String getCommitActionCode(String pk_org) {
+		String actionCode = IPFActionName.SAVE;
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				actionCode = IPFActionName.START;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
+	}
+	
+	/**
+	 * 获取收回动作脚本类型
+	 * 
+	 * @see IPFActionName.UNSAVE
+	 * @see IPFActionName.RECALL
+	 * @param pk_org
+	 * @return
+	 */
+	public static String getUnCommitActionCode(String pk_org) {
+		String actionCode = IPFActionName.UNSAVE;
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				actionCode = IPFActionName.RECALL;
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return actionCode;
+	}
+	
+	/**
 	 * 是否流程最后环节
+	 * 动作脚本中判断工作流时，是否需要生成凭证
 	 * @param vo
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static boolean isWorkFlowFinalNode(PfParameterVO vo) {
 		if(vo.m_workFlow == null){
 			return false;
@@ -346,17 +415,39 @@ public class ErUtil {
 	}
 	
 	/**
-	 * 是否流程最后环节
+	 * 组织是否启用工作流
+	 * 
 	 * @param vo
 	 * @return
-	 * @throws BusinessException 
+	 * @throws BusinessException
 	 */
 	public static boolean isUseWorkFlow(String pk_org) throws BusinessException {
 		String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
 		if (paraString == null || BXParamConstant.ER_FLOW_TYPE_APPROVEFLOW.equals(paraString)) {
 			return false;
 		}
-		
+
 		return true;
+	}
+	
+	/**
+	 * 获取流程类型 工作流/审批流 联查审批流时使用
+	 * 
+	 * @see WorkflowTypeEnum.Approveflow
+	 * @see WorkflowTypeEnum.Workflow
+	 * @param pk_org
+	 * @return
+	 */
+	public static int getWorkFlowType(String pk_org) {
+		int flowtype = WorkflowTypeEnum.Approveflow.getIntValue();
+		try {
+			String paraString = SysInitQuery.getParaString(pk_org, BXParamConstant.ER_FLOW_TYPE);
+			if (BXParamConstant.ER_FLOW_TYPE_WORKFLOW.equals(paraString)) {
+				flowtype = WorkflowTypeEnum.Workflow.getIntValue();
+			}
+		} catch (BusinessException e) {
+			ExceptionHandler.consume(e);
+		}
+		return flowtype;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.matterapp.check.VOStatusChecker;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.pf.PfUtilClient;
@@ -105,8 +106,9 @@ public class RecallAction extends NCAction {
 	private MessageVO recallSingle(AggMatterAppVO appVO) throws Exception {
 		MessageVO result = null;
 		try {
+			String actionType = ErUtil.getUnCommitActionCode(appVO.getParentVO().getPk_org());
 			AggMatterAppVO[] vos = (AggMatterAppVO[]) PfUtilClient.runAction(getModel().getContext().getEntranceUI(),
-					IPFActionName.UNSAVE, appVO.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
+					actionType, appVO.getParentVO().getPk_tradetype(), appVO, null, null, null, null);
 			result = new MessageVO(vos[0], ActionUtils.RECALL);
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);

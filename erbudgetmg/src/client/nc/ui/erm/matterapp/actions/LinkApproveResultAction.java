@@ -2,6 +2,7 @@ package nc.ui.erm.matterapp.actions;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.action.ErmActionConst;
 import nc.ui.pub.workflownote.FlowStateDlg;
 import nc.ui.uif2.DefaultExceptionHanler;
@@ -9,7 +10,6 @@ import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.erm.matterapp.AggMatterAppVO;
-import nc.vo.wfengine.definition.WorkflowTypeEnum;
 
 /**
  * @author chenshuaia
@@ -36,7 +36,8 @@ public class LinkApproveResultAction extends NCAction {
 		String pk_jkbx = selectvo.getParentVO().getPk_mtapp_bill();
 		String djlxbm = selectvo.getParentVO().getPk_tradetype();
 
-		FlowStateDlg app = new FlowStateDlg(getModel().getContext().getEntranceUI(), djlxbm, pk_jkbx, WorkflowTypeEnum.Approveflow.getIntValue());
+		FlowStateDlg app = new FlowStateDlg(getModel().getContext().getEntranceUI(), djlxbm, pk_jkbx, 
+				ErUtil.getWorkFlowType(selectvo.getParentVO().getPk_org()));
 		app.showModal();
 	}
 	

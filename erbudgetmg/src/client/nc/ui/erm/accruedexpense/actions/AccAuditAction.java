@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.ml.NCLangResOnserver;
 import nc.itf.uap.pf.metadata.IFlowBizItf;
 import nc.md.data.access.NCObject;
@@ -33,7 +34,7 @@ public class AccAuditAction extends ErmAuditAction {
 	protected MessageVO approveSingle(AggregatedValueObject aggvo) throws Exception {
 		AggAccruedBillVO accbillvo = (AggAccruedBillVO) aggvo;
 		MessageVO result = null;
-		String actionName = getActionCode(accbillvo.getParentVO().getPk_org());
+		String actionName = ErUtil.getApproveActionCode(accbillvo.getParentVO().getPk_org());
 		try {
 			Object returnObj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), actionName, accbillvo
 					.getParentVO().getPk_tradetype(), aggvo, null, null, null, null);

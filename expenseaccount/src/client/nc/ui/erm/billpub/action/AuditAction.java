@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.logging.Logger;
 import nc.bs.ml.NCLangResOnserver;
 import nc.desktop.ui.WorkbenchEnvironment;
@@ -175,7 +176,7 @@ public class AuditAction extends ErmAuditAction {
 		JKBXHeaderVO head = bxvo.getParentVO();
 		MessageVO result = null;
 		
-		String actionName = getActionCode(head.getPk_org());
+		String actionName = ErUtil.getApproveActionCode(head.getPk_org());
 		try {
 			// 审核动作处理
 			Object msgReturn = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), actionName

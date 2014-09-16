@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.accruedexpense.check.AccruedBillVOStatusChecker;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.pf.PfUtilClient;
@@ -19,7 +20,6 @@ import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
-import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.trade.pub.IBillStatus;
 
 public class AccRecallAction extends NCAction {
@@ -75,8 +75,9 @@ public class AccRecallAction extends NCAction {
 	private MessageVO recallSingle(AggAccruedBillVO aggvo) {
 		MessageVO result = null;
 		try {
+			String actionType = ErUtil.getUnCommitActionCode(aggvo.getParentVO().getPk_org());
 			AggAccruedBillVO[] vos = (AggAccruedBillVO[]) PfUtilClient.runAction(getModel().getContext().getEntranceUI(),
-					IPFActionName.UNSAVE, aggvo.getParentVO().getPk_tradetype(), aggvo, null, null, null, null);
+					actionType, aggvo.getParentVO().getPk_tradetype(), aggvo, null, null, null, null);
 			result = new MessageVO(vos[0], ActionUtils.RECALL);
 		} catch (Exception e) {
 			ExceptionHandler.consume(e);

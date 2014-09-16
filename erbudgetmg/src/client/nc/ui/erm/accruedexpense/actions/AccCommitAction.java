@@ -6,6 +6,7 @@ import java.util.List;
 
 import nc.bs.erm.accruedexpense.check.AccruedBillVOStatusChecker;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.pf.PfUtilClient;
@@ -21,7 +22,6 @@ import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.trade.pub.IBillStatus;
 
 /**
@@ -83,7 +83,8 @@ public class AccCommitAction extends NCAction {
 	private MessageVO commitSingle(AggAccruedBillVO aggvo) throws BusinessException {
 		MessageVO result = null;
 		try {
-			Object obj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), IPFActionName.SAVE, aggvo
+			String actionType = ErUtil.getCommitActionCode(aggvo.getParentVO().getPk_org());
+			Object obj = PfUtilClient.runAction(getModel().getContext().getEntranceUI(), actionType, aggvo
 					.getParentVO().getPk_tradetype(), aggvo, null, null, null, null);
 			if (obj == null) {
 				result = new MessageVO(aggvo, ActionUtils.COMMIT);
