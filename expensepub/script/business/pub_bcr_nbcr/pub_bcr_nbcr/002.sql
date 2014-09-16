@@ -1,12 +1,3 @@
-insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001G96X','pk_org',0,'2cfe13c5-9757-4ae8-9327-f5c2d34bcb46','1001Z31000000001G96T','2014-01-20 14:27:11')
-go
-
-insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001G96V','operator_dept',0,'b26fa3cb-4087-4027-a3b6-c83ab2a086a9','1001Z31000000001G96T','2014-01-20 14:26:52')
-go
-
-insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001G96W','operator_org',0,'a0ec952c-e4e5-416a-b3e0-d402725f76be','1001Z31000000001G96T','2014-01-20 14:26:55')
-go
-
 insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000DHFE','bx_pcorg',0,'5461ada1-ef2a-419a-af14-656cf0641d34','1001Z31000000000DHFC','2012-08-03 11:15:09')
 go
 
@@ -34,16 +25,25 @@ go
 insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000DHFM','dwbm',0,'a0ec952c-e4e5-416a-b3e0-d402725f76be','1001Z31000000000DHFC','2014-04-29 09:53:18')
 go
 
-insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000E6PN','pk_org',0,'2cfe13c5-9757-4ae8-9327-f5c2d34bcb46','1001Z31000000000E6ON','2012-08-09 09:41:07')
-go
-
 insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000E6PL','apply_dept',0,'b26fa3cb-4087-4027-a3b6-c83ab2a086a9','1001Z31000000000E6ON','2012-08-09 09:40:03')
 go
 
 insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000E6PM','apply_org',0,'a0ec952c-e4e5-416a-b3e0-d402725f76be','1001Z31000000000E6ON','2014-04-29 09:53:18')
 go
 
+insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000E6PN','pk_org',0,'2cfe13c5-9757-4ae8-9327-f5c2d34bcb46','1001Z31000000000E6ON','2012-08-09 09:41:07')
+go
+
 insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000000F6CP','effectstate',0,'f61cd296-3d55-4b1d-8428-bda54ae64d6a','1001Z31000000000DHFC','2012-08-15 10:24:39')
+go
+
+insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001G96V','operator_dept',0,'b26fa3cb-4087-4027-a3b6-c83ab2a086a9','1001Z31000000001G96T','2014-01-20 14:26:52')
+go
+
+insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001G96W','operator_org',0,'a0ec952c-e4e5-416a-b3e0-d402725f76be','1001Z31000000001G96T','2014-01-20 14:26:55')
+go
+
+insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001G96X','pk_org',0,'2cfe13c5-9757-4ae8-9327-f5c2d34bcb46','1001Z31000000001G96T','2014-01-20 14:27:11')
 go
 
 insert into pub_bcr_candiattr(pk_billcodeentityrela,candidate,dr,entitymetaid,pk_nbcr,ts) values('1001Z31000000001KRZG','fydeptid',0,'b26fa3cb-4087-4027-a3b6-c83ab2a086a9','2011Z3M000000000263X','2012-03-01 16:10:01')

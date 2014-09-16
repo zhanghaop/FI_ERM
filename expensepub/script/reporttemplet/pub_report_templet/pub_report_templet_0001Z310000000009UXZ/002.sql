@@ -1,10 +1,10 @@
+insert into pub_report_model(pk_model,col_expressions,column_code,column_system,column_type,column_user,column_width,data_type,dr,group_order,idcolname,if_default,if_must,if_no,if_sum,is_thmark,item_order,node_code,order_order,order_type,pk_corp,pk_templet,report_pos,resid_system,resid_user,select_type,ts,userdefflag) values('0001Z310000000009UY0',null,'headcorp','公司',0,'公司',1,0,0,null,null,'Y','N','N',null,null,1,'20111ELA',null,null,'@@@@','0001Z310000000009UXZ',0,'UPTcommon-0100119','UPTcommon-0100119',1,'2014-01-07 09:09:16',null)
+go
+
 insert into pub_report_model(pk_model,col_expressions,column_code,column_system,column_type,column_user,column_width,data_type,dr,group_order,idcolname,if_default,if_must,if_no,if_sum,is_thmark,item_order,node_code,order_order,order_type,pk_corp,pk_templet,report_pos,resid_system,resid_user,select_type,ts,userdefflag) values('0001Z310000000009UY1',null,'qryobj0','查询对象0',0,'查询对象0',1,0,0,null,null,'Y','N','N',null,null,2,'20111ELA',null,null,'@@@@','0001Z310000000009UXZ',0,'UPTcommon-0100498','UPTcommon-0100498',1,'2014-01-07 09:09:16',null)
 go
 
 insert into pub_report_model(pk_model,col_expressions,column_code,column_system,column_type,column_user,column_width,data_type,dr,group_order,idcolname,if_default,if_must,if_no,if_sum,is_thmark,item_order,node_code,order_order,order_type,pk_corp,pk_templet,report_pos,resid_system,resid_user,select_type,ts,userdefflag) values('0001Z310000000009UY2',null,'qryobj1','查询对象1',0,'查询对象1',1,0,0,null,null,'Y','N','N',null,null,3,'20111ELA',null,null,'@@@@','0001Z310000000009UXZ',0,'UPTcommon-0100499','UPTcommon-0100499',1,'2014-01-07 09:09:16',null)
-go
-
-insert into pub_report_model(pk_model,col_expressions,column_code,column_system,column_type,column_user,column_width,data_type,dr,group_order,idcolname,if_default,if_must,if_no,if_sum,is_thmark,item_order,node_code,order_order,order_type,pk_corp,pk_templet,report_pos,resid_system,resid_user,select_type,ts,userdefflag) values('0001Z310000000009UY0',null,'headcorp','公司',0,'公司',1,0,0,null,null,'Y','N','N',null,null,1,'20111ELA',null,null,'@@@@','0001Z310000000009UXZ',0,'UPTcommon-0100119','UPTcommon-0100119',1,'2014-01-07 09:09:16',null)
 go
 
 insert into pub_report_model(pk_model,col_expressions,column_code,column_system,column_type,column_user,column_width,data_type,dr,group_order,idcolname,if_default,if_must,if_no,if_sum,is_thmark,item_order,node_code,order_order,order_type,pk_corp,pk_templet,report_pos,resid_system,resid_user,select_type,ts,userdefflag) values('0001Z310000000009UY3',null,'qryobj2','查询对象2',0,'查询对象2',1,0,0,null,null,'Y','N','N',null,null,4,'20111ELA',null,null,'@@@@','0001Z310000000009UXZ',0,'UPTcommon-0100500','UPTcommon-0100500',1,'2014-01-07 09:09:16',null)

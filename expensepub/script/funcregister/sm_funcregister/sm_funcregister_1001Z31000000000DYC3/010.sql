@@ -1,15 +1,3 @@
-insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PTL',0,'1001Z31000000000A633','1001Z31000000000A5FR','2014-04-29 09:52:21')
-go
-
-insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PTM',0,'1001Z31000000000A633','1001Z31000000000A5FS','2014-04-29 09:52:21')
-go
-
-insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PTN',0,'1001Z31000000000A633','1001Z310000000003X8H','2014-04-29 09:52:21')
-go
-
-insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000A5HY',0,'1001Z31000000000A639','1001Z31000000000A5FT','2014-04-29 09:52:21')
-go
-
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000003X8L',0,'1001Z31000000000A63R','1001Z31000000000A5FA','2014-04-29 09:52:20')
 go
 
@@ -29,6 +17,18 @@ insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1
 go
 
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000003X8R',0,'1001Z31000000000A63R','1001Z310000000003X8I','2014-04-29 09:52:20')
+go
+
+insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PTL',0,'1001Z31000000000A633','1001Z31000000000A5FR','2014-04-29 09:52:21')
+go
+
+insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PTM',0,'1001Z31000000000A633','1001Z31000000000A5FS','2014-04-29 09:52:21')
+go
+
+insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PTN',0,'1001Z31000000000A633','1001Z310000000003X8H','2014-04-29 09:52:21')
+go
+
+insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000A5HY',0,'1001Z31000000000A639','1001Z31000000000A5FT','2014-04-29 09:52:21')
 go
 
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000G859',0,'1001Z31000000000A63U','1001Z31000000000E5T5','2014-04-29 09:52:21')

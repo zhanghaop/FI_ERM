@@ -10,9 +10,6 @@ go
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000J0F6',0,'1001Z31000000000J0F1','1001Z310000000023XT7','2014-04-29 09:52:20')
 go
 
-insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000J0FB',0,'1001Z31000000000J0F1','1001Z310000000023XT3','2014-04-29 09:52:20')
-go
-
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000J0F7',0,'1001Z31000000000J0F2','1001Z310000000023XT2','2014-04-29 09:52:20')
 go
 
@@ -23,5 +20,8 @@ insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1
 go
 
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000J0FA',0,'1001Z31000000000J0F2','1001Z310000000023XT3','2014-04-29 09:52:20')
+go
+
+insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z31000000000J0FB',0,'1001Z31000000000J0F1','1001Z310000000023XT3','2014-04-29 09:52:20')
 go
 

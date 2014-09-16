@@ -1,9 +1,3 @@
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002HTT0','Refresh','刷新(F5)','刷新',0,0,'N','Y','N','1001Z3100000000091NL','butn00113','2014-04-29 09:52:17')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002HTT4','Print','打印(Ctrl+P)','打印',0,0,'N','Y','N','1001Z3100000000091NL',null,'2014-04-29 09:52:17')
-go
-
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000007BW3','Amt',null,'摊销',0,0,'Y','Y','N','1001Z3100000000091NL',null,'2014-04-29 09:52:17')
 go
 
@@ -23,5 +17,11 @@ insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbut
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000007BW9','PrintList',null,'打印列表',0,0,'Y','Y','N','1001Z3100000000091NL',null,'2014-04-29 09:52:17')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002HTT0','Refresh','刷新(F5)','刷新',0,0,'N','Y','N','1001Z3100000000091NL','butn00113','2014-04-29 09:52:17')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002HTT4','Print','打印(Ctrl+P)','打印',0,0,'N','Y','N','1001Z3100000000091NL',null,'2014-04-29 09:52:17')
 go
 

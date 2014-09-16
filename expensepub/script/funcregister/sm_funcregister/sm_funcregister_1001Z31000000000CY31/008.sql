@@ -1,3 +1,6 @@
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000CY39','FreePubPrint',null,'打印',0,0,'Y','Y',null,'1001Z31000000000CY31',null,'2014-04-29 09:52:17')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000CY3A','FreePubPrintPre',null,'打印预览',0,0,'Y','Y',null,'1001Z31000000000CY31',null,'2014-04-29 09:52:17')
 go
 
@@ -26,8 +29,5 @@ insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbut
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000CY3T','btn_drill','穿透','0201008v6-0064',0,0,'Y','Y',null,'1001Z31000000000CY31',null,'2014-04-29 09:52:17')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000CY39','FreePubPrint',null,'打印',0,0,'Y','Y',null,'1001Z31000000000CY31',null,'2014-04-29 09:52:17')
 go
 

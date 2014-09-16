@@ -61,9 +61,6 @@ go
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000E9X0',null,'~',0,'$jk_busitem.pk_checkele',null,'~','263X','1001Z31000000000E9P5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z3100000000E9PL',null,'~',0,'$er_busitem.pk_checkele',null,'~','264X','1001Z31000000000E9P5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000E9X1',null,'~',0,'$csharedetail.pk_checkele',null,'~','265X','1001Z31000000000E9P5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
@@ -76,9 +73,6 @@ go
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000E9X4',null,'~',0,'$amtdetails.assume_org',null,'~','266X','0001Z31000000000HIA8','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000EX5',null,'~',0,'$amtdetails.pk_checkele',null,'~','266X','1001Z31000000000E9P5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000E9X6',null,'~',0,'$amtdetails.jobid',null,'~','266X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
@@ -86,6 +80,27 @@ insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,mod
 go
 
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000E9X8',null,'~',0,'$amtdetails.hbbm',null,'~','266X','0001Z31000000000HIAB','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000EX5',null,'~',0,'$amtdetails.pk_checkele',null,'~','266X','1001Z31000000000E9P5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN6',null,'~',0,'$amtdetails.pk_iobsclass',null,'~','266X','0001Z31000000000HIA5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN7',null,'~',0,'$amtdetails.jobid',null,'~','266X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN8',null,'~',0,'$amtdetails.pk_resacostcenter',null,'~','266X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN9',null,'~',0,'$amtdetails.hbbm',null,'~','266X','0001Z31000000000HIAB','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUNA',null,'~',0,'$amtdetails.assume_dept',null,'~','266X','0001Z31000000000HIA2','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUNB',null,'~',0,'$bzbm',null,'~','266X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z3100000000291GH',null,'~',0,'$accrued_detail.assume_org',null,'~','262X','0001Z31000000000HIA8','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
@@ -121,22 +136,28 @@ go
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z3100000000291GR',null,'~',0,'$pk_currtype',null,'~','262X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E1',null,'~',0,'$er_busitem.paytarget',null,'~','264X','1001Z31000000000E9P1','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z3100000000E9PL',null,'~',0,'$er_busitem.pk_checkele',null,'~','264X','1001Z31000000000E9P5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E2',null,'~',0,'$er_busitem.receiver',null,'~','264X','1001Z31000000000E9P2','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJA',null,'~',0,'$csharedetail.assume_org',null,'~','265X','0001Z31000000000HIA8','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E3',null,'~',0,'$er_busitem.hbbm',null,'~','264X','1001Z31000000000E9P3','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJB',null,'~',0,'$csharedetail.assume_dept',null,'~','265X','0001Z31000000000HIA2','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E4',null,'~',0,'$er_busitem.customer',null,'~','264X','1001Z31000000000E8P4','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJC',null,'~',0,'$csharedetail.pk_iobsclass',null,'~','265X','0001Z31000000000HIA5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006BZ',null,'~',0,'$jk_busitem.pk_resacostcenter',null,'~','263X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJD',null,'~',0,'$csharedetail.pk_resacostcenter',null,'~','265X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006DE',null,'~',0,'$er_busitem.pk_resacostcenter',null,'~','264X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJE',null,'~',0,'$bzbm',null,'~','265X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJF',null,'~',0,'$csharedetail.jobid',null,'~','265X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJG',null,'~',0,'$csharedetail.hbbm',null,'~','265X','0001Z31000000000HIAB','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006BM',null,'~',0,'@bzbm',null,'~','263X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
@@ -178,6 +199,9 @@ go
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006BY',null,'~',0,'$jk_busitem.jobid',null,'~','263X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006BZ',null,'~',0,'$jk_busitem.pk_resacostcenter',null,'~','263X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+go
+
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006D1',null,'~',0,'@bzbm',null,'~','264X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
@@ -217,42 +241,18 @@ go
 insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006DD',null,'~',0,'$er_busitem.jobid',null,'~','264X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJA',null,'~',0,'$csharedetail.assume_org',null,'~','265X','0001Z31000000000HIA8','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006DE',null,'~',0,'$er_busitem.pk_resacostcenter',null,'~','264X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJB',null,'~',0,'$csharedetail.assume_dept',null,'~','265X','0001Z31000000000HIA2','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E1',null,'~',0,'$er_busitem.paytarget',null,'~','264X','1001Z31000000000E9P1','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJC',null,'~',0,'$csharedetail.pk_iobsclass',null,'~','265X','0001Z31000000000HIA5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E2',null,'~',0,'$er_busitem.receiver',null,'~','264X','1001Z31000000000E9P2','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJD',null,'~',0,'$csharedetail.pk_resacostcenter',null,'~','265X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E3',null,'~',0,'$er_busitem.hbbm',null,'~','264X','1001Z31000000000E9P3','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJE',null,'~',0,'$bzbm',null,'~','265X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJF',null,'~',0,'$csharedetail.jobid',null,'~','265X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000265RJJG',null,'~',0,'$csharedetail.hbbm',null,'~','265X','0001Z31000000000HIAB','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUNA',null,'~',0,'$amtdetails.assume_dept',null,'~','266X','0001Z31000000000HIA2','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN6',null,'~',0,'$amtdetails.pk_iobsclass',null,'~','266X','0001Z31000000000HIA5','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN7',null,'~',0,'$amtdetails.jobid',null,'~','266X','0001Z31000000000HIAD','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN8',null,'~',0,'$amtdetails.pk_resacostcenter',null,'~','266X','0001Z31000000000HIAE','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUN9',null,'~',0,'$amtdetails.hbbm',null,'~','266X','0001Z31000000000HIAB','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
-go
-
-insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1001Z31000000000VUNB',null,'~',0,'$bzbm',null,'~','266X','0001Z31000000000HIAA','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
+insert into fip_billfactor(pk_billfactor,creationtime,creator,dr,entity_attr,modifiedtime,modifier,pk_billtype,pk_factor,pk_group,pk_org,pk_systypecode,ts) values('1016Z3100000000006E4',null,'~',0,'$er_busitem.customer',null,'~','264X','1001Z31000000000E8P4','GLOBLE00000000000000','~','erm','2014-05-05 08:55:36')
 go
 

@@ -1,3 +1,6 @@
+insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000000A59R','20110CEA_ADD','ADD','通讯费报销单 新增',0,'新增',0,'1001Z31000000000DYCR','20110CEA_ADD','2014-04-29 09:52:19')
+go
+
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000000A59U','20110CEA_MAINTAIN','MAINTAIN','通讯费报销单 维护',0,'维护',0,'1001Z31000000000DYCR','20110CEA_MAINTAIN','2014-04-29 09:52:19')
 go
 
@@ -11,9 +14,6 @@ insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,owne
 go
 
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z3100000000171QO','20110CEA_Contrast','Contrast',null,0,'冲借款',0,'1001Z31000000000DYCR','20110CEA_Contrast','2014-04-29 09:52:19')
-go
-
-insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000000A59R','20110CEA_ADD','ADD','通讯费报销单 新增',0,'新增',0,'1001Z31000000000DYCR','20110CEA_ADD','2014-04-29 09:52:19')
 go
 
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000001WCRG','20110CEA_COMMIT','COMMIT',null,0,'提交',0,'1001Z31000000000DYCR','201112_COMMIT','2014-02-21 16:02:35')

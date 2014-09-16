@@ -1,42 +1,3 @@
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000MQQ1',0,'20110MCS',null,'N',null,'20110002','费用申请控制规则设置-财务组织','1004ZZ10000000000FFL','D20110002','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DB7F',0,'201105CSMG',null,'N',null,'20113001','费用结转','1004ZZ10000000000FFL','D20113001','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DE9F',0,null,null,'Y',null,'201110','费用申请','1004ZZ10000000000FFL','D201110','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DE9I',0,'20110MTAMN',null,'N',null,'20111004','费用申请单管理','1004ZZ10000000000FFL','D20111004','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001F3JJ',0,null,null,'Y',null,'201130','费用核算','1004ZZ10000000000FFL','D201130','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000009WMY',0,'20110SRG',null,'N',null,'20110022','分摊规则设置-集团','1004ZZ10000000000FFL','D20110022','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000087J8',0,'20110SR',null,'N',null,'20110024','分摊规则设置-组织','1004ZZ10000000000FFL','D20110024','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000091O3',0,'201105EXPMG',null,'N','待摊费用摊销','20113002','待摊费用摊销','1004ZZ10000000000FFL','D20113002','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000I9IR',0,null,null,'Y',null,'20115006','费用趋势图分析','1004ZZ10000000000FFL','D20115006','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000U4YU',0,'2011090901',null,'N',null,'20115008','待摊费用摊销情况查询','1004ZZ10000000000FFL','D20115008','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000021BZ',0,'201102611',null,'N',null,'2011100201','费用申请单','1004ZZ10000000000FFL','D2011100201','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000006MFS',0,'20110BCA',null,'N',null,'20114002','批量关账','1004ZZ10000000000FFL','D20114002','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001GXVI',0,'2011090701',null,'N',null,'2011500301','借款人借款账龄分析查询','1004ZZ10000000000FFL','D2011500301','2014-04-29 09:52:08')
-go
-
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000000EO0',0,null,null,'Y',null,'2011','费用管理','1004ZZ10000000000FFL','D2011','2014-04-29 09:52:08')
 go
 
@@ -56,6 +17,9 @@ insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,me
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000001BUB',0,'20110RTS',null,'N','报销管理报销类型','20110018','报销类型设置','1004ZZ10000000000FFL','D20110018','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000021BZ',0,'201102611',null,'N',null,'2011100201','费用申请单','1004ZZ10000000000FFL','D2011100201','2014-04-29 09:52:08')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000035FF',0,'20110ETLB',null,'N','报销管理差旅费报销单','2011200201','差旅费借款单','1004ZZ10000000000FFL','D2011200201','2014-04-29 09:52:08')
@@ -79,7 +43,19 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000006MFQ',0,'20110OCA',null,'N','报销管理关账','20114001','关账','1004ZZ10000000000FFL','D20114001','2014-04-29 09:52:08')
 go
 
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000006MFS',0,'20110BCA',null,'N',null,'20114002','批量关账','1004ZZ10000000000FFL','D20114002','2014-04-29 09:52:08')
+go
+
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000006QAG',0,'20110RSS',null,'N','报销管理报销管理设置','20110020','报销标准设置','1004ZZ10000000000FFL','D20110020','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000087J8',0,'20110SR',null,'N',null,'20110024','分摊规则设置-组织','1004ZZ10000000000FFL','D20110024','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3100000000091O3',0,'201105EXPMG',null,'N','待摊费用摊销','20113002','待摊费用摊销','1004ZZ10000000000FFL','D20113002','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000009WMY',0,'20110SRG',null,'N',null,'20110022','分摊规则设置-集团','1004ZZ10000000000FFL','D20110022','2014-04-29 09:52:08')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000BF9M',0,'20110CBSG',null,'N','常用单据设置','20110004','常用单据设置-集团','1004ZZ10000000000FFL','D20110004','2014-04-29 09:52:08')
@@ -94,7 +70,19 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000CUYZ',0,'20110LCS',null,'N','报销管理借款控制设置','20110010','借款控制设置-组织','1004ZZ10000000000FFL','D20110010','2014-04-29 09:52:08')
 go
 
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000CY36',0,'2011050402',null,'N',null,'2011500402','部门费用汇总表','1004ZZ10000000000FFL','D2011500402','2014-04-29 09:52:08')
+go
+
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000D0D6',0,'20110AAS',null,'N','报销管理授权代理设置','20110012','授权代理设置','1004ZZ10000000000FFL','D20110012','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DB7F',0,'201105CSMG',null,'N',null,'20113001','费用结转','1004ZZ10000000000FFL','D20113001','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DE9F',0,null,null,'Y',null,'201110','费用申请','1004ZZ10000000000FFL','D201110','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DE9I',0,'20110MTAMN',null,'N',null,'20111004','费用申请单管理','1004ZZ10000000000FFL','D20111004','2014-04-29 09:52:08')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000DJNZ',0,'20110TEA',null,'N','报销管理交通费报销单','2011200204','交通费报销单','1004ZZ10000000000FFL','D2011200204','2014-04-29 09:52:08')
@@ -118,7 +106,28 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000E6T8',0,'20110RB',null,'N','报销管理还款单','2011200209','还款单','1004ZZ10000000000FFL','D2011200209','2014-04-29 09:52:08')
 go
 
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000I9IR',0,null,null,'Y',null,'20115006','费用趋势图分析','1004ZZ10000000000FFL','D20115006','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000K1HR',0,'2011050702',null,'N',null,'2011500702','申请人费用申请执行情况查询','1004ZZ10000000000FFL','D2011500702','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000L7X6',0,'20110ABC',null,'N','分摊结转单据对应设置-组织','20110027','分摊结转单据对应设置-组织','1004ZZ10000000000FFL','D20110027','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000LRYI',0,'20110BO',null,'N',null,'20112000','期初单据','1004ZZ10000000000FFL','D20112000','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000MQQ1',0,'20110MCS',null,'N',null,'20110002','费用申请控制规则设置-财务组织','1004ZZ10000000000FFL','D20110002','2014-04-29 09:52:08')
+go
+
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000MVB0',0,null,null,'Y','借款账龄查询（菜单）','20115003','借款账龄分析查询','1004ZZ10000000000FFL','D20115003','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000MVCG',0,'2011090301',null,'N',null,'2011500202','借款人借款明细账','1004ZZ10000000000FFL','D2011500202','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000NNXZ',0,'20110MCSG',null,'N',null,'20110001','费用申请控制规则设置-集团','1004ZZ10000000000FFL','D20110001','2014-04-29 09:52:08')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000NPEK',0,null,null,'Y',null,'201150','查询','1004ZZ10000000000FFL','D201150','2014-04-29 09:52:08')
@@ -130,51 +139,6 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000NX45',0,'20110LCSG',null,'N','报销管理借款控制设置-集团','20110008','借款控制设置-集团','1004ZZ10000000000FFL','D20110008','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000U097',0,null,null,'Y',null,'201160','报表','1004ZZ10000000000FFL','D201160','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000U099',0,null,null,'Y',null,'20116001','借款账龄分析表','1004ZZ10000000000FFL','D20116001','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019KFP',0,'20111ERR',null,'N',null,'20110029','账表初始化','1004ZZ10000000000FFL','D20110029','2014-07-26 11:23:17')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1011Z310000000000LM9',0,'2011110101',null,'N',null,'2011600101','借款人借款账龄分析','1004ZZ10000000000FFL','D2011600101','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000L7X6',0,'20110ABC',null,'N','分摊结转单据对应设置-组织','20110027','分摊结转单据对应设置-组织','1004ZZ10000000000FFL','D20110027','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000LRYI',0,'20110BO',null,'N',null,'20112000','期初单据','1004ZZ10000000000FFL','D20112000','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002RESS',0,'20110BCL',null,'N','分摊结转单据对应设置-集团','20110026','分摊结转单据对应设置-集团','1004ZZ10000000000FFL','D20110026','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002T8E0',0,'2011FDCT',null,'N',null,'20110030','维度对照','1004ZZ10000000000FFL','D20110030','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000SH0U',0,'2011090601',null,'N',null,'2011500401','报销人汇总表','1004ZZ10000000000FFL','D2011500401','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNKS',0,'2011050502',null,'N',null,'2011500502','部门费用明细账','1004ZZ10000000000FFL','D2011500502','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000SFXE',0,'2011090501',null,'N',null,'2011500501','报销人费用明细账','1004ZZ10000000000FFL','D2011500501','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNN1',0,'2011050503',null,'N',null,'2011500503','成本中心费用明细账','1004ZZ10000000000FFL','D2011500503','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNO2',0,'2011050403',null,'N',null,'2011500403','成本中心汇总表','1004ZZ10000000000FFL','D2011500403','2014-04-29 09:52:08')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNP4',0,'2011050504',null,'N',null,'2011500504','收支项目费用明细账','1004ZZ10000000000FFL','D2011500504','2014-07-26 11:23:39')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNQ7',0,'2011050404',null,'N',null,'2011500404','收支项目汇总表','1004ZZ10000000000FFL','D2011500404','2014-04-29 09:52:08')
-go
-
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000R2KM',0,'2011090801',null,'N',null,'2011500601','收支项目趋势分析','1004ZZ10000000000FFL','D2011500601','2014-04-29 09:52:08')
 go
 
@@ -182,6 +146,48 @@ insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,me
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000R2OU',0,'2011090803',null,'N',null,'2011500603','费用承担部门趋势分析','1004ZZ10000000000FFL','D2011500603','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000SFXE',0,'2011090501',null,'N',null,'2011500501','报销人费用明细账','1004ZZ10000000000FFL','D2011500501','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000SH0U',0,'2011090601',null,'N',null,'2011500401','报销人汇总表','1004ZZ10000000000FFL','D2011500401','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000U097',0,null,null,'Y',null,'201160','报表','1004ZZ10000000000FFL','D201160','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000U099',0,null,null,'Y',null,'20116001','借款账龄分析表','1004ZZ10000000000FFL','D20116001','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000U4YU',0,'2011090901',null,'N',null,'20115008','待摊费用摊销情况查询','1004ZZ10000000000FFL','D20115008','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000WRSJ',0,'2011090401',null,'N',null,'2011500102','借款人借款余额表','1004ZZ10000000000FFL','D2011500102','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000ZSL6',0,'2011050704',null,'N',null,'2011500704','申请部门+申请人费用申请执行情况查询','1004ZZ10000000000FFL','D2011500704','2014-04-29 09:52:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000018V6C',0,'20110ADJUST',null,'N',null,'2011200240','费用调整单','1004ZZ10000000000FFL','D2011200240','2014-09-12 15:29:45')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000018VBW',0,'20110BXAM',null,'N',null,'2011200250','报销转固单','1004ZZ10000000000FFL','D2011200250','2014-09-12 15:29:55')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019KFP',0,'20111ERR',null,'N',null,'20110029','账表初始化','1004ZZ10000000000FFL','D20110029','2014-07-26 11:23:17')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019YOX',0,null,null,'Y',null,'201107','费用预提','1004ZZ10000000000FFL','D201107','2014-01-23 14:11:04')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019YOZ',0,null,null,'Y',null,'20110701','费用预提单录入','1004ZZ10000000000FFL','D20110701','2014-03-12 17:03:28')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019YP1',0,'201102621',null,'N',null,'2011070101','费用预提单','1004ZZ10000000000FFL','D2011070101','2014-03-12 17:03:37')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001F3JJ',0,null,null,'Y',null,'201130','费用核算','1004ZZ10000000000FFL','D201130','2014-04-29 09:52:08')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001GG6N',0,null,null,'Y',null,'201120','报销管理','1004ZZ10000000000FFL','D201120','2014-04-29 09:52:08')
@@ -196,16 +202,22 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001GG9S',0,null,null,'Y',null,'20115007','费用申请单执行情况查询','1004ZZ10000000000FFL','D20115007','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000CY36',0,'2011050402',null,'N',null,'2011500402','部门费用汇总表','1004ZZ10000000000FFL','D2011500402','2014-04-29 09:52:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001GXVI',0,'2011090701',null,'N',null,'2011500301','借款人借款账龄分析查询','1004ZZ10000000000FFL','D2011500301','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000K1HR',0,'2011050702',null,'N',null,'2011500702','申请人费用申请执行情况查询','1004ZZ10000000000FFL','D2011500702','2014-04-29 09:52:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001L871',0,'20111ERQ',null,'N',null,'20110028','查询对象注册','1004ZZ10000000000FFL','D20110028','2014-07-26 11:23:09')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000MVCG',0,'2011090301',null,'N',null,'2011500202','借款人借款明细账','1004ZZ10000000000FFL','D2011500202','2014-04-29 09:52:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001MIIB',0,'20110EndMD',null,'N',null,'20114004','月末凭证处理','1004ZZ10000000000FFL','D20114004','2014-02-12 15:28:17')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000WRSJ',0,'2011090401',null,'N',null,'2011500102','借款人借款余额表','1004ZZ10000000000FFL','D2011500102','2014-04-29 09:52:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001NV3D',0,'20110ACCMN',null,'N',null,'20110702','费用预提单管理','1004ZZ10000000000FFL','D20110702','2014-03-12 17:03:46')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001PA1C',0,'20110QUERY',null,'N',null,'20111010','费用申请单查询','1004ZZ10000000000FFL','D20111010','2014-02-13 10:22:15')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001S1K4',0,'20110ACCQRY',null,'N',null,'20110703','费用预提单查询','1004ZZ10000000000FFL','D20110703','2014-03-12 17:03:54')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000022DN6',0,'2011050701',null,'N',null,'2011500701','申请部门费用申请执行情况查询','1004ZZ10000000000FFL','D2011500701','2014-04-29 09:52:08')
@@ -217,39 +229,27 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002440X',0,'20110CBSII',null,'N',null,'20110011','常用单据设置-组织II','1004ZZ10000000000FFL','D20110011','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000NNXZ',0,'20110MCSG',null,'N',null,'20110001','费用申请控制规则设置-集团','1004ZZ10000000000FFL','D20110001','2014-04-29 09:52:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002RESS',0,'20110BCL',null,'N','分摊结转单据对应设置-集团','20110026','分摊结转单据对应设置-集团','1004ZZ10000000000FFL','D20110026','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000000ZSL6',0,'2011050704',null,'N',null,'2011500704','申请部门+申请人费用申请执行情况查询','1004ZZ10000000000FFL','D2011500704','2014-04-29 09:52:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002T8E0',0,'2011FDCT',null,'N',null,'20110030','维度对照','1004ZZ10000000000FFL','D20110030','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001NV3D',0,'20110ACCMN',null,'N',null,'20110702','费用预提单管理','1004ZZ10000000000FFL','D20110702','2014-03-12 17:03:46')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNKS',0,'2011050502',null,'N',null,'2011500502','部门费用明细账','1004ZZ10000000000FFL','D2011500502','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001MIIB',0,'20110EndMD',null,'N',null,'20114004','月末凭证处理','1004ZZ10000000000FFL','D20114004','2014-02-12 15:28:17')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNN1',0,'2011050503',null,'N',null,'2011500503','成本中心费用明细账','1004ZZ10000000000FFL','D2011500503','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001S1K4',0,'20110ACCQRY',null,'N',null,'20110703','费用预提单查询','1004ZZ10000000000FFL','D20110703','2014-03-12 17:03:54')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNO2',0,'2011050403',null,'N',null,'2011500403','成本中心汇总表','1004ZZ10000000000FFL','D2011500403','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000018V6C',0,'20110ADJUST',null,'N',null,'2011200240','费用调整单','1004ZZ10000000000FFL','D2011200211','2014-02-12 15:27:39')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNP4',0,'2011050504',null,'N',null,'2011500504','收支项目费用明细账','1004ZZ10000000000FFL','D2011500504','2014-07-26 11:23:39')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000018VBW',0,'20110BXAM',null,'N',null,'2011200250','报销转固单','1004ZZ10000000000FFL','D2011200213','2014-02-12 15:27:39')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNQ7',0,'2011050404',null,'N',null,'2011500404','收支项目汇总表','1004ZZ10000000000FFL','D2011500404','2014-04-29 09:52:08')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019YOX',0,null,null,'Y',null,'201107','费用预提','1004ZZ10000000000FFL','D201107','2014-01-23 14:11:04')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019YOZ',0,null,null,'Y',null,'20110701','费用预提单录入','1004ZZ10000000000FFL','D20110701','2014-03-12 17:03:28')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019YP1',0,'201102621',null,'N',null,'2011070101','费用预提单','1004ZZ10000000000FFL','D2011070101','2014-03-12 17:03:37')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001PA1C',0,'20110QUERY',null,'N',null,'20111010','费用申请单查询','1004ZZ10000000000FFL','D20111010','2014-02-13 10:22:15')
-go
-
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000001L871',0,'20111ERQ',null,'N',null,'20110028','查询对象注册','1004ZZ10000000000FFL','D20110028','2014-07-26 11:23:09')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1011Z310000000000LM9',0,'2011110101',null,'N',null,'2011600101','借款人借款账龄分析','1004ZZ10000000000FFL','D2011600101','2014-04-29 09:52:08')
 go
 

@@ -1,15 +1,3 @@
-insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFE',null,'36107e64-2312-459e-b89f-8a4193ed3548','1001Z31000000001IHF7','2014-01-22 10:55:54')
-go
-
-insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFF',null,'82bbe3fc-8177-429a-bb07-7360a1203bf0','1001Z31000000001IHF9','2014-01-22 10:55:54')
-go
-
-insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFG',null,'d57a1d73-83ab-42ff-8b2e-290f2435f987','1001Z31000000001IHFC','2014-01-22 10:55:54')
-go
-
-insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFH',null,'f5c282e8-cd8d-4860-aab4-af56eef2df05','1001Z31000000001IHFD','2014-01-22 10:55:54')
-go
-
 insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z310000000003DX4',null,'66efc3ac-092f-419e-8d48-464d8003b156','1001Z310000000003DX0','2011-05-19 11:10:03')
 go
 
@@ -32,6 +20,18 @@ insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001
 go
 
 insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000000Z5FY',null,'e8c920a8-d991-4dbd-9d81-5d948088ad14','1001Z31000000000Z5FS','2011-03-25 14:54:42')
+go
+
+insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFE',null,'36107e64-2312-459e-b89f-8a4193ed3548','1001Z31000000001IHF7','2014-01-22 10:55:54')
+go
+
+insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFF',null,'82bbe3fc-8177-429a-bb07-7360a1203bf0','1001Z31000000001IHF9','2014-01-22 10:55:54')
+go
+
+insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFG',null,'d57a1d73-83ab-42ff-8b2e-290f2435f987','1001Z31000000001IHFC','2014-01-22 10:55:54')
+go
+
+insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000001IHFH',null,'f5c282e8-cd8d-4860-aab4-af56eef2df05','1001Z31000000001IHFD','2014-01-22 10:55:54')
 go
 
 insert into sm_op_busiop(pk_op_busiop,dr,pk_busiop,pk_operation,ts) values('1001Z31000000002YWRP',null,'9ec30759-99b9-4113-aa7d-ed690af6fd23','1001Z31000000002SJM4','2013-03-25 14:56:45')

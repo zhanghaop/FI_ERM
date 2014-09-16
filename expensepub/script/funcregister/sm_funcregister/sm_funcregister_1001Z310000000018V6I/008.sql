@@ -88,12 +88,6 @@ go
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000018V7F','LinkVoucher',null,'联查凭证',0,0,'N','Y','N','1001Z310000000018V6I',null,'2014-01-09 13:45:17')
 go
 
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RXL','ExportData',null,'导出',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-03-11 15:55:08')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RXK','ImportData',null,'导入',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-03-11 15:55:08')
-go
-
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000018V7G','LinkYs',null,'联查预算执行情况',0,0,'N','Y','N','1001Z310000000018V6I',null,'2014-01-09 13:45:17')
 go
 
@@ -127,12 +121,18 @@ go
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000018V7Q','Preview',null,'预览',0,0,'N','Y','N','1001Z310000000018V6I','butn00127','2014-01-09 13:45:17')
 go
 
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RXK','ImportData',null,'导入',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-03-11 15:55:08')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RXL','ExportData',null,'导出',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-03-11 15:55:08')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002WCRD','SaveCommit',null,'保存提交',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-02-21 16:02:04')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002WCRE','Commit',null,'提交',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-02-21 16:02:04')
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002WCRF','RECALL',null,'收回',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-02-21 16:02:04')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002WCRD','SaveCommit',null,'保存提交',0,0,'Y','Y','N','1001Z310000000018V6I',null,'2014-02-21 16:02:04')
 go
 

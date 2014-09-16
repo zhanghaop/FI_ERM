@@ -1,3 +1,18 @@
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000UBTM','output',null,'输出',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-04-29 09:52:18')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001PA0X','ImportData',null,'导入',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-13 09:53:55')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001PA0Y','ExportData',null,'导出',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-13 09:53:55')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001QKC9','LinkVoucher',null,'联查凭证',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-14 14:49:26')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001QRCZ','BillLinkQuery',null,'联查单据',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-14 15:03:45')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001UEH3','SaveCommit',null,'保存提交',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-04-29 09:52:17')
 go
 
@@ -86,20 +101,5 @@ insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbut
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002I8J0','PrintList',null,'打印列表',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-04-29 09:52:18')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000UBTM','output',null,'输出',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-04-29 09:52:18')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001QKC9','LinkVoucher',null,'联查凭证',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-14 14:49:26')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001QRCZ','BillLinkQuery',null,'联查单据',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-14 15:03:45')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001PA0X','ImportData',null,'导入',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-13 09:53:55')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001PA0Y','ExportData',null,'导出',0,0,'Y','Y','N','1001Z3100000000021BM',null,'2014-02-13 09:53:55')
 go
 

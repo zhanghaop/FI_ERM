@@ -1,3 +1,51 @@
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIH',0,'10100ORG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYII',0,'101613','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIJ',0,'101605','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIK',0,'10140PARA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIL',0,'20110AAS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIM',0,'20110IASG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIN',0,'20110LCSG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIO',0,'20110CBSG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIP',0,'20110ETS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIQ',0,'20110RSS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIR',0,'20110RTS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIS',0,'20110BO','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIT',0,'20110MELB','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIU',0,'20110ETLB','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIV',0,'20110CEA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
+insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIW',0,'20110EEA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
+go
+
 insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIX',0,'20110ETEA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
 go
 
@@ -71,53 +119,5 @@ insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,typ
 go
 
 insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYJL',0,'20110MCS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIH',0,'10100ORG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYII',0,'101613','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIJ',0,'101605','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIK',0,'10140PARA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIL',0,'20110AAS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIM',0,'20110IASG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIN',0,'20110LCSG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIO',0,'20110CBSG','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIP',0,'20110ETS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIQ',0,'20110RSS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIR',0,'20110RTS','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIS',0,'20110BO','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIT',0,'20110MELB','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIU',0,'20110ETLB','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIV',0,'20110CEA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
-go
-
-insert into sm_busiflow_nodes(pk_busiflow_nodes,dr,nodeid,pk_busiworkflow,ts,type) values('1001Z31000000000VYIW',0,'20110EEA','1001Z31000000000EHXG','2014-04-29 09:52:14',1)
 go
 

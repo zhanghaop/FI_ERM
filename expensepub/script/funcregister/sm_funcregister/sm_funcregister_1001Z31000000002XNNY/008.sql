@@ -19,6 +19,9 @@ go
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002XNOE','FreePubSortNone',null,'取消排序',0,0,'Y','Y',null,'1001Z31000000002XNNY',null,'2014-04-29 09:52:17')
 go
 
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002XNOF','FreePubExLink',null,'是否区域联动',0,0,'Y','Y',null,'1001Z31000000002XNNY',null,'2014-04-29 09:52:17')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002XNOM','Drill',null,'穿透',0,0,'Y','Y',null,'1001Z31000000002XNNY',null,'2014-04-29 09:52:17')
 go
 
@@ -26,8 +29,5 @@ insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbut
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002XNOO','btn_drill','穿透','费用明细账',0,0,'Y','Y',null,'1001Z31000000002XNNY',null,'2014-04-29 09:52:17')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000002XNOF','FreePubExLink',null,'是否区域联动',0,0,'Y','Y',null,'1001Z31000000002XNNY',null,'2014-04-29 09:52:17')
 go
 

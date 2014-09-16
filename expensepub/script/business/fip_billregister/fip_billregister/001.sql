@@ -1,9 +1,3 @@
-insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,billsumclass,class_entity_id,ctrlorgfindclass,defdoc1,defdoc2,defdoc3,defqueryclass,desbillservclass,desbillsumclass,desctrlruleclass,dessumruleclass,dessumruleentity,dessumruleref,displayclass,dr,drawqueryclass,editclass,linkqueryclass,modulecode,org_ctrl_entity1,org_ctrl_entity2,org_entity_id,pk_billtype,pk_group,pk_org,ts) values('0000Z3ERM00000000022',null,'nc.bs.erm.matterapp.eventlistener.ErmMatterappReflectorServiceImpl',null,null,null,null,null,null,null,null,null,null,null,null,null,null,0,null,null,null,'erm',null,null,null,'261X',null,null,'2014-04-29 09:52:01')
-go
-
-insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,billsumclass,class_entity_id,ctrlorgfindclass,defdoc1,defdoc2,defdoc3,defqueryclass,desbillservclass,desbillsumclass,desctrlruleclass,dessumruleclass,dessumruleentity,dessumruleref,displayclass,dr,drawqueryclass,editclass,linkqueryclass,modulecode,org_ctrl_entity1,org_ctrl_entity2,org_entity_id,pk_billtype,pk_group,pk_org,ts) values('0000Z3ERM00000000023',null,'nc.impl.erm.accruedexpense.ErmAccruedBillReflectorServiceImpl',null,null,null,'7717f1a3-b777-454e-abb5-ef8705a0f0c2',null,null,null,null,null,null,null,null,null,null,0,null,null,null,'erm',null,null,null,'262X',null,null,'2014-01-07 09:10:04')
-go
-
 insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,billsumclass,class_entity_id,ctrlorgfindclass,defdoc1,defdoc2,defdoc3,defqueryclass,desbillservclass,desbillsumclass,desctrlruleclass,dessumruleclass,dessumruleentity,dessumruleref,displayclass,dr,drawqueryclass,editclass,linkqueryclass,modulecode,org_ctrl_entity1,org_ctrl_entity2,org_entity_id,pk_billtype,pk_group,pk_org,ts) values('0000Z3ERM00000000018',null,'nc.impl.arap.bx.ErmBxReflectorServiceImpl',null,null,null,'7717f1a3-b777-454e-abb5-ef8705a0f0c2',null,null,null,null,null,null,null,null,null,null,0,null,null,null,'erm',null,null,null,'264X',null,null,'2014-04-29 09:52:01')
 go
 
@@ -14,5 +8,11 @@ insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,bill
 go
 
 insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,billsumclass,class_entity_id,ctrlorgfindclass,defdoc1,defdoc2,defdoc3,defqueryclass,desbillservclass,desbillsumclass,desctrlruleclass,dessumruleclass,dessumruleentity,dessumruleref,displayclass,dr,drawqueryclass,editclass,linkqueryclass,modulecode,org_ctrl_entity1,org_ctrl_entity2,org_entity_id,pk_billtype,pk_group,pk_org,ts) values('0000Z3ERM00000000021',null,'nc.plugin.erm.expamortize.ErmExpamortizeReflectorServiceImpl',null,null,null,'7717f1a3-b777-454e-abb5-ef8705a0f0c2',null,null,null,null,null,null,null,null,null,null,0,null,null,null,'erm',null,null,null,'266X',null,null,'2014-04-29 09:52:01')
+go
+
+insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,billsumclass,class_entity_id,ctrlorgfindclass,defdoc1,defdoc2,defdoc3,defqueryclass,desbillservclass,desbillsumclass,desctrlruleclass,dessumruleclass,dessumruleentity,dessumruleref,displayclass,dr,drawqueryclass,editclass,linkqueryclass,modulecode,org_ctrl_entity1,org_ctrl_entity2,org_entity_id,pk_billtype,pk_group,pk_org,ts) values('0000Z3ERM00000000022',null,'nc.bs.erm.matterapp.eventlistener.ErmMatterappReflectorServiceImpl',null,null,null,null,null,null,null,null,null,null,null,null,null,null,0,null,null,null,'erm',null,null,null,'261X',null,null,'2014-04-29 09:52:01')
+go
+
+insert into fip_billregister(pk_billregister,billdrawclass,billreflectclass,billsumclass,class_entity_id,ctrlorgfindclass,defdoc1,defdoc2,defdoc3,defqueryclass,desbillservclass,desbillsumclass,desctrlruleclass,dessumruleclass,dessumruleentity,dessumruleref,displayclass,dr,drawqueryclass,editclass,linkqueryclass,modulecode,org_ctrl_entity1,org_ctrl_entity2,org_entity_id,pk_billtype,pk_group,pk_org,ts) values('0000Z3ERM00000000023',null,'nc.impl.erm.accruedexpense.ErmAccruedBillReflectorServiceImpl',null,null,null,'7717f1a3-b777-454e-abb5-ef8705a0f0c2',null,null,null,null,null,null,null,null,null,null,0,null,null,null,'erm',null,null,null,'262X',null,null,'2014-01-07 09:10:04')
 go
 

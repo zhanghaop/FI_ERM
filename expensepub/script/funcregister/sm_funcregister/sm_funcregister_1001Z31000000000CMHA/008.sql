@@ -1,81 +1,3 @@
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57P','Add',null,'新增',0,0,'N','Y','N','1001Z31000000000CMHA','butn00122','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57Q','BillType',null,'交易类型',0,0,'N','Y','N','1001Z31000000000CMHA','butn00050','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57R','Save',null,'保存',0,0,'N','Y','N','1001Z31000000000CMHA','butn00007','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57S','Cancel',null,'取消',0,0,'N','Y','N','1001Z31000000000CMHA','butn00081','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57W','Contrast',null,'冲借款',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A586','Approve',null,'审批',0,0,'N','Y','N','1001Z31000000000CMHA','butn00105','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A587','UnApprove',null,'取消审批',0,0,'N','Y','N','1001Z31000000000CMHA','butn00091','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A588','Bill',null,'制单',0,0,'N','Y','N','1001Z31000000000CMHA','butn00133','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000006LO2','CancelBatchContrast',null,'取消冲借款',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:18')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000006LOA','Printlist',null,'打印列表',0,0,'N','Y','N','1001Z31000000000CMHA','butn00015','2014-04-29 09:52:18')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000009YTD','Preview',null,'预览',0,0,'N','Y','N','1001Z31000000000CMHA','butn00127','2014-04-29 09:52:18')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000009YTE','Print',null,'打印',0,0,'N','Y','N','1001Z31000000000CMHA','butn00014','2014-04-29 09:52:18')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT5','Edit',null,'修改',0,0,'N','Y','N','1001Z31000000000CMHA','butn00123','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT6','Delete',null,'删除',0,0,'N','Y','N','1001Z31000000000CMHA','butn00099','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT7','Copy',null,'复制',0,0,'N','Y','N','1001Z31000000000CMHA','butn00032','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT8','Tempsave',null,'暂存',0,0,'N','Y','N','1001Z31000000000CMHA','butn00129','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTA','AddLine',null,'增行',0,0,'N','Y','N','1001Z31000000000CMHA','butn00131','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTB','DelLine',null,'删行',0,0,'N','Y','N','1001Z31000000000CMHA','butn00100','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTC','CopyLine',null,'复制行',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTD','PasteLine',null,'粘贴行',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTE','PasteLineToTail',null,'粘贴行到表尾',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTF','InsLine',null,'插入行',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000G84G','Cancelprint',null,'取消打印',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000G84H','Officalprint',null,'正式打印',0,0,'N','Y','N','1001Z31000000000CMHA','butn00132','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000N1HD','Output',null,'输出...',0,0,'N','Y','N','1001Z31000000000CMHA','butn00111','2014-04-29 09:52:16')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000065GR','BatchContrast',null,'批量冲借款',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
-go
-
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000003WFP','AddFromMtapp',null,'费用申请单',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:17')
 go
 
@@ -86,9 +8,6 @@ insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbut
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000003WFZ','CodeBarInput',null,'条码输入',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:17')
-go
-
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT9','Document',null,'附件管理',0,0,'N','Y','N','1001Z31000000000CMHA','butn00118','2014-04-29 09:52:16')
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000003WG0','LinkJkd',null,'联查借款单',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:17')
@@ -121,16 +40,91 @@ go
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000003WG9','BillLinkQuery',null,'联查单据',0,0,'Y','Y','N','1001Z31000000000CMHA','butn00059','2014-04-29 09:52:17')
 go
 
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000ERN8','RapidShare',null,'快速分摊',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:17')
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000065GR','BatchContrast',null,'批量冲借款',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000006LO2','CancelBatchContrast',null,'取消冲借款',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:18')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000006LOA','Printlist',null,'打印列表',0,0,'N','Y','N','1001Z31000000000CMHA','butn00015','2014-04-29 09:52:18')
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000007PTX','LinkAppStatus',null,'查看审批意见',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:17')
 go
 
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RY3','ImportData',null,'导入',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-03-11 15:59:04')
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000009YTD','Preview',null,'预览',0,0,'N','Y','N','1001Z31000000000CMHA','butn00127','2014-04-29 09:52:18')
 go
 
-insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RY4','ExportData',null,'导出',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-03-11 15:59:04')
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000009YTE','Print',null,'打印',0,0,'N','Y','N','1001Z31000000000CMHA','butn00014','2014-04-29 09:52:18')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57P','Add',null,'新增',0,0,'N','Y','N','1001Z31000000000CMHA','butn00122','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57Q','BillType',null,'交易类型',0,0,'N','Y','N','1001Z31000000000CMHA','butn00050','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57R','Save',null,'保存',0,0,'N','Y','N','1001Z31000000000CMHA','butn00007','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57S','Cancel',null,'取消',0,0,'N','Y','N','1001Z31000000000CMHA','butn00081','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A57W','Contrast',null,'冲借款',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A586','Approve',null,'审批',0,0,'N','Y','N','1001Z31000000000CMHA','butn00105','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A587','UnApprove',null,'取消审批',0,0,'N','Y','N','1001Z31000000000CMHA','butn00091','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000A588','Bill',null,'制单',0,0,'N','Y','N','1001Z31000000000CMHA','butn00133','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000ERN8','RapidShare',null,'快速分摊',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:17')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT5','Edit',null,'修改',0,0,'N','Y','N','1001Z31000000000CMHA','butn00123','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT6','Delete',null,'删除',0,0,'N','Y','N','1001Z31000000000CMHA','butn00099','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT7','Copy',null,'复制',0,0,'N','Y','N','1001Z31000000000CMHA','butn00032','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT8','Tempsave',null,'暂存',0,0,'N','Y','N','1001Z31000000000CMHA','butn00129','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXT9','Document',null,'附件管理',0,0,'N','Y','N','1001Z31000000000CMHA','butn00118','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTA','AddLine',null,'增行',0,0,'N','Y','N','1001Z31000000000CMHA','butn00131','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTB','DelLine',null,'删行',0,0,'N','Y','N','1001Z31000000000CMHA','butn00100','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTC','CopyLine',null,'复制行',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTD','PasteLine',null,'粘贴行',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTE','PasteLineToTail',null,'粘贴行到表尾',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000EXTF','InsLine',null,'插入行',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000G84G','Cancelprint',null,'取消打印',0,0,'N','Y','N','1001Z31000000000CMHA',null,'2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000G84H','Officalprint',null,'正式打印',0,0,'N','Y','N','1001Z31000000000CMHA','butn00132','2014-04-29 09:52:16')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000N1HD','Output',null,'输出...',0,0,'N','Y','N','1001Z31000000000CMHA','butn00111','2014-04-29 09:52:16')
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001WCSS','SaveCommit',null,'保存提交',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-02-21 16:36:14')
@@ -143,5 +137,11 @@ insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbut
 go
 
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000026UR5','VerifyAccruedBill',null,'核销预提',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-03-10 11:00:25')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RY3','ImportData',null,'导入',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-03-11 15:59:04')
+go
+
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000027RY4','ExportData',null,'导出',0,0,'Y','Y','N','1001Z31000000000CMHA',null,'2014-03-11 15:59:04')
 go
 

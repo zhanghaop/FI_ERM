@@ -1,6 +1,3 @@
-insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000000G84E','20110BMLB_Contrast','Contrast',null,0,'冲借款',0,'1001Z31000000000CMHA','20110BMLB_Contrast','2014-04-29 09:52:19')
-go
-
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z310000000009YTF','20110BMLB_APPROVE','APPROVE','单据管理 审批',0,'审批',0,'1001Z31000000000CMHA','20110BMLB_APPROVE','2014-04-29 09:52:19')
 go
 
@@ -14,6 +11,9 @@ insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,owne
 go
 
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000000A58V','20110BMLB_BILL','BILL','单据管理 制单',0,'制单',0,'1001Z31000000000CMHA','20110BMLB_BILL','2014-04-29 09:52:19')
+go
+
+insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000000G84E','20110BMLB_Contrast','Contrast',null,0,'冲借款',0,'1001Z31000000000CMHA','20110BMLB_Contrast','2014-04-29 09:52:19')
 go
 
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000001WCSF','20110BMLB_COMMIT','COMMIT',null,0,'提交',0,'1001Z31000000000CMHA','201112_COMMIT','2014-02-21 16:33:08')
