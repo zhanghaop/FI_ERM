@@ -16,7 +16,6 @@ import nc.vo.erm.costshare.AggCostShareVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterappctrl.MtapppfVO;
-import nc.vo.erm.tbbdetail.ERMTbbDetailVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.SuperVO;
@@ -41,8 +40,6 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 	protected CShareDetailVO[] cShareDetailVo;// 分摊信息
 	
 	protected AccruedVerifyVO[] accruedVerifyVO;// 核销预提明细
-	
-	protected ERMTbbDetailVO[] bxtbbDetailVO ;//预算占用期间
 
 	protected JKBXHeaderVO parentVO;
 
@@ -184,17 +181,17 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 					voContrastVo[i] = (BxcontrastVO) contrastVO[i].clone();
 			}
 		}
-		//预算占用期间:以后可能需要
-		ERMTbbDetailVO[] vobxtbbDetailVO =null;
-		if(bxtbbDetailVO!=null){
-			vobxtbbDetailVO = new ERMTbbDetailVO[bxtbbDetailVO.length];
-			for(int i = 0; i < bxtbbDetailVO.length; i++){
-				if(bxtbbDetailVO[i]!=null){
-					vobxtbbDetailVO[i] = (ERMTbbDetailVO)bxtbbDetailVO[i].clone();
-				}
-			}
-		}
-		
+
+		// //预算占用期间:以后可能需要
+		// ERMTbbDetailVO[] vobxtbbDetailVO =null;
+		// if(bxtbbDetailVO!=null){
+		// vobxtbbDetailVO = new ERMTbbDetailVO[bxtbbDetailVO.length];
+		// for(int i = 0; i < bxtbbDetailVO.length; i++){
+		// if(bxtbbDetailVO[i]!=null){
+		// vobxtbbDetailVO[i] = (ERMTbbDetailVO)bxtbbDetailVO[i].clone();
+		// }
+		// }
+		// }
 
 		// 拉单信息复制
 		MtapppfVO[] voMaPfVos = null;
@@ -271,9 +268,7 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 			return cShareDetailVo;
 		} else if (BXConstans.AccruedVerify_TABLECODE.equals(tableCode) || BXConstans.AccruedVerify_PAGE.equals(tableCode)) {
 			return accruedVerifyVO;
-		}else if(BXConstans.Tbb_PAGE.equals(tableCode)){
-			return bxtbbDetailVO;
-		} else if (childrenVO != null && childrenVO.length != 0) {
+		}else if (childrenVO != null && childrenVO.length != 0) {
 			if (BXBusItemVO.getDefaultTableName().equals(tableCode)) {
 				// 适用于会计平台凭证模版取值
 				return childrenVO;
