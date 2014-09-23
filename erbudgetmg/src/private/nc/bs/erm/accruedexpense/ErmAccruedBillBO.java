@@ -493,7 +493,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 			if(auditUser != null){
 				parentVo.setAuditman(auditUser);
 			}else {
-				throw new BusinessException("经办人未关联用户！");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0026")/*@res "单据无表体,不能进行红冲操作"*/);
 			}
 		}
 		// 用金额补齐预计余额和余额

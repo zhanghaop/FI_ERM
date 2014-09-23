@@ -118,21 +118,41 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 			}
 			String displayname = dim.getDisplayname();
 			if (displayname == null) {
-				throw new BusinessException("维度设置必须填写显示名称(第" + currow + "行)，保存失败!");
+				// throw new BusinessException("维度设置必须填写显示名称(第" + currow +
+				// "行)，保存失败!");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2",
+						"22011rr-000048", null, new String[] { String.valueOf(currow) })/*
+																						 * @
+																						 * res
+																						 * "维度设置必须填写显示名称(第{0}行)，保存失败!"
+																						 */);
 			} else {
 				if (keys.contains(displayname)) {
-					throw new BusinessException("维度设置中包含内容相同的记录，保存失败!");
+					throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2",
+							"22011rr-000049")/**
+					 * @* res*"维度设置中包含内容相同的记录，保存失败!"
+					 */
+					);
 				} else {
 					keys.add(displayname);
 				}
 			}
 			if (dim.getDatatype() == null) {
-				throw new BusinessException("维度设置必须填写数据类型(第" + currow + "行)，保存失败!");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2",
+						"22011rr-000050", null, new String[] { String.valueOf(currow) })/*
+						 * @
+						 * res
+						 * "维度设置必须填写数据类型(第{0}行)，保存失败!"
+						 */);
 			}
 			if (dim.getControlflag().booleanValue())
 				controlflags++;
 			if (controlflags > 1) {
-				throw new BusinessException("核心控制项最多只能有一项！");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2",
+						"22011rr-000051")/**
+				 * @* res*"核心控制项最多只能有一项！"
+				 */
+				);
 			}
 			dim.setPk_billtype(pk_billtype);
 			dim.setPk_group(pk_group);
@@ -141,7 +161,11 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 			returnVOs.add(dim);
 		}
 		if (controlflags == 0) {
-			throw new BusinessException("核心控制项必须选择一项，请选择！");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2",
+					"22011rr-000052")/**
+			 * @* res*"核心控制项必须选择一项，请选择！"
+			 */
+			);
 		}
 		return returnVOs.toArray(new ReimRuleDimVO[0]);
 	}
@@ -178,7 +202,49 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 		/**
 		 * 预制七个默认的标准，当填入的显示名称是这些值时，对应单据模板上的这一项
 		 */
-		String[] names = new String[] { "费用类型", "报销类型", "部门", "职位", "币种", "金额", "备注" };
+		String[] names = new String[] {
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000053")/**
+				 * @*
+				 * res*"费用类型"
+				 */
+				,
+
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000054")/**
+				 * @*
+				 * res*"报销类型"
+				 */
+				,
+
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000055")/**
+				 * @*
+				 * res*"部门"
+				 */
+				,
+
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000056")/**
+				 * @*
+				 * res*"职位"
+				 */
+				,
+
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000057")/**
+				 * @*
+				 * res*"币种"
+				 */
+				,
+
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000058")/**
+				 * @*
+				 * res*"金额"
+				 */
+				,
+
+				nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000059") /**
+				 * @*
+				 * res*"备注"
+				 */
+
+		};
 		String[] items = new String[] { "PK_EXPENSETYPE", "PK_REIMTYPE", "PK_DEPTID", "PK_POSITION", "PK_CURRTYPE", "AMOUNT", "MEMO" };
 		// 判断界面上的显示名称是否在以上预制范围内，是则将于单据模板的对应项关联起来
 		String displayname = (String) e.getValue();
@@ -208,7 +274,15 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 		}
 		// 如果也不在自定义列中，则出错
 		if (flag == false) {
-			MessageDialog.showHintDlg(null, "列的数量超出", "自定义列的数量上限为20!");
+			MessageDialog.showHintDlg(null,
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000060")/**
+					 * @*
+					 * res*"列的数量超出"
+					 */
+					, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000061")/**
+					 * @*
+					 * res*"自定义列的数量上限为20!"
+					 */);
 		}
 	}
 
@@ -226,7 +300,14 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 			bean = MDBaseQueryFacade.getInstance().getBeanByID(entityid);
 		} catch (MetaDataException e1) {
 			// 参照选择初始化失败，不做处理，只记录日志
-			MessageDialog.showHintDlg(null, "数据类型错", "数据类型 错误!");
+			MessageDialog.showHintDlg(null, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000062")/**
+					 * @*
+					 * res*"数据类型错"
+					 */
+					, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000063")/**
+					 * @*
+					 * res*"数据类型 错误!"
+					 */);
 			Logger.error(e1.getMessage(), e1);
 		}
 		Object name = getBillCardPanel().getBodyValueAt(e.getRow(), ReimRuleDimVO.DISPLAYNAME);
@@ -279,7 +360,14 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 	public boolean beforeEdit(BillEditEvent e) {
 		Object name = getBillCardPanel().getBodyValueAt(e.getRow(), ReimRuleDimVO.DISPLAYNAME);
 		if (name != null && (name.toString().equals("币种") || name.toString().equals("金额"))) {
-			MessageDialog.showHintDlg(null, "不允许更改", "币种与金额行不允许更改!");
+			MessageDialog.showHintDlg(null, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000064")/**
+					 * @*
+					 * res*"不允许更改"
+					 */
+					, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000065")/**
+					 * @*
+					 * res*"币种与金额行不允许更改!"
+					 */);
 		}
 		// 参照选择列
 		if (e.getKey().equals(ReimRuleDimVO.REFERENTIAL)) {

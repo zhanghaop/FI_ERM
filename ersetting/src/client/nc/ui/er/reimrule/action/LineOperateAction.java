@@ -33,8 +33,17 @@ public class LineOperateAction  extends AbstractLineOperateAction{
 
 		if(move.equals("up")){
 			ActionInitializer.initializeAction(this, IActionCode.PRE);
-			setBtnName("上移一行");
-			putValue(Action.SHORT_DESCRIPTION, "上移一行" + "(Ctrl+U)");
+			setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000043")/**
+			 * @*
+			 * res*"上移一行"
+			 */
+			);
+			putValue(Action.SHORT_DESCRIPTION,
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000043")/**
+					 * @*
+					 * res*"上移一行"
+					 */
+					+ "(Ctrl+U)");
 			putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_MASK));
 			putValue(Action.SMALL_ICON, ThemeResourceCenter.getInstance()
 					.getImage("themeres/ui/toolbaricons/move_up.png"));
@@ -42,8 +51,16 @@ public class LineOperateAction  extends AbstractLineOperateAction{
 		}
 		else if(move.equals("top")){
 			ActionInitializer.initializeAction(this, IActionCode.FIRST);
-			setBtnName("移到顶部");
-			putValue(Action.SHORT_DESCRIPTION, "移到顶部" + "(Ctrl+T)");
+			setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000044")/**
+					 * @*
+					 * res*"移到顶部"
+					 */
+					);
+			putValue(Action.SHORT_DESCRIPTION, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000044")/**
+					 * @*
+					 * res*"移到顶部"
+					 */
+					 + "(Ctrl+T)");
 			putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_MASK));
 			putValue(Action.SMALL_ICON, ThemeResourceCenter.getInstance()
 					.getImage("themeres/ui/toolbaricons/top.png"));
@@ -51,8 +68,16 @@ public class LineOperateAction  extends AbstractLineOperateAction{
 		}
 		else if(move.equals("down")){
 			ActionInitializer.initializeAction(this, IActionCode.NEXT);
-			setBtnName("下移一行");
-			putValue(Action.SHORT_DESCRIPTION, "下移一行" + "(Ctrl+D)");
+			setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000045")/**
+					 * @*
+					 * res*"下移一行"
+					 */
+					);
+			putValue(Action.SHORT_DESCRIPTION, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000045")/**
+					 * @*
+					 * res*"下移一行"
+					 */
+					 + "(Ctrl+D)");
 			putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK));
 			putValue(Action.SMALL_ICON, ThemeResourceCenter.getInstance()
 					.getImage("themeres/ui/toolbaricons/move_down.png"));
@@ -60,8 +85,16 @@ public class LineOperateAction  extends AbstractLineOperateAction{
 		}
 		else if(move.equals("bottom")){
 			ActionInitializer.initializeAction(this, IActionCode.LAST);
-			setBtnName("移到底部");
-			putValue(Action.SHORT_DESCRIPTION, "移到底部" + "(Ctrl+B)");
+			setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000046")/**
+					 * @*
+					 * res*"移到底部"
+					 */
+					);
+			putValue(Action.SHORT_DESCRIPTION, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000046")/**
+					 * @*
+					 * res*"移到底部"
+					 */
+					 + "(Ctrl+B)");
 			putValue(Action.ACCELERATOR_KEY,KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_MASK));
 			putValue(Action.SMALL_ICON, ThemeResourceCenter.getInstance()
 					.getImage("themeres/ui/toolbaricons/bottom.png"));

@@ -205,7 +205,16 @@ public class ControlTable extends BatchBillTable implements IComponentWithAction
 					}
 				}
 				if(centControlItem == null){
-					MessageDialog.showHintDlg(getBillCardPanel(),"错误","未设置核心控制项，请在配置界面中进行选择！");
+					MessageDialog.showHintDlg(getBillCardPanel(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+							.getStrByID("ersetting_2", "22011rr-000039")/**
+					 * @*
+					 * res* "错误"
+					 */
+					, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000047")/**
+					 * @*
+					 * res* "未设置核心控制项，请在配置界面中进行选择！"
+					 */
+					);
 					getBillCardPanel().setVisible(false);
 				}
 				//将需要显示的列加入items中

@@ -57,16 +57,24 @@ public class BillCardHeadAfterEditlistenerExt implements IAppEventHandler<CardHe
         
         UFDate enddate = new UFDate(((Vector)endv.get(0)).get(1).toString());
         
-        if(startdate.compareTo(enddate)>0){
-        	
-        	if(ErmMatterAppConstExt.STARTPERIOD_FIELD.equals(key)){
-        		billForm.getBillCardPanel().getHeadItem(ErmMatterAppConstExt.ENDPERIOD_FIELD).setValue(null);
-        		exceptionHandler.handlerExeption(new BusinessException("开始期间不能晚于结束期间"));
-        	} else if(ErmMatterAppConstExt.ENDPERIOD_FIELD.equals(key)) {
-        		exceptionHandler.handlerExeption(new BusinessException("结束期间不能早于开始期间"));
-        	}
-        	billForm.setHeadValue(key,"");
-       }else{
+		if (startdate.compareTo(enddate) > 0) {
+
+			if (ErmMatterAppConstExt.STARTPERIOD_FIELD.equals(key)) {
+				billForm.getBillCardPanel().getHeadItem(ErmMatterAppConstExt.ENDPERIOD_FIELD).setValue(null);
+				exceptionHandler.handlerExeption(new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("201212_0", "0201212-0105")/*
+																 * @res
+																 * "开始期间不能晚于结束期间"
+																 */));
+			} else if (ErmMatterAppConstExt.ENDPERIOD_FIELD.equals(key)) {
+				exceptionHandler.handlerExeption(new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("201212_0", "0201212-0106")/*
+																 * @res
+																 * "结束期间不能早于开始期间"
+																 */));
+			}
+			billForm.setHeadValue(key, "");
+		}else{
     	   ShowStatusBarMsgUtil.showStatusBarMsg("", ((DefaultExceptionHanler)exceptionHandler).getContext());
        }
 	}

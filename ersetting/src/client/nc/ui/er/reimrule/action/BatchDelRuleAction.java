@@ -24,7 +24,13 @@ public class BatchDelRuleAction extends BatchDelLineAction{
 			for(SuperVO vo:vos){
 				ReimRuleDimVO dimvo = (ReimRuleDimVO)getModel().getSelectedData();
 				if(vo.getAttributeValue(dimvo.getCorrespondingitem()) != null){
-					MessageDialog.showHintDlg(getEditor(),"错误","该列对应的报销标准上有值，请删除！");
+					MessageDialog.showHintDlg(getEditor(),
+							nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000039")/** @* res* "错误"*/,
+							nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000040")/*
+																												 * @
+																												 * res
+																												 * "该列对应的报销标准上有值，请删除！"
+																												 */);
 					return;
 				}
 			}

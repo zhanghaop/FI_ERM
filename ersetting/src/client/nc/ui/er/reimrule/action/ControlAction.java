@@ -53,7 +53,7 @@ public class ControlAction extends NCAction {
                         .getFuncRegisterVO().getOrgtypecode();
         dialog.setOrgtypecode(orgtypecode);
         // 对话框标题
-        dialog.setTitle("报销标准配置");
+        dialog.setTitle(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000041")/** @* res*"报销标准配置"*/);
         FuncletInitData data = new FuncletInitData(-1, dialog);
         Dimension dimension = new Dimension(700,500);
         dialog.setLocationRelativeTo(getEditor());

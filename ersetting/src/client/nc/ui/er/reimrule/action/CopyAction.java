@@ -98,7 +98,11 @@ public class CopyAction extends NCAction {
 			}
 			int count = 0;
 			if (newdjlx.equals(olddjlx) && oldorg.equals(neworg)){
-				showErrorMessage("同公司同交易类型不进行复制,复制已取消!");
+				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000042")/**
+				 * @*
+				 * res*"同公司同交易类型不进行复制,复制已取消!"
+				 */
+				);
 				return;
 			}
 			try {
@@ -182,7 +186,11 @@ public class CopyAction extends NCAction {
 			}
 			int count = reimDimVos.length;
 			if (newdjlx.equals(olddjlx) && oldorg.equals(neworg)){
-				showErrorMessage("同公司同交易类型不进行复制,复制已取消!");
+				showErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000042")/**
+						 * @*
+						 * res*"同公司同交易类型不进行复制,复制已取消!"
+						 */
+						);
 				return;
 			}
 			try {

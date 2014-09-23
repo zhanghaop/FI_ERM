@@ -43,7 +43,12 @@ public class CancelAction extends BatchCancelAction {
 				}
 			}
 		}catch (Exception e1) {
-			MessageDialog.showHintDlg(getEditor(),"´íÎó",e1.getMessage());
+			MessageDialog.showHintDlg(getEditor(),
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2", "22011rr-000039")/**
+					 * @*
+					 * res* "´íÎó"
+					 */
+					, e1.getMessage());
 		}
 	} 
 	
