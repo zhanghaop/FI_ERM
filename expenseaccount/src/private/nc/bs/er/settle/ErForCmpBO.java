@@ -9,7 +9,6 @@ import java.util.Map;
 import nc.bs.arap.bx.BXBusItemBO;
 import nc.bs.arap.bx.BXZbBO;
 import nc.bs.dao.BaseDAO;
-import nc.bs.er.djlx.DjLXDMO;
 import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -51,21 +50,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	private final BXZbBO bo = new BXZbBO();
 	private JKBXVO jkbxVO = null;
 
-	// bx无委托收款,不处理
-	public void billChange(BusiInfo busiInfo, Map<String, MoneyDetail> value) throws BusinessException {
-	}
-
-	private String getDJDL(BusiInfo busiInfo) {
-		String billtype = busiInfo.getBill_type();
-		if (billtype.startsWith("263")) {
-			return BXConstans.JK_DJDL;
-		} else if (billtype.startsWith("264")) {
-			return BXConstans.BX_DJDL;
-		}
-
-		return null;
-	}
-
 	// 委托付款
 	@Override
 	public void execStatuesChange(BusiInfo busiInfo, CMPExecStatus status)
@@ -85,13 +69,10 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			voList.add(vo);
 		}
 		
-		//委托办理支付成功时生成凭证
+		// 委托办理支付成功时生成凭证
 		if (voList.get(0).getPayflag().intValue() == BXStatusConst.PAYFLAG_PayFinish) {
-//			String param = SysinitAccessor.getInstance().getParaString(
-//					voList.get(0).getPk_org(), "CMP37");
 			if (SettleUtil.isJsToFip(voList.get(0))) {
-				List<JKBXVO> jkbxvo = NCLocator.getInstance()
-						.lookup(IBXBillPrivate.class).retriveItems(voList);
+				List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(IBXBillPrivate.class).retriveItems(voList);
 				forwardToFip(BXZbBO.MESSAGE_SETTLE, jkbxvo);// 生成凭证的正向操作
 			}
 		}
@@ -101,11 +82,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 				JKBXHeaderVO.PAYFLAG,JKBXHeaderVO.PAYMAN, JKBXHeaderVO.PAYDATE, JKBXHeaderVO.VOUCHERTAG });
 	}
 
-	// 承兑汇票退票,不处理
-	@Override
-	public List<ReturnBillRetDetail> processReturnBill(ReturnBill4BusiVO bill4BusiVO) throws BusinessException {
-		return null;
-	}
 
 	/**
 	 * 结算红冲
@@ -119,7 +95,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	
 	@Override
 	public void billStateChange(BusiInfo busiInfo, BusiStateTrans trans) throws BusinessException {
-
 		// 审核->签字
 		if (BusiStatus.Audit.equals(trans.getFrom()) && BusiStatus.Sign.equals(trans.getTo())) {
 			jkbxVO = getBxVO(busiInfo, trans);
@@ -139,39 +114,32 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		if (jkbxVO == null || !jkbxVO.getParentVO().getPrimaryKey().equals(busiInfo.getPk_bill())) {
 			jkbxVO = getBxVO(busiInfo, trans);
 		}
-		String flag = "";
-		// 生效
-		if (BusiStatus.Effet.equals(trans.getTo())) {
+		
+		String flag = null;
+		if (BusiStatus.Effet.equals(trans.getTo())) {// 生效
 			flag = BXZbBO.MESSAGE_SETTLE;
-		}
-		// 反生效
-		else if (BusiStatus.EffectNever.equals(trans.getTo())) {
+		} else if (BusiStatus.EffectNever.equals(trans.getTo())) {// 反生效
 			flag = BXZbBO.MESSAGE_UNSETTLE;
 		}
-		//String param = SysinitAccessor.getInstance().getParaString(jkbxVO.getParentVO().getPk_org(), "CMP37");
-		if(!SettleUtil.isJsToFip(jkbxVO.getParentVO())){
-			if(BXZbBO.MESSAGE_SETTLE.equals(flag) && 
-					(jkbxVO.getParentVO().getVouchertag()==null 
-							||jkbxVO.getParentVO().getVouchertag()==BXStatusConst.SXFlag )){
+		
+		if (!SettleUtil.isJsToFip(jkbxVO.getParentVO())) {
+			if (BXZbBO.MESSAGE_SETTLE.equals(flag) && (jkbxVO.getParentVO().getVouchertag() == null || jkbxVO.getParentVO().getVouchertag() == BXStatusConst.SXFlag)) {
 				jkbxVO.getParentVO().setVouchertag(BXStatusConst.SXFlag);
-				bo.updateHeader(jkbxVO.getParentVO(), new String[]{JKBXHeaderVO.VOUCHERTAG});
+				bo.updateHeaders(new JKBXHeaderVO[] { jkbxVO.getParentVO() }, new String[] { JKBXHeaderVO.VOUCHERTAG });
 				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
 			}
 		}
+		
 		//取消签字与凭证环节没有关系
 		if(BXZbBO.MESSAGE_UNSETTLE.equals(flag)){
 			if(jkbxVO.getParentVO().getVouchertag()!= null && 
 					jkbxVO.getParentVO().getVouchertag() == BXStatusConst.MEDeal){
 				//凭证环节是月末凭证时，将单据的凭证都删除（暂估凭证，月末凭证）
 				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag); // 删除月末凭证
-				
-				//删除暂估凭证：
-//				jkbxVO.getParentVO().setVouchertag(BXStatusConst.ZGDeal);
-//				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
-				
 			}else{
 				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
 			}
+			
 			//判断是否有暂估凭证
 			boolean isExistZg = isExistVourcher(jkbxVO.getParentVO(), jkbxVO.getParentVO().getPk()+ "_"+BXStatusConst.ZGDeal);
 			if(isExistZg){
@@ -179,7 +147,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			}else{
 				jkbxVO.getParentVO().setVouchertag(null);
 			}
-			bo.updateHeader(jkbxVO.getParentVO(), new String[]{JKBXHeaderVO.VOUCHERTAG});
+			bo.updateHeaders(new JKBXHeaderVO[]{jkbxVO.getParentVO()}, new String[]{JKBXHeaderVO.VOUCHERTAG});
 		}
 	}
 	
@@ -376,8 +344,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 
 	// 回写单据网银支付状态
 	public void netPayExecChange(NetPayExecInfo payInfo) throws BusinessException {
-//		JKBXHeaderVO head = VOFactory.createHeadVO(payInfo.getBilltype());
-//		head.setPk_jkbx(payInfo.getBillid());
 		List<JKBXHeaderVO> vos = bo.queryHeadersByPrimaryKeys(new String[] { payInfo.getBillid() }, payInfo.getBilltype());
 		JKBXHeaderVO head = vos.get(0);
 
@@ -387,38 +353,34 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		head.setPayman(payInfo.getOperator());
 
 		// 回写结算信息,结算时仅回写支付信息
-//		head.setJsr(payInfo.getOperator());
-//		head.setJsrq(payInfo.getOperateDate());
 		String settleno = payInfo.getSettleno();
 		head.setJsh(settleno);
 		String djlxbm = payInfo.getBilltype();
 
 		if (djlxbm == null || djlxbm.length() == 0) {
 			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0", "02011v61013-0028")/*
-																																 * @res
+																																 * @
+																																 * res
 																																 * "结算单据回写借款/报销单据失败，网银支付信息中缺失单据类型"
 																																 */);
 		}
 		try {
-			head.setDjlxbm(djlxbm);
 			// 这里对自定义交易类型进行下处理
-			if (djlxbm.startsWith(BXConstans.BX_DJLXBM) || djlxbm.startsWith(BXConstans.JK_DJLXBM)) {
-				head.setDjdl(new DjLXDMO().getDjlxvoByDjlxbm(djlxbm, BXConstans.GLOBAL_CODE).getDjdl());
-			} else {
-				head.setDjdl(new DjLXDMO().getDjlxvoByDjlxbm(djlxbm, BXConstans.GROUP_CODE).getDjdl());
-			}
+			head.setDjlxbm(djlxbm);
+			head.setDjdl(getDJDL(djlxbm));
+
 			List<JKBXHeaderVO> voList = new ArrayList<JKBXHeaderVO>();
 			voList.add(head);
-			
-			//网银支付支付完成时处理生成凭证
-			if(head.getPayflag().intValue()==BXStatusConst.PAYFLAG_PayFinish){
-				if(SettleUtil.isJsToFip(jkbxVO.getParentVO())){
+
+			// 网银支付支付完成时处理生成凭证
+			if (head.getPayflag().intValue() == BXStatusConst.PAYFLAG_PayFinish) {
+				if (SettleUtil.isJsToFip(jkbxVO.getParentVO())) {
 					List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(IBXBillPrivate.class).retriveItems(voList);
-					forwardToFip(BXZbBO.MESSAGE_SETTLE,jkbxvo);//生成凭证的正向操作
+					forwardToFip(BXZbBO.MESSAGE_SETTLE, jkbxvo);// 生成凭证的正向操作
 				}
 			}
-			new BaseDAO().updateVOArray(voList.toArray(new JKBXHeaderVO[]{}), new String[] { JKBXHeaderVO.PAYFLAG,
-					JKBXHeaderVO.PAYDATE, JKBXHeaderVO.PAYMAN, JKBXHeaderVO.JSH,JKBXHeaderVO.VOUCHERTAG });
+			new BaseDAO().updateVOArray(voList.toArray(new JKBXHeaderVO[] {}), new String[] { JKBXHeaderVO.PAYFLAG, JKBXHeaderVO.PAYDATE, JKBXHeaderVO.PAYMAN, JKBXHeaderVO.JSH,
+					JKBXHeaderVO.VOUCHERTAG });
 		} catch (Exception e) {
 			throw nc.vo.er.exception.ExceptionHandler.handleException(e);
 		}
@@ -486,7 +448,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			}
 			
 			head = name.get(0);
-			//param = SysinitAccessor.getInstance().getParaString(head.getPk_org(), "CMP37");
 			head.setPk_jkbx(id);
 			head.setPayflag(isOpp ? CMPExecStatus.UNPayed.getStatus() : CMPExecStatus.PayFinish.getStatus());
 			head.setPaydate(isOpp ? null : operateDate);
@@ -516,25 +477,23 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	 * @param jkbxvo
 	 * @throws BusinessException
 	 */
-	private void forwardToFip(String flag, List<JKBXVO> jkbxvo)
-			throws BusinessException {
+	private void forwardToFip(String flag, List<JKBXVO> jkbxvo) throws BusinessException {
 		JKBXHeaderVO jkbxHeadVO = jkbxvo.get(0).getParentVO();
-		if(jkbxHeadVO.getVouchertag()==null){
+		if (jkbxHeadVO.getVouchertag() == null) {
 			jkbxHeadVO.setVouchertag(BXStatusConst.ZFFlag);
-		}else if(BXStatusConst.MEDeal==jkbxHeadVO.getVouchertag()){
+		} else if (BXStatusConst.MEDeal == jkbxHeadVO.getVouchertag()) {
 			jkbxHeadVO.setVouchertag(BXStatusConst.MEZFFlag);
-		}else if(BXStatusConst.ZGDeal==jkbxHeadVO.getVouchertag()){
+		} else if (BXStatusConst.ZGDeal == jkbxHeadVO.getVouchertag()) {
 			jkbxHeadVO.setVouchertag(BXStatusConst.ZGZFFlag);
-		}else if(BXStatusConst.ZGMEFlag==jkbxHeadVO.getVouchertag()){
+		} else if (BXStatusConst.ZGMEFlag == jkbxHeadVO.getVouchertag()) {
 			jkbxHeadVO.setVouchertag(BXStatusConst.ZGMEZFFlag);
 		}
 		
-		//正向
-		if(jkbxHeadVO.getVouchertag()==null || 
-				(jkbxHeadVO.getVouchertag()!=null 
-				&& jkbxHeadVO.getVouchertag()!=BXStatusConst.SXFlag) ){
-			//已经生成则不再生成，网银支付时，红冲时会重复调用
-			if(!isExistVourcher(jkbxHeadVO, jkbxHeadVO.getPk() + "_" + jkbxHeadVO.getVouchertag())){
+		Integer voucherTag = jkbxHeadVO.getVouchertag();
+		// 正向
+		if (voucherTag == null || (voucherTag != null && voucherTag != BXStatusConst.SXFlag)) {
+			// 已经生成则不再生成，网银支付时，红冲时会重复调用
+			if (voucherTag == null || !isExistVourcher(jkbxHeadVO, jkbxHeadVO.getPk() + "_" + voucherTag)) {
 				bo.effectToFip(jkbxvo, flag);
 			}
 		}
@@ -564,8 +523,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			jkbxvo.get(0).getParentVO().setVouchertag(BXStatusConst.ZGMEFlag);
 		}
 	}
-	
-
 
 	public List<SettlementBodyVO> autoBX(List<SettlementBodyVO> bodyList) throws BusinessException {
 		return bodyList;
@@ -576,7 +533,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	}
 
 	public List<String> getFromNoticeBill(List<String> idList) throws BusinessException {
-
 		return null;
 	}
 	
@@ -638,36 +594,36 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		// 更新支付状态
 		bo.updateHeaders((JKBXHeaderVO[]) vos.toArray(new JKBXHeaderVO[0]), new String[] { JKBXHeaderVO.PAYFLAG });
 	}
+	
+	// 承兑汇票退票,不处理
+	@Override
+	public List<ReturnBillRetDetail> processReturnBill(ReturnBill4BusiVO bill4BusiVO) throws BusinessException {
+		return null;
+	}
 
 	@Override
 	public void notifyPayTypeBillFtsRefuseDeal(BusiInfo... busiInfos) throws BusinessException {
-
 	}
 
 	@Override
 	public void notifyPayTypeBillInnertansferCancelForcePay(BusiInfo... busiInfos) throws BusinessException {
-
 	}
 
 	@Override
 	public void notifyPayTypeBillInnertansferForcePay(BusiInfo... busiInfos) throws BusinessException {
-
 	}
 
 	@Override
 	public void notifyPayTypeBillInnertansferRefuseCommisionPay(BusiInfo... busiInfos) throws BusinessException {
-
 	}
 
 	@Override
 	public void notifyPayTypeBillInnertansferSuccessAndEffect(BusiStateChangeVO... busiStateChangeVOs) throws BusinessException {
-		//
 	}
 
 	@Override
 	public void notifyPayTypeBillCancelInnertansferAndCancelEffect(BusiStateChangeVO... busiStateChangeVOs)
 			throws BusinessException {
-		//
 	}
 	
 	/**
@@ -682,5 +638,24 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			isAutoSettle = vos[0].isAutoSettle();
 		}
 		return isAutoSettle;
+	}
+	
+	// bx无委托收款,不处理
+	public void billChange(BusiInfo busiInfo, Map<String, MoneyDetail> value) throws BusinessException {
+	}
+	
+	private String getDJDL(BusiInfo busiInfo) {
+		String billtype = busiInfo.getBill_type();
+		return getDJDL(billtype);
+
+	}
+
+	private String getDJDL(String billtype) {
+		if (billtype.startsWith("263")) {
+			return BXConstans.JK_DJDL;
+		} else if (billtype.startsWith("264")) {
+			return BXConstans.BX_DJDL;
+		}
+		return null;
 	}
 }
