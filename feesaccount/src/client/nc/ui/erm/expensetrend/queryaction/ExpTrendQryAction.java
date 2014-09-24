@@ -541,7 +541,7 @@ public class ExpTrendQryAction extends ErmDefaultQryAction implements ISubscribe
         if (model instanceof LiabilityCenterDefaultRefModel) {
             refPane.setMultiCorpRef(false);
         } else if (model instanceof CostCenterTreeRefModel) {
-            model.setFilterRefNodeName(new String[]{"利润中心"/* -=notranslate=- */});
+            model.setFilterRefNodeName(new String[]{nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0106")/*@res "利润中心"*/});
             refPane.setMultiCorpRef(true);
         } else {
             refPane.setMultiCorpRef(true);

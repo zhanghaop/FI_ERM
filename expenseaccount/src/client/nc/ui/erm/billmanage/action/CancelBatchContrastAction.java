@@ -142,7 +142,8 @@ public class CancelBatchContrastAction extends NCAction {
             // 报销单已核销预提，不可以批量冲借款
             AccruedVerifyVO[] accruedVerifyVO = bxvo.getAccruedVerifyVO();
             if(accruedVerifyVO != null && accruedVerifyVO.length > 0){
-            	msgs.append("报销单已经核销预提，不可以取消批量冲借款" + ":"+ parentVO.getDjbh() + "\n");
+            	msgs.append(nc.vo.ml.NCLangRes4VoTransl
+						.getNCLangRes().getStrByID("2011", "UPP2011-000957")/** @res* "报销单已经核销预提，不可以取消批量冲借款"*/ + ":"+ parentVO.getDjbh() + "\n");
             	continue;
             	
             }

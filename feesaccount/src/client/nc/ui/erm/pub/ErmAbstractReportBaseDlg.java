@@ -778,7 +778,7 @@ public abstract class ErmAbstractReportBaseDlg extends ReportQryDlg {
 	    if (model instanceof LiabilityCenterDefaultRefModel) {
 	        refPane.setMultiCorpRef(false);
 	    } else if (model instanceof CostCenterTreeRefModel) {
-	        model.setFilterRefNodeName(new String[]{"利润中心"/* -=notranslate=- */});
+	        model.setFilterRefNodeName(new String[]{nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0106")/*@res "利润中心"*/});
 	        CostCenterTreeRefModel costModel = (CostCenterTreeRefModel)model;
             costModel.setCurrentOrgCreated(false);
             costModel.setOrgType(CostCenterVO.PK_PROFITCENTER);

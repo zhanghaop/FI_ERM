@@ -143,7 +143,12 @@ public class ErmBxJKSXControlListener implements IBusinessListener {
 
 		for (AggAccruedBillVO vo : aggvos) {
 			if (BXStatusConst.DJZT_Sign != vo.getParentVO().getBillstatus()) {
-				msg.append("有未生效的预提单" + vo.getParentVO().getBillno());
+				msg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0186")/*
+																											 * @
+																											 * res
+																											 * "有未生效的预提单"
+																											 */
+						+ vo.getParentVO().getBillno());
 			}
 		}
 		if (msg.length() != 0) {

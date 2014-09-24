@@ -124,7 +124,12 @@ public class TempSaveAction extends SaveAction {
 
 		//表体中有超过标准值的行
 		if(getInitEditor().getRows().size()>0){
-			int result = MessageDialog.showYesNoDlg(getInitEditor(), null, "该单据所填金额超过标准允许的最大金额，是否确认暂存？");
+			int result = MessageDialog.showYesNoDlg(getInitEditor(), null, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("2011v61013_0", "02011v61013-0119")/*
+					 * @
+					 * res
+					 * "该单据所填金额超过标准允许的最大金额，是否确认暂存？"
+					 */);
 			if (result != UIDialog.ID_YES) 
 				return;
 		}

@@ -48,7 +48,9 @@ public class LinkErmBillAction extends NCAction {
         	}else if(selectedData.getPk_djlx().equals(ErmBillConst.Expamoritize_BILLTYPE)){//摊销信息
         		nodeCode = BXConstans.EXPAMORTIZE_NODE;
         	}else{
-        		throw new BusinessException("不支持该单据类型单据联查[" + selectedData.getPk_djlx() + "]");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0",
+						"0201107-0184")/* @res不支持该单据类型单据联查 */
+						+ "[" + selectedData.getPk_djlx() + "]");
         	}
         	
         	LinkQuery linkQuery = new LinkQuery(selectedData.getPk_djlx(), new String[]{selectedData.getPk_jkbx()});

@@ -254,12 +254,17 @@ public class EventHandleUtil {
 			}
 			if(vos != null && vos.length > 0){
 				ShowStatusBarMsgUtil.showErrorMsg(
-						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0150")/*
+						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0181")/*
 																										 * @
 																										 * res
 																										 * "待摊失败！"
 																										 */,
-								"报销单已经核销预提，不可进行待摊", editor.getModel().getContext());
+						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0182")/*
+																										 * @
+																										 * res
+																										 * "报销单已经核销预提，不可进行待摊"
+																										 */, 
+							editor.getModel().getContext());
 				getBillCardPanel().getHeadItem(JKBXHeaderVO.ISEXPAMT).setValue(UFBoolean.FALSE);
 				return;
 			}
@@ -350,7 +355,12 @@ public class EventHandleUtil {
 																										 * res
 																										 * "分摊失败！"
 																										 */,
-								"报销单已经核销预提，不可进行分摊", editor.getModel().getContext());
+						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0", "0201107-0183")/*
+																										 * @
+																										 * res
+																										 * "报销单已经核销预提，不可进行分摊"
+																										 */, 
+					editor.getModel().getContext());
 				getBillCardPanel().getHeadItem(JKBXHeaderVO.ISCOSTSHARE).setValue(UFBoolean.FALSE);
 				return;
 			}

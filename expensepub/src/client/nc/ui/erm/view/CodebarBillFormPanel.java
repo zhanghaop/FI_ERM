@@ -55,7 +55,7 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 		UILabel label = new UILabel();
 		label.setName("barCode");
 		label.setOpaque(false);
-		label.setText("快捷码");
+		label.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000966")/*@res "快捷码"*/);
 		return label;
 	}
 
@@ -88,7 +88,7 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 							}
 							List<JKBXVO> values=CodeBarQueryUtil.doBarCodeQuery(value,(BillManageModel) getModel());
 							if(values == null){
-								ShowStatusBarMsgUtil.showStatusBarMsg("未找到符合条件的单据",getModel().getContext());
+								ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000967")/*@res"未找到符合条件的单据"*/,getModel().getContext());
 							}
 					         // 如果已经有了条码查询出的数据，就不再追加
 							if (values != null && values.size() != 0) {

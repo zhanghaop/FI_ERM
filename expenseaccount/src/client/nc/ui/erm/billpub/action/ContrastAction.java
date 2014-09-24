@@ -31,6 +31,7 @@ import nc.vo.ep.bx.JKHeaderVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.util.VOUtils;
+import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.bill.BillTabVO;
@@ -69,7 +70,11 @@ public class ContrastAction extends NCAction {
 			vos = (AccruedVerifyVO[]) billModel.getBodyValueVOs(AccruedVerifyVO.class.getName());
 		}
 		if(vos != null && vos.length > 0){
-			throw new ValidationException("报销单已经核销预提，不可冲借款");
+			throw new ValidationException(NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("2011v61013_0", "02011v61013-0116")/*
+					 * @res
+					 * "报销单已经核销预提，不可冲借款"
+					 */);
 		}
 
 		ContrastDialog dialog = getContrastDialog(vo, getModel().getContext().getPk_org());

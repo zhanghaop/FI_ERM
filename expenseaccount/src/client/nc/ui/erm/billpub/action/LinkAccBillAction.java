@@ -19,6 +19,7 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.link.LinkQuery;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
+import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
 
 public class LinkAccBillAction extends NCAction {
@@ -40,7 +41,11 @@ public class LinkAccBillAction extends NCAction {
 			return;
 		}
 		if(ArrayUtils.isEmpty(selectedData.getAccruedVerifyVO())){
-			throw new BusinessException("此单据无核销明细，不能联查预提单");
+			throw new BusinessException(NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("2011v61013_0", "02011v61013-0117")/*
+					 * @res
+					 * "此单据无核销明细，不能联查预提单"
+					 */);
 		}
 		
 		List<String> accpks=new ArrayList<String>(); 

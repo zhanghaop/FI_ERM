@@ -68,7 +68,7 @@ public class ErmBugetPfClientBizProcess implements IPFClientBizProcess {
 	private String matterAppBudgetControl_name = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0033")/*@res "是否进行费用申请单控制"*/;
 	
 	private String isWorkFlowFinalNode_id = "isWorkFlowFinalNode";
-	private String isWorkFlowFinalNode_name = "是否流程最后环节(y/n)";
+	private String isWorkFlowFinalNode_name = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0185")/*@res "是否流程最后环节(y/n)"*/;;
 
 	public PFClientBizRetObj execute(Container parent, PfClientBizProcessContext context) {
 		PFClientBizRetObj result = new PFClientBizRetObj();

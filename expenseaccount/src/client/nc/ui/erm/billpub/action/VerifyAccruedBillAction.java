@@ -19,6 +19,7 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
+import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 
@@ -80,16 +81,28 @@ public class VerifyAccruedBillAction extends NCAction {
 	private void checkBxVOValid(JKBXVO vo) throws ValidationException {
 		StringBuffer bf = new StringBuffer();
 		UFBoolean iscostshare = vo.getParentVO().getIscostshare();
-		if(iscostshare != null && iscostshare.booleanValue()){
-			bf.append("报销单已经设置分摊，不可进行核销预提");
+		if (iscostshare != null && iscostshare.booleanValue()) {
+			bf.append(NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0", "02011v61013-0120")/*
+																									 * @
+																									 * res
+																									 * "报销单已经设置分摊，不可进行核销预提"
+																									 */);
 		}
 		UFBoolean isexp = vo.getParentVO().getIsexpamt();
-		if(isexp != null && isexp.booleanValue()){
-			bf.append("\n报销单已经设置待摊，不可进行核销预提");
+		if (isexp != null && isexp.booleanValue()) {
+			bf.append("\n" + NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0", "02011v61013-0121")/*
+																											 * @
+																											 * res
+																											 * "报销单已经设置待摊，不可进行核销预提"
+																											 */);
 		}
 		BxcontrastVO[] contrastVO = vo.getContrastVO();
-		if(contrastVO != null && contrastVO.length > 0){
-			bf.append("\n报销单已经冲借款，不可进行核销预提");
+		if (contrastVO != null && contrastVO.length > 0) {
+			bf.append("\n" + NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0", "02011v61013-0122")/*
+																											 * @
+																											 * res
+																											 * "报销单已经冲借款，不可进行核销预提"
+																											 */);
 		}
 		if(bf.length() != 0){
 			throw new ValidationException(bf.toString());

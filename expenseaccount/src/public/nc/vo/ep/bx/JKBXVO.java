@@ -244,18 +244,37 @@ public abstract class JKBXVO extends AggregatedValueObject implements ISettleinf
 	public String[] getTableNames() {
 
 		if (getParentVO().getDjdl().equals(BXConstans.BX_DJDL)) {
-			return new String[] {nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000279") /*
-					 * @
-					 * res
-					 * "业务信息"
-					 */, "报销单冲销对照行",
-					"费用分摊明细","报销核销预提明细"};
+			return new String[] { nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000279") /*
+																												 * @
+																												 * res
+																												 * "业务信息"
+																												 */,
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000963") /*
+																									 * @
+																									 * res
+																									 * "报销单冲销对照行"
+																									 */,
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000964") /*
+																									 * @
+																									 * res
+																									 * "费用分摊明细"
+																									 */,
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000965") /*
+																									 * @
+																									 * res
+																									 * "报销核销预提明细"
+																									 */};
 		} else {
 			return new String[] { nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000279") /*
-					 * @
-					 * res
-					 * "业务信息"
-					 */, "报销单冲销对照行"};
+																												 * @
+																												 * res
+																												 * "业务信息"
+																												 */,
+					nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000963") /*
+																									 * @
+																									 * res
+																									 * "报销单冲销对照行"
+																									 */};
 		}
 		
 	}

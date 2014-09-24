@@ -103,7 +103,8 @@ public class ERMBillCheckValidator implements Validator {
 				total_amount = UFDoubleTool.sum(total_amount, accruedVerifyVOs[i].getVerify_amount());
 			}
 			if (total_amount.compareTo(bxvo.getParentVO().getYbje()) != 0) {
-				throw new BusinessException("报销单核销预提时，报销金额必须等于总核销金额");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0194")/* @res "报销单核销预提时，报销金额必须等于总核销金额" */);
 			}
 		}
 		

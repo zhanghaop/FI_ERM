@@ -62,7 +62,7 @@ public class CodebarToolbarPanel  extends CardLayoutToolbarPanel{
 		label.setName("barCode");
 		label.setOpaque(false);
 //		label.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000367"));// "条码："
-		label.setText("快捷码");
+		label.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000966")/*@res "快捷码"*/);
 		return label;
 	}
 
@@ -95,7 +95,7 @@ public class CodebarToolbarPanel  extends CardLayoutToolbarPanel{
 							}
 							List<JKBXVO> values=CodeBarQueryUtil.doBarCodeQuery(value,(BillManageModel) getModel());
 							if(values == null || (values != null && values.size() == 0)){
-								ShowStatusBarMsgUtil.showStatusBarMsg("未找到符合条件的单据",//NCLangRes.getInstance().getStrByID("common", "UCH007")  */,
+								ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000967")/*@res"未找到符合条件的单据"*/,//NCLangRes.getInstance().getStrByID("common", "UCH007")  */,
 										getModel().getContext());
 								Thread.sleep(100);
 							}
@@ -153,7 +153,7 @@ public class CodebarToolbarPanel  extends CardLayoutToolbarPanel{
 	public UICheckBox getUICheckBox() {
 		if (checkBox == null) {
 //			String CHECKSHOW = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000368");// 连续扫描
-			String CHECKSHOW = "连续扫码";
+			String CHECKSHOW = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000968")/*@res"连续扫码"*/;
 			checkBox = new UICheckBox(CHECKSHOW, false);
 			checkBox.setOpaque(false);
 		}

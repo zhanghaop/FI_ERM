@@ -149,8 +149,11 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 							LightBillVO[] lightVos = ErUtil.queryForwardBills(djlxbm, new String[]{type}, result.toArray(new String[0]));
 
 							if (lightVos != null && lightVos.length > 0) {
-								//TODO 提多语
-								throw new BusinessException("该申请单交易类型的单据已被下游单据拉单，不可修改费用申请类型");
+								throw new BusinessException(nc.bs.ml.NCLangResOnserver.getInstance().getStrByID("2006",
+										"UPP2006-000391")/*
+														 * @res
+														 * "该申请单交易类型的单据已被下游单据拉单，不可修改费用申请类型"
+														 */);
 							}
 						}
 					}
@@ -554,8 +557,11 @@ public class ArapBillTypeImpl implements IArapBillTypePrivate,
 	private void checkMatypeNotNull(DjLXVO vo) throws BusinessException{
 		if(vo != null && ErmBillConst.MatterApp_DJDL.equals(vo.getDjdl())){
 			if(vo.getMatype() == null){
-				//TODO 提多语
-				throw new BusinessException("新增费用申请单交易类型，【费用申请类型】不能为空");
+				throw new BusinessException(nc.bs.ml.NCLangResOnserver.getInstance().getStrByID("2006",
+						"UPP2006-000392")/*
+						 * @res
+						 * "新增费用申请单交易类型，【费用申请类型】不能为空"
+						 */);
 			}
 		}
 		

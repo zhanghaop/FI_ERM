@@ -160,11 +160,11 @@ public class ExpAmortizeImpl implements IExpAmortize {
 	private void checkCurrAmount(ExpamtinfoVO newVo) throws BusinessException {
 		UFDouble currAmount = newVo.getCurr_amount() == null ? UFDouble.ZERO_DBL : newVo.getCurr_amount();
 		if (currAmount.compareTo(UFDouble.ZERO_DBL) <= 0 || currAmount.compareTo(newVo.getRes_amount()) > 0) {
-			throw new BusinessException("本期摊销金额应大于0,小于剩余摊销金额!");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0187")/*@res "本期摊销金额应大于0,小于剩余摊销金额!"*/);
 		}
 		
 		if (currAmount.compareTo(newVo.getRes_amount()) == 0 && newVo.getRes_period() > 1 ) {
-			throw new BusinessException("剩余摊销期大于一期,不能将余额全部摊销!");
+			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0188")/*@res "剩余摊销期大于一期,不能将余额全部摊销!"*/);
 		}
 	}
 

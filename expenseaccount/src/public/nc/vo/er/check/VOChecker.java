@@ -367,7 +367,17 @@ public class VOChecker {
 			if (aggvos != null && aggvos.length > 0) {
 				for (AggAccruedBillVO aggvo : aggvos) {
 					if (aggvo.getParentVO().getRedflag() != null && aggvo.getParentVO().getRedflag() == ErmAccruedBillConst.REDFLAG_REDED) {
-						throw new BusinessException("核销的预提单" + aggvo.getParentVO().getBillno() + "已红冲，不能反审");
+						throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+								"expensepub_0", "02011002-0195")/*
+																 * @res "核销的预提单"
+																 */
+								+ aggvo.getParentVO().getBillno()
+								+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+										.getStrByID("expensepub_0", "02011002-0196")/*
+																					 * @
+																					 * res
+																					 * "已红冲，不能反审"
+																					 */);
 					}
 				}
 			}
@@ -405,7 +415,8 @@ public class VOChecker {
 				total_amount = UFDoubleTool.sum(total_amount, accruedVerifyVOs[i].getVerify_amount());
 			}
 			if (total_amount.compareTo(bxvo.getParentVO().getYbje()) != 0) {
-				throw new BusinessException("报销单核销预提时，报销金额必须等于总核销金额");
+				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0",
+						"02011002-0194")/* @res "报销单核销预提时，报销金额必须等于总核销金额" */);
 			}
 		}
 		

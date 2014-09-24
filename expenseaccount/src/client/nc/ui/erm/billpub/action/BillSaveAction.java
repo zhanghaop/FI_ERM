@@ -81,7 +81,12 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 
 		//表体中有超过标准值的行
 		if(((ErmBillBillForm) getEditor()).getRows().size()>0){
-			int result = MessageDialog.showYesNoDlg((ErmBillBillForm) getEditor(), null, "该单据所填金额超过标准允许的最大金额，是否确认保存？");
+			int result = MessageDialog.showYesNoDlg((ErmBillBillForm) getEditor(), null, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("2011v61013_0", "02011v61013-0115")/*
+					 * @
+					 * res
+					 * "该单据所填金额超过标准允许的最大金额，是否确认保存？"
+					 */);
 			if (result != UIDialog.ID_YES) 
 				return;
 		}

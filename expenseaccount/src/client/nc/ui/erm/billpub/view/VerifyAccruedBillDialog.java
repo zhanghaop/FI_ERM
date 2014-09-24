@@ -99,7 +99,11 @@ public class VerifyAccruedBillDialog extends UIDialog implements
 
 	@Override
 	public String getTitle() {
-		return "核销预提";
+		return nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000958")/*
+																							 * @
+																							 * res
+																							 * "核销预提"
+																							 */;
 	}
 
 	private void initialize() {
@@ -443,7 +447,17 @@ public class VerifyAccruedBillDialog extends UIDialog implements
 				UFDouble verify_amount = detailvo.getVerify_amount();
 				UFDouble pre_rest_amount = detailvo.getPredict_rest_amount();
 				if (pre_rest_amount == null || verify_amount.compareTo(pre_rest_amount) > 0) {
-					errormsg.append("预提单" + headvo.getBillno() + "中不能有核销金额大于预计余额的行\n");
+					errormsg.append(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000959")/*
+																													 * @
+																													 * res
+																													 * "预提单"
+																													 */
+							+ headvo.getBillno()
+							+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000960")/*
+																											 * @
+																											 * res
+																											 * "中不能有核销金额大于预计余额的行"
+																											 */+ "\n");
 				}
 			}
 
@@ -586,18 +600,24 @@ public class VerifyAccruedBillDialog extends UIDialog implements
 			if(verify_amount.compareTo(UFDouble.ZERO_DBL) <= 0){
 				BXUiUtil.showUif2DetailMessage(VerifyAccruedBillDialog.this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
 						.getStrByID("201107_0", "0201107-0147")/*
-																 * @res
-																 * "错误信息"
-																 */, "核销金额应大于0，请重新填写");
+																 * @res "错误信息"
+																 */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("2011", "UPP2011-000961")/*
+															 * @ res
+															 * "核销金额应大于0，请重新填写"
+															 */);
 				// 恢复设置核销金额为预提余额
 				verify_amount = p_rest_amount;
 			}
 			if (verify_amount.compareTo(UFDoubleTool.getDoubleValue(p_rest_amount)) > 0) {
 				BXUiUtil.showUif2DetailMessage(VerifyAccruedBillDialog.this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
 						.getStrByID("201107_0", "0201107-0147")/*
-																 * @res
-																 * "错误信息"
-																 */, "核销金额不应大于预提余额");
+																 * @res "错误信息"
+																 */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("2011", "UPP2011-000962")/*
+															 * @ res
+															 * "核销金额不应大于预提余额"
+															 */);
 				// 恢复设置核销金额为预提余额
 				verify_amount = p_rest_amount;
 			}

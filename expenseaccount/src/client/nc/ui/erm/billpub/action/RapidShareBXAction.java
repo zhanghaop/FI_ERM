@@ -15,6 +15,7 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.costshare.CShareDetailVO;
+import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.ValidationException;
@@ -38,7 +39,11 @@ public class RapidShareBXAction extends RapidShareAbstractAction {
 			vos = (AccruedVerifyVO[]) billModel.getBodyValueVOs(AccruedVerifyVO.class.getName());
 		}
 		if(vos != null && vos.length > 0){
-			throw new ValidationException("报销单已经核销预提，不可快速分摊");
+			throw new ValidationException(NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("2011v61013_0", "02011v61013-0118")/*
+					 * @res
+					 * "报销单已经核销预提，不可快速分摊"
+					 */);
 		}
         
         BillData data = ((BillForm) getEditor()).getBillCardPanel().getBillData();

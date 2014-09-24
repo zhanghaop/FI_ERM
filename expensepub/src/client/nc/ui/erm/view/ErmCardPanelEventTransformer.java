@@ -247,7 +247,7 @@ public class ErmCardPanelEventTransformer {
 			this.setBodyOldValue(e.getRow(), e.getKey());
 
 			if (null == editable) {
-				String message = "表体编辑前事件未设置返回值！";/* -=notranslate=- */
+				String message = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000969")/*@res"表体编辑前事件未设置返回值！"*/;
 				ExceptionUtils.wrappBusinessException(message);
 				return false;
 			}
@@ -279,7 +279,7 @@ public class ErmCardPanelEventTransformer {
 			this.setHeadTailOldValue(e.getItem());
 
 			if (null == editable) {
-				String message = "表头/表尾编辑前事件未设置返回值！";/* -=notranslate=- */
+				String message = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000970")/*@res"表头/表尾编辑前事件未设置返回值！"*/;
 				ExceptionUtils.wrappBusinessException(message);
 				return false;
 			}
@@ -315,7 +315,7 @@ public class ErmCardPanelEventTransformer {
 			editable = event.getReturnValue();
 
 			if (null == editable) {
-				String message = "表体页签切换前事件未设置返回值！";/* -=notranslate=- */
+				String message = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000971")/*@res"表体页签切换前事件未设置返回值！"*/;
 				ExceptionUtils.wrappBusinessException(message);
 				return false;
 			}
@@ -405,7 +405,7 @@ public class ErmCardPanelEventTransformer {
 			exModel.fireExtEvent(event);
 
 			if (null == event.getReturnValue()) {
-				String message = "卡片表体排序前事件未设置返回值！";/* -=notranslate=- */
+				String message = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000972")/*@res"卡片表体排序前事件未设置返回值！"*/;
 				ExceptionUtils.wrappBusinessException(message);
 			}
 			sortType = event.getReturnValue().getType();
@@ -434,7 +434,7 @@ public class ErmCardPanelEventTransformer {
 			editable = event.getReturnValue();
 
 			if (null == editable) {
-				String message = "卡片行编辑事件未设置返回值！";/* -=notranslate=- */
+				String message = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000973")/*@res"卡片行编辑事件未设置返回值！"*/;
 				ExceptionUtils.wrappBusinessException(message);
 				return false;
 			}

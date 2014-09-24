@@ -188,7 +188,7 @@ public class ActionUtils {
         	name=nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0008")/*@res "取消确认"*/;
         	break;
         case INVALID:
-        	name= "作废";
+        	name= nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0107")/*@res "作废"*/;
         	break;
 		default:
 			break;
