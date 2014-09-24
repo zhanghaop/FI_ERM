@@ -67,7 +67,7 @@ public class LinkVoucherAction extends NCAction {
 			FipBillLinkQueryCenter.queryDesBillBySrcInfoInDlg(getEditor(), 
 					querylist.toArray(new FipRelationInfoVO[0]));
 		} catch (Exception ex) {
-			ExceptionHandler.consume(ex);
+			ExceptionHandler.handleException(ex);
 		}
 
 	}
