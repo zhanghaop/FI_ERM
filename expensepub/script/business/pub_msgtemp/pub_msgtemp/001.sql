@@ -31,10 +31,10 @@ go
 insert into pub_msgtemp(pk_templet,dr,langcode,messagetitle,pk_org,pk_outtemplet,tempcode,tempdscrpt,tempname,textcontent,ts,typecode) values('1001Z31000000002Q8QE',0,'simpchn','还款单审批消息','GLOBLE00000000000000','1001Z31000000002S2PT','264701','还款单审批消息模板','还款单审批消息',null,'2013-08-15 15:31:25','264X')
 go
 
-insert into pub_msgtemp(pk_templet,dr,langcode,messagetitle,pk_org,pk_outtemplet,tempcode,tempdscrpt,tempname,textcontent,ts,typecode) values('1001Z31000000005KY2H',0,'simpchn','报销预警消息模板','GLOBLE00000000000000','1001Z31000000005KY2I','ermprealarm','报销预警消息模板','报销预警消息模板',null,'2013-08-15 15:31:25','ermjkprealarm')
+insert into pub_msgtemp(pk_templet,dr,langcode,messagetitle,pk_org,pk_outtemplet,tempcode,tempdscrpt,tempname,textcontent,ts,typecode) values('1001Z31000000005KY2H',0,'simpchn','报销预警消息模板','GLOBLE00000000000000','1001Z31000000005KY2I','ermprealarm','报销预警消息模板','报销预警消息模板',null,'2013-05-28 12:17:01','ermjkprealarm')
 go
 
-insert into pub_msgtemp(pk_templet,dr,langcode,messagetitle,pk_org,pk_outtemplet,tempcode,tempdscrpt,tempname,textcontent,ts,typecode) values('1001Z31000000005KY5Q',0,'english','Erm Warning','GLOBLE00000000000000','1001Z31000000005KY5R','ermprealarm','Erm Warning','Erm Warning',null,'2013-08-15 15:31:25','ermjkprealarm')
+insert into pub_msgtemp(pk_templet,dr,langcode,messagetitle,pk_org,pk_outtemplet,tempcode,tempdscrpt,tempname,textcontent,ts,typecode) values('1001Z31000000005KY5Q',0,'english','Erm Warning','GLOBLE00000000000000','1001Z31000000005KY5R','ermprealarm','Erm Warning','Erm Warning',null,'2013-05-28 12:17:01','ermjkprealarm')
 go
 
 insert into pub_msgtemp(pk_templet,dr,langcode,messagetitle,pk_org,pk_outtemplet,tempcode,tempdscrpt,tempname,textcontent,ts,typecode) values('1001Z31000000005KY8Z',0,'tradchn','報銷預警消息模板','GLOBLE00000000000000','1001Z31000000005KY90','ermprealarm','報銷預警消息模板','報銷預警消息模板',null,'2013-08-15 15:31:25','ermjkprealarm')

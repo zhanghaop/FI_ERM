@@ -16,6 +16,6 @@ go
 insert into fip_classmainprop(pk_classmainprop,creationtime,creator,displaycode,displayname,dr,modifiedtime,modifier,pk_group,pk_org,ts) values('1001Z31000000000DUQF',null,'~','ERM06','~',0,null,'~','GLOBLE00000000000000',null,'2014-09-25 10:49:26')
 go
 
-insert into fip_classmainprop(pk_classmainprop,creationtime,creator,displaycode,displayname,dr,modifiedtime,modifier,pk_group,pk_org,ts) values('1001Z310000000AADUQF',null,'~','ERM07','~',0,null,'~','GLOBLE00000000000000',null,'2014-09-25 10:49:26')
+insert into fip_classmainprop(pk_classmainprop,creationtime,creator,displaycode,displayname,dr,modifiedtime,modifier,pk_group,pk_org,ts) values('1001Z310000000AADUQF',null,'~','ERM07','~',0,null,'~','GLOBLE00000000000000',null,'2014-04-04 10:55:01')
 go
 

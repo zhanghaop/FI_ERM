@@ -1294,217 +1294,217 @@ go
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('0001Z31000000264X4D8','pk_resacostcenter','~','de9796b5-bccd-42a1-97dd-808847bfddbd',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIF','receiver','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','263X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIF','receiver','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','263X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIG','center_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','263X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIG','center_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','263X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIK','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','263X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIK','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','263X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIL','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','263X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIL','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','263X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIM','iscusupplier','~','BS000010000100001032',0,'~','263X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EIM','iscusupplier','~','BS000010000100001032',0,'~','263X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ1','center_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ1','center_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','264X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ5','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ5','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','264X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ6','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ6','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','264X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ7','iscusupplier','~','BS000010000100001032',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EJ7','iscusupplier','~','BS000010000100001032',0,'~','264X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EK8','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','265X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EK8','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','265X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EK9','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','265X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000EK9','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','265X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000ELH','cashproj','~','edc7fbfe-4111-440e-93e0-a88664969dd4',0,'~','266X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000ELH','cashproj','~','edc7fbfe-4111-440e-93e0-a88664969dd4',0,'~','266X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000ELI','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','266X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000ELI','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','266X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000ELJ','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','266X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000000ELJ','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','266X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FBH','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','263X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FBH','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','263X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FBI','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','263X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FBI','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','263X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCI','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCI','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','264X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCJ','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCJ','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','264X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCX','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','265X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCX','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','265X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCY','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','265X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FCY','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','265X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD1','billstatus','~','b02ff924-5474-473e-b077-4d7d5f802107',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD1','billstatus','~','b02ff924-5474-473e-b077-4d7d5f802107',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD2','hasntbcheck','~','BS000010000100001032',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD2','hasntbcheck','~','BS000010000100001032',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD3','amortize_user','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD3','amortize_user','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD4','amortize_date','~','BS000010000100001033',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD4','amortize_date','~','BS000010000100001033',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD5','bx_pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD5','bx_pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD6','bx_dwbm','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD6','bx_dwbm','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD7','bx_deptid','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD7','bx_deptid','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD8','bx_jkbxr','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD8','bx_jkbxr','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD9','pk_billtype','~','BS000010000100001001',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FD9','pk_billtype','~','BS000010000100001001',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDA','bx_pk_billtype','~','BS000010000100001001',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDA','bx_pk_billtype','~','BS000010000100001001',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDB','bx_djrq','~','BS000010000100001033',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDB','bx_djrq','~','BS000010000100001033',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDC','defitem30','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDC','defitem30','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDD','defitem29','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDD','defitem29','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDE','defitem28','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDE','defitem28','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDF','defitem27','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDF','defitem27','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDG','defitem26','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDG','defitem26','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDH','defitem25','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDH','defitem25','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDI','defitem24','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDI','defitem24','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDJ','defitem23','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDJ','defitem23','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDK','defitem22','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDK','defitem22','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDL','defitem21','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDL','defitem21','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDM','defitem20','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDM','defitem20','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDN','defitem19','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDN','defitem19','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDO','defitem18','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDO','defitem18','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDP','defitem17','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDP','defitem17','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDQ','defitem16','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDQ','defitem16','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDR','defitem15','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDR','defitem15','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDS','defitem14','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDS','defitem14','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDT','defitem13','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDT','defitem13','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDU','defitem12','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDU','defitem12','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDV','defitem11','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDV','defitem11','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDW','defitem10','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDW','defitem10','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDX','defitem9','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDX','defitem9','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDY','defitem8','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDY','defitem8','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDZ','defitem7','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FDZ','defitem7','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE0','defitem6','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE0','defitem6','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE1','defitem5','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE1','defitem5','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE2','defitem4','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE2','defitem4','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE3','defitem3','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE3','defitem3','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE4','defitem2','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE4','defitem2','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE5','defitem1','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE5','defitem1','~','BS000010000100001056',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE6','zy','~','BS000010000100001001',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE6','zy','~','BS000010000100001001',0,'~','266X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE7','billstatus','~','BS000010000100001004',0,'~','266X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000005FE7','billstatus','~','BS000010000100001004',0,'~','266X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FBM','receiver','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FBM','receiver','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','264X','~','~',2,'2014-01-15 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FBT','paytarget','~','65d35dd9-05f8-4cb3-afc9-073ff888e319',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FBT','paytarget','~','65d35dd9-05f8-4cb3-afc9-073ff888e319',0,'~','264X','~','~',2,'2014-01-15 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FBY','vouchertag','~','18f25e25-6a96-4923-a1f7-ec3918b020a6',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FBY','vouchertag','~','18f25e25-6a96-4923-a1f7-ec3918b020a6',0,'~','264X','~','~',1,'2014-02-12 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCA','freecust','~','20d2ca8b-c9da-4def-a9a1-4b11b85bba54',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCA','freecust','~','20d2ca8b-c9da-4def-a9a1-4b11b85bba54',0,'~','264X','~','~',2,'2014-01-15 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCJ','dwbm','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCT','paytarget','~','65d35dd9-05f8-4cb3-afc9-073ff888e319',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCT','paytarget','~','65d35dd9-05f8-4cb3-afc9-073ff888e319',0,'~','264X','~','~',1,'2014-01-15 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCW','custaccount','~','9e10ef4a-0be9-482b-880f-871e5b0504b7',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FCW','custaccount','~','9e10ef4a-0be9-482b-880f-871e5b0504b7',0,'~','264X','~','~',2,'2014-01-15 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FUT','skyhzh','~','ada13c7f-b854-46cf-95a3-9f59d121c0e7',0,'~','264X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000006FUT','skyhzh','~','ada13c7f-b854-46cf-95a3-9f59d121c0e7',0,'~','264X','~','~',2,'2014-01-15 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z3100000000085ZH','pk_expamtinfo','~','BS000010000100001051',0,'~','266X','~','~',1,'2014-09-25 10:49:26')
@@ -1954,409 +1954,409 @@ go
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000000QUV9','pk_resacostcenter','~','de9796b5-bccd-42a1-97dd-808847bfddbd',0,'~','263X','~','~',2,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO2','pk_mtapp_bill','~','BS000010000100001051',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO2','pk_mtapp_bill','~','BS000010000100001051',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO3','pk_billtype','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO3','pk_billtype','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO4','pk_tradetype','~','b0fa41cd-a649-4309-b685-d341a5d1b0ed',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO4','pk_tradetype','~','b0fa41cd-a649-4309-b685-d341a5d1b0ed',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO5','billno','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO5','billno','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO6','billmaker','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO6','billmaker','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO7','billdate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO7','billdate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO8','billstatus','~','fa5a2ee3-2230-4f3d-9872-5eaeb7aab85c',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO8','billstatus','~','fa5a2ee3-2230-4f3d-9872-5eaeb7aab85c',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO9','apprstatus','~','2ed33012-890c-4e5f-82a0-40ef0eeb4b45',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BO9','apprstatus','~','2ed33012-890c-4e5f-82a0-40ef0eeb4b45',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOA','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOA','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOB','close_status','~','4aa7bb04-a337-44b9-829d-6135d4f3c091',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOB','close_status','~','4aa7bb04-a337-44b9-829d-6135d4f3c091',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOC','pk_currtype','~','b498bc9a-e5fd-4613-8da8-bdae2a05704a',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOC','pk_currtype','~','b498bc9a-e5fd-4613-8da8-bdae2a05704a',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOD','org_currinfo','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOD','org_currinfo','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOE','group_currinfo','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOE','group_currinfo','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOF','global_currinfo','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOF','global_currinfo','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOG','orig_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOG','orig_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOH','org_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOH','org_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOI','group_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOI','group_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOJ','global_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOJ','global_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOK','reason','~','07a55a1c-ef34-4607-8230-18053e94f27f',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOK','reason','~','07a55a1c-ef34-4607-8230-18053e94f27f',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOL','attach_amount','~','BS000010000100001004',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOL','attach_amount','~','BS000010000100001004',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOM','apply_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOM','apply_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BON','center_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BON','center_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOO','pk_customer','~','e4f48eaf-5567-4383-a370-a59cb3e8a451',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOP','closeman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOP','closeman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOQ','closedate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOQ','closedate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOR','approver','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOR','approver','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOS','approvetime','~','BS000010000100001034',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOS','approvetime','~','BS000010000100001034',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOT','creator','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOT','creator','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOU','creationtime','~','BS000010000100001034',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOU','creationtime','~','BS000010000100001034',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOV','modifier','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOV','modifier','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOW','modifiedtime','~','BS000010000100001034',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOW','modifiedtime','~','BS000010000100001034',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOX','printer','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOX','printer','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOY','printdate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOY','printdate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOZ','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BOZ','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP0','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP0','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP1','hasntbcheck','~','BS000010000100001032',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP1','hasntbcheck','~','BS000010000100001032',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP2','warningmsg','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP2','warningmsg','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP3','rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP3','rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP4','org_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP4','org_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP5','group_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP5','group_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP6','global_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP6','global_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP7','exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP7','exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP8','org_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP8','org_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP9','group_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BP9','group_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPA','global_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPA','global_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPB','pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPB','pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPC','org_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPC','org_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPD','group_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPD','group_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPE','global_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPE','global_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPF','autoclosedate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPF','autoclosedate','~','BS000010000100001033',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPG','defitem30','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPG','defitem30','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPH','defitem29','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPH','defitem29','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPI','defitem28','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPI','defitem28','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPJ','defitem27','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPJ','defitem27','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPK','defitem26','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPK','defitem26','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPL','defitem25','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPL','defitem25','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPM','defitem24','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPM','defitem24','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPN','defitem23','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPN','defitem23','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPO','defitem22','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPO','defitem22','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPP','defitem21','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPP','defitem21','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPQ','defitem20','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPQ','defitem20','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPR','defitem19','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPR','defitem19','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPS','defitem18','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPS','defitem18','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPT','defitem17','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPT','defitem17','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPU','defitem16','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPU','defitem16','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPV','defitem15','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPV','defitem15','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPW','defitem14','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPW','defitem14','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPX','defitem13','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPX','defitem13','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPY','defitem12','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPY','defitem12','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPZ','defitem11','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BPZ','defitem11','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ0','defitem10','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ0','defitem10','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ1','defitem9','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ1','defitem9','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ2','defitem8','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ2','defitem8','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ3','defitem7','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ3','defitem7','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ4','defitem6','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ4','defitem6','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ5','defitem5','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ5','defitem5','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ6','defitem4','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ6','defitem4','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ7','defitem3','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ7','defitem3','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ8','defitem2','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ8','defitem2','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ9','defitem1','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQ9','defitem1','~','BS000010000100001056',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQA','djdl','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQA','djdl','~','BS000010000100001001',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQB','auditman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQB','auditman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQD','pk_supplier','~','720dcc7c-ff19-48f4-b9c5-b90906682f45',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQE','assume_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQE','assume_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQF','is_adjust','~','BS000010000100001032',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQF','is_adjust','~','BS000010000100001032',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQG','usable_amout','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQG','usable_amout','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQH','max_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQH','max_amount','~','BS000010000100001031',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQI','iscostshare','~','BS000010000100001032',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQI','iscostshare','~','BS000010000100001032',0,'~','261X','~','~',1,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQJ','pk_mtapp_detail','~','BS000010000100001051',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQJ','pk_mtapp_detail','~','BS000010000100001051',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQK','assume_org','~','985be8a4-3a36-4778-8afe-2d8ed3902659',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQK','assume_org','~','985be8a4-3a36-4778-8afe-2d8ed3902659',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQL','assume_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQL','assume_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQM','pk_iobsclass','~','283d91a4-a8f4-4763-ac44-aae7401fa09a',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQM','pk_iobsclass','~','283d91a4-a8f4-4763-ac44-aae7401fa09a',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQN','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQN','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQO','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQO','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQP','pk_pcorg','~','5461ada1-ef2a-419a-af14-656cf0641d34',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQP','pk_pcorg','~','5461ada1-ef2a-419a-af14-656cf0641d34',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQQ','pk_resacostcenter','~','de9796b5-bccd-42a1-97dd-808847bfddbd',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQQ','pk_resacostcenter','~','de9796b5-bccd-42a1-97dd-808847bfddbd',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQR','pk_checkele','~','37e3adca-e0a0-4dff-82ea-63b335cf5515',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQR','pk_checkele','~','37e3adca-e0a0-4dff-82ea-63b335cf5515',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQS','pk_salesman','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQS','pk_salesman','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQT','pk_project','~','2ee58f9b-781b-469f-b1d8-1816842515c3',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQT','pk_project','~','2ee58f9b-781b-469f-b1d8-1816842515c3',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQU','pk_wbs','~','e0cc2c7c-4274-4844-a55d-08ad5d1ff81c',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQU','pk_wbs','~','e0cc2c7c-4274-4844-a55d-08ad5d1ff81c',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQV','pk_customer','~','e4f48eaf-5567-4383-a370-a59cb3e8a451',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQV','pk_customer','~','e4f48eaf-5567-4383-a370-a59cb3e8a451',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQW','pk_supplier','~','720dcc7c-ff19-48f4-b9c5-b90906682f45',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQW','pk_supplier','~','720dcc7c-ff19-48f4-b9c5-b90906682f45',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQX','reason','~','07a55a1c-ef34-4607-8230-18053e94f27f',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQX','reason','~','07a55a1c-ef34-4607-8230-18053e94f27f',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQY','pk_currtype','~','b498bc9a-e5fd-4613-8da8-bdae2a05704a',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQY','pk_currtype','~','b498bc9a-e5fd-4613-8da8-bdae2a05704a',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQZ','orig_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BQZ','orig_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR0','billno','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR0','billno','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR1','pk_billtype','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR1','pk_billtype','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR2','pk_tradetype','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR2','pk_tradetype','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR3','billdate','~','BS000010000100001033',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR3','billdate','~','BS000010000100001033',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR4','close_status','~','4aa7bb04-a337-44b9-829d-6135d4f3c091',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR4','close_status','~','4aa7bb04-a337-44b9-829d-6135d4f3c091',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR5','billstatus','~','fa5a2ee3-2230-4f3d-9872-5eaeb7aab85c',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR5','billstatus','~','fa5a2ee3-2230-4f3d-9872-5eaeb7aab85c',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR6','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR6','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR7','closeman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR7','closeman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR8','closedate','~','BS000010000100001033',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR8','closedate','~','BS000010000100001033',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR9','org_currinfo','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BR9','org_currinfo','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRA','group_currinfo','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRA','group_currinfo','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRB','global_currinfo','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRB','global_currinfo','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRC','org_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRC','org_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRD','group_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRD','group_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRE','global_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRE','global_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRF','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRF','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRG','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRG','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRH','rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRH','rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRI','org_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRI','org_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRJ','group_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRJ','group_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRK','global_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRK','global_rest_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRL','exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRL','exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRM','org_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRM','org_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRN','group_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRN','group_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRO','global_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRO','global_exe_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRP','rowno','~','BS000010000100001004',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRP','rowno','~','BS000010000100001004',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRQ','pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRQ','pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRR','org_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRR','org_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRS','group_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRS','group_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRT','global_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRT','global_pre_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRU','billmaker','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
@@ -2365,115 +2365,115 @@ go
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRV','apply_dept','~','BS000010000100001001',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRW','approvetime','~','BS000010000100001033',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRW','approvetime','~','BS000010000100001033',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRX','defitem30','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRX','defitem30','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRY','defitem29','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRY','defitem29','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRZ','defitem28','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BRZ','defitem28','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS0','defitem27','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS0','defitem27','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS1','defitem26','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS1','defitem26','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS2','defitem25','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS2','defitem25','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS3','defitem24','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS3','defitem24','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS4','defitem23','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS4','defitem23','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS5','defitem22','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS5','defitem22','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS6','defitem21','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS6','defitem21','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS7','defitem20','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS7','defitem20','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS8','defitem19','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS8','defitem19','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS9','defitem18','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BS9','defitem18','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSA','defitem17','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSA','defitem17','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSB','defitem16','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSB','defitem16','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSC','defitem15','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSC','defitem15','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSD','defitem14','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSD','defitem14','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSE','defitem13','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSE','defitem13','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSF','defitem12','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSF','defitem12','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSG','defitem11','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSG','defitem11','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSH','defitem10','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSH','defitem10','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSI','defitem9','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSI','defitem9','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSJ','defitem8','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSJ','defitem8','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSK','defitem7','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSK','defitem7','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSL','defitem6','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSL','defitem6','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSM','defitem5','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSM','defitem5','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSN','defitem4','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSN','defitem4','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSO','defitem3','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSO','defitem3','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSP','defitem2','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSP','defitem2','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSQ','defitem1','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSQ','defitem1','~','BS000010000100001056',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSR','usable_amout','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSR','usable_amout','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSS','share_ratio','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSS','share_ratio','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BST','apply_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BST','apply_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSU','customer_ratio','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSU','customer_ratio','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSV','max_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BSV','max_amount','~','BS000010000100001031',0,'~','261X','~','~',2,'2014-01-07 09:11:29')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BT2','apply_org','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','261X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z310000000015BT2','apply_org','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','261X','~','~',1,'2014-01-14 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001QTAI','pk_payorg','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','264X','GLOBLE00000000000000','~',1,'2014-09-25 10:49:26')
@@ -2482,454 +2482,454 @@ go
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001QUV1','pk_payorg','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','263X','GLOBLE00000000000000','~',1,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B4','pk_accrued_bill','~','BS000010000100001051',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B4','pk_accrued_bill','~','BS000010000100001051',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B5','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B5','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B6','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B6','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B7','pk_billtype','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B7','pk_billtype','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B8','pk_tradetype','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B8','pk_tradetype','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B9','pk_tradetypeid','~','b0fa41cd-a649-4309-b685-d341a5d1b0ed',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0B9','pk_tradetypeid','~','b0fa41cd-a649-4309-b685-d341a5d1b0ed',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BA','billno','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BA','billno','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BB','billdate','~','BS000010000100001033',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BB','billdate','~','BS000010000100001033',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BC','pk_currtype','~','b498bc9a-e5fd-4613-8da8-bdae2a05704a',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BC','pk_currtype','~','b498bc9a-e5fd-4613-8da8-bdae2a05704a',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BD','billstatus','~','dd2ccba9-164a-44ad-beea-e7a9e43d61c2',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BD','billstatus','~','dd2ccba9-164a-44ad-beea-e7a9e43d61c2',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BE','apprstatus','~','2ed33012-890c-4e5f-82a0-40ef0eeb4b45',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BE','apprstatus','~','2ed33012-890c-4e5f-82a0-40ef0eeb4b45',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BF','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BF','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BG','org_currinfo','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BG','org_currinfo','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BH','group_currinfo','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BH','group_currinfo','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BI','global_currinfo','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BI','global_currinfo','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BJ','amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BJ','amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BK','org_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BK','org_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BL','group_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BL','group_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BM','global_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BM','global_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BN','verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BN','verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BO','org_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BO','org_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BP','group_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BP','group_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BQ','global_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BQ','global_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BR','predict_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BR','predict_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BS','rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BS','rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BT','org_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BT','org_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BU','group_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BU','group_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BV','global_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BV','global_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BW','reason','~','07a55a1c-ef34-4607-8230-18053e94f27f',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BW','reason','~','07a55a1c-ef34-4607-8230-18053e94f27f',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BX','attach_amount','~','BS000010000100001004',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BX','attach_amount','~','BS000010000100001004',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BY','operator_org','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BY','operator_org','~','a0ec952c-e4e5-416a-b3e0-d402725f76be',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BZ','operator_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0BZ','operator_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C0','operator','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C0','operator','~','40d39c26-a2b6-4f16-a018-45664cac1a1f',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C1','defitem1','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C1','defitem1','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C2','defitem2','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C2','defitem2','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C3','defitem3','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C3','defitem3','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C4','defitem4','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C4','defitem4','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C5','defitem5','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C5','defitem5','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C6','defitem6','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C6','defitem6','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C7','defitem7','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C7','defitem7','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C8','defitem8','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C8','defitem8','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C9','defitem9','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0C9','defitem9','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CA','defitem10','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CA','defitem10','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CB','defitem11','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CB','defitem11','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CC','defitem12','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CC','defitem12','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CD','defitem13','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CD','defitem13','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CE','defitem14','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CE','defitem14','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CF','defitem15','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CF','defitem15','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CG','defitem16','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CG','defitem16','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CH','defitem17','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CH','defitem17','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CI','defitem18','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CI','defitem18','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CJ','defitem19','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CJ','defitem19','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CK','defitem20','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CK','defitem20','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CL','defitem21','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CL','defitem21','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CM','defitem22','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CM','defitem22','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CN','defitem23','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CN','defitem23','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CO','defitem24','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CO','defitem24','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CP','defitem25','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CP','defitem25','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CQ','defitem26','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CQ','defitem26','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CR','defitem27','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CR','defitem27','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CS','defitem28','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CS','defitem28','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CT','defitem29','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CT','defitem29','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CU','defitem30','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CU','defitem30','~','BS000010000100001056',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CV','approver','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CV','approver','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CW','approvetime','~','BS000010000100001034',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CW','approvetime','~','BS000010000100001034',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CX','printer','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CX','printer','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CY','printdate','~','BS000010000100001033',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CY','printdate','~','BS000010000100001033',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CZ','creator','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0CZ','creator','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D0','creationtime','~','BS000010000100001034',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D0','creationtime','~','BS000010000100001034',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D1','modifier','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D1','modifier','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D2','modifiedtime','~','BS000010000100001034',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D2','modifiedtime','~','BS000010000100001034',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D3','auditman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D3','auditman','~','f6f9a473-56c0-432f-8bc7-fbf8fde54fee',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D4','hasntbcheck','~','BS000010000100001032',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D4','hasntbcheck','~','BS000010000100001032',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D5','warningmsg','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D5','warningmsg','~','BS000010000100001001',0,'~','262X','~','~',1,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D6','pk_accrued_detail','~','BS000010000100001051',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D6','pk_accrued_detail','~','BS000010000100001051',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D7','rowno','~','BS000010000100001004',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D7','rowno','~','BS000010000100001004',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D8','assume_org','~','985be8a4-3a36-4778-8afe-2d8ed3902659',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D8','assume_org','~','985be8a4-3a36-4778-8afe-2d8ed3902659',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D9','assume_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0D9','assume_dept','~','b26fa3cb-4087-4027-a3b6-c83ab2a086a9',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DA','pk_iobsclass','~','283d91a4-a8f4-4763-ac44-aae7401fa09a',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DA','pk_iobsclass','~','283d91a4-a8f4-4763-ac44-aae7401fa09a',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DB','pk_pcorg','~','5461ada1-ef2a-419a-af14-656cf0641d34',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DB','pk_pcorg','~','5461ada1-ef2a-419a-af14-656cf0641d34',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DC','pk_resacostcenter','~','de9796b5-bccd-42a1-97dd-808847bfddbd',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DC','pk_resacostcenter','~','de9796b5-bccd-42a1-97dd-808847bfddbd',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DD','pk_checkele','~','37e3adca-e0a0-4dff-82ea-63b335cf5515',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DD','pk_checkele','~','37e3adca-e0a0-4dff-82ea-63b335cf5515',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DE','pk_project','~','2ee58f9b-781b-469f-b1d8-1816842515c3',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DE','pk_project','~','2ee58f9b-781b-469f-b1d8-1816842515c3',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DF','pk_wbs','~','e0cc2c7c-4274-4844-a55d-08ad5d1ff81c',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DF','pk_wbs','~','e0cc2c7c-4274-4844-a55d-08ad5d1ff81c',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DG','pk_supplier','~','720dcc7c-ff19-48f4-b9c5-b90906682f45',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DG','pk_supplier','~','720dcc7c-ff19-48f4-b9c5-b90906682f45',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DH','pk_customer','~','e4f48eaf-5567-4383-a370-a59cb3e8a451',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DH','pk_customer','~','e4f48eaf-5567-4383-a370-a59cb3e8a451',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DI','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DI','pk_proline','~','029c4c8f-39bb-4208-acc0-c3f66632f328',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DJ','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DJ','pk_brand','~','3ee53558-6398-4096-a91f-c7aa00e93701',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DK','org_currinfo','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DK','org_currinfo','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DL','group_currinfo','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DL','group_currinfo','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DM','global_currinfo','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DM','global_currinfo','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DN','amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DN','amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DO','org_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DO','org_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DP','group_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DP','group_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DQ','global_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DQ','global_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DR','verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DR','verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DS','org_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DS','org_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DT','group_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DT','group_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DU','global_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DU','global_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DV','predict_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DV','predict_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DW','rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DW','rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DX','org_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DX','org_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DY','group_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DY','group_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DZ','global_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0DZ','global_rest_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E0','defitem1','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E0','defitem1','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E1','defitem2','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E1','defitem2','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E2','defitem3','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E2','defitem3','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E3','defitem4','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E3','defitem4','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E4','defitem5','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E4','defitem5','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E5','defitem6','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E5','defitem6','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E6','defitem7','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E6','defitem7','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E7','defitem8','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E7','defitem8','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E8','defitem9','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E8','defitem9','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E9','defitem10','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0E9','defitem10','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EA','defitem11','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EA','defitem11','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EB','defitem12','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EB','defitem12','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EC','defitem13','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EC','defitem13','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ED','defitem14','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ED','defitem14','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EE','defitem15','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EE','defitem15','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EF','defitem16','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EF','defitem16','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EG','defitem17','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EG','defitem17','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EH','defitem18','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EH','defitem18','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EI','defitem19','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EI','defitem19','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EJ','defitem20','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EJ','defitem20','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EK','defitem21','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EK','defitem21','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EL','defitem22','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EL','defitem22','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EM','defitem23','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EM','defitem23','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EN','defitem24','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EN','defitem24','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EO','defitem25','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EO','defitem25','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EP','defitem26','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EP','defitem26','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EQ','defitem27','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EQ','defitem27','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ER','defitem28','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ER','defitem28','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ES','defitem29','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ES','defitem29','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ET','defitem30','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0ET','defitem30','~','BS000010000100001056',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EU','pk_accrued_verify','~','BS000010000100001051',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EU','pk_accrued_verify','~','BS000010000100001051',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EV','pk_accrued_detail','~','dac07786-0d4e-4863-89dc-b46eecf50d39',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EV','pk_accrued_detail','~','dac07786-0d4e-4863-89dc-b46eecf50d39',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EW','pk_bxd','~','d9b9f860-4dc7-47fa-a7d5-7a5d91f39290',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EW','pk_bxd','~','d9b9f860-4dc7-47fa-a7d5-7a5d91f39290',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EX','verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EX','verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EY','org_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EY','org_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EZ','group_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0EZ','group_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F0','global_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F0','global_verify_amount','~','BS000010000100001031',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F1','verify_man','~','BS000010000100001001',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F1','verify_man','~','BS000010000100001001',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F2','verify_date','~','BS000010000100001033',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F2','verify_date','~','BS000010000100001033',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F3','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F3','effectstatus','~','f61cd296-3d55-4b1d-8428-bda54ae64d6a',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F4','effectdate','~','BS000010000100001033',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F4','effectdate','~','BS000010000100001033',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F5','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F5','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F6','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F6','pk_group','~','3b6dd171-2900-47f3-bfbe-41e4483a2a65',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F7','accrued_billno','~','BS000010000100001001',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F7','accrued_billno','~','BS000010000100001001',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F8','bxd_billno','~','BS000010000100001001',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F8','bxd_billno','~','BS000010000100001001',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F9','pk_iobsclass','~','283d91a4-a8f4-4763-ac44-aae7401fa09a',0,'~','262X','~','~',2,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000001T0F9','pk_iobsclass','~','283d91a4-a8f4-4763-ac44-aae7401fa09a',0,'~','262X','~','~',2,'2014-02-18 11:09:09')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1001Z31000000002HRIB','pk_costshare','~','BS000010000100001051',0,'~','265X','~','~',1,'2014-09-25 10:49:26')
@@ -4030,7 +4030,7 @@ go
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1013Z3100000000002JR','globalcjkbbje','~','BS000010000100001031',0,'~','263X','~','~',2,'2014-09-25 10:49:26')
 go
 
-insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1013Z3100000000003HB','vouchertag','~','18f25e25-6a96-4923-a1f7-ec3918b020a6',0,'~','263X','~','~',1,'2014-09-25 10:49:26')
+insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1013Z3100000000003HB','vouchertag','~','18f25e25-6a96-4923-a1f7-ec3918b020a6',0,'~','263X','~','~',1,'2014-02-12 09:11:29')
 go
 
 insert into fip_billitem(pk_billitem,attrcode,attrname,doctype,dr,explanation,pk_billtype,pk_group,pk_org,position,ts) values('1016Z31000000000046Z','pk_org','~','2cfe13c5-9757-4ae8-9327-f5c2d34bcb46',0,'~','264X','~','~',1,'2014-09-25 10:49:26')
