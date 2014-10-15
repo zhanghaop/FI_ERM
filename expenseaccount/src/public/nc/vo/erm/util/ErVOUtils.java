@@ -264,7 +264,8 @@ public class ErVOUtils {
 			
 			String[] attributeNames = busItem.getAttributeNames();
 			for (String attr : attributeNames) {
-				if(attr.equals("cashproj") || attr.equals("jkbxr") || attr.equals("cashitem")){
+				if(attr.equals("cashproj") || attr.equals("jkbxr") || attr.equals("cashitem")
+						|| attr.equals(BXBusItemVO.DWBM) || attr.equals(BXBusItemVO.DEPTID)){
 					continue;
 				}
 				head.setAttributeValue(attr, busItem.getAttributeValue(attr));
