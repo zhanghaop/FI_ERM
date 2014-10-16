@@ -175,9 +175,6 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000018V6C',0,'20110ADJUST',null,'N',null,'2011200240','费用调整单','1004ZZ10000000000FFL','D2011200240','2014-09-12 14:44:50')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000018VBW',0,'20110BXAM',null,'N',null,'2011200250','报销转固单','1004ZZ10000000000FFL','D2011200250','2014-09-25 10:43:47')
-go
-
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z310000000019KFP',0,'20111ERR',null,'N',null,'20110029','账表初始化','1004ZZ10000000000FFL','D20110029','2014-08-14 10:26:40')
 go
 
@@ -251,6 +248,12 @@ insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,me
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNQ7',0,'2011050404',null,'N',null,'2011500404','收支项目汇总表','1004ZZ10000000000FFL','D2011500404','2014-02-12 15:28:27')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3M0000000000EO2',0,'A0D001',null,'N',null,'A0D002','移动报销','1004ZZ10000000000FFL','DA0D001','2014-08-18 14:53:08')
+go
+
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1005Z3M00000000003UX',0,null,null,'Y',null,'A0D0','财务会计','1004ZZ10000000000FFL','DA0D0','2014-08-18 14:52:23')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1011Z310000000000LM9',0,'2011110101',null,'N',null,'2011600101','借款人借款账龄分析','1004ZZ10000000000FFL','D2011600101','2014-02-12 16:26:07')
