@@ -19,11 +19,14 @@ import nc.bs.erm.event.ErmBusinessEvent;
 import nc.bs.erm.event.ErmEventType;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.erm.util.ErLockUtil;
+import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.CheckStatusCallbackContext;
 import nc.bs.pub.pf.ICheckStatusCallback;
+import nc.itf.uap.pf.IWorkflowMachine;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.accruedexpense.AccruedDetailVO;
 import nc.vo.erm.accruedexpense.AccruedVO;
@@ -105,20 +108,22 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		AccruedBillVOChecker vochecker = new AccruedBillVOChecker();
 		vochecker.checkInvalid(aggvo);
 
-		// 删除前事件处理
-		fireBeforeDeleteEvent(aggvo);
+		// 作废前事件处理
+		fireBeforeInvalidEvent(aggvo);
 
 		//作废状态
-		aggvo.getParentVO().setBillstatus(ErmAccruedBillConst.BILLSTATUS_INVALID);
+		aggvo.getParentVO().setBillstatus(BXStatusConst.DJZT_Invalid);
 		// 取服务器事件作为修改时间
 		AuditInfoUtil.updateData(aggvo.getParentVO());
 		new BaseDAO().updateVOArray(new AccruedVO[]{aggvo.getParentVO()} , new String[] { MatterAppVO.BILLSTATUS, MatterAppVO.MODIFIER, MatterAppVO.MODIFIEDTIME });
 
-		// 修改后事件处理
-		fireAfterDeleteEvent(aggvo);
-
+		// 作废后事件处理
+		fireAfterInvalidEvent(aggvo);
+		
+		// 删除审批流
+		NCLocator.getInstance().lookup(IWorkflowMachine.class)
+				.deleteCheckFlow(aggvo.getParentVO().getPk_tradetype(), aggvo.getParentVO().getPrimaryKey(), aggvo, InvocationInfoProxy.getInstance().getUserId());
 		return aggvo;
-
 	}
 
 	public AggAccruedBillVO insertVO(AggAccruedBillVO aggvo) throws BusinessException {
@@ -176,6 +181,11 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		fireAfterDeleteEvent(aggvos);
 		// 退还单据号
 		returnBillno(aggvos);
+		
+		// 删除审批流
+		NCLocator.getInstance().lookup(IWorkflowMachine.class)
+				.deleteCheckFlow(aggvos[0].getParentVO().getPk_tradetype(), aggvos[0].getParentVO().getPrimaryKey(), aggvos[0], InvocationInfoProxy.getInstance().getUserId());
+		
 		// 记录业务日志
 		for (AggAccruedBillVO aggvo : aggvos) {
 			aggvo.getParentVO().setStatus(VOStatus.DELETED);
@@ -879,6 +889,16 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	protected void fireAfterDeleteEvent(AggAccruedBillVO... aggvos) throws BusinessException {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
 				ErmEventType.TYPE_DELETE_AFTER, aggvos));
+	}
+	
+	protected void fireBeforeInvalidEvent(AggAccruedBillVO... aggvos) throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
+				ErmEventType.TYPE_INVALID_BEFORE, aggvos));
+	}
+
+	protected void fireAfterInvalidEvent(AggAccruedBillVO... aggvos) throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(ErmAccruedBillConst.AccruedBill_MDID,
+				ErmEventType.TYPE_INVALID_AFTER, aggvos));
 	}
 
 	protected void fireBeforeApproveEvent(AggAccruedBillVO... aggvos) throws BusinessException {

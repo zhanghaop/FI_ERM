@@ -53,7 +53,8 @@ public class ErmExpAccListener implements IBusinessListener {
 							.updateVOs(expaccvo, oldaccountVOs);
 				}
 			}
-		} else if (ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)) {
+		} else if (ErmEventType.TYPE_DELETE_AFTER.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_INVALID_AFTER.equalsIgnoreCase(eventType)) {
 			List<String> pksList = new ArrayList<String>();
 			for (int j = 0; j < vos.length; j++) {
 				pksList.add(vos[j].getParentVO().getPk_accrued_bill());

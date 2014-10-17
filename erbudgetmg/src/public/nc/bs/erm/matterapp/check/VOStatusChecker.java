@@ -232,6 +232,9 @@ public class VOStatusChecker {
 		case ErmMatterAppConst.BILLSTATUS_APPROVED:
 			name = ErmMatterAppConst.BILLSTATUS_APPROVED_NAME;
 			break;
+		case ErmMatterAppConst.BILLSTATUS_INVALID:
+			name = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0107")/*@res "×÷·Ï"*/;
+			break;
 		default:
 			break;
 		}

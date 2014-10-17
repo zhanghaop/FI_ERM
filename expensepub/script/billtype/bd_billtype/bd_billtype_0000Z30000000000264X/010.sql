@@ -1,3 +1,45 @@
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI3','APPROVE','N_264X_APPROVE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI4','SAVE','N_264X_SAVE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI5','EDIT','N_264X_EDIT',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI6','DELETE','N_264X_DELETE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI7','UNAPPROVE','N_264X_UNAPPROVE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI8','SETTLE','N_264X_SETTLE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BI9','UNSETTLE','N_264X_UNSETTLE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BIA','WRITE','N_264X_WRITE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BIB','TRANSFERFTS','N_264X_TRANSFERFTS',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKH','UNSAVE','N_264X_UNSAVE',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKI','START','N_264X_START',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKJ','RECALL','N_264X_RECALL',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKK','SIGNAL','N_264X_SIGNAL',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKL','ROLLBACK','N_264X_ROLLBACK',0,'N','264X','0000Z30000000000264X','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
 insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('0001221000000000BELT','UNSAVE','N_264X_UNSAVE',0,'N','264X','0000Z30000000000264X','~','0001Z310000000000AUU','2014-09-25 10:43:16')
 go
 

@@ -1,3 +1,6 @@
+insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z3100000000003VB','20110ACCMN_Invalid','Invalid',null,0,'作废',0,'1001Z310000000019YFZ','201102_Invalid','2014-10-17 09:43:58')
+go
+
 insert into sm_busiactivereg(pk_busiactive,busi_pk,code,description,dr,name,ownertype,parent_id,resid,ts) values('1001Z31000000001TTOR','20110ACCMN_ADD','ADD',null,0,'新增',0,'1001Z310000000019YFZ','201102_ADD','2014-09-25 10:43:57')
 go
 

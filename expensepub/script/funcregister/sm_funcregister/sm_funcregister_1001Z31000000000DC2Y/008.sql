@@ -1,3 +1,6 @@
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000003VH','Invalid',null,'作废',0,0,'Y','Y','N','1001Z31000000000DC2Y',null,'2014-10-17 09:45:49')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000000QPF6','output',null,'输出',0,0,'Y','Y','N','1001Z31000000000DC2Y',null,'2014-01-07 09:10:32')
 go
 

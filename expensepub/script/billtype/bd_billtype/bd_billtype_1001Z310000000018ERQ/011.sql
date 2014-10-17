@@ -7,3 +7,6 @@ go
 insert into bd_billtype2(pk_billtype,classtype,classname,code,dr,pk_billtypeid,ts) values('262X',9,'nc.ui.erm.accruedexpense.budgetinit.ErmAccPfClientBizProcess',null,null,'1001Z310000000018ERQ','2014-03-13 08:44:05')
 go
 
+insert into bd_billtype2(pk_billtype,classtype,classname,code,dr,pk_billtypeid,ts) values('262X',9,'ssc.ui.wf.engine.SSCPfClientBizProcess',null,null,'1001Z310000000018ERQ','2014-09-15 10:34:56')
+go
+

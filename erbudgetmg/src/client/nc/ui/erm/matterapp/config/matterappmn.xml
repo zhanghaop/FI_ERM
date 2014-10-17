@@ -47,6 +47,7 @@
 				<ref bean="auditGroupAction" />
 				<ref bean="closeGroupAction" />
 				<ref bean="documentaction" />
+				<ref bean="nullAction" />
 				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
@@ -81,6 +82,7 @@
 				<ref bean="auditGroupAction" />
 				<ref bean="closeGroupAction" />
 				<ref bean="documentaction" />
+				<ref bean="nullAction" />
 				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />

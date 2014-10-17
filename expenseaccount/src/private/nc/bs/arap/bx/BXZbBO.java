@@ -172,6 +172,8 @@ public class BXZbBO {
 				// 非常用单据回退单据号，常用单据不生成单据号
 				if (!vo.getParentVO().isInit()) {
 					returnBillCode(vo);
+					// 删除审批流
+					NCLocator.getInstance().lookup(IWorkflowMachine.class).deleteCheckFlow(vo.getParentVO().getDjlxbm(), vo.getParentVO().getPrimaryKey(), vo, InvocationInfoProxy.getInstance().getUserId());
 				}
 
 			}
@@ -1199,6 +1201,7 @@ public class BXZbBO {
 		if (isCmpInstalled) {
 			//删除单据的结算信息
 			new ErForCmpBO().invokeCmp(vo, vo.getParentVO().getDjrq(), BusiStatus.Deleted);
+			vo.setContrastVO(null);
 		}
 
 		// 删除冲借款对照信息
@@ -1210,6 +1213,7 @@ public class BXZbBO {
 
 		// 删除报销核销 预提明细
 		new BxVerifyAccruedBillBO().deleteByBxdPks(vo.getParentVO().getPk_jkbx());
+		vo.setAccruedVerifyVO(null);
 		
 		//补充表体
 		retriveItems(vo);

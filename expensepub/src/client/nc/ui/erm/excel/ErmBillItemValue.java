@@ -39,12 +39,16 @@ public class ErmBillItemValue implements InputItem {
 	}
 
 	public Integer getOrder() {
-		if(getItemKey().contains("dwbm") || getItemKey().contains("org")){
+		if(getItemKey().equals("pk_org") || getItemKey().equals("pk_org_v")){
 			return 1;
 		}
 		
-		if(getItemKey().contains("dept")){
+		if(getItemKey().contains("dwbm") || getItemKey().contains("org")){
 			return 2;
+		}
+		
+		if(getItemKey().contains("dept")){
+			return 3;
 		}
 		return item.getReadOrder();
 	}

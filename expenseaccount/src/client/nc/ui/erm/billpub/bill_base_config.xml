@@ -455,6 +455,10 @@
 		<property name="resourceCode" value="ermloanservice" />
 		<property name="operateCode" value="delete" />
 	</bean>
+	
+	<bean id="invalaction" class="nc.ui.erm.billquery.action.InvalidAction">
+		<property name="model" ref="manageAppModel" />
+	</bean>
 
 	<bean id="listRefreshAction" class="nc.ui.uif2.actions.RefreshAction">
 		<property name="model" ref="manageAppModel" />

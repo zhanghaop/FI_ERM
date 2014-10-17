@@ -10,10 +10,6 @@
 		<property name="model" ref="manageAppModel" />
 	</bean>
 	
-	<bean id="invalaction" class="nc.ui.erm.billquery.action.InvalidAction">
-		<property name="model" ref="manageAppModel" />
-	</bean>
-	
 	<bean id="editorActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">
 		<constructor-arg>
 			<ref bean="editor" />

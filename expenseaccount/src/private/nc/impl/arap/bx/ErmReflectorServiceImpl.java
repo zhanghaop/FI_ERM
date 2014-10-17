@@ -14,7 +14,6 @@ import nc.vo.erm.util.ErVOUtils;
 import nc.vo.fip.external.FipExtendAggVO;
 import nc.vo.fip.service.FipRelationInfoVO;
 import nc.vo.fipub.utils.ArrayUtil;
-import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 
 public abstract class ErmReflectorServiceImpl implements IBillReflectorService {
@@ -54,10 +53,11 @@ public abstract class ErmReflectorServiceImpl implements IBillReflectorService {
 				FipExtendAggVO vo = new FipExtendAggVO();
 				JKBXVO = ErVOUtils.prepareBxvoHeaderToItemClone(JKBXVO);
 
-				AggregatedValueObject object = new FipUtil()
-						.addOtherInfo(JKBXVO);
-				vo.setBillVO(object);
-
+				JKBXVO jkbxvo = (JKBXVO)new FipUtil().addOtherInfo(JKBXVO);
+				if(tag != null){
+					jkbxvo.getParentVO().setVouchertag(Integer.valueOf(tag));//要重新设置凭证标志
+				}
+				vo.setBillVO(jkbxvo);
 				vo.setRelationID(JKBXVO.getParentVO().getPrimaryKey() + "_"+ tag);
 				ret.add(vo);
 			}

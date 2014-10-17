@@ -1,3 +1,6 @@
+insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z3100000000003VG',0,'1001Z3100000000003VE','1001Z3100000000003VF','2014-10-17 09:45:33')
+go
+
 insert into sm_busiactive_btn(pk_relation,dr,pk_busiactive,pk_butn,ts) values('1001Z310000000007PU1',0,'1001Z31000000002T8AJ','1001Z31000000002I8HO','2014-01-07 09:10:34')
 go
 

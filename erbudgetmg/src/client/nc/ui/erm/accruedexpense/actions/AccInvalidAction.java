@@ -24,16 +24,15 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 /**
  * 预提单作废按钮
- * @author wangled
  */
 
-public class InvalidAction extends NCAsynAction{
+public class AccInvalidAction extends NCAsynAction{
 	private static final long serialVersionUID = 1L;
 	private BillManageModel model;
 	private TPAProgressUtil tpaProgressUtil;
 	private IProgressMonitor monitor = null;
 
-	public InvalidAction() {
+	public AccInvalidAction() {
 		setCode("Invalid");
 		this.setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201107_0","0201107-0175")/*@res "作废"*/);
 	}

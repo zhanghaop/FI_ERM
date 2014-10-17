@@ -146,7 +146,8 @@
 				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
-				<!--ref bean="assistantAction"/-->
+				<ref bean="nullAction"/>
+				<ref bean="invalaction"/>
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
@@ -185,7 +186,6 @@
 				<ref bean="editaction" />
 				<ref bean="deleteaction" />
 				<ref bean="copyaction" />
-
 				<ref bean="nullAction" />
 				<ref bean="queryAction" />
 				<ref bean="listRefreshAction" />
@@ -197,7 +197,8 @@
 				<ref bean="commitGroupAction"/>
 				<ref bean="auditGroupAction"/>
 				<ref bean="documentaction"/>
-				<!--ref bean="assistantAction"/-->
+				<ref bean="nullAction"/>
+				<ref bean="invalaction"/>
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>

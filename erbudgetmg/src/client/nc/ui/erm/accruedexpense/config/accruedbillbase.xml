@@ -21,7 +21,7 @@
 		<property name="context" ref="context" />
 	</bean>
 	
-	<bean id="invalaction" class="nc.ui.erm.accruedexpense.actions.InvalidAction">
+	<bean id="invalaction" class="nc.ui.erm.accruedexpense.actions.AccInvalidAction">
 		<property name="model" ref="manageAppModel" />
 	</bean>
 

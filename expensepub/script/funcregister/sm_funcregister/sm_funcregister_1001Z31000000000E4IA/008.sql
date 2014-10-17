@@ -1,3 +1,6 @@
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000003VQ','Invalid',null,'作废',0,0,'Y','Y','N','1001Z31000000000E4IA',null,'2014-10-17 09:49:45')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000003VPB','LinkAppStatus',null,'查看审批意见',0,0,'Y','Y','N','1001Z31000000000E4IA',null,'2014-01-07 09:10:32')
 go
 

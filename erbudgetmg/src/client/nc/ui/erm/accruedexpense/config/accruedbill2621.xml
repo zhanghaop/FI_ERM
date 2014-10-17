@@ -29,6 +29,9 @@
 				<ref bean="commitGroupAction" />
 				<ref bean="auditGroupAction" />
 				<ref bean="documentaction" />
+				<ref bean="nullAction" />
+				<ref bean="redbackAction" />
+				<ref bean="nullAction" />
 				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
@@ -52,18 +55,17 @@
 				<ref bean="editAction" />
 				<ref bean="deleteAction" />
 				<ref bean="copyAction" />
-
 				<ref bean="nullAction" />
 				<ref bean="queryAction" />
 				<ref bean="refreshSingleAction" />
-
 				<ref bean="nullAction" />
 				<ref bean="commitGroupAction" />
 				<ref bean="auditGroupAction" />
 				<ref bean="documentaction" />
-				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="redbackAction" />
+				<ref bean="nullAction" />
+				<ref bean="invalaction"/>
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
 				<ref bean="nullAction" />

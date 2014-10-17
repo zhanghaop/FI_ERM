@@ -1,3 +1,30 @@
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKM','SAVE','N_262X_SAVE',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKN','UNSAVE','N_262X_UNSAVE',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKO','APPROVE','N_262X_APPROVE',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKP','UNAPPROVE','N_262X_UNAPPROVE',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKQ','DELETE','N_262X_DELETE',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKR','START','N_262X_START',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKS','RECALL','N_262X_RECALL',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKT','SIGNAL','N_262X_SIGNAL',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
+insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('00012210000000004BKU','ROLLBACK','N_262X_ROLLBACK',0,'N','262X','1001Z310000000018ERQ','~','0001AA10000000000MDS','2014-10-17 08:43:16')
+go
+
 insert into pub_busiclass(pk_busiclass,actiontype,classname,dr,isbefore,pk_billtype,pk_billtypeid,pk_businesstype,pk_group,ts) values('0001221000000000BELN','SAVE','N_262X_SAVE',0,'N','262X','1001Z310000000018ERQ','~','0001Z310000000000AUU','2014-09-25 10:43:17')
 go
 

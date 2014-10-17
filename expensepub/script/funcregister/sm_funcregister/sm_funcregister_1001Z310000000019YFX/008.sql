@@ -1,3 +1,6 @@
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000003V9','Invalid',null,'作废',0,0,'Y','Y','N','1001Z310000000019YFX',null,'2014-10-17 09:43:26')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z31000000001TTM1','PasteLineToTail','粘贴行到末行(Ctrl+Alt+V)','粘贴行到末行',0,0,'N','Y','N','1001Z310000000019YFX',null,'2014-03-12 17:02:14')
 go
 

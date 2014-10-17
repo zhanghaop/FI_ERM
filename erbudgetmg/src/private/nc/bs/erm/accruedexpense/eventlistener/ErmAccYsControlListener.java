@@ -37,7 +37,8 @@ public class ErmAccYsControlListener implements IBusinessListener {
 			AggAccruedBillVO[] oldvos = (AggAccruedBillVO[]) obj.getOldObjects();
 			getYsService().ysControlUpdate(cloneVos, oldvos);
 			return ;
-		}else if(ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)){
+		}else if(ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)){
 			// É¾³ý²Ù×÷
 			isContray = true;
 		}else if(ErmEventType.TYPE_SIGN_BEFORE.equalsIgnoreCase(eventType)
