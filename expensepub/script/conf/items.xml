@@ -250,4 +250,13 @@
 		<grpField></grpField>
 		<fixedWhere>modulename='erm'</fixedWhere>
 	</item>
+	<item>
+		<itemKey>bd_imagescantype</itemKey>
+		<itemName>共享服务扫描方式</itemName>
+		<itemRule>bd_imagescantype</itemRule>
+		<sysField></sysField>
+		<corpField></corpField>
+		<grpField></grpField>
+		<fixedWhere>code like '01%'</fixedWhere>
+	</item>
 </items>
