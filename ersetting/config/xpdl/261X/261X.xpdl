@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<WorkflowProcess AccessLevel="PUBLIC" Id="4f685d8f-55c7-11e4-8e6d-cd2777f871ac" Name="新建工作流程" Name2="" Name3="" Name4="" Name5="" Name6="">
+    <ProcessHeader DurationUnit="m">
+        <Created>2014-10-17 14:17:34</Created>
+        <MailModal>NOMAIL</MailModal>
+        <PrintTempletId/>
+        <PrintTempletName/>
+        <MobileModal>NOMOBILE</MobileModal>
+    </ProcessHeader>
+    <Applications>
+        <Application Id="AUTO_ID" Name="自动活动"/>
+        <Application Id="MAKEBILL_ID" Name="制单"/>
+        <Application Id="MANUAL_ID" Name="手工活动"/>
+    </Applications>
+    <Activities>
+        <Activity Id="a95f51a5-55c2-11e4-8e6d-cd2777f871ac" Name="制单人&lt;制单&gt;" Name2="" Name3="" Name4="" Name5="" Name6="">
+            <Implementation>
+                <Tool Id="MAKEBILL_ID" Type="APPLICATION"/>
+            </Implementation>
+            <Performer>7ebcfb23-55c5-11e4-8e6d-cd2777f871ac</Performer>
+            <StartMode>
+                <Automatic/>
+            </StartMode>
+            <FinishMode>
+                <Automatic/>
+            </FinishMode>
+            <Icon>nc/ui/wfengine/designer/resources/billmaker.png</Icon>
+            <TransitionRestrictions>
+                <TransitionRestriction>
+                    <Join Type="XOR"/>
+                    <Split Type="XOR"/>
+                </TransitionRestriction>
+            </TransitionRestrictions>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="VIRTUAL_ROLE"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5I"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
+                <ExtendedAttribute Name="Background" Value="R=195,G=170,B=228"/>
+                <ExtendedAttribute Name="Dimension" Value="21;120;78;60"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1829dd5"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC制单"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="ShowBillOrg"/>
+            </ExtendedAttributes>
+        </Activity>
+        <Activity Id="ad9c10f7-55c2-11e4-8e6d-cd2777f871ac" Name="影像扫描" Name2="" Name3="" Name4="" Name5="" Name6="">
+            <Implementation>
+                <Tool Id="MANUAL_ID" Type="APPLICATION"/>
+            </Implementation>
+            <Performer>88bffff4-55c5-11e4-8e6d-cd2777f871ac</Performer>
+            <StartMode>
+                <Automatic/>
+            </StartMode>
+            <FinishMode>
+                <Automatic/>
+            </FinishMode>
+            <Icon>nc/ui/wfengine/designer/resources/manualActivity.png</Icon>
+            <TransitionRestrictions>
+                <TransitionRestriction>
+                    <Join Type="XOR"/>
+                    <Split Type="XOR"/>
+                </TransitionRestriction>
+            </TransitionRestrictions>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
+                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="影像扫描"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
+                <ExtendedAttribute Name="CanTransfer" Value="false"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z310000000005J2T"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Dimension" Value="241;120;78;60"/>
+                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@48400a"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="RaceModal" Value="0"/>
+                <ExtendedAttribute Name="ShowBillOrg"/>
+            </ExtendedAttributes>
+        </Activity>
+        <Activity Id="afe8e729-55c2-11e4-8e6d-cd2777f871ac" Name="审批子流程" Name2="" Name3="" Name4="" Name5="" Name6="">
+            <Implementation>
+                <SubFlow Execution="SYNCHR" Id="03a7bbc4-55c5-11e4-8e6d-cd2777f871ac"/>
+            </Implementation>
+            <StartMode>
+                <Automatic/>
+            </StartMode>
+            <FinishMode>
+                <Automatic/>
+            </FinishMode>
+            <Icon>nc/ui/wfengine/designer/resources/subflowOnFlow.png</Icon>
+            <TransitionRestrictions>
+                <TransitionRestriction>
+                    <Join Type="XOR"/>
+                    <Split Type="XOR"/>
+                </TransitionRestriction>
+            </TransitionRestrictions>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
+                <ExtendedAttribute Name="Dimension" Value="141;120;78;60"/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="BorderWidth" Value="2"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
+            </ExtendedAttributes>
+        </Activity>
+        <Activity Id="dda0b30f-55c2-11e4-8e6d-cd2777f871ac" Name="财务初审" Name2="" Name3="" Name4="" Name5="" Name6="">
+            <Implementation>
+                <Tool Id="MANUAL_ID" Type="APPLICATION"/>
+            </Implementation>
+            <Performer>978547c5-55c5-11e4-8e6d-cd2777f871ac</Performer>
+            <StartMode>
+                <Automatic/>
+            </StartMode>
+            <FinishMode>
+                <Automatic/>
+            </FinishMode>
+            <Icon>nc/ui/wfengine/designer/resources/manualActivity.png</Icon>
+            <TransitionRestrictions>
+                <TransitionRestriction>
+                    <Join Type="XOR"/>
+                    <Split Type="XOR"/>
+                </TransitionRestriction>
+            </TransitionRestrictions>
+            <DataFields>
+                <DataField Id="04426b81-55c4-11e4-8e6d-cd2777f871ac" Name="SSC_ACTIVETYPE">
+                    <DataType>
+                        <BasicType Type="STRING"/>
+                    </DataType>
+                    <InitialValue>sscAccountFirstExam</InitialValue>
+                    <Description>SSC环节类型</Description>
+                </DataField>
+            </DataFields>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
+                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC会计初审"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
+                <ExtendedAttribute Name="CanTransfer" Value="false"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5F"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Dimension" Value="341;120;100;61"/>
+                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1646949"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="RaceModal" Value="0"/>
+                <ExtendedAttribute Name="ShowBillOrg"/>
+            </ExtendedAttributes>
+        </Activity>
+        <Activity Id="de9d89a1-55c2-11e4-8e6d-cd2777f871ac" Name="共享服务中心" Name2="" Name3="" Name4="" Name5="" Name6="">
+            <Implementation>
+                <Tool Id="MANUAL_ID" Type="APPLICATION"/>
+            </Implementation>
+            <Performer>a54de018-55c5-11e4-8e6d-cd2777f871ac</Performer>
+            <StartMode>
+                <Automatic/>
+            </StartMode>
+            <FinishMode>
+                <Automatic/>
+            </FinishMode>
+            <Icon>nc/ui/wfengine/designer/resources/manualActivity.png</Icon>
+            <TransitionRestrictions>
+                <TransitionRestriction>
+                    <Join Type="XOR"/>
+                    <Split Type="XOR"/>
+                </TransitionRestriction>
+            </TransitionRestrictions>
+            <DataFields>
+                <DataField Id="1161a472-55c4-11e4-8e6d-cd2777f871ac" Name="SSC_ACTIVETYPE">
+                    <DataType>
+                        <BasicType Type="STRING"/>
+                    </DataType>
+                    <InitialValue>sscFirstExam</InitialValue>
+                    <Description>SSC环节类型</Description>
+                </DataField>
+            </DataFields>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="SSC"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
+                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC初审"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
+                <ExtendedAttribute Name="CanTransfer" Value="false"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5G"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Dimension" Value="460;120;121;61"/>
+                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@13c6472"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="WorkflowGadgetParam" Value="ifSSCFinal=false,false"/>
+                <ExtendedAttribute Name="RaceModal" Value="0"/>
+                <ExtendedAttribute Name="ShowBillOrg"/>
+            </ExtendedAttributes>
+        </Activity>
+        <Activity Id="dfdce773-55c2-11e4-8e6d-cd2777f871ac" Name="共享服务中心" Name2="" Name3="" Name4="" Name5="" Name6="">
+            <Implementation>
+                <Tool Id="MANUAL_ID" Type="APPLICATION"/>
+            </Implementation>
+            <Performer>b03ccb8a-55c5-11e4-8e6d-cd2777f871ac</Performer>
+            <StartMode>
+                <Automatic/>
+            </StartMode>
+            <FinishMode>
+                <Automatic/>
+            </FinishMode>
+            <Icon>nc/ui/wfengine/designer/resources/manualActivity.png</Icon>
+            <TransitionRestrictions>
+                <TransitionRestriction>
+                    <Join Type="XOR"/>
+                    <Split Type="XOR"/>
+                </TransitionRestriction>
+            </TransitionRestrictions>
+            <DataFields>
+                <DataField Id="8ae3e79a-55c4-11e4-8e6d-cd2777f871ac" Name="isWorkFlowFinalNode">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                    <InitialValue>y</InitialValue>
+                    <Description>是否流程最后环节(y/n)</Description>
+                </DataField>
+                <DataField Id="8ae3e79b-55c4-11e4-8e6d-cd2777f871ac" Name="SSC_ACTIVETYPE">
+                    <DataType>
+                        <BasicType Type="STRING"/>
+                    </DataType>
+                    <InitialValue>sscReview</InitialValue>
+                    <Description>SSC环节类型</Description>
+                </DataField>
+            </DataFields>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="SSC"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
+                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC复核"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
+                <ExtendedAttribute Name="CanTransfer" Value="false"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5H"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Dimension" Value="621;120;140;71"/>
+                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1e67900"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="WorkflowGadgetParam" Value="ifSSCFinal=true,true"/>
+                <ExtendedAttribute Name="RaceModal" Value="0"/>
+                <ExtendedAttribute Name="ShowBillOrg"/>
+            </ExtendedAttributes>
+        </Activity>
+    </Activities>
+    <Transitions>
+        <Transition From="a95f51a5-55c2-11e4-8e6d-cd2777f871ac" Id="b305425c-55c2-11e4-8e6d-cd2777f871ac" Name="" To="afe8e729-55c2-11e4-8e6d-cd2777f871ac">
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="LineType" Value="0"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
+                <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="Dashed" Value="false"/>
+                <ExtendedAttribute Name="DashPattern" Value="5;5"/>
+                <ExtendedAttribute Name="LineColor" Value="Color.black"/>
+                <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
+            </ExtendedAttributes>
+        </Transition>
+        <Transition From="afe8e729-55c2-11e4-8e6d-cd2777f871ac" Id="b43d9b4d-55c2-11e4-8e6d-cd2777f871ac" Name="" To="ad9c10f7-55c2-11e4-8e6d-cd2777f871ac">
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="LineType" Value="0"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
+                <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="Dashed" Value="false"/>
+                <ExtendedAttribute Name="DashPattern" Value="5;5"/>
+                <ExtendedAttribute Name="LineColor" Value="Color.black"/>
+                <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
+            </ExtendedAttributes>
+        </Transition>
+        <Transition From="ad9c10f7-55c2-11e4-8e6d-cd2777f871ac" Id="ed43b0b5-55c2-11e4-8e6d-cd2777f871ac" Name="" To="dda0b30f-55c2-11e4-8e6d-cd2777f871ac">
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="LineType" Value="0"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
+                <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="Dashed" Value="false"/>
+                <ExtendedAttribute Name="DashPattern" Value="5;5"/>
+                <ExtendedAttribute Name="LineColor" Value="Color.black"/>
+                <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
+            </ExtendedAttributes>
+        </Transition>
+        <Transition From="dda0b30f-55c2-11e4-8e6d-cd2777f871ac" Id="eeb7b316-55c2-11e4-8e6d-cd2777f871ac" Name="" To="de9d89a1-55c2-11e4-8e6d-cd2777f871ac">
+            <Condition Type="CONDITION"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="LineType" Value="0"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
+                <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="Dashed" Value="false"/>
+                <ExtendedAttribute Name="DashPattern" Value="5;5"/>
+                <ExtendedAttribute Name="LineColor" Value="Color.black"/>
+                <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
+                <ExtendedAttribute Name="Priority" Value="0"/>
+            </ExtendedAttributes>
+        </Transition>
+        <Transition From="de9d89a1-55c2-11e4-8e6d-cd2777f871ac" Id="f007d9c7-55c2-11e4-8e6d-cd2777f871ac" Name="" To="dfdce773-55c2-11e4-8e6d-cd2777f871ac">
+            <Condition Type="CONDITION"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="LineType" Value="0"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
+                <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="Dashed" Value="false"/>
+                <ExtendedAttribute Name="DashPattern" Value="5;5"/>
+                <ExtendedAttribute Name="LineColor" Value="Color.black"/>
+                <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
+                <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
+                <ExtendedAttribute Name="Priority" Value="0"/>
+            </ExtendedAttributes>
+        </Transition>
+    </Transitions>
+    <ExtendedAttributes>
+        <ExtendedAttribute Name="TimeLimit" Value="0"/>
+        <ExtendedAttribute Name="SubmitTORejecter" Value="Y"/>
+        <ExtendedAttribute Name="TimeRemind" Value="0"/>
+        <ExtendedAttribute Name="UFW_EndOfWorkflow@0" Value="dfdce773-55c2-11e4-8e6d-cd2777f871ac@开始@541;240;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=238,G=203,B=88@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/endOnFlow.png@0.0;0.0"/>
+        <ExtendedAttribute Name="UFW_StartOfWorkflow" Value="a95f51a5-55c2-11e4-8e6d-cd2777f871ac@开始@181;10;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=123,G=166,B=218@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/startOnFlow.png@0.0;0.0"/>
+        <ExtendedAttribute Name="WorkflowType" Value="4"/>
+        <ExtendedAttribute Name="EmendFlow" Value="-1"/>
+        <ExtendedAttribute Name="Priority" Value="0"/>
+    </ExtendedAttributes>
+</WorkflowProcess>
