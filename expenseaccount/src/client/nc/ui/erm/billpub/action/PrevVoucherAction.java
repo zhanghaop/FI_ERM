@@ -126,7 +126,6 @@ public class PrevVoucherAction extends NCAction {
 			Object[] billvos=new Object[]{datavo};
 			List<VoucherVO> list=new ArrayList<VoucherVO>();
 			list.add(fip2gl(datavo, true));
-//			BillLinkOneNodeCenter.linkQuery_Dialog(toftPanel,"C0" , new String[]{}, billvos, true);
 			
 			DefaultLinkData userdata = new DefaultLinkData();
 			userdata.setBillType(null);
@@ -157,20 +156,6 @@ public class PrevVoucherAction extends NCAction {
 			} else {
 //				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1017clt_0", "01017clt-0125")/* @res "当前用户没有权限使用该节点" */+ ":" + nodecode);
 			}
-			// FuncletContext fc = toftPanel.getFuncletContext();
-			// if (fc != null) {
-			// DefaultLinkData userdata = new DefaultLinkData();
-			// userdata.setBillType("C0");
-			// userdata.setUserObject(list);
-			//
-			// FuncletInitData initdata = new FuncletInitData();
-			// initdata.setInitType(ILinkType.LINK_TYPE_QUERY);
-			// initdata.setInitData(userdata);
-			// // SFClientUtil2.openFuncNodeDialog(toftPanel,
-			// PfDataCache.getBillType(
-			// // new BillTypeCacheKey().buildPkGroup(, initdata, null, false,
-			// true, null);
-			// }
 		} catch (Exception ex) {
 			if (ex instanceof java.lang.reflect.InvocationTargetException) {
 				ExceptionHandler
