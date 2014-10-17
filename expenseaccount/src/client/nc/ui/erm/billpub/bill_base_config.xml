@@ -771,6 +771,11 @@
 		<property name="datasource" ref="listdatasource" />
 	</bean>
 
+	<bean id="prevVoucher" class="nc.ui.erm.billpub.action.PrevVoucherAction">
+		<property name="model" ref="manageAppModel"></property>
+		<property name="editor" ref="editor"></property>
+	</bean>
+	
 	<bean id="listprintGroup" class="nc.funcnode.ui.action.GroupAction">
 		<property name="name">
 			<bean class="nc.ui.uif2.I18nFB">
