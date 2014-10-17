@@ -102,6 +102,7 @@
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
+				<ref bean="prevVoucher"/>
 				<ref bean="mergePfAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="importexportActionGroup" />
@@ -145,6 +146,7 @@
 				<ref bean="nullAction"/>
 				<ref bean="linkGroupAction"/>
 				<ref bean="nullAction"/>
+				<ref bean="prevVoucher"/>
 				<ref bean="mergePfAction"/>
 				<ref bean="nullAction"/>
 				<ref bean="importexportActionGroup" />
