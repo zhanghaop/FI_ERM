@@ -777,7 +777,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				panel++;
 				if(flag.equals("addcard"))
 					input.append( "<input id=\"number" + panel 
-					+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
+					+ "\" min=\"-9.99999999E8\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
 					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
 					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				else if(flag.equals("editcard"))
