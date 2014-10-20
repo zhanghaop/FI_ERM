@@ -16,9 +16,7 @@
 		<sysField>systemcode</sysField>
 		<corpField></corpField>
 		<grpField>pk_billtypecode</grpField>
-		<fixedWhere>systemcode='erm' and (pk_group='global00000000000000' or pk_group = '~') 
-			and pk_billtypecode in ('2621','261X','263X','2631','2632','264X','262X','265a','264a')
-		</fixedWhere>
+		<fixedWhere>systemcode='erm' and (pk_group='global00000000000000' or pk_group = '~') </fixedWhere>
 	</item>
 	<item>
 		<itemKey>BD315</itemKey>
