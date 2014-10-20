@@ -725,10 +725,13 @@ public class ErmBillBillForm extends ERMBillForm {
 	
 	public void filtJkbx() {
 		Object appstatus = getBillCardPanel().getHeadItem(JKBXHeaderVO.SPZT).getValueObject();
-		if ((appstatus != null && (IBillStatus.COMMIT == (Integer) appstatus || IBillStatus.CHECKGOING == (Integer) appstatus))) {
+		if ((appstatus != null && (IBillStatus.COMMIT == (Integer) appstatus
+				|| IBillStatus.CHECKGOING == (Integer) appstatus || IBillStatus.CHECKPASS == (Integer) appstatus))) {
 			// 审批状态是提交态时，不做处理
+			//635后换成工作流，审批状态为审批通过的，单据也可能还在流程中
 			return;
 		}
+		
 		//若借款报销人不是登陆用户，并且不在授权代理中，将字段清空
 		String loginUser = BXUiUtil.getPk_psndoc();
 		if(loginUser!=null && !loginUser.equals((String)getHeadValue(JKBXHeaderVO.JKBXR)) && !this.isInit()){
