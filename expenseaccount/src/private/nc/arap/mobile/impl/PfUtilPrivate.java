@@ -474,9 +474,9 @@ public class PfUtilPrivate {
 					billOrTranstype)
 					|| PfUtilBaseTools.isSignalAction(actionCode,
 							billOrTranstype)) {
-//				// 工作流互处理
-//				worknoteVO = actionAboutWorkflow(parent, actionCode,
-//						billOrTranstype, billvo, eParam,0);
+				// 工作流互处理
+				worknoteVO = actionAboutWorkflow(parent, actionCode,
+						billOrTranstype, billvo, eParam,0);
 				if (!m_isSuccess)
 					return null;
 			}
@@ -673,6 +673,99 @@ public class PfUtilPrivate {
 	}
 	
 	/**
+	 * 工作流相关的交互处理
+	 * @throws BusinessException 
+	 */
+	private static WorkflownoteVO actionAboutWorkflow(Container parent, String actionName,
+			String billType, AggregatedValueObject billvo, HashMap eParam,int voAryLen) throws BusinessException {
+		WorkflownoteVO worknoteVO = null;
+
+		if (PfUtilBaseTools.isStartAction(actionName, billType)) {
+			Logger.debug("*启动动作=" + actionName + "，检查工作流");
+			Stack dlgResult = new Stack();
+			worknoteVO = checkOnStart(parent, actionName, billType, billvo, dlgResult, eParam);
+			if (dlgResult.size() > 0) {
+				m_isSuccess = false;
+				Logger.debug("*用户指派时点击了取消，则停止启动工作流");
+			}
+		} else if (PfUtilBaseTools.isSignalAction(actionName, billType)) {
+			Logger.debug("*执行动作=" + actionName + "，检查工作流");
+			// 检查该单据是否处于工作流中
+			worknoteVO = checkWorkitemWhenSignal(parent, actionName, billType, billvo, eParam, voAryLen);
+			if (worknoteVO != null) {
+				if ("Y".equals(worknoteVO.getApproveresult())) {
+					m_iCheckResult = IApproveflowConst.CHECK_RESULT_PASS;
+				} else if("R".equals(worknoteVO.getApproveresult())) {
+					// XXX::驳回也作为审批通过的一种,需要继续判断 lj+
+					WFTask currTask = worknoteVO.getTaskInfo().getTask();
+					if (currTask != null && currTask.getTaskType() == WfTaskType.Backward.getIntValue()) {
+						if (currTask.isBackToFirstActivity())
+							m_iCheckResult = IApproveflowConst.CHECK_RESULT_REJECT_FIRST;
+						else
+							m_iCheckResult = IApproveflowConst.CHECK_RESULT_REJECT_LAST;
+					}
+				} else
+					m_iCheckResult = IApproveflowConst.CHECK_RESULT_NOPASS;
+			} else if (!m_checkFlag) {
+				m_isSuccess = false;
+				Logger.debug("*用户驱动工作流时点击了取消，则停止执行工作流");
+			}
+		}
+		return worknoteVO;
+	}
+	
+	/**
+	 * 检查当前单据是否处于工作流程中或工作流的审批子流程中，并进行交互
+	 */
+	private static WorkflownoteVO checkWorkitemWhenSignal(Container parent, String actionCode,
+			String billType, AggregatedValueObject billVo, HashMap hmPfExParams, int voAryLen) throws BusinessException {
+		WorkflownoteVO noteVO = null;
+			//检查当前用户的工作流工作项+审批子流程工作项
+			noteVO = NCLocator.getInstance().lookup(IWorkflowMachine.class).checkWorkFlow(actionCode,
+					billType, billVo, hmPfExParams);
+			if (noteVO == null) {
+				m_checkFlag = true;
+				return noteVO;
+			} else {
+				//XXX:guowl+,检查是否弹出交互界面
+//				if (!PfUtilClientAssistor.isExchange(noteVO.getTaskInfo().getTask())) {
+					m_checkFlag = true;
+					noteVO.setApproveresult("Y");
+					return noteVO;
+//				}
+
+//				if (noteVO.getWorkflow_type() == WorkflowTypeEnum.SubWorkApproveflow.getIntValue()) {
+					//工作流的审批子流程
+//					if(hmPfExParams != null && hmPfExParams.get(PfUtilBaseTools.PARAM_BATCH) != null) {
+//						dlg = new BatchApproveWorkitemAcceptDlg(parent, noteVO);
+//						
+//						BatchApproveModel batchApproveMode = new BatchApproveModel();
+//						batchApproveMode.setBillUI(true);
+//						batchApproveMode.setSingleBillSelected(true);
+//						batchApproveMode.setContainUnApproveBill(false);
+//						batchApproveMode.setBillItem(voAryLen);
+//						
+//						((BatchApproveWorkitemAcceptDlg) dlg).setBachApproveMode(batchApproveMode);
+//					} else {
+//						dlg = new ApproveWorkitemAcceptDlg(parent, noteVO, true);
+//					}
+//				} 
+//				else{
+					//工作流或工作子流程
+//					dlg = new WorkflowWorkitemAcceptDlg(parent, noteVO,PfUtilClientAssistor.isCanTransfer(noteVO.getTaskInfo().getTask()));
+//				}
+//				if (dlg.showModal() == UIDialog.ID_OK) {
+					// 返回处理后的工作项
+//					m_checkFlag = true;
+//				} else {
+//					// 用户取消
+//					m_checkFlag = false;
+//					noteVO = null;
+//				}
+			}
+	}
+	
+	/**
 	 * @return 是否侧边栏审批
 	 * */
 	private static boolean isBesideApprove(HashMap hmPfExParams){
@@ -776,7 +869,7 @@ public class PfUtilPrivate {
 					return null;
 			} else if (PfUtilBaseTools.isStartAction(actionCode, billOrTranstype) || PfUtilBaseTools.isSignalAction(actionCode, billOrTranstype)) {
 				//工作流交互处理
-//				workflownote = actionAboutWorkflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
+				workflownote = actionAboutWorkflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
 				if (!m_isSuccess)
 					return null;
 			}
@@ -833,7 +926,7 @@ public class PfUtilPrivate {
 						return null;
 				} else if (PfUtilBaseTools.isStartAction(actionCode, billOrTranstype) || PfUtilBaseTools.isSignalAction(actionCode, billOrTranstype)) {
 					//工作流交互处理
-//					workflownote = actionAboutWorkflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
+					workflownote = actionAboutWorkflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
 					if (!m_isSuccess)
 						return null;
 				}

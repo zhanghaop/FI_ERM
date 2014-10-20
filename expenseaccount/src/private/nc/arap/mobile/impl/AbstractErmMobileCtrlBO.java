@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.arap.util.BillOrgVUtils;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
@@ -22,11 +23,13 @@ import nc.bs.pub.filesystem.IFileSystemService;
 import nc.bs.pub.filesystem.IQueryFolderTreeNodeService;
 import nc.bs.pub.filesystem.UploadFileIsExistException;
 import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.bd.psn.psndoc.IPsndocQueryService;
 import nc.itf.org.IOrgVersionQryService;
 import nc.itf.uap.rbac.IUserManageQuery;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.pubitf.para.SysInitQuery;
 import nc.vo.arap.bx.util.BXParamConstant;
+import nc.vo.bd.psn.PsndocVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
@@ -80,9 +83,11 @@ public abstract class AbstractErmMobileCtrlBO {
 	protected static String PK_ORG;
 	public void initEvn(String userid) throws BusinessException{
 		UserVO uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(userid);
-		PK_ORG = uservo.getPk_org();
 		InvocationInfoProxy.getInstance().setUserId(userid);
 		InvocationInfoProxy.getInstance().setGroupId(uservo == null?null:uservo.getPk_group());
+		PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(new String[]{uservo.getPk_psndoc()});
+		if(docvos!=null && docvos.length>0)
+			PK_ORG = docvos[0].getPk_org();
 	}
 	@SuppressWarnings("unchecked")
 	protected void saveAttachment(String bxpk, Map valuemap) throws BusinessException{
@@ -316,7 +321,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			  }
 			  JKBXVO jkbxvo = vos.get(0);
 			  // ÷¥––Ã·Ωª
-			  String actionType = getActionCode(IPFActionName.SAVE,PK_ORG);
+			  String actionType = ErUtil.getCommitActionCode(PK_ORG);
 			  PfUtilPrivate.runAction(null, actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 						null, null, null);
 //			  PfUtilPrivate.runAction(null, IPFActionName.SAVE+ userid, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,

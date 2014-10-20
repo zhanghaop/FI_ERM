@@ -753,6 +753,26 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				break;
 			case IBillItem.DECIMAL:
 			case IBillItem.MONEY: 
+				panel++;
+				if(flag.equals("addcard"))
+					input.append( "<input id=\"number" + panel 
+					+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
+					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
+					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				else if(flag.equals("editcard"))
+//					input.append("<input id=\"number" + panel 
+//							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
+//							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
+//							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
+					input.append("<input id=\"textbox" + panel 
+							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
+				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+				//金额直接赋值
+				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+					input.append(" value=\"" + item.getDefaultValue() + "\"");
+				input.append("/>"); 
+				break;
 			case IBillItem.INTEGER:
 				panel++;
 				if(flag.equals("addcard"))
