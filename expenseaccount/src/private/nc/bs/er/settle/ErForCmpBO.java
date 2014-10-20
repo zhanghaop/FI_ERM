@@ -98,13 +98,13 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		// 审核->签字
 		if (BusiStatus.Audit.equals(trans.getFrom()) && BusiStatus.Sign.equals(trans.getTo())) {
 			jkbxVO = getBxVO(busiInfo, trans);
-			bo.settle(busiInfo.getOperator(), busiInfo.getOperatorDate(), jkbxVO);
+			bo.signVo(busiInfo.getOperator(), busiInfo.getOperatorDate(), jkbxVO);
 
 		}
 		// 签字->反签字
 		else if (BusiStatus.Sign.equals(trans.getFrom()) && BusiStatus.Audit.equals(trans.getTo())) {
 			jkbxVO = getBxVO(busiInfo, trans);
-			bo.unSettle(new JKBXVO[] { jkbxVO }, true);
+			bo.unSignVos(new JKBXVO[] { jkbxVO });
 		}
 
 	}
@@ -118,12 +118,14 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		String flag = null;
 		if (BusiStatus.Effet.equals(trans.getTo())) {// 生效
 			flag = BXZbBO.MESSAGE_SETTLE;
+			bo.effectVo(jkbxVO);
 		} else if (BusiStatus.EffectNever.equals(trans.getTo())) {// 反生效
 			flag = BXZbBO.MESSAGE_UNSETTLE;
+			bo.unEffectVos(new JKBXVO[] { jkbxVO });
 		}
 		
-		if (!SettleUtil.isJsToFip(jkbxVO.getParentVO())) {
-			if (BXZbBO.MESSAGE_SETTLE.equals(flag) && (jkbxVO.getParentVO().getVouchertag() == null || jkbxVO.getParentVO().getVouchertag() == BXStatusConst.SXFlag)) {
+		if (!SettleUtil.isJsToFip(jkbxVO.getParentVO()) && BXZbBO.MESSAGE_SETTLE.equals(flag)) {
+			if (jkbxVO.getParentVO().getVouchertag() == null || jkbxVO.getParentVO().getVouchertag() == BXStatusConst.SXFlag) {
 				jkbxVO.getParentVO().setVouchertag(BXStatusConst.SXFlag);
 				bo.updateHeaders(new JKBXHeaderVO[] { jkbxVO.getParentVO() }, new String[] { JKBXHeaderVO.VOUCHERTAG });
 				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);

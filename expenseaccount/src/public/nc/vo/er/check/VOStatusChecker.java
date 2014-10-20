@@ -82,18 +82,14 @@ public class VOStatusChecker {
 		if (!StringUtils.isNullWithTrim(msgs)) {
 			throw new DataValidateException(msgs);
 		}
-		// begin--added by chendya@ufida.com.cn
-		// if (head.getShrq().getDate().after(jsrq)) {
-		// if (head.getShrq().getDate().afterDate(jsrq)) {
-		// //--end
-		// throw new
-		// DataValidateException("签字日期"+head.getShrq().toString()+"不能早于单据审核日期"+jsrq.toString()/*@res
-		// "签字日期不能早于单据审核日期"*/);
-		// // throw new
-		// DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000337")/*@res
-		// "签字日期不能早于单据审核日期"*/);
-		// }
-
+		
+		if (head.getShrq().getDate().afterDate(jsrq)) {// 审核日期/签字日期校验
+			throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000337")/*
+																															 * @
+																															 * res
+																															 * "签字日期不能早于单据审核日期"
+																															 */);
+		}
 	}
 
 	public static void checkUnSettleStatus(JKBXHeaderVO head) throws DataValidateException {

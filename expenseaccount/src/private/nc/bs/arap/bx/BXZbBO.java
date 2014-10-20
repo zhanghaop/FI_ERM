@@ -163,9 +163,6 @@ public class BXZbBO {
 				if (!isTempSave && !notExistsPayOrRecv && isCmpInstalled) {
 					new ErForCmpBO().invokeCmp(vo, parentVO.getDjrq(), BusiStatus.Deleted);
 				}
-				
-				//ehp2创维专项：删除单据时删除单据对应的暂估凭证，通版中不需要
-				effectToFip(vo, MESSAGE_UNSETTLE);
 
 				afterActInf(vo, MESSAGE_DELETE);
 
@@ -652,9 +649,7 @@ public class BXZbBO {
 			if (!isCmpInstalled) {
 				unSettle(new JKBXVO[] { bxvo });
 				// 删除凭证
-//				if ((headerVO.getPayflag() != null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST) || headerVO.isAdjustBxd()) {
 				effectToFip(bxvo, MESSAGE_UNSETTLE);
-//				}
 			} else {
 				// 安装了结算的反审核
 				new ErForCmpBO().invokeCmp(bxvo, shrq, billStatus);
@@ -918,16 +913,59 @@ public class BXZbBO {
 			effectToFip(bxvo, MESSAGE_SETTLE);
 		}
 	}
+	
 	/**
-	 * 
-	 * @param vos
+	 * 反生效 + 反签字
+	 * @param vos 借款报销VOs
 	 * @param isCmpUnEffectiveCall
 	 *            是否结算反生效调用
 	 * @return
 	 * @throws BusinessException
 	 */
 	public JKBXVO[] unSettle(JKBXVO[] vos, boolean isCmpUnEffectiveCall) throws BusinessException {
+		vos = unSignVos(vos);
+		vos = unEffectVos(vos);
+		return vos;
+	}
+	
+	/**
+	 * 反签字
+	 * 
+	 * @param vos
+	 *            借款报销VOs
+	 * 
+	 * @return
+	 * @throws BusinessException
+	 */
+	public JKBXVO[] unSignVos(JKBXVO[] vos) throws BusinessException {
+		compareTs(vos);
+		try {
+			JKBXHeaderVO[] headers = new JKBXHeaderVO[vos.length];
+			for (int i = 0; i < vos.length; i++) {
+				JKBXHeaderVO parentVO = vos[i].getParentVO();
+				headers[i] = parentVO;
+				headers[i].setJsrq(null);
+				headers[i].setJsr(null);
+			}
 
+			updateHeaders(headers, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ });
+			return vos;
+
+		} catch (BusinessException e) {
+			ExceptionHandler.handleException(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * 反生效
+	 * @param vos 借款报销VOS
+	 * @param isCmpUnEffectiveCall
+	 *            是否结算反生效调用
+	 * @return
+	 * @throws BusinessException
+	 */
+	public JKBXVO[] unEffectVos(JKBXVO[] vos) throws BusinessException {
 		compareTs(vos);
 
 		try {
@@ -940,18 +978,14 @@ public class BXZbBO {
 
 				vos[i].setBxoldvo((JKBXVO) vos[i].clone());
 				headers[i] = parentVO;
-
 				// 补充信息
 				addBxExtralInfo(vos[i]);
-				
 				fillUpMapf(vos[i]);
 			}
 
 			beforeActInf(vos, MESSAGE_UNSETTLE);
 			
 			for (int i = 0; i < vos.length; i++) {
-				headers[i].setJsrq(null);
-				headers[i].setJsr(null);
 				headers[i].setDjzt(BXStatusConst.DJZT_Verified);
 				headers[i].setSxbz(BXStatusConst.SXBZ_NO);
 			}
@@ -1033,8 +1067,7 @@ public class BXZbBO {
 				getJKBXDAO().delete(jsContrasVOs.toArray(new JsConstrasVO[] {}));
 			}
 
-			updateHeaders(headers, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ, JKBXHeaderVO.DJZT,
-					JKBXHeaderVO.SXBZ });
+			updateHeaders(headers, new String[] {JKBXHeaderVO.DJZT ,JKBXHeaderVO.SXBZ });
 			
 			// 核销预提明细取消生效处理
 			new BxVerifyAccruedBillBO().uneffectAccruedVerifyVOs(vos);
@@ -1050,7 +1083,7 @@ public class BXZbBO {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @param head
 	 * @throws BusinessException
@@ -1070,6 +1103,7 @@ public class BXZbBO {
 	}
 
 	/**
+	 * 签字+生效
 	 * 此方法处理生效，借款控制，预算控制，传收付
 	 * 
 	 * @param jsr
@@ -1079,22 +1113,53 @@ public class BXZbBO {
 	 * 
 	 */
 	public void settle(String jsr, UFDate jsrq, JKBXVO vo) throws BusinessException {
+		//委托付款时，签字时，只回写签字信息，单据并不生效
+		signVo(jsr, jsrq,vo);//签字
+		effectVo(vo);//生效
+	}
+	
+	/**
+	 * 单据签字
+	 * 
+	 * @param jsr 签字人
+	 * @param jsrq 签字日期
+	 * @param vo
+	 * @throws BusinessException
+	 * 
+	 */
+	public JKBXVO signVo(String jsr, UFDate jsrq, JKBXVO vo) throws BusinessException {
+		// 校验ts
+		compareTs(new JKBXVO[] { vo });
 
+		JKBXHeaderVO head = vo.getParentVO();
+		VOStatusChecker.checkSettleStatus(head, jsrq);
+
+		head.setJsr(jsr);
+		head.setJsrq(jsrq);
+
+		// 更新vo信息
+		updateHeaders(new JKBXHeaderVO[] { head }, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ });
+		return vo;
+	}
+	
+	/**
+	 * 单据生效
+	 * 
+	 * @param vo
+	 *            借款报销VO
+	 * @throws BusinessException
+	 * 
+	 */
+	public JKBXVO effectVo(JKBXVO vo) throws BusinessException {
 		// 校验ts
 		compareTs(new JKBXVO[] { vo });
 
 		JKBXHeaderVO head = vo.getParentVO();
 
-		VOStatusChecker.checkSettleStatus(head, jsrq);
-
 		// 补充信息
 		addBxExtralInfo(vo);
 		fillUpMapf(vo);
-		
-		// begin--added by chendya 下列代码块一定放在预算控制之前，
-		// 避免预算控制设置控制规则中如果设置控制日期为“生效日期”时查不到控制方案
-		head.setJsr(jsr);
-		head.setJsrq(jsrq);
+
 		head.setDjzt(BXStatusConst.DJZT_Sign);
 		head.setSxbz(BXStatusConst.SXBZ_VALID);
 
@@ -1102,9 +1167,8 @@ public class BXZbBO {
 		beforeActInf(new JKBXVO[] { vo }, MESSAGE_SETTLE);
 
 		// 更新vo信息
-		updateHeaders(new JKBXHeaderVO[] { head }, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ,
-				JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ});
-		
+		updateHeaders(new JKBXHeaderVO[] { head }, new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ });
+
 		// 核销预提明细生效处理
 		new BxVerifyAccruedBillBO().effectAccruedVerifyVOs(vo);
 
@@ -1113,6 +1177,8 @@ public class BXZbBO {
 
 		// 传收付
 		transferArap(vo);
+
+		return vo;
 	}
 	
 	/**
