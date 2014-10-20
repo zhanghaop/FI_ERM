@@ -376,7 +376,7 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 
 			// 网银支付支付完成时处理生成凭证
 			if (head.getPayflag().intValue() == BXStatusConst.PAYFLAG_PayFinish) {
-				if (SettleUtil.isJsToFip(jkbxVO.getParentVO())) {
+				if (SettleUtil.isJsToFip(head)) {
 					List<JKBXVO> jkbxvo = NCLocator.getInstance().lookup(IBXBillPrivate.class).retriveItems(voList);
 					forwardToFip(BXZbBO.MESSAGE_SETTLE, jkbxvo);// 生成凭证的正向操作
 				}
