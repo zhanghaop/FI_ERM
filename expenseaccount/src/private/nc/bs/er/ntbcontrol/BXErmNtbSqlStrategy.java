@@ -53,7 +53,7 @@ public class BXErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		sql.append(" and zb.isexpamt = 'N' ");
 		sql.append(" and (cs.src_id is null or (cs.src_type = 0 and cs.billstatus < 2))");
 		// 过滤掉核销预提的报销单
-		sql.append(" not exists (select acv.pk_bxd from er_accrued_verify acv where acv.pk_bxd=zb.pk_jkbx) ");
+		sql.append(" and not exists (select acv.pk_bxd from er_accrued_verify acv where acv.pk_bxd=zb.pk_jkbx) ");
 		//单据状态 
 		sql.append(getBillStatus());
 		return sql.toString();

@@ -1328,6 +1328,20 @@ public class VOChecker {
 				item.setGroupbbye(item.getGroupbbje());
 				item.setGlobalbbye(item.getGlobalbbje());
 				item.setYjye(item.getYbje());
+				
+				// 将支付对象的信息带到表体
+				if (item.getPaytarget() == null && bxvo.getParentVO().getPaytarget() != null) {
+					item.setPaytarget(bxvo.getParentVO().getPaytarget());
+				}
+				if (item.getHbbm() == null && bxvo.getParentVO().getHbbm() != null) {
+					item.setHbbm(bxvo.getParentVO().getHbbm());
+				}
+				if (item.getCustomer() == null && bxvo.getParentVO().getCustomer() != null) {
+					item.setCustomer(bxvo.getParentVO().getCustomer());
+				}
+				if (item.getReceiver() == null && bxvo.getParentVO().getReceiver() != null) {
+					item.setReceiver(bxvo.getParentVO().getReceiver());
+				}
 
 				if (item.getCjkybje() == null) {
 					item.setCjkybje(zero);
