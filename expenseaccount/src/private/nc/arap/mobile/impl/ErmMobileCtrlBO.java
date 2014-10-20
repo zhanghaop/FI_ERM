@@ -19,6 +19,7 @@ import java.util.Set;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.erm.util.CacheUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
@@ -1606,7 +1607,20 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	}
 
 	public Map<String,Map<String,String>> queryWorkFlow(String billId,String billType) throws BusinessException {
-		  Map<String,Map<String,String>> resultmap = new LinkedHashMap<String,Map<String,String>>();
+		 //定义返回值map
+		 Map<String,Map<String,String>> resultmap = new LinkedHashMap<String,Map<String,String>>();
+		 //查找单据
+		 IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
+  				IBXBillPrivate.class);
+  		 List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(new String[]{billId},BXConstans.BX_DJDL);
+  		if(list == null || list.size() == 0){
+  			Map<String, String> fieldvalueMap = new HashMap<String, String>();
+	  		fieldvalueMap.put("flowstatus","该单据已被删除");
+		    resultmap.put("111", fieldvalueMap);
+  		}
+  		 // 找到WFTask所属的流程定义及其父流程定义
+  		 int m_iWorkflowtype = ErUtil.getWorkFlowType(list.get(0).getPk_org());
+  		 
 		  //待查询的字段
 		  String[] queryFields = new String[] {"actiontype","checknote","checkname",
 					"checkname", "dealdate", "messagenote", "sendername","senddate","checkman"};
@@ -1617,17 +1631,17 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		  String[] toFields = new String[] {"actiontype","checknote","checkname",
 					"checkname", "dealdate", "messagenote", "sendername","senddate","checkman"};
 			
-	      // 找到WFTask所属的流程定义及其父流程定义
+		  // 找到WFTask所属的流程定义及其父流程定义
 	      ProcessRouteRes processRoute = null;
 	      IWorkflowDefine wfDefine = (IWorkflowDefine) NCLocator
 	            .getInstance().lookup(IWorkflowDefine.class.getName());
 	      processRoute = wfDefine.queryProcessRoute(billId,
-	            billType, null, 2);
+	            billType, null, m_iWorkflowtype);
 	      if (processRoute == null || processRoute.getXpdlString() == null){
 	         // WARN::说明该单据就没有流程实例,直接查看该单据的状态
-	    	 IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
-	  				IBXBillPrivate.class);
-	  		 List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(new String[]{billId},BXConstans.BX_DJDL);
+//	    	 IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
+//	  				IBXBillPrivate.class);
+//	  		 List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(new String[]{billId},BXConstans.BX_DJDL);
 	  		 Map<String, String> fieldvalueMap = new HashMap<String, String>();
 	  		 if(list!=null && list.size()>0){
 	  			if(list.get(0).getSpzt().equals(IBillStatus.CHECKPASS))
@@ -1667,12 +1681,12 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	      // 当前正运行的活动
 	      HashSet hsRunningActs = new HashSet();
 	      for (int i = 0; i < allActInstances.length; i++) {
-	      //排除掉作废的子流程
-	      if(allActInstances[i].getStatus()==WfTaskOrInstanceStatus.Inefficient.getIntValue())
-	            continue;
-	         startedActivityDefIds[i] = allActInstances[i].getActivityID();
-	         if (allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Started.getIntValue())
-	            hsRunningActs.add(startedActivityDefIds[i]);
+		      //排除掉作废的子流程
+		      if(allActInstances[i].getStatus()==WfTaskOrInstanceStatus.Inefficient.getIntValue())
+		            continue;
+		         startedActivityDefIds[i] = allActInstances[i].getActivityID();
+		         if (allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Started.getIntValue())
+		            hsRunningActs.add(startedActivityDefIds[i]);
 	      }
 	      if (startedActivityDefIds == null || startedActivityDefIds.length == 0)
 	         return resultmap;

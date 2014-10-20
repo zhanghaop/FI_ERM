@@ -125,6 +125,18 @@ public class PfUtilPrivate {
 		//guowl+ 2010-5,如果是批处理，不用取指派信息，直接返回
 		if(hmPfExParams != null && hmPfExParams.get(PfUtilBaseTools.PARAM_BATCH) != null)
 			return wfVo;
+		if (wfVo != null) {
+			// 得到可指派的信息
+			Vector assignInfos = wfVo.getTaskInfo().getAssignableInfos();
+			Vector tSelectInfos = wfVo.getTaskInfo().getTransitionSelectableInfos();
+			if (assignInfos.size() > 0 || tSelectInfos.size() > 0) {
+				// 显示指派对话框并收集实际指派信息
+//				WFStartDispatchDialog wfdd = new WFStartDispatchDialog(parent, wfVo);
+//				int iClose = wfdd.showModal();
+//				if (iClose == UIDialog.ID_CANCEL)
+//					dlgResult.push(Integer.valueOf(iClose));
+			}
+		}
 		return wfVo;
 	}
 	
@@ -480,7 +492,7 @@ public class PfUtilPrivate {
 				if (!m_isSuccess)
 					return null;
 			}
-			//putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, worknoteVO);
+			putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, worknoteVO);
 		}
 		
 		if (worknoteVO == null) {
@@ -930,7 +942,7 @@ public class PfUtilPrivate {
 					if (!m_isSuccess)
 						return null;
 				}
-//				putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, workflownote);
+				putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, workflownote);
 			}
 		//}
 		// 3.后台批处理动作
