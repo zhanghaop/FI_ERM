@@ -253,10 +253,15 @@ public class VOChecker {
 		if (!headvo.getDjzt().equals(
 				BXStatusConst.DJZT_TempSaved)) {
 			//修改单据时，状态控制
-			String msgs = VOStatusChecker.checkBillStatus(headvo.getDjzt(),
-					ActionUtils.EDIT, new int[] {
-							BXStatusConst.DJZT_Saved,
-							BXStatusConst.DJZT_TempSaved });
+			String msgs = null;
+			if(headvo.getQcbz().booleanValue()){//期初单据
+				msgs = VOStatusChecker.checkBillStatus(headvo.getDjzt(), ActionUtils.EDIT, new int[] {
+						BXStatusConst.DJZT_Saved, BXStatusConst.DJZT_TempSaved, BXStatusConst.DJZT_Sign });
+			} else {
+				msgs = VOStatusChecker.checkBillStatus(headvo.getDjzt(), ActionUtils.EDIT, new int[] {
+						BXStatusConst.DJZT_Saved, BXStatusConst.DJZT_TempSaved });
+			}
+			
 			if (msgs != null && msgs.trim().length() != 0) {
 				throw new DataValidateException(msgs);
 			}
