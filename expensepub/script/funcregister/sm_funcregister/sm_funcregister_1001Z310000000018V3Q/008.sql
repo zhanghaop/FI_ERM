@@ -1,6 +1,9 @@
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000003VK','Invalid',null,'作废',0,0,'Y','Y','N','1001Z310000000018V3Q',null,'2014-10-17 09:48:44')
 go
 
+insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z3100000000006Y6','PreVoucher',null,'预览凭证',0,0,'Y','Y','N','1001Z310000000018V3Q',null,'2014-10-21 15:07:40')
+go
+
 insert into sm_butnregister(pk_btn,btncode,btndesc,btnname,btnownertype,dr,isbuttonpower,isenable,iskeyfunc,parent_id,resid,ts) values('1001Z310000000018V3U','Printlist',null,'打印列表',0,0,'N','Y','N','1001Z310000000018V3Q','butn00015','2014-01-09 13:46:00')
 go
 
