@@ -130,46 +130,41 @@ public class BxApproveBtnStatusListener
 		}
 		return false;
 	}
-    /**
-     * 反审核按钮是否可用
-     * 
-     * @param vo
-     * @return
-     */
-    private boolean isUnApproveBtnEnable(JKBXVO vo) {
-        
-        if(vo==null){
-            return false;
-        }
-        if(vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid){
-        	return false;
-        }
+    
+	/**
+	 * 反审核按钮是否可用
+	 * 
+	 * @param vo
+	 * @return
+	 */
+	private boolean isUnApproveBtnEnable(JKBXVO vo) {
 
-        //审批中、审批结束， 反审核按钮可用
+		if (vo == null) {
+			return false;
+		}
+		if (vo.getParentVO().getDjzt().intValue() == BXStatusConst.DJZT_Invalid) {
+			return false;
+		}
+
+		// 审批中、审批结束， 反审核按钮可用
 		if (vo.getParentVO().getSpzt() != null
-				&& (vo.getParentVO().getSpzt() == IPfRetCheckInfo.GOINGON 
-				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.NOPASS)
-				|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.PASSING) {
+				&& (vo.getParentVO().getSpzt() == IPfRetCheckInfo.GOINGON
+						|| vo.getParentVO().getSpzt() == IPfRetCheckInfo.NOPASS || vo
+						.getParentVO().getSpzt() == IPfRetCheckInfo.PASSING)) {
 			return true;
-        }
-        
-//        //单据尚未审核，反审核不可用
-//        if (vo.getParentVO().getDjzt() < BXStatusConst.DJZT_Verified) {
-//            return false;
-//        }
-        
-        // 单据已经审核通过了，反审核按钮可用
-        if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved ) {
-            return true;
-        }
-        
-        return true;
-    }
+		}
 
-    public BillManageModel getModel()
-    {
-        return model;
-    }
+		// 单据已经审核通过了，反审核按钮可用
+		if (vo.getParentVO().getDjzt() > BXStatusConst.DJZT_Saved) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public BillManageModel getModel() {
+		return model;
+	}
 
     public void setModel(BillManageModel model)
     {
