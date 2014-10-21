@@ -110,6 +110,24 @@ public class PfUtilPrivate {
 			return worknoteVO;
 		}
 		
+//		//在审批处理框显示之前，调用业务处理
+//		PFClientBizRetObj retObj = executeBusinessPlugin(parent, billVo, worknoteVO, true);
+//		if(retObj != null && retObj.isStopFlow()){
+//			m_isSuccess = false;
+//			return null;
+//		}
+		if (worknoteVO != null) {
+			// 得到可指派的输入数据
+			Vector assignInfos = worknoteVO.getTaskInfo().getAssignableInfos();
+			if (assignInfos != null && assignInfos.size() > 0) {
+				// 显示指派对话框并收集实际指派信息
+//				DispatchDialog dd = new DispatchDialog(parent);
+//				dd.initByWorknoteVO(worknoteVO);
+//				int iClose = dd.showModal();
+//				if (iClose == UIDialog.ID_CANCEL)
+//					dlgResult.push(Integer.valueOf(iClose));
+			}
+		}
 		return worknoteVO;
 	}
 
@@ -492,7 +510,7 @@ public class PfUtilPrivate {
 				if (!m_isSuccess)
 					return null;
 			}
-			putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, worknoteVO);
+//			putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, worknoteVO);
 		}
 		
 		if (worknoteVO == null) {

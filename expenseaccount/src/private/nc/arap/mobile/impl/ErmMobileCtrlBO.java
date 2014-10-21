@@ -31,13 +31,14 @@ import nc.bs.wfengine.engine.ActivityInstance;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.arap.pub.IErmBillUIPublic;
-import nc.itf.erm.prv.IErmBsCommonService;
 import nc.itf.fi.org.IOrgVersionQueryService;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.itf.uap.pf.IWorkflowDefine;
 import nc.itf.uap.pf.IplatFormEntry;
 import nc.itf.uap.rbac.IUserManageQuery;
+import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.BaseProcessor;
+import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -74,6 +75,7 @@ import nc.vo.sm.UserVO;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PfProcessBatchRetObject;
 import nc.vo.uap.wfmonitor.ProcessRouteRes;
+import nc.vo.util.AuditInfoUtil;
 import nc.vo.vorg.OrgVersionVO;
 import nc.vo.wfengine.core.XpdlPackage;
 import nc.vo.wfengine.core.parser.UfXPDLParser;
@@ -703,8 +705,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		  //待查询的单据类型
 		  String[] djlxbmarray = getDjlxbmArray();//{"2643","2642","2641"};
 		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbmarray, false);
-		  String[] billPks = NCLocator.getInstance().lookup(IErmBsCommonService.class)
-			.queryApprovedWFBillPksByCondition(null, djlxbmarray, false);
+		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbmarray, false);
 		  if (billPks != null && billPks.length > 0) {
 			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
 		  } else {
@@ -827,8 +828,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		  String sqlWhere = "QCBZ='N' and DR ='0'"; 
 		  String[] djlxbm = getDjlxbmArray();
 		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbm, false);
-		  String[] billPks = NCLocator.getInstance().lookup(IErmBsCommonService.class)
-			.queryApprovedWFBillPksByCondition(null, djlxbm, true);
+		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbm, true);
 		  if (billPks != null && billPks.length > 0) {
 			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, true);
 		  } else {
@@ -2050,8 +2050,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		 String sqlWhere = "QCBZ='N' and DR ='0'"; 
 		 String[] djlxbmarray = getDjlxbmArray();//{"2643","2642","2641"};
 		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbmarray, false);
-		  String[] billPks = NCLocator.getInstance().lookup(IErmBsCommonService.class)
-			.queryApprovedWFBillPksByCondition(null, djlxbmarray, false);
+		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbmarray, false);
 		  if (billPks != null && billPks.length > 0) {
 			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
 		  } else { 
@@ -2063,5 +2062,50 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		return pks==null?"0":String.valueOf(pks.length);
 	}
 
+	
+	public String[] queryApprovedWFBillPksByCondition(String pk_user, String[] tradeTypes, boolean isApproved)
+			throws BusinessException {
+		StringBuffer sqlBuf = new StringBuffer(
+				"select distinct billid from pub_workflownote where checkman = ?  and  actiontype = ? ");
+
+		SQLParameter sqlparams = new SQLParameter();
+		if (pk_user == null) {// 用户
+			pk_user = AuditInfoUtil.getCurrentUser();
+		}
+		sqlparams.addParam(pk_user);
+		sqlparams.addParam("Z");//actiontype为Z时，表示为审批
+
+		if (isApproved) {//是否已审批
+			sqlBuf.append(" and approvestatus = 1 ");
+		} else {//待我审批
+			sqlBuf.append(" and ischeck = 'N' ");
+		}
+
+		if (tradeTypes != null && tradeTypes.length > 0) {//交易类型
+			sqlBuf.append(" and " + SqlUtils.getInStr("pk_billtype", tradeTypes, true));
+		}
+
+		@SuppressWarnings("unchecked")
+		List<String> result = (List<String>) new BaseDAO().executeQuery(sqlBuf.toString(), sqlparams,
+				new ResultSetProcessor() {
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public Object handleResultSet(ResultSet rs) throws SQLException {
+						List<String> result = new ArrayList<String>();
+						while (rs.next()) {
+							result.add(rs.getString(1));
+						}
+						return result;
+					}
+
+				});
+
+		if (result != null && result.size() > 0) {
+			return result.toArray(new String[] {});
+		}
+
+		return null;
+	}
 }
 

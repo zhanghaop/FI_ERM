@@ -56,7 +56,6 @@ import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pub.templet.translator.BillTranslator;
