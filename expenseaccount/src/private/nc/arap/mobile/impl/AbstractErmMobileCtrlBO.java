@@ -183,7 +183,7 @@ public abstract class AbstractErmMobileCtrlBO {
 		if(jkbxvo.getParentVO().getSpzt().equals(IBillStatus.FREE))
 			return pk_jkbx;
 		//收回提交
-		String actionType = getActionCode(IPFActionName.UNSAVE,PK_ORG);
+		String actionType = ErUtil.getUnCommitActionCode(PK_ORG);
 		  PfUtilPrivate.runAction(null, actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 					null, null, null);
 	//	PfUtilPrivate.runAction(null, IPFActionName.UNSAVE

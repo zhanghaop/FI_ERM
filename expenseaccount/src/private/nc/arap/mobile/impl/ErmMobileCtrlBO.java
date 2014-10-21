@@ -43,7 +43,6 @@ import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.bd.inoutbusiclass.InoutBusiClassVO;
 import nc.vo.ep.bx.BXBusItemVO;
-import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
@@ -1583,7 +1582,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		MessageVO result = null;
 		// 审核动作处理
 		try{
-			String actionType = getActionCode(IPFActionName.APPROVE,PK_ORG);
+			String actionType = ErUtil.getApproveActionCode(PK_ORG);
 			Object msgReturn = PfUtilPrivate.runAction(null, actionType, head.getDjlxbm(), bxvo, null,
 						null, null, null);
 //			Object msgReturn = PfUtilPrivate.runAction(null, IPFActionName.APPROVE
@@ -1617,6 +1616,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
   			Map<String, String> fieldvalueMap = new HashMap<String, String>();
 	  		fieldvalueMap.put("flowstatus","该单据已被删除");
 		    resultmap.put("111", fieldvalueMap);
+		    return resultmap;
   		}
   		 // 找到WFTask所属的流程定义及其父流程定义
   		 int m_iWorkflowtype = ErUtil.getWorkFlowType(list.get(0).getPk_org());
@@ -1949,7 +1949,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		boolean retflag = true;
 		String errMsg  = "";
 		try{
-			String actionType = getActionCode(IPFActionName.SAVE,PK_ORG);
+			String actionType = ErUtil.getUnApproveActionCode(PK_ORG);
 			Object msgReturn = PfUtilPrivate.runAction(null, actionType, head.getDjlxbm(), bxvo, null,
 						null, null, null);
 //			Object msgReturn = PfUtilPrivate.runAction(null, IPFActionName.UNAPPROVE
