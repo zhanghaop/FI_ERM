@@ -111,45 +111,42 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	
 	@Override
 	public void effectStateChange(BusiInfo busiInfo, BusiStateTrans trans) throws BusinessException {
-		if (jkbxVO == null || !jkbxVO.getParentVO().getPrimaryKey().equals(busiInfo.getPk_bill())) {
-			jkbxVO = getBxVO(busiInfo, trans);
-		}
-		
+		JKBXVO jkbxVo = getBxVO(busiInfo, trans);
 		String flag = null;
 		if (BusiStatus.Effet.equals(trans.getTo())) {// 生效
 			flag = BXZbBO.MESSAGE_SETTLE;
-			bo.effectVo(jkbxVO);
+			bo.effectVo(jkbxVo);
 		} else if (BusiStatus.EffectNever.equals(trans.getTo())) {// 反生效
 			flag = BXZbBO.MESSAGE_UNSETTLE;
-			bo.unEffectVos(new JKBXVO[] { jkbxVO });
+			bo.unEffectVos(new JKBXVO[] { jkbxVo });
 		}
 		
-		if (!SettleUtil.isJsToFip(jkbxVO.getParentVO()) && BXZbBO.MESSAGE_SETTLE.equals(flag)) {
-			if (jkbxVO.getParentVO().getVouchertag() == null || jkbxVO.getParentVO().getVouchertag() == BXStatusConst.SXFlag) {
-				jkbxVO.getParentVO().setVouchertag(BXStatusConst.SXFlag);
-				bo.updateHeaders(new JKBXHeaderVO[] { jkbxVO.getParentVO() }, new String[] { JKBXHeaderVO.VOUCHERTAG });
-				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
+		if (!SettleUtil.isJsToFip(jkbxVo.getParentVO()) && BXZbBO.MESSAGE_SETTLE.equals(flag)) {
+			if (jkbxVo.getParentVO().getVouchertag() == null || jkbxVo.getParentVO().getVouchertag() == BXStatusConst.SXFlag) {
+				jkbxVo.getParentVO().setVouchertag(BXStatusConst.SXFlag);
+				bo.updateHeaders(new JKBXHeaderVO[] { jkbxVo.getParentVO() }, new String[] { JKBXHeaderVO.VOUCHERTAG });
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVo }), flag);
 			}
 		}
 		
 		//取消签字与凭证环节没有关系
 		if(BXZbBO.MESSAGE_UNSETTLE.equals(flag)){
-			if(jkbxVO.getParentVO().getVouchertag()!= null && 
-					jkbxVO.getParentVO().getVouchertag() == BXStatusConst.MEDeal){
+			if(jkbxVo.getParentVO().getVouchertag()!= null && 
+					jkbxVo.getParentVO().getVouchertag() == BXStatusConst.MEDeal){
 				//凭证环节是月末凭证时，将单据的凭证都删除（暂估凭证，月末凭证）
-				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag); // 删除月末凭证
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVo }), flag); // 删除月末凭证
 			}else{
-				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVO }), flag);
+				bo.effectToFip(Arrays.asList(new JKBXVO[] { jkbxVo }), flag);
 			}
 			
 			//判断是否有暂估凭证
-			boolean isExistZg = isExistVourcher(jkbxVO.getParentVO(), jkbxVO.getParentVO().getPk()+ "_"+BXStatusConst.ZGDeal);
+			boolean isExistZg = isExistVourcher(jkbxVo.getParentVO(), jkbxVo.getParentVO().getPk()+ "_"+BXStatusConst.ZGDeal);
 			if(isExistZg){
-				jkbxVO.getParentVO().setVouchertag(BXStatusConst.ZGDeal);
+				jkbxVo.getParentVO().setVouchertag(BXStatusConst.ZGDeal);
 			}else{
-				jkbxVO.getParentVO().setVouchertag(null);
+				jkbxVo.getParentVO().setVouchertag(null);
 			}
-			bo.updateHeaders(new JKBXHeaderVO[]{jkbxVO.getParentVO()}, new String[]{JKBXHeaderVO.VOUCHERTAG});
+			bo.updateHeaders(new JKBXHeaderVO[]{jkbxVo.getParentVO()}, new String[]{JKBXHeaderVO.VOUCHERTAG});
 		}
 	}
 	
