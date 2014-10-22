@@ -100,23 +100,17 @@ public class ERMBillEditAction extends EditAction {
 	}
 
 	private void checkBillStatus(JKBXVO jkbxvo) throws BusinessException {
+		if (jkbxvo.getParentVO().getQcbz().booleanValue()) {
+			return;
+		}
+		
 		Integer spzt = jkbxvo.getParentVO().getSpzt();// 审批状态控制
-
-		if (spzt != null && (spzt.equals(IPfRetCheckInfo.GOINGON) || spzt.equals(IPfRetCheckInfo.COMMIT))) {
+		Integer djzt = jkbxvo.getParentVO().getDjzt();// 单据状态控制
+		if (djzt != null && (djzt.equals(BXStatusConst.DJZT_Saved))) {
 			String userId = ErUiUtil.getPk_user();
 			String billId = jkbxvo.getParentVO().getPk_jkbx();
 			String billType = jkbxvo.getParentVO().getDjlxbm();
 			try {
-//				if (((IPFWorkflowQry) NCLocator.getInstance().lookup(IPFWorkflowQry.class.getName()))
-//						.isApproveFlowStartup(billId, billType)) {// 启动了审批流后
-//					if (!NCLocator.getInstance().lookup(IPFWorkflowQry.class).isCheckman(billId, billType, userId)) {
-//						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-//								"0201212-0092")/* @res "请取消审批再修改！" */);
-//					}
-//				} else {
-//					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-//							"0201212-0092")/* @res "请取消审批再修改！" */);
-//				}
 				if (((IPFWorkflowQry) NCLocator.getInstance().lookup(IPFWorkflowQry.class.getName()))
 						.isApproveFlowStartup(billId, billType)) {// 启动了审批流后
 					if(spzt.equals(IPfRetCheckInfo.COMMIT) && userId.equals(jkbxvo.getParentVO().getCreator())){

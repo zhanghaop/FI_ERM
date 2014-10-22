@@ -46,7 +46,8 @@ public class AccEditAction extends EditAction {
 
 		AccruedVO parentVo = aggVo.getParentVO();
 		Integer spzt = parentVo.getApprstatus();
-		if (spzt != null && ((spzt.equals(IPfRetCheckInfo.GOINGON)) || (spzt.equals(IPfRetCheckInfo.COMMIT)))) {
+		Integer djzt = parentVo.getBillstatus();// µ¥¾Ý×´Ì¬¿ØÖÆ
+		if (djzt != null && djzt.equals(ErmAccruedBillConst.BILLSTATUS_SAVED)) {
 			String userId = ErUiUtil.getPk_user();
 			String billId = parentVo.getPk_accrued_bill();
 			String billType = parentVo.getPk_tradetype();
@@ -90,7 +91,8 @@ public class AccEditAction extends EditAction {
 		if(billstatus.equals(ErmAccruedBillConst.BILLSTATUS_INVALID)){
 			return false;
 		}
-		if (spzt.equals(IPfRetCheckInfo.PASSING) || spzt.equals(IPfRetCheckInfo.NOPASS)) {
+		
+		if (billstatus.equals(ErmAccruedBillConst.BILLSTATUS_APPROVED) || spzt.equals(IPfRetCheckInfo.NOPASS)) {
 			return false;
 		}
 

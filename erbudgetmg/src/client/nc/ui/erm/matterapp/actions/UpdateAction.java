@@ -54,7 +54,8 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 		
 		MatterAppVO parentVo = aggVo.getParentVO();
 		Integer spzt = parentVo.getApprstatus();
-		if (spzt != null && ((spzt.equals(IPfRetCheckInfo.GOINGON)) || (spzt.equals(IPfRetCheckInfo.COMMIT)))) {
+		Integer djzt = parentVo.getBillstatus();// µ¥¾Ý×´Ì¬¿ØÖÆ
+		if (djzt != null && djzt.equals(ErmMatterAppConst.BILLSTATUS_SAVED)) {
 			String userId = ErUiUtil.getPk_user();
 			String billId = parentVo.getPk_mtapp_bill();
 			String billType = parentVo.getPk_tradetype();
@@ -95,7 +96,8 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 		if(billstatus.equals(ErmMatterAppConst.BILLSTATUS_INVALID)){
 			return false;
 		}
-		if(spzt.equals(IPfRetCheckInfo.PASSING) || spzt.equals(IPfRetCheckInfo.NOPASS)){
+		
+		if(billstatus.equals(ErmMatterAppConst.BILLSTATUS_APPROVED) || spzt.equals(IPfRetCheckInfo.NOPASS)){
 			return false;
 		}
 		
