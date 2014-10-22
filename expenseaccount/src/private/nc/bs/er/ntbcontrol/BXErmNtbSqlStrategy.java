@@ -47,7 +47,6 @@ public class BXErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		sql.append(" select " + getSelectFields(isDetail));
 		sql.append(" from " + getBxFromSql());
 		sql.append(" where 1=1 " + getWhereSql());
-		
 		//过滤掉摊销与分摊的报销单
 		sql.append(" and fb.dr=0 and zb.dr=0 and zb.qcbz='N' ");
 		sql.append(" and zb.isexpamt = 'N' ");
@@ -92,7 +91,6 @@ public class BXErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 	
 	private String getBxFromSql() {
 		String from = " er_bxzb zb inner join er_busitem fb on zb.pk_jkbx = fb.pk_jkbx left join er_costshare cs on cs.src_id = zb.pk_jkbx ";
-//				" left join er_accrued_verify acv on acv.pk_bxd = zb.pk_jkbx ";
 		return from;
 	}
 
