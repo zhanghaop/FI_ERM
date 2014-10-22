@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
+import nc.bs.arap.bx.FipUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.bs.pf.pub.BillTypeCacheKey;
@@ -99,14 +100,14 @@ public class PrevVoucherAction extends NCAction {
 						head.getPk_jkbx() + "_" + head.getVouchertag());// ehp2要加上凭证环节
 				
 				FipRelationInfoVO srcinfovo = new FipRelationInfoVO();
-				srcinfovo.setPk_group(selectedvos[0].getParentVO().getPk_group());
-				srcinfovo.setPk_org(selectedvos[0].getParentVO().getPk_org());
-				srcinfovo.setRelationID(selectedvos[0].getParentVO().getPrimaryKey());
-				srcinfovo.setPk_billtype(selectedvos[0].getParentVO().getDjlxbm());
+				srcinfovo.setPk_group(vo.getParentVO().getPk_group());
+				srcinfovo.setPk_org(vo.getParentVO().getPk_org());
+				srcinfovo.setRelationID(vo.getParentVO().getPrimaryKey());
+				srcinfovo.setPk_billtype(vo.getParentVO().getDjlxbm());
 				srcinfovo.setPk_system("erm");
 				
 				FipBaseMessageVO fipvo = new FipBaseMessageVO();
-				fipvo.setBillVO(vo);
+				fipvo.setBillVO(new FipUtil().addOtherInfo(vo));
 				fipvo.setMessageinfo(srcinfovo);
 				svos.add(fipvo);
 			}
@@ -488,16 +489,17 @@ public class PrevVoucherAction extends NCAction {
 	@Override
 	protected boolean isActionEnable() {
 		JKBXVO selectedData = (JKBXVO) getModel().getSelectedData();
-		if ((selectedData != null
-				&& selectedData.getParentVO().getDjzt() != BXStatusConst.DJZT_Invalid && (selectedData
-					.getParentVO().getDjzt()).equals(BXStatusConst.DJZT_Sign))) {
-			return false;
-		}
+		
 		if(selectedData == null){
 			return false;
 		}
 
-		return true;
+		if (selectedData.getParentVO().getDjzt().equals(BXStatusConst.DJZT_Saved)
+				|| selectedData.getParentVO().getDjzt().equals(BXStatusConst.DJZT_Verified)) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	public BillForm getEditor() {
