@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?><WorkflowProcess AccessLevel="PUBLIC" Id="f394acc3-55c6-11e4-8e6d-cd2777f871ac" Name="Êñ∞Âª∫Â∑•‰ΩúÊµÅÁ®ã" Name2="" Name3="" Name4="" Name5="" Name6="">
+<?xml version="1.0" encoding="utf-8"?><WorkflowProcess AccessLevel="PUBLIC" Id="f394acc3-55c6-11e4-8e6d-cd2777f871ac" Name="–¬Ω®π§◊˜¡˜≥Ã" Name2="" Name3="" Name4="" Name5="" Name6="">
     <ProcessHeader DurationUnit="m">
-        <Created>2014-10-17 14:17:34</Created>
+        <Created>2014-10-22 08:58:23</Created>
         <MailModal>NOMAIL</MailModal>
         <PrintTempletId/>
         <PrintTempletName/>
         <MobileModal>NOMOBILE</MobileModal>
     </ProcessHeader>
     <Applications>
-        <Application Id="AUTO_ID" Name="Ëá™Âä®Ê¥ªÂä®"/>
-        <Application Id="MAKEBILL_ID" Name="Âà∂Âçï"/>
-        <Application Id="MANUAL_ID" Name="ÊâãÂ∑•Ê¥ªÂä®"/>
+        <Application Id="AUTO_ID" Name="◊‘∂ØªÓ∂Ø"/>
+        <Application Id="MAKEBILL_ID" Name="÷∆µ•"/>
+        <Application Id="MANUAL_ID" Name=" ÷π§ªÓ∂Ø"/>
     </Applications>
     <Activities>
-        <Activity Id="a95f51a5-55c2-11e4-8e6d-cd2777f871ac" Name="Âà∂Âçï‰∫∫&lt;Âà∂Âçï&gt;" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="a95f51a5-55c2-11e4-8e6d-cd2777f871ac" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MAKEBILL_ID" Type="APPLICATION"/>
             </Implementation>
-            <Performer>7ebcfb23-55c5-11e4-8e6d-cd2777f871ac</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -43,10 +42,9 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1cddeb7"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCÂà∂Âçï"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC÷∆µ•"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
@@ -54,11 +52,10 @@
                 <ExtendedAttribute Name="ShowBillOrg"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="ad9c10f7-55c2-11e4-8e6d-cd2777f871ac" Name="ÂΩ±ÂÉèÊâ´Êèè" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="ad9c10f7-55c2-11e4-8e6d-cd2777f871ac" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
-            <Performer>88bffff4-55c5-11e4-8e6d-cd2777f871ac</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -74,33 +71,32 @@
             </TransitionRestrictions>
             <ExtendedAttributes>
                 <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
-                <ExtendedAttribute Name="TextPosition" Value="3"/>
-                <ExtendedAttribute Name="Opaque" Value="false"/>
-                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
-                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
-                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
-                <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="ÂΩ±ÂÉèÊâ´Êèè"/>
-                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
-                <ExtendedAttribute Name="CanTransfer" Value="false"/>
-                <ExtendedAttribute Name="UseIcon" Value="true"/>
                 <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z310000000005J2S"/>
                 <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z310000000005J2S"/>
+                <ExtendedAttribute Name="Opaque" Value="false"/>
+                <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
+                <ExtendedAttribute Name="ShapeStyle" Value="0"/>
                 <ExtendedAttribute Name="Dimension" Value="281;130;78;60"/>
                 <ExtendedAttribute Name="CanAddApprover" Value="false"/>
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
-                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@d8df0d"/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="Exchange" Value="true"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="”∞œÒ…®√Ë"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
                 <ExtendedAttribute Name="RaceModal" Value="0"/>
+                <ExtendedAttribute Name="CanTransfer" Value="false"/>
+                <ExtendedAttribute Name="UseIcon" Value="true"/>
                 <ExtendedAttribute Name="ShowBillOrg"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="afe8e729-55c2-11e4-8e6d-cd2777f871ac" Name="ÂÆ°ÊâπÂ≠êÊµÅÁ®ã" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="afe8e729-55c2-11e4-8e6d-cd2777f871ac" Name="…Û≈˙◊”¡˜≥Ã" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <SubFlow Execution="SYNCHR" Id="237a66af-55c5-11e4-8e6d-cd2777f871ac"/>
             </Implementation>
@@ -134,11 +130,10 @@
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="de9d89a1-55c2-11e4-8e6d-cd2777f871ac" Name="ÂÖ±‰∫´ÊúçÂä°‰∏≠ÂøÉ" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="de9d89a1-55c2-11e4-8e6d-cd2777f871ac" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
-            <Performer>a54de018-55c5-11e4-8e6d-cd2777f871ac</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -158,7 +153,7 @@
                         <BasicType Type="STRING"/>
                     </DataType>
                     <InitialValue>sscFirstExam</InitialValue>
-                    <Description>SSCÁéØËäÇÁ±ªÂûã</Description>
+                    <Description>SSCª∑Ω⁄¿‡–Õ</Description>
                 </DataField>
             </DataFields>
             <ExtendedAttributes>
@@ -169,7 +164,7 @@
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCÂàùÂÆ°"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC≥ı…Û"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
                 <ExtendedAttribute Name="CanTransfer" Value="false"/>
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
@@ -181,7 +176,6 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1bf3d8"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
@@ -190,11 +184,10 @@
                 <ExtendedAttribute Name="ShowBillOrg"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="dfdce773-55c2-11e4-8e6d-cd2777f871ac" Name="ÂÖ±‰∫´ÊúçÂä°‰∏≠ÂøÉ" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="dfdce773-55c2-11e4-8e6d-cd2777f871ac" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
-            <Performer>b03ccb8a-55c5-11e4-8e6d-cd2777f871ac</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -214,14 +207,14 @@
                         <BasicType Type="BOOLEAN"/>
                     </DataType>
                     <InitialValue>y</InitialValue>
-                    <Description>ÊòØÂê¶ÊµÅÁ®ãÊúÄÂêéÁéØËäÇ(y/n)</Description>
+                    <Description> «∑Ò¡˜≥Ã◊Ó∫Ûª∑Ω⁄(y/n)</Description>
                 </DataField>
                 <DataField Id="8ae3e79b-55c4-11e4-8e6d-cd2777f871ac" Name="SSC_ACTIVETYPE">
                     <DataType>
                         <BasicType Type="STRING"/>
                     </DataType>
                     <InitialValue>sscReview</InitialValue>
-                    <Description>SSCÁéØËäÇÁ±ªÂûã</Description>
+                    <Description>SSCª∑Ω⁄¿‡–Õ</Description>
                 </DataField>
             </DataFields>
             <ExtendedAttributes>
@@ -232,7 +225,7 @@
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCÂ§çÊ†∏"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC∏¥∫À"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
                 <ExtendedAttribute Name="CanTransfer" Value="false"/>
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
@@ -244,7 +237,6 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@125f53f"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
@@ -316,11 +308,10 @@
     </Transitions>
     <ExtendedAttributes>
         <ExtendedAttribute Name="TimeLimit" Value="0"/>
-        <ExtendedAttribute Name="OrgUnitTree"/>
         <ExtendedAttribute Name="TimeRemind" Value="0"/>
-        <ExtendedAttribute Name="SubmitTORejecter" Value="Y"/>
-        <ExtendedAttribute Name="UFW_EndOfWorkflow@0" Value="dfdce773-55c2-11e4-8e6d-cd2777f871ac@ÂºÄÂßã@581;250;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=238,G=203,B=88@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/endOnFlow.png@0.0;0.0"/>
-        <ExtendedAttribute Name="UFW_StartOfWorkflow" Value="a95f51a5-55c2-11e4-8e6d-cd2777f871ac@ÂºÄÂßã@181;10;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=123,G=166,B=218@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/startOnFlow.png@0.0;0.0"/>
+        <ExtendedAttribute Name="SubmitTORejecter" Value="N"/>
+        <ExtendedAttribute Name="UFW_EndOfWorkflow@0" Value="dfdce773-55c2-11e4-8e6d-cd2777f871ac@ø™ º@581;250;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=238,G=203,B=88@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/endOnFlow.png@0.0;0.0"/>
+        <ExtendedAttribute Name="UFW_StartOfWorkflow" Value="a95f51a5-55c2-11e4-8e6d-cd2777f871ac@ø™ º@181;10;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=123,G=166,B=218@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/startOnFlow.png@0.0;0.0"/>
         <ExtendedAttribute Name="WorkflowType" Value="4"/>
         <ExtendedAttribute Name="Priority" Value="0"/>
         <ExtendedAttribute Name="EmendFlow" Value="-1"/>
