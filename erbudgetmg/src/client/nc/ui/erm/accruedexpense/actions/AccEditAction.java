@@ -18,6 +18,7 @@ import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.pf.IPfRetCheckInfo;
+import nc.vo.trade.pub.IBillStatus;
 
 public class AccEditAction extends EditAction {
 	private static final long serialVersionUID = 1L;
@@ -47,7 +48,7 @@ public class AccEditAction extends EditAction {
 		AccruedVO parentVo = aggVo.getParentVO();
 		Integer spzt = parentVo.getApprstatus();
 		Integer djzt = parentVo.getBillstatus();// µ¥¾Ý×´Ì¬¿ØÖÆ
-		if (djzt != null && djzt.equals(ErmAccruedBillConst.BILLSTATUS_SAVED)) {
+		if (djzt != null && djzt.equals(ErmAccruedBillConst.BILLSTATUS_SAVED) && !spzt.equals(IBillStatus.FREE)) {
 			String userId = ErUiUtil.getPk_user();
 			String billId = parentVo.getPk_accrued_bill();
 			String billType = parentVo.getPk_tradetype();

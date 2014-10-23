@@ -24,6 +24,7 @@ import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.pf.IPfRetCheckInfo;
+import nc.vo.trade.pub.IBillStatus;
 
 public class ERMBillEditAction extends EditAction {
 	private static final long serialVersionUID = 1L;
@@ -106,7 +107,7 @@ public class ERMBillEditAction extends EditAction {
 		
 		Integer spzt = jkbxvo.getParentVO().getSpzt();// 审批状态控制
 		Integer djzt = jkbxvo.getParentVO().getDjzt();// 单据状态控制
-		if (djzt != null && (djzt.equals(BXStatusConst.DJZT_Saved))) {
+		if (djzt != null && (djzt.equals(BXStatusConst.DJZT_Saved))&& !spzt.equals(IBillStatus.FREE)) {
 			String userId = ErUiUtil.getPk_user();
 			String billId = jkbxvo.getParentVO().getPk_jkbx();
 			String billType = jkbxvo.getParentVO().getDjlxbm();
