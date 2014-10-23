@@ -19,6 +19,7 @@ import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.pf.IPfRetCheckInfo;
+import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uif2.LoginContext;
 
 /**
@@ -55,7 +56,7 @@ public class UpdateAction extends nc.ui.uif2.actions.EditAction {
 		MatterAppVO parentVo = aggVo.getParentVO();
 		Integer spzt = parentVo.getApprstatus();
 		Integer djzt = parentVo.getBillstatus();// µ¥¾Ý×´Ì¬¿ØÖÆ
-		if (djzt != null && djzt.equals(ErmMatterAppConst.BILLSTATUS_SAVED)) {
+		if (djzt != null && djzt.equals(ErmMatterAppConst.BILLSTATUS_SAVED) && !spzt.equals(IBillStatus.FREE)) {
 			String userId = ErUiUtil.getPk_user();
 			String billId = parentVo.getPk_mtapp_bill();
 			String billType = parentVo.getPk_tradetype();
