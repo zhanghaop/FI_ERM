@@ -1,6 +1,7 @@
 package nc.bs.arap.bx;
 
 import nc.bs.er.callouter.FipCallFacade;
+import nc.bs.er.util.FipUtil;
 import nc.itf.fi.pub.Currency;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXHeaderVO;

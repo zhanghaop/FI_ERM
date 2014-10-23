@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nc.bd.accperiod.InvalidAccperiodExcetion;
-import nc.bs.arap.bx.FipUtil;
+import nc.bs.er.util.FipUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.bs.pf.pub.BillTypeCacheKey;

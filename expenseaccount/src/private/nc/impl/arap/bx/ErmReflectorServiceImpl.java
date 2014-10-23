@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import nc.bs.arap.bx.FipUtil;
+import nc.bs.er.util.FipUtil;
 import nc.pubitf.fip.external.IBillReflectorService;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.util.ErVOUtils;
