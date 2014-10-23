@@ -35,7 +35,7 @@ public class ErmAccruedBillUtils {
 			billstatus = ErmAccruedBillConst.BILLSTATUS_APPROVED;
 			break;
 		case IBillStatus.NOPASS:
-			billstatus = ErmAccruedBillConst.BILLSTATUS_APPROVED;
+			billstatus = ErmAccruedBillConst.BILLSTATUS_SAVED;
 			break;
 		case IBillStatus.COMMIT:
 			billstatus = ErmAccruedBillConst.BILLSTATUS_SAVED;

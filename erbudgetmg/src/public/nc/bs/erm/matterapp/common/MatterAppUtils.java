@@ -50,7 +50,7 @@ public class MatterAppUtils {
 			billstatus = ErmMatterAppConst.BILLSTATUS_APPROVED;
 			break;
 		case IBillStatus.NOPASS:
-			billstatus = ErmMatterAppConst.BILLSTATUS_APPROVED;
+			billstatus = ErmMatterAppConst.BILLSTATUS_SAVED;
 			break;
 		case IBillStatus.COMMIT:
 			billstatus = ErmMatterAppConst.BILLSTATUS_SAVED;
