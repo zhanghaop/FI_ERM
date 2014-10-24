@@ -231,6 +231,13 @@ public class PrevVoucherAction extends NCAction {
 		} else if (Voucher instanceof VoucherVO) {
 			return (VoucherVO) Voucher;
 		}
+		
+		//±íÌå·ÖÂ¼ºÅ
+		if (mdVoucher.getAggdetails() != null && mdVoucher.getAggdetails().length > 0) {
+			for (int i = 0; i < mdVoucher.getAggdetails().length; i++) {
+				mdVoucher.getAggdetails()[i].setDetailindex(i + 1);
+			}
+		}
 		VoucherVO voucherVO = new VoucherVO();
 		voucherVO.setAddclass(mdVoucher.getAddclass());
 		voucherVO.setAttachment(mdVoucher.getAttachment());
