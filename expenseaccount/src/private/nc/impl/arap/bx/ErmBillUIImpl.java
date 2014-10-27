@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import nc.bs.er.util.BXBsUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
@@ -316,6 +317,7 @@ public class ErmBillUIImpl implements IErmBillUIPublic{
 		jkbxvo.getParentVO().setPk_group(pk_group);
 		jkbxvo.getParentVO().setOperator(cuserid);
 		jkbxvo.getParentVO().setCreator(cuserid);
+		jkbxvo.getParentVO().setCreationtime(BXBsUtil.getBsLoginDate());
 	}
 	
 	/**
