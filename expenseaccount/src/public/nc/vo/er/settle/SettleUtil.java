@@ -19,6 +19,7 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 
@@ -152,16 +153,20 @@ public class SettleUtil {
 			msg.setBillDate(head.getDjrq());
 			msg.setBillkey(head.getPk_jkbx());
 			
-			if(!busiStatus.equals(BusiStatus.Save) && !busiStatus.equals(BusiStatus.Deleted)){
-				if(head.auditman != null){
-					msg.setLastauditer(head.auditman);
-				}else{
-					msg.setLastauditer(head.getAuditman());
-				}
-			}
-			msg.setLastOperator(head.getOperator());
-			msg.setLastOperatorDate(head.getOperationDate());
+//			if(!busiStatus.equals(BusiStatus.Save) && !busiStatus.equals(BusiStatus.Deleted)){
+//				if(head.auditman != null){
+//					msg.setLastauditer(head.auditman);
+//				}else{
+//					msg.setLastauditer(head.getAuditman());
+//				}
+//			}
+			msg.setLastauditer(head.getApprover());
 			msg.setLastauditedate(head.getShrq()!=null?head.getShrq().getDate():null);
+//			msg.setLastOperator(head.getOperator());
+//			msg.setLastOperatorDate(head.getOperationDate());
+			msg.setLastOperator(head.getModifier());
+			UFDateTime datetime = head.getModifiedtime();
+			msg.setLastOperatorDate(datetime == null ? null : datetime.getDate());
 			
 			msg.setDirection(head.getZfybje()==null || head.getZfybje().equals(new UFDouble(0)) ? 0 : 1);
 			msg.setFtsExec(false);
