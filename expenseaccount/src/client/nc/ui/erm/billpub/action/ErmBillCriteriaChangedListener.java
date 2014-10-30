@@ -36,6 +36,8 @@ import nc.vo.fi.pub.SqlUtils;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
+import nc.ui.querytemplate.valueeditor.DefaultFieldValueEditor;
+import nc.ui.querytemplate.filtereditor.DefaultFilterEditor;
 
 /**
  * <p>
@@ -80,9 +82,15 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 				}else{
 					ERMQueryActionHelper.setPk(event, pk_org, false);
 				}
-			}else if (key.equals(JKBXHeaderVO.DJRQ)) {
+			} else if (key.equals(JKBXHeaderVO.DJRQ)) {
 				UIRefPane leftDate = (UIRefPane) ERMQueryActionHelper.getFiltComponentForInit(event);
-				UIRefPane rightDate = (UIRefPane) ERMQueryActionHelper.getFiltRightComponentForInit(event);
+				//设置固定条件时，单据日期可以只是一个控件。
+				boolean isHasRight = ((DefaultFieldValueEditor) ((DefaultFilterEditor) event.getFiltereditor())
+						.getFieldValueEditor()).getRightFieldValueElemEditor() == null ? false : true;
+				UIRefPane rightDate = null;
+				if (isHasRight) {
+					rightDate = (UIRefPane) ERMQueryActionHelper.getFiltRightComponentForInit(event);
+				}
 				try {
 					if (((ErmBillBillManageModel) getModel()).isInit()) {
 						if (pk_org == null) {
@@ -90,14 +98,18 @@ public class ErmBillCriteriaChangedListener implements ICriteriaChangedListener 
 						}
 						UFDate dateStart = BXUiUtil.getStartDate(pk_org);
 						if (dateStart != null) {
-	                        UFDate dateBefore = dateStart.getDateBefore(1);
-	                        leftDate.setValueObjFireValueChangeEvent(dateBefore.getDateBefore(30));
-	                        rightDate.setValueObjFireValueChangeEvent(dateBefore);						    
+							UFDate dateBefore = dateStart.getDateBefore(1);
+							leftDate.setValueObjFireValueChangeEvent(dateBefore.getDateBefore(30));
+							if(rightDate != null){
+								rightDate.setValueObjFireValueChangeEvent(dateBefore);
+							}
 						}
 					} else {
 						UFDate busiDate = WorkbenchEnvironment.getInstance().getBusiDate();
 						leftDate.setValueObjFireValueChangeEvent(busiDate.getDateBefore(30));
-						rightDate.setValueObjFireValueChangeEvent(busiDate);
+						if(rightDate != null){
+							rightDate.setValueObjFireValueChangeEvent(busiDate);
+						}
 					}
 				} catch (BusinessException e) {
 					ExceptionHandler.handleExceptionRuntime(e);
