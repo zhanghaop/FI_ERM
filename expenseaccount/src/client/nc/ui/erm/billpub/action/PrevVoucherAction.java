@@ -120,6 +120,9 @@ public class PrevVoucherAction extends NCAction {
 			
 			List<FipTranslateResultVO> trans = NCLocator.getInstance().lookup(IFipConvertService.class).convertOnly(desinfovo, svos);
 			FipTranslateResultVO fipTranslateResultVO = trans.get(0);
+			if (fipTranslateResultVO.getErrorMsg() != null) {
+				throw new BusinessException(fipTranslateResultVO.getErrorMsg());
+			}
 			List<FipTransVO> desBills = fipTranslateResultVO.getDesBills();
 			FipTransVO fipTransVO = desBills.get(0);
 			Object datavo = fipTransVO.getDatavo();
