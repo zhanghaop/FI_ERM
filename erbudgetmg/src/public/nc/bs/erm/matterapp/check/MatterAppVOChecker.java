@@ -6,13 +6,13 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.org.IOrgConst;
+import nc.itf.uap.rbac.IUserManageQuery;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.org.IOrgUnitPubService;
 import nc.pubitf.para.SysInitQuery;
 import nc.utils.crosscheckrule.FipubCrossCheckRuleChecker;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
@@ -24,7 +24,9 @@ import nc.vo.pub.VOStatus;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.sm.UserVO;
 import nc.vo.trade.pub.IBillStatus;
+import nc.vo.util.AuditInfoUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -483,6 +485,18 @@ public class MatterAppVOChecker {
 		String msgs = VOStatusChecker.checkBillStatus(vo.getParentVO().getBillstatus(), ActionUtils.INVALID, new int[] { ErmMatterAppConst.BILLSTATUS_SAVED });
 		if (msgs != null && msgs.trim().length() != 0) {
 			throw new DataValidateException(msgs);
+		}
+		
+		String currentUser = AuditInfoUtil.getCurrentUser();
+		UserVO uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(currentUser);
+		
+		if (!(vo.getParentVO().getCreator().equals(currentUser) || vo.getParentVO().getBillmaker().equals(uservo.getPk_base_doc()))) {
+			throw new DataValidateException("当前操作员不可作废单据！");
+		}
+
+		Integer spzt = vo.getParentVO().getApprstatus();
+		if (spzt != IBillStatus.FREE) {
+			throw new DataValidateException("仅可以作废未提交的单据");
 		}
 	}
 }

@@ -16,12 +16,16 @@ import nc.ui.uif2.NCAsynAction;
 import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.common.MessageVO;
+import nc.vo.erm.termendtransact.DataValidateException;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.trade.pub.IBillStatus;
 /**
  * 借款报销单作废按钮
  *
@@ -73,6 +77,7 @@ public class InvalidAction extends NCAsynAction {
 		
 		MessageVO result = null;
 		try {
+			check(jkbxvo);
 			JKBXVO returnVo = NCLocator.getInstance().lookup(IBXBillPublic.class).invalidBill(jkbxvo);
 			result = new MessageVO(returnVo, ActionUtils.INVALID);
 		} catch (Exception e) {
@@ -83,6 +88,27 @@ public class InvalidAction extends NCAsynAction {
 		return result;
 	}
 
+	private void check(JKBXVO jkbxvo) throws BusinessException{
+		String nodeCode = getModel().getContext().getNodeCode();
+		
+		if(nodeCode.equals(BXConstans.MONTHEND_DEAL)){
+			if(jkbxvo.getParentVO().getSpzt() == IBillStatus.NOPASS){
+				return ;
+			}
+		}
+		
+		String currentUser = ErUiUtil.getPk_user();
+		String pk_psn = ErUiUtil.getPk_psndoc();
+		if (!(jkbxvo.getParentVO().getCreator().equals(currentUser) || jkbxvo.getParentVO().getJkbxr().equals(pk_psn))) {
+			throw new DataValidateException("当前操作员不可作废单据！");
+		}
+
+		Integer spzt = jkbxvo.getParentVO().getSpzt();
+		if (spzt != IBillStatus.FREE) {
+			throw new DataValidateException("仅可以作废未提交的单据");
+		}
+	}
+
 	/**
 	 * 保存未生效的单据
 	 */
@@ -91,8 +117,18 @@ public class InvalidAction extends NCAsynAction {
 		boolean inenable = false;
 		Object[] vos = (Object[]) getModel().getSelectedOperaDatas();
 		if (vos != null && vos.length != 0) {
+			String nodeCode = getModel().getContext().getNodeCode();
 			for (int i = 0; i < vos.length; i++) {
-				if ((BXStatusConst.DJZT_Saved == ((JKBXVO) vos[i]).getParentVO().getDjzt().intValue())) {
+				JKBXHeaderVO parentVO = ((JKBXVO) vos[i]).getParentVO();
+				int djzt = parentVO.getDjzt().intValue();
+				int spzt = parentVO.getSpzt().intValue();
+				if (BXStatusConst.DJZT_Saved == djzt && IBillStatus.FREE == spzt) {
+					inenable = true;
+					break;
+				}
+				
+				//月末凭证节点不通过单据可以进行作废
+				if (nodeCode.equals(BXConstans.MONTHEND_DEAL) && IBillStatus.NOPASS == spzt) {
 					inenable = true;
 					break;
 				}

@@ -10,6 +10,7 @@ import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.org.IOrgConst;
+import nc.itf.uap.rbac.IUserManageQuery;
 import nc.pubitf.accperiod.AccountCalendar;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillVerifyService;
 import nc.pubitf.org.IOrgUnitPubService;
@@ -31,6 +32,7 @@ import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.sm.UserVO;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.util.AuditInfoUtil;
 
@@ -69,6 +71,18 @@ public class AccruedBillVOChecker {
 		String msgs = VOStatusChecker.checkBillStatus(vo.getParentVO().getBillstatus(), ActionUtils.INVALID, new int[] { ErmAccruedBillConst.BILLSTATUS_SAVED});
 		if (msgs != null && msgs.trim().length() != 0) {
 			throw new DataValidateException(msgs);
+		}
+		
+		String currentUser = AuditInfoUtil.getCurrentUser();
+		UserVO uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(currentUser);
+		
+		if (!(vo.getParentVO().getCreator().equals(currentUser) || vo.getParentVO().getOperator().equals(uservo.getPk_base_doc()))) {
+			throw new DataValidateException("当前操作员不可作废单据！");
+		}
+
+		Integer spzt = vo.getParentVO().getApprstatus();
+		if (spzt != IBillStatus.FREE) {
+			throw new DataValidateException("仅可以作废未提交的单据");
 		}
 	}
 

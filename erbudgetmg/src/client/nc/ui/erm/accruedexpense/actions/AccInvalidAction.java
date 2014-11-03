@@ -17,11 +17,13 @@ import nc.ui.uif2.NCAsynAction;
 import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.trade.pub.IBillStatus;
 /**
  * 预提单作废按钮
  */
@@ -135,7 +137,10 @@ public class AccInvalidAction extends NCAsynAction{
 		Object[] vos = (Object[]) getModel().getSelectedOperaDatas();
 		if (vos != null && vos.length != 0) {
 			for (int i = 0; i < vos.length; i++) {
-				if ((ErmAccruedBillConst.BILLSTATUS_SAVED == ((AggAccruedBillVO) vos[i]).getParentVO().getBillstatus().intValue())) {
+				AccruedVO parentVO = ((AggAccruedBillVO) vos[i]).getParentVO();
+				int djzt = parentVO.getBillstatus().intValue();
+				int spzt = parentVO.getApprstatus().intValue();
+				if (ErmAccruedBillConst.BILLSTATUS_SAVED == djzt && spzt == IBillStatus.FREE) {
 					inenable = true;
 					break;
 				}

@@ -19,9 +19,11 @@ import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.erm.common.MessageVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.trade.pub.IBillStatus;
 
 /**
  * wangled
@@ -98,7 +100,10 @@ public class InvalidAction extends NCAsynAction {
 		Object[] vos = (Object[]) getModel().getSelectedOperaDatas();
 		if (vos != null && vos.length != 0) {
 			for (int i = 0; i < vos.length; i++) {
-				if ((ErmMatterAppConst.BILLSTATUS_SAVED == ((AggMatterAppVO) vos[i]).getParentVO().getBillstatus().intValue())) {
+				MatterAppVO parentVO = ((AggMatterAppVO) vos[i]).getParentVO();
+				int djzt = parentVO.getBillstatus().intValue();
+				int spzt = parentVO.getApprstatus().intValue();
+				if (ErmMatterAppConst.BILLSTATUS_SAVED == djzt && spzt == IBillStatus.FREE) {
 					inenable = true;
 					break;
 				}
