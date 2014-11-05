@@ -38,7 +38,7 @@ public class N_262X_APPROVE extends AbstractCompiler2 {
 					fMsgs.add(new MessageVO(aggvo, ActionUtils.AUDIT));
 				}
 			} else {
-				aggvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(aggvo);
+//				aggvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(aggvo);
 				MessageVO unAuditVo = new MessageVO(aggvo, ActionUtils.AUDIT);
 				fMsgs.add(unAuditVo);
 			}

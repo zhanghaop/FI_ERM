@@ -37,7 +37,7 @@ public class N_262X_UNAPPROVE extends AbstractCompiler2 {
 				}
 				auditVOs.add(accbillvo);
 			} else {
-				accbillvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(accbillvo);
+//				accbillvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(accbillvo);
 				MessageVO temp = new MessageVO(accbillvo, ActionUtils.UNAUDIT);
 				fMsgs.add(temp);
 			}

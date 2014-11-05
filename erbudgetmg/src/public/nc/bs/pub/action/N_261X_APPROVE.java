@@ -50,7 +50,7 @@ public class N_261X_APPROVE extends AbstractCompiler2 {
 					fMsgs.add(new MessageVO(maVo, ActionUtils.AUDIT));
 				}
 			} else {
-				maVo = getAppBillService().updateVOBillStatus(maVo);
+//				maVo = getAppBillService().updateVOBillStatus(maVo);
 				MessageVO unAuditVo = new MessageVO(maVo, ActionUtils.AUDIT);
 				fMsgs.add(unAuditVo);
 			}

@@ -48,7 +48,7 @@ public class N_261X_UNAPPROVE extends AbstractCompiler2 {
 				}
 				auditVOs.add(maVo);
 			} else {
-				maVo = getAppBillService().updateVOBillStatus(maVo);
+//				maVo = getAppBillService().updateVOBillStatus(maVo);
 				MessageVO temp = new MessageVO(maVo, ActionUtils.UNAUDIT);
 				fMsgs.add(temp);
 			}
