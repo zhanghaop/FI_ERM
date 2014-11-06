@@ -82,7 +82,7 @@
 		<corpField></corpField>
 		<grpField>vnodecode</grpField>
 		<fixedWhere>(pk_corp='@@@@' and (vnodecode like '2011%' or (ctemplateid in ( select pub_msgtemp.pk_outtemplet from pub_msgtemp where pub_msgtemp.typecode in ('erm','ermprealarm','ermjkprealarm','261X','263X','264X')))))
-			and(( vnodecode in ('20110MELB','20110ETEA','20110PEA','20110EEA','20110MEA','20110RB','20110TEA','20110CEA','20110ETLB') and vtemplatecode like '%card%')
+			and(( vnodecode in ('201102611','20110MELB','20110ETEA','20110PEA','20110EEA','20110MEA','20110RB','20110TEA','20110CEA','20110ETLB') and vtemplatecode like '%card%')
 			or( vnodecode in ('20110ADJUST','20110ACCMN','20110RSS', '201102621','20110ACCQRY','20110QUERY')))
 		</fixedWhere>
 	</item>
