@@ -5,9 +5,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIPanel;
@@ -16,15 +16,17 @@ import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.AppEventListener;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.model.BillManageModel;
-import nc.vo.ep.bx.JKBXVO;
 import nc.vo.fipub.exception.ExceptionHandler;
+import nc.vo.pub.AggregatedValueObject;
+import nc.vo.pub.SuperVO;
+
 /**
  * 
  * @author wangled
- *
+ * 
  */
 @SuppressWarnings("serial")
-public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
+public class CodebarBillFormPanel extends UIPanel implements AppEventListener {
 	/*
 	 * 控件对象
 	 */
@@ -32,19 +34,20 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 
 	private BillManageModel model;
 	private String value = ""; // 存储条码系列
+
 	public CodebarBillFormPanel() {
 		super();
 		initUI();
 	}
-	private void initUI() 
-	{
+
+	private void initUI() {
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		add(getUILabel());
 		add(getUITextField());
 		this.setBorder(null);
 		getUITextField().requestFocusInWindow();
 	}
-	
+
 	/**
 	 * 实例Label（提示文字）
 	 * 
@@ -55,7 +58,11 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 		UILabel label = new UILabel();
 		label.setName("barCode");
 		label.setOpaque(false);
-		label.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000966")/*@res "快捷码"*/);
+		label.setText(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000966")/*
+																									 * @
+																									 * res
+																									 * "快捷码"
+																									 */);
 		return label;
 	}
 
@@ -78,31 +85,37 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 					char press = e.getKeyChar();
 					if ('\n' == press) {
 						value = field.getText().trim();
-						try{
-							List<JKBXVO> oldData = ((BillManageModel) getModel()).getData();
-							Map<String,JKBXVO> oldDataMap= new HashMap<String,JKBXVO>();
-							for (JKBXVO vo:oldData){
-								if(oldDataMap.get(vo.getParentVO().getPrimaryKey())==null){
-									oldDataMap.put(vo.getParentVO().getPrimaryKey(), vo);
+						try {
+							List<AggregatedValueObject> oldData = ((BillManageModel) getModel()).getData();
+							Set<String> oldPkSet = new HashSet<String>();
+							for (AggregatedValueObject vo : oldData) {
+								String pk = ((SuperVO) vo.getParentVO()).getPrimaryKey();
+								if (pk != null) {
+									oldPkSet.add(pk);
 								}
 							}
-							List<JKBXVO> values=CodeBarQueryUtil.doBarCodeQuery(value,(BillManageModel) getModel());
-							if(values == null){
-								ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011","UPP2011-000967")/*@res"未找到符合条件的单据"*/,getModel().getContext());
+							
+							AggregatedValueObject result = CodeBarQueryUtil.doBarCodeQuery(value, (BillManageModel) getModel());
+							if (result == null) {
+								ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000967")/*
+																																					 * @
+																																					 * res
+																																					 * "未找到符合条件的单据"
+																																					 */, getModel().getContext());
 							}
-					         // 如果已经有了条码查询出的数据，就不再追加
-							if (values != null && values.size() != 0) {
-								if (!oldDataMap.keySet().contains(
-										values.get(0).getParentVO().getPrimaryKey())) {
-									((BillManageModel) getModel()).directlyAdd(values.get(0));
-									((BillManageModel) getModel()).nextRow();
+							// 如果已经有了条码查询出的数据，就不再追加
+							if (result != null) {
+								if (oldPkSet.contains(((SuperVO)result.getParentVO()).getPrimaryKey())) {
+									((BillManageModel) getModel()).directlyAdd(result);
+									((BillManageModel) getModel()).directlyUpdate(result);//不更新的情况下数据显示存在问题
 								} else {
-									((BillManageModel) getModel()).directlyUpdate(values.get(0));
+									// 如果已经有了条码查询出的数据，就不再追加
+									((BillManageModel) getModel()).directlyUpdate(result);
 								}
 							}
-						}catch(Exception ex){
+						} catch (Exception ex) {
 							ExceptionHandler.handleRuntimeException(ex);
-						}finally{
+						} finally {
 							field.setText("");
 						}
 					}
@@ -119,7 +132,7 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 		}
 		return field;
 	}
-	
+
 	public BillManageModel getModel() {
 		return model;
 	}
@@ -129,10 +142,9 @@ public class CodebarBillFormPanel extends UIPanel implements AppEventListener{
 		model.addAppEventListener(this);
 	}
 
-
 	@Override
 	public void handleEvent(AppEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

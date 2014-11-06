@@ -133,6 +133,8 @@
 		<property name="billCardBodyBeforeEditlistener" ref="billCardBodyBeforeEditlistener" />
 		<property name="billCardHeadAfterEditlistener" ref="billCardHeadAfterEditlistener" />
 		<property name="billCardHeadBeforeEditlistener" ref="billCardHeadBeforeEditlistener" />
+		<property name="codebarPanel" ref="cardCodeBarPanel"/>
+		
 		<property name="bodyActionMap">
 			<map>
 				<entry key="mtapp_detail">

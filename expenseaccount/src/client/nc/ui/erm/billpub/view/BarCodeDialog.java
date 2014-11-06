@@ -65,7 +65,7 @@ public class BarCodeDialog extends UIDialog implements ActionListener {
 
 	public BarCodeDialog(BillManageModel model, boolean isCard) {
 		super(model.getContext().getEntranceUI());
-		this.model=model;
+		this.model = model;
 		this.isCard = isCard;
 		init();
 	}
@@ -104,48 +104,42 @@ public class BarCodeDialog extends UIDialog implements ActionListener {
 	/**
 	 * @return 条码输入查询
 	 */
-    @SuppressWarnings("unchecked")
-	public void doBarCodeQuery(String pk)
-    {
-        if (pk == null || pk.trim().length() == 0)
-            return;
-        
-        //如果新查出来的数据在原数据中，就不再追加上。
+	@SuppressWarnings("unchecked")
+	public void doBarCodeQuery(String pk) {
+		if (pk == null || pk.trim().length() == 0)
+			return;
+
+		// 如果新查出来的数据在原数据中，就不再追加上。
 		List<JKBXVO> oldData = getModel().getData();
-		Map<String,JKBXVO> oldDataMap= new HashMap<String,JKBXVO>();
-		for (JKBXVO vo:oldData){
-			if(oldDataMap.get(vo.getParentVO().getPk_jkbx())==null){
+		Map<String, JKBXVO> oldDataMap = new HashMap<String, JKBXVO>();
+		for (JKBXVO vo : oldData) {
+			if (oldDataMap.get(vo.getParentVO().getPk_jkbx()) == null) {
 				oldDataMap.put(vo.getParentVO().getPk_jkbx(), vo);
 			}
 		}
-        
-        List<JKBXVO> values = null;
-        try
-        {
-            values = ((IBXBillPrivate) NCLocator.getInstance().lookup(IBXBillPrivate.class.getName())).queryVOsByWhereSql(" where zb.djbh='" + pk.trim() + "' and zb.pk_group='"
-                    + BXUiUtil.getPK_group() + "'", "");
-        }
-        catch (Exception e)
-        {
-            ExceptionHandler.handleRuntimeException(e);
-        }
-        /**
-         * 如果已经有了条码查询出的数据，就不再追加
-         */
+
+		List<JKBXVO> values = null;
+		try {
+			values = ((IBXBillPrivate) NCLocator.getInstance().lookup(IBXBillPrivate.class.getName())).queryVOsByWhereSql(
+					" where zb.djbh='" + pk.trim() + "' and zb.pk_group='" + BXUiUtil.getPK_group() + "'", "");
+		} catch (Exception e) {
+			ExceptionHandler.handleRuntimeException(e);
+		}
+		/**
+		 * 如果已经有了条码查询出的数据，就不再追加
+		 */
 		if (values != null && values.size() != 0) {
 
-			if (!oldDataMap.keySet().contains(
-					values.get(0).getParentVO().getPk_jkbx())) {
+			if (!oldDataMap.keySet().contains(values.get(0).getParentVO().getPk_jkbx())) {
 				getModel().directlyAdd(values.get(0));
 			} else {
-				//不能是聚合VO
-				int findBusinessData = getModel().findBusinessData(
-						values.get(0).getParentVO());
+				// 不能是聚合VO
+				int findBusinessData = getModel().findBusinessData(values.get(0).getParentVO());
 				getModel().setSelectedRow(findBusinessData);
 			}
 
 		}
-    }
+	}
 
 	/**
 	 * 复选框是否处于选中状态

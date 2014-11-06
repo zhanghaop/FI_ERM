@@ -154,6 +154,8 @@
 		<property name="billCardBodyBeforeEditlistener" ref="billCardBodyBeforeEditlistener" />
 		<property name="billCardHeadAfterEditlistener" ref="billCardHeadAfterEditlistener" />
 		<property name="billCardHeadBeforeEditlistener" ref="billCardHeadBeforeEditlistener" />
+		
+		<property name="codebarPanel" ref="cardCodeBarPanel"/>
 	</bean>
 
 	<bean id="container" class="nc.ui.uif2.TangramContainer"

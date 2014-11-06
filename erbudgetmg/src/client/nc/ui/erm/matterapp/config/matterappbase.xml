@@ -564,9 +564,6 @@
 		<property name="queryAreaCreator" ref="queryAction" />
 	</bean>
 
-	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
-		<property name="model" ref="manageAppModel" />
-	</bean>
 	<!-- 联查单据 -->
 	<bean id="linkBillAction" class="nc.ui.pubapp.uif2app.actions.LinkQueryAction">
 		<property name="model" ref="manageAppModel" />
@@ -650,5 +647,13 @@
 		<property name="editor" ref="billFormEditor" />
 	</bean>
 	
+	<!-- 快捷码 -->
+	<bean id="listInfoPanel" class="nc.ui.erm.view.CodebarToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="cardCodeBarPanel" class="nc.ui.erm.view.CodebarBillFormPanel" >
+		<property name="model" ref="manageAppModel" />
+	</bean>
 </beans>
 

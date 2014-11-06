@@ -134,6 +134,7 @@
 		<property name="showTotalLine" value="true" />
 		<property name="templateContainer" ref="templateContainer" />
 		<property name="userdefitemPreparator" ref="userdefitemCardPreparator" />
+		<property name="codebarPanel" ref="cardCodeBarPanel"/>
 		<property name="bodyActionMap">
 			<map>
 				<entry key="mtapp_detail">

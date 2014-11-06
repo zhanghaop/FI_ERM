@@ -441,10 +441,6 @@
 		<property name="context" ref="context" />
 	</bean>
 
-	<bean id="listInfoPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
-		<property name="model" ref="manageAppModel" />
-	</bean>
-
 	<!-- 超链接监听器 -->
 	<bean id="linklistener" class="nc.ui.erm.view.ERMHyperLinkListener">
 		<property name="model" ref="manageAppModel"></property>
@@ -578,6 +574,15 @@
 	<bean id="billCardHeadBeforeEditlistener"
 		class="nc.ui.erm.accruedexpense.listener.AccBillCardHeadBeforeEditListener">
 		<property name="billForm" ref="billFormEditor" />
+	</bean>
+	
+	<!-- 快捷码 -->
+	<bean id="listInfoPanel" class="nc.ui.erm.view.CodebarToolbarPanel">
+		<property name="model" ref="manageAppModel" />
+	</bean>
+	
+	<bean id="cardCodeBarPanel" class="nc.ui.erm.view.CodebarBillFormPanel" >
+		<property name="model" ref="manageAppModel" />
 	</bean>
 </beans>
 
