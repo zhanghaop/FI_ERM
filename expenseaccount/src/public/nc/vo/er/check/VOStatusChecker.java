@@ -176,6 +176,9 @@ public class VOStatusChecker {
 																									 * "审批未通过的单据不可以删除！"
 																									 */;
 			}
+			if (head.getSpzt() != null && head.getSpzt().equals(IBillStatus.CHECKPASS)) {
+				msg = "审批通过的单据不可以删除！";
+			}
 			if(head.getDjzt() !=null && head.getDjzt().intValue()==BXStatusConst.DJZT_Invalid){
 				msg = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common", "UPP2011-000955");//单据状态为作废，不可以操作
 
