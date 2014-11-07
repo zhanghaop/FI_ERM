@@ -38,7 +38,9 @@ public class ErmAccYsControlListener implements IBusinessListener {
 			getYsService().ysControlUpdate(cloneVos, oldvos);
 			return ;
 		}else if(ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
-				|| ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)){
+				|| ErmEventType.TYPE_DELETE_BEFORE.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_INVALID_AFTER.equalsIgnoreCase(eventType)
+				|| ErmEventType.TYPE_INVALID_BEFORE.equalsIgnoreCase(eventType)){
 			// É¾³ý²Ù×÷
 			isContray = true;
 		}else if(ErmEventType.TYPE_SIGN_BEFORE.equalsIgnoreCase(eventType)
