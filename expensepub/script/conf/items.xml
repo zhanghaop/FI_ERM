@@ -216,7 +216,6 @@
 		<corpField></corpField>
 		<grpField></grpField>
 		<fixedWhere>src_system in ('erm')  and pk_group ='GLOBLE00000000000000'
-			and displaycode in ('ERM07')
 		</fixedWhere>
 	</item>
 	<item>
