@@ -7,7 +7,6 @@ import java.util.Set;
 import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.ParticipantFilterContext;
-import nc.itf.pmbd.pub.IProjectQueryService;
 import nc.pubitf.rbac.IUserPubService;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
@@ -15,7 +14,6 @@ import nc.vo.pf.pub.util.UserUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.sm.UserVO;
 import nc.vo.uap.pf.PFBusinessException;
-import nc.vo.pim.project.ProjectHeadVO;
 
 public class WfFyFilterMattProject extends ErmBaseParticipantFilter {
 
@@ -36,31 +34,11 @@ public class WfFyFilterMattProject extends ErmBaseParticipantFilter {
 		if (projectPKs.isEmpty()) {
 			return null;
 		}
-
-//		String condition = SqlUtils.getInStr(ProjectHeadVO.PK_PROJECT,
-//				projectPKs.toArray(new String[projectPKs.size()]));
-
-		// 查询全部项目的负责人
-//		IProjectQuery service = NCLocator.getInstance().lookup(IProjectQuery.class);
-//		ProjectHeadVO[] projecters = (ProjectHeadVO[]) service.queryProjectHeadVOsByCondition(condition);
-		// 查询全部项目的负责人 合生元使用IProjectQueryService接口
-		IProjectQueryService service = NCLocator.getInstance().lookup(IProjectQueryService.class);
-		ProjectHeadVO[] projecters = (ProjectHeadVO[]) service.queryProjectHeadVOsByPK(projectPKs
-				.toArray(new String[0]));
-
-		if (projecters == null || projecters.length == 0) {
-			return null;
-		}
-		HashSet<String> psnIDs = new HashSet<String>();
-		for (int i = 0; i < projecters.length; i++) {
-			if (projecters[i].getPk_dutier() == null) {
-				throw new PFBusinessException("未找到项目负责人");
-			} else {
-				psnIDs.add(projecters[i].getPk_dutier());
-			}
-		}
+		
+		String[] psnIDs = new WfFyFilterUtils().getDutierByProjectPks(projectPKs.toArray(new String[projectPKs.size()]));
+		
 		// 查询负责人对应的用户信息
-		HashSet<String> userids = retrUser(psnIDs.toArray(new String[0]));
+		HashSet<String> userids = retrUser(psnIDs);
 
 		HashSet<String> userList = getPfc().getUserList();
 

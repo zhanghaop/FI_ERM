@@ -490,6 +490,7 @@ public interface BXConstans {
 	public static String PIM_FUNCODE = "48";//pim 项目预算
 	public static String ME_FUNCODE = "4038";   //营销费用模块
 	
+	
 	/**
 	 * 责任会计v6.1新增
 	 */
