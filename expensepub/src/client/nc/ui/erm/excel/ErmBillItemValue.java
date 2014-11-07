@@ -50,6 +50,11 @@ public class ErmBillItemValue implements InputItem {
 		if(getItemKey().contains("dept")){
 			return 3;
 		}
+		
+		if(item.getReadOrder() < 3){
+			return 4;
+		}
+		
 		return item.getReadOrder();
 	}
 

@@ -61,8 +61,8 @@ public class AggMatterAppVO extends HYBillVO implements Cloneable, IExAggVO , IB
 	private static List<String> notRepeatFields;
 	
 	public static String[] excelInputHeadItems = new String[] { MatterAppVO.PK_TRADETYPE, MatterAppVO.BILLDATE,
-			MatterAppVO.PK_ORG, MatterAppVO.PK_CURRTYPE, MatterAppVO.ORIG_AMOUNT, MatterAppVO.APPLY_ORG,
-			MatterAppVO.APPLY_ORG, MatterAppVO.APPLY_DEPT, MatterAppVO.BILLNO };
+			MatterAppVO.PK_ORG, MatterAppVO.PK_CURRTYPE, MatterAppVO.ORIG_AMOUNT,
+			MatterAppVO.APPLY_ORG, MatterAppVO.APPLY_DEPT,MatterAppVO.BILLMAKER, MatterAppVO.BILLNO };
 
 	public static String[] excelInputBodyItems = new String[] { MtAppDetailVO.ASSUME_ORG,
 			MtAppDetailVO.ASSUME_DEPT, MtAppDetailVO.ORIG_AMOUNT };
