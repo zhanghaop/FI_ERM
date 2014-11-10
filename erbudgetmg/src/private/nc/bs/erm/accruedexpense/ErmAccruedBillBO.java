@@ -493,10 +493,9 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	}
 
 	private void prepareHeader(AccruedVO parentVo) throws BusinessException {
-		if (parentVo.getApprstatus() != IBillStatus.FREE) {
-			parentVo.setBillstatus(ErmAccruedBillUtils.getBillStatus(parentVo.getApprstatus()));
-		}
-
+//		if (parentVo.getApprstatus() != IBillStatus.FREE) {
+//			parentVo.setBillstatus(ErmAccruedBillUtils.getBillStatus(parentVo.getApprstatus()));
+//		}
 		parentVo.setPk_billtype(ErmAccruedBillConst.AccruedBill_Billtype);
 		if (parentVo.getOperator() != null) {
 			String auditUser = BXBsUtil.getCuserIdByPK_psndoc(parentVo.getOperator());

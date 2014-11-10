@@ -1420,8 +1420,7 @@ public class VOChecker {
 
 		// 设置其他默认值
 		parentVO.setDr(Integer.valueOf(0));
-		if(parentVO.getSpzt() == null || (parentVO.getSpzt() != IBillStatus.CHECKGOING
-				&& parentVO.getSpzt() != IBillStatus.COMMIT && parentVO.getSpzt() != IBillStatus.CHECKPASS)){
+		if(parentVO.getSpzt() == null){
 			parentVO.setSpzt(IBillStatus.FREE);
 		}
 		parentVO.setQzzt(BXStatusConst.STATUS_NOTVALID);

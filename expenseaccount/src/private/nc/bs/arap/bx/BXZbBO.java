@@ -431,12 +431,6 @@ public class BXZbBO {
 					vo.getParentVO().setJsrq(vo.getParentVO().getDjrq());
 					vo.getParentVO().setApprover(InvocationInfoProxy.getInstance().getUserId());
 					vo.getParentVO().setJsr(InvocationInfoProxy.getInstance().getUserId());
-
-				}else {
-					if(vo.getParentVO().getSpzt() != IPfRetCheckInfo.GOINGON
-							&& vo.getParentVO().getSpzt() != IPfRetCheckInfo.COMMIT){//加入这个判断，审批中修改，不做审批状态变更
-						vo.getParentVO().setSpzt(IBillStatus.FREE);
-					}
 				}
 			} 
 

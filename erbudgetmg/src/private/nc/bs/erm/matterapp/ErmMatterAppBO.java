@@ -1116,10 +1116,9 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 	}
 
 	private void prepareHeader(MatterAppVO parentVo) {
-		if(parentVo.getApprstatus() != IBillStatus.FREE){
-			parentVo.setBillstatus(MatterAppUtils.getBillStatus(parentVo.getApprstatus()));
-		}
-		
+//		if(parentVo.getApprstatus() == IBillStatus.FREE){
+//			parentVo.setBillstatus(MatterAppUtils.getBillStatus(parentVo.getApprstatus()));
+//		}
 		parentVo.setPk_billtype(ErmMatterAppConst.MatterApp_BILLTYPE);
 		if (parentVo.getBillmaker() != null) {
 			try {

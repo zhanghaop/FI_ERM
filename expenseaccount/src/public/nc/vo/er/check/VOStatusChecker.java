@@ -20,20 +20,21 @@ public class VOStatusChecker {
 		String msgs = ActionUtils.checkBillStatus(head.getDjzt(), ActionUtils.AUDIT,
 				new int[] { BXStatusConst.DJZT_Saved });
 
-		if (head.getSpzt() != null && head.getSpzt().equals(IPfRetCheckInfo.NOPASS)) {
-			if (msgs == null) {
-				msgs = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000915")/*
-																									 * @
-																									 * res
-																									 * "审批未通过的单据不可以审批！"
-																									 */;
-			}
-			msgs += ", " + nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000915")/*
-																										 * @
-																										 * res
-																										 * "审批未通过的单据不可以审批！"
-																										 */;
-		}
+//		if (head.getSpzt() != null && head.getSpzt().equals(IPfRetCheckInfo.NOPASS)) {
+//			if (msgs == null) {
+//				msgs = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000915")/*
+//																									 * @
+//																									 * res
+//																									 * "审批未通过的单据不可以审批！"
+//																									 */;
+//			}else{
+//				msgs += ", " + nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000915")/*
+//				 * @
+//				 * res
+//				 * "审批未通过的单据不可以审批！"
+//				 */;
+//			}
+//		}
 		
 		if (head.getSpzt() == IBillStatus.FREE) {
 			throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("201212_0",
