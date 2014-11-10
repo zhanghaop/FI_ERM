@@ -1253,9 +1253,24 @@ public class BXZbBO {
 		vo.getParentVO().setDjzt(BXStatusConst.DJZT_Invalid);
 		// 取服务器事件作为修改时间
 		AuditInfoUtil.updateData(vo.getParentVO());
+		
+		//申请单信息清除
+		vo.getParentVO().setPk_item(null);
+		
 		//更新
 		updateHeaders(new JKBXHeaderVO[] { vo.getParentVO() }, new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.MODIFIER, JKBXHeaderVO.MODIFIEDTIME });
-
+		
+		//表体处理
+		if(vo.getChildrenVO() != null && vo.getChildrenVO().length > 0){
+			BXBusItemVO[] childrenVos = vo.getChildrenVO();
+			for(BXBusItemVO item :childrenVos){
+				//申请单处理一定要放到时间前处理事件中处理
+				item.setPk_item(null);//申请单信息清除
+				item.setPk_mtapp_detail(null);
+			}
+			new BXBusItemBO().update(childrenVos);
+		}
+		
 		// 判断CMP产品是否启用
 		boolean isCmpInstalled = BXZbBO.isCmpInstall(vo.getParentVO());
 
