@@ -59,6 +59,10 @@ public class ErmBillBillListView extends ERMBillListView {
 		if (pk_item_billno != null) {
 			pk_item_billno.addBillItemHyperlinkListener(ll);
 		}
+		BillItem pk_item_billno2 = getBillListPanel().getBodyItem(BXBusItemVO.FCTNO);
+		if (pk_item_billno2 != null) {
+			pk_item_billno2.addBillItemHyperlinkListener(ll);
+		}
 
 		/** Ìí¼Ó¾«¶È¼àÌý **/
 		addDecimalListenerToListpanel(getBillListPanel());
@@ -80,22 +84,27 @@ public class ErmBillBillListView extends ERMBillListView {
 		@Override
 		public void hyperlink(BillItemHyperlinkEvent event) {
 			if (event != null) {
-				if (getModel().getData() != null) {
-					JKBXVO vo = (JKBXVO) getModel().getData().get(event.getRow());
-					String pkItem = vo.getParentVO().getPk_item();
-					if(!StringUtils.isEmpty(pkItem)){
-						LinkQuery linkQuery = new LinkQuery(
-								ErmBillConst.MatterApp_DJDL,
-								new String[] { pkItem });
-//						SFClientUtil.openLinkedQueryDialog(BXConstans.MTAMN_NODE,
-//								getBillListPanel(), linkQuery);
-						
-						FuncletInitData initData = new FuncletInitData();
-						initData.setInitData(linkQuery);
-						initData.setInitType(ILinkType.LINK_TYPE_QUERY);
-						SFClientUtil2.openFuncNodeDialog(getBillListPanel(), BXConstans.MTAMN_NODE, initData, null, false,
-								false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
+				if(event.getItem().getKey().equals(JKBXHeaderVO.PK_ITEM)){
+					if (getModel().getData() != null) {
+						JKBXVO vo = (JKBXVO) getModel().getData().get(event.getRow());
+						String pkItem = vo.getParentVO().getPk_item();
+						if(!StringUtils.isEmpty(pkItem)){
+							LinkQuery linkQuery = new LinkQuery(ErmBillConst.MatterApp_DJDL,new String[] { pkItem });
+							FuncletInitData initData = new FuncletInitData();
+							initData.setInitData(linkQuery);
+							initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+							SFClientUtil2.openFuncNodeDialog(getBillListPanel(), BXConstans.MTAMN_NODE, initData, null, false,
+									false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
+						}
 					}
+				}else if(event.getItem().getKey().equals(BXBusItemVO.FCTNO)){
+					String pk =(String) event.getValue();
+					LinkQuery linkQuery = new LinkQuery("Z4", pk);
+					FuncletInitData initData = new FuncletInitData();
+					initData.setInitData(linkQuery);
+					initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+					SFClientUtil2.openFuncNodeDialog(getBillListPanel(), "200401APM", initData, null, false,
+							false, null, null);
 				}
 			}
 		}

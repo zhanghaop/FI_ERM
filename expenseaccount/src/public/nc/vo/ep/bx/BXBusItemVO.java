@@ -84,6 +84,7 @@ public class BXBusItemVO extends SuperVO {
 	 */
 	public static final String SRCTYPE = "srctype";
 	
+	public static final String FCTNO = "fctno";
 	private String pk_resacostcenter;// 成本中心
 	private String pk_checkele; // 核算要素
 	private String pk_pcorg; // 利润中心

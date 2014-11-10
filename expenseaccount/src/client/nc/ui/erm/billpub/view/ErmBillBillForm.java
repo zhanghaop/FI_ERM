@@ -265,6 +265,11 @@ public class ErmBillBillForm extends ERMBillForm {
 		if (item != null) {
 			item.addBillItemHyperlinkListener(ll);
 		}
+		BillItem item2 = this.billCardPanel.getBodyItem(BXBusItemVO.FCTNO);
+		// 注意还款单没有pk_item_billno字段
+		if (item2 != null) {
+			item2.addBillItemHyperlinkListener(ll);
+		}
 	}
 	
 	@Override
@@ -320,14 +325,23 @@ public class ErmBillBillForm extends ERMBillForm {
 
 		@Override
 		public void hyperlink(BillItemHyperlinkEvent event) {
-			String pk =getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject().toString();
-			LinkQuery linkQuery = new LinkQuery(ErmBillConst.MatterApp_DJDL, new String[] { pk });
-//			SFClientUtil.openLinkedQueryDialog(, , linkQuery);
-			FuncletInitData initData = new FuncletInitData();
-			initData.setInitData(linkQuery);
-			initData.setInitType(ILinkType.LINK_TYPE_QUERY);
-			SFClientUtil2.openFuncNodeDialog(getBillCardPanel(), BXConstans.MTAMN_NODE, initData, null, false,
-					false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
+			if(event.getItem().getKey().equals(JKBXHeaderVO.PK_ITEM)){
+				String pk =getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ITEM).getValueObject().toString();
+				LinkQuery linkQuery = new LinkQuery(ErmBillConst.MatterApp_DJDL, new String[] { pk });
+				FuncletInitData initData = new FuncletInitData();
+				initData.setInitData(linkQuery);
+				initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+				SFClientUtil2.openFuncNodeDialog(getBillCardPanel(), BXConstans.MTAMN_NODE, initData, null, false,
+						false, null, new String[] { ErmConst.BUSIACTIVE_LINKQUERY });
+			}else if(event.getItem().getKey().equals(BXBusItemVO.FCTNO)){
+				String pk =(String) event.getValue();
+				LinkQuery linkQuery = new LinkQuery("Z4", pk);
+				FuncletInitData initData = new FuncletInitData();
+				initData.setInitData(linkQuery);
+				initData.setInitType(ILinkType.LINK_TYPE_QUERY);
+				SFClientUtil2.openFuncNodeDialog(getBillCardPanel(), "200401APM", initData, null, false,
+						false, null, null);
+			}
 		}
 	}
 	
