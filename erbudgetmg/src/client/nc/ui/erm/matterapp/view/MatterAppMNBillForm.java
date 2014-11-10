@@ -123,6 +123,9 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		
 		super.initUI();
 		
+		// 主组织
+		this.getBillOrgPanel().getRefPane().addValueChangedListener((ValueChangedListener) this.getBillCardHeadAfterEditlistener());
+
 		initBillCardItem();
 	}
 	
@@ -131,9 +134,6 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 	 */
 	private void initBillCardItem() {
 		this.initBodyMulSelected();
-		
-		//主组织
-		this.getBillOrgPanel().getRefPane().addValueChangedListener((ValueChangedListener) this.getBillCardHeadAfterEditlistener());
 		
 		//精度处理
 		MatterAppUiUtil.addDigitListenerToCardPanel(this.getBillCardPanel(), this.getModel());
