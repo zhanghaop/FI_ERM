@@ -122,17 +122,25 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		((MAppModel) this.getModel()).setSelectBillTypeCode(initDjlxbm);
 		
 		super.initUI();
-
-		this.initMatterAppPage();
-
-		this.getBillOrgPanel().getRefPane().addValueChangedListener(
-				(ValueChangedListener) this.getBillCardHeadAfterEditlistener());
+		
+		initBillCardItem();
+	}
+	
+	/**
+	 * 切换模板/初始化界面时，监听/字段特殊处理
+	 */
+	private void initBillCardItem() {
+		this.initBodyMulSelected();
+		
+		//主组织
+		this.getBillOrgPanel().getRefPane().addValueChangedListener((ValueChangedListener) this.getBillCardHeadAfterEditlistener());
+		
+		//精度处理
 		MatterAppUiUtil.addDigitListenerToCardPanel(this.getBillCardPanel(), this.getModel());
 
 		// 对交易类型参照设置查询条件
 		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setMatchPkWithWherePart(true);
-		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setWherePart(
-				" istransaction = 'Y' and islock ='N' and pk_group='" + MatterAppUiUtil.getPK_group() + "' ");
+		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setWherePart(" istransaction = 'Y' and islock ='N' and pk_group='" + MatterAppUiUtil.getPK_group() + "' ");
 
 		// 表体事由的特殊处理，处理现实问题
 		BillItem bodyItem = this.getBillCardPanel().getBodyItem(MtAppDetailVO.REASON);
@@ -262,7 +270,7 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 	 * 
 	 * @throws ValidationException
 	 */
-	private void initMatterAppPage() {
+	private void initBodyMulSelected() {
 		try {
 			String[] names = AggMatterAppVO.getBodyMultiSelectedItems();
 			for (String name : names) {
@@ -272,7 +280,7 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 				}
 			}
 		} catch (Exception e) {
-			Logger.error(e.getMessage(), e);
+			ExceptionHandler.consume(e);
 		}
 	}
 
@@ -414,16 +422,18 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 			throw new IllegalArgumentException(NCLangRes.getInstance().getStrByID("uif2", "BatchBillTable-000000")/* 没有找到设置的单据模板信息 */);
 		}
 		this.setBillData(template);
-		// 切换模板后表体添加精度监听
-		MatterAppUiUtil.addDigitListenerToCardPanel(this.getBillCardPanel(), this.getModel());
-
-		// 对交易类型参照设置查询条件
-		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setMatchPkWithWherePart(true);
-		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setWherePart(
-				" istransaction = 'Y' and islock ='N' and pk_group='" + MatterAppUiUtil.getPK_group() + "' ");
+//		// 切换模板后表体添加精度监听
+//		MatterAppUiUtil.addDigitListenerToCardPanel(this.getBillCardPanel(), this.getModel());
+//
+//		// 对交易类型参照设置查询条件
+//		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setMatchPkWithWherePart(true);
+//		this.getHeadItemUIRefPane(MatterAppVO.PK_TRADETYPE).getRefModel().setWherePart(
+//				" istransaction = 'Y' and islock ='N' and pk_group='" + MatterAppUiUtil.getPK_group() + "' ");
+//		
+//		//切换模板后，重新加载表体的多选项
+//		initMatterAppPage();
 		
-		//切换模板后，重新加载表体的多选项
-		initMatterAppPage();
+		initBillCardItem();
 	}
 	
 	public void setBillDataTemplate(BillTempletVO template){
