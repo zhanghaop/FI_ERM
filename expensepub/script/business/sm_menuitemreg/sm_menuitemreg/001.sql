@@ -250,7 +250,7 @@ go
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z31000000002XNQ7',0,'2011050404',null,'N',null,'2011500404','收支项目汇总表','1004ZZ10000000000FFL','D2011500404','2014-02-12 15:28:27')
 go
 
-insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3M0000000000EO2',0,'A0D001',null,'N',null,'A0D002','移动报销','1004ZZ10000000000FFL','DA0D001','2014-08-18 14:53:08')
+insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1001Z3M0000000000EO2',0,'A0D001',null,'N',null,'A0D002','用友云报销','1004ZZ10000000000FFL','DA0D001','2014-08-18 14:53:08')
 go
 
 insert into sm_menuitemreg(pk_menuitem,dr,funcode,iconpath,ismenutype,menudes,menuitemcode,menuitemname,pk_menu,resid,ts) values('1005Z3M00000000003UX',0,null,null,'Y',null,'A0D0','财务会计','1004ZZ10000000000FFL','DA0D0','2014-08-18 14:52:23')
