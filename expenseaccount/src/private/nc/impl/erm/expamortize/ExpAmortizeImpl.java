@@ -16,6 +16,7 @@ import nc.pubitf.erm.expamortize.IExpAmortizeprocManage;
 import nc.pubitf.erm.expamortize.IExpAmortizeprocQuery;
 import nc.pubitf.fip.service.IFipMessageService;
 import nc.util.erm.expamortize.ExpAmortizeprocUtil;
+import nc.util.erm.expamortize.ExpamtUtil;
 import nc.util.erm.expamortize.ExpamtVoChecker;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -100,28 +101,25 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		boolean flag=checker.checkAmortize(aggvo, currYearMonth);
 		if(flag){
 			//已摊销，则仅发送会计平台生成凭证,查询摊销过程记录
-			ExpamtDetailVO[] childrenVO = (ExpamtDetailVO[]) aggvo.getChildrenVO();
-			String[] infoPks = VOUtil.getAttributeValues(childrenVO, ExpamtDetailVO.PK_EXPAMTDETAIL);
-			ExpamtprocVO[] expamtproc = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class).queryByInfoPksAndAccperiod(infoPks, currYearMonth);
-			for (ExpamtDetailVO expamtdetailVO : childrenVO) {
-				for(ExpamtprocVO proc : expamtproc){
-					if(expamtdetailVO.getPk_expamtdetail().equals(proc.getPk_expamtinfo())){
-						expamtdetailVO.setCurr_amount(proc.getCurr_amount());
-						expamtdetailVO.setCurr_orgamount(proc.getCurr_orgamount());
-						expamtdetailVO.setCurr_groupamount(proc.getCurr_groupamount());
-						expamtdetailVO.setCurr_globalamount(proc.getCurr_globalamount());
-					}
-				}
-			}
+//			ExpamtDetailVO[] childrenVO = (ExpamtDetailVO[]) aggvo.getChildrenVO();
+//			String[] infoPks = VOUtil.getAttributeValues(childrenVO, ExpamtDetailVO.PK_EXPAMTDETAIL);
+//			ExpamtprocVO[] expamtproc = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class).queryByInfoPksAndAccperiod(infoPks, currYearMonth);
+//			for (ExpamtDetailVO expamtdetailVO : childrenVO) {
+//				for(ExpamtprocVO proc : expamtproc){
+//					if(expamtdetailVO.getPk_expamtdetail().equals(proc.getPk_expamtinfo())){
+//						expamtdetailVO.setCurr_amount(proc.getCurr_amount());
+//						expamtdetailVO.setCurr_orgamount(proc.getCurr_orgamount());
+//						expamtdetailVO.setCurr_groupamount(proc.getCurr_groupamount());
+//						expamtdetailVO.setCurr_globalamount(proc.getCurr_globalamount());
+//					}
+//				}
+//			}
+			
 			sendMessageToFip(aggvo,FipMessageVO.MESSAGETYPE_DEL);
 			sendMessageToFip(aggvo,FipMessageVO.MESSAGETYPE_ADD);
 			
-			AggExpamtinfoVO aggExpamt = new AggExpamtinfoVO();
-			aggExpamt.setParentVO(vo);
-			
-			result = new MessageVO(aggExpamt, ActionUtils.EXPAMORTIZE);
+			result = new MessageVO(aggvo, ActionUtils.EXPAMORTIZE);
 			result.setShowField(ExpamtinfoVO.BX_BILLNO);
-			
 			return result;
 		}
 		
