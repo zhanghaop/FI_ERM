@@ -171,26 +171,13 @@ public class ErmBillCostConver {
                             || attr.equals(JKBXHeaderVO.CASHITEM)) {
                         continue;
                     }
-//                    if (attr.indexOf("defitem") >= 0) {
-//                        String att1 = attr.substring(7);
-//                        parentVO.setAttributeValue("zyx" + att1, item.getAttributeValue(attr));
-//                    } else {
-//                        parentVO.setAttributeValue(attr, item.getAttributeValue(attr));
-//                    }
+
                     fbField.put(attr, null);
                 }
 
                 //事项审批 关联表 arap_item_clb
                 parentVO.setPk_jkbx(parentVO.getPk_jkbx());
                 expaccVO  = new ExpenseAccountVO();
-//                for (int j = 0; j < attrNames.length; j++) {
-//                    String bxvoField = ErmBillFieldContrastCache.getSrcField(ErmBillFieldContrastCache.FieldContrast_SCENE_ExpenseAccount,
-//                            BXConstans.BX_DJLXBM,
-//                            attrNames[j]);
-//                    if (bxvoField!=null) {
-//                        expaccVO.setAttributeValue(attrNames[j], parentVO.getAttributeValue(bxvoField));
-//                    }
-//                }
                 
                 for (int j = 0; j < attrNames.length; j++) {
                     String bxvoField = ErmBillFieldContrastCache.getSrcField(ErmBillFieldContrastCache.FieldContrast_SCENE_ExpenseAccount,
@@ -199,16 +186,16 @@ public class ErmBillCostConver {
                     if (bxvoField!=null) {
                         String[] tokens = StringUtil.split(bxvoField, ".");
                         Object value = null;
-                        //这些属性表体有，但仅按表头属性走
-                        if ("fb".equals(tokens[0])) {
-                            value =  item.getAttributeValue(tokens[1]);
-                        } else if (fbField.containsKey(bxvoField)) {
-                            value =  item.getAttributeValue(bxvoField);
-                        } else if ("zb".equals(tokens[0])) {
-                            value =  parentVO.getAttributeValue(tokens[1]);
-                        } else {
-                            value =  parentVO.getAttributeValue(bxvoField);
-                        }
+						// 这些属性表体有，但仅按表头属性走
+						if ("fb".equals(tokens[0])) {
+							value = item.getAttributeValue(tokens[1]);
+						} else if ("zb".equals(tokens[0])) {
+							value = parentVO.getAttributeValue(tokens[1]);
+						} else if (fbField.containsKey(bxvoField)) {
+							value = item.getAttributeValue(bxvoField);
+						} else {
+							value = parentVO.getAttributeValue(bxvoField);
+						}
                         
                         expaccVO.setAttributeValue(attrNames[j], value);
                     }
