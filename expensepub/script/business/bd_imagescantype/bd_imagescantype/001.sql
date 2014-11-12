@@ -13,6 +13,6 @@ go
 insert into bd_imagescantype(pk_id,code,dr,name,orgrefclass,pk_billtypecode,pk_parent,ts,billtypecode) values('1001Z3100000000VTPDD','01',0,'财务会计',null,null,null,null,null)
 go
 
-insert into bd_imagescantype(pk_id,code,dr,name,orgrefclass,pk_billtypecode,pk_parent,ts,billtypecode) values('1001Z3100000000VTPDE','0101',0,'费用管理',null,null,'1001Z0100000000VTPDD',null,null)
+insert into bd_imagescantype(pk_id,code,dr,name,orgrefclass,pk_billtypecode,pk_parent,ts,billtypecode) values('1001Z3100000000VTPDE','0101',0,'费用管理',null,null,'1001Z3100000000VTPDD',null,null)
 go
 
