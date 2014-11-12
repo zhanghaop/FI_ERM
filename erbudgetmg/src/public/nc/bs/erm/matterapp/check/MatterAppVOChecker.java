@@ -396,9 +396,12 @@ public class MatterAppVOChecker {
 						"0201212-0052")/* @res "单据审核人不能为空!" */);
 			}
 
-			if (head.getBilldate().compareTo(head.getApprovetime().getDate()) > 0) {
-				throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0",
-						"0201212-0098")/* @res "单据审核日期不得早于单据日期!" */);
+			if (new UFDate(head.getBilldate().toStdString()).compareTo(new UFDate(head.getApprovetime().getDate().toStdString())) > 0) {
+				throw new DataValidateException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0", "0201212-0098")/*
+																																 * @
+																																 * res
+																																 * "单据审核日期不得早于单据日期!"
+																																 */);
 			}
 			
 			if (head.getApprstatus() == IBillStatus.FREE) {
