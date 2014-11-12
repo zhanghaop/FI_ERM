@@ -168,7 +168,9 @@ public class ErmBillCostConver {
                 for (String attr : attributeNames) {
                     //这些属性表体有，但仅按表头属性走
                     if (attr.equals(JKBXHeaderVO.CASHPROJ) || attr.equals(JKBXHeaderVO.JKBXR)
-                            || attr.equals(JKBXHeaderVO.CASHITEM)) {
+                            || attr.equals(JKBXHeaderVO.CASHITEM)
+                            || attr.equals(JKBXHeaderVO.DEPTID)
+                            || attr.equals(JKBXHeaderVO.DWBM)) {
                         continue;
                     }
 
