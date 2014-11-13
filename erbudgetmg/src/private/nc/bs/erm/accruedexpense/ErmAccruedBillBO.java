@@ -43,6 +43,7 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.pub.IBillStatus;
+import nc.vo.uap.rbac.constant.INCSystemUserConst;
 import nc.vo.util.AuditInfoUtil;
 import nc.vo.util.BDVersionValidationUtil;
 
@@ -627,6 +628,15 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		pklockOperate(aggvos);
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(aggvos);
+		
+		//补充审批信息
+		for(AggAccruedBillVO aggVo : aggvos){
+			if(aggVo.getParentVO().getApprovetime() == null){
+				aggVo.getParentVO().setApprover(INCSystemUserConst.NC_USER_PK);
+				aggVo.getParentVO().setApprovetime(AuditInfoUtil.getCurrentTime());
+			}
+		}
+		
 		// vo校验
 		AccruedBillVOChecker vochecker = new AccruedBillVOChecker();
 		vochecker.checkApprove(aggvos);
@@ -669,7 +679,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		}
 
 		retriveItems(aggvos);
-
+		
 		MessageVO[] msgs = new MessageVO[aggvos.length];
 		// 加锁
 		pklockOperate(aggvos);
@@ -692,9 +702,17 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	}
 
 	private void unApproveBack(AggAccruedBillVO aggvo) throws BusinessException {
+		
 		// 取消审核前事件处理
 		fireBeforeUnApproveEvent(aggvo.getOldvo());
-
+		
+		//补充审批信息
+		if (aggvo.getParentVO().getApprover() == null 
+				|| aggvo.getParentVO().getApprover().equals(INCSystemUserConst.NC_USER_PK)) {
+			aggvo.getParentVO().setApprover(null);
+			aggvo.getParentVO().setApprovetime(null);
+		}
+		
 		// 设置单据状态、生效信息
 		setAccruedVOAttribute(new AggAccruedBillVO[] { aggvo }, AccruedVO.EFFECTSTATUS,
 				ErmMatterAppConst.EFFECTSTATUS_NO);

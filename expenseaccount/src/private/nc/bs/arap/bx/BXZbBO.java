@@ -100,6 +100,7 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.lang.UFTime;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.trade.pub.IBillStatus;
+import nc.vo.uap.rbac.constant.INCSystemUserConst;
 import nc.vo.uap.rbac.role.RoleVO;
 import nc.vo.util.AuditInfoUtil;
 
@@ -634,11 +635,8 @@ public class BXZbBO {
 		if (billStatus.equals(BusiStatus.Deleted)) {
 			// 没有结算信息的单据直接反生效
 			unSettle(new JKBXVO[] { bxvo });
-			if((headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
-					||headerVO.isAdjustBxd()){
-				// 删除凭证
-				effectToFip(bxvo, MESSAGE_UNSETTLE);
-			}
+			// 删除凭证
+			effectToFip(bxvo, MESSAGE_UNSETTLE);
 		} else {
 			UFDate shrq = headerVO.getShrq() == null ? null : headerVO.getShrq().getDate();
 			if (!isCmpInstalled) {
@@ -663,11 +661,19 @@ public class BXZbBO {
 		headerVO.setPaydate(null);
 		headerVO.setVouchertag(null);
 		
+		//工作流不配审批流时出现情况
+		if (headerVO.getApprover() == null 
+				|| headerVO.getApprover().equals(INCSystemUserConst.NC_USER_PK)) {
+			headerVO.setApprover(null);
+			headerVO.setShrq(null);
+		}
+		
 		try {
 			beforeActInf(bxvo, MESSAGE_UNAUDIT);
 
 			getJKBXDAO().update(new JKBXHeaderVO[] { headerVO },
-					new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ, JKBXHeaderVO.SPZT,JKBXHeaderVO.VOUCHERTAG });
+					new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ, JKBXHeaderVO.SPZT,JKBXHeaderVO.VOUCHERTAG 
+					,JKBXHeaderVO.APPROVER, JKBXHeaderVO.SHRQ});
 
 			// 重新加载冲销行表体（带出冲销行生效日期）
 			if (bxvo.getContrastVO() != null && bxvo.getContrastVO().length > 0) {
@@ -741,17 +747,17 @@ public class BXZbBO {
 			headerVO.setPayflag(BXStatusConst.ALL_CONTRAST);
 		}
 		
+		if(headerVO.getApprover() == null){//审核人为空时，设置默认值
+			headerVO.setApprover(INCSystemUserConst.NC_USER_PK);
+			headerVO.setShrq(AuditInfoUtil.getCurrentTime());
+		}
+		
 		VOStatusChecker.checkAuditStatus(headerVO, headerVO.getShrq());
-		beforeActInf(bxvo, MESSAGE_AUDIT);
 		
 		headerVO.setSpzt(IPfRetCheckInfo.PASSING);
 		headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Verified));
 		
-		if(headerVO.getApprover() == null){
-			headerVO.setApprover(AuditInfoUtil.getCurrentUser());
-			headerVO.setShrq(AuditInfoUtil.getCurrentTime());
-		}
-
+		beforeActInf(bxvo, MESSAGE_AUDIT);
 		// 需更新字段
 		String[] updateFields = new String[] { JKBXHeaderVO.SPZT, JKBXHeaderVO.DJZT, JKBXHeaderVO.SXBZ,
 				JKBXHeaderVO.APPROVER, JKBXHeaderVO.SHRQ ,JKBXHeaderVO.VOUCHERTAG};

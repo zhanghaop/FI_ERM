@@ -328,6 +328,14 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 		pklockOperate(vos);
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(vos);
+		
+		// 补充审批信息
+		for (AggMatterAppVO aggVo : vos) {
+			if (aggVo.getParentVO().getApprovetime() == null) {
+				aggVo.getParentVO().setApprover(INCSystemUserConst.NC_USER_PK);
+				aggVo.getParentVO().setApprovetime(AuditInfoUtil.getCurrentTime());
+			}
+		}
 		// vo校验
 		MatterAppVOChecker vochecker = new MatterAppVOChecker();
 		vochecker.checkApprove(vos);
@@ -396,10 +404,6 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 	}
 
 	private void unApproveBack(AggMatterAppVO vo) throws BusinessException {
-//		// 是否是取消生效动作
-//		MatterAppVO parentvo = (MatterAppVO) vo.getParentVO();
-//
-//		parentvo.setApprovetime(oldvo.getParentVO().getApprovetime());//用于预算控制为审核日期的情况，审核日期不能丢
 		// 取消审核前事件处理
 		fireBeforeUnApproveEvent(vo.getOldvo());
 
@@ -409,11 +413,13 @@ public class ErmMatterAppBO implements ICheckStatusCallback{
 
 		setAggMatterAppVOAttribute(new AggMatterAppVO[] { vo }, MatterAppVO.BILLSTATUS,
 				ErmMatterAppConst.BILLSTATUS_SAVED, true);
-
-		// 清空审核人、审核日期
-//		parentvo.setApprover(null);
-//		parentvo.setApprovetime(null);
-
+		
+		// 补充审批信息
+		if (vo.getParentVO().getApprover() == null || vo.getParentVO().getApprover().equals(INCSystemUserConst.NC_USER_PK)) {
+			vo.getParentVO().setApprover(null);
+			vo.getParentVO().setApprovetime(null);
+		}
+				
 		// 更新保存
 		getDAO().updateAggVOsByFields(
 				new AggMatterAppVO[] { vo },
