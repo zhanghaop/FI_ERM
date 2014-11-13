@@ -322,17 +322,16 @@ public class AggMatterAppVO extends HYBillVO implements Cloneable, IExAggVO , IB
 	 * @return CircularlyAccessibleValueObject[]
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public CircularlyAccessibleValueObject[] getAllChildrenVO(){
-		
+	public CircularlyAccessibleValueObject[] getAllChildrenVO() {
+
 		ArrayList al = new ArrayList();
 		String[] allTabcodes = getAllTabcodes();
-		for(int i = 0; i < allTabcodes.length; i++){
-			CircularlyAccessibleValueObject[] cvos
-			        = getTableVO(getTableCodes()[i]);
-			if(cvos != null)
+		for (int i = 0; i < allTabcodes.length; i++) {
+			CircularlyAccessibleValueObject[] cvos = getTableVO(allTabcodes[i]);
+			if (cvos != null)
 				al.addAll(Arrays.asList(cvos));
 		}
-		
+
 		return (SuperVO[]) al.toArray(new SuperVO[0]);
 	}
 	

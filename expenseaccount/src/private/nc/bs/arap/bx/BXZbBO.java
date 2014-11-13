@@ -851,12 +851,12 @@ public class BXZbBO {
 
 			// 没有结算信息的单据直接签字生效
 			if (billStatus.equals(BusiStatus.Deleted)) {
-				autoSignDeal(bxvo, headerVO, isJsToFip);
+				autoSignDeal(bxvo, headerVO);
 			} else {
 				if (isCmpInstalled) {
 					new ErForCmpBO().invokeCmp(bxvo, headerVO.getShrq().getDate(), billStatus);
 				} else {
-					autoSignDeal(bxvo, headerVO, isJsToFip);
+					autoSignDeal(bxvo, headerVO);
 				}
 			}
 			// 自动签字
@@ -903,16 +903,11 @@ public class BXZbBO {
 	 * @param param
 	 * @throws BusinessException
 	 */
-	private void autoSignDeal(JKBXVO bxvo, JKBXHeaderVO headerVO, boolean isJsToFip)
+	private void autoSignDeal(JKBXVO bxvo, JKBXHeaderVO headerVO)
 			throws BusinessException {
 		settle(headerVO.getApprover(), headerVO.getShrq().getDate(), bxvo);
 		// 传会计平台
-		if(headerVO.getVouchertag()==BXStatusConst.SXFlag && (!isJsToFip 
-				||(headerVO.getPayflag()!=null && headerVO.getPayflag() == BXStatusConst.ALL_CONTRAST)
-				||headerVO.isAdjustBxd())){
-			
-			effectToFip(bxvo, MESSAGE_SETTLE);
-		}
+		effectToFip(bxvo, MESSAGE_SETTLE);
 	}
 	
 	/**
