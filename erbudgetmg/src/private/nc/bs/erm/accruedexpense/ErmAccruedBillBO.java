@@ -315,6 +315,7 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 			// 保留下来oldvo，供业务处理的事件前使用
 			aggvo.setOldvo(oldvos[0]);
 		}
+		retriveItems(new AggAccruedBillVO[]{aggvo});
 	}
 
 	private void unRedbackOldAccruedBill(AggAccruedBillVO aggvo) throws BusinessException {
