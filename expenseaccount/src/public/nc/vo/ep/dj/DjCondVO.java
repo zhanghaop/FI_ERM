@@ -11,11 +11,10 @@ public class DjCondVO implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7641757221432876655L;
-	public final static Integer Voucher_All=new Integer(-1);
-    public final static Integer Voucher_NotCreated=new Integer(1);
-    public final static Integer Voucher_Created=new Integer(2);
-    public final static Integer Voucher_Singed=new Integer(3);
-	
+	public final static Integer Voucher_All = Integer.valueOf(-1);
+	public final static Integer Voucher_NotCreated = Integer.valueOf(1);
+	public final static Integer Voucher_Created = Integer.valueOf(2);
+	public final static Integer Voucher_Singed = Integer.valueOf(3);
 	
 	public int m_Syscode;
 	//系统 0为应收,1应付,2报账中心

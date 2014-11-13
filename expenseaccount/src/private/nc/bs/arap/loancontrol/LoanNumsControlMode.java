@@ -20,13 +20,14 @@ public class LoanNumsControlMode extends SimpleSqlLoanControlMode {
 	@Override
 	public boolean compare(Object dataValue, Object controlValue,Object itemValue) {
 		
-		if(dataValue==null)
-			dataValue=new Integer(0);
+		if (dataValue == null) {
+			dataValue = Integer.valueOf(0);
+		}
 		
 		Integer data=new Integer(dataValue.toString());
 		Integer control=new Integer(controlValue.toString());
 		
-		data=new Integer(data.intValue()+1);
+		data = Integer.valueOf(data.intValue() + 1);
 		
 		if(data.compareTo(control)>0){
 			return false;

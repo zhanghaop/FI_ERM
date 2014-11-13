@@ -356,7 +356,7 @@ public class ErmExpPfxxPlugin extends nc.bs.pfxx.plugin.AbstractPfxxPlugin  {
 
 	private void dealOtherField(JKBXVO djvo) {
 		JKBXHeaderVO header = djvo.getParentVO();
-		header.setDr(new Integer(0));
+		header.setDr(Integer.valueOf(0));
 		if(header.getBbhl() == null || header.getBbhl().toDouble() == 0){
 			header.setBbhl(new UFDouble(1.0));
 		}

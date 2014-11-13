@@ -1118,7 +1118,7 @@ public class AuthorizeUI extends ToftPanel {
 		for (int i = 0; i < rowcount; i++) {
 			if (BillModel.SELECTED == getBillListPanel().getHeadBillModel()
 					.getRowState(i)) {
-				selectedRowList.add(new Integer(i));
+				selectedRowList.add(Integer.valueOf(i));
 			}
 		}
 		Integer[] rows = selectedRowList.toArray(new Integer[0]);

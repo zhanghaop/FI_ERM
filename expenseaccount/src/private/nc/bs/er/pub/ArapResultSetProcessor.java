@@ -265,13 +265,13 @@ public class ArapResultSetProcessor implements ResultSetProcessor {
 
 	private Object setObj(Object obj) {
 		if (obj.toString().equals("0E-8"))
-			obj = new Integer(0);
+			obj = Integer.valueOf(0);
 		String temp = obj.toString();
 		if (temp.indexOf(".") == -1)
-			obj = new Integer(temp);
+			obj = Integer.valueOf(temp);
 		else {
 			String s = temp.substring(0, temp.indexOf("."));
-			obj = new Integer(s);
+			obj = Integer.valueOf(s);
 		}
 		return obj;
 	}

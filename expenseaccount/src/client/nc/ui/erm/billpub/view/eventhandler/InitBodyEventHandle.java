@@ -541,47 +541,45 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 		DefaultConstEnum bodyItemStrValue = (DefaultConstEnum) getBillCardPanel().getBillModel().getValueObjectAt(e.getRow(), BXBusItemVO.PAYTARGET);
 		if (bodyItemStrValue != null) {
 			Integer paytarget = (Integer) bodyItemStrValue.getValue();
-			if (paytarget instanceof Integer) {
-				if (paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM) {// 等于供应商时清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
-					// 收款人、个人银行账户信息应清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.SKYHZH + "_ID", e.getTableCode());
-					// 外部人员清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM39, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM38, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM37, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM36, e.getTableCode());
-				} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER) {
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
-					// 收款人、个人银行账户信息应清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.SKYHZH + "_ID", e.getTableCode());
-					// 外部人员清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM39, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM38, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM37, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM36, e.getTableCode());
+			if (paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM) {// 等于供应商时清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
+				// 收款人、个人银行账户信息应清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.SKYHZH + "_ID", e.getTableCode());
+				// 外部人员清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM39, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM38, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM37, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM36, e.getTableCode());
+			} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER) {
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
+				// 收款人、个人银行账户信息应清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.SKYHZH + "_ID", e.getTableCode());
+				// 外部人员清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM39, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM38, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM37, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM36, e.getTableCode());
 
-				} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_RECEIVER) {
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
-					// 外部人员清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM39, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM38, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM37, e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM36, e.getTableCode());
+			} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_RECEIVER) {
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
+				// 外部人员清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM39, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM38, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM37, e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), BXBusItemVO.DEFITEM36, e.getTableCode());
 
-				} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_OTHER) {
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
-					// 收款人、个人银行账户信息应清空
-					getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.SKYHZH, e.getTableCode()); // 收款人、个人银行账户信息应清空
-				}
+			} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_OTHER) {
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.CUSTACCOUNT + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.FREECUST + "_ID", e.getTableCode());
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), "freecust.bankaccount", e.getTableCode());
+				// 收款人、个人银行账户信息应清空
+				getBillCardPanel().setBodyValueAt(null, e.getRow(), JKBXHeaderVO.SKYHZH, e.getTableCode()); // 收款人、个人银行账户信息应清空
 			}
 		}
 	}
