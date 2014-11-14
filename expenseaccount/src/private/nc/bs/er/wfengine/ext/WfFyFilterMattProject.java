@@ -49,7 +49,7 @@ public class WfFyFilterMattProject extends ErmBaseParticipantFilter {
 			} else {
 				// 抛异常
 				throw new PFBusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getString("common", null,
-						"UPP2011-000909", null, new String[] { getParticipantName(), getParticipantTypeName() })/*
+						"UPP2011-000910", null, new String[] { getParticipantName(), getParticipantTypeName() })/*
 																												 * @
 																												 * res
 																												 * "{0}不属于当前{1}！"
