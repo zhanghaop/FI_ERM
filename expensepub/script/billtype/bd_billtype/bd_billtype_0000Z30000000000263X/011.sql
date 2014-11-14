@@ -22,6 +22,3 @@ go
 insert into bd_billtype2(pk_billtype,classtype,classname,code,dr,pk_billtypeid,ts) values('263X',9,'nc.ui.erm.bugetint.ErmBugetPfClientBizProcess',null,null,'0000Z30000000000263X','2014-11-05 16:58:52')
 go
 
-insert into bd_billtype2(pk_billtype,classtype,classname,code,dr,pk_billtypeid,ts) values('263X',9,'ssc.ui.wf.engine.SSCPfClientBizProcess',null,null,'0000Z30000000000263X','2014-11-05 16:58:52')
-go
-
