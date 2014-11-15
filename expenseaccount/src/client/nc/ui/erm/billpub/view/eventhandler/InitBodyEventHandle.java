@@ -176,6 +176,9 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 			beforeCustAccount(e, key);
 		} else if (BXBusItemVO.FREECUST.equals(key)) {
 			beforeEditFreecust(e);
+		} else if (BXBusItemVO.FCTNO.equals(key)) {
+			String pk_org = bodyEventHandleUtil.getHeadItemStrValue(JKBXHeaderVO.PK_ORG);
+			beforeFct(e, key, pk_org);
 		} else if (key != null && (key.startsWith(BXConstans.BODY_USERDEF_PREFIX))) {
 			filterDefItemField(key);
 		}
@@ -254,6 +257,20 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 		}
 	}
 
+	// 供应商和客户过滤
+	private void beforeFct(BillEditEvent e, String key, String pk_org) {
+		UIRefPane refPane = bodyEventHandleUtil.getBodyItemUIRefPane(e.getTableCode(), key);
+		if (pk_org != null) {
+			refPane.setEnabled(true);
+			AbstractRefModel model = refPane.getRefModel();
+			if (model != null) {
+				model.setPk_org(pk_org);
+			}
+		} else {
+			refPane.setEnabled(false);
+		}
+	}
+		
 	// 供应商和客户过滤
 	private void beforeHbbmAndCustomer(BillEditEvent e, String key, String fydwbm) {
 		UIRefPane refPane = bodyEventHandleUtil.getBodyItemUIRefPane(e.getTableCode(), key);
