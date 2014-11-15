@@ -842,7 +842,9 @@ public class BXZbBO {
 			// 1.状态置为已审核，结算单据
 			headerVO.setJsr(headerVO.getApprover());
 			headerVO.setJsrq(headerVO.getShrq().getDate());
-
+			// 自动签字
+			headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Sign));
+			
 			if (!isJsToFip && headerVO.getVouchertag() == null) {
 				headerVO.setVouchertag(BXStatusConst.SXFlag);// 自动签字时设置该字段
 			}
@@ -859,11 +861,9 @@ public class BXZbBO {
 					autoSignDeal(bxvo, headerVO);
 				}
 			}
-			// 自动签字
-			headerVO.setDjzt(Integer.valueOf(BXStatusConst.DJZT_Sign));
+			
 			// 生效标志
 			headerVO.setSxbz(Integer.valueOf((BXStatusConst.SXBZ_VALID)));
-
 		} else {
 			// 没有结算信息的单据直接签字生效
 			if (billStatus.equals(BusiStatus.Deleted)) {
@@ -942,9 +942,10 @@ public class BXZbBO {
 				headers[i] = parentVO;
 				headers[i].setJsrq(null);
 				headers[i].setJsr(null);
+				headers[i].setDjzt(BXStatusConst.DJZT_Verified);
 			}
 
-			updateHeaders(headers, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ });
+			updateHeaders(headers, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ ,JKBXHeaderVO.DJZT});
 			return vos;
 
 		} catch (BusinessException e) {
@@ -982,7 +983,6 @@ public class BXZbBO {
 			beforeActInf(vos, MESSAGE_UNSETTLE);
 			
 			for (int i = 0; i < vos.length; i++) {
-				headers[i].setDjzt(BXStatusConst.DJZT_Verified);
 				headers[i].setSxbz(BXStatusConst.SXBZ_NO);
 			}
 
@@ -1063,7 +1063,7 @@ public class BXZbBO {
 				getJKBXDAO().delete(jsContrasVOs.toArray(new JsConstrasVO[] {}));
 			}
 
-			updateHeaders(headers, new String[] {JKBXHeaderVO.DJZT ,JKBXHeaderVO.SXBZ });
+			updateHeaders(headers, new String[] {JKBXHeaderVO.SXBZ });
 			
 			// 核销预提明细取消生效处理
 			new BxVerifyAccruedBillBO().uneffectAccruedVerifyVOs(vos);
@@ -1132,9 +1132,10 @@ public class BXZbBO {
 
 		head.setJsr(jsr);
 		head.setJsrq(jsrq);
+		head.setDjzt(BXStatusConst.DJZT_Sign);
 
 		// 更新vo信息
-		updateHeaders(new JKBXHeaderVO[] { head }, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ });
+		updateHeaders(new JKBXHeaderVO[] { head }, new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ });
 		return vo;
 	}
 	
