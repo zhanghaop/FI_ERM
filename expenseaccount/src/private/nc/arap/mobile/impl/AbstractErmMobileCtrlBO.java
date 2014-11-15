@@ -22,12 +22,14 @@ import nc.bs.pf.pub.PfDataCache;
 import nc.bs.pub.filesystem.IFileSystemService;
 import nc.bs.pub.filesystem.IQueryFolderTreeNodeService;
 import nc.bs.pub.filesystem.UploadFileIsExistException;
+import nc.imag.itf.IImagUtil;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.bd.psn.psndoc.IPsndocQueryService;
 import nc.itf.org.IOrgVersionQryService;
 import nc.itf.uap.rbac.IUserManageQuery;
-import nc.vo.arap.bx.util.BXConstans;
+import nc.itf.uap.sf.ICreateCorpQueryService;
 import nc.pubitf.para.SysInitQuery;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.bd.psn.PsndocVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -89,73 +91,101 @@ public abstract class AbstractErmMobileCtrlBO {
 		if(docvos!=null && docvos.length>0)
 			PK_ORG = docvos[0].getPk_org();
 	}
+	
+	/** 
+	* 调用启用模块API(非预算调用) 
+	* @param pk_group 集团 
+	* @param funcode 功能节点 数据来源于dap_dapsystem 
+	* @return 
+	* @throws BusinessException 
+	*/ 
+	public static boolean isProductInstalled(String strCorpPK,String pro) { 
+		boolean value = false; 
+		try { 
+			value = NCLocator.getInstance().lookup(ICreateCorpQueryService.class).isEnabled(strCorpPK, pro); 
+		} catch (BusinessException e) { 
+			ExceptionHandler.consume(e); 
+		} 
+		return value ; 
+	}
+	/**
+	 * 如果安装了共享服务，则将图像上传到影像，否则上传到附件管理
+	 * @param bxpk
+	 * @param valuemap
+	 * @throws BusinessException
+	 * @throws IOException 
+	 */
 	@SuppressWarnings("unchecked")
 	protected void saveAttachment(String bxpk, Map valuemap) throws BusinessException{
 		List<Map<String, Object>> attachment = (List<Map<String, Object>>) valuemap.get("attachment");
 		if(attachment == null || attachment.isEmpty()){
 			return ;
 		}
-		BASE64Decoder decoder = new BASE64Decoder();
-		for(int i=0 ; i<attachment.size(); i++){
-			Map map = attachment.get(i);
-	//		String file = (String) map.get("attachment");
-			String file = (String) map.get("content");
-			if(file == null){
-				continue;
+		
+		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
+			//如果安装了共享服务，则上传到影像
+			String userID = InvocationInfoProxy.getInstance().getUserId();
+			String[] fileNames = new String[attachment.size()];
+			int[] fileSizes = new int[attachment.size()];
+			String[] content = new String[attachment.size()];
+			for(int i=0 ; i<attachment.size(); i++){
+				Map map = attachment.get(i);
+				fileNames[i] = (String) map.get("name");// 文件的名称
+				fileSizes[i] = Integer.parseInt(map.get("size").toString()); // 文件的大小
+				//file是经过base64编码的
+				String file = (String) map.get("content");
+				content[i] = file;//decoder.decodeBuffer(file).toString();
 			}
-			InputStream in = null;
-			try {
-				in = new ByteArrayInputStream(decoder.decodeBuffer(file));
-			} catch (IOException e3) {
-				ExceptionHandler.handleException(e3);
+			boolean success = NCLocator.getInstance().lookup(IImagUtil.class)
+					.UploadImag(userID, bxpk, fileNames, fileSizes, content);
+			if(!success)
+				throw new BusinessException("上传附件失败!");
+		}else{
+			//否则上传到附件管理
+			BASE64Decoder decoder = new BASE64Decoder();
+			for(int i=0 ; i<attachment.size(); i++){
+				Map map = attachment.get(i);
+		//		String file = (String) map.get("attachment");
+				String file = (String) map.get("content");
+				if(file == null){
+					continue;
+				}
+				InputStream in = null;
+				try {
+					//将String进行解码
+					in = new ByteArrayInputStream(decoder.decodeBuffer(file));
+				} catch (IOException e3) {
+					ExceptionHandler.handleException(e3);
+				}
+				String parentPath = bxpk;
+				IFileSystemService service = NCLocator.getInstance().lookup(IFileSystemService.class);
+				String filename = (String) map.get("name");// 文件的名称
+				String size = (String) map.get("size").toString(); // 文件的大小
+				long length = Long.parseLong(size);
+				try {
+		//			NCFileNode node = 
+						service.createNewFileNodeWithStream(parentPath, 
+								filename, InvocationInfoProxy.getInstance().getUserId(), in, length);
+				} catch (UploadFileIsExistException e1) {
+			         ExceptionHandler.handleException(e1);
+			      } catch (Exception e) {
+			         try {
+			             String fullPath = filename.replace('\\', '/');
+			             if (parentPath != null && parentPath.trim().length() > 0) {
+			                parentPath = parentPath.replace('\\', '/');
+			                if (!parentPath.endsWith("/")) {
+			                    parentPath += "/";
+			                }
+			                fullPath = parentPath + filename;
+			             }
+			             service.deleteNCFileNode(fullPath);
+			         } catch (Exception e2) {
+			        	 ExceptionHandler.handleException(e2);
+			         }
+			         ExceptionHandler.handleException(e);
+		
+			      }
 			}
-			String parentPath = bxpk;
-			
-			IFileSystemService service = NCLocator.getInstance().lookup(IFileSystemService.class);
-			
-			String filename = (String) map.get("name");// 文件的名称
-			String size = (String) map.get("size").toString(); // 文件的大小
-			long length = Long.parseLong(size);
-			
-			try {
-				
-	//			NCFileNode node = 
-					service.createNewFileNodeWithStream(parentPath, filename, InvocationInfoProxy.getInstance().getUserId(), in, length);
-				
-			} catch (UploadFileIsExistException e1) {
-	
-		         ExceptionHandler.handleException(e1);
-	
-		      } catch (Exception e) {
-	
-		         try {
-	
-		             String fullPath = filename.replace('\\', '/');
-	
-		             if (parentPath != null && parentPath.trim().length() > 0) {
-	
-		                parentPath = parentPath.replace('\\', '/');
-	
-		                if (!parentPath.endsWith("/")) {
-	
-		                    parentPath += "/";
-	
-		                }
-	
-		                fullPath = parentPath + filename;
-	
-		             }
-	
-		             service.deleteNCFileNode(fullPath);
-	
-		         } catch (Exception e2) {
-		        	 ExceptionHandler.handleException(e2);
-		         }
-		         ExceptionHandler.handleException(e);
-	
-		      }
-	
-	
 		}
 	
 	}
@@ -356,34 +386,43 @@ public abstract class AbstractErmMobileCtrlBO {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Map> getFileList(String bxpk,String userid) throws BusinessException{
-		// 获取附件列表
-		List<Map> attatchmapList = new ArrayList<Map>();
-		
-		IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
-		NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
-		if(filenode != null){
-			Enumeration fileEnum = filenode.breadthFirstEnumeration();
-			while (fileEnum.hasMoreElements()) {
-				NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
-				Collection<NCFileVO> files = tempfile.getFilemap().values();
-				for (NCFileVO ncFileVO : files) {
-		 			LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
-					attatchmapList.add(fileMap);
-
-					fileMap.put("name", ncFileVO.getName()); // 附件文件名称
-					fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
-					fileMap.put("id", ncFileVO.getPk()); // 文件标识
-					fileMap.put("size", ""+ncFileVO.getFileLen()); // 文件大小
-					fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
-					fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
+	public List<Map<String, String>> getFileList(String bxpk,String userid) throws BusinessException{
+		//返回attatchmapList
+		List<Map<String, String>> attatchmapList = new ArrayList<Map<String, String>>();
+		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
+			//如果安装了共享服务，则从影像服务器下载图片
+			try {
+				attatchmapList = NCLocator.getInstance().lookup(IImagUtil.class)
+						 .DownloadImag(userid, bxpk);
+				return attatchmapList;
+			} catch (Exception e) {
+				return attatchmapList;
+			}
+		}else{
+			// 获取附件列表
+			IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
+			NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
+			if(filenode != null){
+				Enumeration fileEnum = filenode.breadthFirstEnumeration();
+				while (fileEnum.hasMoreElements()) {
+					NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
+					Collection<NCFileVO> files = tempfile.getFilemap().values();
+					for (NCFileVO ncFileVO : files) {
+			 			LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
+	
+						fileMap.put("name", ncFileVO.getName()); // 附件文件名称
+						fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
+						fileMap.put("id", ncFileVO.getPk()); // 文件标识
+						fileMap.put("size", String.valueOf(ncFileVO.getFileLen())); // 文件大小
+						fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
+						fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
+						
+						attatchmapList.add(fileMap);
+					}
 				}
 			}
+			return attatchmapList;
 		}
-		
-		
-		return attatchmapList;
 	}
 	private String getFileContent(NCFileVO ncFileVO) throws BusinessException {
 		IFileSystemService fileservice = NCLocator.getInstance().lookup(IFileSystemService.class);

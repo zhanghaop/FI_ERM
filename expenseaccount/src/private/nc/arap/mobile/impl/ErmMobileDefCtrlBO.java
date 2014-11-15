@@ -23,6 +23,7 @@ import nc.bs.logging.Logger;
 import nc.bs.pf.pub.PfDataCache;
 import nc.erm.mobile.view.ComboBoxUtil;
 import nc.erm.mobile.view.MobileBillItem;
+import nc.imag.itf.IImagUtil;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.arap.pub.IErmBillUIPublic;
@@ -60,6 +61,7 @@ import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pub.templet.translator.BillTranslator;
 import nc.vo.vorg.OrgVersionVO;
+import sun.misc.BASE64Decoder;
 import uap.json.JSONArray;
 import uap.json.JSONObject;
 public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
@@ -153,6 +155,32 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			throws BusinessException {
 		initEvn(userid);
 		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+		
+		
+//		List<Map<String, Object>> attachment = (List<Map<String, Object>>) valuemap.get("attachment");
+//		if(attachment == null || attachment.isEmpty()){
+//			return null;
+//		}
+//		BASE64Decoder decoder = new BASE64Decoder();
+//		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
+//			String userID = InvocationInfoProxy.getInstance().getUserId();
+//			int size = attachment.size();
+//			String[] fileNames = new String[size];
+//			int[] fileSizes = new int[size];
+//			String[] content = new String[size];
+//			for(int i=0 ; i<size; i++){
+//				Map map = attachment.get(i);
+//				fileNames[i] = (String) map.get("name");// 文件的名称
+//				fileSizes[i] = Integer.parseInt(map.get("size").toString()); // 文件的大小
+//				//file是经过base64编码的
+//				String file = (String) map.get("content");
+//				content[i] = file;//decoder.decodeBuffer(file).toString();
+//			}
+//			boolean value = NCLocator.getInstance().lookup(IImagUtil.class)
+//					.UploadImag(userID, "1001Z31000000000068K", fileNames, fileSizes, content); 
+//		}
+		
+		
 		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
 		// 初始化表头数据
 		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
@@ -1247,8 +1275,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		}
 		
 		// 获取附件列表
-		ErmMobileDefCtrlBO bo = new ErmMobileDefCtrlBO();
-		List<Map> attatchmapList =bo.getFileList(pk_jkbx, userid);
+		List<Map<String, String>> attatchmapList = getFileList(pk_jkbx, userid);
 		resultmap.put("attachment", attatchmapList);
 		//resultmap.put("ts", ts);
 		return resultmap;

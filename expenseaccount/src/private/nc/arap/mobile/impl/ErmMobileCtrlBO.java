@@ -500,7 +500,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	 * 查询当前用户全部未审批通过的报销单
 	 * 
 	 * @param userid
-	 * @param flag 审批状态标志 1-已完成 0-为完成
+	 * @param flag 审批状态标志 1-已完成 0-未完成
 	 * @return 交易类型名称分组的报销单属性值
 	 * @throws BusinessException
 	 */
@@ -1219,47 +1219,47 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		return heads;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Map> getFileList(String bxpk,String userid) throws BusinessException{
-		// 获取附件列表
-		List<Map> attatchmapList = new ArrayList<Map>();
-		
-		IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
-		NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
-		if(filenode != null){
-			Enumeration fileEnum = filenode.breadthFirstEnumeration();
-			while (fileEnum.hasMoreElements()) {
-				NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
-				Collection<NCFileVO> files = tempfile.getFilemap().values();
-				for (NCFileVO ncFileVO : files) {
-					LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
-					attatchmapList.add(fileMap);
+//	@SuppressWarnings("unchecked")
+//	public List<Map> getFileList(String bxpk,String userid) throws BusinessException{
+//		// 获取附件列表
+//		List<Map> attatchmapList = new ArrayList<Map>();
+//		
+//		IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
+//		NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
+//		if(filenode != null){
+//			Enumeration fileEnum = filenode.breadthFirstEnumeration();
+//			while (fileEnum.hasMoreElements()) {
+//				NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
+//				Collection<NCFileVO> files = tempfile.getFilemap().values();
+//				for (NCFileVO ncFileVO : files) {
+//					LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
+//					attatchmapList.add(fileMap);
+//
+//					fileMap.put("name", ncFileVO.getName()); // 附件文件名称
+//					fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
+//					fileMap.put("id", ncFileVO.getPk()); // 文件标识
+//					fileMap.put("size", ""+ncFileVO.getFileLen()); // 文件大小
+//					fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
+//					fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
+//				}
+//			}
+//		}
+//		
+//		
+//		return attatchmapList;
+//	}
 
-					fileMap.put("name", ncFileVO.getName()); // 附件文件名称
-					fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
-					fileMap.put("id", ncFileVO.getPk()); // 文件标识
-					fileMap.put("size", ""+ncFileVO.getFileLen()); // 文件大小
-					fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
-					fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
-				}
-			}
-		}
-		
-		
-		return attatchmapList;
-	}
-
-	private String getFileContent(NCFileVO ncFileVO) throws BusinessException {
-		IFileSystemService fileservice = NCLocator.getInstance().lookup(IFileSystemService.class);
-		
-		OutputStream out = new ByteArrayOutputStream();
-		fileservice.downLoadFile(ncFileVO.getFullPath(), out);
-		byte[] downloaded = ((ByteArrayOutputStream) out).toByteArray(); // 附件内容
-		BASE64Encoder encoder = new BASE64Encoder();
-		String content = encoder.encodeBuffer(downloaded);
-		
-		return content;
-	}
+//	private String getFileContent(NCFileVO ncFileVO) throws BusinessException {
+//		IFileSystemService fileservice = NCLocator.getInstance().lookup(IFileSystemService.class);
+//		
+//		OutputStream out = new ByteArrayOutputStream();
+//		fileservice.downLoadFile(ncFileVO.getFullPath(), out);
+//		byte[] downloaded = ((ByteArrayOutputStream) out).toByteArray(); // 附件内容
+//		BASE64Encoder encoder = new BASE64Encoder();
+//		String content = encoder.encodeBuffer(downloaded);
+//		
+//		return content;
+//	}
 	
 	
 	/**
