@@ -14,7 +14,6 @@ import nc.vo.pub.bill.MetaDataPropertyAdpter;
  
 public class ComboBoxUtil {
 	
-	private static boolean comboBoxReturnInteger = false;
 	public static String getComboBoxDiv(int panel,String prefix,MobileBillItem item,String flag){
 		StringBuffer input = new StringBuffer();
 		if(flag.equals("addcard")){
@@ -120,7 +119,6 @@ public class ComboBoxUtil {
 							value = getDecodeStr(ss[i].substring(pos + 1),isFromMeta);
 							if (isIX) {
 								value = Integer.valueOf(value.toString());
-								comboBoxReturnInteger = true;
 							}
 						} else {
 							
@@ -128,7 +126,6 @@ public class ComboBoxUtil {
 								value = getDecodeStr(ss[i], isFromMeta);
 							} else {
 								value = Integer.valueOf(i);
-								comboBoxReturnInteger = true;
 							}
 						}
 
@@ -193,7 +190,6 @@ public class ComboBoxUtil {
 							value = getDecodeStr(ss[i].substring(pos + 1),isFromMeta);
 							if (isIX) {
 								value = Integer.valueOf(value.toString());
-								comboBoxReturnInteger = true;
 							}
 						} else {
 							
@@ -201,7 +197,6 @@ public class ComboBoxUtil {
 								value = getDecodeStr(ss[i], isFromMeta);
 							} else {
 								value = Integer.valueOf(i);
-								comboBoxReturnInteger = true;
 							}
 						}
 

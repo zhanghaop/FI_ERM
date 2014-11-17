@@ -1,7 +1,5 @@
 package nc.arap.mobile.impl;
 
-import static nc.arap.mobile.itf.IJtfMobileCtrl.defaultDjlxbm;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

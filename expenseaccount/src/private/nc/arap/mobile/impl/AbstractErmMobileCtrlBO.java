@@ -392,8 +392,9 @@ public abstract class AbstractErmMobileCtrlBO {
 		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
 			//如果安装了共享服务，则从影像服务器下载图片
 			try {
-				attatchmapList = NCLocator.getInstance().lookup(IImagUtil.class)
-						 .DownloadImag(userid, bxpk);
+				IImagUtil imageutil = NCLocator.getInstance().lookup(IImagUtil.class);
+				imageutil.DownloadImageNumber(userid, bxpk);
+				attatchmapList = imageutil.DownloadImag(userid, bxpk);
 				return attatchmapList;
 			} catch (Exception e) {
 				return attatchmapList;
