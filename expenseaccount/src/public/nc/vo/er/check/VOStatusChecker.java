@@ -78,7 +78,7 @@ public class VOStatusChecker {
 	public static void checkSettleStatus(JKBXHeaderVO head, UFDate jsrq) throws DataValidateException {
 
 		String msgs = ActionUtils.checkBillStatus(head.getDjzt(), ActionUtils.SETTLE,
-				new int[] { BXStatusConst.DJZT_Verified });
+				new int[] { BXStatusConst.DJZT_Verified,BXStatusConst.DJZT_Sign });
 
 		if (!StringUtils.isNullWithTrim(msgs)) {
 			throw new DataValidateException(msgs);
