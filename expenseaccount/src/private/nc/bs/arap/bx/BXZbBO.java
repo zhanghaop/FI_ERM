@@ -1260,7 +1260,7 @@ public class BXZbBO {
 		vo.getParentVO().setPk_item(null);
 		
 		//更新
-		updateHeaders(new JKBXHeaderVO[] { vo.getParentVO() }, new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.MODIFIER, JKBXHeaderVO.MODIFIEDTIME });
+		updateHeaders(new JKBXHeaderVO[] { vo.getParentVO() }, new String[] { JKBXHeaderVO.DJZT, JKBXHeaderVO.MODIFIER, JKBXHeaderVO.MODIFIEDTIME,JKBXHeaderVO.PK_ITEM});
 		
 		//表体处理
 		if(vo.getChildrenVO() != null && vo.getChildrenVO().length > 0){
