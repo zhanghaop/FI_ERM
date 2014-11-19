@@ -119,6 +119,10 @@ public class PrevVoucherAction extends NCAction {
 			desinfovo.setPk_group(selectedvos[0].getParentVO().getPk_group());
 			
 			List<FipTranslateResultVO> trans = NCLocator.getInstance().lookup(IFipConvertService.class).convertOnly(desinfovo, svos);
+			if(trans==null || trans.size()==0){
+				// 这个提示语暂且用这个，看之后有更好的提示再修改
+				throw new BusinessException("请检查转换模板");
+			}
 			FipTranslateResultVO fipTranslateResultVO = trans.get(0);
 			if (fipTranslateResultVO.getErrorMsg() != null) {
 				throw new BusinessException(fipTranslateResultVO.getErrorMsg());
