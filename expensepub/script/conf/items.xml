@@ -257,4 +257,14 @@
 		<grpField></grpField>
 		<fixedWhere>code like '01%'</fixedWhere>
 	</item>
+	<item>
+	   <itemKey>pub_vochange</itemKey>
+	   <itemName>Êý¾Ý½»»»</itemName>
+	   <itemRule>pub_vochange</itemRule>
+	   <sysField></sysField>
+	   <corpField></corpField>
+	   <grpField></grpField>
+	   <fixedWhere> DEST_BILLTYPE   in( SELECT pk_billtypecode FROM BD_BILLTYPE WHERE SYSTEMCODE in('erm')) and (pk_group='global00000000000000' or pk_group = '~') </fixedWhere>
+	</item>
+	
 </items>
