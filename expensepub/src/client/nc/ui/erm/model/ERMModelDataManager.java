@@ -12,6 +12,7 @@ import nc.ui.uif2.model.IAppModelDataManagerEx;
 import nc.ui.uif2.model.IQueryAndRefreshManagerEx;
 import nc.ui.uif2.model.ModelDataDescriptor;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.jcom.lang.StringUtil;
@@ -123,11 +124,12 @@ public abstract class ERMModelDataManager implements IAppModelDataManagerEx,
 				if(BXConstans.BXINIT_NODECODE_G.equals(getModel().getContext().getNodeCode()) ){//常用单据集团级节点不需要 组织信息
 					this.sqlWhere = sqlWhere;
 				}else{
-					
-					inStr1 = SqlUtils.getInStr("pk_org", pkorgs, false);
-					
-					sqlWhere += " and " +inStr1; 
-					
+					//如果查询条件中已经拼写了关于pk_org的条件，则这里不在用功能权限过滤
+					if (!sqlWhere.contains(JKBXHeaderVO.PK_ORG)) {
+						inStr1 = SqlUtils.getInStr("pk_org", pkorgs, false);
+
+						sqlWhere += " and " + inStr1;
+					}
 					this.sqlWhere = sqlWhere;
 					
 				}
