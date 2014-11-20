@@ -51,7 +51,7 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 
 		List<String> sqlList = new ArrayList<String>();
 		sqlList.add(getSqlMa(false));
-		String[] fromMaSqls = getSqlFromMa(false);
+		String[] fromMaSqls = getSqlFromMa(false,getSqlMaForSP(false));
 		if (!ArrayUtils.isEmpty(fromMaSqls)) {
 			for (String sql : fromMaSqls) {
 				sqlList.add(sql);
@@ -67,7 +67,7 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		this.ntbParam = ntbParam;
 		sqlList.add(getSqlMa(true));
 
-		String[] fromMaSqls = getSqlFromMa(true);
+		String[] fromMaSqls = getSqlFromMa(true,getSqlMaForSP(true));
 		if (!ArrayUtils.isEmpty(fromMaSqls)) {
 			for (String sql : fromMaSqls) {
 				if(sql != null){
@@ -82,18 +82,22 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 	 * 查询是下游单据对申请单的执行数或预算数的占用
 	 * 
 	 * @param isDetail
+	 * @param string 
 	 * @return
 	 * @throws Exception
 	 */
-	private String[] getSqlFromMa(boolean isDetail) throws Exception {
+	private String[] getSqlFromMa(boolean isDetail, String masql) throws Exception {
 		Map<String, List<String>> effectPkMap = getEffectPfPksMap();
 		List<String> sqlList = new ArrayList<String>();
 
+		masql=" and pf.pk_mtapp_detail in (select distinct mad.pk_mtapp_detail "+masql.substring(masql.indexOf(" from "))+")";
 		List<String> bxDetailList = effectPkMap.get("bx");
 		if(bxDetailList != null && bxDetailList.size() > 0){
 			String bxSql = getFromSal(isDetail, bxDetailList.toArray(new String[0]), "er_bxzb");
 			if(bxSql != null){
+				bxSql+=masql;
 				sqlList.add(bxSql);
+				
 			}
 		}
 		
@@ -107,6 +111,7 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 				String meSql = getFromSubSql(isDetail, effectPks);
 
 				if (meSql != null) {
+					meSql+=masql;
 					sqlList.add(meSql);
 				}
 			}
@@ -286,6 +291,18 @@ public class MAErmNtbSqlStrategy extends AbstractErmNtbSqlStrategy {
 		// ErmMatterAppConst.CLOSESTATUS_N + " ");
 		// 单据状态
 		sql.append(getBillStatus());
+		return sql.toString();
+	}
+	
+	private String getSqlMaForSP(boolean isDetail) throws Exception {
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select " + getSelectFields(isDetail));
+		sql.append(" from " + getFromSql());
+		sql.append(" where 1=1 " + getWhereSql());
+
+		// sql.append(" and mad.close_status = " +
+		// ErmMatterAppConst.CLOSESTATUS_N + " ");
+		// 单据状态
 		return sql.toString();
 	}
 
