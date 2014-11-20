@@ -1,6 +1,5 @@
 package nc.ui.erm.billpub.action;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,22 +14,15 @@ import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.er.util.FipUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
-import nc.bs.pf.pub.BillTypeCacheKey;
-import nc.bs.pf.pub.PfDataCache;
 import nc.desktop.ui.WorkbenchEnvironment;
-import nc.funcnode.ui.FuncletInitData;
-import nc.funcnode.ui.FuncletWindowLauncher;
 import nc.gl.glconst.systemtype.SystemtypeConst;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.gl.pub.IFreevaluePub;
 import nc.itf.uap.busibean.SysinitAccessor;
 import nc.pubitf.accperiod.AccountCalendar;
-import nc.pubitf.fip.service.IFipConvertService;
 import nc.pubitf.org.ICloseAccQryPubServicer;
 import nc.ui.erm.view.ErmToftPanel;
-import nc.ui.fip.pub.FipUITools;
-import nc.ui.pub.linkoperate.ILinkType;
-import nc.ui.sm.power.FuncRegisterCacheAccessor;
+import nc.ui.pub.link.DesBillGenerator;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
@@ -41,11 +33,8 @@ import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.fip.pub.FipBaseDataProxy;
-import nc.vo.fip.service.FipBaseMessageVO;
+import nc.vo.fip.service.FipMessageVO;
 import nc.vo.fip.service.FipRelationInfoVO;
-import nc.vo.fip.trans.FipTransVO;
-import nc.vo.fip.trans.FipTranslateResultVO;
 import nc.vo.fipub.freevalue.Module;
 import nc.vo.gateway60.itfs.CalendarUtilGL;
 import nc.vo.gl.aggvoucher.MDVoucher;
@@ -56,8 +45,6 @@ import nc.vo.glcom.tools.GLPubProxy;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.pub.link.DefaultLinkData;
-import nc.vo.sm.funcreg.FuncRegisterVO;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -89,7 +76,7 @@ public class PrevVoucherAction extends NCAction {
 		Map<String, List<String>> temp = new HashMap<String, List<String>>();
 
 		try {
-			Collection<FipBaseMessageVO> svos = new ArrayList<FipBaseMessageVO>();
+			Collection<FipMessageVO> svos = new ArrayList<FipMessageVO>();
 			checkTs(selectedvos);
 			for (JKBXVO vo : selectedvos) {
 				JKBXHeaderVO head = vo.getParentVO();
@@ -106,64 +93,69 @@ public class PrevVoucherAction extends NCAction {
 				srcinfovo.setPk_billtype(vo.getParentVO().getDjlxbm());
 				srcinfovo.setPk_system("erm");
 				
-				FipBaseMessageVO fipvo = new FipBaseMessageVO();
+				FipMessageVO fipvo = new FipMessageVO();
 				fipvo.setBillVO(new FipUtil().addOtherInfo(vo));
 				fipvo.setMessageinfo(srcinfovo);
 				svos.add(fipvo);
 			}
+			
+			Collection<FipMessageVO[]> messagevos = new ArrayList<FipMessageVO[]>();
+			messagevos.add(svos.toArray(new FipMessageVO[svos.size()]));
+			ErmToftPanel entranceui = (ErmToftPanel) getModel().getContext().getEntranceUI();
+			DesBillGenerator.previewDesBill(entranceui, messagevos.toArray(new FipMessageVO[0][0]), null, new String[] { "C0" });
 
-			FipRelationInfoVO desinfovo = new FipRelationInfoVO();
-			desinfovo.setPk_billtype("C0");
-			String pk_accountingbook = FipBaseDataProxy.getMainAccountingBookIDByPk_org(selectedvos[0].getParentVO().getPk_org());
-			desinfovo.setPk_org(pk_accountingbook);
-			desinfovo.setPk_group(selectedvos[0].getParentVO().getPk_group());
-			
-			List<FipTranslateResultVO> trans = NCLocator.getInstance().lookup(IFipConvertService.class).convertOnly(desinfovo, svos);
-			if(trans==null || trans.size()==0){
-				// 这个提示语暂且用这个，看之后有更好的提示再修改
-				throw new BusinessException("请检查转换模板");
-			}
-			FipTranslateResultVO fipTranslateResultVO = trans.get(0);
-			if (fipTranslateResultVO.getErrorMsg() != null) {
-				throw new BusinessException(fipTranslateResultVO.getErrorMsg());
-			}
-			List<FipTransVO> desBills = fipTranslateResultVO.getDesBills();
-			FipTransVO fipTransVO = desBills.get(0);
-			Object datavo = fipTransVO.getDatavo();
-			ErmToftPanel toftPanel = (ErmToftPanel) getModel().getContext().getEntranceUI();
-			Object[] billvos=new Object[]{datavo};
-			List<VoucherVO> list=new ArrayList<VoucherVO>();
-			list.add(fip2gl(datavo, true));
-			
-			DefaultLinkData userdata = new DefaultLinkData();
-			userdata.setBillType(null);
-			userdata.setBillIDs(new String[]{});
-			if (billvos != null) {
-				ArrayList<Object> billlist = new ArrayList<Object>();
-				for (int i = 0; i < billvos.length; i++) {
-					VoucherVO voucherVo = fip2gl(billvos[i], true);
-					FipRelationInfoVO messageVO = fipTransVO.getMessagevo().getDesRelation();
-					processVoucher(voucherVo, messageVO, true);
-					catDetailPk_corp(voucherVo);
-					catAss(voucherVo);
-					voucherVo.setPk_voucher("2222");
-					billlist.add(voucherVo);
-				}
-				userdata.setBillVOs(billlist);
-				userdata.setUserObject(billlist);
-			}
-			FuncletInitData initdata = new FuncletInitData();
-			initdata.setInitType(ILinkType.LINK_TYPE_QUERY);
-			initdata.setInitData(userdata);
-			FuncRegisterVO frVO = null;
-			frVO = FuncRegisterCacheAccessor.getInstance().getFuncRegisterVOByFunCode(PfDataCache.getBillType(
-					new BillTypeCacheKey().buildPkGroup(WorkbenchEnvironment.getInstance().getGroupVO().getPk_group()).buildBilltype("C0")).getNodecode());
-			if (frVO != null) {
-				Dimension frameSize = FipUITools.getLinkQueryDialogSize();
-				FuncletWindowLauncher.openFuncNodeForceModalDialog(toftPanel, frVO, initdata, null, true, frameSize, null);
-			} else {
-//				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1017clt_0", "01017clt-0125")/* @res "当前用户没有权限使用该节点" */+ ":" + nodecode);
-			}
+//			FipRelationInfoVO desinfovo = new FipRelationInfoVO();
+//			desinfovo.setPk_billtype("C0");
+//			String pk_accountingbook = FipBaseDataProxy.getMainAccountingBookIDByPk_org(selectedvos[0].getParentVO().getPk_org());
+//			desinfovo.setPk_org(pk_accountingbook);
+//			desinfovo.setPk_group(selectedvos[0].getParentVO().getPk_group());
+//			
+//			List<FipTranslateResultVO> trans = NCLocator.getInstance().lookup(IFipConvertService.class).convertOnly(desinfovo, svos);
+//			if(trans==null || trans.size()==0){
+//				// 这个提示语暂且用这个，看之后有更好的提示再修改
+//				throw new BusinessException("请检查转换模板");
+//			}
+//			FipTranslateResultVO fipTranslateResultVO = trans.get(0);
+//			if (fipTranslateResultVO.getErrorMsg() != null) {
+//				throw new BusinessException(fipTranslateResultVO.getErrorMsg());
+//			}
+//			List<FipTransVO> desBills = fipTranslateResultVO.getDesBills();
+//			FipTransVO fipTransVO = desBills.get(0);
+//			Object datavo = fipTransVO.getDatavo();
+//			ErmToftPanel toftPanel = (ErmToftPanel) getModel().getContext().getEntranceUI();
+//			Object[] billvos=new Object[]{datavo};
+//			List<VoucherVO> list=new ArrayList<VoucherVO>();
+//			list.add(fip2gl(datavo, true));
+//			
+//			DefaultLinkData userdata = new DefaultLinkData();
+//			userdata.setBillType(null);
+//			userdata.setBillIDs(new String[]{});
+//			if (billvos != null) {
+//				ArrayList<Object> billlist = new ArrayList<Object>();
+//				for (int i = 0; i < billvos.length; i++) {
+//					VoucherVO voucherVo = fip2gl(billvos[i], true);
+//					FipRelationInfoVO messageVO = fipTransVO.getMessagevo().getDesRelation();
+//					processVoucher(voucherVo, messageVO, true);
+//					catDetailPk_corp(voucherVo);
+//					catAss(voucherVo);
+//					voucherVo.setPk_voucher("2222");
+//					billlist.add(voucherVo);
+//				}
+//				userdata.setBillVOs(billlist);
+//				userdata.setUserObject(billlist);
+//			}
+//			FuncletInitData initdata = new FuncletInitData();
+//			initdata.setInitType(ILinkType.LINK_TYPE_QUERY);
+//			initdata.setInitData(userdata);
+//			FuncRegisterVO frVO = null;
+//			frVO = FuncRegisterCacheAccessor.getInstance().getFuncRegisterVOByFunCode(PfDataCache.getBillType(
+//					new BillTypeCacheKey().buildPkGroup(WorkbenchEnvironment.getInstance().getGroupVO().getPk_group()).buildBilltype("C0")).getNodecode());
+//			if (frVO != null) {
+//				Dimension frameSize = FipUITools.getLinkQueryDialogSize();
+//				FuncletWindowLauncher.openFuncNodeForceModalDialog(toftPanel, frVO, initdata, null, true, frameSize, null);
+//			} else {
+////				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1017clt_0", "01017clt-0125")/* @res "当前用户没有权限使用该节点" */+ ":" + nodecode);
+//			}
 		} catch (Exception ex) {
 			if (ex instanceof java.lang.reflect.InvocationTargetException) {
 				ExceptionHandler
@@ -175,6 +167,7 @@ public class PrevVoucherAction extends NCAction {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void catAss(VoucherVO voucherVo) throws BusinessException {
 		if(voucherVo != null && voucherVo.getDetails()!= null && voucherVo.getDetails().length >0) {
 			for(DetailVO detailVo:voucherVo.getDetails()) {
@@ -198,6 +191,7 @@ public class PrevVoucherAction extends NCAction {
 	 *            nc.vo.gl.pubvoucher.VoucherVO
 	 * @throws BusinessException
 	 */
+	@SuppressWarnings("unused")
 	private VoucherVO catDetailPk_corp(VoucherVO voucher) throws BusinessException {
 		// Map<String, FinanceOrgVO> map = new HashMap<String, FinanceOrgVO>();
 		DetailVO detail = null;
