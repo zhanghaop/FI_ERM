@@ -1,20 +1,63 @@
-<?xml version="1.0" encoding="utf-8"?><WorkflowProcess AccessLevel="PUBLIC" Id="6026745a-60d9-11e4-ae36-dd14b20d4719" Name="ΩËøÓµ•‘§÷√FSSCπ§◊˜¡˜" Name2="" Name3="" Name4="" Name5="" Name6="">
+<?xml version="1.0" encoding="utf-8"?><WorkflowProcess AccessLevel="PUBLIC" Id="146570e1-73b3-11e4-95bd-772b4bb6d6a7" Name="ÂÄüÊ¨æÂçïÈ¢ÑÁΩÆÂ∑•‰ΩúÊµÅ" Name2="" Name3="" Name4="" Name5="" Name6="">
     <ProcessHeader DurationUnit="m">
-        <Created>2014-10-31 16:47:41</Created>
+        <Created>2014-11-24 16:17:05</Created>
         <MailModal>NOMAIL</MailModal>
         <PrintTempletId/>
         <PrintTempletName/>
         <MobileModal>NOMOBILE</MobileModal>
     </ProcessHeader>
+    <Participants>
+        <Participant Id="4cf5612f-73b2-11e4-95bd-772b4bb6d6a7" Name="Âà∂Âçï‰∫∫">
+            <ParticipantType Type="HUMAN"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeUnitBelongOrg" Value="0001611000000000038K"/>
+                <ExtendedAttribute Name="OrganizeUnitPK" Value="ID_ALLBILLMAKER_ROLE"/>
+                <ExtendedAttribute Name="OrganizeUnitType" Value="VIRTUAL_ROLE"/>
+            </ExtendedAttributes>
+        </Participant>
+        <Participant Id="680ad220-73b2-11e4-95bd-772b4bb6d6a7" Name="ÁéãÂø†‰∫ö">
+            <ParticipantType Type="HUMAN"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeUnitBelongOrg" Value="ÂπøÂ∑ûÊ¨ßÊ≠å‰øùÂÅ•È£üÂìÅÊúâÈôêÂÖ¨Âè∏"/>
+                <ExtendedAttribute Name="OrganizeUnitPK" Value="10016110000000004CTY"/>
+                <ExtendedAttribute Name="OrganizeUnitType" Value="OPERATOR"/>
+            </ExtendedAttributes>
+        </Participant>
+        <Participant Id="7311b261-73b2-11e4-95bd-772b4bb6d6a7" Name="3">
+            <ParticipantType Type="HUMAN"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeUnitBelongOrg" Value="Âº†Ê∞èÂõΩÈôÖÈõÜÂõ¢"/>
+                <ExtendedAttribute Name="OrganizeUnitPK" Value="10010010000000050WI4"/>
+                <ExtendedAttribute Name="OrganizeUnitType" Value="OPERATOR"/>
+            </ExtendedAttributes>
+        </Participant>
+        <Participant Id="7e2ba572-73b2-11e4-95bd-772b4bb6d6a7" Name="ÂÖ±‰∫´ÊúçÂä°‰∏≠ÂøÉ">
+            <ParticipantType Type="HUMAN"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeUnitBelongOrg"/>
+                <ExtendedAttribute Name="OrganizeUnitPK" Value="ssccode"/>
+                <ExtendedAttribute Name="OrganizeUnitType" Value="SSC"/>
+            </ExtendedAttributes>
+        </Participant>
+        <Participant Id="8bda2613-73b2-11e4-95bd-772b4bb6d6a7" Name="ÂÖ±‰∫´ÊúçÂä°‰∏≠ÂøÉ">
+            <ParticipantType Type="HUMAN"/>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OrganizeUnitBelongOrg"/>
+                <ExtendedAttribute Name="OrganizeUnitPK" Value="ssccode"/>
+                <ExtendedAttribute Name="OrganizeUnitType" Value="SSC"/>
+            </ExtendedAttributes>
+        </Participant>
+    </Participants>
     <Applications>
-        <Application Id="MAKEBILL_ID" Name="÷∆µ•"/>
-        <Application Id="MANUAL_ID" Name=" ÷π§ªÓ∂Ø"/>
+        <Application Id="MAKEBILL_ID" Name="Âà∂Âçï"/>
+        <Application Id="MANUAL_ID" Name="ÊâãÂ∑•Ê¥ªÂä®"/>
     </Applications>
     <Activities>
-        <Activity Id="8a7e5e0c-60d7-11e4-ae36-dd14b20d4719" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="8a7e5e0c-60d7-11e4-ae36-dd14b20d4719" Name="Âà∂Âçï" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MAKEBILL_ID" Type="APPLICATION"/>
             </Implementation>
+            <Performer>4cf5612f-73b2-11e4-95bd-772b4bb6d6a7</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -29,21 +72,22 @@
                 </TransitionRestriction>
             </TransitionRestrictions>
             <ExtendedAttributes>
-                <ExtendedAttribute Name="OrganizeTransferType" Value="VIRTUAL_ROLE"/>
                 <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="VIRTUAL_ROLE"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5M"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI68"/>
                 <ExtendedAttribute Name="Opaque" Value="false"/>
                 <ExtendedAttribute Name="ShapeStyle" Value="0"/>
                 <ExtendedAttribute Name="Background" Value="R=195,G=170,B=228"/>
-                <ExtendedAttribute Name="Dimension" Value="121;70;78;60"/>
-                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="Dimension" Value="101;50;78;60"/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@10a6349"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC÷∆µ•"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCÂà∂Âçï"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
@@ -51,9 +95,9 @@
                 <ExtendedAttribute Name="ShowBillOrg"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="913ee20e-60d7-11e4-ae36-dd14b20d4719" Name="New◊”¡˜≥Ã" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="913ee20e-60d7-11e4-ae36-dd14b20d4719" Name="NewÂ≠êÊµÅÁ®ã" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
-                <SubFlow Execution="SYNCHR" Id="6d89f3e0-60d7-11e4-ae36-dd14b20d4719"/>
+                <SubFlow Execution="SYNCHR" Id="09c0ca22-73b2-11e4-95bd-772b4bb6d6a7"/>
             </Implementation>
             <StartMode>
                 <Automatic/>
@@ -70,13 +114,13 @@
             </TransitionRestrictions>
             <ExtendedAttributes>
                 <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="TextPosition" Value="3"/>
                 <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="TextPosition" Value="3"/>
                 <ExtendedAttribute Name="Opaque" Value="false"/>
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
-                <ExtendedAttribute Name="Dimension" Value="221;70;78;60"/>
-                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="Dimension" Value="151;170;78;60"/>
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="BorderWidth" Value="2"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
@@ -85,10 +129,11 @@
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="931e0250-60d7-11e4-ae36-dd14b20d4719" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="931e0250-60d7-11e4-ae36-dd14b20d4719" Name="ÂΩ±ÂÉèÊâ´Êèè" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
+            <Performer>680ad220-73b2-11e4-95bd-772b4bb6d6a7</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -103,23 +148,24 @@
                 </TransitionRestriction>
             </TransitionRestrictions>
             <ExtendedAttributes>
-                <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
                 <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z310000000005J2R"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI64"/>
                 <ExtendedAttribute Name="Opaque" Value="false"/>
                 <ExtendedAttribute Name="ShapeStyle" Value="0"/>
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
-                <ExtendedAttribute Name="Dimension" Value="321;70;78;60"/>
+                <ExtendedAttribute Name="Dimension" Value="241;60;78;60"/>
                 <ExtendedAttribute Name="CanAddApprover" Value="false"/>
-                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@fc544f"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="”∞œÒ…®√Ë"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="ÂΩ±ÂÉèÊâ´Êèè"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
@@ -128,10 +174,11 @@
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="9415f6e2-60d7-11e4-ae36-dd14b20d4719" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="9415f6e2-60d7-11e4-ae36-dd14b20d4719" Name="ÂàùÂÆ°" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
+            <Performer>7311b261-73b2-11e4-95bd-772b4bb6d6a7</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -146,23 +193,24 @@
                 </TransitionRestriction>
             </TransitionRestrictions>
             <ExtendedAttributes>
-                <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
                 <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="OrganizeTransferType" Value="OPERATOR"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5J"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI65"/>
                 <ExtendedAttribute Name="Opaque" Value="false"/>
                 <ExtendedAttribute Name="ShapeStyle" Value="0"/>
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
-                <ExtendedAttribute Name="Dimension" Value="421;70;78;60"/>
+                <ExtendedAttribute Name="Dimension" Value="341;160;78;60"/>
                 <ExtendedAttribute Name="CanAddApprover" Value="false"/>
-                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@32181"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCª·º∆≥ı…Û"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC‰ºöËÆ°ÂàùÂÆ°"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
@@ -171,10 +219,11 @@
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="957deb54-60d7-11e4-ae36-dd14b20d4719" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="957deb54-60d7-11e4-ae36-dd14b20d4719" Name="SSCÂÆ°Ê†∏" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
+            <Performer>7e2ba572-73b2-11e4-95bd-772b4bb6d6a7</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -190,35 +239,37 @@
             </TransitionRestrictions>
             <ExtendedAttributes>
                 <ExtendedAttribute Name="OrganizeTransferType" Value="SSC"/>
-                <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="TimeRemind" Value="0"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5K"/>
                 <ExtendedAttribute Name="Opaque" Value="false"/>
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
                 <ExtendedAttribute Name="ShapeStyle" Value="0"/>
-                <ExtendedAttribute Name="Dimension" Value="531;70;78;60"/>
-                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
-                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
-                <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC…Û∫À"/>
-                <ExtendedAttribute Name="ParticipantFilterMode"/>
-                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCÂÆ°Ê†∏"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
-                <ExtendedAttribute Name="RaceModal" Value="0"/>
                 <ExtendedAttribute Name="CanTransfer" Value="false"/>
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI66"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Dimension" Value="451;50;78;60"/>
+                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@18cb5cd"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="RaceModal" Value="0"/>
                 <ExtendedAttribute Name="ShowBillOrg"/>
             </ExtendedAttributes>
         </Activity>
-        <Activity Id="96dedae6-60d7-11e4-ae36-dd14b20d4719" Name="" Name2="" Name3="" Name4="" Name5="" Name6="">
+        <Activity Id="96dedae6-60d7-11e4-ae36-dd14b20d4719" Name="SSCÂ§çÊ†∏" Name2="" Name3="" Name4="" Name5="" Name6="">
             <Implementation>
                 <Tool Id="MANUAL_ID" Type="APPLICATION"/>
             </Implementation>
+            <Performer>8bda2613-73b2-11e4-95bd-772b4bb6d6a7</Performer>
             <StartMode>
                 <Automatic/>
             </StartMode>
@@ -238,33 +289,34 @@
                         <BasicType Type="BOOLEAN"/>
                     </DataType>
                     <InitialValue>y</InitialValue>
-                    <Description>µ„…Û≈˙∫Û…˙≥…∆æ÷§(y/n)</Description>
+                    <Description>ÁÇπÂÆ°ÊâπÂêéÁîüÊàêÂá≠ËØÅ(y/n)</Description>
                 </DataField>
             </DataFields>
             <ExtendedAttributes>
                 <ExtendedAttribute Name="OrganizeTransferType" Value="SSC"/>
-                <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="TimeRemind" Value="0"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1004ZZ10000000003D5L"/>
                 <ExtendedAttribute Name="Opaque" Value="false"/>
                 <ExtendedAttribute Name="Background" Value="Color.lightGray"/>
                 <ExtendedAttribute Name="ShapeStyle" Value="0"/>
-                <ExtendedAttribute Name="Dimension" Value="631;70;78;60"/>
-                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
-                <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
-                <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC∏¥∫À"/>
-                <ExtendedAttribute Name="ParticipantFilterMode"/>
-                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSCÂ§çÊ†∏"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
-                <ExtendedAttribute Name="RaceModal" Value="0"/>
                 <ExtendedAttribute Name="CanTransfer" Value="false"/>
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
+                <ExtendedAttribute Name="HasBorder" Value="false"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI67"/>
+                <ExtendedAttribute Name="TimeRemind" Value="0"/>
+                <ExtendedAttribute Name="Dimension" Value="561;50;78;60"/>
+                <ExtendedAttribute Name="CanAddApprover" Value="false"/>
+                <ExtendedAttribute Name="MsgConfig" Value=""/>
+                <ExtendedAttribute Name="Assigned" Value="false"/>
+                <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@f3dce4"/>
+                <ExtendedAttribute Name="TimeLimit" Value="0"/>
+                <ExtendedAttribute Name="ParticipantFilterMode"/>
+                <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
+                <ExtendedAttribute Name="RaceModal" Value="0"/>
                 <ExtendedAttribute Name="ShowBillOrg"/>
             </ExtendedAttributes>
         </Activity>
@@ -272,83 +324,83 @@
     <Transitions>
         <Transition From="8a7e5e0c-60d7-11e4-ae36-dd14b20d4719" Id="99d02e79-60d7-11e4-ae36-dd14b20d4719" Name="" To="913ee20e-60d7-11e4-ae36-dd14b20d4719">
             <ExtendedAttributes>
-                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LineType" Value="0"/>
-                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
                 <ExtendedAttribute Name="Dashed" Value="false"/>
                 <ExtendedAttribute Name="DashPattern" Value="5;5"/>
                 <ExtendedAttribute Name="LineColor" Value="Color.black"/>
-                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
             </ExtendedAttributes>
         </Transition>
         <Transition From="913ee20e-60d7-11e4-ae36-dd14b20d4719" Id="9a39297a-60d7-11e4-ae36-dd14b20d4719" Name="" To="931e0250-60d7-11e4-ae36-dd14b20d4719">
             <ExtendedAttributes>
-                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LineType" Value="0"/>
-                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
                 <ExtendedAttribute Name="Dashed" Value="false"/>
                 <ExtendedAttribute Name="DashPattern" Value="5;5"/>
                 <ExtendedAttribute Name="LineColor" Value="Color.black"/>
-                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
             </ExtendedAttributes>
         </Transition>
         <Transition From="931e0250-60d7-11e4-ae36-dd14b20d4719" Id="9ab0554b-60d7-11e4-ae36-dd14b20d4719" Name="" To="9415f6e2-60d7-11e4-ae36-dd14b20d4719">
             <ExtendedAttributes>
-                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LineType" Value="0"/>
-                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
                 <ExtendedAttribute Name="Dashed" Value="false"/>
                 <ExtendedAttribute Name="DashPattern" Value="5;5"/>
                 <ExtendedAttribute Name="LineColor" Value="Color.black"/>
-                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
             </ExtendedAttributes>
         </Transition>
         <Transition From="9415f6e2-60d7-11e4-ae36-dd14b20d4719" Id="9b65747c-60d7-11e4-ae36-dd14b20d4719" Name="" To="957deb54-60d7-11e4-ae36-dd14b20d4719">
             <ExtendedAttributes>
-                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LineType" Value="0"/>
-                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
                 <ExtendedAttribute Name="Dashed" Value="false"/>
                 <ExtendedAttribute Name="DashPattern" Value="5;5"/>
                 <ExtendedAttribute Name="LineColor" Value="Color.black"/>
-                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
             </ExtendedAttributes>
         </Transition>
         <Transition From="957deb54-60d7-11e4-ae36-dd14b20d4719" Id="9bed692d-60d7-11e4-ae36-dd14b20d4719" Name="" To="96dedae6-60d7-11e4-ae36-dd14b20d4719">
             <ExtendedAttributes>
-                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LineType" Value="0"/>
-                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
+                <ExtendedAttribute Name="LineWidth" Value="1"/>
                 <ExtendedAttribute Name="LabelPosition" Value="500.0;0.0"/>
+                <ExtendedAttribute Name="StartArrow" Value="0;10;false"/>
                 <ExtendedAttribute Name="Dashed" Value="false"/>
                 <ExtendedAttribute Name="DashPattern" Value="5;5"/>
                 <ExtendedAttribute Name="LineColor" Value="Color.black"/>
-                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="LabelOffset" Value="0.0;0.0"/>
+                <ExtendedAttribute Name="RoutingType" Value="NOROUTING"/>
                 <ExtendedAttribute Name="EndArrow" Value="2;8;true"/>
             </ExtendedAttributes>
         </Transition>
     </Transitions>
     <ExtendedAttributes>
         <ExtendedAttribute Name="TimeLimit" Value="0"/>
-        <ExtendedAttribute Name="SubmitTORejecter" Value="N"/>
+        <ExtendedAttribute Name="SubmitTORejecter" Value="Y"/>
         <ExtendedAttribute Name="TimeRemind" Value="0"/>
-        <ExtendedAttribute Name="UFW_EndOfWorkflow@0" Value="96dedae6-60d7-11e4-ae36-dd14b20d4719@ø™ º@731;70;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=238,G=203,B=88@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/endOnFlow.png@0.0;0.0"/>
-        <ExtendedAttribute Name="UFW_StartOfWorkflow" Value="8a7e5e0c-60d7-11e4-ae36-dd14b20d4719@ø™ º@11;70;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=123,G=166,B=218@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/startOnFlow.png@0.0;0.0"/>
+        <ExtendedAttribute Name="UFW_EndOfWorkflow@0" Value="96dedae6-60d7-11e4-ae36-dd14b20d4719@ÂºÄÂßã@671;50;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=238,G=203,B=88@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/endOnFlow.png@0.0;0.0"/>
+        <ExtendedAttribute Name="UFW_StartOfWorkflow" Value="8a7e5e0c-60d7-11e4-ae36-dd14b20d4719@ÂºÄÂßã@1;50;78;60@0@Dialog;0;12@R=0,G=0,B=0@3@R=123,G=166,B=218@false@R=0,G=0,B=0@1.0@false@true@-1@0;10;false@2;8;true@1.0@R=0,G=0,B=0@0@NOROUTING@false@5;5@500.0;0.0@nc/ui/wfengine/designer/resources/startOnFlow.png@0.0;0.0"/>
         <ExtendedAttribute Name="WorkflowType" Value="4"/>
-        <ExtendedAttribute Name="EmendFlow" Value="-1"/>
         <ExtendedAttribute Name="Priority" Value="0"/>
+        <ExtendedAttribute Name="EmendFlow" Value="-1"/>
     </ExtendedAttributes>
 </WorkflowProcess>
