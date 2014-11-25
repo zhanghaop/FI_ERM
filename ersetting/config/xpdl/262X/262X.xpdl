@@ -84,7 +84,7 @@
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@29c34b"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@15eb776"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
                 <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC制单"/>
@@ -162,7 +162,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1d48272"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@15ea6bb"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
                 <ExtendedAttribute Name="WorkflowGadgetName" Value="影像扫描"/>
@@ -207,7 +207,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@c03d92"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@11445d8"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
                 <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC会计初审"/>
@@ -237,6 +237,15 @@
                     <Split Type="XOR"/>
                 </TransitionRestriction>
             </TransitionRestrictions>
+            <DataFields>
+                <DataField Id="819edd7b-7452-11e4-9324-1df33946262f" Name="isWorkFlowFinalNode">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                    <InitialValue>n</InitialValue>
+                    <Description>点审批后生成凭证(y/n)</Description>
+                </DataField>
+            </DataFields>
             <ExtendedAttributes>
                 <ExtendedAttribute Name="OrganizeTransferType" Value="SSC"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
@@ -245,19 +254,19 @@
                 <ExtendedAttribute Name="ShapeStyle" Value="0"/>
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
-                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC复核"/>
+                <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC审核"/>
                 <ExtendedAttribute Name="Font" Value="Dialog;0;12"/>
                 <ExtendedAttribute Name="CanTransfer" Value="false"/>
                 <ExtendedAttribute Name="UseIcon" Value="true"/>
                 <ExtendedAttribute Name="HasBorder" Value="false"/>
-                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI5X"/>
+                <ExtendedAttribute Name="WorkflowGadget" Value="1001Z01000000000GI5W"/>
                 <ExtendedAttribute Name="TimeRemind" Value="0"/>
-                <ExtendedAttribute Name="Dimension" Value="451;50;78;60"/>
+                <ExtendedAttribute Name="Dimension" Value="461;50;78;60"/>
                 <ExtendedAttribute Name="CanAddApprover" Value="false"/>
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@10a46e2"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1f58949"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
@@ -312,7 +321,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1b3cd19"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@10824ef"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>

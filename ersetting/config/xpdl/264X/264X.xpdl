@@ -84,7 +84,7 @@
                 <ExtendedAttribute Name="TextColor" Value="Color.black"/>
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@6a047a"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1756b65"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
                 <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC制单"/>
@@ -162,7 +162,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@4bf21b"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@1ddcf4e"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
                 <ExtendedAttribute Name="WorkflowGadgetName" Value="影像扫描"/>
@@ -207,7 +207,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@3f7e6"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@155226f"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="Exchange" Value="true"/>
                 <ExtendedAttribute Name="WorkflowGadgetName" Value="SSC会计初审"/>
@@ -237,6 +237,15 @@
                     <Split Type="XOR"/>
                 </TransitionRestriction>
             </TransitionRestrictions>
+            <DataFields>
+                <DataField Id="59b3502e-7465-11e4-9324-1df33946262f" Name="isWorkFlowFinalNode">
+                    <DataType>
+                        <BasicType Type="BOOLEAN"/>
+                    </DataType>
+                    <InitialValue>n</InitialValue>
+                    <Description>点审批后生成凭证(y/n)</Description>
+                </DataField>
+            </DataFields>
             <ExtendedAttributes>
                 <ExtendedAttribute Name="OrganizeTransferType" Value="SSC"/>
                 <ExtendedAttribute Name="TextPosition" Value="3"/>
@@ -257,7 +266,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@884f4f"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@47ab39"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
@@ -312,7 +321,7 @@
                 <ExtendedAttribute Name="MsgConfig" Value=""/>
                 <ExtendedAttribute Name="Assigned" Value="false"/>
                 <ExtendedAttribute Name="BorderWidth" Value="1.0"/>
-                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@10f0647"/>
+                <ExtendedAttribute Name="OrganizeTransferObj" Value="nc.vo.wfengine.core.activity.OrganizeTransferObj@13a2c5a"/>
                 <ExtendedAttribute Name="TimeLimit" Value="0"/>
                 <ExtendedAttribute Name="ParticipantFilterMode"/>
                 <ExtendedAttribute Name="BorderColor" Value="Color.black"/>
