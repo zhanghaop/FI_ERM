@@ -1,5 +1,7 @@
 package nc.impl.erm.common;
 
+import nc.bs.dao.BaseDAO;
+import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.common.RuntimeEnv;
 import nc.bs.logging.Logger;
@@ -25,6 +27,8 @@ import nc.vo.pub.BusinessException;
  */
 public class ErmMDUpdate extends AbstractPatchInstall {
 	private IPublishService service;
+	
+	private BaseDAO dao = null;
 
 	// 元数据如果相互关联，需注意先后顺序
 	private String[] bmfpath = {
@@ -72,6 +76,23 @@ public class ErmMDUpdate extends AbstractPatchInstall {
 				throw new BusinessException(ex.getMessage(), ex);
 			}
 		}
+		
+		// pub_vochange_b表维护
+		delVOChange_b();
+	}
+
+	private void delVOChange_b() throws DAOException {
+		String sql = "delete from pub_vochange_b where ts not like '2014-11%' and  pk_vochange in (select pk_vochange from pub_vochange where src_billtype='261X' and pk_group='~' and dest_billtype in ('263X','264X'))";
+		getBaseDAO().executeUpdate(sql);
+		Logger.debug(sql);
+	}
+	
+	
+	private BaseDAO getBaseDAO() {
+		if (dao == null) {
+			dao = new BaseDAO();
+		}
+		return dao;
 	}
 
 	public IPublishService getPublishService() {
