@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.erm.util.ErUtil;
+import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.IActionCode;
+import nc.imag.itf.IImagUtil;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.pf.PfUtilClient;
 import nc.ui.uif2.DefaultExceptionHanler;
@@ -86,11 +88,29 @@ public class ErmBillRecallAction extends NCAction {
 		MessageVO result = new MessageVO(vo, ActionUtils.RECALL);
 		try {
 			VOStatusChecker.checkRecallStatus(vo.getParentVO());
+			validateRecall(vo, vo.getParentVO().getPk_jkbx());
 		} catch (Exception e) {
 			result.setSuccess(false);
 			result.setErrorMessage(e.getMessage());
 		}
 		return result;
+	}
+	
+	private MessageVO validateRecall(JKBXVO vo , String djpk) throws Exception{
+		boolean isWfOnImage = true;
+		MessageVO result = new MessageVO(vo, ActionUtils.RECALL);
+		try {
+			isWfOnImage = ((IImagUtil) NCLocator.getInstance().lookup(IImagUtil.class.getName())).isWFOnImageActivity(djpk);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		
+		if(!isWfOnImage){
+			result.setSuccess(false);
+			result.setErrorMessage("当前有影像扫描活动正在进行，无法收回单据");
+		}
+		return result;
+	
 	}
 	
 	private MessageVO[] recallOneByOne(List<JKBXVO> auditVOs) throws Exception {
