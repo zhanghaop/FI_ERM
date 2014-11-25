@@ -151,6 +151,9 @@ public interface BXConstans {
 	 */
 	public final String CMP_MODULEID = "3607";
 	
+	// 影像扫描
+	public final String IMAG_MODULEID =  "1054";
+	
 	/**
 	 * 项目管理
 	 */

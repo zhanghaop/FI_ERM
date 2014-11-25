@@ -16,7 +16,9 @@ import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.check.VOStatusChecker;
@@ -97,15 +99,19 @@ public class ErmBillRecallAction extends NCAction {
 	}
 	
 	private MessageVO validateRecall(JKBXVO vo , String djpk) throws Exception{
-		boolean isWfOnImage = true;
+		boolean isWfOnImage = false;
+		boolean isInstallImag = BXUtil.isProductInstalled(vo.getParentVO().getPk_group(),
+				BXConstans.IMAG_MODULEID);
 		MessageVO result = new MessageVO(vo, ActionUtils.RECALL);
 		try {
-			isWfOnImage = ((IImagUtil) NCLocator.getInstance().lookup(IImagUtil.class.getName())).isWFOnImageActivity(djpk);
+			if(isInstallImag){
+				isWfOnImage = ((IImagUtil) NCLocator.getInstance().lookup(IImagUtil.class.getName())).isWFOnImageActivity(djpk);
+			}
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
 		
-		if(!isWfOnImage){
+		if(isWfOnImage){
 			result.setSuccess(false);
 			result.setErrorMessage("当前有影像扫描活动正在进行，无法收回单据");
 		}
