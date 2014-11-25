@@ -214,7 +214,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			return pk_jkbx;
 		//收回提交
 		String actionType = ErUtil.getUnCommitActionCode(PK_ORG);
-		  PfUtilPrivate.runAction(null, actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
+		  PfUtilPrivate.runAction(actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 					null, null, null);
 	//	PfUtilPrivate.runAction(null, IPFActionName.UNSAVE
 	//		 	+ InvocationInfoProxy.getInstance().getUserId(), jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
@@ -352,7 +352,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			  JKBXVO jkbxvo = vos.get(0);
 			  // 执行提交
 			  String actionType = ErUtil.getCommitActionCode(PK_ORG);
-			  PfUtilPrivate.runAction(null, actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
+			  PfUtilPrivate.runAction(actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 						null, null, null);
 //			  PfUtilPrivate.runAction(null, IPFActionName.SAVE+ userid, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 //						null, null, null);

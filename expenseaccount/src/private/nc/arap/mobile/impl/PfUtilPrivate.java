@@ -1,6 +1,5 @@
 package nc.arap.mobile.impl;
 
-import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ import nc.message.vo.AttachmentVO;
 import nc.security.NCAuthenticator;
 import nc.security.NCAuthenticatorFactory;
 import nc.uap.pf.metadata.PfMetadataTools;
+import nc.ui.pf.workitem.beside.BesideApproveContext;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pf.change.PfUtilBaseTools;
 import nc.vo.pub.AggregatedValueObject;
@@ -45,15 +45,8 @@ import nc.vo.wfengine.pub.WFTask;
 import nc.vo.wfengine.pub.WfTaskType;
 
 /**
- * 流程平台客户端工具类
+ * 流程平台轻量级工具类
  * 
- * @author fangj 2001-10
- * @modifier leijun 2005-5 取消单据类型UI类名必须以<Y>开头才可指派的限制
- * @modifier leijun 2006-7 送审时的指派对话框，如果用户点击取消，则不送审
- * @modifier leijun 2007-5 使用新的查询模板
- * @modifier leijun 2008-3 重构动作处理的API，进一步精简
- * @modifier dingxm 2009-7 参照制单对于按钮逻辑的处理挪到BusinessDelegator，参照制单中本类只提供信息，不处理按钮
- * @modifier zhouzhenga 20120107 部分逻辑挪到PfUtilClientAssistor
  */
 public class PfUtilPrivate {
 
@@ -68,10 +61,6 @@ public class PfUtilPrivate {
 	/** 当前审批节点的审批结果 */
 	private static int m_iCheckResult = IApproveflowConst.CHECK_RESULT_PASS;
 
-	private static boolean m_isOk = false;
-
-	/** fgj2001-11-27 判断当前动作是否执行成功 */
-	private static boolean m_isSuccess = true;
 
 	/** 源单据类型 */
 	private static String m_sourceBillType = null;
@@ -95,7 +84,7 @@ public class PfUtilPrivate {
 	 * 提交单据时,需要的指派信息
 	 * <li>只有"SAVE","EDIT"动作才调用
 	 */
-	private static WorkflownoteVO checkOnSave(Container parent, String actionName, String billType,
+	private static WorkflownoteVO checkOnSave(String actionName, String billType,
 			AggregatedValueObject billVo, Stack dlgResult, HashMap hmPfExParams) throws BusinessException {
 		WorkflownoteVO worknoteVO = new WorkflownoteVO();
 
@@ -111,7 +100,7 @@ public class PfUtilPrivate {
 		}
 		
 //		//在审批处理框显示之前，调用业务处理
-//		PFClientBizRetObj retObj = executeBusinessPlugin(parent, billVo, worknoteVO, true);
+//		PFClientBizRetObj retObj = executeBusinessPlugin(billVo, worknoteVO, true);
 //		if(retObj != null && retObj.isStopFlow()){
 //			m_isSuccess = false;
 //			return null;
@@ -135,7 +124,7 @@ public class PfUtilPrivate {
 	 * 单据启动工作流时,需要的指派信息
 	 * <li>包括选择后继活动参与者、选择后继分支转移
 	 */
-	private static WorkflownoteVO checkOnStart(Container parent, String actionName, String billType,
+	private static WorkflownoteVO checkOnStart(String actionName, String billType,
 			AggregatedValueObject billVo, Stack dlgResult, HashMap hmPfExParams) throws BusinessException {
 		WorkflownoteVO wfVo = NCLocator.getInstance().lookup(IWorkflowMachine.class).checkWorkFlow(
 				actionName, billType, billVo, hmPfExParams);
@@ -149,7 +138,7 @@ public class PfUtilPrivate {
 			Vector tSelectInfos = wfVo.getTaskInfo().getTransitionSelectableInfos();
 			if (assignInfos.size() > 0 || tSelectInfos.size() > 0) {
 				// 显示指派对话框并收集实际指派信息
-//				WFStartDispatchDialog wfdd = new WFStartDispatchDialog(parent, wfVo);
+//				WFStartDispatchDialog wfdd = new WFStartDispatchDialog(wfVo);
 //				int iClose = wfdd.showModal();
 //				if (iClose == UIDialog.ID_CANCEL)
 //					dlgResult.push(Integer.valueOf(iClose));
@@ -162,80 +151,35 @@ public class PfUtilPrivate {
 	/**
 	 * 检查当前单据是否处于审批流程中，并进行交互
 	 */
-	private static WorkflownoteVO checkWorkitemWhenApprove(Container parent,
-			String actionName, String billType, AggregatedValueObject billVo,
+	private static WorkflownoteVO checkWorkitemWhenApprove(String actionName, String billType, AggregatedValueObject billVo,
 			HashMap hmPfExParams,int voAryLen) throws BusinessException {
 		WorkflownoteVO noteVO = null;
-		if (hmPfExParams != null
-				&& hmPfExParams.get(PfUtilBaseTools.PARAM_BATCH) != null) {
-			
-			
-			Object notSilent = hmPfExParams
-					.get(PfUtilBaseTools.PARAM_NOTSILENT);
-			// 检查单据是否定义了审批流，如果没有定义，则不弹出,此处只简单检查第一张单据的单据类型上是否有流程定义
-			if (notSilent == null && !hasApproveflowDef(billType, billVo)) {
+		if (!hasApproveflowDef(billType, billVo)) {
+			//如果没有定义审批流,则默认通过 
+			noteVO = new WorkflownoteVO();
+			noteVO.setApproveresult("Y");
+			Logger.debug("*checkWorkitemWhenApprove 1 billType.");
+			return noteVO;
+		}
+		noteVO = NCLocator.getInstance().lookup(IWorkflowMachine.class)
+				.checkWorkFlow(actionName, billType, billVo, hmPfExParams);
+		Logger.debug("*checkWorkitemWhenApprove 3.");
+		
+		Object notSilent = null;
+		if(hmPfExParams != null){
+			notSilent = hmPfExParams.get(PfUtilBaseTools.PARAM_NOTSILENT);
+		}
+
+		if (noteVO == null) {
+			if (notSilent == null) {
 				m_checkFlag = true;
-				noteVO = new WorkflownoteVO();
-				noteVO.setApproveresult("Y");
 				Logger.debug("*checkWorkitemWhenApprove 1 billType.");
 				return noteVO;
 			} else {
-				// 预算开发部要求批审时不管有没有流程定义，都弹出审批意见框
 				noteVO = new WorkflownoteVO();
-				
-//				putElecsignatureRelaProperties(noteVO,hmPfExParams);
-//				
-//				BatchApproveModel batchApproveMode = new BatchApproveModel();
-//				batchApproveMode.setBillUI(true);
-//				batchApproveMode.setSingleBillSelected(true);
-//				batchApproveMode.setContainUnApproveBill(false);
-//				batchApproveMode.setBillItem(voAryLen);
-//				dlg = new BatchApproveWorkitemAcceptDlg(parent, noteVO);
-//				((BatchApproveWorkitemAcceptDlg) dlg)
-//						.setBachApproveMode(batchApproveMode);
-//				Logger.debug("*checkWorkitemWhenApprove 2.");
 			}
-		} else {
-			noteVO = NCLocator.getInstance().lookup(IWorkflowMachine.class)
-					.checkWorkFlow(actionName, billType, billVo, hmPfExParams);
-			Logger.debug("*checkWorkitemWhenApprove 3.");
-			
-			
-			if (noteVO != null && isBesideApprove(hmPfExParams)) {
-				noteVO = BesideApprove(hmPfExParams, noteVO);
-			} else {
-				Object notSilent = null;
-				if(hmPfExParams != null){
-					notSilent = hmPfExParams.get(PfUtilBaseTools.PARAM_NOTSILENT);
-				}
-
-				if (noteVO == null) {
-					if (notSilent == null) {
-						m_checkFlag = true;
-						Logger.debug("*checkWorkitemWhenApprove 1 billType.");
-						return noteVO;
-					} else {
-						noteVO = new WorkflownoteVO();
-					}
-				}
-				onApprove(true,noteVO);
-				Logger.debug("*checkWorkitemWhenApprove 4.");
-			}			
-			
 		}
-
-		if (hmPfExParams != null
-				&& hmPfExParams.get(PfUtilBaseTools.PARAM_WORKNOTE) != null) {
-			WorkflownoteVO worknote = (WorkflownoteVO) hmPfExParams
-					.get(PfUtilBaseTools.PARAM_WORKNOTE);
-			noteVO.setApproveresult(worknote.getApproveresult());
-			noteVO.setChecknote(worknote.getChecknote());
-			PfUtilPrivate.m_checkFlag = true;
-			return noteVO;
-		}
-
-		Logger.debug("*checkWorkitemWhenApprove 5.");
-		
+					
 	    if (hmPfExParams == null) {
 	        hmPfExParams = new HashMap<String, Object>();
 	    }
@@ -431,41 +375,9 @@ public class PfUtilPrivate {
 		}	
 	}
 
-	/**
-	 * 判断用户是否点击了＂取消＂按钮
-	 * 
-	 * @return boolean leijun+
-	 */
-	public static boolean isCanceled() {
-		return !m_checkFlag;
-	}
-
-	/**
-	 * 返回 参照单据是否正常关闭
-	 * 
-	 * @return boolean
-	 */
-	public static boolean isCloseOK() {
-		return m_isOk;
-	}
-
-	/**
-	 * 返回 当前单据动作执行是否成功
-	 * 
-	 * @return boolean
-	 */
-	public static boolean isSuccess() {
-		return m_isSuccess;
-	}
 	
 	/**
-	 * 前台单据动作处理API，算法如下：
-	 * <li>1.动作执行前提示以及事前处理，如果用户取消，则方法直接返回
-	 * <li>2.查看扩展参数，判断是否需要审批流相关处理。如果为提交动作，则可能需要收集提交人的指派信息；
-	 * 如果为审批动作，则可能需要收集审批人的审批信息
-	 * <li>3.后台执行动作。并返回动作执行结果。 
-	 * 
-	 * @param parent 父窗体
+	 *
 	 * @param actionCode 动作编码，比如"SAVE"
 	 * @param billOrTranstype 单据（或交易）类型PK
 	 * @param billvo 单据聚合VO
@@ -477,54 +389,40 @@ public class PfUtilPrivate {
 	 * @throws Exception
 	 * @since 5.5
 	 */
-	public static Object runAction(Container parent, String actionCode, String billOrTranstype,
-			AggregatedValueObject billvo, Object userObj, String strBeforeUIClass,
+	public static Object runAction(String actionCode, String billOrTranstype,
+			AggregatedValueObject billvo, Object userObj, BesideApproveContext besideContext,
 			AggregatedValueObject checkVo, HashMap eParam) throws BusinessException {
 		Logger.debug("*单据动作处理 开始");
 		debugParams(actionCode, billOrTranstype, billvo, userObj);
 		long start = System.currentTimeMillis();
-		m_isSuccess = true;
 
-		// 2.查看扩展参数，是否要流程交互处理
 		WorkflownoteVO worknoteVO = null;
-		Object paramSilent = getParamFromMap(eParam, PfUtilBaseTools.PARAM_SILENTLY);
-		Object paramNoflow = getParamFromMap(eParam,
-				PfUtilBaseTools.PARAM_NOFLOW);
-		if (paramNoflow == null && paramSilent == null) {
-			// 需要交互处理
-			if (PfUtilBaseTools.isSaveAction(actionCode, billOrTranstype)
-					|| PfUtilBaseTools.isApproveAction(actionCode,
-							billOrTranstype)) {
-				// 审批流交互处理
-				worknoteVO = actionAboutApproveflow(parent, actionCode,
-						billOrTranstype, billvo, eParam,0);
-				if (!m_isSuccess)
-					return null;
-			} else if (PfUtilBaseTools.isStartAction(actionCode,
-					billOrTranstype)
-					|| PfUtilBaseTools.isSignalAction(actionCode,
-							billOrTranstype)) {
-				// 工作流互处理
-				worknoteVO = actionAboutWorkflow(parent, actionCode,
-						billOrTranstype, billvo, eParam,0);
-				if (!m_isSuccess)
-					return null;
-			}
-//			putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, worknoteVO);
+		//得到审批信息
+		if (PfUtilBaseTools.isSaveAction(actionCode, billOrTranstype)
+				|| PfUtilBaseTools.isApproveAction(actionCode,
+						billOrTranstype)) {
+			// 审批流交互处理
+			worknoteVO = actionAboutApproveflow(actionCode,
+					billOrTranstype, billvo, eParam,0);
+			onApprove(besideContext,worknoteVO);
+		} else if (PfUtilBaseTools.isStartAction(actionCode,
+				billOrTranstype)
+				|| PfUtilBaseTools.isSignalAction(actionCode,
+						billOrTranstype)) {
+			// 工作流互处理
+			worknoteVO = actionAboutWorkflow(actionCode,
+					billOrTranstype, billvo, besideContext,0);
 		}
 		
 		if (worknoteVO == null) {
 			//检查不到工作项，则后台无需再次检查
 			if (eParam == null)
 				eParam = new HashMap<String, String>();
-			if (paramSilent == null)
-				eParam.put(PfUtilBaseTools.PARAM_NOTE_CHECKED, PfUtilBaseTools.PARAM_NOTE_CHECKED);
+			eParam.put(PfUtilBaseTools.PARAM_NOTE_CHECKED, PfUtilBaseTools.PARAM_NOTE_CHECKED);
 		}
 
 		// 4.后台执行动作
 		Object retObj = null;
-		//后台执行审批前将标志位置为false
-		m_isSuccess = false;
 		
 		Logger.debug("*后台动作处理 开始");
 		long start2 = System.currentTimeMillis();
@@ -534,23 +432,26 @@ public class PfUtilPrivate {
 				userObj, eParam);
 		Logger.debug("*后台动作处理 结束=" + (System.currentTimeMillis() - start2) + "ms");
 
-		m_isSuccess = true;
-
 		// 5.返回对象执行
-		//retObjRun(parent, retObj);
+		//retObjRun(retObj);
 		Logger.debug("*单据动作处理 结束=" + (System.currentTimeMillis() - start) + "ms");
 
 		return retObj;
 	}
 
+	private static void onSignal(BesideApproveContext besideContext,
+			WorkflownoteVO worknoteVO) {
+		worknoteVO.setChecknote(besideContext.getCheckNote());
+		worknoteVO.setApproveresult(besideContext.getApproveResult());
+	}
+
 	/**
 	 * 审批通过或不通过
 	 */
-	protected static void onApprove(boolean pass,WorkflownoteVO worknoteVO) {
+	protected static void onApprove(BesideApproveContext besideContext,WorkflownoteVO worknoteVO) {
 
 		// 判断是否需要后继指派
-		boolean isNeedDispatch = pass ? isExistAssignableInfoWhenPass(worknoteVO)
-				: isExistAssignableInfoWhenNopass(worknoteVO);
+		boolean isNeedDispatch = isExistAssignableInfoWhenPass(worknoteVO);
 		if (isNeedDispatch) {
 //			// 填充指派信息
 //			getDispatchDialog().getDisPatchPanel().initByWorknoteVO(
@@ -567,12 +468,10 @@ public class PfUtilPrivate {
 		if (!beforeButtonOperate(worknoteVO))
 			return;
 
-		// yanke1+ 2011-7-15 设置当前审批人是否对流程进行跟踪
+		//设置当前审批人是否对流程进行跟踪
 		worknoteVO.setTrack(false);
-
-		String checkNote = "批准";
-		worknoteVO.setChecknote(checkNote);
-		worknoteVO.setApproveresult(UFBoolean.valueOf(pass).toString());
+		worknoteVO.setChecknote(besideContext.getCheckNote());
+		worknoteVO.setApproveresult(besideContext.getApproveResult());
 	}
 	
 	private static boolean beforeButtonOperate(WorkflownoteVO worknoteVO) {
@@ -663,7 +562,7 @@ public class PfUtilPrivate {
 	 * 审批流相关的交互处理
 	 * @throws BusinessException 
 	 */
-	private static WorkflownoteVO actionAboutApproveflow(Container parent, String actionName,
+	private static WorkflownoteVO actionAboutApproveflow(String actionName,
 			String billType, AggregatedValueObject billvo, HashMap eParam,int voAryLen) throws BusinessException {
 		WorkflownoteVO worknoteVO = null;
 
@@ -671,15 +570,11 @@ public class PfUtilPrivate {
 			Logger.debug("*提交动作=" + actionName + "，检查审批流");
 			// 如果为提交动作，可能需要收集提交人的指派信息，这里统一动作名称 lj@2005-4-8
 			Stack dlgResult = new Stack();
-			worknoteVO = checkOnSave(parent, IPFActionName.SAVE, billType, billvo, dlgResult, eParam);
-			if (dlgResult.size() > 0) {
-				m_isSuccess = false;
-				Logger.debug("*用户指派时点击了取消，则停止送审");
-			}
+			worknoteVO = checkOnSave(IPFActionName.SAVE, billType, billvo, dlgResult, eParam);
 		} else if (PfUtilBaseTools.isApproveAction(actionName, billType)) {
 			Logger.debug("*审批动作=" + actionName + "，检查审批流");
 			// 检查该单据是否处于审批流中，并收集审批人的审批信息
-			worknoteVO = checkWorkitemWhenApprove(parent, actionName, billType, billvo, eParam,voAryLen);
+			worknoteVO = checkWorkitemWhenApprove(actionName, billType, billvo, eParam,voAryLen);
 			if (worknoteVO != null) {
 				if ("Y".equals(worknoteVO.getApproveresult())) {
 					m_iCheckResult = IApproveflowConst.CHECK_RESULT_PASS;
@@ -695,7 +590,6 @@ public class PfUtilPrivate {
 				} else
 					m_iCheckResult = IApproveflowConst.CHECK_RESULT_NOPASS;
 			} else if (!m_checkFlag) {
-				m_isSuccess = false;
 				Logger.debug("*用户审批时点击了取消，则停止审批");
 			}
 		}
@@ -706,22 +600,17 @@ public class PfUtilPrivate {
 	 * 工作流相关的交互处理
 	 * @throws BusinessException 
 	 */
-	private static WorkflownoteVO actionAboutWorkflow(Container parent, String actionName,
-			String billType, AggregatedValueObject billvo, HashMap eParam,int voAryLen) throws BusinessException {
+	private static WorkflownoteVO actionAboutWorkflow(String actionName,
+			String billType, AggregatedValueObject billvo, BesideApproveContext besideContext,int voAryLen) throws BusinessException {
 		WorkflownoteVO worknoteVO = null;
 
 		if (PfUtilBaseTools.isStartAction(actionName, billType)) {
 			Logger.debug("*启动动作=" + actionName + "，检查工作流");
-			Stack dlgResult = new Stack();
-			worknoteVO = checkOnStart(parent, actionName, billType, billvo, dlgResult, eParam);
-			if (dlgResult.size() > 0) {
-				m_isSuccess = false;
-				Logger.debug("*用户指派时点击了取消，则停止启动工作流");
-			}
+			worknoteVO = checkOnStart(actionName, billType, billvo, null, null);
 		} else if (PfUtilBaseTools.isSignalAction(actionName, billType)) {
 			Logger.debug("*执行动作=" + actionName + "，检查工作流");
 			// 检查该单据是否处于工作流中
-			worknoteVO = checkWorkitemWhenSignal(parent, actionName, billType, billvo, eParam, voAryLen);
+			worknoteVO = checkWorkitemWhenSignal(actionName, billType, billvo, besideContext, voAryLen);
 			if (worknoteVO != null) {
 				if ("Y".equals(worknoteVO.getApproveresult())) {
 					m_iCheckResult = IApproveflowConst.CHECK_RESULT_PASS;
@@ -737,7 +626,6 @@ public class PfUtilPrivate {
 				} else
 					m_iCheckResult = IApproveflowConst.CHECK_RESULT_NOPASS;
 			} else if (!m_checkFlag) {
-				m_isSuccess = false;
 				Logger.debug("*用户驱动工作流时点击了取消，则停止执行工作流");
 			}
 		}
@@ -747,59 +635,55 @@ public class PfUtilPrivate {
 	/**
 	 * 检查当前单据是否处于工作流程中或工作流的审批子流程中，并进行交互
 	 */
-	private static WorkflownoteVO checkWorkitemWhenSignal(Container parent, String actionCode,
-			String billType, AggregatedValueObject billVo, HashMap hmPfExParams, int voAryLen) throws BusinessException {
-		WorkflownoteVO noteVO = null;
-			//检查当前用户的工作流工作项+审批子流程工作项
-			noteVO = NCLocator.getInstance().lookup(IWorkflowMachine.class).checkWorkFlow(actionCode,
-					billType, billVo, hmPfExParams);
-			if (noteVO == null) {
-				m_checkFlag = true;
-				return noteVO;
-			} else {
-				//XXX:guowl+,检查是否弹出交互界面
-//				if (!PfUtilClientAssistor.isExchange(noteVO.getTaskInfo().getTask())) {
-					m_checkFlag = true;
-					noteVO.setApproveresult("Y");
-					return noteVO;
-//				}
-
-//				if (noteVO.getWorkflow_type() == WorkflowTypeEnum.SubWorkApproveflow.getIntValue()) {
-					//工作流的审批子流程
-//					if(hmPfExParams != null && hmPfExParams.get(PfUtilBaseTools.PARAM_BATCH) != null) {
-//						dlg = new BatchApproveWorkitemAcceptDlg(parent, noteVO);
-//						
-//						BatchApproveModel batchApproveMode = new BatchApproveModel();
-//						batchApproveMode.setBillUI(true);
-//						batchApproveMode.setSingleBillSelected(true);
-//						batchApproveMode.setContainUnApproveBill(false);
-//						batchApproveMode.setBillItem(voAryLen);
-//						
-//						((BatchApproveWorkitemAcceptDlg) dlg).setBachApproveMode(batchApproveMode);
-//					} else {
-//						dlg = new ApproveWorkitemAcceptDlg(parent, noteVO, true);
-//					}
-//				} 
-//				else{
-					//工作流或工作子流程
-//					dlg = new WorkflowWorkitemAcceptDlg(parent, noteVO,PfUtilClientAssistor.isCanTransfer(noteVO.getTaskInfo().getTask()));
-//				}
-//				if (dlg.showModal() == UIDialog.ID_OK) {
-					// 返回处理后的工作项
-//					m_checkFlag = true;
-//				} else {
-//					// 用户取消
-//					m_checkFlag = false;
-//					noteVO = null;
-//				}
+	private static WorkflownoteVO checkWorkitemWhenSignal(String actionCode,
+			String billType, AggregatedValueObject billVo, BesideApproveContext besideContext, int voAryLen) throws BusinessException {
+		//检查当前用户的工作流工作项+审批子流程工作项
+		WorkflownoteVO noteVO = NCLocator.getInstance().lookup(IWorkflowMachine.class).checkWorkFlow(actionCode,
+					billType, billVo, null);
+		if (noteVO.getWorkflow_type() == WorkflowTypeEnum.SubWorkApproveflow.getIntValue()) {
+			//工作流的审批子流程
+			if(besideContext.getApproveResult().equals("Y")){
+				//批准
+				onApprove(besideContext,noteVO);
+			}else if(besideContext.getApproveResult().equals("R")){
+				//驳回
+				noteVO.setChecknote(besideContext.getCheckNote());
+				noteVO.getTaskInfo().getTask().setTaskType(WfTaskType.Backward.getIntValue());
+		    	noteVO.getTaskInfo().getTask().setBackToFirstActivity(besideContext.isBackToFirstActivity());
+			    noteVO.getTaskInfo().getTask().setJumpToActivity(besideContext.getJumpToActivity());
+			    noteVO.setApproveresult("R");
+			}else if(besideContext.getApproveResult().equals("R")){
+				//加签
+				if(!canAddApprover(noteVO))
+					throw new BusinessException("该单据不支持加签！");
+				noteVO.setChecknote(besideContext.getCheckNote());
+				noteVO.getTaskInfo().getTask().setTaskType(WfTaskType.Backward.getIntValue());
+		    	noteVO.getTaskInfo().getTask().setBackToFirstActivity(besideContext.isBackToFirstActivity());
+			    noteVO.getTaskInfo().getTask().setJumpToActivity(besideContext.getJumpToActivity());
+			    noteVO.setApproveresult("R");
 			}
+		}else{
+			onSignal(besideContext,noteVO);
+		}
+		return noteVO;
 	}
 	
 	/**
-	 * @return 是否侧边栏审批
-	 * */
-	private static boolean isBesideApprove(HashMap hmPfExParams){
-		return hmPfExParams!=null&&hmPfExParams.get(PfUtilBaseTools.PARAM_BESIDEAPPROVE)!=null;
+	 * 是否可以加签
+	 * @return
+	 */
+	private static boolean canAddApprover(WorkflownoteVO noteVO) {
+		Object value = noteVO.getRelaProperties().get(
+				XPDLNames.CAN_ADDAPPROVER);
+		if (value != null && "true".equalsIgnoreCase(value.toString())) {
+			if (noteVO.actiontype
+					.equalsIgnoreCase(WorkflownoteVO.WORKITEM_TYPE_APPROVE
+							+ WorkflownoteVO.WORKITEM_ADDAPPROVER_SUFFIX))
+				return false;
+			else
+				return true;
+		} else
+			return false;
 	}
 
 	/**
@@ -846,13 +730,7 @@ public class PfUtilPrivate {
 	
 	
 	/**
-	 * 前台单据动作批处理API，算法如下：
-	 * <li>1.动作执行前提示以及事前处理，如果用户取消，则方法直接返回
-	 * <li>2.查看扩展参数，判断是否需要审批流相关处理。如果为提交动作，且单据VO数组中只有一张单据时可能需要收集提交人的指派信息；
-	 * 如果为审批动作，则针对第一张单据可能需要收集审批人的审批信息
-	 * <li>3.后台执行批动作。并返回动作执行结果。 
 	 * 
-	 * @param parent 父窗体
 	 * @param actionCode 动作编码，比如"SAVE"
 	 * @param billOrTranstype 单据类型（或交易类型）PK
 	 * @param voAry 单据聚合VO数组
@@ -862,25 +740,21 @@ public class PfUtilPrivate {
 	 * @throws Exception
 	 * @since 5.5
 	 */
-	public static Object[] runBatch(Container parent, String actionCode, String billOrTranstype,
-			AggregatedValueObject[] voAry, Object[] userObjAry, String strBeforeUIClass, HashMap eParam)
+	public static Object[] runBatch(String actionCode, String billOrTranstype,
+			AggregatedValueObject[] voAry, Object[] userObjAry, BesideApproveContext besideContext, HashMap eParam)
 			throws Exception {
 		Logger.debug("*单据动作批处理 开始");
 		debugParams(actionCode, billOrTranstype, voAry, userObjAry);
 		long start = System.currentTimeMillis();
 		if(voAry!= null && voAry.length == 1) {
-			Object obj = runAction(parent, actionCode, billOrTranstype, voAry[0], userObjAry, strBeforeUIClass, null, eParam);
+			Object obj = runAction(actionCode, billOrTranstype, voAry[0], userObjAry, besideContext, null, eParam);
 			Object[] ret = null;
 			ret = PfUtilBaseTools.composeResultAry(obj,1,0,ret);
 			return ret;
 		}
 		
-		m_isSuccess = true;
-		
 		putElecsignatureValue(billOrTranstype,voAry,eParam);
 		
-		
-
 		WorkflownoteVO workflownote = null;
 		
 		// 2.查看扩展参数，是否要流程交互处理
@@ -894,14 +768,10 @@ public class PfUtilPrivate {
 			}
 			if (PfUtilBaseTools.isSaveAction(actionCode, billOrTranstype) || PfUtilBaseTools.isApproveAction(actionCode, billOrTranstype)) {
 				//审批流交互处理
-				workflownote = actionAboutApproveflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
-				if (!m_isSuccess)
-					return null;
+				workflownote = actionAboutApproveflow(actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
 			} else if (PfUtilBaseTools.isStartAction(actionCode, billOrTranstype) || PfUtilBaseTools.isSignalAction(actionCode, billOrTranstype)) {
 				//工作流交互处理
-				workflownote = actionAboutWorkflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
-				if (!m_isSuccess)
-					return null;
+				workflownote = actionAboutWorkflow(actionCode, billOrTranstype, voAry[0], besideContext,voAry.length);
 			}
 		}
 
@@ -913,29 +783,24 @@ public class PfUtilPrivate {
 			String errMsg = ((PfProcessBatchRetObject)retObj).getExceptionMsg();
 			retObj = ((PfProcessBatchRetObject)retObj).getRetObj();
 		}
-		if(retObj != null && ((Object[]) retObj).length > 0) {
-			//批处理时，有一个成功的就认为成功
-			m_isSuccess = true;
-		}
 		Logger.debug("*单据动作批处理 结束=" + (System.currentTimeMillis() - start) + "ms");
 		
 		return (Object[]) retObj;
 	}
 	
-	public static PfProcessBatchRetObject runBatchNew(Container parent, String actionCode, String billOrTranstype,
-			AggregatedValueObject[] voAry, Object[] userObjAry, String strBeforeUIClass, HashMap eParam)
+	public static PfProcessBatchRetObject runBatchNew(String actionCode, String billOrTranstype,
+			AggregatedValueObject[] voAry, Object[] userObjAry, BesideApproveContext besideContext, HashMap eParam)
 			throws Exception {
 		Logger.debug("*单据动作批处理 开始");
 		debugParams(actionCode, billOrTranstype, voAry, userObjAry);
 		long start = System.currentTimeMillis();
 		if(voAry!= null && voAry.length == 1) {
-			Object obj = runAction(parent, actionCode, billOrTranstype, voAry[0], userObjAry, strBeforeUIClass, null, eParam);
+			Object obj = runAction(actionCode, billOrTranstype, voAry[0], userObjAry, besideContext, null, eParam);
 			Object[] retObj = null;
 			retObj = PfUtilBaseTools.composeResultAry(obj,1,0,retObj);
 			return new PfProcessBatchRetObject(retObj, null);
 		}
 		
-		m_isSuccess = true;
 		putElecsignatureValue(billOrTranstype,voAry,eParam);
 
 		// 2.查看扩展参数，是否要流程交互处理
@@ -951,14 +816,10 @@ public class PfUtilPrivate {
 				}
 				if (PfUtilBaseTools.isSaveAction(actionCode, billOrTranstype) || PfUtilBaseTools.isApproveAction(actionCode, billOrTranstype)) {
 					//审批流交互处理
-					workflownote = actionAboutApproveflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
-					if (!m_isSuccess)
-						return null;
+					workflownote = actionAboutApproveflow(actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
 				} else if (PfUtilBaseTools.isStartAction(actionCode, billOrTranstype) || PfUtilBaseTools.isSignalAction(actionCode, billOrTranstype)) {
 					//工作流交互处理
-					workflownote = actionAboutWorkflow(parent, actionCode, billOrTranstype, voAry[0], eParam,voAry.length);
-					if (!m_isSuccess)
-						return null;
+					workflownote = actionAboutWorkflow(actionCode, billOrTranstype, voAry[0], besideContext,voAry.length);
 				}
 				putParam(eParam, PfUtilBaseTools.PARAM_WORKNOTE, workflownote);
 			}

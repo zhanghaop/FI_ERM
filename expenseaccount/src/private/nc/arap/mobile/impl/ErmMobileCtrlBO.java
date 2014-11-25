@@ -39,6 +39,7 @@ import nc.itf.uap.rbac.IUserManageQuery;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
+import nc.ui.pf.workitem.beside.BesideApproveContext;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -78,6 +79,7 @@ import nc.vo.uap.wfmonitor.ProcessRouteRes;
 import nc.vo.util.AuditInfoUtil;
 import nc.vo.vorg.OrgVersionVO;
 import nc.vo.wfengine.core.XpdlPackage;
+import nc.vo.wfengine.core.activity.Activity;
 import nc.vo.wfengine.core.parser.UfXPDLParser;
 import nc.vo.wfengine.core.parser.XPDLNames;
 import nc.vo.wfengine.core.parser.XPDLParserException;
@@ -85,6 +87,7 @@ import nc.vo.wfengine.core.transition.BasicTransitionEx;
 import nc.vo.wfengine.core.workflow.WorkflowProcess;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
 import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
+import nc.vo.wfengine.pub.WfTaskType;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -996,8 +999,41 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 					initEvn(head.getOperator());
 					//收回提交
 					String actionType = getActionCode(IPFActionName.UNSAVE,PK_ORG);
-					  PfUtilPrivate.runAction(null, actionType, head.getDjlxbm(), vo, null,
-								null, null, null);
+//					String checkNote = approveInfo.getChecknote();
+//					switch(approveInfo.getOperationType()){
+//					case 1:
+//						//批准
+//						besideContext.setApproveResult("Y");
+//						if (StringUtil.isEmpty(checkNote)) {
+//					      checkNote = "批准";
+//					    }
+//						besideContext.setCheckNote(checkNote);
+//						break;
+//					case 2:
+//						//驳回
+//						besideContext.setApproveResult("R");
+//						if (StringUtil.isEmpty(checkNote)) {
+//					      checkNote = "驳回";
+//					    }
+//						besideContext.setCheckNote(checkNote);
+//						besideContext.setBackToFirstActivity(true);
+//						besideContext.setTaskType(WfTaskType.Backward.getIntValue());
+//						Activity rejectActivity = null;
+//					    
+//					    if (rejectActivity == null) {
+//					    	besideContext.setBackToFirstActivity(true);
+//					    } else {
+//					    	besideContext.setBackToFirstActivity(false);
+//					    }
+//					    besideContext.setJumpToActivity(rejectActivity == null ? null : rejectActivity.getId());
+//						break;
+//					case 3:
+//						//加签
+//						besideContext.setAddAssign(true);
+//						break;
+//					}
+					PfUtilPrivate.runAction(actionType, head.getDjlxbm(), vo, null,
+							  null, null, null);
 //					PfUtilPrivate.runAction(null, IPFActionName.UNSAVE
 //							+ InvocationInfoProxy.getInstance().getUserId(), head.getDjlxbm(), vo, null,
 //							null, null, null); 
@@ -1116,7 +1152,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		  JKBXVO jkbxvo = vos.get(0);
 		  // 执行提交
 		  String actionType = getActionCode(IPFActionName.SAVE,PK_ORG);
-		  PfUtilPrivate.runAction(null, actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
+		  PfUtilPrivate.runAction(actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 					null, null, null);
 //		  PfUtilPrivate.runAction(null, IPFActionName.SAVE+ userid, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 //					null, null, null);
@@ -1583,8 +1619,11 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		// 审核动作处理
 		try{
 			String actionType = ErUtil.getApproveActionCode(PK_ORG);
-			Object msgReturn = PfUtilPrivate.runAction(null, actionType, head.getDjlxbm(), bxvo, null,
-						null, null, null);
+			BesideApproveContext besideContext = new BesideApproveContext();
+			besideContext.setApproveResult("Y");
+			besideContext.setCheckNote("批准");
+			Object msgReturn = PfUtilPrivate.runAction(actionType, head.getDjlxbm(), bxvo, null,
+					besideContext, null, null);
 //			Object msgReturn = PfUtilPrivate.runAction(null, IPFActionName.APPROVE
 //					+ InvocationInfoProxy.getInstance().getUserId(), head.getDjlxbm(), bxvo, null,
 //					null, null, null);
@@ -1621,15 +1660,15 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
   		 // 找到WFTask所属的流程定义及其父流程定义
   		 int m_iWorkflowtype = ErUtil.getWorkFlowType(list.get(0).getPk_org());
   		 
-		  //待查询的字段
+  		  //待查询的字段
 		  String[] queryFields = new String[] {"actiontype","checknote","checkname",
-					"checkname", "dealdate", "messagenote", "sendername","senddate","checkman"};
-		  
+					"checkname", "dealdate", "sendername","senddate","checkman"};//"messagenote",
+		  //待转换的字段
 		  String[] fromFields = new String[] {"actiontype","checknote","checkname",
-					"checkname", "dealdate", "messagenote", "checkname","dealdate","senderman"};
-		  
+					"checkname", "dealdate", "checkname","dealdate","checkman"};
+		  //转换后的字段
 		  String[] toFields = new String[] {"actiontype","checknote","checkname",
-					"checkname", "dealdate", "messagenote", "sendername","senddate","checkman"};
+					"checkname", "dealdate", "sendername","senddate","checkman"};
 			
 		  // 找到WFTask所属的流程定义及其父流程定义
 	      ProcessRouteRes processRoute = null;
@@ -1656,40 +1695,40 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	      // 获取主流程状态
 	      String  m_iMainFlowStatus = String.valueOf(processRoute.getProcStatus());
 	      // 构造一个临时包
-	      XpdlPackage pkg = new XpdlPackage("unknown", "unknown", null);
-	      pkg.getExtendedAttributes().put(XPDLNames.MADE_BY, "UFW");
-	      String def_xpdl = null;
-	      ProcessRouteRes currentRoute = processRoute;
-	      if (currentRoute.getXpdlString() != null)
-	         def_xpdl = currentRoute.getXpdlString().toString();
-	      WorkflowProcess wp = null;
-	      try {
-	         // 前台解析XML串为对象
-	         wp = UfXPDLParser.getInstance().parseProcess(def_xpdl);
-	      } catch (XPDLParserException e) {
-	         Logger.error(e.getMessage(), e);
-	         return resultmap;
-	      }
-	      wp.setPackage(pkg);
-	      List<BasicTransitionEx> transition = wp.getTransitions();
-	      Map<String,String> transitionMap = new LinkedHashMap<String, String>();
-	      for(int i=0;i<transition.size();i++){
-	    	  transitionMap.put(transition.get(i).getTo(), transition.get(i).getFrom());
-	      }
-	      ActivityInstance[] allActInstances = currentRoute.getActivityInstance();
-	      String[] startedActivityDefIds = new String[allActInstances.length];
-	      // 当前正运行的活动
-	      HashSet hsRunningActs = new HashSet();
-	      for (int i = 0; i < allActInstances.length; i++) {
-		      //排除掉作废的子流程
-		      if(allActInstances[i].getStatus()==WfTaskOrInstanceStatus.Inefficient.getIntValue())
-		            continue;
-		         startedActivityDefIds[i] = allActInstances[i].getActivityID();
-		         if (allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Started.getIntValue())
-		            hsRunningActs.add(startedActivityDefIds[i]);
-	      }
-	      if (startedActivityDefIds == null || startedActivityDefIds.length == 0)
-	         return resultmap;
+//	      XpdlPackage pkg = new XpdlPackage("unknown", "unknown", null);
+//	      pkg.getExtendedAttributes().put(XPDLNames.MADE_BY, "UFW");
+//	      String def_xpdl = null;
+//	      ProcessRouteRes currentRoute = processRoute;
+//	      if (currentRoute.getXpdlString() != null)
+//	         def_xpdl = currentRoute.getXpdlString().toString();
+//	      WorkflowProcess wp = null;
+//	      try {
+//	         // 前台解析XML串为对象
+//	         wp = UfXPDLParser.getInstance().parseProcess(def_xpdl);
+//	      } catch (XPDLParserException e) {
+//	         Logger.error(e.getMessage(), e);
+//	         return resultmap;
+//	      }
+//	      wp.setPackage(pkg);
+//	      List<BasicTransitionEx> transition = wp.getTransitions();
+//	      Map<String,String> transitionMap = new LinkedHashMap<String, String>();
+//	      for(int i=0;i<transition.size();i++){
+//	    	  transitionMap.put(transition.get(i).getTo(), transition.get(i).getFrom());
+//	      }
+//	      ActivityInstance[] allActInstances = currentRoute.getActivityInstance();
+//	      String[] startedActivityDefIds = new String[allActInstances.length];
+//	      // 当前正运行的活动
+//	      HashSet hsRunningActs = new HashSet();
+//	      for (int i = 0; i < allActInstances.length; i++) {
+//		      //排除掉作废的子流程
+//		      if(allActInstances[i].getStatus()==WfTaskOrInstanceStatus.Inefficient.getIntValue())
+//		            continue;
+//		         startedActivityDefIds[i] = allActInstances[i].getActivityID();
+//		         if (allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Started.getIntValue())
+//		            hsRunningActs.add(startedActivityDefIds[i]);
+//	      }
+//	      if (startedActivityDefIds == null || startedActivityDefIds.length == 0)
+//	         return resultmap;
 
 	      //获取具体信息
 	      FlowAdminVO adminVO = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
@@ -1697,31 +1736,23 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	      WorkflownoteVO[] noteVOs = adminVO.getWorkflowNotes();
 		  if (noteVOs == null || noteVOs.length == 0) {
 				return resultmap;
-			}
+		  }
 		  
-//		  for(int i=0;i<startedActivityDefIds.length;i++){
-//			  if(startedActivityDefIds[i]==null)
-//				  continue;
-			  for(int j=0;j<noteVOs.length;j++){
-				  String id = noteVOs[j].getActivityID();
-				  String fromid = transitionMap.get(id);
-//				  if(id.equals(startedActivityDefIds[i])){
-					  if(noteVOs[j].getMessagenote().contains("commitBill")){
-					  //从制单中可以提出两种活动
-					  //制单活动
-					  resultmap.put("commitBill", getApproveFieldMap(m_iMainFlowStatus,queryFields,fromFields,noteVOs[j],true));
-					  //审批活动
-					  resultmap.put(j+"Bill", getApproveFieldMap(m_iMainFlowStatus,queryFields,toFields,noteVOs[j],false));
-					  }
-					  else{
-						  //其余只能提出一种
-						  resultmap.put(j+"Bill", getApproveFieldMap(m_iMainFlowStatus,queryFields,toFields,noteVOs[j],false));
-					  }
-//				  }
-				  }
-//		  }
+		  for(int j=0;j<noteVOs.length;j++){
+			  if(noteVOs[j].getMessagenote().contains("commitBill") || noteVOs[j].getMessagenote().contains("startworkflow")){
+				  //从制单中可以提出两种活动
+				  //制单活动
+				  resultmap.put("commitBill", getApproveFieldMap(m_iMainFlowStatus,queryFields,fromFields,noteVOs[j],true));
+				  //审批活动
+				  resultmap.put(j+"Bill", getApproveFieldMap(m_iMainFlowStatus,queryFields,toFields,noteVOs[j],false));
+			  }
+			  else{
+				  //其余只能提出一种
+				  resultmap.put(j+"Bill", getApproveFieldMap(m_iMainFlowStatus,queryFields,toFields,noteVOs[j],false));
+			  }
+		 }
 	      return resultmap;
-	   }
+	 }
 
 	Map<String, String> getApproveFieldMap(String m_iMainFlowStatus,String[] queryFields,String[] targetFields,WorkflownoteVO vo,boolean isBillMake){
 		Map<String, String> fieldvalueMap = new HashMap<String, String>();
@@ -1950,7 +1981,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		String errMsg  = "";
 		try{
 			String actionType = ErUtil.getUnApproveActionCode(PK_ORG);
-			Object msgReturn = PfUtilPrivate.runAction(null, actionType, head.getDjlxbm(), bxvo, null,
+			Object msgReturn = PfUtilPrivate.runAction(actionType, head.getDjlxbm(), bxvo, null,
 						null, null, null);
 //			Object msgReturn = PfUtilPrivate.runAction(null, IPFActionName.UNAPPROVE
 //					+ InvocationInfoProxy.getInstance().getUserId(), head.getDjlxbm(), bxvo, null,
