@@ -30,7 +30,7 @@ public class JtfMobileCtrlImpl extends ErmMobileCtrlImpl implements IJtfMobileCt
 		Map<String, Object> resultmap = new HashMap<String, Object>();
 		if(StringUtils.isEmpty(headpk)){
 			return resultmap;
-		}
+		} 
 		BaseDAO dao = new BaseDAO();
 		BXHeaderVO bxheadvo = (BXHeaderVO) dao.retrieveByPK(BXHeaderVO.class, headpk, queryFields);
 		if(bxheadvo == null)

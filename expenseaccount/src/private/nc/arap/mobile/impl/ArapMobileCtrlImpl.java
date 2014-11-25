@@ -17,9 +17,9 @@ import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
 public class ArapMobileCtrlImpl extends ErmMobileCtrlImpl implements IArapMobileCtrl{
-	
+	 
 	@Override
-	public Map<String, Object> getJkbxCard(String headpk) throws BusinessException {
+	public Map<String, Object> getJkbxCard(String headpk) throws BusinessException { 
 		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
 				JKBXHeaderVO.TOTAL,
 				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, 

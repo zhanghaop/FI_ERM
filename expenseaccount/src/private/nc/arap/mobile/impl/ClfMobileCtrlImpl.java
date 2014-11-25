@@ -19,7 +19,7 @@ import nc.vo.pub.lang.UFDate;
 public class ClfMobileCtrlImpl extends ErmMobileCtrlImpl implements IClfMobileCtrl{
 	
 	@Override
-	public Map<String, Object> getJkbxCard(String headpk) throws BusinessException {
+	public Map<String, Object> getJkbxCard(String headpk) throws BusinessException { 
 		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
 				JKBXHeaderVO.TOTAL,
 				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, 

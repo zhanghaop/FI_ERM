@@ -66,7 +66,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	private static int panel=9990;
 	private BaseDAO basedao;
 	public static final List<String> djlxbmList = new ArrayList<String>();
-	static {
+	static { 
 		for(int i=1; i<7; i++){
 			djlxbmList.add("264" + Integer.valueOf(i).toString());
 		}

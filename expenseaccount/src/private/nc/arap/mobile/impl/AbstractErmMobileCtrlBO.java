@@ -196,7 +196,7 @@ public abstract class AbstractErmMobileCtrlBO {
 	 * @throws BusinessException
 	 */
 	protected String commitCancle(String pk_jkbx) throws BusinessException{
-		// 根据pk查询单据
+		// 根据pk查询单据 
 		List<JKBXVO> vos = null;
 		try {
 			vos = NCLocator.getInstance().

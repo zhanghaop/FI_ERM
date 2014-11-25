@@ -37,7 +37,7 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	public String deleteJkbx(String headpk,String userid) throws BusinessException {
 		return getErmMobileCtrlBo().deleteJkbx(headpk,userid);
 	}
-	
+	 
 	@Override
 	public String commitJkbx(String userid,String headpk) throws BusinessException {
 		return getErmMobileCtrlBo().commitJkbx(userid,headpk);
