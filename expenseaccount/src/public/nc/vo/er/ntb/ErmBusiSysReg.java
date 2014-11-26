@@ -120,6 +120,7 @@ public class ErmBusiSysReg implements IBusiSysReg ,IDateType{
 				// 费用结转单、摊销信息主组织
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_EXP_ORG);// 费用承担单位
 				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_PCORG);// 利润中心
+				ctrlBillOrgs.add(BXConstans.ERM_NTB_PK_ORG);// 财务组织
 			}
 		}
 		return ctrlBillOrgs;
