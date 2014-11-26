@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import nc.bs.dao.BaseDAO;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
@@ -19,10 +21,12 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
+import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.erm.extendconfig.ErmExtendconfigInterfaceCenter;
 import nc.itf.erm.mactrlschema.IErmMappCtrlBillQuery;
 import nc.itf.erm.matterapp.IErmMatterAppBillQueryPrivate;
 import nc.itf.erm.prv.IErmBsCommonService;
+import nc.itf.fi.pub.Currency;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.md.model.MetaDataException;
@@ -30,23 +34,35 @@ import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.pubitf.rbac.IUserPubService;
+import nc.ui.querytemplate.querytree.IQueryScheme;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.util.SqlUtils_Pub;
 import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.erm.matterapp.MaBillCombineUtil;
+import nc.vo.erm.matterapp.MatterAppCloseStatusEnum;
 import nc.vo.erm.matterapp.MatterAppVO;
+import nc.vo.erm.matterapp.MatterViewVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.erm.matterappctrl.MtappbillpfVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.fi.pub.SqlUtils;
+import nc.vo.fipub.utils.SqlBuilder;
 import nc.vo.fipub.utils.VOUtil;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pubapp.query2.sql.process.QuerySchemeProcessor;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.rbac.constant.IRoleConst;
 import nc.vo.uap.rbac.role.RoleVO;
+import nc.vo.util.AuditInfoUtil;
+import nc.impl.pubapp.pattern.data.view.ViewQuery;
+import nc.impl.pubapp.pattern.database.DataAccessUtils;
+
 
 public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery, IErmMatterAppBillQueryPrivate {
 
@@ -502,5 +518,152 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery, IErmMa
 		}
 		return result == null ? null : result.toArray(new AggMatterAppVO[result.size()]);
 	}
+	
+	public AggMatterAppVO getAddInitAggMatterVo(DjLXVO djlx, String funnode, AggMatterAppVO vo)
+			throws BusinessException {
+		if(djlx == null){
+			throw new BusinessException("交易类型不能为空");
+		}
+		
+		AggMatterAppVO defaultVo = vo;
+		
+		if(defaultVo == null){
+			defaultVo = new AggMatterAppVO();
+		}
+		
+		UFDate busiDate = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());
+		String loginUser = AuditInfoUtil.getCurrentUser();
+		
+		//表头默认值
+		MatterAppVO parentVo = defaultVo.getParentVO();
+		parentVo.setPk_billtype(ErmMatterAppConst.MatterApp_BILLTYPE);
+		parentVo.setPk_tradetype(djlx.getDjlxbm());
+		parentVo.setBilldate(busiDate);
+		parentVo.setPk_group(InvocationInfoProxy.getInstance().getGroupId());
+		
+		//表头金额默认值
+		String[] headAmounts = AggMatterAppVO.getHeadAmounts();
+		for (String field : headAmounts) {
+			parentVo.setAttributeValue(field, UFDouble.ZERO_DBL);
+		}
+		
+		//表尾
+		parentVo.setApprover(null);
+		parentVo.setApprovetime(null);
+		parentVo.setCloseman(null);
+		parentVo.setClosedate(null);
+		parentVo.setPrinter(null);
+		parentVo.setPrintdate(null);
+		parentVo.setCreator(loginUser);
+		parentVo.setCreationtime(null);
+		
+		//状态值
+		parentVo.setBillstatus(BXStatusConst.DJZT_Saved);
+		parentVo.setApprstatus(IBillStatus.FREE);
+		parentVo.setEffectstatus(ErmMatterAppConst.EFFECTSTATUS_NO);
+		parentVo.setClose_status(ErmMatterAppConst.CLOSESTATUS_N);
+		
+		//设置人员信息
+		setPsnInfoByUserId(parentVo, loginUser, parentVo.getPk_group());
+		//设置币种
+		setCurrency(parentVo,djlx);
+		//设置汇率
+		setCurrencyRate(parentVo);
+		
+		return defaultVo;
+	}
+
+	private void setPsnInfoByUserId(MatterAppVO parentVo, String userId , String pk_group) throws BusinessException {
+		String[] psnInfos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPsnidAndDeptid(userId, pk_group);
+		if(psnInfos != null && psnInfos.length > 0){
+			parentVo.setBillmaker(psnInfos[0]);
+			parentVo.setApply_dept(psnInfos[1]);
+			parentVo.setAssume_dept(psnInfos[1]);
+			parentVo.setPk_org(psnInfos[2]);
+		}
+	}
+
+	private void setCurrency(MatterAppVO parentVo, DjLXVO djlx) throws BusinessException {
+		String pk_currency = null;
+		if (djlx == null || djlx.getDefcurrency() == null) {
+			// 组织本币币种
+			
+			if(parentVo.getPk_org() != null){
+				pk_currency = Currency.getOrgLocalCurrPK(parentVo.getPk_org());
+			}
+			// 默认组织本币作为原币
+		} else {
+			pk_currency = djlx.getDefcurrency();
+		}
+		
+		parentVo.setPk_currtype(pk_currency);
+	}
+
+	private void setCurrencyRate(MatterAppVO parentVo) {
+		String pk_org = parentVo.getPk_org();
+		String pk_currtype = parentVo.getPk_currtype();
+		UFDate date = parentVo.getBilldate();
+
+		if (pk_org == null || pk_currtype == null || date == null) {
+			return;
+		}
+		try {
+			// 汇率(本币，集团本币，全局本币汇率)
+			UFDouble orgRate = Currency.getRate(pk_org, pk_currtype, date);
+			UFDouble groupRate = Currency.getGroupRate(pk_org, parentVo.getPk_group(), pk_currtype, date);
+			UFDouble globalRate = Currency.getGlobalRate(pk_org, pk_currtype, date);
+			parentVo.setOrg_currinfo(orgRate);
+			parentVo.setGroup_currinfo(groupRate);
+			parentVo.setGlobal_currinfo(globalRate);
+		} catch (Exception e) {
+			ExceptionHandler.consume(e);
+		}
+	}
+
+	
+	@Override
+	public AggMatterAppVO[] queryMaFor35ByQueryScheme(IQueryScheme queryScheme) throws BusinessException {
+
+		String sql = createSql(queryScheme);
+		DataAccessUtils utils = new DataAccessUtils();
+		String[] ids = utils.query(sql).toOneDimensionStringArray();
+		MatterViewVO[] views = new ViewQuery<MatterViewVO>(MatterViewVO.class).query(ids);
+		if (ArrayUtils.isEmpty(views)) {
+			return null;
+		}
+
+		AggMatterAppVO[] queryVos = new MaBillCombineUtil<AggMatterAppVO>(AggMatterAppVO.class, MatterAppVO.class,
+				MtAppDetailVO.class).combineViewToAgg(views, MatterAppVO.PK_MTAPP_BILL);
+
+		return queryVos;
+
+	}
+	
+	private String createSql(IQueryScheme queryScheme) throws BusinessException {
+
+		QuerySchemeProcessor qrySchemeProcessor = new QuerySchemeProcessor(queryScheme);
+		qrySchemeProcessor.appendRefTrantypeWhere(ErmMatterAppConst.MatterApp_BILLTYPE, "35", MatterAppVO.PK_TRADETYPE);
+		SqlBuilder h_sql = new SqlBuilder();
+		String mainTableAlias = qrySchemeProcessor.getMainTableAlias();
+		h_sql.append("select distinct(" + mainTableAlias + ".pk_mtapp_bill)");
+		h_sql.append(qrySchemeProcessor.getFinalFromWhere());
+		h_sql.append(" and ");
+		h_sql.append(mainTableAlias + ".pk_group", BXBsUtil.getPK_group());
+		h_sql.append(" and ");
+		h_sql.append(mainTableAlias + ".effectstatus", BXStatusConst.SXBZ_VALID);
+		h_sql.append(" and ");
+		h_sql.append(mainTableAlias + ".close_status", MatterAppCloseStatusEnum.UNCLOSED.toIntValue());
+		h_sql.append(" and ");
+		h_sql.append(mainTableAlias + ".pk_tradetype");
+		h_sql.append(" in (select djlxbm from er_djlx where matype=2 )");
+		
+		SqlBuilder b_sql = new SqlBuilder();
+		b_sql.append("select er_mtapp_detail.pk_mtapp_detail from er_mtapp_detail where er_mtapp_detail.close_status=2 ");
+		b_sql.append(" and er_mtapp_detail.pk_mtapp_bill in (");
+	    b_sql.append(h_sql);
+	    b_sql.append(") order by er_mtapp_detail.billdate");
+		return b_sql.toString();
+	}
+
 }
 

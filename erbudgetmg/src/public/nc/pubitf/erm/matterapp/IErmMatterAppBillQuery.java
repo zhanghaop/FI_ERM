@@ -1,5 +1,7 @@
 package nc.pubitf.erm.matterapp;
 
+import nc.ui.querytemplate.querytree.IQueryScheme;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.matterapp.MtAppDetailVO;
@@ -78,4 +80,33 @@ public interface IErmMatterAppBillQuery {
 	 * @throws BusinessException
 	 */
 	public MtAppDetailVO[] queryMtAppDetailVOVoByPks(String[] pks) throws BusinessException;
+	
+	/**
+	 * 获取新增时带默认值的初始申请VO <br>
+	 * <li>单据日期
+	 * <li>人员信息 
+	 * <li>创建人
+	 * <li>币种、汇率 
+	 * <li>金额默认值
+	 * <li>单据初始状态
+	 * <li>财务组织、集团
+	 * 
+	 * @param djlx
+	 *            交易类型
+	 * @param funnode
+	 *            节点功能号
+	 * @param vo
+	 *            默认VO，可以为null
+	 * @return
+	 * @throws BusinessException
+	 */
+	public AggMatterAppVO getAddInitAggMatterVo(DjLXVO djlx, String funnode, AggMatterAppVO vo) throws BusinessException;
+	
+	/**
+	 * 营销费用拉单根据流程平台
+	 * @param queryScheme
+	 * @return
+	 * @throws BusinessException
+	 */
+	public AggMatterAppVO[] queryMaFor35ByQueryScheme(IQueryScheme queryScheme)throws BusinessException;
 }
