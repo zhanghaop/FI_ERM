@@ -393,8 +393,22 @@ public abstract class AbstractErmMobileCtrlBO {
 			//如果安装了共享服务，则从影像服务器下载图片
 			try {
 				IImagUtil imageutil = NCLocator.getInstance().lookup(IImagUtil.class);
-				imageutil.DownloadImageNumber(userid, bxpk);
 				attatchmapList = imageutil.DownloadImag(userid, bxpk);
+				//把影像服务器上的图像转换为手机可识别的
+				if(attatchmapList != null && attatchmapList.size()>0){
+					for(int i=0; i<attatchmapList.size(); i++){
+						Map<String, String> map = attatchmapList.get(i);
+						String url = map.get("URL");
+						map.put("content", map.get("FILE_VALUE")); // 文件内容
+						map.put("id", url.substring(url.indexOf("file_id=")+8)); // 文件标识
+						map.put("name", map.get("FILE_NAME")); // 附件文件名称
+						map.put("type", map.get("FILE_TYPE")); // 文件类型
+						map.put("path", map.get("URL")); // 文件路径
+						map.put("size", map.get("FILE_SIZE")); // 文件大小
+						map.remove("FILE_VALUE");
+						map.remove("URL");
+					}
+				}
 				return attatchmapList;
 			} catch (Exception e) {
 				return attatchmapList;
