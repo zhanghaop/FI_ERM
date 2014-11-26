@@ -710,7 +710,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbmarray, false);
 		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbmarray, false);
 		  if (billPks != null && billPks.length > 0) {
-			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
+			  sqlWhere += " and spzt in (2,3) and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
 		  } else {
 			  sqlWhere += " and 1=0 ";
 		  }
@@ -1452,7 +1452,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 //		BatchApproveWorkitemAcceptDlg dlg = new BatchApproveWorkitemAcceptDlg(null, noteVO);
 //		dlg.setBachApproveMode(batchApproveMode);
 		// 默认为批准
-		noteVO.setChecknote(UFBoolean.valueOf(true).toString());
+		noteVO.setChecknote("批准");
 		noteVO.setApproveresult("Y");
 		for (Map.Entry<String, List<AggregatedValueObject>> entry : typeMap.entrySet()) {
 			List<AggregatedValueObject> aggVosTmepList = entry.getValue();
@@ -1466,7 +1466,8 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 				currParam.put(PfUtilBaseTools.PARAM_WORKNOTE, currNote);
 				currParam.put(PfUtilBaseTools.PARAM_BATCH, PfUtilBaseTools.PARAM_BATCH);
 
-				String actionName = "APPROVE" + InvocationInfoProxy.getInstance().getUserId();
+				String actionType = ErUtil.getApproveActionCode(PK_ORG);
+				String actionName = actionType + InvocationInfoProxy.getInstance().getUserId();
 				IplatFormEntry platFormService = NCLocator.getInstance().lookup(IplatFormEntry.class);
 
 				retObject = (PfProcessBatchRetObject) platFormService.processBatch(actionName, billType, currNote,
