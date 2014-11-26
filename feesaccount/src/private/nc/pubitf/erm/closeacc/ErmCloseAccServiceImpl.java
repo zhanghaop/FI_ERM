@@ -17,6 +17,7 @@ import nc.bs.erm.event.ErmEventType;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.ml.NCLangResOnserver;
 import nc.bs.uap.lock.PKLock;
+import nc.itf.org.IFinanceOrgQryService;
 import nc.pubitf.org.ICloseAccPubServicer;
 import nc.ui.dbcache.DBCacheFacade;
 import nc.vo.arap.bx.util.BXConstans;
@@ -27,7 +28,9 @@ import nc.vo.erm.annotation.CloseAccBiz;
 import nc.vo.fipub.annotation.Business;
 import nc.vo.fipub.annotation.BusinessType;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.ml.MultiLangContext;
 import nc.vo.org.CloseAccBookVO;
+import nc.vo.org.FinanceOrgVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
@@ -156,9 +159,9 @@ public class ErmCloseAccServiceImpl implements IErmCloseAccService {
 			} catch (BusinessException e) {
 				ExceptionHandler.consume(e);
 				errLog =new ValueObjWithErrLog();
-				Vector<Vector<String>> orgNameByDBCache = getOrgNameByDBCache(dealCloseAccBookVO.get(i));
+//				Vector<Vector<String>> orgNameByDBCache = getOrgNameByDBCache(dealCloseAccBookVO.get(i));
 
-				errLog.addErrLogMessage(dealCloseAccBookVO.get(i), org+": "+orgNameByDBCache.get(0).get(37)+"   "+ e.getMessage());
+				errLog.addErrLogMessage(dealCloseAccBookVO.get(i), org+": "+getOrgNameByID(dealCloseAccBookVO.get(i).getPk_org())+"   "+ e.getMessage());
 			}
 			resultErrLog[i] = errLog;
 		}
@@ -202,8 +205,8 @@ public class ErmCloseAccServiceImpl implements IErmCloseAccService {
 			} catch (BusinessException e) {
 				ExceptionHandler.consume(e);
 				errLog =new ValueObjWithErrLog();
-				Vector<Vector<String>> orgNameByDBCache = getOrgNameByDBCache(dealUnCloseAccBookVO.get(i));
-				errLog.addErrLogMessage(dealUnCloseAccBookVO.get(i), org+": "+orgNameByDBCache.get(0).get(37)+"   " +e.getMessage());
+//				Vector<Vector<String>> orgNameByDBCache = getOrgNameByDBCache(dealUnCloseAccBookVO.get(i));
+				errLog.addErrLogMessage(dealUnCloseAccBookVO.get(i), org+": "+getOrgNameByID(dealUnCloseAccBookVO.get(i).getPk_org())+"   " +e.getMessage());
 			}
 			resultErrLog[i] = errLog;
 		}
@@ -233,10 +236,10 @@ public class ErmCloseAccServiceImpl implements IErmCloseAccService {
 	
 	private static final String initVal = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201109_0","0201109-0004")/*@res "无"*/;
 	
-	private ValueObjWithErrLog validCloseAccBookVO(CloseAccBookVO closeAccBookVO){
+	private ValueObjWithErrLog validCloseAccBookVO(CloseAccBookVO closeAccBookVO) throws BusinessException{
 		String validateMessage = null;
         List<String> maxMinlist = maxMinMap.get(closeAccBookVO.getPk_org());
-		Vector<Vector<String>> vers = getOrgNameByDBCache(closeAccBookVO);
+//		Vector<Vector<String>> vers = getOrgNameByDBCache(closeAccBookVO);
         String minPeriod = initVal;
         if (StringUtils.isNotEmpty(maxMinlist.get(1)))
             minPeriod = maxMinlist.get(1);
@@ -250,17 +253,17 @@ public class ErmCloseAccServiceImpl implements IErmCloseAccService {
         }
 		if(validateMessage !=null){
 			ValueObjWithErrLog errLog=new ValueObjWithErrLog();
-			errLog.addErrLogMessage(closeAccBookVO, org+": "+vers.get(0).get(37)+"   " +validateMessage);
+			errLog.addErrLogMessage(closeAccBookVO, org+": "+getOrgNameByID(closeAccBookVO.getPk_org())+"   " +validateMessage);
 			return errLog;
 		}else{
 			return null;
 		}
 	}
 	
-    private ValueObjWithErrLog validUnCloseAccBookVO(CloseAccBookVO closeAccBookVO) {
+    private ValueObjWithErrLog validUnCloseAccBookVO(CloseAccBookVO closeAccBookVO) throws BusinessException {
     	AccperiodmonthVO monthVO = null;
     	List<String> maxMinlist = maxMinMap.get(closeAccBookVO.getPk_org());
-		Vector<Vector<String>> vers = getOrgNameByDBCache(closeAccBookVO);
+//		Vector<Vector<String>> vers = getOrgNameByDBCache(closeAccBookVO);
         String maxPeriod = initVal;
         if (StringUtils.isNotEmpty(maxMinlist.get(0)))
             maxPeriod = maxMinlist.get(0);
@@ -279,14 +282,36 @@ public class ErmCloseAccServiceImpl implements IErmCloseAccService {
         }
     	if(validateMessage !=null){
 			ValueObjWithErrLog errLog=new ValueObjWithErrLog();
-			errLog.addErrLogMessage(closeAccBookVO, org+": "+vers.get(0).get(37)+"   " +validateMessage);
+//			errLog.addErrLogMessage(closeAccBookVO, org+": "+vers.get(0).get(37)+"   " +validateMessage);
+			errLog.addErrLogMessage(closeAccBookVO, org+": "+getOrgNameByID(closeAccBookVO.getPk_org())+"   " +validateMessage);
 			return errLog;
 		}else{
 			return null;
 		}
     }
-
-	@SuppressWarnings("unchecked")
+    
+    /**
+     * 根据财务组织pk取得财务组织的名称
+     * 如果前台有缓存以后更改为从缓存中取用，但绝不是vers.get(0).get(37)的这种方式。
+     * @param pk_org
+     * @return
+     * @throws BusinessException
+     */
+    private String getOrgNameByID(String pk_org) throws BusinessException{
+    	FinanceOrgVO orgvo = NCLocator.getInstance().lookup(IFinanceOrgQryService.class).queryFinanceOrgByID(pk_org);
+    	int langIndex = MultiLangContext.getInstance().getCurrentLangSeq().intValue();
+    	switch(langIndex){
+	    	case 1:return orgvo.getName();
+	    	case 2:return orgvo.getName2();
+	    	case 3:return orgvo.getName3();
+	    	case 4:return orgvo.getName4();
+	    	case 5:return orgvo.getName5();
+	    	case 6:return orgvo.getName6();
+	    	default :return orgvo.getName();
+    	}
+    }
+    
+	@SuppressWarnings({ "unchecked", "unused" })
 	/**
 	 * 从缓存中取组织的信息
 	 */
