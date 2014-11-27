@@ -90,7 +90,7 @@ public class ErmBillRecallAction extends NCAction {
 		MessageVO result = new MessageVO(vo, ActionUtils.RECALL);
 		try {
 			VOStatusChecker.checkRecallStatus(vo.getParentVO());
-			validateRecall(vo, vo.getParentVO().getPk_jkbx());
+			validateRecall(vo.getParentVO().getPk_group(), vo.getParentVO().getPk_jkbx(),result);
 		} catch (Exception e) {
 			result.setSuccess(false);
 			result.setErrorMessage(e.getMessage());
@@ -98,24 +98,30 @@ public class ErmBillRecallAction extends NCAction {
 		return result;
 	}
 	
-	private MessageVO validateRecall(JKBXVO vo , String djpk) throws Exception{
+	private void validateRecall(String pk_group , String djpk, MessageVO result) throws Exception{
+		StringBuffer errMsg = new StringBuffer();
+		if(result.getErrorMessage() != null){
+			errMsg.append(result.getErrorMessage());
+		}
 		boolean isWfOnImage = false;
-		boolean isInstallImag = BXUtil.isProductInstalled(vo.getParentVO().getPk_group(),
+		boolean isInstallImag = BXUtil.isProductInstalled(pk_group,
 				BXConstans.IMAG_MODULEID);
-		MessageVO result = new MessageVO(vo, ActionUtils.RECALL);
 		try {
 			if(isInstallImag){
 				isWfOnImage = ((IImagUtil) NCLocator.getInstance().lookup(IImagUtil.class.getName())).isWFOnImageActivity(djpk);
 			}
 		} catch (Exception e) {
-			throw new Exception(e);
+			errMsg.append(e.getMessage());
 		}
 		
 		if(isWfOnImage){
-			result.setSuccess(false);
-			result.setErrorMessage("当前有影像扫描活动正在进行，无法收回单据");
+			errMsg.append( "当前有影像扫描活动正在进行，无法收回单据");
 		}
-		return result;
+		
+		if(errMsg.length() > 0){
+			result.setSuccess(false);
+			result.setErrorMessage(errMsg.toString());
+		}
 	
 	}
 	
