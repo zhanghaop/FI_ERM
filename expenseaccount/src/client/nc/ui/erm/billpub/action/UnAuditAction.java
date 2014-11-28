@@ -9,9 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import nc.bs.erm.util.ErUtil;
+import nc.bs.framework.common.NCLocator;
 import nc.bs.ml.NCLangResOnserver;
 import nc.bs.uif2.IActionCode;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.imag.itf.IImagUtil;
 import nc.ui.erm.billpub.btnstatus.BxApproveBtnStatusListener;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.beans.progress.IProgressMonitor;
@@ -22,7 +24,9 @@ import nc.ui.uif2.components.progress.TPAProgressUtil;
 import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.ActionUtils;
+import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
+import nc.vo.arap.bx.util.BXUtil;
 import nc.vo.cmp.exception.CmpAuthorizationException;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -187,8 +191,9 @@ public class UnAuditAction extends NCAsynAction {
 	 * @return
 	 * 
 	 *         校验反审核信息
+	 * @throws Exception 
 	 */
-	private MessageVO checkUnShenhe(JKBXVO bxvo) {
+	private MessageVO checkUnShenhe(JKBXVO bxvo) throws Exception {
 
 		// 单据表头VO
 		JKBXHeaderVO head = bxvo.getParentVO();
@@ -211,8 +216,38 @@ public class UnAuditAction extends NCAsynAction {
 			msgVO.setErrorMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UPP2011-000955"));
 			return msgVO;
 		}
+		
+		validateUnAudit(bxvo.getParentVO().getPk_group(), bxvo.getParentVO().getPk_jkbx(), msgVO);
 
 		return msgVO;
+	}
+	
+	
+	private void validateUnAudit(String pk_group , String djpk, MessageVO result) throws Exception{
+		StringBuffer errMsg = new StringBuffer();
+		if(result.getErrorMessage() != null){
+			errMsg.append(result.getErrorMessage());
+		}
+		boolean isWfOnImage = false;
+		boolean isInstallImag = BXUtil.isProductInstalled(pk_group,
+				BXConstans.IMAG_MODULEID);
+		try {
+			if(isInstallImag){
+				isWfOnImage = ((IImagUtil) NCLocator.getInstance().lookup(IImagUtil.class.getName())).isWFOnImageActivity(djpk);
+			}
+		} catch (Exception e) {
+			errMsg.append(e.getMessage());
+		}
+		
+		if(isWfOnImage){
+			errMsg.append( "当前有影像扫描活动正在进行，无法收回单据");
+		}
+		
+		if(errMsg.length() > 0){
+			result.setSuccess(false);
+			result.setErrorMessage(errMsg.toString());
+		}
+	
 	}
 	
 	public BillManageModel getModel() {
