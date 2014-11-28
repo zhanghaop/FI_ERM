@@ -62,7 +62,7 @@ public abstract class AbstractErmMobileCtrlBO {
 				if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
 					if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
 							|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)
-							|| vo.getPk_billtypecode().equals("2647")) {
+							|| vo.getPk_billtypecode().equals("2647") || vo.getPk_billtypecode().equals("264a")) {
 						continue;
 					}
 					// 通过当前集团进行过滤

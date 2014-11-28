@@ -2084,7 +2084,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbmarray, false);
 		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbmarray, false);
 		  if (billPks != null && billPks.length > 0) {
-			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
+			  sqlWhere += " and spzt in (2,3) and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
 		  } else { 
 			  sqlWhere += " and 1=0 ";
 		  }
