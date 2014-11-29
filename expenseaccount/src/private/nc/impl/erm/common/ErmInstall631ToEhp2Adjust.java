@@ -175,10 +175,45 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
         
         // 635SSC适配升级
         updateSSC();
+        
+        // 635FCT适配升级
+        updateFct();
 		
 		Logger.debug("*************************************");
 		Logger.debug("******** 报销管理模块升级6.31升级到6.3EHP2开始更新信息结束" + getClass().getName() + "**********");
 		Logger.debug("*************************************");
+	}
+	
+	/**
+	 * 已安装收付款合同的情况下才执行。
+	 * @throws Exception 
+	 */
+	private void updateFct() throws Exception {
+		try{
+			BaseDAO dao = new BaseDAO();
+			dao.executeUpdate("update fct_ar set dr=dr");
+		}catch(Exception e){
+			return;
+		}
+		String[] sqls = new String[] {
+				"delete from md_property where id in ('32901b16-b984-43fb-9d9b-148ecabf5be9','78d1da6b-0af5-4ddb-b629-cf8df7e42b04')",
+				"delete from md_db_relation where id in ('130c3ecb-5647-43da-bc5c-2571b0ed1a62','b5d73606-f408-411c-8e0a-c6aeb04c472d')",
+				"insert into md_db_relation (asstype, createtime, creator, description, displayname, dr, endcardinality, endfieldid, endtableid, help, id, isforeignkey, modifier, modifytime, name, resid, startattrid, startcardinality, startfieldid, starttableid, ts, versiontype) values (3, null, null, null, 'jk_busitem_ct_ap', null, null, 'fct_ap@@PK@@', 'fct_ap', null, '130c3ecb-5647-43da-bc5c-2571b0ed1a62', 'N', null, null, 'jk_busitem_ct_ap', null, '32901b16-b984-43fb-9d9b-148ecabf5be9', null, 'er_busitem@@@fctno', 'er_busitem', '2014-11-15 10:00:11', 0)",
+				"insert into md_db_relation (asstype, createtime, creator, description, displayname, dr, endcardinality, endfieldid, endtableid, help, id, isforeignkey, modifier, modifytime, name, resid, startattrid, startcardinality, startfieldid, starttableid, ts, versiontype) values (3, null, null, null, 'er_busitem_fct_ap', null, null, 'fct_ap@@PK@@', 'fct_ap', null, 'b5d73606-f408-411c-8e0a-c6aeb04c472d', 'N', null, null, 'er_busitem_fct_ap', null, '78d1da6b-0af5-4ddb-b629-cf8df7e42b04', null, 'er_busitem@@@fctno', 'er_busitem', '2014-11-15 10:00:10', 0)",
+				"insert into md_property (accessorclassname, accesspower, accesspowergroup, attrlength, attrmaxvalue, attrminvalue, attrsequence, calculation, classid, createindustry, createtime, creator, customattr, datatype, datatypestyle, defaultvalue, description, displayname, dr, dynamicattr, dynamictable, fixedlength, help, hided, id, industry, isactive, isauthen, modifier, modifytime, name, notserialize, nullable, precise, readonly, refmodelname, resid, ts, versiontype, visibility) values (null, 'N', null, 20, null, null, 91, 'N', '6953ec6a-329c-4c09-b950-25b4af68e5c5', '0', null, null, 'N', 'af6a8e77-4fa3-4316-9d8d-12d24a9ff338', 305, null, null, '合同号', null, 'N', null, 'N', null, 'N', '32901b16-b984-43fb-9d9b-148ecabf5be9', '0', 'Y', null, null, null, 'fctno', 'N', 'Y', 0, 'N', '付款合同', '2UC000-000234', '2014-11-15 10:00:11', 0, 0)",
+				"insert into md_property (accessorclassname, accesspower, accesspowergroup, attrlength, attrmaxvalue, attrminvalue, attrsequence, calculation, classid, createindustry, createtime, creator, customattr, datatype, datatypestyle, defaultvalue, description, displayname, dr, dynamicattr, dynamictable, fixedlength, help, hided, id, industry, isactive, isauthen, modifier, modifytime, name, notserialize, nullable, precise, readonly, refmodelname, resid, ts, versiontype, visibility) values (null, 'N', null, 20, null, null, 95, 'N', 'ece96dd8-bdf8-4db3-a112-9d2f636d388f', '0', null, null, 'N', 'af6a8e77-4fa3-4316-9d8d-12d24a9ff338', 305, null, null, '合同号', null, 'N', null, 'N', null, 'N', '78d1da6b-0af5-4ddb-b629-cf8df7e42b04', '0', 'Y', null, null, null, 'fctno', 'N', 'Y', 0, 'N', '付款合同', '2UC000-000234', '2014-11-15 10:00:09', 0, 0)",
+				};
+				
+		for (String sql : sqls) {
+			executeSql(dao, sql);
+		}
+	}
+	private void executeSql(BaseDAO dao, String sql) throws Exception {
+		try{
+			dao.executeUpdate(sql);
+		}catch(Exception e){
+			throw new Exception("费用升级出错："+sql);
+		}
 	}
 	
 	// 635借款报销单加入单据类型字段
