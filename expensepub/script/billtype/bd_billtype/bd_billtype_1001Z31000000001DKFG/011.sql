@@ -1,6 +1,3 @@
-insert into bd_billtype2(pk_billtype,classtype,classname,code,dr,pk_billtypeid,ts) values('261X',1,'nc.bs.er.wfengine.ext.WfFyFilterAssumeDept','e',null,'1001Z31000000001DKFG','2013-09-11 13:58:26')
-go
-
 insert into bd_billtype2(pk_billtype,classtype,classname,code,dr,pk_billtypeid,ts) values('261X',1,'nc.bs.er.wfengine.ext.WfFyFilterMattAssumeDept','w',null,'1001Z31000000001DKFG','2013-09-11 13:58:26')
 go
 
