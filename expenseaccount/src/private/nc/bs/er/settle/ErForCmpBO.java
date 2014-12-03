@@ -393,41 +393,41 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 	 * 
 	 *             调用结算接口
 	 */
-	public void invokeCmp(JKBXVO param, UFDate date, BusiStatus busiStatus) throws BusinessException {
-		JKBXHeaderVO head = param.getParentVO();
+	public void invokeCmp(JKBXVO jkbxVo, UFDate date, BusiStatus busiStatus) throws BusinessException {
+		JKBXHeaderVO head = jkbxVo.getParentVO();
 		if(head.isAdjustBxd()){
 			// 报销类型为费用调整的单据，不进行支付结算
 			return ;
 		}
 		if (SettleUtil.hasSettleInfo(head, head.getDjdl())) {
 			ISettlement settle =  NCLocator.getInstance().lookup(ISettlement.class);
-			DjLXVO djlxvo = NCLocator.getInstance().lookup(IArapBillTypePublic.class).getDjlxvoByDjlxbm(param.getParentVO().getDjlxbm(), param.getParentVO()
+			DjLXVO djlxvo = NCLocator.getInstance().lookup(IArapBillTypePublic.class).getDjlxvoByDjlxbm(jkbxVo.getParentVO().getDjlxbm(), jkbxVo.getParentVO()
 					.getPk_group());
 			SettlementBatchOperateVO batchoperateVOs = new SettlementBatchOperateVO();
-			batchoperateVOs.setBusibill(param);
-			batchoperateVOs.setMsg(SettleUtil.getCmpMsg(param, djlxvo, date, busiStatus));
-			batchoperateVOs.setSettlementAgg(param.getSettlementInfo());
+			batchoperateVOs.setBusibill(jkbxVo);
+			batchoperateVOs.setMsg(SettleUtil.getCmpMsg(jkbxVo, djlxvo, date, busiStatus));
+			batchoperateVOs.setSettlementAgg(jkbxVo.getSettlementInfo());
 			if (busiStatus == BusiStatus.Save) {
 				if (head.getDjzt() == BXStatusConst.DJZT_Saved) {
 					//全额冲借款（zfje=0 && hkje=0）因为不生成结算信息，所以也不存在删除结算信息动作。
 					// 支付单位没有变化的，也不删除结算信息。
-					if (param.getBxoldvo() != null
-							&& !param.getParentVO().getPk_payorg().equals(param.getBxoldvo().getParentVO().getPk_payorg())
-							&& !((param.getBxoldvo().getParentVO().getHkybje().compareTo(UFDouble.ZERO_DBL) == 0) && (param
+					if (jkbxVo.getBxoldvo() != null
+							&& !jkbxVo.getParentVO().getPk_payorg().equals(jkbxVo.getBxoldvo().getParentVO().getPk_payorg())
+							&& !((jkbxVo.getBxoldvo().getParentVO().getHkybje().compareTo(UFDouble.ZERO_DBL) == 0) && (jkbxVo
 									.getBxoldvo().getParentVO().getZfybje().compareTo(UFDouble.ZERO_DBL) == 0))
-							&& param.getBxoldvo().getParentVO().getDjzt() == BXStatusConst.DJZT_Saved) {
-						settle.notifySettlementBatchDelete(SettleUtil.getCmpMsg(param.getBxoldvo(), djlxvo, date, busiStatus));
+							&& jkbxVo.getBxoldvo().getParentVO().getDjzt() == BXStatusConst.DJZT_Saved) {
+						settle.notifySettlementBatchDelete(SettleUtil.getCmpMsg(jkbxVo.getBxoldvo(), djlxvo, date, busiStatus));
 					}
 					settle.notifySettlementBatchSave(batchoperateVOs);
 				} else {
-					settle.notifySettlementBatchReserveAudit(SettleUtil.getCmpMsg(param, djlxvo, date, busiStatus));
+					settle.notifySettlementBatchReserveAudit(SettleUtil.getCmpMsg(jkbxVo, djlxvo, date, busiStatus));
 				}
 			} else if (busiStatus == BusiStatus.Tempeorary) {
 				settle.notifySettlementBatchTempSave(batchoperateVOs);
 			} else if (busiStatus == BusiStatus.Deleted) {
-				settle.notifySettlementBatchDelete(SettleUtil.getCmpMsg(param, djlxvo, date, busiStatus));
+				settle.notifySettlementBatchDelete(SettleUtil.getCmpMsg(jkbxVo, djlxvo, date, busiStatus));
 			} else {
-				settle.notifySettlementBatchAudit(SettleUtil.getCmpMsg(param, djlxvo, date, busiStatus));
+				settle.notifySettlementBatchAudit(SettleUtil.getCmpMsg(jkbxVo, djlxvo, date, busiStatus));
 			}
 		}
 	}

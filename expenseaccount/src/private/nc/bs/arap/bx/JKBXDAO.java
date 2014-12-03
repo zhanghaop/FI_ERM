@@ -311,14 +311,14 @@ public class JKBXDAO extends BXSuperDAO implements ICheckStatusCallback {
 			// 设置临时对真实主键的对照
 			bxvo.setCmpIdMap(idMap);
 
-			// 判断CMP产品是否启用
-			JKBXHeaderVO headerVO = bxvo.getParentVO();
-
-			boolean iscmpused = BXUtil.isProductInstalled(headerVO.getPk_org(), BXConstans.TM_CMP_FUNCODE);
-			if (iscmpused) {
-				new ErForCmpBO().invokeCmp(bxvo, headerVO.getShrq().getDate(), SettleUtil
-						.getBillStatus(bxvo.getParentVO(), false));
-			}
+			// 判断CMP产品是否启用 14/12/03 注销掉，bxzbbo中已调用该接口，不知道为什么还要调用
+//			JKBXHeaderVO headerVO = bxvo.getParentVO();
+//
+//			boolean iscmpused = BXUtil.isProductInstalled(headerVO.getPk_org(), BXConstans.TM_CMP_FUNCODE);
+//			if (iscmpused) {
+//				new ErForCmpBO().invokeCmp(bxvo, headerVO.getShrq().getDate(), SettleUtil
+//						.getBillStatus(bxvo.getParentVO(), false));
+//			}
 		}
 		baseDao.updateVOArray(voList.toArray(new JKBXHeaderVO[voList.size()]));
 

@@ -454,7 +454,7 @@ public class BXZbBO {
 		
 		try {
 			// 调用现金流平台结算
-			ErForCmpBO erBO = new ErForCmpBO();
+			ErForCmpBO erForCmpBO = new ErForCmpBO();
 
 			for (JKBXVO vo : vos) {
 
@@ -473,20 +473,25 @@ public class BXZbBO {
 
 				// 是否不存在收付款
 				boolean notExistsPayOrRecv = (vo.getParentVO().getZfybje() == null || vo.getParentVO().getZfybje()
-						.equals(new UFDouble(0)))
+						.equals(UFDouble.ZERO_DBL))
 						&& (vo.getParentVO().getHkybje() == null || vo.getParentVO().getHkybje()
-								.equals(new UFDouble(0)));
+								.equals(UFDouble.ZERO_DBL));
 
 				boolean isToSettle = false;
 				if (oldBillStatus == BusiStatus.Save && billStatus == BusiStatus.Deleted) {
-					isToSettle = true;
+					//修改场景：单据修改全额冲借款，支付单位修改会造成原结算信息不能被删除，这里按oldVO进行删除
+					//资金逻辑不清楚，pk_org修改后就不能删除结算信息，明明记录了报销单的pk，不按pk进行删
+					if (isInstallCmp && !isTmpSave){
+						erForCmpBO.invokeCmp(vo.getBxoldvo(), vo.getBxoldvo().getParentVO().getDjrq(), billStatus);
+					}
 				} else {
 					isToSettle = !notExistsPayOrRecv;
+					if (isInstallCmp && !isTmpSave && isToSettle) {
+						erForCmpBO.invokeCmp(vo, vo.getParentVO().getDjrq(), billStatus);
+					}
 				}
 
-				if (isInstallCmp && !isTmpSave && isToSettle) {
-					erBO.invokeCmp(vo, vo.getParentVO().getDjrq(), billStatus);
-				}
+				
 			}
 
 			afterActInf(vos, MESSAGE_UPDATE);
