@@ -363,27 +363,36 @@ public abstract class AbstractErmMobileCtrlBO {
 			}
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**
+	 * 删除服务器上的影像
+	 * @param bxpk
+	 * @param userid
+	 * @throws BusinessException
+	 */
 	protected void deleteAttachmentList(String bxpk,String userid) throws BusinessException{
-		List<String> attatchmapList = new ArrayList<String>();
 		
-		IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
-		NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
-		if(filenode != null){
-			Enumeration fileEnum = filenode.breadthFirstEnumeration();
-			while (fileEnum.hasMoreElements()) {
-				NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
-				Collection<NCFileVO> files = tempfile.getFilemap().values();
-				for (NCFileVO ncFileVO : files) {
-					attatchmapList.add(ncFileVO.getFullPath());
+		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
+			//如果安装了共享服务，从影像删除图片
+		}else{
+			List<String> attatchmapList = new ArrayList<String>();
+			
+			IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
+			NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
+			if(filenode != null){
+				Enumeration fileEnum = filenode.breadthFirstEnumeration();
+				while (fileEnum.hasMoreElements()) {
+					NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
+					Collection<NCFileVO> files = tempfile.getFilemap().values();
+					for (NCFileVO ncFileVO : files) {
+						attatchmapList.add(ncFileVO.getFullPath());
+					}
 				}
 			}
+			if(!attatchmapList.isEmpty()){
+				IFileSystemService service = NCLocator.getInstance().lookup(IFileSystemService.class);
+				service.deleteNCFileNodes(attatchmapList.toArray(new String[0]));
+			}
 		}
-		if(!attatchmapList.isEmpty()){
-			IFileSystemService service = NCLocator.getInstance().lookup(IFileSystemService.class);
-			service.deleteNCFileNodes(attatchmapList.toArray(new String[0]));
-		}
-		
 	}
 	
 	public List<Map<String, String>> getFileList(String bxpk,String userid) throws BusinessException{

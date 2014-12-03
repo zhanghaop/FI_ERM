@@ -75,14 +75,6 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		Map<String,Map<String,String>> billtypeMap = new LinkedHashMap<String,Map<String,String>>();
 		try {
 			initEvn(userid);
-//			List<DjLXVO> list = new ArrayList<DjLXVO>();
-//			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-//			DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
-//					"pk_group = '"+pk_group+"' and djdl in('bx')");
-//			for(DjLXVO vo:vos){
-//				if(vo.getBxtype()==null || vo.getBxtype() != ErmDjlxConst.BXTYPE_ADJUST)
-//					list.add(vo);
-//			} 
 			HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
 			List<BilltypeVO> list = new ArrayList<BilltypeVO>();
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
@@ -90,7 +82,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
 					if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
 							|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)
-							|| vo.getPk_billtypecode().equals("2647")) {
+							|| vo.getPk_billtypecode().equals("2647") || vo.getPk_billtypecode().equals("264a")) {
 						continue;
 					}
 					// 通过当前集团进行过滤
@@ -484,7 +476,6 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		// 更新单据
 		NCLocator.getInstance().lookup(IBXBillPublic.class).update(new JKBXVO[]{jkbxvo});
 		return headpk;
-//		return headpk+","+djbh+","+spzt; 
 	}
     
     /**
