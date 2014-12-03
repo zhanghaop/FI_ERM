@@ -3,7 +3,7 @@ create table er_jkzb (pk_checkele char(20) null
 /*核算要素*/,
 pk_pcorg varchar2(20) default '~' null 
 /*利润中心*/,
-pk_pcorg_v varchar2(20) null 
+pk_pcorg_v varchar2(20) default '~' null 
 /*利润中心历史版本*/,
 pk_fiorg varchar2(20) default '~' null 
 /*财务组织*/,
@@ -11,11 +11,11 @@ pk_group varchar2(20) default '~' null
 /*集团*/,
 pk_org varchar2(20) default '~' null 
 /*借款单位*/,
-pk_org_v char(20) null 
+pk_org_v varchar2(20) default '~' null 
 /*借款单位历史版本*/,
 reimrule varchar2(512) null 
 /*借款标准*/,
-mngaccid char(20) null 
+mngaccid varchar2(20) null 
 /*管理账户*/,
 paydate char(19) null 
 /*支付日期*/,
@@ -33,13 +33,13 @@ zfbbje number(28,8) null
 /*支付本币金额*/,
 payflag int(1) null 
 /*支付状态*/,
-fydeptid_v varchar2(20) null 
+fydeptid_v varchar2(20) default '~' null 
 /*费用承担部门历史版本*/,
-deptid_v varchar2(20) null 
+deptid_v varchar2(20) default '~' null 
 /*借款部门历史版本*/,
-fydwbm_v varchar2(20) null 
+fydwbm_v varchar2(20) default '~' null 
 /*费用承担单位历史版本*/,
-dwbm_v varchar2(20) null 
+dwbm_v varchar2(20) default '~' null 
 /*借款人单位历史版本*/,
 fydeptid varchar2(20) default '~' null 
 /*费用承担部门*/,
@@ -87,7 +87,7 @@ szxmid varchar2(20) default '~' null
 /*收支项目*/,
 cashitem varchar2(20) default '~' null 
 /*现金流量项目*/,
-pk_item char(20) default '~' null 
+pk_item varchar2(20) default '~' null 
 /*费用申请单*/,
 bzbm varchar2(20) default '~' null 
 /*币种*/,
@@ -239,13 +239,13 @@ checktype varchar2(20) default '~' null
 /*票据类型*/,
 projecttask varchar2(20) default '~' null 
 /*项目任务*/,
-pk_resacostcenter char(20) null 
+pk_resacostcenter varchar2(20) default '~' null 
 /*成本中心*/,
-pk_cashaccount char(20) null 
+pk_cashaccount varchar2(20) default '~' null 
 /*现金帐户*/,
-pk_payorg varchar2(20) null 
+pk_payorg varchar2(20) default '~' null 
 /*原支付组织*/,
-pk_payorg_v varchar2(20) null 
+pk_payorg_v varchar2(20) default '~' null 
 /*支付组织*/,
 pk_proline varchar2(20) default '~' null 
 /*产品线*/,
@@ -267,7 +267,7 @@ vouchertag int(1) null
 /*凭证标志*/,
 red_status int(1) default 0 null 
 /*红冲标志*/,
-redbillpk char(20) null 
+redbillpk varchar2(20) null 
 /*红冲单据主键*/,
 isneedimag char(1) null 
 /*需要影像扫描*/,
@@ -527,7 +527,7 @@ pk_item varchar2(20) default '~' null
 /*费用申请单*/,
 projecttask varchar2(20) default '~' null 
 /*项目任务*/,
-pk_resacostcenter varchar2(20) null 
+pk_resacostcenter varchar2(20) default '~' null 
 /*成本中心*/,
 srcbilltype varchar2(50) null 
 /*来源单据类型*/,
@@ -555,11 +555,11 @@ custaccount varchar2(20) default '~' null
 /*客商银行账户*/,
 freecust varchar2(20) default '~' null 
 /*散户*/,
-dwbm varchar2(20) null 
+dwbm varchar2(20) default '~' null 
 /*报销人单位*/,
-deptid varchar2(20) null 
+deptid varchar2(20) default '~' null 
 /*报销人部门*/,
-fctno varchar2(20) null 
+fctno varchar2(20) default '~' null 
 /*合同号*/,
 pk_crmdetail varchar2(20) default '~' null 
 /*pk_crmdetail*/,
@@ -570,7 +570,7 @@ dr number(10) default 0
 /
 
 /* tablename: 报销单 */
-create table er_bxzb (pk_org varchar2(20) null 
+create table er_bxzb (pk_org varchar2(20) default '~' null 
 /*报销单位*/,
 pk_org_v varchar2(20) default '~' null 
 /*报销单位历史版本*/,
@@ -810,13 +810,13 @@ checktype varchar2(20) default '~' null
 /*票据类型*/,
 projecttask varchar2(20) default '~' null 
 /*项目任务*/,
-pk_resacostcenter char(20) null 
+pk_resacostcenter varchar2(20) default '~' null 
 /*成本中心*/,
-pk_cashaccount char(20) null 
+pk_cashaccount varchar2(20) default '~' null 
 /*现金帐户*/,
-pk_payorg varchar2(20) null 
+pk_payorg varchar2(20) default '~' null 
 /*原支付组织*/,
-pk_payorg_v varchar2(20) null 
+pk_payorg_v varchar2(20) default '~' null 
 /*支付组织*/,
 flexible_flag char(1) null 
 /*项目预算柔性控制*/,

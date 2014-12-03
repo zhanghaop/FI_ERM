@@ -68,8 +68,9 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 				}
 			}
 //--end			
-			boolean bflag = procUnApproveFlow(vo);
 			int spStatus = bxvo.getParentVO().getSpzt();
+
+			boolean bflag = procUnApproveFlow(vo);
 			
 			if (bflag && spStatus != IBillStatus.NOPASS) {
 				if(vo.m_workFlow == null){

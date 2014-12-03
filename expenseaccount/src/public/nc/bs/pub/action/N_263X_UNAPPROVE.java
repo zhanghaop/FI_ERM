@@ -64,15 +64,15 @@ public class N_263X_UNAPPROVE extends AbstractCompiler2 {
 			//是否从NC客户端
 			boolean isNCClient=bxvo.isNCClient();
 			
-			//非期初、常用单据校验数据权限
-			if(isNCClient){
-				if(!isQc&&!isInit){
-					BXDataPermissionChkUtil.process(bxvo, BXConstans.ERMLOANRESOURCECODE, BXConstans.LOANUNAPPROVECODE,vo.m_operator);
+			// 非期初、常用单据校验数据权限
+			if (isNCClient) {
+				if (!isQc && !isInit) {
+					BXDataPermissionChkUtil.process(bxvo, BXConstans.ERMLOANRESOURCECODE, BXConstans.LOANUNAPPROVECODE, vo.m_operator);
 				}
 			}
-//--end				
-			boolean bflag = procUnApproveFlow(vo);
+			// --end	
 			int spStatus = bxvo.getParentVO().getSpzt();
+			boolean bflag = procUnApproveFlow(vo);
 			
 			if (bflag && spStatus != IBillStatus.NOPASS) {
 				if(vo.m_workFlow == null){

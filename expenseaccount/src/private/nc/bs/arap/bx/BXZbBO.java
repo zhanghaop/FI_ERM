@@ -2324,7 +2324,7 @@ public class BXZbBO {
 		VOStatusChecker.checkDeleteStatus(vo.getParentVO());
 
 		// 非常用单据单据校验是否关帐
-		if (!vo.getParentVO().isInit()) {
+		if (!vo.getParentVO().isInit() && vo.getParentVO().getDjzt() != BXStatusConst.DJZT_TempSaved) {
 			VOChecker.checkErmIsCloseAcc(vo);
 		}
 	}

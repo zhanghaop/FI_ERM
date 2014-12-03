@@ -744,8 +744,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_pcorg_v</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
+<a:ModificationDate>1417567244</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -791,9 +792,10 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_org_v</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
-<a:DataType>CHAR(20)</a:DataType>
+<a:ModificationDate>1417567235</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o13">
@@ -813,9 +815,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>mngaccid</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
-<a:DataType>CHAR(20)</a:DataType>
+<a:ModificationDate>1417567150</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o15">
@@ -918,8 +920,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>fydeptid_v</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
+<a:ModificationDate>1417567255</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -929,8 +932,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>deptid_v</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
+<a:ModificationDate>1417567261</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -940,8 +944,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>fydwbm_v</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
+<a:ModificationDate>1417567266</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -951,8 +956,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>dwbm_v</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1310431924</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
+<a:ModificationDate>1417567272</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -1231,10 +1237,10 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_item</a:Code>
 <a:CreationDate>1310431924</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1386740292</a:ModificationDate>
+<a:ModificationDate>1417567150</a:ModificationDate>
 <a:Modifier>chenshuaia</a:Modifier>
 <a:DefaultValue>~</a:DefaultValue>
-<a:DataType>CHAR(20)</a:DataType>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o51">
@@ -2097,9 +2103,10 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_resacostcenter</a:Code>
 <a:CreationDate>1323765641</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1323765641</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
-<a:DataType>CHAR(20)</a:DataType>
+<a:ModificationDate>1417567163</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o127">
@@ -2108,9 +2115,10 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_cashaccount</a:Code>
 <a:CreationDate>1323765641</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1323765641</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
-<a:DataType>CHAR(20)</a:DataType>
+<a:ModificationDate>1417567170</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o128">
@@ -2119,8 +2127,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_payorg</a:Code>
 <a:CreationDate>1353478088</a:CreationDate>
 <a:Creator>lvhj</a:Creator>
-<a:ModificationDate>1353479197</a:ModificationDate>
-<a:Modifier>lvhj</a:Modifier>
+<a:ModificationDate>1417567178</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -2130,8 +2139,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_payorg_v</a:Code>
 <a:CreationDate>1353479197</a:CreationDate>
 <a:Creator>lvhj</a:Creator>
-<a:ModificationDate>1353479197</a:ModificationDate>
-<a:Modifier>lvhj</a:Modifier>
+<a:ModificationDate>1417567184</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -2256,9 +2266,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>redbillpk</a:Code>
 <a:CreationDate>1400574199</a:CreationDate>
 <a:Creator>wangled</a:Creator>
-<a:ModificationDate>1400574231</a:ModificationDate>
-<a:Modifier>wangled</a:Modifier>
-<a:DataType>char(20)</a:DataType>
+<a:ModificationDate>1417567150</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o141">
@@ -3876,8 +3886,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_resacostcenter</a:Code>
 <a:CreationDate>1351145229</a:CreationDate>
 <a:Creator>lvhj</a:Creator>
-<a:ModificationDate>1380417094</a:ModificationDate>
+<a:ModificationDate>1417567360</a:ModificationDate>
 <a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -4040,8 +4051,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>dwbm</a:Code>
 <a:CreationDate>1392685025</a:CreationDate>
 <a:Creator>chenshuaia</a:Creator>
-<a:ModificationDate>1392685025</a:ModificationDate>
+<a:ModificationDate>1417567348</a:ModificationDate>
 <a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -4051,8 +4063,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>deptid</a:Code>
 <a:CreationDate>1392685025</a:CreationDate>
 <a:Creator>chenshuaia</a:Creator>
-<a:ModificationDate>1392685025</a:ModificationDate>
+<a:ModificationDate>1417567343</a:ModificationDate>
 <a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -4062,8 +4075,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>fctno</a:Code>
 <a:CreationDate>1404979752</a:CreationDate>
 <a:Creator>xucp3</a:Creator>
-<a:ModificationDate>1404979752</a:ModificationDate>
-<a:Modifier>xucp3</a:Modifier>
+<a:ModificationDate>1417567335</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -4137,8 +4151,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_org</a:Code>
 <a:CreationDate>1310632815</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1359959478</a:ModificationDate>
-<a:Modifier>lvhj</a:Modifier>
+<a:ModificationDate>1417567567</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -5521,9 +5536,10 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_resacostcenter</a:Code>
 <a:CreationDate>1323765703</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1323765703</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
-<a:DataType>char(20)</a:DataType>
+<a:ModificationDate>1417567521</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o425">
@@ -5532,9 +5548,10 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_cashaccount</a:Code>
 <a:CreationDate>1323765703</a:CreationDate>
 <a:Creator>chendya</a:Creator>
-<a:ModificationDate>1323765703</a:ModificationDate>
-<a:Modifier>chendya</a:Modifier>
-<a:DataType>char(20)</a:DataType>
+<a:ModificationDate>1417567526</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
+<a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
 <o:Column Id="o426">
@@ -5543,8 +5560,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_payorg</a:Code>
 <a:CreationDate>1353479213</a:CreationDate>
 <a:Creator>lvhj</a:Creator>
-<a:ModificationDate>1353479213</a:ModificationDate>
-<a:Modifier>lvhj</a:Modifier>
+<a:ModificationDate>1417567532</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
@@ -5554,8 +5572,9 @@ PhysOpts=</a:ModelOptionsText>
 <a:Code>pk_payorg_v</a:Code>
 <a:CreationDate>1353479213</a:CreationDate>
 <a:Creator>lvhj</a:Creator>
-<a:ModificationDate>1353479213</a:ModificationDate>
-<a:Modifier>lvhj</a:Modifier>
+<a:ModificationDate>1417567539</a:ModificationDate>
+<a:Modifier>chenshuaia</a:Modifier>
+<a:DefaultValue>~</a:DefaultValue>
 <a:DataType>VARCHAR(20)</a:DataType>
 <a:Length>20</a:Length>
 </o:Column>
