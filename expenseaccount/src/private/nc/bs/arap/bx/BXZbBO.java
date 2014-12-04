@@ -924,50 +924,7 @@ public class BXZbBO {
 	 * @throws BusinessException
 	 */
 	public JKBXVO[] unSettle(JKBXVO[] vos, boolean isCmpUnEffectiveCall) throws BusinessException {
-		vos = unSignVos(vos);
-		vos = unEffectVos(vos);
-		return vos;
-	}
-	
-	/**
-	 * 反签字
-	 * 
-	 * @param vos
-	 *            借款报销VOs
-	 * 
-	 * @return
-	 * @throws BusinessException
-	 */
-	public JKBXVO[] unSignVos(JKBXVO[] vos) throws BusinessException {
-		compareTs(vos);
-		try {
-			JKBXHeaderVO[] headers = new JKBXHeaderVO[vos.length];
-			for (int i = 0; i < vos.length; i++) {
-				JKBXHeaderVO parentVO = vos[i].getParentVO();
-				headers[i] = parentVO;
-				headers[i].setJsrq(null);
-				headers[i].setJsr(null);
-				headers[i].setDjzt(BXStatusConst.DJZT_Verified);
-			}
 
-			updateHeaders(headers, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ ,JKBXHeaderVO.DJZT});
-			return vos;
-
-		} catch (BusinessException e) {
-			ExceptionHandler.handleException(e);
-		}
-		return null;
-	}
-	
-	/**
-	 * 反生效
-	 * @param vos 借款报销VOS
-	 * @param isCmpUnEffectiveCall
-	 *            是否结算反生效调用
-	 * @return
-	 * @throws BusinessException
-	 */
-	public JKBXVO[] unEffectVos(JKBXVO[] vos) throws BusinessException {
 		compareTs(vos);
 
 		try {
@@ -980,14 +937,19 @@ public class BXZbBO {
 
 				vos[i].setBxoldvo((JKBXVO) vos[i].clone());
 				headers[i] = parentVO;
+
 				// 补充信息
 				addBxExtralInfo(vos[i]);
+				
 				fillUpMapf(vos[i]);
 			}
 
 			beforeActInf(vos, MESSAGE_UNSETTLE);
 			
 			for (int i = 0; i < vos.length; i++) {
+				headers[i].setJsrq(null);
+				headers[i].setJsr(null);
+				headers[i].setDjzt(BXStatusConst.DJZT_Verified);
 				headers[i].setSxbz(BXStatusConst.SXBZ_NO);
 			}
 
@@ -1068,7 +1030,8 @@ public class BXZbBO {
 				getJKBXDAO().delete(jsContrasVOs.toArray(new JsConstrasVO[] {}));
 			}
 
-			updateHeaders(headers, new String[] {JKBXHeaderVO.SXBZ });
+			updateHeaders(headers, new String[] { JKBXHeaderVO.JSR, JKBXHeaderVO.JSRQ, JKBXHeaderVO.DJZT,
+					JKBXHeaderVO.SXBZ });
 			
 			// 核销预提明细取消生效处理
 			new BxVerifyAccruedBillBO().uneffectAccruedVerifyVOs(vos);
@@ -1084,7 +1047,7 @@ public class BXZbBO {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param head
 	 * @throws BusinessException
@@ -1092,13 +1055,9 @@ public class BXZbBO {
 	 *             后台进行反结算操作
 	 */
 	public void unSettleBack(JKBXHeaderVO head) throws BusinessException {
-
 		VOStatusChecker.checkUnSettleStatus(head);
-
 		JKBXVO bxvo = VOFactory.createVO(head);
 
-		head.setDjzt(BXStatusConst.DJZT_Verified);
-		head.setSxbz(BXStatusConst.SXBZ_NO);
 		unSettle(new JKBXVO[] { bxvo });
 
 	}

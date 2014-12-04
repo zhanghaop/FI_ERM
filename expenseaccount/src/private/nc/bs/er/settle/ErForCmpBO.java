@@ -37,6 +37,7 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.VOFactory;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.settle.SettleUtil;
+import nc.vo.erm.accruedexpense.AccruedVerifyVO;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.fip.external.FipExtendAggVO;
 import nc.vo.fip.service.FipRelationInfoVO;
@@ -104,9 +105,8 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		// 签字->反签字
 		else if (BusiStatus.Sign.equals(trans.getFrom()) && BusiStatus.Audit.equals(trans.getTo())) {
 			jkbxVO = getBxVO(busiInfo, trans);
-			bo.unSignVos(new JKBXVO[] { jkbxVO });
+			bo.unSettle(new JKBXVO[] { jkbxVO });
 		}
-
 	}
 	
 	@Override
@@ -118,7 +118,6 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 			bo.effectVo(jkbxVo);
 		} else if (BusiStatus.EffectNever.equals(trans.getTo())) {// 反生效
 			flag = BXZbBO.MESSAGE_UNSETTLE;
-			bo.unEffectVos(new JKBXVO[] { jkbxVo });
 		}
 		
 		if (!SettleUtil.isJsToFip(jkbxVo.getParentVO()) && BXZbBO.MESSAGE_SETTLE.equals(flag)) {
@@ -222,10 +221,15 @@ public class ErForCmpBO implements ISettleNotifyPayTypeBusiBillService {
 		// 添加冲借款信息
 		Collection<BxcontrastVO> collection = bo.queryContrasts(head);
 		bxvo.setContrastVO(collection.toArray(new BxcontrastVO[0]));
-
+		
+		//分摊信息
 		Collection<CShareDetailVO> cShares = bo.queryCSharesVOS(new JKBXHeaderVO[] { bxvo.getParentVO() });// 分摊明细
 		bxvo.setcShareDetailVo(cShares.toArray(new CShareDetailVO[] {}));
-
+		
+		//核销明细信息
+		Collection<AccruedVerifyVO> accruedVerifyVOs = bo.queryAccruedVerifyVOS(bxvo.getParentVO());
+		bxvo.setAccruedVerifyVO(accruedVerifyVOs.toArray(new AccruedVerifyVO[] {}));
+		
 		if (rawbill != null) {
 			boolean hasNtbCheck = rawbill.getHasNtbCheck();
 			boolean hasZjjhCheck = rawbill.getHasZjjhCheck();
