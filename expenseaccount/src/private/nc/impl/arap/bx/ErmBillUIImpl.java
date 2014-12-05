@@ -8,6 +8,7 @@ import java.util.List;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
+import nc.bs.framework.core.service.TimeService;
 import nc.bs.logging.Log;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IErmBillUIPublic;
@@ -32,6 +33,7 @@ import nc.vo.org.OrgVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.resa.costcenter.CostCenterVO;
 /**
  * 设置借款报销单界面的默认值后台服务类
@@ -317,7 +319,8 @@ public class ErmBillUIImpl implements IErmBillUIPublic{
 		jkbxvo.getParentVO().setPk_group(pk_group);
 		jkbxvo.getParentVO().setOperator(cuserid);
 		jkbxvo.getParentVO().setCreator(cuserid);
-		jkbxvo.getParentVO().setCreationtime(BXBsUtil.getBsLoginDate());
+		UFDateTime currTime = TimeService.getInstance().getUFDateTime();
+		jkbxvo.getParentVO().setCreationtime(currTime);
 	}
 	
 	/**
