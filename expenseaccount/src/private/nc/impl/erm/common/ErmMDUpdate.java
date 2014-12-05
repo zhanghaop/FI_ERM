@@ -1,7 +1,6 @@
 package nc.impl.erm.common;
 
 import nc.bs.dao.BaseDAO;
-import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.common.RuntimeEnv;
 import nc.bs.logging.Logger;
@@ -73,15 +72,110 @@ public class ErmMDUpdate extends AbstractPatchInstall {
 			}
 		}
 
-		// pub_vochange_b表维护
-		delVOChange_b();
+		// pub_vochange_b表维护,申请单到借款报销单的vo对照
+		updateVOChange_b();
 		updateFct();
 	}
 
-	private void delVOChange_b() throws DAOException {
-		String sql = "delete from pub_vochange_b where ts not like '2014-11%' and  pk_vochange in (select pk_vochange from pub_vochange where src_billtype='261X' and pk_group='~' and dest_billtype in ('263X','264X'))";
-		getBaseDAO().executeUpdate(sql);
-		Logger.debug(sql);
+	private void updateVOChange_b() throws BusinessException {
+		String delsql = "delete from pub_vochange_b where  pk_vochange in (select pk_vochange from pub_vochange where src_billtype='261X' and pk_group='~' and dest_billtype in ('263X','264X'))";
+		executeSql(getBaseDAO(), delsql);
+		Logger.debug(delsql);
+		
+		String[] insertsqls = new String[]{
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('bzbm', 0, '1001Z31000000000UWO1', '1001Z310000000000TBM', 'pk_currtype', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.srctype', 0, '1001Z31000000000UWO1', '1001Z310000000000TBN', 'pk_billtype', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('srctype', 0, '1001Z31000000000UWO1', '1001Z310000000000TBO', 'pk_billtype', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_proline', 0, '1001Z31000000000UWO1', '1001Z310000000000TBP', 'mtapp_detail.pk_proline', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_proline', 0, '1001Z31000000000UWO1', '1001Z310000000000TBQ', 'mtapp_detail.pk_proline', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_resacostcenter', 0, '1001Z31000000000UWO1', '1001Z310000000000TBR', 'mtapp_detail.pk_resacostcenter', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('fydeptid', 0, '1001Z31000000000UWO1', '1001Z310000000000TBS', 'mtapp_detail.assume_dept', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('fydwbm', 0, '1001Z31000000000UWO1', '1001Z310000000000TBT', 'mtapp_detail.assume_org', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('hbbm', 0, '1001Z31000000000UWO1', '1001Z310000000000TBU', 'mtapp_detail.pk_supplier', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_checkele', 0, '1001Z31000000000UWO1', '1001Z310000000000TBV', 'mtapp_detail.pk_checkele', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.amount', 0, '1001Z31000000000UWO1', '1001Z310000000000TBW', 'mtapp_detail.usable_amout', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.ybje', 0, '1001Z31000000000UWO1', '1001Z310000000000TBX', 'mtapp_detail.usable_amout', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('customer', 0, '1001Z31000000000UWO1', '1001Z310000000000TBY', 'mtapp_detail.pk_customer', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_pcorg', 0, '1001Z31000000000UWO1', '1001Z310000000000TBZ', 'mtapp_detail.pk_pcorg', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_brand', 0, '1001Z31000000000UWO1', '1001Z310000000000TC0', 'mtapp_detail.pk_brand', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_brand', 0, '1001Z31000000000UWO1', '1001Z310000000000TC1', 'mtapp_detail.pk_brand', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.szxmid', 0, '1001Z31000000000UWO1', '1001Z310000000000TC2', 'mtapp_detail.pk_iobsclass', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.jobid', 0, '1001Z31000000000UWO1', '1001Z310000000000TC3', 'mtapp_detail.pk_project', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.projecttask', 0, '1001Z31000000000UWO1', '1001Z310000000000TC4', 'mtapp_detail.pk_wbs', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_mtapp_detail', 0, '1001Z31000000000UWO1', '1001Z310000000000TC5', 'mtapp_detail.pk_mtapp_detail', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('center_dept', 0, '1001Z31000000000UWO1', '1001Z310000000000TC6', 'center_dept', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.srcbilltype', 0, '1001Z31000000000UWO1', '1001Z310000000000TC7', 'pk_tradetype', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('srcbilltype', 0, '1001Z31000000000UWO1', '1001Z310000000000TC8', 'pk_tradetype', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('deptid', 0, '1001Z31000000000UWO1', '1001Z310000000000TC9', 'apply_dept', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jkbxr', 0, '1001Z31000000000UWO1', '1001Z310000000000TCA', 'billmaker', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('receiver', 0, '1001Z31000000000UWO1', '1001Z310000000000TCB', 'billmaker', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('zy', 0, '1001Z31000000000UWO1', '1001Z310000000000TCC', 'reason', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('ismashare', 0, '1001Z31000000000UWO1', '1001Z310000000000TCD', 'iscostshare', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('dwbm', 0, '1001Z31000000000UWO1', '1001Z310000000000TCE', 'apply_org', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_org', 0, '1001Z31000000000UWO1', '1001Z310000000000TCF', 'pk_org', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_payorg', 0, '1001Z31000000000UWO1', '1001Z310000000000TCG', 'pk_org', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_item', 0, '1001Z31000000000UWO1', '1001Z310000000000TCH', 'pk_mtapp_bill', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jk_busitem.pk_item', 0, '1001Z31000000000UWO1', '1001Z310000000000TCI', 'pk_mtapp_bill', 2, '2014-11-20 18:28:59')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.hbbm', 0, '1001Z31000000000UWO3', '1001Z310000000000TDL', 'mtapp_detail.pk_supplier', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.assume_amount', 0, '1001Z31000000000UWO3', '1001Z310000000000TDM', 'mtapp_detail.usable_amout', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.bzbm', 0, '1001Z31000000000UWO3', '1001Z310000000000TDN', 'pk_currtype', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_org', 0, '1001Z31000000000UWO3', '1001Z310000000000TDO', 'pk_org', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_group', 0, '1001Z31000000000UWO3', '1001Z310000000000TDP', 'pk_group', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_item', 0, '1001Z31000000000UWO3', '1001Z310000000000TDQ', 'pk_mtapp_bill', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_mtapp_detail', 0, '1001Z31000000000UWO3', '1001Z310000000000TDR', 'mtapp_detail.pk_mtapp_detail', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_proline', 0, '1001Z31000000000UWO3', '1001Z310000000000TDS', 'mtapp_detail.pk_proline', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_brand', 0, '1001Z31000000000UWO3', '1001Z310000000000TDT', 'mtapp_detail.pk_brand', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_payorg', 0, '1001Z31000000000UWO3', '1001Z310000000000TDU', 'pk_org', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_item', 0, '1001Z31000000000UWO3', '1001Z310000000000TDV', 'pk_mtapp_bill', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.customer', 0, '1001Z31000000000UWO3', '1001Z310000000000TDK', 'mtapp_detail.pk_customer', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('iscostshare', 0, '1001Z31000000000UWO3', '1001Z310000000000TCJ', 'Y', 1, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_org', 0, '1001Z31000000000UWO3', '1001Z310000000000TCK', 'pk_org', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_pcorg', 0, '1001Z31000000000UWO3', '1001Z310000000000TCL', 'mtapp_detail.pk_pcorg', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('fydwbm', 0, '1001Z31000000000UWO3', '1001Z31000000000CR4R', 'mtapp_detail.assume_org', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('dwbm', 0, '1001Z31000000000UWO3', '1001Z310000000000TCN', 'apply_org', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('deptid', 0, '1001Z31000000000UWO3', '1001Z310000000000TCO', 'apply_dept', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('receiver', 0, '1001Z31000000000UWO3', '1001Z310000000000TCP', 'billmaker', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('jkbxr', 0, '1001Z31000000000UWO3', '1001Z310000000000TCQ', 'billmaker', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('szxmid', 0, '1001Z31000000000UWO3', '1001Z310000000000TCR', 'mtapp_detail.pk_iobsclass', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('fydeptid', 0, '1001Z31000000000UWO3', '1001Z310000000000TCS', 'mtapp_detail.assume_dept', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('bzbm', 0, '1001Z31000000000UWO3', '1001Z310000000000TCT', 'pk_currtype', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('zy', 0, '1001Z31000000000UWO3', '1001Z310000000000TCU', 'reason', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('hbbm', 0, '1001Z31000000000UWO3', '1001Z310000000000TCV', 'mtapp_detail.pk_supplier', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('customer', 0, '1001Z31000000000UWO3', '1001Z310000000000TCW', 'mtapp_detail.pk_customer', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.amount', 0, '1001Z31000000000UWO3', '1001Z310000000000TCX', 'mtapp_detail.usable_amout', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.szxmid', 0, '1001Z31000000000UWO3', '1001Z310000000000TCY', 'mtapp_detail.pk_iobsclass', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.ybje', 0, '1001Z31000000000UWO3', '1001Z310000000000TCZ', 'mtapp_detail.usable_amout', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_pcorg', 0, '1001Z31000000000UWO3', '1001Z310000000000TD0', 'mtapp_detail.pk_pcorg', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_checkele', 0, '1001Z31000000000UWO3', '1001Z310000000000TD1', 'mtapp_detail.pk_checkele', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.jobid', 0, '1001Z31000000000UWO3', '1001Z310000000000TD2', 'mtapp_detail.pk_project', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.projecttask', 0, '1001Z31000000000UWO3', '1001Z310000000000TD3', 'mtapp_detail.pk_wbs', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_resacostcenter', 0, '1001Z31000000000UWO3', '1001Z310000000000TD4', 'mtapp_detail.pk_resacostcenter', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_item', 0, '1001Z31000000000UWO3', '1001Z310000000000TD5', 'pk_mtapp_bill', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.srcbilltype', 0, '1001Z31000000000UWO3', '1001Z310000000000TD6', 'pk_tradetype', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.srctype', 0, '1001Z31000000000UWO3', '1001Z310000000000TD7', 'pk_billtype', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_mtapp_detail', 0, '1001Z31000000000UWO3', '1001Z310000000000TD8', 'mtapp_detail.pk_mtapp_detail', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_proline', 0, '1001Z31000000000UWO3', '1001Z310000000000TD9', 'mtapp_detail.pk_proline', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.pk_brand', 0, '1001Z31000000000UWO3', '1001Z310000000000TDA', 'mtapp_detail.pk_brand', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('er_busitem.receiver', 0, '1001Z31000000000UWO3', '1001Z310000000000TDB', 'billmaker', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.assume_org', 0, '1001Z31000000000UWO3', '1001Z310000000000TDC', 'mtapp_detail.assume_org', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.assume_dept', 0, '1001Z31000000000UWO3', '1001Z310000000000TDD', 'mtapp_detail.assume_dept', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_pcorg', 0, '1001Z31000000000UWO3', '1001Z310000000000TDE', 'mtapp_detail.pk_pcorg', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_resacostcenter', 0, '1001Z31000000000UWO3', '1001Z310000000000TDF', 'mtapp_detail.pk_resacostcenter', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_iobsclass', 0, '1001Z31000000000UWO3', '1001Z310000000000TDG', 'mtapp_detail.pk_iobsclass', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.jobid', 0, '1001Z31000000000UWO3', '1001Z310000000000TDH', 'mtapp_detail.pk_project', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.projecttask', 0, '1001Z31000000000UWO3', '1001Z310000000000TDI', 'mtapp_detail.pk_wbs', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('costsharedetail.pk_checkele', 0, '1001Z31000000000UWO3', '1001Z310000000000TDJ', 'mtapp_detail.pk_checkele', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('center_dept', 0, '1001Z31000000000UWO3', '1001Z310000000000TDW', 'center_dept', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('srcbilltype', 0, '1001Z31000000000UWO3', '1001Z310000000000TDX', 'pk_tradetype', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('srctype', 0, '1001Z31000000000UWO3', '1001Z310000000000TDY', 'pk_billtype', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('ismashare', 0, '1001Z31000000000UWO3', '1001Z310000000000TDZ', 'iscostshare', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_proline', 0, '1001Z31000000000UWO3', '1001Z310000000000TE0', 'mtapp_detail.pk_proline', 2, '2014-11-20 18:29:35')",
+				"insert into PUB_VOCHANGE_B (DEST_ATTR, DR, PK_VOCHANGE, PK_VOCHANGE_B, RULEDATA, RULETYPE, TS) values ('pk_brand', 0, '1001Z31000000000UWO3', '1001Z310000000000TE1', 'mtapp_detail.pk_brand', 2, '2014-11-20 18:29:35')"
+
+		};
+		for (String sql : insertsqls) {
+			executeSql(getBaseDAO(), sql);
+		}
 	}
 
 	/**
