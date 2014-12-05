@@ -5,22 +5,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nc.bd.accperiod.InvalidAccperiodExcetion;
 import nc.bs.er.util.FipUtil;
 import nc.bs.framework.common.NCLocator;
-import nc.bs.logging.Logger;
-import nc.desktop.ui.WorkbenchEnvironment;
 import nc.gl.glconst.systemtype.SystemtypeConst;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.gl.pub.IFreevaluePub;
-import nc.itf.uap.busibean.SysinitAccessor;
-import nc.pubitf.accperiod.AccountCalendar;
-import nc.pubitf.org.ICloseAccQryPubServicer;
 import nc.ui.erm.view.ErmToftPanel;
 import nc.ui.pub.link.DesBillGenerator;
 import nc.ui.uif2.NCAction;
@@ -28,7 +21,6 @@ import nc.ui.uif2.editor.BillForm;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
-import nc.vo.bd.period.AccperiodVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -36,15 +28,10 @@ import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.fip.service.FipMessageVO;
 import nc.vo.fip.service.FipRelationInfoVO;
 import nc.vo.fipub.freevalue.Module;
-import nc.vo.gateway60.itfs.CalendarUtilGL;
-import nc.vo.gl.aggvoucher.MDVoucher;
 import nc.vo.gl.pubvoucher.DetailVO;
 import nc.vo.gl.pubvoucher.VoucherVO;
 import nc.vo.glcom.ass.AssVO;
-import nc.vo.glcom.tools.GLPubProxy;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.lang.UFBoolean;
-import nc.vo.pub.lang.UFDate;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -84,7 +71,8 @@ public class PrevVoucherAction extends NCAction {
 					temp.put(head.getDjlxbm(), new ArrayList<String>());
 				}
 				temp.get(head.getDjlxbm()).add(
-						head.getPk_jkbx() + "_" + head.getVouchertag());// ehp2要加上凭证环节
+						head.getPk_jkbx() + "_" + BXStatusConst.SXFlag);// ehp2要加上凭证环节
+				head.setVouchertag(BXStatusConst.SXFlag);
 				
 				FipRelationInfoVO srcinfovo = new FipRelationInfoVO();
 				srcinfovo.setPk_group(vo.getParentVO().getPk_group());
@@ -225,7 +213,7 @@ public class PrevVoucherAction extends NCAction {
 		return voucher;
 	}
 	
-	public static VoucherVO fip2gl(Object Voucher, boolean setControlFlag) {
+	/*public static VoucherVO fip2gl(Object Voucher, boolean setControlFlag) {
 		MDVoucher mdVoucher = null;
 		if (Voucher instanceof MDVoucher) {
 			mdVoucher = (MDVoucher) Voucher;
@@ -292,6 +280,7 @@ public class PrevVoucherAction extends NCAction {
 		}
 		return voucherVO;
 	}
+	*/
 	
 	/**
 	 * 加工凭证
@@ -300,105 +289,106 @@ public class PrevVoucherAction extends NCAction {
 	 * @param messageVO
 	 * @param ismdVoucher 正式凭证
 	 */
-	public static void processVoucher(VoucherVO vouchervo, FipRelationInfoVO messageVO, boolean ismdVoucher) throws BusinessException {
-		vouchervo.setPk_accountingbook(messageVO.getPk_org());
-		vouchervo.setPk_group(messageVO.getPk_group());
-		vouchervo.setPk_prepared(vouchervo.getPk_prepared());
-		
-		UFDate preparedDate = null == vouchervo.getPrepareddate() ? messageVO.getBusidate() : vouchervo.getPrepareddate();
-		if(preparedDate == null) {
-			preparedDate = WorkbenchEnvironment.getInstance().getBusiDate();
-		}
-		
-		vouchervo.setPrepareddate(preparedDate);
-
-		// hurh 取制单日期对应的非自然期间，作为凭证的期间
-		AccountCalendar calendar = CalendarUtilGL.getAccountCalendarByAccountBook(vouchervo.getPk_accountingbook());
-		try {
-			calendar.setDate(vouchervo.getPrepareddate());
-		} catch (InvalidAccperiodExcetion e) {
-			Logger.error(e.getMessage(), e);
-		}
-		vouchervo.setPeriod(calendar.getMonthVO().getAccperiodmth());
-		vouchervo.setYear(calendar.getYearVO().getPeriodyear());
-		generalNextMonth(vouchervo, ismdVoucher);
-		vouchervo.setPk_system(StringUtils.isEmpty(messageVO.getPk_system()) ? "GL" : messageVO.getPk_system());
-		vouchervo.setVoucherkind(vouchervo.getVoucherkind() == null ? 0 : vouchervo.getVoucherkind());
-		if (vouchervo.getDetail() != null && vouchervo.getDetail(0) != null) {
-			vouchervo.setExplanation(StringUtils.isEmpty(vouchervo.getDetail(0).getExplanation()) ? nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("glpubprivate_0", "02002003-0007")/* @res "外系统生成凭证" */: vouchervo.getDetail(0).getExplanation());
-		}
-	}
 	
-	private static void generalNextMonth(VoucherVO vouchervo, boolean ismdVoucher)
-			throws BusinessException, InvalidAccperiodExcetion {
-		
-		if (ismdVoucher) {
-			AccountCalendar calendar = CalendarUtilGL.getAccountCalendarByAccountBook(vouchervo.getPk_accountingbook());
-			try {
-				calendar.setDate(vouchervo.getPrepareddate());
-			} catch (InvalidAccperiodExcetion e) {
-				Logger.error(e.getMessage(), e);
-			}
-			UFBoolean isNextMonth = UFBoolean.FALSE;
-			try {
-				isNextMonth= SysinitAccessor.getInstance().getParaBoolean(vouchervo.getPk_accountingbook(), "GL130");
-			} catch (BusinessException e) {
-				Logger.error(e.getMessage(), e);
-				isNextMonth = UFBoolean.FALSE;;
-			}
-			if (isNextMonth != null && isNextMonth.booleanValue()) {
-				
-				ICloseAccQryPubServicer qryPubServicer = NCLocator.getInstance().lookup(ICloseAccQryPubServicer.class);
-				boolean closed = false;
-				try {
-					closed = qryPubServicer.isCloseByAccountBookId(vouchervo.getPk_accountingbook(), vouchervo.getYear() + "-" + vouchervo.getPeriod());
-				} catch (BusinessException e) {
-					Logger.error(e.getMessage(), e);
-					closed = false;
-				}
-				if (closed) {
-				   AccperiodVO[] accps =  calendar.getYearVOsOfCurrentScheme();
-				   List<String> yearperiodList = new LinkedList<String>(); 
-				   //期间处理的不好
-				   
-				   for (int i = 0; accps != null && i < accps.length; i ++) {
-					   for (int j = 1; j <= accps[i].getPeriodnum(); j ++) {
-						   String yearmont = accps[i].getPeriodyear() + "-" + (j < 10 ? "0"+j : ""+j);
-						   if (yearmont.compareTo(vouchervo.getYear() + "-" + vouchervo.getPeriod()) > 0) {
-							   yearperiodList.add(yearmont);
-						   }
-					   }
-				   }
-				  String yearmonth = "";
-				  try {
-					  for (int i = 0; i < yearperiodList.size(); i ++) {
-						closed = qryPubServicer.isCloseByAccountBookId(vouchervo.getPk_accountingbook(), yearperiodList.get(i));
-						if (!closed) {
-							yearmonth = yearperiodList.get(i);
-							break;
-						}
-					  }
-				   } catch (BusinessException e) {
-						Logger.error(e.getMessage(), e);
-						closed = true;
-				   }
-				   if (closed) {
-					   throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("glpubprivate_0", "02002003-0052")/* @res "下一年度未建会计期间，无法生成下期凭证" */);
-				   } else {
-					   String[] yearmonts = yearmonth.split("-");
-					   int count = GLPubProxy.getRemoteInitBalance().isBuiltByGlOrgBook(vouchervo.getPk_accountingbook(), yearmonts[0]);
-					   if (count == 0)
-							throw new nc.vo.gateway60.pub.GlBusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("glpubprivate_0", "02002003-0053",null,new String[]{yearmonts[0]})/* @res "年度{0}未建账，无法生成下期凭证！" */);
-					   calendar.set(yearmonts[0], yearmonts[1]);
-					   vouchervo.setPeriod(yearmonts[1]);
-					   vouchervo.setYear(yearmonts[0]);
-					   vouchervo.setPrepareddate(calendar.getMonthVO().getBegindate());
-				   }
-				}
-			}
-		}
-	}
-
+//	public static void processVoucher(VoucherVO vouchervo, FipRelationInfoVO messageVO, boolean ismdVoucher) throws BusinessException {
+//		vouchervo.setPk_accountingbook(messageVO.getPk_org());
+//		vouchervo.setPk_group(messageVO.getPk_group());
+//		vouchervo.setPk_prepared(vouchervo.getPk_prepared());
+//		
+//		UFDate preparedDate = null == vouchervo.getPrepareddate() ? messageVO.getBusidate() : vouchervo.getPrepareddate();
+//		if(preparedDate == null) {
+//			preparedDate = WorkbenchEnvironment.getInstance().getBusiDate();
+//		}
+//		
+//		vouchervo.setPrepareddate(preparedDate);
+//
+//		// hurh 取制单日期对应的非自然期间，作为凭证的期间
+//		AccountCalendar calendar = CalendarUtilGL.getAccountCalendarByAccountBook(vouchervo.getPk_accountingbook());
+//		try {
+//			calendar.setDate(vouchervo.getPrepareddate());
+//		} catch (InvalidAccperiodExcetion e) {
+//			Logger.error(e.getMessage(), e);
+//		}
+//		vouchervo.setPeriod(calendar.getMonthVO().getAccperiodmth());
+//		vouchervo.setYear(calendar.getYearVO().getPeriodyear());
+//		generalNextMonth(vouchervo, ismdVoucher);
+//		vouchervo.setPk_system(StringUtils.isEmpty(messageVO.getPk_system()) ? "GL" : messageVO.getPk_system());
+//		vouchervo.setVoucherkind(vouchervo.getVoucherkind() == null ? 0 : vouchervo.getVoucherkind());
+//		if (vouchervo.getDetail() != null && vouchervo.getDetail(0) != null) {
+//			vouchervo.setExplanation(StringUtils.isEmpty(vouchervo.getDetail(0).getExplanation()) ? nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("glpubprivate_0", "02002003-0007")/* @res "外系统生成凭证" */: vouchervo.getDetail(0).getExplanation());
+//		}
+//	}
+//	
+//	private static void generalNextMonth(VoucherVO vouchervo, boolean ismdVoucher)
+//			throws BusinessException, InvalidAccperiodExcetion {
+//		
+//		if (ismdVoucher) {
+//			AccountCalendar calendar = CalendarUtilGL.getAccountCalendarByAccountBook(vouchervo.getPk_accountingbook());
+//			try {
+//				calendar.setDate(vouchervo.getPrepareddate());
+//			} catch (InvalidAccperiodExcetion e) {
+//				Logger.error(e.getMessage(), e);
+//			}
+//			UFBoolean isNextMonth = UFBoolean.FALSE;
+//			try {
+//				isNextMonth= SysinitAccessor.getInstance().getParaBoolean(vouchervo.getPk_accountingbook(), "GL130");
+//			} catch (BusinessException e) {
+//				Logger.error(e.getMessage(), e);
+//				isNextMonth = UFBoolean.FALSE;;
+//			}
+//			if (isNextMonth != null && isNextMonth.booleanValue()) {
+//				
+//				ICloseAccQryPubServicer qryPubServicer = NCLocator.getInstance().lookup(ICloseAccQryPubServicer.class);
+//				boolean closed = false;
+//				try {
+//					closed = qryPubServicer.isCloseByAccountBookId(vouchervo.getPk_accountingbook(), vouchervo.getYear() + "-" + vouchervo.getPeriod());
+//				} catch (BusinessException e) {
+//					Logger.error(e.getMessage(), e);
+//					closed = false;
+//				}
+//				if (closed) {
+//				   AccperiodVO[] accps =  calendar.getYearVOsOfCurrentScheme();
+//				   List<String> yearperiodList = new LinkedList<String>(); 
+//				   //期间处理的不好
+//				   
+//				   for (int i = 0; accps != null && i < accps.length; i ++) {
+//					   for (int j = 1; j <= accps[i].getPeriodnum(); j ++) {
+//						   String yearmont = accps[i].getPeriodyear() + "-" + (j < 10 ? "0"+j : ""+j);
+//						   if (yearmont.compareTo(vouchervo.getYear() + "-" + vouchervo.getPeriod()) > 0) {
+//							   yearperiodList.add(yearmont);
+//						   }
+//					   }
+//				   }
+//				  String yearmonth = "";
+//				  try {
+//					  for (int i = 0; i < yearperiodList.size(); i ++) {
+//						closed = qryPubServicer.isCloseByAccountBookId(vouchervo.getPk_accountingbook(), yearperiodList.get(i));
+//						if (!closed) {
+//							yearmonth = yearperiodList.get(i);
+//							break;
+//						}
+//					  }
+//				   } catch (BusinessException e) {
+//						Logger.error(e.getMessage(), e);
+//						closed = true;
+//				   }
+//				   if (closed) {
+//					   throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("glpubprivate_0", "02002003-0052")/* @res "下一年度未建会计期间，无法生成下期凭证" */);
+//				   } else {
+//					   String[] yearmonts = yearmonth.split("-");
+//					   int count = GLPubProxy.getRemoteInitBalance().isBuiltByGlOrgBook(vouchervo.getPk_accountingbook(), yearmonts[0]);
+//					   if (count == 0)
+//							throw new nc.vo.gateway60.pub.GlBusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("glpubprivate_0", "02002003-0053",null,new String[]{yearmonts[0]})/* @res "年度{0}未建账，无法生成下期凭证！" */);
+//					   calendar.set(yearmonts[0], yearmonts[1]);
+//					   vouchervo.setPeriod(yearmonts[1]);
+//					   vouchervo.setYear(yearmonts[0]);
+//					   vouchervo.setPrepareddate(calendar.getMonthVO().getBegindate());
+//				   }
+//				}
+//			}
+//		}
+//	}
+ 
 	private void checkTs(JKBXVO[] selectedvos) throws BusinessException {
 		HashMap<String, List<JKBXVO>> map = new HashMap<String, List<JKBXVO>>();
 		for (JKBXVO vo : selectedvos) {
