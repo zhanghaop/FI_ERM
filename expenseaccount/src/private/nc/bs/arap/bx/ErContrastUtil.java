@@ -133,6 +133,7 @@ public class ErContrastUtil {
 						UFDouble clje = hkybje.compareTo(hkybje2) > 0 ? hkybje2 : hkybje;
 						BxcontrastVO vonew = (BxcontrastVO) bxcontrastVO.clone();
 						
+						//针对网报处理
 						String uuid = null;	
 						try {
 							f = vonew.getClass().getDeclaredField("$cglib_prop_" + UIID_FIELD);
@@ -183,6 +184,26 @@ public class ErContrastUtil {
 
 				UFDouble clje = cjkybje.compareTo(cjkybje2) > 0 ? cjkybje2 : cjkybje;
 				BxcontrastVO vonew = (BxcontrastVO) bxcontrastVO.clone();
+				
+				
+				//针对网报处理
+				String uuid = null;	
+				try {
+					f = vonew.getClass().getDeclaredField("$cglib_prop_" + UIID_FIELD);
+					if (f!=null) {
+						f.setAccessible(true);
+						uuid =  (String)f.get(vonew);
+						if (uuid!=null && !"".equals(uuid)) {
+							f.set(vonew, null);
+						}
+					}
+				} 
+				catch (Exception e) {
+					Logger.error(e.getMessage(), e);
+				}
+				
+				
+				
 				vonew.setHkybje(UFDouble.ZERO_DBL);
 				vonew.setCjkybje(clje);
 				vonew.setPk_finitem(itemVO.getPrimaryKey());
