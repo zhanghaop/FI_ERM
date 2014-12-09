@@ -39,6 +39,9 @@ public class FipUtil {
 			return null;
 		}
 		Map<String, BXBusItemVO> map = new HashMap<String, BXBusItemVO>();
+		if( bxvo.getChildrenVO() == null ||  bxvo.getChildrenVO().length <= 0){
+			return (JKBXVO) bxvo.clone();
+		}
 		for (BXBusItemVO finitem : bxvo.getChildrenVO()) {
 			map.put(finitem.getPrimaryKey(), finitem);
 		}
