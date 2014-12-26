@@ -30,6 +30,7 @@ import nc.ui.uif2.editor.BatchBillTable;
 import nc.ui.uif2.model.AppEventConst;
 import nc.vo.bd.ref.RefInfoVO;
 import nc.vo.er.reimrule.ReimRuleDimVO;
+import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.SuperVO;
@@ -145,8 +146,17 @@ public class DimensTable extends BatchBillTable implements IComponentWithActions
 						 * "维度设置必须填写数据类型(第{0}行)，保存失败!"
 						 */);
 			}
-			if (dim.getControlflag().booleanValue())
+			if (dim.getControlflag().booleanValue()){
 				controlflags++;
+				// 修改核心控制项 jiawh 2014.12.22
+				String[] djlxKey = djlx.split(";");
+				List<SuperVO> reimRulers = ReimRuleUtil.getDataMapRule().get(djlxKey[0]);
+				for (SuperVO reimVO : reimRulers) {
+					if (((ReimRulerVO)reimVO).getAttributeValue(dim.getCorrespondingitem()) == null) {
+						throw new BusinessException("修改后核心控制项为空！");
+					}
+				}
+			}
 			if (controlflags > 1) {
 				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("ersetting_2",
 						"22011rr-000051")/**

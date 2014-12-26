@@ -3,7 +3,9 @@ package nc.ui.er.reimrule.view;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -30,9 +32,12 @@ import nc.ui.uif2.AppEvent;
 import nc.ui.uif2.components.IComponentWithActions;
 import nc.ui.uif2.editor.BatchBillTable;
 import nc.ui.uif2.model.AppEventConst;
+import nc.vo.bill.pub.BillUtil;
 import nc.vo.er.reimrule.ReimRuleDimVO;
 import nc.vo.er.reimrule.ReimRulerVO;
 import nc.vo.pub.SuperVO;
+import nc.vo.pub.bill.IMetaDataProperty;
+import nc.vo.pub.bill.MetaDataPropertyFactory;
 
 public class ControlTable extends BatchBillTable implements IComponentWithActions {
 
@@ -178,6 +183,51 @@ public class ControlTable extends BatchBillTable implements IComponentWithAction
 		cardPanel.getBodyPanel().setTableCellEditor(centControlItem.toLowerCase(), new CentCellEditor());
 	}
 	
+	/*
+	 * 解析类型设置
+	 */
+	private void initAttribByParseReftype(String datatypename,BillItem item,String reftype) {
+
+		if (reftype == null || reftype.trim().length() == 0) {
+			return;
+		}
+		reftype = reftype.trim();
+
+		String[] tokens = BillUtil.getStringTokensWithNullToken(reftype,
+				":");
+
+		if (tokens.length > 0) {
+			try {
+				// 非原数据数据类型
+				if (item.getMetaDataProperty() != null) {
+					IMetaDataProperty mdp = MetaDataPropertyFactory
+							.creatMetaDataUserDefPropertyByType(
+									item.getMetaDataProperty(), tokens[0]);
+					item.setMetaDataProperty(mdp);
+				} else {
+					int datatype = Integer.parseInt(tokens[0]);
+					if (datatype <= IBillItem.USERDEFITEM)
+						item.setDataType(datatype);
+				}
+				if (tokens.length > 1) {
+					//修改元数据的datatype,展示时使用
+					if(datatypename!=null && !datatypename.equals("2")){
+						tokens[1]+=",code=N";
+					}
+					item.setRefType(tokens[1]);
+				} else {
+					item.setRefType(null);
+					return;
+				}
+			} catch (NumberFormatException e) {
+				Logger.warn("数据类型设置错误：" + tokens[0]);
+				item.setDataType(IBillItem.STRING);
+				item.setRefType(null);
+				return;
+			}
+		}
+	}
+	
 	public void handleEvent(AppEvent event) {
 		super.handleEvent(event);
 		if(event.getType() == AppEventConst.MODEL_INITIALIZED){
@@ -195,11 +245,19 @@ public class ControlTable extends BatchBillTable implements IComponentWithAction
 			BillData billData = getBillCardPanel().getBillData();
 			List<SuperVO> reimruledim=ReimRuleUtil.getDataMapDim().get(djlx);
 			if (reimruledim!=null && reimruledim.size()>0) {
+				
+				// 自定义档案设置参照类型jiawh
+				Map<String, String> strRefDataTypeMap = new HashMap<String, String>();
+				Map<String, String> strRefDataTypeNameMap = new HashMap<String, String>();
+				
 				getBillCardPanel().setVisible(true);
-				for(SuperVO vo:reimruledim)
-				{
-					if(((ReimRuleDimVO)vo).getControlflag().booleanValue())
-					{
+				for(SuperVO vo:reimruledim){
+					// //自定义档案的参照
+					if (((ReimRuleDimVO) vo).getCorrespondingitem().startsWith("DEF")) {
+						strRefDataTypeMap.put(((ReimRuleDimVO) vo).getCorrespondingitem(), ((ReimRuleDimVO) vo).getDatatype());
+						strRefDataTypeNameMap.put(((ReimRuleDimVO) vo).getCorrespondingitem(), ((ReimRuleDimVO) vo).getDatatypename());
+					}
+					if(((ReimRuleDimVO)vo).getControlflag().booleanValue()){
 						centControlItem=((ReimRuleDimVO)vo).getCorrespondingitem();
 						break;
 					}
@@ -225,8 +283,18 @@ public class ControlTable extends BatchBillTable implements IComponentWithAction
 				for (BillItem item : bodyItems) {
 					if(item.getKey().equals(ReimRulerVO.SHOWITEM) || item.getKey().equals(ReimRulerVO.CONTROLITEM)
 							|| item.getKey().equals(ReimRulerVO.CONTROLFLAG) || item.getKey().equalsIgnoreCase(centControlItem)
-							|| item.getKey().equals(ReimRulerVO.CONTROLFORMULA))
-					{
+							|| item.getKey().equals(ReimRulerVO.CONTROLFORMULA)){
+						
+						// //设置参照的显示名称和参照类型 jiawh
+						if (item.getKey().startsWith("def")) {
+							String datatypename = strRefDataTypeNameMap.get(item.getKey().toUpperCase());
+							// 修改item的reftype，修改时弹出相应对话框
+							String reftype = strRefDataTypeMap.get(item.getKey().toUpperCase());
+							if (datatypename != null)
+								reftype += ":" + datatypename;
+							initAttribByParseReftype(datatypename, item, reftype);
+							item.setName(datatypename);
+						}
 						item.setShow(true);
 						items.add(item);
 					}

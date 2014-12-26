@@ -377,54 +377,63 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 		if (bodyItem == null)
 			return;
 
+		//编辑表体值以后刷新表体和表头数据 jiawh
+		editor.doReimRuleAction();
 		// 分摊明细规则处理
 		if (e.getTableCode().equals(BXConstans.CSHARE_PAGE)) {
 			ErmForCShareUiUtil.doCShareAfterEdit(e, getBillCardPanel());
 		} else {
-			// 表体输入时需要判断是否超标准
+			//表体输入时需要判断是否超标准
 			bodyEventHandleUtil.doBodyReimAction();
-			List<ControlBodyEditVO> controlRule = editor.getControlRule();
-			for (ControlBodyEditVO vo : controlRule) {
-				// if(isControlItem(e,vo)){
-				if (e.getValue() == null || getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()) == null)
-					continue;
-				BillItem bodyItem1 = getBillCardPanel().getBodyItem(e.getTableCode(), vo.getItemkey());
-				if (bodyItem1 == null)
-					continue;
-				Double amount = Double.parseDouble(getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()).toString());
-				Double standard = Double.parseDouble(vo.getValue().toString());
-				String formula = vo.getFormulaRule();
-				// 执行公式
-				if (formula != null) {
-					if (formula.indexOf("->") < 0)
-						formula = vo.getItemkey() + "->" + formula;
-					String[] fomulas = bodyItem1.getEditFormulas();
-					bodyItem1.setEditFormula(new String[] { formula });
-					getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(), vo.getItemkey());
-					if (getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()) != null)
-						standard = Double.parseDouble(getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()).toString());
-					bodyItem1.setEditFormula(fomulas);
-					getBillCardPanel().setBodyValueAt(amount, e.getRow(), vo.getItemkey());
-					getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(), vo.getItemkey());
+			List<ControlBodyEditVO> controlRule=editor.getControlRule();
+			
+			ControlBodyEditVO vo=new ControlBodyEditVO();
+			for(ControlBodyEditVO controlVO:controlRule){
+				if(controlVO.getRow()==e.getRow()){
+					vo=controlVO;
 				}
-				Integer row = Integer.valueOf(e.getRow());
-				if (amount > standard) {
-					if (vo.getTip() == 1) {
-						MessageDialog.showHintDlg(null, "超标准", "第" + (e.getRow() + 1) + "行所填金额超过标准允许的最大金额!");
-						// 记录超过标准的行
-						editor.getRows().add(row);
-					} else if (vo.getTip() == 2) {
-						MessageDialog.showHintDlg(null, "超标准", "第" + (e.getRow() + 1) + "行所填金额超过标准允许的最大金额，已修改为最大标准金额!");
-						getBillCardPanel().setBodyValueAt(standard, e.getRow(), vo.getItemkey());
-						getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(), vo.getItemkey());
-						bodyItem = getBillCardPanel().getBodyItem(e.getTableCode(), BXBusItemVO.AMOUNT);
-					}
-				} else {
-					if (editor.getRows().contains(row))
-						editor.getRows().remove(row);
-				}
-				// }
 			}
+			
+			if(vo != null && getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()) != null){
+
+					BillItem bodyItem1 = getBillCardPanel().getBodyItem(e.getTableCode(),vo.getItemkey());
+				
+					Double amount = Double.parseDouble(getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()).toString());
+					Double standard = Double.parseDouble(vo.getValue().toString());
+					String formula = vo.getFormulaRule();
+					//执行公式
+					if(formula != null){
+						 if (formula.indexOf("->") < 0)
+			                    formula = vo.getItemkey() + "->" + formula;
+						 String[] fomulas = bodyItem1.getEditFormulas();
+						 bodyItem1.setEditFormula(new String[]{formula});
+						 getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(),vo.getItemkey());
+						 if(getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey())!=null)
+							 standard = Double.parseDouble(getBillCardPanel().getBodyValueAt(e.getRow(), vo.getItemkey()).toString());
+						 bodyItem1.setEditFormula(fomulas);
+						 getBillCardPanel().setBodyValueAt(amount,e.getRow(), vo.getItemkey());
+						 getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(),vo.getItemkey());
+					}
+					Integer row = Integer.valueOf(e.getRow());
+					if(amount > standard){
+						if(vo.getTip()==1){
+							MessageDialog.showHintDlg(null,"超标准","第"+(e.getRow()+1)+"行所填金额超过标准允许的最大金额!");
+							//记录超过标准的行
+							editor.getRows().add(row);
+						}
+						else if(vo.getTip()==2){
+							MessageDialog.showHintDlg(null,"超标准","第"+(e.getRow()+1)+"行所填金额超过标准允许的最大金额，已修改为最大标准金额!");
+							getBillCardPanel().setBodyValueAt(standard,e.getRow(), vo.getItemkey());
+							getBillCardPanel().getBillModel().execEditFormulasByKey(e.getRow(),vo.getItemkey());
+							bodyItem = getBillCardPanel().getBodyItem(e.getTableCode(),BXBusItemVO.AMOUNT);
+						}
+					}
+					else{
+						if(editor.getRows().contains(row))
+							editor.getRows().remove(row);
+					}
+			}
+			
 			if (bodyItem.getKey().equals(BXBusItemVO.AMOUNT) || isAmoutField(bodyItem)) {
 				Object amount = getBillCardPanel().getBillModel(e.getTableCode()).getValueAt(e.getRow(), BXBusItemVO.AMOUNT);
 				getBillCardPanel().getBillModel(e.getTableCode()).setValueAt(amount, e.getRow(), BXBusItemVO.YBJE);

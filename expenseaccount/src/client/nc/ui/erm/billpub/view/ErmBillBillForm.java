@@ -1524,7 +1524,8 @@ public class ErmBillBillForm extends ERMBillForm {
 	public void doBodyReimAction() {
 
 		JKBXVO bxvo = null;
-		bxvo = (JKBXVO) getValue();
+//		bxvo = (JKBXVO) getValue();
+		bxvo = (JKBXVO) getJKBXVO();
 
 		//如果没有表体字段，则直接返回
 		if (getBillCardPanel().getBillData().getBillTempletVO() == null
