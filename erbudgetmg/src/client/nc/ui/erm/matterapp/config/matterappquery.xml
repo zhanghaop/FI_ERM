@@ -84,6 +84,7 @@
 		<property name="userdefitemListPreparator" ref="userdefitemListPreparator" />
 		<property name="north" ref="listInfoPanel" />
 		<property name="paginationBar" ref="paginationBar" />
+		<property name="showTotalLine" value="true"/>
 	</bean>
 
 	<!--卡控件 -->

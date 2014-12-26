@@ -4,10 +4,12 @@ import java.awt.Component;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 import nc.ui.erm.accruedexpense.common.AccUiUtil;
 import nc.ui.erm.view.ERMBillListView;
 import nc.ui.pub.bill.BillItem;
+import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.BillMouseEnent;
 import nc.ui.pub.bill.BillTableCellRenderer;
 import nc.ui.pub.bill.BillTableMouseListener;
@@ -80,8 +82,9 @@ public class AccMNListView extends ERMBillListView implements BillTableMouseList
 				public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 					super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 					List data = getModel().getData();
+					TableModel tableModel = table.getModel();
 					if(data != null){
-						if(row < data.size()){
+						if(row < data.size() && tableModel instanceof BillModel){
 							AggAccruedBillVO aggvo = (AggAccruedBillVO) data.get(row);
 							if(aggvo != null){
 								setValue((String)aggvo.getParentVO().getReason());

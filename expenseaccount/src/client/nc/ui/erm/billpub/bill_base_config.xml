@@ -333,6 +333,7 @@
 		<property name="north" ref="listInfoPanel" />
 		<property name="paginationBar" ref="paginationBar" />
 		<property name="linklistener" ref="linklistener" />
+		<property name="showTotalLine" value="true"/>
 	</bean>
 
 	<bean id="listViewActions" class="nc.ui.uif2.actions.StandAloneToftPanelActionContainer">

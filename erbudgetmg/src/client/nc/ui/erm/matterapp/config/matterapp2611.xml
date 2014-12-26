@@ -116,6 +116,7 @@
 		<property name="userdefitemListPreparator" ref="userdefitemListPreparator" />
 		<property name="north" ref="listInfoPanel" />
 		<property name="paginationBar" ref="paginationBar" />
+		<property name="showTotalLine" value="true"/>
 	</bean>
 	<!--卡控件-->
 	<bean id="billFormEditor" class="nc.ui.erm.matterapp.view.MatterAppMNBillForm" init-method="initUI">

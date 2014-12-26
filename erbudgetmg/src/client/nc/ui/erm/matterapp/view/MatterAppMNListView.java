@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 import nc.bs.erm.common.ErmBillConst;
 import nc.bs.framework.core.util.ObjectCreator;
@@ -22,6 +23,7 @@ import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.beans.constenum.IConstEnum;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillListData;
+import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.BillMouseEnent;
 import nc.ui.pub.bill.BillTableCellRenderer;
 import nc.ui.pub.bill.BillTableMouseListener;
@@ -221,8 +223,9 @@ public class MatterAppMNListView extends ERMBillListView implements BillTableMou
 					super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 					@SuppressWarnings("rawtypes")
 					List data = getModel().getData();
+					TableModel tableModel = table.getModel();
 					if(data != null){
-						if(row < data.size()){
+						if(row < data.size() && tableModel instanceof BillModel){
 							AggMatterAppVO vo = (AggMatterAppVO) data.get(row);
 							if(vo != null){
 								setValue(ErUiUtil.getDjlxNameMultiLang((vo.getParentVO().getPk_tradetype())));
@@ -241,8 +244,9 @@ public class MatterAppMNListView extends ERMBillListView implements BillTableMou
 					super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 					@SuppressWarnings("rawtypes")
 					List data = getModel().getData();
+					TableModel tableModel = table.getModel();
 					if(data != null){
-						if(row < data.size()){
+						if(row < data.size() && tableModel instanceof BillModel){
 							AggMatterAppVO vo = (AggMatterAppVO) data.get(row);
 							if(vo != null){
 								setValue((String)vo.getParentVO().getReason());

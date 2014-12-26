@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 import nc.bs.erm.common.ErmBillConst;
 import nc.bs.erm.common.ErmConst;
@@ -26,6 +27,7 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillItemHyperlinkEvent;
 import nc.ui.pub.bill.BillItemHyperlinkListener;
 import nc.ui.pub.bill.BillListPanel;
+import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.BillTableCellRenderer;
 import nc.ui.pub.linkoperate.ILinkType;
 import nc.ui.uap.sf.SFClientUtil2;
@@ -334,7 +336,8 @@ public class ErmBillBillListView extends ERMBillListView {
 					public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 						super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 						List<JKBXVO> data = getModel().getData();
-						if(data != null && data.size() != 0 && row < data.size()){
+						TableModel tableModel = table.getModel();
+						if(data != null && data.size() != 0 && row < data.size() && tableModel instanceof BillModel){
 							JKBXVO vo = (JKBXVO) data.get(row);
 							if(vo != null){
 								setValue(ErUiUtil.getDjlxNameMultiLang((vo.getParentVO().getDjlxbm())));
@@ -356,7 +359,8 @@ public class ErmBillBillListView extends ERMBillListView {
 					public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 						super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 						List<JKBXVO> data = getModel().getData();
-						if(data != null && data.size() != 0){
+						TableModel tableModel = table.getModel();
+						if(data != null && data.size() != 0 && tableModel instanceof BillModel){
 							JKBXVO vo = (JKBXVO) data.get(row);
 							if(vo != null){
 								setValue(vo.getParentVO().getZy());
