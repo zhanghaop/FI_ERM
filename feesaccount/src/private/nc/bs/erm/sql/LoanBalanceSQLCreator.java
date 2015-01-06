@@ -512,12 +512,12 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
 		sqlBuffer.append(" where ").append(ErmReportSqlUtils.getFixedWhere());
 		sqlBuffer.append(getCompositeWhereSql(jkzbAlias));
 
-        //当期的还款单据 和期初的借款单
-        sqlBuffer.append(" and ((").append(jkzbAlias).append(".djrq >= '").append(
-                queryVO.getBeginDate()).append("' and ");
-        sqlBuffer.append(jkzbAlias).append(".djrq <= '").append(queryVO.getEndDate()).append("') or  (");
-        sqlBuffer.append(jkzbAlias).append(".qcbz = 'Y' and ");
-        sqlBuffer.append(jkzbAlias).append(".djrq < '").append(queryVO.getBeginDate()).append("') )");
+        //当期的还款单据 和期初的借款单 @modify by chenshuai 借款余额表还款按时间点区间查询
+		sqlBuffer.append(" and (").append(cxAlias).append(".cxrq >= '").append(queryVO.getBeginDate()).append("' and ");
+		sqlBuffer.append(cxAlias).append(".cxrq <= '").append(queryVO.getEndDate()).append("')");
+
+		// sqlBuffer.append(jkzbAlias).append(".qcbz = 'Y' and ");
+		// sqlBuffer.append(jkzbAlias).append(".djrq < '").append(queryVO.getBeginDate()).append("') )");
         
 		sqlBuffer.append(getQueryObjSql(jkzbAlias)); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
@@ -533,17 +533,18 @@ public class LoanBalanceSQLCreator extends ErmBaseSqlCreator {
             sqlBuffer.append( " inner join er_bxcontrast " ).append( cxAlias);
             sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd");
             sqlBuffer.append(" left join er_bxzb bxzb on bxzb.pk_jkbx = fb.pk_bxd where ");
-        } else {
-            sqlBuffer.append(" and ");
-        }
+        } 
+//        else {
+//            sqlBuffer.append(" and ");
+//        }
         
      // 日期单独处理，包括单据日期以及核销完成日期
 //      if (queryVO.getBeginDate() != null) { // 查询日期
             // 核销完成日期
-       sqlBuffer.append(jkzbAlias).append(".contrastEndDate >= '").append(
-                    queryVO.getBeginDate()).append("' ");
-            // 冲销日期
-       sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq >= '").append(queryVO.getBeginDate()).append("' ");
+//       sqlBuffer.append(jkzbAlias).append(".contrastEndDate >= '").append(
+//                    queryVO.getBeginDate()).append("' ");
+//            // 冲销日期
+//       sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq >= '").append(queryVO.getBeginDate()).append("' ");
 //      }
 //      if (queryVO.getEndDate() != null) {
             // 冲销日期

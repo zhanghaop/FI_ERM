@@ -5,7 +5,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.bs.er.util.SqlUtils;
 import nc.bs.erm.util.ErmReportSqlUtils;
 import nc.bs.erm.util.ReportSqlUtils;
 import nc.bs.erm.util.TmpTableCreator;
@@ -13,6 +12,7 @@ import nc.itf.erm.report.IErmReportConstants;
 import nc.itf.fipub.report.IPubReportConstants;
 import nc.jdbc.framework.util.DBConsts;
 import nc.utils.fipub.SmartProcessor;
+import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.report.QryObj;
 import nc.vo.fipub.utils.SqlBuilder;
 import nc.vo.pub.BusinessException;
@@ -338,7 +338,7 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
 		sqlBuffer.append(getQueryObjSql(jkzbAlias));// 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
 		sqlBuffer.append(ErmReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), true)); // 币种
-		sqlBuffer.append(SqlUtils.getInStr(" and " + jkzbAlias + ".pk_org", queryVO.getPk_orgs())); // 业务单元
+		sqlBuffer.append(SqlUtils.getInStr(" and " + jkzbAlias + ".pk_org", queryVO.getPk_orgs(), true)); // 业务单元
 		sqlBuffer.append(ErmReportSqlUtils.getGroupSql(queryVO.getPk_group(), true)); // 业务单元
 		sqlBuffer.append(" and ").append(jkzbAlias).append(".dr = 0 ");
 
@@ -470,7 +470,7 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
 //		sqlBuffer.append(ReportSqlUtils.getQueryObjSql(queryVO.getQryObjs())); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, true)); // 单据状态
 		sqlBuffer.append(ReportSqlUtils.getCurrencySql(queryVO.getPk_currency(), jkzbAlias)); // 币种
-		sqlBuffer.append(" and ").append(SqlUtils.getInStr(jkzbAlias + "." + PK_ORG, queryVO.getPk_orgs())); // 业务单元
+		sqlBuffer.append(" and ").append(SqlUtils.getInStr(jkzbAlias + "." + PK_ORG, queryVO.getPk_orgs(), true)); // 业务单元
 		sqlBuffer.append(" and ").append(jkzbAlias ).append( "." ).append( PK_GROUP ).append( " = '").append(queryVO.getPk_group()).append("' "); // 集团
 		sqlBuffer.append(" and ").append(jkzbAlias).append(".dr = 0");
 
@@ -578,12 +578,11 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
 					cxAlias + ".szxmid"));
 		}
 
-		//当期的还款单据和期初的借款单
-		sqlBuffer.append(" and ((").append(jkzbAlias).append(".djrq >= '").append(
-                queryVO.getBeginDate()).append("' and ");
-		sqlBuffer.append(jkzbAlias).append(".djrq <= '").append(queryVO.getEndDate()).append("') or  (");
-		sqlBuffer.append(jkzbAlias).append(".qcbz = 'Y' and ");
-		sqlBuffer.append(jkzbAlias).append(".djrq < '").append(queryVO.getBeginDate()).append("') )");
+		//当期的还款单据和期初的借款单 @modify by chenshuai 借款余额表还款按时间点区间查询
+		sqlBuffer.append(" and (").append(cxAlias).append(".cxrq >= '").append(queryVO.getBeginDate()).append("' and ");
+		sqlBuffer.append(cxAlias).append(".cxrq <= '").append(queryVO.getEndDate()).append("') ");
+//		sqlBuffer.append(jkzbAlias).append(".qcbz = 'Y' and ");
+//		sqlBuffer.append(jkzbAlias).append(".djrq < '").append(queryVO.getBeginDate()).append("') )");
 
 		sqlBuffer.append(getQueryObjSql(jkzbAlias).replace("zb.", jkzbAlias + ".")); // 查询对象
 		sqlBuffer.append(getBillStatusSQL(queryVO, false, false)); // 单据状态
@@ -613,36 +612,36 @@ public class LoanDetailSQLCreator extends ErmBaseSqlCreator{
             sqlBuffer.append(" on " ).append( jkzbAlias ).append( ".pk_jkbx = " ).append( cxAlias ).append( ".pk_jkd");
             sqlBuffer.append(" left join er_bxzb bxzb on bxzb.pk_jkbx = fb.pk_bxd where ");
             sqlBuffer.append(sql.toString());
-        } else {
+        } 
+        
+        else {
             sqlBuffer.append(" and ");
         }
 
-        sqlBuffer.append(SqlUtils.getInStr(cxAlias + ".pk_org", queryVO.getPk_orgs())); // 业务单元
-        sqlBuffer.append(" and ").append(cxAlias).append(".dr = 0 and ");
+        sqlBuffer.append(SqlUtils.getInStr(cxAlias + ".pk_org", queryVO.getPk_orgs(), true)); // 业务单元
+        sqlBuffer.append(" and ").append(cxAlias).append(".dr = 0 ");
         
 //      if (queryVO.getBeginDate() != null) { // 查询开始日期
 //      sqlBuffer.append(" and ").append(jkzbAlias).append(".djrq >= '").append(
 //                queryVO.getBeginDate()).append("' ");
-        sqlBuffer.append(jkzbAlias).append(".contrastEndDate >= '").append(
-                queryVO.getBeginDate()).append("' ");
-        sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq >= '").append(queryVO.getBeginDate()).append("' ");
+//        sqlBuffer.append(jkzbAlias).append(".contrastEndDate >= '").append(
+//                queryVO.getBeginDate()).append("' ");
+//        sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq >= '").append(queryVO.getBeginDate()).append("' ");
 //  }
 
 //  if (queryVO.getEndDate() != null) { // 查询截止日期
 //      sqlBuffer.append(" and " ).append( cxAlias ).append( ".cxrq <= '").append(queryVO.getEndDate()).append("' ");
 //      sqlBuffer.append(" and " ).append(jkzbAlias).append( ".djrq <= '").append(queryVO.getEndDate()).append("' ");
 //  }
-		
-        
-        String billStatus = queryVO.getBillState().toString();
-        if (IPubReportConstants.BILL_STATUS_EFFECT.equals(billStatus)) {
-            sqlBuffer.append(" and bxzb.djzt >= 3 "); //单据状态——签字BXStatusConst
-//            sqlBuffer.append(" and " + cxAlias + ".sxbz = 1 ");
-        } else if (IPubReportConstants.BILL_STATUS_CONFIRM.equals(billStatus)) {
-            sqlBuffer.append(" and bxzb.djzt >= 2 "); //单据状态——签字BXStatusConst
-        } else {
-            sqlBuffer.append(" and bxzb.djzt >= 1 "); //单据状态——保存BXStatusConst
-        }
+
+		String billStatus = queryVO.getBillState().toString();
+		if (IPubReportConstants.BILL_STATUS_EFFECT.equals(billStatus)) {
+			sqlBuffer.append(" and bxzb.djzt >= 3 "); // 单据状态——签字BXStatusConst
+		} else if (IPubReportConstants.BILL_STATUS_CONFIRM.equals(billStatus)) {
+			sqlBuffer.append(" and bxzb.djzt >= 2 "); // 单据状态——签字BXStatusConst
+		} else {
+			sqlBuffer.append(" and bxzb.djzt >= 1 "); // 单据状态——保存BXStatusConst
+		}
         
 		sqlBuffer.append(" group by ");
 		sqlBuffer.append(jkzbAlias ).append( "." ).append( PK_GROUP ).append( ", " ).append( cxAlias ).append( "." ).append( PK_ORG);

@@ -24,7 +24,7 @@ public class TmpTableCreator {
 		for (int i = 0; i < colTypes.length; i++) {
 			if (colNames[i] != null && (colNames[i].trim().equalsIgnoreCase("reason") 
 					|| colNames[i].trim().equalsIgnoreCase("zy"))) {
-				types[i] = "varchar(250)";
+				types[i] = "varchar(1000)";
 				continue;
 			}
 			switch (colTypes[i]) {
