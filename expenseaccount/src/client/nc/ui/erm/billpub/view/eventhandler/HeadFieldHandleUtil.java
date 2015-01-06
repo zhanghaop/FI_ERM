@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.desktop.ui.WorkbenchEnvironment;
+import nc.itf.bd.psnbankacc.IPsnBankaccPubService;
 import nc.pubitf.uapbd.ICustomerPubService;
 import nc.pubitf.uapbd.ISupplierPubService_C;
 import nc.ui.bd.ref.AbstractRefModel;
@@ -228,13 +229,13 @@ public class HeadFieldHandleUtil {
 		if (!(editor).isInit()) {
 			try {
 				BillItem headItem = editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.JKBXR);
-				initSqdlr(editor, headItem, ((ErmBillBillManageModel)editor.getModel()).getCurrentBillTypeCode(), getBillCardPanel().getHeadItem(JKBXHeaderVO.DWBM));
+				initSqdlr(editor, headItem, ((ErmBillBillManageModel) editor.getModel()).getCurrentBillTypeCode(), getBillCardPanel().getHeadItem(JKBXHeaderVO.DWBM));
 			} catch (BusinessException e) {
 				Log.getInstance(getClass()).error(e);
 			}
 		}
 	}
-	
+
 	/**
 	 * 过滤借款报销人 特殊处理
 	 * 
@@ -313,9 +314,13 @@ public class HeadFieldHandleUtil {
 	/**
 	 * 收款人更换时，设置默认个人银行账户
 	 */
-	private void setDefaultSkyhzhByReceiver() {
+	public void setDefaultSkyhzhByReceiver() {
 		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.RECEIVER);
 		String receiver = headItem == null ? null : (String) headItem.getValueObject();
+		if(receiver == null){
+			return;
+		}
+		
 		// 自动带出收款银行帐号
 		try {
 			String key = UserBankAccVoCall.USERBANKACC_VOCALL + receiver;
@@ -324,6 +329,13 @@ public class HeadFieldHandleUtil {
 				if (vos != null && vos.length > 0 && vos[0] != null) {
 					getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, vos[0].getPk_bankaccsub());
 					editor.getHelper().changeBusItemValue(BXBusItemVO.SKYHZH, vos[0].getPk_bankaccsub());
+				}
+			} else {// 个人银行账户带默认账户
+				BankAccbasVO bank = NCLocator.getInstance().lookup(IPsnBankaccPubService.class).queryDefaultBankAccByPsnDoc(receiver);
+				if (bank != null && bank.getBankaccsub() != null) {
+					WorkbenchEnvironment.getInstance().putClientCache(UserBankAccVoCall.USERBANKACC_VOCALL + receiver, bank.getBankaccsub());
+					getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, bank.getBankaccsub()[0].getPk_bankaccsub());
+					editor.getHelper().changeBusItemValue(BXBusItemVO.SKYHZH, bank.getBankaccsub()[0].getPk_bankaccsub());
 				}
 			}
 		} catch (Exception e) {

@@ -25,6 +25,7 @@ import nc.ui.erm.billpub.remote.ReimRuleDefCall;
 import nc.ui.erm.billpub.remote.RoleVoCall;
 import nc.ui.erm.billpub.remote.UserBankAccVoCall;
 import nc.ui.erm.billpub.view.eventhandler.HeadAfterEditUtil;
+import nc.ui.erm.billpub.view.eventhandler.HeadFieldHandleUtil;
 import nc.ui.erm.billpub.view.eventhandler.MultiVersionUtil;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
 import nc.ui.erm.util.ErUiUtil;
@@ -68,11 +69,13 @@ import org.apache.commons.lang.ArrayUtils;
 public class ErmBillBillFormHelper {
 	private ErmBillBillForm editor = null;
 	private HeadAfterEditUtil afterEditUtil = null;
+	private HeadFieldHandleUtil headFieldHandle = null;
 
 	public ErmBillBillFormHelper(ErmBillBillForm editor) {
 		super();
 		this.editor = editor;
 		afterEditUtil = new HeadAfterEditUtil(editor);
+		headFieldHandle = new HeadFieldHandleUtil(editor);
 	}
 
 	/**
@@ -134,7 +137,7 @@ public class ErmBillBillFormHelper {
 		setCurrencyInfo(pk_org);
 		
 		// 根据借款报销单位自动带出收款银行帐号
-		afterEditUtil.editSkyhzh(true, pk_org);
+		headFieldHandle.setDefaultSkyhzhByReceiver();
 
 		// 设置最迟还款日期
 		try {

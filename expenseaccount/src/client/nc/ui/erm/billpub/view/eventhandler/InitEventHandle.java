@@ -1,10 +1,8 @@
 package nc.ui.erm.billpub.view.eventhandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -14,7 +12,6 @@ import nc.bs.erm.util.CacheUtil;
 import nc.bs.erm.util.ErAccperiodUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
-import nc.desktop.ui.WorkbenchEnvironment;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.itf.arap.pub.IBxUIControl;
 import nc.itf.bd.fundplan.IFundPlanQryService;
@@ -27,7 +24,6 @@ import nc.ui.bd.ref.model.AccPeriodDefaultRefModel;
 import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.action.ContrastAction;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
-import nc.ui.erm.billpub.remote.UserBankAccVoCall;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.billpub.view.ErmBillBillFormHelper;
 import nc.ui.erm.costshare.common.ErmForCShareUiUtil;
@@ -48,7 +44,6 @@ import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.arap.bx.util.BXStatusConst;
-import nc.vo.bd.bankaccount.BankAccSubVO;
 import nc.vo.bd.freecustom.FreeCustomVO;
 import nc.vo.bd.fundplan.FundPlanVO;
 import nc.vo.bd.period2.AccperiodmonthVO;
@@ -1019,44 +1014,38 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 			jobs = pd.queryPsnjobVOByPsnPK(jkbxr);
 		}
 		
-		//人员有兼职，多个公司和部门的情况,切换人员档案时，不跳转公司和部门
-		if(jobs!=null && jobs.length>1){
+		// 人员有兼职，多个公司和部门的情况,切换人员档案时，不跳转公司和部门
+		if (jobs != null && jobs.length > 1) {
 			String mainOrg = null;
+			String mainDept = null;
 			List<String> orgList = new ArrayList<String>();
 			List<String> deptList = new ArrayList<String>();
-			Map<String,List<String>> orgAndDeptMap = new HashMap<String,List<String>>();
-			
-			for(PsnjobVO vo : jobs){
+
+			for (PsnjobVO vo : jobs) {
 				orgList.add(vo.getPk_org());
 				deptList.add(vo.getPk_dept());
-				if(vo.getIsmainjob().equals(UFBoolean.TRUE)){
-					mainOrg =vo.getPk_org();
+				if (vo.getIsmainjob().equals(UFBoolean.TRUE)) {
+					mainOrg = vo.getPk_org();// 主职组织
+					mainDept = vo.getPk_dept();// 主职部门
 				}
-				List<String> list = orgAndDeptMap.get(vo.getPk_org());
-				if(list==null){
-					list= new ArrayList<String>();
-					list.add(vo.getPk_dept());
-				}
-				orgAndDeptMap.put(vo.getPk_org(), list);
 			}
-			
+
 			Object pk_org = editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.DWBM).getValueObject();
-			if(pk_org==null || !orgList.contains(pk_org.toString())){
+			if (pk_org == null || !orgList.contains(pk_org.toString())) {
 				eventUtil.setHeadNotNullValue(JKBXHeaderVO.DWBM, mainOrg);
 				helper.changeBusItemValue(BXBusItemVO.DWBM, mainOrg);
 			}
-			
+
 			Object pk_deptid = editor.getBillCardPanel().getHeadItem(JKBXHeaderVO.DEPTID).getValueObject();
-			if(pk_deptid==null || !deptList.contains(pk_deptid.toString())){
-				List<String> dept = orgAndDeptMap.get(pk_org);
-				eventUtil.setHeadNotNullValue(JKBXHeaderVO.DEPTID, dept.get(0));
-				helper.changeBusItemValue(BXBusItemVO.DEPTID, dept.get(0));
+			if (pk_deptid == null || !deptList.contains(pk_deptid.toString())) {
+				eventUtil.setHeadNotNullValue(JKBXHeaderVO.DEPTID, mainDept);
+				helper.changeBusItemValue(BXBusItemVO.DEPTID, mainDept);
 			}
-		}else{
+		} else {
 			final String[] values = ErUiUtil.getPsnDocInfoById(jkbxr);
 			if (values != null && values.length > 0) {
-				
-				if(!StringUtil.isEmpty(values[1]) && !StringUtil.isEmpty(values[2])){
+
+				if (!StringUtil.isEmpty(values[1]) && !StringUtil.isEmpty(values[2])) {
 					// 组织
 					eventUtil.setHeadNotNullValue(JKBXHeaderVO.DWBM, values[2]);
 					helper.changeBusItemValue(BXBusItemVO.DWBM, values[2]);
@@ -1405,36 +1394,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		headAfterEdit.initUseEntityItems(true);
 		String dwbm = getHeadItemStrValue(JKBXHeaderVO.DWBM);
 		if (dwbm != null) {
-			editSkyhzh(true, dwbm);
 			helper.changeBusItemValue(JKBXHeaderVO.DWBM, dwbm);
-		}
-	}
-
-	/**
-	 * 编辑收款银行帐号
-	 */
-	public void editSkyhzh(boolean autotake, String pk_org) throws BusinessException {
-		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.RECEIVER);
-		String jkbxr = getHeadItemStrValue(JKBXHeaderVO.JKBXR);
-		String receiver = headItem == null ? null : (String) headItem.getValueObject();
-		if (!StringUtils.isNullWithTrim(receiver)) {
-			jkbxr = receiver;
-		}
-		if (jkbxr == null)
-			return;
-		if (autotake) {
-			// 自动带出收款银行帐号
-			try {
-				String key = UserBankAccVoCall.USERBANKACC_VOCALL + BXUiUtil.getPk_psndoc();
-				if (WorkbenchEnvironment.getInstance().getClientCache(key) != null) {
-					BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
-					if (vos != null && vos.length > 0 && vos[0] != null) {
-						setHeadValue(JKBXHeaderVO.SKYHZH, vos[0].getPk_bankaccsub());
-					}
-				}
-			} catch (Exception e) {
-				setHeadValue(JKBXHeaderVO.SKYHZH, "");
-			}
 		}
 	}
 

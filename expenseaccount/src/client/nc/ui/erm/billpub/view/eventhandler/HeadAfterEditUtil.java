@@ -3,22 +3,16 @@ package nc.ui.erm.billpub.view.eventhandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.desktop.ui.WorkbenchEnvironment;
 import nc.ui.bd.ref.AbstractRefModel;
-import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.model.ErmBillBillManageModel;
-import nc.ui.erm.billpub.remote.UserBankAccVoCall;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.bd.bankaccount.BankAccSubVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.er.util.StringUtils;
 import nc.vo.fipub.exception.ExceptionHandler;
-import nc.vo.pub.BusinessException;
 /**
  * 初始化不同单位归属的字段
  * @author wangled
@@ -210,30 +204,6 @@ public class HeadAfterEditUtil {
 			}
 		}
 	}
-	
-	/**
-	 * 编辑收款银行帐号
-	 */
-	public void editSkyhzh(boolean autotake, String pk_org)
-			throws BusinessException {
-		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.RECEIVER);
-		String receiver = headItem == null ? null : (String) headItem.getValueObject();
-		if (autotake) {
-			// 自动带出收款银行帐号
-			try {
-				String key = UserBankAccVoCall.USERBANKACC_VOCALL+ receiver;
-				if (WorkbenchEnvironment.getInstance().getClientCache(key) != null) {
-					BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
-					if (vos != null && vos.length > 0 && vos[0] != null) {
-						setHeadValue(JKBXHeaderVO.SKYHZH, vos[0].getPk_bankaccsub());
-					}
-				}
-			} catch (Exception e) {
-				setHeadValue(JKBXHeaderVO.SKYHZH, "");
-			}
-		}
-	}
-
 	
 	/**
 	 * 将这些字段为表头表体均有的字段，设置到表体的每个页签中

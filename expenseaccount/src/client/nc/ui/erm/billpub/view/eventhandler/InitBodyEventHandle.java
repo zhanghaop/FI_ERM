@@ -10,6 +10,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.arap.pub.IBxUIControl;
+import nc.itf.bd.psnbankacc.IPsnBankaccPubService;
 import nc.itf.fi.pub.Currency;
 import nc.pubitf.uapbd.ICustomerPubService;
 import nc.pubitf.uapbd.ISupplierPubService;
@@ -41,6 +42,7 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BodyEditVO;
 import nc.vo.arap.bx.util.ControlBodyEditVO;
 import nc.vo.bd.bankaccount.BankAccSubVO;
+import nc.vo.bd.bankaccount.BankAccbasVO;
 import nc.vo.bd.bankaccount.IBankAccConstant;
 import nc.vo.bd.psn.PsnjobVO;
 import nc.vo.bd.pub.IPubEnumConst;
@@ -605,10 +607,11 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 	 * 收款人更换时，设置默认个人银行账户
 	 */
 	private void setDefaultSkyhzhByReceiver(String tablecode, int row) {
-		if(isBxBill()){
+		if (isBxBill()) {
 			Integer payTarget = getBillPayTarget(row);
-			if(payTarget != null && payTarget.equals(Integer.valueOf(0))){
+			if (payTarget != null && payTarget.equals(Integer.valueOf(0))) {
 				String receiver = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.RECEIVER, tablecode);
+
 				// 自动带出收款银行帐号
 				try {
 					String key = UserBankAccVoCall.USERBANKACC_VOCALL + receiver;
@@ -616,6 +619,12 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 						BankAccSubVO[] vos = (BankAccSubVO[]) WorkbenchEnvironment.getInstance().getClientCache(key);
 						if (vos != null && vos.length > 0 && vos[0] != null) {
 							getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(vos[0].getPk_bankaccsub(), row, BXBusItemVO.SKYHZH);
+						}
+					} else {// 个人银行账户带默认账户
+						BankAccbasVO bank = NCLocator.getInstance().lookup(IPsnBankaccPubService.class).queryDefaultBankAccByPsnDoc(receiver);
+						if (bank != null && bank.getBankaccsub() != null) {
+							WorkbenchEnvironment.getInstance().putClientCache(UserBankAccVoCall.USERBANKACC_VOCALL + receiver, bank.getBankaccsub());
+							getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(bank.getBankaccsub()[0].getPk_bankaccsub(), row, BXBusItemVO.SKYHZH);
 						}
 					}
 				} catch (Exception e) {
