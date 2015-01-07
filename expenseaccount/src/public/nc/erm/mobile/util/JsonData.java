@@ -22,10 +22,12 @@ import nc.pubitf.bd.accessor.GeneralAccessorFactory;
 import nc.pubitf.bd.accessor.IGeneralAccessor;
 import nc.ui.bd.mmpub.DataDictionaryReader;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
-import nc.ui.pub.bill.HashtableBillTabVO;
+import nc.ui.pub.bill.BillData;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.bd.accessor.IBDData;
+import nc.vo.bill.pub.BillUtil;
 import nc.vo.bill.pub.MiscUtil;
+import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
@@ -265,17 +267,31 @@ public class JsonData
 							ncobject = DASFacade.newInstanceWithContainedObject(be, o);
 						}
 					}
-					JSONObject bodyJson = new JSONObject();
+//					JSONObject bodyJson = new JSONObject();
+					JSONArray itemsarray = new JSONArray();
+					int itemno = 0;
 					for (int i = 0; i < tabvos.length; i++) {
 						BillTabVO tabVO = tabvos[i];
 						NCObject[] ncos = (NCObject[]) ncobject
 								.getAttributeValue(tabVO.getMetadatapath());
-	
-						JsonModel model = getBillModel(tabVO.getTabcode());
-						JSONArray bodyarray = model.setBodyObjectByMetaData(ncos);
-						bodyJson.put(tabVO.getTabcode(), bodyarray);
+						if(ncos != null && ncos.length > 0){
+							JsonModel model = getBillModel(tabVO.getTabcode());
+							JSONArray bodyarray = model.setBodyObjectByMetaData(ncos);
+							if(bodyarray != null){
+								for(int arrayindex = 0;arrayindex < bodyarray.length();arrayindex++){
+									JSONObject bodyjson = (JSONObject) bodyarray.get(arrayindex);
+									bodyjson.put("itemno", itemno);
+									itemno++;
+									bodyjson.put("tablecode", tabVO.getTabcode());
+									bodyjson.put("tablename", tabVO.getTabname());
+									itemsarray.put(bodyjson);
+								}
+							}
+						}
+//						bodyJson.put(tabVO.getTabcode(), bodyarray);
 					}
-					resultJson.put("body", bodyJson);
+					resultJson.put("itemlist", itemsarray);
+					resultJson.put("itemnum", itemsarray.length());
 				}
 			} else {
 				// 单表体，取得表体数据，得到name并返回
@@ -331,12 +347,17 @@ public class JsonData
   public JSONObject getHeadVO(SuperVO head) throws Exception{
 	    JsonItem[] items = getHeadTailItems();
 	    JSONObject headJson = new JSONObject();
+	    String key = JKBXHeaderVO.TOTAL;
+	    Object value = head.getAttributeValue(key);
+	    headJson.put(key, value);
+		headJson.put(key+"_name", NumberFormatUtil.formatDouble((UFDouble)value));
 		for (int i = 0; i < items.length; i++) {
-			String key = items[i].getKey();
-			Object value = head.getAttributeValue(key);
+			key = items[i].getKey();
+			value = head.getAttributeValue(key);
 			if(value != null){
 				JSONObject itemJson = getJsonObjectFromItem(items[i],value);
-				headJson.put(key, itemJson);
+				headJson.put(key, itemJson.get("pk"));
+				headJson.put(key+"_name", itemJson.get("name"));
 				//加载公式
 				if(items[i].getLoadFormula() != null ){
 					WebFormulaParser.getInstance().processFormulasForHead(headJson,items[i].getLoadFormula(),head);
@@ -598,22 +619,37 @@ public class JsonData
 	      m_biTailItems = ((JsonItem[])MiscUtil.ArraysCat(this.m_biTailItems, items));
 	    }
   }
+  public static String getDefaultTableCode(int pos)
+  {
+	    switch (pos) {
+	    case 0: 
+	      return "main";
+	    
+	
+	    case 1: 
+	      return ExAggregatedVO.defaultTableCode;
+	    
+	    case 2: 
+	      return "tail";
+	    }
+	    return null;
+  }
   
   private void initBodyVOs(BillTempletBodyVO[] bodys)
   {
-//    if ((bodys == null) || (bodys.length == 0)) {
-//      return;
-//    }
-//    
-//    for (int i = 0; i < bodys.length; i++) { 
-//      String code;
-//      if (((code = bodys[i].getTableCode()) == null) || (code.trim().length() == 0)) {
-//        int pos;
-//        bodys[i].setTableCode(BillUtil.getDefaultTableCode(pos = bodys[i].getPos().intValue()));
-//        bodys[i].setTableName(BillUtil.getDefaultTableName(pos));
-//      }
-//    }
-//    BillUtil.sortBodyVOsByProps(bodys, new String[] { "pos", "table_code", "showorder" });
+	    if ((bodys == null) || (bodys.length == 0)) {
+	      return;
+	    }
+	    
+	    for (int i = 0; i < bodys.length; i++) { 
+	      String code;
+	      if (((code = bodys[i].getTableCode()) == null) || (code.trim().length() == 0)) {
+	        int pos = bodys[i].getPos().intValue();
+	        bodys[i].setTableCode(getDefaultTableCode(pos));
+//	        bodys[i].setTableName(BillUtil.getDefaultTableName(pos));
+	      }
+	    }
+	    ItemSortUtil.sortBodyVOsByProps(bodys, new String[] { "pos", "table_code", "showorder" });
   }
   
   /**

@@ -7,26 +7,16 @@ import java.util.Map;
 
 import nc.arap.mobile.itf.IErmMobileCtrl;
 import nc.bs.dao.BaseDAO;
-import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.arap.prv.IBXBillPrivate;
-import nc.vo.arap.bx.util.ActionUtils;
-import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.ep.bx.JKBXVO;
-import nc.vo.erm.common.MessageVO;
-import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.pub.pf.workflow.IPFActionName;
 
 public class ErmMobileCtrlImpl implements IErmMobileCtrl{
-	
-	private String defaultDjlxbm="2643";
-	
 	@Override
 	public String addJkbx(Map<String, Object> valuemap,String djlxbm) throws BusinessException {
 		 valuemap.put(JKBXHeaderVO.DJLXBM,djlxbm);
@@ -94,9 +84,9 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 		}
 		
 		// 获取附件列表
-		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
-		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
-		resultmap.put("attachment", attatchmapList);
+//		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
+//		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
+//		resultmap.put("attachment", attatchmapList);
 		
 		return resultmap;
 	}
@@ -141,7 +131,7 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	@Override
     public Map<String,Map<String,String>> loadBxdWorkflownote(String pk_jkbx,String djlxbm) throws BusinessException{
 
-      return new ErmMobileCtrlBO(defaultDjlxbm).queryWorkFlow(pk_jkbx,djlxbm);
+      return new ErmMobileCtrlBO().queryWorkFlow(pk_jkbx,djlxbm);
 
     }
 	public String unAuditbxd(String pk_jkbx,String userid) throws BusinessException{
@@ -158,7 +148,7 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	 private ErmMobileCtrlBO mobilebo = null;
 	 ErmMobileCtrlBO getErmMobileCtrlBo(){
 		 if(mobilebo == null)
-			 mobilebo = new ErmMobileCtrlBO(defaultDjlxbm);
+			 mobilebo = new ErmMobileCtrlBO();
 		 return mobilebo;
 	 }
 

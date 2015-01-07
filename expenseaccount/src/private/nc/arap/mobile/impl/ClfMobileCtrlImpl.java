@@ -98,9 +98,9 @@ public class ClfMobileCtrlImpl extends ErmMobileCtrlImpl implements IClfMobileCt
 			}
 		}
 		// 获取附件列表
-		ErmMobileCtrlBO bo = new ErmMobileCtrlBO(defaultDjlxbm);
-		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
-		resultmap.put("attachment", attatchmapList);
+//		ErmMobileCtrlBO bo = new ErmMobileCtrlBO(defaultDjlxbm);
+//		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
+//		resultmap.put("attachment", attatchmapList);
 		
 		return resultmap;
 	}

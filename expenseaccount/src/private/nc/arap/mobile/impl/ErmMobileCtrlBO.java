@@ -1,13 +1,10 @@
 package nc.arap.mobile.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -23,11 +20,8 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
-import nc.bs.logging.Logger;
 import nc.bs.pf.pub.PfDataCache;
-import nc.bs.pub.filesystem.IFileSystemService;
-import nc.bs.pub.filesystem.IQueryFolderTreeNodeService;
-import nc.bs.wfengine.engine.ActivityInstance;
+import nc.erm.mobile.util.NumberFormatUtil;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.arap.pub.IErmBillUIPublic;
@@ -62,9 +56,6 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.VOStatus;
 import nc.vo.pub.ValidationException;
-import nc.vo.pub.filesystem.NCFileNode;
-import nc.vo.pub.filesystem.NCFileVO;
-import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.pf.BillStatusEnum;
@@ -78,20 +69,12 @@ import nc.vo.uap.pf.PfProcessBatchRetObject;
 import nc.vo.uap.wfmonitor.ProcessRouteRes;
 import nc.vo.util.AuditInfoUtil;
 import nc.vo.vorg.OrgVersionVO;
-import nc.vo.wfengine.core.XpdlPackage;
-import nc.vo.wfengine.core.activity.Activity;
-import nc.vo.wfengine.core.parser.UfXPDLParser;
 import nc.vo.wfengine.core.parser.XPDLNames;
-import nc.vo.wfengine.core.parser.XPDLParserException;
-import nc.vo.wfengine.core.transition.BasicTransitionEx;
-import nc.vo.wfengine.core.workflow.WorkflowProcess;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
 import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
-import nc.vo.wfengine.pub.WfTaskType;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import sun.misc.BASE64Encoder;
 import uap.pub.bap.fs.FileStorageClient;
 import uap.pub.bap.fs.IFileTransfer;
 import uap.pub.bap.fs.domain.FileHeader;
@@ -103,11 +86,9 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	/** 
 	 * 默认单据类型
 	 */
-	private String defaultDjlxbm="2643";
 	
-	public ErmMobileCtrlBO(String defaultDjlxbm) {
+	public ErmMobileCtrlBO() {
 		super();
-		this.defaultDjlxbm = defaultDjlxbm;
 	}
 	
 	public String addJkbx(Map<String, Object> valuemap) throws BusinessException {
@@ -277,11 +258,10 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 		//获得当前操作的交易类型
 		String djlxbm = (String) valuemap.get(JKBXHeaderVO.DJLXBM);
-		String pk_tradetype = StringUtil.isEmpty(djlxbm)?defaultDjlxbm:djlxbm.toString();
-		org.jfree.util.Log.getInstance().error("wangjjm pk_group :" + pk_group);
-		org.jfree.util.Log.getInstance().error("wangjjm pk_tradetype :" + pk_tradetype);
-		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, pk_tradetype);
-		org.jfree.util.Log.getInstance().error("wangjjm djlxVO :" + djlxVO);
+//		org.jfree.util.Log.getInstance().error("wangjjm pk_group :" + pk_group);
+//		org.jfree.util.Log.getInstance().error("wangjjm pk_tradetype :" + pk_tradetype);
+		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
+//		org.jfree.util.Log.getInstance().error("wangjjm djlxVO :" + djlxVO);
 		// 初始化表头数据
 		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
 		JKBXVO jkbxvo = initservice.setBillVOtoUI(djlxVO, "", null);
@@ -457,7 +437,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	
 
 	private Map<String, Map<String, String>> queryBxheadVOsByWhere(String userid,String sql) throws BusinessException {
-		String sqlWhere = "djlxbm = '"+defaultDjlxbm+"' and "+sql;
+		String sqlWhere = "djlxbm = '2641' and "+sql;
 		initEvn(userid);
 		//待查询的字段
 		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
@@ -509,17 +489,16 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	 */
 	public Map<String, Map<String, String>> getBXHeadsByUser(String userid,String flag)
 	throws BusinessException {
-
 		initEvn(userid);
 		String sqlWhere = SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, getDjlxbmArray(), false);
-//		sqlWhere = JKBXHeaderVO.DJLXBM + " in(" + "'2641','2642','2643')";
 		if("1".equals(flag)){
+			//查询已完成单据
 			sqlWhere = sqlWhere + " and " + JKBXHeaderVO.SPZT +" in (" + 
 					""+IBillStatus.CHECKPASS + "," + IBillStatus.NOPASS + ")";
 		}else{
+			//查询未完成单据
 			sqlWhere = sqlWhere + " and " + JKBXHeaderVO.SPZT +"<>"+IBillStatus.CHECKPASS + " and " + JKBXHeaderVO.SPZT +"<>"+IBillStatus.NOPASS;
 		}
-		
 		
 		//待查询的字段
 		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
@@ -550,8 +529,9 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
 					}else if(JKBXHeaderVO.TOTAL.equals(field)){
 						UFDouble total = new UFDouble(attributeValue);
-						total = total.setScale(2,4);
-						fieldvalueMap.put(field, total.toString());
+//						total = total.setScale(2,4);
+						String value = NumberFormatUtil.formatDouble(total);
+						fieldvalueMap.put(field, value);
 					}if(JKBXHeaderVO.SPZT.equals(field)){
 						String sprshow = getSprShow(vo.getSpzt());
 						String spztshow = getSpztShow(vo.getSpzt());
@@ -573,7 +553,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		
 		// 补充查询审批进行中的报销单的当前审批人
 		if(!resultmap.isEmpty()){
-			Map<String, String> checkmanMap = getBillCheckman(resultmap.keySet().toArray(new String[0]),defaultDjlxbm);
+			Map<String, String> checkmanMap = getBillCheckman(resultmap.keySet().toArray(new String[0]));
 			for (Entry<String, String> checkmans : checkmanMap.entrySet()) {
 				Map<String, String> map = resultmap.get(checkmans.getKey());
 				// 将审批状态替换为当前审批人
@@ -1306,7 +1286,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	 * @return
 	 * @throws BusinessException
 	 */
-	private Map<String,String> getBillCheckman(String billIdAry[], String billType) throws BusinessException{
+	private Map<String,String> getBillCheckman(String billIdAry[]) throws BusinessException{
 		String sql = (new StringBuilder()).append(" select billVersionPK ,checkman,user_name from pub_workflownote ,sm_user " +
 				" where pub_workflownote.checkman = sm_user.cuserid " +
 				" and approvestatus in(").append(WfTaskOrInstanceStatus.getUnfinishedStatusSet()).append(") " +
@@ -1951,7 +1931,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 			
 			// 补充查询审批进行中的报销单的当前审批人
 			if(!resultmap.isEmpty()){
-				Map<String, String> checkmanMap = getBillCheckman(resultmap.keySet().toArray(new String[0]),defaultDjlxbm);
+				Map<String, String> checkmanMap = getBillCheckman(resultmap.keySet().toArray(new String[0]));
 				for (Entry<String, String> checkmans : checkmanMap.entrySet()) {
 					Map<String, String> map = resultmap.get(checkmans.getKey());
 					// 将审批状态替换为当前审批人

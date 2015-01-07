@@ -93,10 +93,12 @@ public class JsonModel{
 		try {
 			for (int i = 0; i < bodys.length; i++) {
 				JSONObject bodyJson = setBodyRowObjectModelByMetaData(bodys[i], i);
-				//gaotn
-				bodyMap.put(i, bodyJson);
-				//gaotn
-//				bodyarray.put(bodyJson);
+				if(bodyJson != null){
+					//gaotn
+					bodyMap.put(i, bodyJson);
+					//gaotn
+	//				bodyarray.put(bodyJson);
+				}
 			}
 			//gaotn
 			JsonItem[] items = getBodyItems();
@@ -164,7 +166,11 @@ public class JsonModel{
 	
 	
 	private JSONObject setBodyRowObjectModelByMetaData(NCObject o, int row){
+		if(o.getVOStatus() == 100)
+			return null;
+		o.setVOStatus(100);
 		JSONObject bodyJson = new JSONObject();
+		StringBuffer text = new StringBuffer();
 		if (o == null || row < 0)
 			return bodyJson;
 		try{
@@ -216,10 +222,17 @@ public class JsonModel{
 							itemJson.put("pk", value);
 							itemJson.put("name", value);
 						}
-						bodyJson.put(item.getKey(), itemJson);
+//						bodyJson.put(item.getKey(), itemJson);
+						bodyJson.put(item.getKey(), itemJson.get("pk"));
+						bodyJson.put(item.getKey()+"_name", itemJson.get("name"));
+						//Æ´½Ó×Ö·û´®
+						if(item.isShowFlag() == true && !"amount".equals(item.getKey())){
+							text.append(itemJson.get("name"));
+						}
 					}
 				}
 			}
+			bodyJson.put("textaera",text);
 		}catch(Exception e){
 			//e.printStackTrace();
 		}

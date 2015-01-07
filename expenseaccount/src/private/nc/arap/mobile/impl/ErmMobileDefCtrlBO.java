@@ -10,8 +10,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
+
+import org.codehaus.jettison.json.JSONException;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
@@ -21,6 +23,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.bs.logging.Logger;
 import nc.bs.pf.pub.PfDataCache;
+import nc.erm.mobile.util.TranslateValueObjectToJson;
 import nc.erm.mobile.view.ComboBoxUtil;
 import nc.erm.mobile.view.MobileBillItem;
 import nc.itf.arap.prv.IBXBillPrivate;
@@ -145,32 +148,6 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			throws BusinessException {
 		initEvn(userid);
 		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-		
-		
-//		List<Map<String, Object>> attachment = (List<Map<String, Object>>) valuemap.get("attachment");
-//		if(attachment == null || attachment.isEmpty()){
-//			return null;
-//		}
-//		BASE64Decoder decoder = new BASE64Decoder();
-//		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
-//			String userID = InvocationInfoProxy.getInstance().getUserId();
-//			int size = attachment.size();
-//			String[] fileNames = new String[size];
-//			int[] fileSizes = new int[size];
-//			String[] content = new String[size];
-//			for(int i=0 ; i<size; i++){
-//				Map map = attachment.get(i);
-//				fileNames[i] = (String) map.get("name");// 文件的名称
-//				fileSizes[i] = Integer.parseInt(map.get("size").toString()); // 文件的大小
-//				//file是经过base64编码的
-//				String file = (String) map.get("content");
-//				content[i] = file;//decoder.decodeBuffer(file).toString();
-//			}
-//			boolean value = NCLocator.getInstance().lookup(IImagUtil.class)
-//					.UploadImag(userID, "1001Z31000000000068K", fileNames, fileSizes, content); 
-//		}
-		
-		
 		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
 		// 初始化表头数据
 		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
@@ -815,7 +792,26 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				String reftype = item.getRefType();
 				//下拉类型和参照类型分别需要对reftype做处理
 				if(dataType == IBillItem.COMBO){
-					reftype = "COMBO," + item.getName() + "," + reftype;
+					JSONObject jsonObj = new JSONObject();
+					boolean isFromMeta = reftype
+			                   .startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
+					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
+					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
+					JSONArray jsonarray = new JSONArray();
+					for(int i=0;i<combodata.size();i++){
+						DefaultConstEnum enumvalue = combodata.get(i);
+						JSONObject data = new JSONObject();
+						data.put("refname", enumvalue.getName());
+						data.put("pk_ref", enumvalue.getValue());
+						jsonarray.put(data);
+					}
+					JSONObject none = new JSONObject();
+					none.put("refname", "无");
+					none.put("pk_ref", "");
+					jsonarray.put(none);
+					jsonObj.put("reflist", jsonarray);
+					jsonObj.put("nodename", item.getName());
+					reftype = "COMBO,"+jsonObj.toString();	
 				}else{
 					if(item.getRefType() == null)
 						reftype = "UFREF,没有参照";
@@ -986,7 +982,6 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		return div.toString();
 	}
 	
-	private static Map<String,String> orderCache = new HashMap<String,String>();
 	//得到表体动态dsl的字段显示顺序
 	private String getbodyorder(BillTempletBodyVO[] bodyVO,String tablecode,String flag,String djlxbm){
 		
@@ -1030,10 +1025,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			}
 			if(editorder.length()>0){
 				String orderStr = editorder.substring(0,editorder.length()-1).toString();
-				orderCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm  + tablecode + "_order",orderStr);
 				return orderStr;
-			}else{
-				orderCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm  + tablecode + "_order","");
 			}
 		}
 		return "";
@@ -1177,157 +1169,121 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	}
 	
 	
-	@SuppressWarnings("unchecked")
-	Map<String,Object> getJkbxCard(String pk_jkbx,String userid,String djlxbm) throws BusinessException {
+	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc) throws BusinessException {
 		initEvn(userid);
-		
-		//若没有pk，则返回空
-		BaseDAO dao = new BaseDAO();
-		Map<String, Object> resultmap = new HashMap<String, Object>();
+		org.codehaus.jettison.json.JSONObject retJson = new org.codehaus.jettison.json.JSONObject();
 		if(StringUtil.isEmpty(pk_jkbx)){
-			return resultmap;
+			return retJson.toString();
 		}
-		templetCache.clear();
-		//取表头数据，只需取出queryFields标明的字段即可
-		Map headMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head");
-		if(headMap == null){
-			getBxdTemplate(userid,djlxbm,null,"editcard");
-			headMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head");
-		}
-		String[] queryFields = (String[]) headMap.keySet().toArray(new String[0]);
-		BXHeaderVO bxheadvo = (BXHeaderVO) dao.retrieveByPK(BXHeaderVO.class, pk_jkbx, queryFields);
-		if(bxheadvo == null)
-			return resultmap;
-		Map<String, Object> headvo = new HashMap<String,Object>();
-		for (int i = 0; i < queryFields.length; i++) {
-			String queryField = queryFields[i];
-			String value = ErmMobileCtrlBO.getStringValue(bxheadvo.getAttributeValue(queryField));
-			headvo.put(queryField, value);
-			if(JKBXHeaderVO.DJRQ.equals(queryField)){
-				headvo.put(queryField, new UFDate(value).toLocalString());
-			}else if(JKBXHeaderVO.SPZT.equals(queryField)){
-				String spztshow = ErmMobileCtrlBO.getSpztShow(bxheadvo.getSpzt());
-				headvo.put("spztshow", spztshow);
-			}
-			
-			//根据queryFields把是参照的部分取出来名字
-			if(headMap.get(queryField) != null){
-				String refname = resetRefName(queryField,value,headMap.get(queryField).toString());
-				if(refname != null)
-					headvo.put(queryField + "_name", refname);
-			}
-			 
-		}
-		resultmap.put("head", headvo);
-		
-		//取表体数据，只需取出itemQueryFields标明的字段即可
-		IBXBillPrivate service = NCLocator.getInstance().lookup(IBXBillPrivate.class);
-		BXBusItemVO[] items = service.queryItems(bxheadvo);
-		List<Map<String, Object>> itemResultmapList = new ArrayList<Map<String,Object>>();
-		if(items != null && items.length > 0){
-			for (int i = 0; i < items.length; i++) {
-				BXBusItemVO item = items[i];
-				String tablecode = item.getTablecode();
-				
-				Map bodyMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm  + tablecode + "body");
-				String orderStr = orderCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm  + tablecode + "_order");
-				if(bodyMap == null || orderStr == null){
-					getItemDslFile(userid, djlxbm, null, tablecode, "editcard");
-					bodyMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm  + tablecode + "body");
-					orderStr = orderCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm  + tablecode + "_order");
-				}
-				 
-				if(orderStr != null && !"".equals(orderStr)){
-					resultmap.put(tablecode + "_order", orderStr);
-				} 
-				
-				String[] itemQueryFields = (String[])bodyMap.keySet().toArray(new String[0]); 
-				Map<String, Object> itemResultmap = new HashMap<String, Object>();
-				for (int j = 0; j < itemQueryFields.length;j++) {
-					String queryField = itemQueryFields[j];
-					String attrvalue = ErmMobileCtrlBO.getStringValue(item.getAttributeValue(queryField));
-					if(BXBusItemVO.PK_REIMTYPE.equals(queryField)){
-						// 转换报销类型为name
-//						String attrname = reimtypemap.get(attrvalue) == null?"":reimtypemap.get(attrvalue).get(ReimTypeVO.NAME);
-//						itemResultmap.put("reimname", attrname);
-					}
-					if(bodyMap.get(queryField) != null){
-						String refname = resetRefName(queryField,attrvalue,bodyMap.get(queryField).toString());
-						if(refname != null)
-							itemResultmap.put(queryField + "_name", refname);
-					}
-					itemResultmap.put(queryField, attrvalue);
-				}
-				itemResultmapList.add(itemResultmap);
-			}
-			resultmap.put("items", itemResultmapList);
+		/**
+		 * 模板转换
+		 */
+		List<JKBXVO> vos = NCLocator.getInstance()
+				.lookup(IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
+						new String[]{pk_jkbx}, null,false,null);
+		BillTempletVO billTempletVO =  getDefaultTempletStatics(djlxbm);
+		TranslateValueObjectToJson trans = new TranslateValueObjectToJson();
+		try {
+			JKBXVO bxvo = vos.get(0);
+			retJson = trans.transValueObjectToJSON(billTempletVO,bxvo);
+			retJson.put("djbh", bxvo.getParentVO().getDjbh());
+			retJson.put("total", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total_name"));
+			retJson.put("pk_jkbx", bxvo.getParentVO().getPk_jkbx());
+			retJson.put("djlxbm", djlxbm);
+			retJson.put("djlxmc", djlxmc);
+			retJson.put("userid", userid);
+		} catch (Exception e) {
+			Logger.debug(e.getMessage());
 		}
 		
+		// 获取附件个数
+		try {
+			String fileNum = getFileNum(pk_jkbx, userid);
+			if(fileNum != null){
+				retJson.put("attachnum", fileNum);
+			}else{
+				retJson.put("attachnum", "0");
+			}
+		} catch (JSONException e) {
+			Logger.debug(e.getMessage());
+		}
+		return retJson.toString();
+	}
+
+	public String getAttachFile(String pk_jkbx, String userid) throws BusinessException {
+		org.codehaus.jettison.json.JSONObject retJson = new org.codehaus.jettison.json.JSONObject();
 		// 获取附件列表
-		List<Map<String, String>> attatchmapList = getFileList(pk_jkbx, userid);
-		resultmap.put("attachment", attatchmapList);
-		//resultmap.put("ts", ts);
-		return resultmap;
-	}
-	private static Map<String,Map<String,String>> refPkName = new HashMap<String,Map<String,String>>();
-	private String resetRefName(String key,String refval,String reftype){
-		if(key.endsWith("_name")){
-			return null;
+		try {
+			org.codehaus.jettison.json.JSONArray attatchmapList = getFileList(pk_jkbx, userid);
+			if(attatchmapList != null && attatchmapList.length() > 0){
+				retJson.put("attachnum", attatchmapList.length());
+			}
+			retJson.put("attachment", attatchmapList);
+		} catch (JSONException e) {
+			Logger.debug(e.getMessage());
 		}
-		if(reftype.startsWith("UFREF,")){
-			reftype = reftype.substring(6);
-			if(reftype != null && reftype.contains(","))
-				reftype = reftype.split(",")[0];
-			if (RefPubUtil.isSpecialRef(reftype)) {
-				return null;
-			}
-			if(refPkName.get(reftype) == null){
-				AbstractRefModel refModel = RefPubUtil.getRefModel(reftype);
-				String pkFieldCode = refModel.getPkFieldCode();
-				RefcolumnVO[] RefcolumnVOs = RefPubUtil.getColumnSequences(refModel);
-				Vector vDataAll = refModel.getRefData();
-				Map<String,String> map = new HashMap<String,String>();
-				for(int i=0;i<vDataAll.size();i++){
-					Vector aa = (Vector) vDataAll.get(i);
-					String pk = null;
-					String value = null;
-					for(int j=0;j<RefcolumnVOs.length;j++){
-						if(RefcolumnVOs[j].getFieldname().equals("name")){
-							value = (String) aa.get(j);
-						}
-						else if(RefcolumnVOs[j].getFieldname().equals(pkFieldCode)){
-							pk = (String) aa.get(j);
-						}
-					}
-					map.put(pk, value);
-				}
-				if(map.size() > 0)
-					refPkName.put(reftype, map);
-				else
-					return null;
-			}
-		}else if(reftype.startsWith("COMBO,")){
-			//如果是下拉，则按照下拉取值
-			reftype = reftype.substring(6);
-			if(refPkName.get(reftype) == null){
-				if (reftype != null
-						&& (reftype = reftype.trim()).length() > 0) {
-					boolean isFromMeta = reftype
-							.startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
-					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
-					Map<String,String> map = new HashMap<String,String>();
-					for(int i=0;i<combodata.size();i++){
-						map.put(combodata.get(i).getValue().toString(), combodata.get(i).getName());
-					}
-					if(map.size() > 0)
-						refPkName.put(reftype, map);
-					else
-						return null;
-				}
-			}
-		}
-		return refPkName.get(reftype).get(refval);
+		return retJson.toString();
 	}
+	
+//	private static Map<String,Map<String,String>> refPkName = new HashMap<String,Map<String,String>>();
+//	private String resetRefName(String key,String refval,String reftype){
+//		if(key.endsWith("_name")){
+//			return null;
+//		}
+//		if(reftype.startsWith("UFREF,")){
+//			reftype = reftype.substring(6);
+//			if(reftype != null && reftype.contains(","))
+//				reftype = reftype.split(",")[0];
+//			if (RefPubUtil.isSpecialRef(reftype)) {
+//				return null;
+//			}
+//			if(refPkName.get(reftype) == null){
+//				AbstractRefModel refModel = RefPubUtil.getRefModel(reftype);
+//				String pkFieldCode = refModel.getPkFieldCode();
+//				RefcolumnVO[] RefcolumnVOs = RefPubUtil.getColumnSequences(refModel);
+//				Vector vDataAll = refModel.getRefData();
+//				Map<String,String> map = new HashMap<String,String>();
+//				for(int i=0;i<vDataAll.size();i++){
+//					Vector aa = (Vector) vDataAll.get(i);
+//					String pk = null;
+//					String value = null;
+//					for(int j=0;j<RefcolumnVOs.length;j++){
+//						if(RefcolumnVOs[j].getFieldname().equals("name")){
+//							value = (String) aa.get(j);
+//						}
+//						else if(RefcolumnVOs[j].getFieldname().equals(pkFieldCode)){
+//							pk = (String) aa.get(j);
+//						}
+//					}
+//					map.put(pk, value);
+//				}
+//				if(map.size() > 0)
+//					refPkName.put(reftype, map);
+//				else
+//					return null;
+//			}
+//		}else if(reftype.startsWith("COMBO,")){
+//			//如果是下拉，则按照下拉取值
+//			reftype = reftype.substring(6);
+//			if(refPkName.get(reftype) == null){
+//				if (reftype != null
+//						&& (reftype = reftype.trim()).length() > 0) {
+//					boolean isFromMeta = reftype
+//							.startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
+//					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
+//					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
+//					Map<String,String> map = new HashMap<String,String>();
+//					for(int i=0;i<combodata.size();i++){
+//						map.put(combodata.get(i).getValue().toString(), combodata.get(i).getName());
+//					}
+//					if(map.size() > 0)
+//						refPkName.put(reftype, map);
+//					else
+//						return null;
+//				}
+//			}
+//		}
+//		return refPkName.get(reftype).get(refval);
+//	}
 }
 

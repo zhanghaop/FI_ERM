@@ -45,6 +45,11 @@ public interface IDefMobileCtrl {
 	/**
 	 * 根据pk查询单据
 	 */
-	public Map<String,Object> getJkbxCard(String pk_jkbx,String userid,String djlxbm) throws BusinessException;
+	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc) throws BusinessException;
+	
+	/**
+	 * 查询单据附件附件
+	 */
+	public String getAttachFile(String pk_jkbx,String userid) throws BusinessException;
 	
 }

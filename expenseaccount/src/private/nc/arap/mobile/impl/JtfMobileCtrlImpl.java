@@ -81,9 +81,9 @@ public class JtfMobileCtrlImpl extends ErmMobileCtrlImpl implements IJtfMobileCt
 		}
 		
 		// 获取附件列表
-		ErmMobileCtrlBO bo = new ErmMobileCtrlBO(defaultDjlxbm);
-		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
-		resultmap.put("attachment", attatchmapList);
+//		ErmMobileCtrlBO bo = new ErmMobileCtrlBO(defaultDjlxbm);
+//		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
+//		resultmap.put("attachment", attatchmapList);
 		  
 //		fileservice.downLoadFile(s, outputstream);
 //		FileHeader[] filevos = new ErmMobileCtrlBO(defaultDjlxbm).getAttachmentList(bxheadvo.getPk_group(), headpk);

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +44,10 @@ import nc.vo.trade.pub.IBillStatus;
 import nc.vo.vorg.DeptVersionVO;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.jdom.JDOMException;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -395,10 +398,31 @@ public abstract class AbstractErmMobileCtrlBO {
 		}
 	}
 	
-	public List<Map<String, String>> getFileList(String bxpk,String userid) throws BusinessException{
+	public String getFileNum(String bxpk,String userid) throws BusinessException{
+		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"00")){
+			//如果安装了共享服务，则从影像服务器下载图片
+			IImagUtil imageutil = NCLocator.getInstance().lookup(IImagUtil.class);
+			try {
+				return String.valueOf(imageutil.DownloadImageNumber(userid, bxpk));
+			} catch (JDOMException e) {
+				return null;
+			} catch (IOException e) {
+				return null;
+			}
+		}else{
+			IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
+			NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
+			return String.valueOf(filenode.getFileLen());
+		}
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public JSONArray getFileList(String bxpk,String userid) throws BusinessException, JSONException{
 		//返回attatchmapList
+		JSONArray attacharray = new JSONArray();
 		List<Map<String, String>> attatchmapList = new ArrayList<Map<String, String>>();
-		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
+		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"00")){
 			//如果安装了共享服务，则从影像服务器下载图片
 			try {
 				IImagUtil imageutil = NCLocator.getInstance().lookup(IImagUtil.class);
@@ -406,21 +430,34 @@ public abstract class AbstractErmMobileCtrlBO {
 				//把影像服务器上的图像转换为手机可识别的
 				if(attatchmapList != null && attatchmapList.size()>0){
 					for(int i=0; i<attatchmapList.size(); i++){
+//						Map<String, String> map = attatchmapList.get(i);
+//						String url = map.get("URL");
+//						map.put("content", map.get("FILE_VALUE")); // 文件内容
+//						map.put("id", url.substring(url.indexOf("file_id=")+8)); // 文件标识
+//						map.put("name", map.get("FILE_NAME")); // 附件文件名称
+//						map.put("type", map.get("FILE_TYPE")); // 文件类型
+//						map.put("path", map.get("URL")); // 文件路径
+//						map.put("size", map.get("FILE_SIZE")); // 文件大小
+//						map.remove("FILE_VALUE");
+//						map.remove("URL");
+						
+						JSONObject picture = new JSONObject();
 						Map<String, String> map = attatchmapList.get(i);
 						String url = map.get("URL");
-						map.put("content", map.get("FILE_VALUE")); // 文件内容
-						map.put("id", url.substring(url.indexOf("file_id=")+8)); // 文件标识
-						map.put("name", map.get("FILE_NAME")); // 附件文件名称
-						map.put("type", map.get("FILE_TYPE")); // 文件类型
-						map.put("path", map.get("URL")); // 文件路径
-						map.put("size", map.get("FILE_SIZE")); // 文件大小
-						map.remove("FILE_VALUE");
-						map.remove("URL");
+						picture.put("content", map.get("FILE_VALUE")); // 文件内容
+						picture.put("id", url.substring(url.indexOf("file_id=")+8)); // 文件标识
+						picture.put("name", map.get("FILE_NAME")); // 附件文件名称
+						picture.put("type", map.get("FILE_TYPE")); // 文件类型
+						picture.put("path", map.get("URL")); // 文件路径
+						picture.put("size", map.get("FILE_SIZE")); // 文件大小
+						picture.remove("FILE_VALUE");
+						picture.remove("URL");
+						attacharray.put(picture);
 					}
 				}
-				return attatchmapList;
+				return attacharray;
 			} catch (Exception e) {
-				return attatchmapList;
+				return attacharray;
 			}
 		}else{
 			// 获取附件列表
@@ -432,22 +469,31 @@ public abstract class AbstractErmMobileCtrlBO {
 					NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
 					Collection<NCFileVO> files = tempfile.getFilemap().values();
 					for (NCFileVO ncFileVO : files) {
-			 			LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
-	
-						fileMap.put("name", ncFileVO.getName()); // 附件文件名称
-						fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
-						fileMap.put("id", ncFileVO.getPk()); // 文件标识
-						fileMap.put("size", String.valueOf(ncFileVO.getFileLen())); // 文件大小
-						fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
-						fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
+//			 			LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
+//						fileMap.put("name", ncFileVO.getName()); // 附件文件名称
+//						fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
+//						fileMap.put("id", ncFileVO.getPk()); // 文件标识
+//						fileMap.put("size", String.valueOf(ncFileVO.getFileLen())); // 文件大小
+//						fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
+//						fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
+//						attatchmapList.add(fileMap);
 						
-						attatchmapList.add(fileMap);
+						JSONObject picture = new JSONObject();
+						picture.put("name", ncFileVO.getName()); // 附件文件名称
+						picture.put("type", ncFileVO.getFiletype()); // 文件类型
+						picture.put("id", ncFileVO.getPk()); // 文件标识
+						picture.put("size", String.valueOf(ncFileVO.getFileLen())); // 文件大小
+						picture.put("path", ncFileVO.getFullPath()); // 文件路径
+						picture.put("content", getFileContent(ncFileVO)); // 文件内容
+						attacharray.put(picture);
 					}
 				}
 			}
-			return attatchmapList;
+			return attacharray;
 		}
 	}
+	
+	
 	private String getFileContent(NCFileVO ncFileVO) throws BusinessException {
 		IFileSystemService fileservice = NCLocator.getInstance().lookup(IFileSystemService.class);
 		

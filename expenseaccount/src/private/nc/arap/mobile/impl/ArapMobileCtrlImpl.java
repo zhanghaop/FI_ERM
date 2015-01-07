@@ -75,9 +75,9 @@ public class ArapMobileCtrlImpl extends ErmMobileCtrlImpl implements IArapMobile
 		}
 		
 		// 获取附件列表
-		ErmMobileCtrlBO bo = new ErmMobileCtrlBO(defaultDjlxbm);
-		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
-		resultmap.put("attachment", attatchmapList);
+//		ErmMobileCtrlBO bo = new ErmMobileCtrlBO(defaultDjlxbm);
+//		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
+//		resultmap.put("attachment", attatchmapList);
 		
 		return resultmap;
 	}
@@ -85,7 +85,7 @@ public class ArapMobileCtrlImpl extends ErmMobileCtrlImpl implements IArapMobile
 	@Override
 	public Map<String, Map<String, String>> queryReimType(String userid)
 			throws BusinessException {
-		return new ErmMobileCtrlBO(defaultDjlxbm).queryReimType(userid);
+		return new ErmMobileCtrlBO().queryReimType(userid);
 	}
 
 }

@@ -55,9 +55,15 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().validateTs(userid,djlxbm,nodecode,tsflag);
 	}
 	@Override
-	public Map<String, Object> getJkbxCard(String pk_jkbx,String userid,String djlxbm)
+	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc)
 			throws BusinessException {
-		return getErmDefMobileCtrlBo().getJkbxCard(pk_jkbx,userid,djlxbm);
+		return getErmDefMobileCtrlBo().getJkbxCard(pk_jkbx,userid,djlxbm,djlxmc);
 	}
 	
+	/**
+	 * 查询单据附件附件
+	 */
+	public String getAttachFile(String pk_jkbx,String userid) throws BusinessException{
+		return getErmDefMobileCtrlBo().getAttachFile(pk_jkbx,userid);
+	}
 }

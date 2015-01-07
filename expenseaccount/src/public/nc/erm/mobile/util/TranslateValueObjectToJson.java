@@ -88,17 +88,17 @@ public class TranslateValueObjectToJson{
 	 * @return
 	 * @throws Exception 
 	 */
-	public JSONObject transValueObjectToJSON(String pk_group,String pk_user,Object o) throws Exception{
+	public JSONObject transValueObjectToJSON(BillTempletVO billTempletVO,Object o) throws Exception{
 		try {
-			EnvironmentInit.initEvn(pk_user);
-			BillOperaterEnvVO envvo=new BillOperaterEnvVO();
-			envvo.setBilltype("20080PBR");
-			envvo.setNodekey("D1");
-			envvo.setOperator(pk_user);
-			envvo.setCorp(pk_group);
-			BillTempletVO billTempletVO = ErmTemplateQueryUtil.findBillTempletDatas(envvo);
+//			EnvironmentInit.initEvn(pk_user);
+//			BillOperaterEnvVO envvo=new BillOperaterEnvVO();
+//			envvo.setBilltype("20080PBR");
+//			envvo.setNodekey("D1");
+//			envvo.setOperator(pk_user);
+//			envvo.setCorp(pk_group);
+//			BillTempletVO billTempletVO = ErmTemplateQueryUtil.findBillTempletDatas(envvo);
 			if(billTempletVO==null){
-				throw new BusinessException("加载模板失败："+envvo.getBilltype()+":"+envvo.getNodekey()+":"+envvo.getOperator()+":"+envvo.getCorp()+":");
+				throw new BusinessException("模板为空");
 			}
 			JsonData jsonData = new JsonData(billTempletVO);
 			return jsonData.transBillValueObjectToJson(o);
