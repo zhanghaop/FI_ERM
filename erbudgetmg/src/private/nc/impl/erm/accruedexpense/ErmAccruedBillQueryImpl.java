@@ -1,9 +1,11 @@
 package nc.impl.erm.accruedexpense;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.erm.accruedexpense.ErmAccruedBillBO;
 import nc.bs.erm.accruedexpense.common.AccruedBillQueryCondition;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.bs.erm.util.CacheUtil;
@@ -11,6 +13,7 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.itf.erm.accruedexpense.IErmAccruedBillQueryPrivate;
 import nc.itf.erm.prv.IErmBsCommonService;
+import nc.jdbc.framework.exception.DbException;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
@@ -22,6 +25,7 @@ import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.utils.VOUtil;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.trade.pub.IBillStatus;
 
 public class ErmAccruedBillQueryImpl implements IErmAccruedBillQuery, IErmAccruedBillQueryPrivate {
@@ -187,6 +191,11 @@ public class ErmAccruedBillQueryImpl implements IErmAccruedBillQuery, IErmAccrue
 			return pks;
 		}
 		return null;
+	}
+
+	@Override
+	public Map<String, UFDateTime> getTsMapByPK(List<String> key, String tableName, String pk_field) throws DbException {
+		return new ErmAccruedBillBO().getTsMapByPK(key, tableName, pk_field);
 	}
 
 }

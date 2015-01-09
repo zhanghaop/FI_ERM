@@ -24,6 +24,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.pf.CheckStatusCallbackContext;
 import nc.bs.pub.pf.ICheckStatusCallback;
 import nc.itf.uap.pf.IWorkflowMachine;
+import nc.jdbc.framework.exception.DbException;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXStatusConst;
@@ -974,6 +975,10 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		// 查询返回结果
 		IErmAccruedBillQuery qryService = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
 		return qryService.queryBillByPks(pks);
+	}
+
+	public Map<String, UFDateTime> getTsMapByPK(List<String> key, String tableName, String pk_field) throws DbException {
+		return getDAO().getTsMap(key, tableName, pk_field);
 	}
 
 }

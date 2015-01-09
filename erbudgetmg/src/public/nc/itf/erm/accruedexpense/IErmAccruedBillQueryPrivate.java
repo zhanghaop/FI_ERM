@@ -1,7 +1,12 @@
 package nc.itf.erm.accruedexpense;
 
+import java.util.List;
+import java.util.Map;
+
 import nc.bs.erm.accruedexpense.common.AccruedBillQueryCondition;
+import nc.jdbc.framework.exception.DbException;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDateTime;
 
 /**
  * 预提单内部查询服务接口
@@ -20,4 +25,6 @@ public interface IErmAccruedBillQueryPrivate {
 	 * @throws BusinessException
 	 */
 	public String[] queryBillPksByWhere(AccruedBillQueryCondition condvo) throws BusinessException;
+	
+	public Map<String, UFDateTime> getTsMapByPK(List<String> key, String tableName, String pk_field) throws DbException;
 }

@@ -36,6 +36,8 @@
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
 				<ref bean="nullAction" />
+				<ref bean="mergepfAction"/>
+				<ref bean="nullAction" />
 				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction" />
 				<ref bean="printListGroupAction" />
@@ -69,6 +71,8 @@
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
 				<ref bean="nullAction" />
+				<ref bean="mergepfAction"/>
+				<ref bean="nullAction"/>
 				<ref bean="importexportActionGroup" />
 				<ref bean="nullAction" />
 				<ref bean="printCardGroupAction" />

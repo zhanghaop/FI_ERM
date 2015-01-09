@@ -154,6 +154,11 @@
 		<property name="resourceCode" value="accruedbill" />
 		<property name="operateCode" value="Approve" />
 	</bean>
+	
+	<bean id="mergepfAction" class="nc.ui.erm.accruedexpense.actions.AccMergePfAction">
+		<property name="model" ref="manageAppModel" />
+		<property name="editor" ref="billFormEditor"></property>
+	</bean>
 
 	<bean id="unAuditAction" class="nc.ui.erm.accruedexpense.actions.AccUnAuditAction">
 		<property name="exceptionHandler" ref="exceptionHandler" />
