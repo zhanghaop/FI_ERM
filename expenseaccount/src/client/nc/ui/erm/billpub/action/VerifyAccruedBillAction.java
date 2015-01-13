@@ -15,7 +15,6 @@ import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.model.BillManageModel;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.accruedexpense.AccruedVerifyVO;
@@ -96,14 +95,14 @@ public class VerifyAccruedBillAction extends NCAction {
 																											 * "报销单已经设置待摊，不可进行核销预提"
 																											 */);
 		}
-		BxcontrastVO[] contrastVO = vo.getContrastVO();
-		if (contrastVO != null && contrastVO.length > 0) {
-			bf.append("\n" + NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0", "02011v61013-0122")/*
-																											 * @
-																											 * res
-																											 * "报销单已经冲借款，不可进行核销预提"
-																											 */);
-		}
+//		BxcontrastVO[] contrastVO = vo.getContrastVO();
+//		if (contrastVO != null && contrastVO.length > 0) {
+//			bf.append("\n" + NCLangRes4VoTransl.getNCLangRes().getStrByID("2011v61013_0", "02011v61013-0122")/*
+//																											 * @
+//																											 * res
+//																											 * "报销单已经冲借款，不可进行核销预提"
+//																											 */);
+//		}
 		if(bf.length() != 0){
 			throw new ValidationException(bf.toString());
 		}
