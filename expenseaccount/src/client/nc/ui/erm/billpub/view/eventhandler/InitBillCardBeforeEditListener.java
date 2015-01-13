@@ -2,9 +2,7 @@ package nc.ui.erm.billpub.view.eventhandler;
 
 import javax.swing.JComponent;
 
-import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.ui.bd.ref.model.FreeCustRefModel;
-import nc.ui.bd.ref.model.PsnbankaccDefaultRefModel;
 import nc.ui.erm.billpub.view.ErmBillBillForm;
 import nc.ui.erm.view.ERMBillForm;
 import nc.ui.org.ref.DeptDefaultRefModel;
@@ -14,16 +12,12 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillItemEvent;
 import nc.ui.uif2.editor.BillForm;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.bx.util.BXStatusConst;
-import nc.vo.bd.bankaccount.IBankAccConstant;
-import nc.vo.bd.pub.IPubEnumConst;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 
 public class InitBillCardBeforeEditListener implements BillCardBeforeEditListener {
-
 	private BillForm editor;
 
 	public InitBillCardBeforeEditListener(BillForm editor) {
@@ -42,13 +36,13 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 				BillItem headItem = ((ErmBillBillForm) editor).getBillCardPanel().getHeadItem(JKBXHeaderVO.DWBM);
 				if (headItem != null) {
 					String dwbm = (String) headItem.getValueObject();
-					((ErmBillBillForm) editor).getEventHandle().getHeadFieldHandle().beforeEditDept_v(dwbm, JKBXHeaderVO.DEPTID_V);
+					getHeadFieldHandle().beforeEditDept_v(dwbm, JKBXHeaderVO.DEPTID_V);
 				}
 			} else if (JKBXHeaderVO.FYDEPTID_V.equals(key)) {
 				BillItem headItem = ((ErmBillBillForm) editor).getBillCardPanel().getHeadItem(JKBXHeaderVO.FYDWBM);
 				if (headItem != null) {
 					String fydwbm = (String) headItem.getValueObject();
-					((ErmBillBillForm) editor).getEventHandle().getHeadFieldHandle().beforeEditDept_v(fydwbm, JKBXHeaderVO.FYDEPTID_V);
+					getHeadFieldHandle().beforeEditDept_v(fydwbm, JKBXHeaderVO.FYDEPTID_V);
 				}
 			} else if (JKBXHeaderVO.DEPTID.equals(key)) {
 				BillItem headItem = ((ErmBillBillForm) editor).getBillCardPanel().getHeadItem(JKBXHeaderVO.DWBM);
@@ -62,8 +56,8 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 					String dwbm = (String) headItem.getValueObject();
 					beforeEditDept(dwbm, JKBXHeaderVO.FYDEPTID);
 				}
-			} else if (JKBXHeaderVO.JKBXR.equals(key)) {
-				((ErmBillBillForm) editor).getEventHandle().getHeadFieldHandle().initJkbxr();
+			} else if (JKBXHeaderVO.JKBXR.equals(key)) {// 借款报销人
+				getHeadFieldHandle().initJkbxr();
 			} else if (key != null && (key.startsWith(BXConstans.HEAD_USERDEF_PREFIX))) {// 自定义项过滤
 				filterZyxField(key);
 			} else if (JKBXHeaderVO.CUSTACCOUNT.equals(key)) {// 客户银行账号
@@ -72,8 +66,22 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 				beforeEditFreecust();
 			} else if (JKBXHeaderVO.SKYHZH.equals(key)) {// 个人银行账户
 				beforeEditSkyhzh();
-			} else if(JKBXHeaderVO.JOBID.equals(key)){//项目
-				new HeadFieldHandleUtil((ErmBillBillForm) editor).initProj();
+			} else if (JKBXHeaderVO.JOBID.equals(key)) {// 项目
+				getHeadFieldHandle().initProj();
+			} else if (JKBXHeaderVO.PK_CASHACCOUNT.equals(key)) {// 现金银行账户
+				getHeadFieldHandle().initCashAccount();
+			} else if (JKBXHeaderVO.PK_CHECKELE.equals(key)) {// 核算要素
+				getHeadFieldHandle().initPk_Checkele();
+			} else if (JKBXHeaderVO.CASHPROJ.equals(key)) {// 资金计划项目
+				getHeadFieldHandle().initCashProj();
+			} else if (JKBXHeaderVO.PK_RESACOSTCENTER.equals(key)) {// 成本中心
+				getHeadFieldHandle().initResaCostCenter();
+			} else if (JKBXHeaderVO.PROJECTTASK.equals(key)) {// 项目任务
+				getHeadFieldHandle().initProjTask();
+			} else if (JKBXHeaderVO.FKYHZH.equals(key)) {// 付款银行账户
+				getHeadFieldHandle().initFkyhzh();
+			} else if (JKBXHeaderVO.SZXMID.equals(key)) {// 收支项目
+				getHeadFieldHandle().initSzxm();
 			}
 
 			if (!JKBXHeaderVO.PK_ORG_V.equals(key) && !JKBXHeaderVO.PK_ORG.equals(key)) {
@@ -90,23 +98,7 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 	}
 
 	private void beforeEditSkyhzh() {
-		// 收款人
-		String receiver = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
-		if(!isReceiverPaytarget()){
-			receiver = null;
-		}
-		
-		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
-		// 收款银行参照
-		UIRefPane refpane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
-		StringBuffer wherepart = new StringBuffer();
-		wherepart.append(" pk_psndoc='" + receiver + "'");
-		wherepart.append(" and pk_currtype='" + pk_currtype + "'");
-		
-		// 创维项目测出，收款银行账户仅根据人员进行过滤即可
-		PsnbankaccDefaultRefModel psnbankModel = (PsnbankaccDefaultRefModel) refpane.getRefModel();
-		psnbankModel.setWherePart(wherepart.toString());
-		psnbankModel.setPk_psndoc(receiver);
+		getHeadFieldHandle().initSkyhzh();
 	}
 
 	/**
@@ -124,44 +116,7 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 	 * 
 	 */
 	private void beforeEditCustaccount() {
-		// 客商档案
-		String pk_custsup = null;
-		int accclass = 0;
-		if(isBxBill()){
-			Integer paytarget = (Integer)getHeadValue(JKBXHeaderVO.PAYTARGET);
-			if(paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM){
-				pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.HBBM);
-				accclass = IBankAccConstant.ACCCLASS_SUPPLIER;
-			}else if(paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER){
-				pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
-				accclass = IBankAccConstant.ACCCLASS_CUST;
-			}
-		}else{
-			pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.HBBM);
-			accclass = IBankAccConstant.ACCCLASS_SUPPLIER;
-			if (StringUtil.isEmptyWithTrim(pk_custsup)) {
-				pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
-				accclass = IBankAccConstant.ACCCLASS_CUST;
-			}
-		}
-		
-		if(isReceiverPaytarget()){
-			pk_custsup = null;
-		}
-		
-		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT);
-		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
-		StringBuffer wherepart = new StringBuffer();
-		wherepart.append(" pk_currtype='" + pk_currtype + "'");
-		wherepart.append(" and enablestate='" + IPubEnumConst.ENABLESTATE_ENABLE + "'");
-		wherepart.append(" and accclass='" + accclass + "'");
-		HeadFieldHandleUtil.setWherePart2RefModel(refPane, null, wherepart.toString());
-		if (refPane.getRefModel() != null && refPane.getRefModel() instanceof CustBankaccDefaultRefModel) {
-			CustBankaccDefaultRefModel refModel = (CustBankaccDefaultRefModel) refPane.getRefModel();
-			if (refModel != null) {
-				refModel.setPk_cust(pk_custsup);
-			}
-		}
+		getHeadFieldHandle().initCustAccount();
 	}
 
 	private String getCustomerSupplier() {
@@ -233,38 +188,7 @@ public class InitBillCardBeforeEditListener implements BillCardBeforeEditListene
 		}
 	}
 
-	// 是否是报销单
-	private boolean isBxBill() {
-		return BXConstans.BX_DJDL.equals(getHeadItemStrValue(JKBXHeaderVO.DJDL));
+	private HeadFieldHandleUtil getHeadFieldHandle() {
+		return ((ErmBillBillForm) editor).getEventHandle().getHeadFieldHandle();
 	}
-
-	/**
-	 * 是否对个人进行支付
-	 * 
-	 * @return
-	 */
-	private boolean isReceiverPaytarget() {
-		if (isBxBill()) {
-			Integer paytarget = (Integer) getHeadValue(JKBXHeaderVO.PAYTARGET);
-			if (paytarget == null || paytarget.intValue() == 0) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return getHeadValue(JKBXHeaderVO.ISCUSUPPLIER) == null || !(Boolean) getHeadValue(JKBXHeaderVO.ISCUSUPPLIER);
-		}
-	}
-	
-	protected Object getHeadValue(String key) {
-		BillItem headItem = editor.getBillCardPanel().getHeadItem(key);
-		if (headItem == null) {
-			headItem = editor.getBillCardPanel().getTailItem(key);
-		}
-		if (headItem == null) {
-			return null;
-		}
-		return headItem.getValueObject();
-	}
-
 }

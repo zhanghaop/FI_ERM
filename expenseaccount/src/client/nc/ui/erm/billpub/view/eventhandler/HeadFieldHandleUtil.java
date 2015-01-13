@@ -15,6 +15,7 @@ import nc.itf.bd.psnbankacc.IPsnBankaccPubService;
 import nc.pubitf.uapbd.ICustomerPubService;
 import nc.pubitf.uapbd.ISupplierPubService_C;
 import nc.ui.bd.ref.AbstractRefModel;
+import nc.ui.bd.ref.model.BankaccSubDefaultRefModel;
 import nc.ui.bd.ref.model.CashAccountRefModel;
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.ui.bd.ref.model.FreeCustRefModel;
@@ -30,6 +31,7 @@ import nc.ui.pub.bill.BillItem;
 import nc.ui.vorg.ref.DeptVersionDefaultRefModel;
 import nc.ui.vorg.ref.FinanceOrgVersionDefaultRefTreeModel;
 import nc.vo.arap.bx.util.BXConstans;
+import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.bd.bankaccount.BankAccSubVO;
 import nc.vo.bd.bankaccount.BankAccbasVO;
 import nc.vo.bd.bankaccount.IBankAccConstant;
@@ -75,28 +77,29 @@ public class HeadFieldHandleUtil {
 	
 	/**
 	 * 根据供应商处理散户字段
+	 * 
 	 * @param key
 	 */
 	public void initFreeCustBySupplier() {
-		//散户
+		// 散户
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.FREECUST);
-		//供应商
+		// 供应商
 		final String pk_supplier = getHeadItemStrValue(JKBXHeaderVO.HBBM);
-		
-		if(pk_supplier!=null&&pk_supplier.trim().length()>0){
-			//散户设置供应商
+
+		if (pk_supplier != null && pk_supplier.trim().length() > 0) {
+			// 散户设置供应商
 			try {
-				SupplierVO[] supplierVO = NCLocator.getInstance().lookup(ISupplierPubService_C.class).getSupplierVO(new String[]{pk_supplier}, new String[]{SupplierVO.ISFREECUST});
-				if(supplierVO!=null && supplierVO.length!=0 && supplierVO[0].getIsfreecust().equals(UFBoolean.TRUE)){
+				SupplierVO[] supplierVO = NCLocator.getInstance().lookup(ISupplierPubService_C.class).getSupplierVO(new String[] { pk_supplier }, new String[] { SupplierVO.ISFREECUST });
+				if (supplierVO != null && supplierVO.length != 0 && supplierVO[0].getIsfreecust().equals(UFBoolean.TRUE)) {
 					getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(true);
-					((FreeCustRefModel)refPane.getRefModel()).setCustomSupplier(pk_supplier);
-				}else{
+					((FreeCustRefModel) refPane.getRefModel()).setCustomSupplier(pk_supplier);
+				} else {
 					getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(false);
 				}
 			} catch (BusinessException e) {
 				ExceptionHandler.handleExceptionRuntime(e);
 			}
-		}else{
+		} else {
 			getBillCardPanel().getHeadItem(JKBXHeaderVO.FREECUST).setEnabled(false);
 		}
 	}
@@ -134,36 +137,30 @@ public class HeadFieldHandleUtil {
 	}
 	
 	/**
-	 * 资金计划项目字段处理
+	 * 资金计划项目字段处理 </br>根据支付组织进行过滤
 	 */
 	public void initCashProj() {
 		UIRefPane ref = getHeadItemUIRefPane(JKBXHeaderVO.CASHPROJ);
-		String pk_org =null;
-		if(BXConstans.BXRB_CODE.equals(editor.getModel().getContext().getNodeCode())){
-			 pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
-		}else{
-			 pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_PAYORG).getValueObject();
+		String pk_org = null;
+		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_PAYORG);
+		if (headItem == null) {
+			pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
+		} else {
+			pk_org = (String) headItem.getValueObject();
 		}
 		ref.getRefModel().setPk_org(pk_org);
 		ref.getRefModel().addWherePart(" and inoutdirect = '1' ", false);
 	}
 	
 	/**
-	 * 核算帐户
+	 * 核算要素，根据利润中心过滤
 	 * @param itemKey
 	 * @return
 	 */
 	public void initPk_Checkele(){
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.PK_CHECKELE);
 		String pk_pcorg = getHeadItemStrValue(JKBXHeaderVO.PK_PCORG);
-		if(pk_pcorg!=null){
-			refPane.setEnabled(true);
-			setPkOrg2RefModel(refPane, pk_pcorg);
-		}else{
-			refPane.setPK(null);
-			refPane.setEnabled(false);
-		}
-		
+		setPkOrg2RefModel(refPane, pk_pcorg);
 	}
 	
 	/**
@@ -251,8 +248,6 @@ public class HeadFieldHandleUtil {
 		ErUiUtil.initSqdlr(editor, jkbxr, billtype, (String) dwbm.getValueObject(), billDate);
 	}
 	
-	
-	
 	/**
 	 * 成本中心根据利润中心来过滤
 	 * @author wangle
@@ -261,53 +256,57 @@ public class HeadFieldHandleUtil {
 	public void initResaCostCenter(){
 		String pk_pcorg = getHeadItemStrValue(JKBXHeaderVO.PK_PCORG);
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.PK_RESACOSTCENTER);
+		
+		String wherePart = CostCenterVO.PK_PROFITCENTER+"="+"'"+pk_pcorg+"'"; 
+		addWherePart2RefModel(refPane, pk_pcorg, wherePart);
+		
 		if(pk_pcorg == null){
-			refPane.setEnabled(false);
 			refPane.setPK(null);
-		}else{
-			refPane.setEnabled(true);
-			String wherePart = CostCenterVO.PK_PROFITCENTER+"="+"'"+pk_pcorg+"'"; 
-			addWherePart2RefModel(refPane, pk_pcorg, wherePart);
 		}
 	}
 	
 	/**
 	 * 收款银行帐号根据借款报销人和币种编码过滤
+	 * 
 	 * @param key
 	 */
 	public void initSkyhzh() {
-		// 收款银行帐号根据收款人过滤
-		getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
-		String filterStr = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
+		// 收款人
+		String receiver = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
+		if (!isReceiverPaytarget()) {
+			receiver = null;
+		}
+
 		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
-		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
-		String wherepart = " pk_psndoc='" + filterStr + "'";
-		wherepart += " and pk_currtype='" + pk_currtype + "'";
-		setWherePart2RefModel(refPane, null, wherepart);
+		// 收款银行参照
+		UIRefPane refpane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
+		StringBuffer wherepart = new StringBuffer();
+		wherepart.append(" pk_psndoc='" + receiver + "'");
+		wherepart.append(" and pk_currtype='" + pk_currtype + "'");
+
+		// 创维项目测出，收款银行账户仅根据人员进行过滤即可
+		PsnbankaccDefaultRefModel psnbankModel = (PsnbankaccDefaultRefModel) refpane.getRefModel();
+		psnbankModel.setWherePart(wherepart.toString());
+		psnbankModel.setPk_psndoc(receiver);
 	}
+	
+	
 	
 	/**
 	 * @author wangle 收款人编辑后事件
+	 * @throws BusinessException
 	 */
-	public void editReceiver() {
+	public void editReceiver() throws BusinessException {
 		// 收款人
 		String receiver = getHeadItemStrValue(JKBXHeaderVO.RECEIVER);
-		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
-		// 收款银行参照
-		UIRefPane refpane = getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH);
 
-		String wherepart = " pk_psndoc='" + receiver + "'";
-		wherepart += " and pk_currtype='" + pk_currtype + "'";
-		//创维项目测出，收款银行账户仅根据人员进行过滤即可
-		PsnbankaccDefaultRefModel psnbankModel = (PsnbankaccDefaultRefModel)refpane.getRefModel();
-		psnbankModel.setWherePart(wherepart);
-		psnbankModel.setPk_psndoc(receiver);
-		
 		// 收款人发生变更,清空个人银行帐号
-		String pk_psndoc = (String) refpane.getRefValue("pk_psndoc");
-		if (pk_psndoc != null && !pk_psndoc.equals(receiver)) {
+		if (receiver == null) {
 			getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
+			editor.getHelper().changeBusItemValue(BXBusItemVO.SKYHZH, null);
 		}
+		
+		//收款人编辑后，要判断收款对象是否是收款人
 		setDefaultSkyhzhByReceiver();
 	}
 	
@@ -320,6 +319,12 @@ public class HeadFieldHandleUtil {
 		if(receiver == null){
 			return;
 		}
+		
+		if(!isReceiverPaytarget()){//是否是对私支付
+			return;
+		}
+		
+		initSkyhzh();//初始化银行
 		
 		// 自动带出收款银行帐号
 		try {
@@ -368,39 +373,48 @@ public class HeadFieldHandleUtil {
 	
 	/**
 	 * 客商银行帐号根据币种和供应商过滤
-	 * wangle
 	 */
-	public void initCustAccount(){
-		//供应商
-		final String pk_supplier = getHeadItemStrValue(JKBXHeaderVO.HBBM);
-		UIRefPane refPane =getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT);
-		CustBankaccDefaultRefModel refModel = (CustBankaccDefaultRefModel)refPane.getRefModel();
-		if(refModel!=null){
-			refModel.setPk_cust(pk_supplier);
+	public void initCustAccount() {
+		// 客商档案
+		String pk_custsup = null;
+		int accclass = 0;
+		if (isBxBill()) {
+			Integer paytarget = (Integer) getHeadValue(JKBXHeaderVO.PAYTARGET);
+			if (paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM) {
+				pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.HBBM);
+				accclass = IBankAccConstant.ACCCLASS_SUPPLIER;
+			} else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER) {
+				pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
+				accclass = IBankAccConstant.ACCCLASS_CUST;
+			}
+		} else {
+			pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.HBBM);
+			accclass = IBankAccConstant.ACCCLASS_SUPPLIER;
+			if (StringUtil.isEmptyWithTrim(pk_custsup)) {
+				pk_custsup = (String) getHeadItemStrValue(JKBXHeaderVO.CUSTOMER);
+				accclass = IBankAccConstant.ACCCLASS_CUST;
+			}
 		}
-		refPane.getRefModel().setWherePart("accclass='"+IBankAccConstant.ACCCLASS_SUPPLIER+"'");
-		refPane.getRefModel().addWherePart(getBankWherePart());	
+
+		if (isReceiverPaytarget()) {
+			pk_custsup = null;
+		}
+
+		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT);
+		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
+		StringBuffer wherepart = new StringBuffer();
+		wherepart.append(" pk_currtype='" + pk_currtype + "'");
+		wherepart.append(" and enablestate='" + IPubEnumConst.ENABLESTATE_ENABLE + "'");
+		wherepart.append(" and accclass='" + accclass + "'");
+		HeadFieldHandleUtil.setWherePart2RefModel(refPane, null, wherepart.toString());
+		if (refPane.getRefModel() != null && refPane.getRefModel() instanceof CustBankaccDefaultRefModel) {
+			CustBankaccDefaultRefModel refModel = (CustBankaccDefaultRefModel) refPane.getRefModel();
+			if (refModel != null) {
+				refModel.setPk_cust(pk_custsup);
+			}
+		}
 	}
-	
-	private String getBankWherePart() {
-		return getCurrencyWherePart() + getEnablestate();
-	}
-	
-	private String getCurrencyWherePart() {
-		StringBuffer appending = new StringBuffer();
-		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
-		appending.append(" and ").append(BankAccSubVO.PK_CURRTYPE);
-		appending.append(" = '").append(pk_currtype).append("'");
-		return appending.toString();
-	}
-	
-	private String getEnablestate() {
-		StringBuffer appending = new StringBuffer();
-		appending.append(" and ").append(BankAccbasVO.ENABLESTATE);
-		appending.append(" =  ").append(IPubEnumConst.ENABLESTATE_ENABLE);
-		return appending.toString();
-	}
-	
+
 	/**
 	 *收支项目根据费用承担单位过滤 
 	 *wangle
@@ -414,7 +428,7 @@ public class HeadFieldHandleUtil {
 	
 	/**
 	 * 事由字段
-	 * wangle
+	 * 
 	 */
 	public void initZy(){
 		UIRefPane refPane = getHeadItemUIRefPane(JKBXHeaderVO.ZY);
@@ -424,53 +438,52 @@ public class HeadFieldHandleUtil {
 	
 	/**
 	 * 付款银行帐号根据币种编码和支付单位过滤
-	 * @author wangle
+	 * 
 	 */
-    @SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	public void initFkyhzh() {
 		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		BillItem headItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.FKYHZH);
-		if(headItem!=null){
+		if (headItem != null) {
 			UIRefPane refPane = (UIRefPane) headItem.getComponent();
-			
-			final String refPK = refPane.getRefPK();
-			nc.ui.bd.ref.model.BankaccSubDefaultRefModel model = (nc.ui.bd.ref.model.BankaccSubDefaultRefModel) refPane
-					.getRefModel();
+
+			BankaccSubDefaultRefModel model = (BankaccSubDefaultRefModel) refPane.getRefModel();
 			final String prefix = "pk_currtype = ";
-			String pk_org =null;
-			if(BXConstans.BXRB_CODE.equals(editor.getModel().getContext().getNodeCode())){
-				 pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
-			}else{
-				 pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_PAYORG).getValueObject();
+			String pk_org = null;
+			BillItem payHeadItem = getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_PAYORG);
+			if (payHeadItem == null) {
+				pk_org = (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
+			} else {
+				pk_org = (String) payHeadItem.getValueObject();
 			}
-			
-			//单位银行帐户不能看到通知、定期两类账户
+
+			// 单位银行帐户不能看到通知、定期两类账户
 			if (StringUtil.isEmpty(pk_currtype)) {
 				model.setWherePart(" acctype not in ('1','2')");
 				model.setPk_org(pk_org);
 				return;
 			}
 			model.setPk_org(pk_org);
-			model.setWherePart(prefix + "'" + pk_currtype + "' and acctype not in ('1','2')" );
+			model.setWherePart(prefix + "'" + pk_currtype + "' and acctype not in ('1','2')");
 			model.setMatchPkWithWherePart(true);
 			model.setPKMatch(true);
-			
-			if(refPK != null){
+
+			final String refPK = refPane.getRefPK();
+			if (refPK != null) {
 				Vector vec = model.matchPkData(refPK);
 				if (vec == null || vec.isEmpty()) {
 					refPane.setPK(null);
 				}
 			}
 		}
-
 	}
 	
 	/**
 	 * 现金帐户(根据币种和支付单位过滤)
-	 * @author wangle
-	*/
-    @SuppressWarnings({ "unchecked"})
-	public void initAccount() {
+	 * 
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public void initCashAccount() {
 		String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		UIRefPane refPane = (UIRefPane) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_CASHACCOUNT).getComponent();
 		nc.ui.bd.ref.model.CashAccountRefModel model = (CashAccountRefModel) refPane.getRefModel();
@@ -483,9 +496,9 @@ public class HeadFieldHandleUtil {
 		}
 		model.setPk_org(pk_org);
 		model.setWherePart(prefix + "'" + pk_currtype + "'");
-		
+
 		final String refPK = refPane.getRefPK();
-		if(refPK != null){
+		if (refPK != null) {
 			List<String> pkValueList = new ArrayList<String>();
 			Vector vct = model.reloadData();
 			Iterator<Vector> it = vct.iterator();
@@ -494,7 +507,7 @@ public class HeadFieldHandleUtil {
 				Vector next = it.next();
 				pkValueList.add((String) next.get(index));
 			}
-			
+
 			if (!pkValueList.contains(refPK)) {
 				refPane.setPK(null);
 			}
@@ -554,5 +567,39 @@ public class HeadFieldHandleUtil {
 	
 	public  void setPkOrg2RefModel(UIRefPane refPane, String pk_org) {
 		refPane.getRefModel().setPk_org(pk_org);
+	}
+	
+	/**
+	 * 是否对个人进行支付
+	 * 
+	 * @return
+	 */
+	public boolean isReceiverPaytarget() {
+		if (isBxBill()) {
+			Integer paytarget = (Integer) getHeadValue(JKBXHeaderVO.PAYTARGET);
+			if (paytarget == null || paytarget.intValue() == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return getHeadValue(JKBXHeaderVO.ISCUSUPPLIER) == null || !(Boolean) getHeadValue(JKBXHeaderVO.ISCUSUPPLIER);
+		}
+	}
+
+	// 是否是报销单
+	public boolean isBxBill() {
+		return BXConstans.BX_DJDL.equals(getHeadItemStrValue(JKBXHeaderVO.DJDL));
+	}
+
+	public Object getHeadValue(String key) {
+		BillItem headItem = editor.getBillCardPanel().getHeadItem(key);
+		if (headItem == null) {
+			headItem = editor.getBillCardPanel().getTailItem(key);
+		}
+		if (headItem == null) {
+			return null;
+		}
+		return headItem.getValueObject();
 	}
 }

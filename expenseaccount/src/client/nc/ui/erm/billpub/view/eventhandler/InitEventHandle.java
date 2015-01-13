@@ -546,8 +546,9 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 	/**
 	 * 编辑'对公支付'后处理
 	 * 如果对公支付则将收款人清空，如果不对公支付则将借款报销人默认赋给收款人（防止收款人隐藏时，做对个人支付）
+	 * @throws BusinessException 
 	 */
-	public void afterEditIsCusSupplier() {
+	public void afterEditIsCusSupplier() throws BusinessException {
 		Object iscusupplier = getHeadValue(JKBXHeaderVO.ISCUSUPPLIER);
 		if(Boolean.TRUE.equals(iscusupplier)){
 			setHeadValue(JKBXHeaderVO.RECEIVER, null);
@@ -1158,7 +1159,7 @@ public class InitEventHandle implements BillEditListener2, BillEditListener, Val
 		getBillCardPanel().setHeadItem(JKBXHeaderVO.SKYHZH, null);
 		getBillCardPanel().setHeadItem(JKBXHeaderVO.CUSTACCOUNT, null);
 		headFieldHandle.initFkyhzh();
-		headFieldHandle.initAccount();
+		headFieldHandle.initCashAccount();
 		
 		final String pk_currtype = getHeadItemStrValue(JKBXHeaderVO.BZBM);
 		if (pk_currtype != null) {

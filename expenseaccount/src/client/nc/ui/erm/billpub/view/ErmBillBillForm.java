@@ -686,44 +686,45 @@ public class ErmBillBillForm extends ERMBillForm {
 	}
 	
 	public void filterHeadItem() {
-		//过滤事由
-		filtZy();
-		
-		//过滤借款报销人
-		filtJkbx();
-		
-		// 单位银行账户需要币种和支付单位两个过滤条件，故新增时重新过滤。
-		filtFkyhzh();
-		
-		// 收款银行帐号（个人银行账户）根据收款人和币种编码过滤
-//		filtSkyhzh();
-		
-		//过滤现金账户
-		filtAccount();
-		
-		//根据利润中心过滤核算要素
-		filtPk_Checkele();
-		
-		//过滤资金计划项目
-		filtCashProj();
-		
-		//过滤成本中心
-		filtResaCostCenter();
-		
-//		//根据供应商过滤客商银行帐户
-//		filtHbbm();
-		
-		//过滤项目任务
-		filtProjTask();
-		
-		//归口管理部门参照范围（参照全集团所有组织的部门档案）
-		fileCenterDept();
-		
 		// 对公支付，则收款人和个人银行账户不可编辑
 		filtIscusupplier();
-		
+
 		// 根据客商，设置散户是否可编辑
 		filtFreeCust();
+
+		Object appstatus = getBillCardPanel().getHeadItem(JKBXHeaderVO.SPZT).getValueObject();
+		if ((appstatus != null && (IBillStatus.COMMIT == (Integer) appstatus || IBillStatus.CHECKGOING == (Integer) appstatus || IBillStatus.CHECKPASS == (Integer) appstatus))) {
+			// 审批状态是提交态时，不做处理
+			// 635后换成工作流，审批状态为审批通过的，单据也可能还在流程中
+			return;
+		}
+
+		// 过滤事由
+		filtZy();
+
+		// 过滤借款报销人
+		filtJkbx();
+
+		// 单位银行账户需要币种和支付单位两个过滤条件，故新增时重新过滤。
+		filtFkyhzh();
+
+		// 过滤现金账户
+		filtAccount();
+
+		// 根据利润中心过滤核算要素
+		filtPk_Checkele();
+
+		// 过滤资金计划项目
+		filtCashProj();
+
+		// 过滤成本中心
+		filtResaCostCenter();
+
+		// 过滤项目任务
+		filtProjTask();
+
+		// 归口管理部门参照范围（参照全集团所有组织的部门档案）
+		fileCenterDept();
 	}
 
 
@@ -738,14 +739,6 @@ public class ErmBillBillForm extends ERMBillForm {
 	}
 	
 	public void filtJkbx() {
-		Object appstatus = getBillCardPanel().getHeadItem(JKBXHeaderVO.SPZT).getValueObject();
-		if ((appstatus != null && (IBillStatus.COMMIT == (Integer) appstatus
-				|| IBillStatus.CHECKGOING == (Integer) appstatus || IBillStatus.CHECKPASS == (Integer) appstatus))) {
-			// 审批状态是提交态时，不做处理
-			//635后换成工作流，审批状态为审批通过的，单据也可能还在流程中
-			return;
-		}
-		
 		//若借款报销人不是登陆用户，并且不在授权代理中，将字段清空
 		String loginUser = BXUiUtil.getPk_psndoc();
 		if(loginUser!=null && !loginUser.equals((String)getHeadValue(JKBXHeaderVO.JKBXR)) && !this.isInit()){
@@ -786,15 +779,11 @@ public class ErmBillBillForm extends ERMBillForm {
 	}
 
 	private void filtAccount() {
-		getEventHandle().getHeadFieldHandle().initAccount();
+		getEventHandle().getHeadFieldHandle().initCashAccount();
 	}
 
 	private void filtProjTask() {
 		getEventHandle().getHeadFieldHandle().initProjTask();
-	}
-
-	public void filtHbbm() {
-		getEventHandle().afterEditSupplier();
 	}
 
 	public void filtResaCostCenter() {
@@ -818,12 +807,6 @@ public class ErmBillBillForm extends ERMBillForm {
 	
 	public void filtFkyhzh(){
 		getEventHandle().getHeadFieldHandle().initFkyhzh();
-	}
-	
-	public void filtSkyhzh() {
-		getEventHandle().getHeadFieldHandle().initSkyhzh();
-//		// 借款单无收款人，不需要走该方法
-		getEventHandle().getHeadFieldHandle().editReceiver();
 	}
 
 	@Override
@@ -981,18 +964,13 @@ public class ErmBillBillForm extends ERMBillForm {
 		}
 	}
 
-	//过滤部门字段
+	// 过滤部门字段
 	private void filtDeptField() {
 		String dwbm = getEventHandle().getHeadItemStrValue(JKBXHeaderVO.DWBM);
-		getEventHandle().getHeadFieldHandle().beforeEditDept_v(dwbm,
-				JKBXHeaderVO.DEPTID_V);
-		String fydwbm = getEventHandle().getHeadItemStrValue(
-				JKBXHeaderVO.FYDWBM);
-		getEventHandle().getHeadFieldHandle().beforeEditDept_v(fydwbm,
-				JKBXHeaderVO.FYDEPTID_V);
+		getEventHandle().getHeadFieldHandle().beforeEditDept_v(dwbm, JKBXHeaderVO.DEPTID_V);
+		String fydwbm = getEventHandle().getHeadItemStrValue(JKBXHeaderVO.FYDWBM);
+		getEventHandle().getHeadFieldHandle().beforeEditDept_v(fydwbm, JKBXHeaderVO.FYDEPTID_V);
 	}
-	
-	//
 	
 	//根据表头将表体数据查出
 	@Override

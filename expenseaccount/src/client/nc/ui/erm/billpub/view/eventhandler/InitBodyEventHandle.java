@@ -484,28 +484,6 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 			} else if (e.getKey().equals(BXBusItemVO.JKBXR)) {
 				try {
 					afterEditJkbxr(e);
-					// 如果收款对象是员工，则修改
-					// DefaultConstEnum bodyItemStrValue =
-					// (DefaultConstEnum)getBillCardPanel().getBillModel().getValueObjectAt(e.getRow(),
-					// BXBusItemVO.PAYTARGET);
-					// if(bodyItemStrValue != null){
-					// Object paytarget = bodyItemStrValue.getValue();
-					// if(paytarget instanceof Integer){
-					// String jkbxr =
-					// bodyEventHandleUtil.getBodyItemStrValue(e.getRow(),
-					// BXBusItemVO.JKBXR,e.getTableCode());
-					// if(((Integer)paytarget).compareTo(0)==0){
-					// //设置个人银行帐户
-					// if(jkbxr !=null){
-					// getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(jkbxr,
-					// e.getRow(), BXBusItemVO.RECEIVER);
-					// getBillCardPanel().getBillData().getBillModel(e.getTableCode()).setValueAt(null,
-					// e.getRow(), BXBusItemVO.SKYHZH);
-					// setDefaultSkyhzhByReceiver(e.getTableCode(),e.getRow());
-					// }
-					// }
-					// }
-					// }
 				} catch (BusinessException e1) {
 					ExceptionHandler.handleExceptionRuntime(e1);
 				}
@@ -641,16 +619,16 @@ public class InitBodyEventHandle implements BillEditListener2, BillEditListener 
 	 * @param row
 	 */
 	private void setDefaultCustaccountBySupplier(String tablecode, int row) {
-		if(isBxBill()){
+		if (isBxBill()) {
 			Integer payTarget = getBillPayTarget(row);
-			if(payTarget != null && payTarget.equals(Integer.valueOf(1))){
+			if (payTarget != null && payTarget.equals(Integer.valueOf(1))) {
 				String customer = bodyEventHandleUtil.getBodyItemStrValue(row, BXBusItemVO.HBBM, tablecode);
 				ISupplierPubService service = (ISupplierPubService) NCLocator.getInstance().lookup(ISupplierPubService.class.getName());
 				try {
 					String custaccount = service.getDefaultBankAcc(customer);
 					getBillCardPanel().getBillData().getBillModel(tablecode).setValueAt(custaccount, row, BXBusItemVO.CUSTACCOUNT);
 				} catch (Exception ex) {
-					Log.getInstance(this.getClass()).error(ex);
+					ExceptionHandler.handleExceptionRuntime(ex);
 				}
 			}
 		}
