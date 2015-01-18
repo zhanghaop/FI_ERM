@@ -1,5 +1,7 @@
 package nc.erm.mobile.util;
 
+import java.util.Map;
+
 import nc.bs.framework.exception.ComponentException;
 import nc.erm.mobile.environment.ErmTemplateQueryUtil;
 import nc.vo.pub.AggregatedValueObject;
@@ -33,5 +35,9 @@ public class TranslateJsonToValueObject {
 		return jsonData.transJsonToBillValueObject(json);
 	}
 	
+	public AggregatedValueObject translateMapToAggvo(BillTempletVO billTempletVO,Map<String, Object> valuemap) throws BusinessException{
+		JsonData jsonData = new JsonData(billTempletVO);
+		return jsonData.transMapToBillValueObject(valuemap);
+	}
 	
 }

@@ -17,10 +17,10 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
-import nc.bs.pf.pub.PfDataCache;
 import nc.bs.pub.filesystem.IFileSystemService;
 import nc.bs.pub.filesystem.IQueryFolderTreeNodeService;
 import nc.bs.pub.filesystem.UploadFileIsExistException;
+import nc.erm.mobile.util.BillTypeUtil;
 import nc.imag.itf.IImagUtil;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.bd.psn.psndoc.IPsndocQueryService;
@@ -28,13 +28,11 @@ import nc.itf.org.IOrgVersionQryService;
 import nc.itf.uap.rbac.IUserManageQuery;
 import nc.itf.uap.sf.ICreateCorpQueryService;
 import nc.pubitf.para.SysInitQuery;
-import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXParamConstant;
 import nc.vo.bd.psn.PsndocVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.filesystem.NCFileNode;
 import nc.vo.pub.filesystem.NCFileVO;
 import nc.vo.pub.lang.UFDate;
@@ -54,32 +52,10 @@ import sun.misc.BASE64Encoder;
 
 
 public abstract class AbstractErmMobileCtrlBO {
-	//将当前用户可用的单据类型缓存，查找我的未完成 待审批时用
-	private String[] djlxbm = null;
-	public String[] getDjlxbmArray(){
-		if(djlxbm == null){
-			HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
-			List<String> list = new ArrayList<String>();
-			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-			for (BilltypeVO vo : billtypes.values()) {
-				if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
-					if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
-							|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)
-							|| vo.getPk_billtypecode().equals("2647") || vo.getPk_billtypecode().equals("264a")) {
-						continue;
-					}
-					// 通过当前集团进行过滤
-					if (vo.getPk_group() != null && !vo.getPk_group().equalsIgnoreCase(pk_group)) {
-						continue;
-					}
-					if (BXConstans.BX_DJLXBM.equals(vo.getParentbilltype())) {
-						list.add(vo.getPk_billtypecode());
-					}
-				}
-			}
-			djlxbm=list.toArray(new String[0]);
-		}
-		return djlxbm;
+	
+	public String getBXbilltype(String userid,String flag) throws BusinessException{
+			initEvn(userid);
+			return BillTypeUtil.getBXbilltype(userid,flag);
 	}
 	
 	public static String getStringValue(Object value){
@@ -343,7 +319,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			return null;
 		}
 	}
-	public String commitJkbx(String userid,String pk_jkbx) throws BusinessException {
+	public String commitJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException {
 		  initEvn(userid);
 		  try{
 			  // 查询
@@ -355,7 +331,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			  JKBXVO jkbxvo = vos.get(0);
 			  // 执行提交
 			  String actionType = ErUtil.getCommitActionCode(PK_ORG);
-			  PfUtilPrivate.runAction(actionType, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
+			  PfUtilPrivate.runAction(actionType, djlxbm, jkbxvo, null,
 						null, null, null);
 //			  PfUtilPrivate.runAction(null, IPFActionName.SAVE+ userid, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
 //						null, null, null);

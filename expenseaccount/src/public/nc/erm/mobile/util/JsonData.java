@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import nc.bs.logging.Logger;
 import nc.erm.mobile.pub.formula.WebFormulaParser;
@@ -22,10 +25,8 @@ import nc.pubitf.bd.accessor.GeneralAccessorFactory;
 import nc.pubitf.bd.accessor.IGeneralAccessor;
 import nc.ui.bd.mmpub.DataDictionaryReader;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
-import nc.ui.pub.bill.BillData;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.bd.accessor.IBDData;
-import nc.vo.bill.pub.BillUtil;
 import nc.vo.bill.pub.MiscUtil;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.jcom.lang.StringUtil;
@@ -33,6 +34,7 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ExAggregatedVO;
 import nc.vo.pub.SuperVO;
+import nc.vo.pub.VOStatus;
 import nc.vo.pub.bill.BillStructVO;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
@@ -275,14 +277,23 @@ public class JsonData
 						NCObject[] ncos = (NCObject[]) ncobject
 								.getAttributeValue(tabVO.getMetadatapath());
 						if(ncos != null && ncos.length > 0){
-							JsonModel model = getBillModel(tabVO.getTabcode());
-							JSONArray bodyarray = model.setBodyObjectByMetaData(ncos);
+							NCObject[] nctrans = new NCObject[ncos.length];
+							String tabcode = tabVO.getTabcode();
+							JsonModel model = getBillModel(tabcode);
+							for(int ncindex = 0;ncindex<ncos.length;ncindex++){
+								if(!ncos[ncindex].getAttributeValue("tablecode").equals(tabcode)){
+									nctrans[ncindex] = null;
+								}else{
+									nctrans[ncindex] = ncos[ncindex];
+								}
+							}
+							JSONArray bodyarray = model.setBodyObjectByMetaData(nctrans);
 							if(bodyarray != null){
 								for(int arrayindex = 0;arrayindex < bodyarray.length();arrayindex++){
 									JSONObject bodyjson = (JSONObject) bodyarray.get(arrayindex);
 									bodyjson.put("itemno", itemno);
 									itemno++;
-									bodyjson.put("tablecode", tabVO.getTabcode());
+									bodyjson.put("tablecode", tabcode);
 									bodyjson.put("tablename", tabVO.getTabname());
 									itemsarray.put(bodyjson);
 								}
@@ -351,6 +362,10 @@ public class JsonData
 	    Object value = head.getAttributeValue(key);
 	    headJson.put(key, value);
 		headJson.put(key+"_name", NumberFormatUtil.formatDouble((UFDouble)value));
+		key = JKBXHeaderVO.SPZT;
+	    value = head.getAttributeValue(key);
+	    headJson.put(key, value);
+		headJson.put(key+"_name", value);
 		for (int i = 0; i < items.length; i++) {
 			key = items[i].getKey();
 			value = head.getAttributeValue(key);
@@ -378,6 +393,8 @@ public class JsonData
 					IBDData[] data = accessor.getDocbyPks(new String[]{value.toString()});
 					if(data != null && data.length>0 && data[0] != null)
 						itemJson.put("name", data[0].getName());
+					else
+						itemJson.put("name", value);
 				}else{
 					itemJson.put("name", "");
 				}
@@ -707,6 +724,48 @@ public class JsonData
 		return hBillModels.get(tableCode);
 	}
 
+	public void setVoFromItem(JsonItem item,SuperVO parent,String headvalue){
+		String key = item.getKey();
+		if(item != null){
+            if(item != null && !StringUtil.isEmpty(headvalue)){
+//            ncobject.setAttributeValue(item.getMetaDataProperty().getAttribute(), headvalue);
+	            if(item.getDataType() == IBillItem.DATE){
+	            	parent.setAttributeValue(key, new UFDate(headvalue));
+	            }else if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
+	            	parent.setAttributeValue(key, new UFDouble(headvalue));
+	            }else if(item.getDataType() == IBillItem.DATETIME){
+	            	parent.setAttributeValue(key, new UFDateTime(headvalue));
+	            }else if(item.getDataType() == IBillItem.COMBO){
+	            	String reftype = item.getRefType();
+	            	reftype = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
+	            	boolean isSX = true;
+	            	boolean isIX = false;
+	        		ArrayList<String> list = new ArrayList<String>();
+
+	        		String[] items = MiscUtil.getStringTokens(reftype, ",");
+	        		if (items != null) {
+		    			isSX = IBillItem.COMBOTYPE_VALUE_X.equals(items[0]); // SX
+		    			isIX = IBillItem.COMBOTYPE_INDEX_X.equals(items[0]); // IX
+	        		}
+	        		if(isSX){
+	        			try{
+		            		parent.setAttributeValue(key, headvalue);
+		            	}catch(Exception e){
+		            		return;
+		            	}
+	        		}else
+	        			parent.setAttributeValue(key, new Integer(headvalue));
+	            }else{
+	            	try{
+	            		parent.setAttributeValue(key, headvalue);
+	            	}catch(Exception e){
+	            		return;
+	            	}
+	            }
+            }
+        }
+    }  
+	
 	public AggregatedValueObject transJsonToBillValueObject(JSONObject json) throws JSONException, BusinessException {
 		//设置表头的值
 		JSONObject head = (JSONObject)json.get("head");
@@ -729,44 +788,7 @@ public class JsonData
             key = keys.next();  
             headvalue = (String) head.get(key);
             JsonItem item = getHeadTailItem(key);
-            if(item != null){
-	            if(item!=null && !StringUtil.isEmpty(headvalue)){
-	//            ncobject.setAttributeValue(item.getMetaDataProperty().getAttribute(), headvalue);
-		            if(item.getDataType() == IBillItem.DATE){
-		            	parent.setAttributeValue(key, new UFDate(headvalue));
-		            }else if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
-		            	parent.setAttributeValue(key, new UFDouble(headvalue));
-		            }else if(item.getDataType() == IBillItem.DATETIME){
-		            	parent.setAttributeValue(key, new UFDateTime(headvalue));
-		            }else if(item.getDataType() == IBillItem.COMBO){
-		            	String reftype = item.getRefType();
-		            	reftype = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-		            	boolean isSX = true;
-		            	boolean isIX = false;
-		        		ArrayList<String> list = new ArrayList<String>();
-
-		        		String[] items = MiscUtil.getStringTokens(reftype, ",");
-		        		if (items != null) {
-			    			isSX = IBillItem.COMBOTYPE_VALUE_X.equals(items[0]); // SX
-			    			isIX = IBillItem.COMBOTYPE_INDEX_X.equals(items[0]); // IX
-		        		}
-		        		if(isSX){
-		        			try{
-			            		parent.setAttributeValue(key, headvalue);
-			            	}catch(Exception e){
-			            		continue;
-			            	}
-		        		}else
-		        			parent.setAttributeValue(key, new Integer(headvalue));
-		            }else{
-		            	try{
-		            		parent.setAttributeValue(key, headvalue);
-		            	}catch(Exception e){
-		            		continue;
-		            	}
-		            }
-	            }
-            }
+            setVoFromItem(item,parent,headvalue);
         }  
         
         //设置表体的值
@@ -798,6 +820,77 @@ public class JsonData
         	}
             
         }  
+        aggvo.setChildrenVO(childrenlist.toArray(new SuperVO[0]));
+		return aggvo;
+	}
+
+	public static String getStringValue(Object value){
+		return value == null? "":value.toString();
+	}
+	
+	public AggregatedValueObject transMapToBillValueObject(
+			Map<String, Object> valuemap) {
+		//设置表头的值
+		IBusinessEntity be = getBillTempletVO().getHeadVO()
+				.getBillMetaDataBusinessEntity();
+		AggregatedValueObject aggvo = null;
+		if (be.getBeanStyle().getStyle() == BeanStyleEnum.AGGVO_HEAD){
+			//根据元数据类型得到应该是什么类型的vo
+			AggVOStyle aggstyle = (AggVOStyle)be.getBeanStyle();
+			aggvo = (AggregatedValueObject) aggstyle.newInstance(null);
+		}
+		//给表头vo赋值	
+		SuperVO parent = (SuperVO) aggvo.getParentVO();
+		Set<String> mapkeys = valuemap.keySet();  
+		Iterator<String> keys = mapkeys.iterator();
+		String headvalue;  
+        String key;  
+        while(keys.hasNext()){
+            key = keys.next();  
+            if("items".equals(key) || "attachment".equals(key)){
+				continue;
+			}
+            headvalue = getStringValue(valuemap.get(key));
+            JsonItem item = getHeadTailItem(key);
+            setVoFromItem(item,parent,headvalue);
+        }  
+        
+        //设置表体的值
+        List<Map<String, Object>> items = (List<Map<String, Object>>) valuemap.get("items");
+        List<SuperVO> childrenlist = new ArrayList<SuperVO>();
+        if(items != null && !items.isEmpty()){ 
+        	for(int i=0;i<items.size();i++){
+        		Map<String, Object> itemvalue = items.get(i);
+        		String amountvalue = (String) itemvalue.get("amount");
+				if(StringUtil.isEmpty(amountvalue)){
+					continue;
+				}
+				key = (String) itemvalue.get("tablecode");
+				JsonModel model = getBillModel(key);
+	            IBusinessEntity bodybean = null;
+	            NCBeanStyle bodystyle = null;
+	            try {
+	            	bodybean = MDBaseQueryFacade.getInstance().getBusinessEntityByFullName(model.getTabvo().getMetadataclass());
+				} catch (MetaDataException e) {
+					Logger.debug(e);
+				}
+	            if ((bodybean.getBeanStyle().getStyle() == BeanStyleEnum.NCVO) || (bodybean.getBeanStyle().getStyle() == BeanStyleEnum.POJO)){
+	            	bodystyle = (NCBeanStyle) bodybean.getBeanStyle();
+	            }
+	            SuperVO bodyvo = (SuperVO) bodystyle.newInstance(null);
+	            for (Entry<String, Object> fieldvalues : itemvalue.entrySet()) {
+					key = fieldvalues.getKey();
+					Object value = fieldvalues.getValue();
+					if("amount".equals(key)){
+						value = new UFDouble((String)value);
+					}
+					bodyvo.setAttributeValue(key, value);
+				} 
+//	            model.translateJsonToValueObject(bodyvo,jo);
+        		childrenlist.add(bodyvo);
+        	}
+        }
+        
         aggvo.setChildrenVO(childrenlist.toArray(new SuperVO[0]));
 		return aggvo;
 	}

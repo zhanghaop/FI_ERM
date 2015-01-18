@@ -3,456 +3,73 @@ package nc.arap.mobile.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Vector;
 
-import org.codehaus.jettison.json.JSONException;
-
-import nc.bs.dao.BaseDAO;
-import nc.bs.dao.DAOException;
-import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.bs.logging.Logger;
-import nc.bs.pf.pub.PfDataCache;
+import nc.erm.mobile.billaction.JKBXBillSaveAction;
+import nc.erm.mobile.pub.template.MobileTemplateUtils;
+import nc.erm.mobile.util.RefUtil;
+import nc.erm.mobile.util.TranslateJsonToValueObject;
 import nc.erm.mobile.util.TranslateValueObjectToJson;
 import nc.erm.mobile.view.ComboBoxUtil;
 import nc.erm.mobile.view.MobileBillItem;
 import nc.itf.arap.prv.IBXBillPrivate;
-import nc.itf.arap.pub.IBXBillPublic;
-import nc.itf.arap.pub.IErmBillUIPublic;
-import nc.itf.fi.org.IOrgVersionQueryService;
-import nc.itf.fi.pub.Currency;
 import nc.itf.uap.billtemplate.IBillTemplateQry;
-import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.jdbc.framework.processor.ResultSetProcessor;
-import nc.ui.bd.ref.AbstractRefModel;
-import nc.ui.bd.ref.RefPubUtil;
-import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
-import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.bd.ref.RefcolumnVO;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.er.djlx.DjLXVO;
-import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.VOStatus;
-import nc.vo.pub.ValidationException;
 import nc.vo.pub.bill.BillStructVO;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.bill.BillTempletHeadVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
-import nc.vo.pub.billtype.BilltypeVO;
-import nc.vo.pub.lang.UFDate;
-import nc.vo.pub.lang.UFDouble;
-import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pub.templet.translator.BillTranslator;
-import nc.vo.vorg.OrgVersionVO;
+
+import org.codehaus.jettison.json.JSONException;
+
 import uap.json.JSONArray;
 import uap.json.JSONObject;
 public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	private static int panel=9990;
-	private BaseDAO basedao;
-	public static final List<String> djlxbmList = new ArrayList<String>();
-	static { 
-		for(int i=1; i<7; i++){
-			djlxbmList.add("264" + Integer.valueOf(i).toString());
-		}
-	}
-	Map<String,Map<String,String>> getBXbilltype(String userid){
-		Map<String,Map<String,String>> billtypeMap = new LinkedHashMap<String,Map<String,String>>();
-		try {
-			initEvn(userid);
-			HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
-			List<BilltypeVO> list = new ArrayList<BilltypeVO>();
-			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-			for (BilltypeVO vo : billtypes.values()) {
-				if (vo.getSystemcode() != null && vo.getSystemcode().equalsIgnoreCase(BXConstans.ERM_PRODUCT_CODE)) {
-					if (vo.getPk_billtypecode().equals(BXConstans.BX_DJLXBM)
-							|| vo.getPk_billtypecode().equals(BXConstans.JK_DJLXBM)
-							|| vo.getPk_billtypecode().equals("2647") || vo.getPk_billtypecode().equals("264a")) {
-						continue;
-					}
-					// 通过当前集团进行过滤
-					if (vo.getPk_group() != null && !vo.getPk_group().equalsIgnoreCase(pk_group)) {
-						continue;
-					}
-					if (BXConstans.BX_DJLXBM.equals(vo.getParentbilltype())) {
-						list.add(vo);
-					}
-				}
-			}
-			BilltypeVO[] toArray = list.toArray(new BilltypeVO[] {});
-			Arrays.sort(toArray, new Comparator<BilltypeVO>() {
-				public int compare(BilltypeVO o1, BilltypeVO o2) {
-					return o1.getPk_billtypecode().compareTo(o2.getPk_billtypecode());
-				}
-			});
-			for(int i =0; i<toArray.length; i++){
-				Map<String,String> map = new HashMap<String,String>();
-				map.put("djlxbm", toArray[i].getPk_billtypecode());
-				map.put("djlxmc", toArray[i].getBilltypename());
-				map.put("nodecode", toArray[i].getNodecode());
-				billtypeMap.put("abc"+i, map);
-			}
-			return billtypeMap;
-		}catch (BusinessException e) {
-			return billtypeMap;
-		}
-	}
 	
 	public String addJkbx(Map<String, Object> map, String djlxbm,String userid) throws BusinessException{
 		initEvn(userid);
 		try{
-			String pk_jkbx = null;
+			String billpk = null;
+			TranslateJsonToValueObject trans = new TranslateJsonToValueObject();
+			BillTempletVO billTempletVO =  getDefaultTempletStatics(djlxbm); 
+			AggregatedValueObject vo = trans.translateMapToAggvo(billTempletVO, map);
+			JKBXBillSaveAction saveaction = new JKBXBillSaveAction(PK_ORG);
 			if(map.get("pk_jkbx") != null && !"".equals(map.get("pk_jkbx"))){
-				// 主键已生成，说明是修改后提交，需要先收回单据
-				commitCancle(map.get("pk_jkbx").toString());
-				pk_jkbx = updateJkbx(map,userid); 
+				// 主键已生成，修改
+				billpk = saveaction.updateJkbx(vo,userid); 
+				// 附件先删后插
+				deleteAttachmentList(billpk, userid); 
+				saveAttachment(billpk, map);
 			}else{
-				//第一次提交
-				pk_jkbx = insertJkbx(map,djlxbm,userid);
+				//第一次保存
+				billpk = saveaction.insertJkbx(vo,djlxbm,userid);
+				//保存附件
+				saveAttachment(billpk,map);
 			}
-			commitJkbx(userid,pk_jkbx);
-			return "pk_jkbx"+pk_jkbx;
+			return "pk_jkbx"+billpk;
 		}catch(BusinessException e){
 			String msg = e.getMessage();
 			return msg; 
 		}
-	}
-	
-	/**
-	 * 新增保存
-	 * 
-	 * @param valuemap
-	 * @return
-	 * @throws BusinessException
-	 */
-	@SuppressWarnings("unchecked")
-	private String insertJkbx(Map<String, Object> valuemap,String djlxbm,String userid)
-			throws BusinessException {
-		initEvn(userid);
-		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
-		// 初始化表头数据
-		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
-		JKBXVO jkbxvo = initservice.setBillVOtoUI(djlxVO, "", null);
-		JKBXHeaderVO parentVO = jkbxvo.getParentVO();
-		//根据数据类型将需要转换的数据进行转换
-		Map<String,String> headMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head");
-		if(headMap == null){
-			getBxdTemplate(userid,djlxbm,null,"editcard");
-			headMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head");
-		}
-		
-		boolean incluedCurr = false;
-		for (Entry<String, Object> value_entry : valuemap.entrySet()) {
-			String key = value_entry.getKey();
-			if("items".equals(key) || "attachment".equals(key)){
-				continue;
-			}
-			String value = getStringValue(value_entry.getValue());
-			if(JKBXHeaderVO.DJRQ.equals(key)){
-				if(!StringUtil.isEmpty(value)){
-					parentVO.setDjrq(new UFDate(value));
-				}else{
-					parentVO.setDjrq(new UFDate());
-				}
-			}else if(JKBXHeaderVO.TOTAL.equals(key)){
-				if(!StringUtil.isEmpty(value)){
-					parentVO.setTotal(new UFDouble(value));
-				}
-			}else{
-				String reftype= headMap.get(key);
-				if(reftype != null && reftype.startsWith("COMBO,")){
-					if(value!=null && !value.equals("")){
-						int intValue = Integer.parseInt(value);
-						parentVO.setAttributeValue(key, intValue);
-					}
-				}else{
-					parentVO.setAttributeValue(key, value);
-				}
-			}
-			
-			if(key.equals("bzbm")){
-				incluedCurr = true;
-			}
-		}
-		parentVO.setPk_jkbx(null);
-		parentVO.setStatus(VOStatus.NEW);
-		if(!incluedCurr){
-			parentVO.setBzbm("1002Z0100000000001K1");// 默认人民币
-		}
-		parentVO.setBbhl(new UFDouble(1));
-		parentVO.setGroupbbhl(UFDouble.ZERO_DBL);
-		parentVO.setGlobalbbhl(UFDouble.ZERO_DBL);
-		if(parentVO.getPaytarget() == null){
-			parentVO.setPaytarget(0);
-		}
-		parentVO.setDjbh(null);
-		// 补充表头组织字段版本信息
-		IOrgVersionQueryService orgvservice = NCLocator.getInstance().lookup(IOrgVersionQueryService.class);
-		Map<String, OrgVersionVO> orgvmap = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, parentVO.getDjrq());
-		OrgVersionVO orgVersionVO = orgvmap.get(parentVO.getPk_org());
-		if(orgVersionVO==null){
-			Map<String, OrgVersionVO> orgvmap2 = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, new UFDate("2990-01-01"));
-			orgVersionVO= orgvmap2.get(parentVO.getPk_org());
-		}
-		String orgVid = orgVersionVO.getPk_vid();
-		parentVO.setDwbm_v(orgVid);
-		parentVO.setFydwbm_v(orgVid);
-		parentVO.setPk_org_v(orgVid);
-		parentVO.setPk_payorg_v(orgVid);
-		
-		String deptVid = getDept_vid(parentVO.getDeptid(),  parentVO.getDjrq());
-		parentVO.setDeptid_v(deptVid);
-		parentVO.setFydeptid_v(deptVid);
-		
-		// 设置表体数据
-		List<Map<String, Object>> items = (List<Map<String, Object>>) valuemap.get("items");
-		//把表头收支项目同步到表体
-		String szxmid = parentVO.getSzxmid();
-		if(items != null && !items.isEmpty()){ 
-			UFDouble totalAmount = UFDouble.ZERO_DBL;   
-			List<BXBusItemVO> itemvos = new ArrayList<BXBusItemVO>();
-			for (Map<String, Object> itemvalue : items) {
-				String amountvalue = (String) itemvalue.get("amount");
-				if(StringUtil.isEmpty(amountvalue)){
-					continue;
-				}
-				BXBusItemVO itemvo = new BXBusItemVO();
-				itemvo.setStatus(VOStatus.NEW);
-				for (Entry<String, Object> fieldvalues : itemvalue.entrySet()) {
-					String key = fieldvalues.getKey();
-					Object value = fieldvalues.getValue();
-					if("amount".equals(key)){
-						value = new UFDouble((String)value);
-					}
-					itemvo.setAttributeValue(key, value);
-				} 
-				if(!StringUtil.isEmpty(szxmid) && StringUtil.isEmpty(itemvo.getSzxmid()))
-					itemvo.setSzxmid(szxmid);
-				itemvo.setYbje(itemvo.getAmount());
-				itemvo.setBbje(itemvo.getAmount());
-				itemvo.setPaytarget(0);
-				itemvo.setReceiver(parentVO.getReceiver());
-				itemvos.add(itemvo);
-				totalAmount = totalAmount.add(itemvo.getAmount());
-			}
-			jkbxvo.setBxBusItemVOS(itemvos.toArray(new BXBusItemVO[itemvos.size()]));
-			parentVO.setYbje(totalAmount);
-			parentVO.setTotal(totalAmount);
-//			parentVO.setBbje(totalAmount);
-			
-			parentVO = resetAmount(parentVO);
-			
-		}
-		// 保存报销单数据
-		IBXBillPublic service = NCLocator.getInstance().lookup(IBXBillPublic.class);
-		JKBXVO[] result = service.save(new JKBXVO[] { jkbxvo });
-		
-		String bxpk = result[0].getParentVO().getPrimaryKey();
-//		String djbh = result[0].getParentVO().getDjbh();
-//		String spzt = result[0].getParentVO().getSpzt().toString();
-		//保存附件
-		saveAttachment(bxpk,valuemap);
-		return bxpk; 
-//		return bxpk+","+djbh+","+spzt; 
-	}
-	
-	private JKBXHeaderVO resetAmount(JKBXHeaderVO parentVO){
-		
-		//集团
-		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-		// 原币币种pk
-		String pk_currtype = parentVO.getBzbm();
-		UFDate djrq = parentVO.getDjrq();
-		UFDouble ybje = parentVO.getYbje();
-
-		// 汇率(本币，集团本币，全局本币汇率)
-		UFDouble orgRate = new UFDouble(1);
-		
-		UFDouble groupRate = new UFDouble(1);
-		UFDouble globalRate = new UFDouble(1);
-		try {
-			orgRate = Currency.getRate(PK_ORG, pk_currtype, djrq);
-			groupRate = Currency.getGroupRate(PK_ORG, pk_group, pk_currtype, djrq);
-			globalRate = Currency.getGlobalRate(PK_ORG, pk_currtype, djrq);
-		} catch (BusinessException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		
-
-		parentVO.setBbhl(orgRate);
-		parentVO.setGroupbbhl(groupRate);
-		parentVO.setGlobalbbhl(globalRate);
-		
-		try {
-			// 组织本币金额
-			UFDouble[] bbje = Currency.computeYFB(PK_ORG,
-					Currency.Change_YBCurr, pk_currtype, ybje, null, null, null, orgRate,new UFDate());
-			parentVO.setYbye(ybje);
-			parentVO.setBbje(bbje[2]);
-			parentVO.setBbye(bbje[2]);
-
-			// 集团、全局金额
-			UFDouble[] money = Currency.computeGroupGlobalAmount(bbje[0], bbje[2],
-					pk_currtype, new UFDate(), PK_ORG, pk_group,groupRate, globalRate);
-			parentVO.setGroupbbje(money[0]);
-			parentVO.setGroupbbye(money[0]);
-			parentVO.setGlobalbbje(money[1]);
-			parentVO.setGlobalbbye(money[1]);
-		} catch (Exception e) {
-			ExceptionHandler.consume(e);
-		}
-		return parentVO;
-	}
-    
-	private String updateJkbx(Map<String, Object> valuemap,String userid) throws BusinessException {
-		initEvn(userid);
-		String headpk = (String) valuemap.get("pk_jkbx");
-		// 查询当前借款报销单
-		List<JKBXVO> vos = NCLocator.getInstance().
-		  lookup(IBXBillPrivate.class).queryVOsByPrimaryKeys(new String[]{headpk}, null);
-		if(vos == null || vos.isEmpty()){
-			throw new BusinessException("单据已被删除，请检查");
-		}
-		JKBXVO jkbxvo = vos.get(0);
-		JKBXHeaderVO parentVO = jkbxvo.getParentVO();
-		// 审批状态控制
-		Integer spzt = parentVO.getSpzt();
-
-		if (spzt != null && (spzt.equals(IPfRetCheckInfo.GOINGON) || spzt.equals(IPfRetCheckInfo.COMMIT))) {
-			String userId = InvocationInfoProxy.getInstance().getUserId();
-			String billId = headpk;
-			String billType = parentVO.getDjlxbm();
-			try {
-				if (((IPFWorkflowQry) NCLocator.getInstance().lookup(IPFWorkflowQry.class.getName()))
-						.isApproveFlowStartup(billId, billType)) {// 启动了审批流后
-					if(spzt.equals(IPfRetCheckInfo.COMMIT) && userId.equals(jkbxvo.getParentVO().getCreator())){
-						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0093")/*@res "请收回单据再修改！"*/);
-					}
-					
-					if (!NCLocator.getInstance().lookup(IPFWorkflowQry.class).isCheckman(billId,
-									billType, userId)) {
-						throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0092")/*@res "请取消审批再修改！"*/);
-					}
-				}else{
-					throw new ValidationException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0093")/*@res "请收回单据再修改！"*/);
-				}
-			} catch (ValidationException ex) {
-				ExceptionHandler.handleException(ex);
-			} catch (BusinessException e) {
-				ExceptionHandler.consume(e);
-			}
-		}
-		//根据数据类型将需要转换的数据进行转换
-		Map<String,String> headMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + (String) valuemap.get("djlxbm") + "head");
-		if(headMap == null){
-			getBxdTemplate(userid,(String) valuemap.get("djlxbm"),null,"editcard");
-			headMap = templetCache.get(InvocationInfoProxy.getInstance().getGroupId() + (String) valuemap.get("djlxbm") + "head");
-		}
-		parentVO.setStatus(VOStatus.UPDATED);
-		parentVO.setBzbm("1002Z0100000000001K1");// 默认人民币
-		parentVO.setBbhl(new UFDouble(1));
-		parentVO.setPaytarget(0);
-		for (Entry<String, Object> value_entry : valuemap.entrySet()) {
-			String key = value_entry.getKey();
-			if("items".equals(key)){
-				continue;
-			}
-			String value = getStringValue(value_entry.getValue());
-			if(JKBXHeaderVO.DJRQ.equals(key)){
-				if(!StringUtil.isEmpty(value)){
-					parentVO.setDjrq(new UFDate(value));
-				}
-			}else if(JKBXHeaderVO.TOTAL.equals(key)){
-				if(!StringUtil.isEmpty(value)){
-					parentVO.setTotal(new UFDouble(value));
-				}
-			}else{
-				String reftype= headMap.get(key);
-				if(reftype != null && reftype.startsWith("COMBO,")){
-					if(value!=null && !value.equals("")){
-						int intValue = Integer.parseInt(value);
-						parentVO.setAttributeValue(key, intValue);
-					}
-				}else{
-					parentVO.setAttributeValue(key, value);
-				}
-			}
-		}
-		// 业务行先删后插，重新合计表头
-		List<BXBusItemVO> itemlist = new ArrayList<BXBusItemVO>();
-		BXBusItemVO[] olditems = jkbxvo.getBxBusItemVOS();
-		if(olditems != null && olditems.length > 0){
-			for (int i = 0; i < olditems.length; i++) {
-				olditems[i].setStatus(VOStatus.DELETED);
-				itemlist.add(olditems[i]);
-			}
-		}
-		UFDouble totalAmount = UFDouble.ZERO_DBL;
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> items = (List<Map<String, Object>>) valuemap.get("items");
-		if(items != null && !items.isEmpty()){
-			//把表头收支项目同步到表体
-			String szxmid = parentVO.getSzxmid();
-			for (Map<String, Object> itemvalue : items) {
-				String amountvalue = (String) itemvalue.get("amount");
-				if(StringUtil.isEmpty(amountvalue)){
-					continue;
-				}
-				BXBusItemVO itemvo = new BXBusItemVO();
-				itemvo.setStatus(VOStatus.NEW);
-				for (Entry<String, Object> fieldvalues : itemvalue.entrySet()) {
-					String key = fieldvalues.getKey();
-					Object value = fieldvalues.getValue();
-					if("amount".equals(key)){
-						value = new UFDouble((String)value);
-					}
-					itemvo.setAttributeValue(key, value);
-					//收支项目字段同步到表体行
-					if(!StringUtil.isEmpty(szxmid) && StringUtil.isEmpty(itemvo.getSzxmid())){
-						itemvo.setSzxmid(szxmid);
-					}
-				} 
-				
-				itemvo.setYbje(itemvo.getAmount()); 
-				itemvo.setBbje(itemvo.getAmount());
-				itemvo.setPaytarget(0);
-				itemvo.setReceiver(parentVO.getReceiver());
-				itemvo.setPrimaryKey(null);
-				itemlist.add(itemvo);
-				totalAmount = totalAmount.add(itemvo.getAmount());
-			}
-		}
-		jkbxvo.setBxBusItemVOS(itemlist.toArray(new BXBusItemVO[itemlist.size()]));
-		parentVO.setYbje(totalAmount);
-		parentVO.setTotal(totalAmount);
-		parentVO.setBbje(totalAmount);
-		// 附件先删后插
-		deleteAttachmentList(headpk, parentVO.getOperator()); 
-		saveAttachment(headpk, valuemap);
-		
-		// 更新单据
-		NCLocator.getInstance().lookup(IBXBillPublic.class).update(new JKBXVO[]{jkbxvo});
-		return headpk;
 	}
     
     /**
@@ -478,7 +95,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
     
 	public BillTempletVO findBillTempletDatas(String djlxbm)
 		throws BusinessException, ComponentException {
-		String pk_billtemplet = getTemplatePK(djlxbm);
+		String pk_billtemplet = MobileTemplateUtils.getTemplatePK(djlxbm);
 		if(pk_billtemplet == null){
 			return null;
 		}
@@ -554,6 +171,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	//拿到单据context
 	public String getBxdTemplate(String userid,
 			String djlxbm, String nodecode,String flag) throws BusinessException {
+		panel = 9990;
 		initEvn(userid);
 		JSONObject jsonObj = new JSONObject();
 
@@ -568,13 +186,13 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		jsonObj.put("dsl", getheaddsl(flag,bodyVO,djlxbm));
         jsonObj.put("ts", billTempletVO.getHeadVO().getTs().toString());
 		//显示界面需要加载表头和表体，因为要根据表体的dsl的reftype确定pk所对应的名称
-        if(flag.equals("editcard")){
-        	for(int i=0;i<tablist.length();i++){
-        		JSONObject item = (JSONObject) tablist.get(i);
-        		String tablecode = item.getString("tablecode");
-        		jsonObj.put(tablecode+"dsl", getbodydsl(bodyVO,tablecode,flag,djlxbm));
-        	}
-        }
+//        if(flag.equals("editcard")){
+//        	for(int i=0;i<tablist.length();i++){
+//        		JSONObject item = (JSONObject) tablist.get(i);
+//        		String tablecode = item.getString("tablecode");
+//        		jsonObj.put(tablecode+"dsl", getbodydsl(bodyVO,tablecode,flag,djlxbm));
+//        	}
+//        }
 		return jsonObj.toString();
 	}
 	
@@ -607,10 +225,10 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		
 	}
 	
-	private static Map<String,Map<String,String>> templetCache = new HashMap<String,Map<String,String>>();
+//	private static Map<String,Map<String,String>> templetCache = new HashMap<String,Map<String,String>>();
 	private String getheaddsl(String flag,BillTempletBodyVO[] bodyVO,String djlxbm){
 		StringBuffer div = new StringBuffer();
-		div.append("<div id=\"viewPage999\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
+		div.append("<div id=\"viewPage99\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
 		div.append("<div id=\"viewPage" + panel
 				+ "\"  layout=\"vbox\" width=\"fill\" height=\"wrap\" padding-left=\"15\">");
 		
@@ -662,7 +280,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 					}
 				}
 			}
-			templetCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head", head);
+//			templetCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head", head);
 		}
 		div.append("</div>");
 		panel++;
@@ -733,12 +351,13 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 					input.append("<input id=\"dateinput" + panel 
 					+ "\" format=\"yyyy-MM-dd\" placeholder=\"可空\" type=\"date\""
 					+ " height=\"44\" weight=\"1\" color=\"#000000\" "
-					+ " font-size=\"16\" width=\"fill\" font-family=\"default\" ");
+					+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
+					+ " bindfield=\"" + prefix + item.getKey() + "\"");
 				else if(flag.equals("editcard"))
 					input.append("<input id=\"dateinput" + panel 
 							+ "\" readonly =\"true\" format=\"yyyy-MM-dd\" type=\"date\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" "
+							+ " bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//日期直接赋值
 				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
 					input.append(" value=\"" + item.getDefaultValue() + "\"");
@@ -792,26 +411,19 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				String reftype = item.getRefType();
 				//下拉类型和参照类型分别需要对reftype做处理
 				if(dataType == IBillItem.COMBO){
-					JSONObject jsonObj = new JSONObject();
+//					JSONObject jsonObj = new JSONObject();
 					boolean isFromMeta = reftype
 			                   .startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
 					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
 					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
-					JSONArray jsonarray = new JSONArray();
+					StringBuffer typestr = new StringBuffer();
 					for(int i=0;i<combodata.size();i++){
 						DefaultConstEnum enumvalue = combodata.get(i);
-						JSONObject data = new JSONObject();
-						data.put("refname", enumvalue.getName());
-						data.put("pk_ref", enumvalue.getValue());
-						jsonarray.put(data);
+						if(i != 0)
+							typestr.append(",");
+						typestr.append(enumvalue.getName()).append("=").append(enumvalue.getValue());
 					}
-					JSONObject none = new JSONObject();
-					none.put("refname", "无");
-					none.put("pk_ref", "");
-					jsonarray.put(none);
-					jsonObj.put("reflist", jsonarray);
-					jsonObj.put("nodename", item.getName());
-					reftype = "COMBO,"+jsonObj.toString();	
+					reftype = "COMBO," + item.getName() + ":" +typestr.toString();	
 				}else{
 					if(item.getRefType() == null)
 						reftype = "UFREF,没有参照";
@@ -841,79 +453,9 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		return input.toString();
 	}  
 
-	public String getRefList(String userid, String reftype) throws BusinessException {
+	public String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
 		initEvn(userid);
- 		JSONObject jsonObj = new JSONObject();
-		if(reftype.startsWith("COMBO,")){
-			reftype = reftype.substring(6);
-			int index = reftype.indexOf(",");
-			String name = reftype.substring(0, index);
-			reftype = reftype.substring(index+1);
-			if (reftype != null
-					&& (reftype = reftype.trim()).length() > 0) {
-				boolean isFromMeta = reftype
-						.startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
-				String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-				List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
-				JSONArray jsonarray = new JSONArray();
-				for(int i=0;i<combodata.size();i++){
-					DefaultConstEnum enumvalue = combodata.get(i);
-					JSONObject data = new JSONObject();
-					data.put("refname", enumvalue.getName());
-					data.put("pk_ref", enumvalue.getValue());
-					jsonarray.put(data);
-				}
-				JSONObject none = new JSONObject();
-				none.put("refname", "无");
-				none.put("pk_ref", "");
-				jsonarray.put(none);
-				jsonObj.put("reflist", jsonarray);
-				jsonObj.put("nodename", name);
-				return jsonObj.toString();		
-			}
-		}else{
-			if(reftype.startsWith("UFREF,"))
-				reftype = reftype.substring(6);
-			//特殊参照返回空
-			if (RefPubUtil.isSpecialRef(reftype)) {
-				return jsonObj.toString();
-			}
-			AbstractRefModel refModel = RefPubUtil.getRefModel(reftype);
-			String pkFieldCode = refModel.getPkFieldCode();
-			RefcolumnVO[] RefcolumnVOs = RefPubUtil.getColumnSequences(refModel);
-			if(reftype.equals("客商银行账户")){
-				((CustBankaccDefaultRefModel) refModel).setPk_cust("10041110000000000Q8Q");
-			}
-			Vector vDataAll = refModel.getRefData();
-			JSONArray jsonarray = new JSONArray();
-			for(int i=0;i<vDataAll.size();i++){
-				Vector aa = (Vector) vDataAll.get(i);
-				JSONObject data = new JSONObject();
-				for(int j=0;j<RefcolumnVOs.length;j++){
-					String field = RefcolumnVOs[j].getFieldname();
-					Object value = (Object) aa.get(j);
-					if(reftype.equals("客商银行账户")){
-						if(field.equals("accname")){
-							data.put("refname", value);
-						}
-					}
-					if(field.equals("name")){
-						data.put("refname", value);
-					}
-					else if(pkFieldCode.equals(field)){
-						data.put("pk_ref", value);
-					}
-				}
-				jsonarray.put(data);
-			}
-			JSONObject none = new JSONObject();
-			none.put("refname", "无");
-			none.put("pk_ref", "");
-			jsonarray.put(none);
-			jsonObj.put("reflist", jsonarray);
-			jsonObj.put("nodename", reftype);
-		}
-		return jsonObj.toString();
+		return RefUtil.getRefList(userid, reftype, map);
 	}
 	
 	//得到表体动态dsl
@@ -970,7 +512,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 					}
 				}
 			}
-			templetCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + tablecode + "body", body);
+//			templetCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + tablecode + "body", body);
 		}
 		div.append("</div>");
 		panel++;
@@ -1061,108 +603,12 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	        return topPks;
 	     }
      }
-	 @SuppressWarnings("unchecked")
-	private String getTemplatePK(String djlxbm) throws BusinessException {
-		String pk_corp = InvocationInfoProxy.getInstance().getGroupId();
-		ListResultSetProcessor processor = new ListResultSetProcessor();
-		String xtdjlx = "2641,2642,2643,2644,2645,2646";
-		try {
-			if(!xtdjlx.contains(djlxbm)){
-				//自定义交易类型，首先查找当前集团当前交易类型的模板，命名必须为djlxbm_W
-				String sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where pk_corp = '" 
-				+ pk_corp + "' and BILL_TEMPLETNAME = '" + djlxbm + "_W'";
-				List<String> ts = (List<String>)getBasedao().executeQuery(sql, processor);
-				if (isEmpty(ts)){
-					//为空则查找系统预置的差旅费报销单的移动模板
-					sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where PK_BILLTYPECODE = '2641_W' and pk_corp = '@@@@'";
-					ts = (List<String>)getBasedao().executeQuery(sql, processor);
-				}
-				if (isEmpty(ts)){
-					return null; 
-				} 
-				return ts.get(0);
-			}else{
-				//预制单据类型，首先查找当前集团当前交易类型的模板，命名必须为djlxbm_W
-				String sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where PK_BILLTYPECODE = '" + djlxbm 
-				+ "_W' and pk_corp = '" + pk_corp + "' and BILL_TEMPLETNAME = '" + djlxbm + "_W'";
-				List<String> ts = (List<String>)getBasedao().executeQuery(sql, processor);
-				if (isEmpty(ts)){
-					//为空则查找系统预置的当前交易类型的
-					sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where PK_BILLTYPECODE = '" + djlxbm 
-					+ "_W' and pk_corp = '@@@@'";
-					ts = (List<String>)getBasedao().executeQuery(sql, processor);
-					if (isEmpty(ts)){
-						//还为空则查找系统预置的差旅费报销单的模板模板
-						sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where PK_BILLTYPECODE = '2641_W' and pk_corp = '@@@@'";
-						ts = (List<String>)getBasedao().executeQuery(sql, processor);
-					}
-				}
-				if (isEmpty(ts)){
-					return null; 
-				} 
-				return ts.get(0);
-			}
-		} catch (DAOException e) {
-			return null;
-		}
-	}
-	
-	private BaseDAO getBasedao() {
-		if (basedao == null) {
-			basedao = new BaseDAO();
-		}
-		return basedao;
-	}
-	private <T> boolean isEmpty(Collection<T> c) {
-		return c == null || c.size() == 0;
-	}
 
 	public String validateTs(String userid, String djlxbm, String nodecode,
 			String tsflag) throws BusinessException {
 		initEvn(userid);
-		String pk_corp = InvocationInfoProxy.getInstance().getGroupId();
-		ListResultSetProcessor processor = new ListResultSetProcessor();
-		String xtdjlx = "2641,2642,2643,2644,2645,2646";
 		if(tsflag.equals("head")){
-			try {
-				if(!xtdjlx.contains(djlxbm)){
-					//自定义交易类型，首先查找当前集团当前交易类型的模板，命名必须为djlxbm_W
-					String sql = "select ts from PUB_BILLTEMPLET where pk_corp = '" 
-					+ pk_corp + "' and BILL_TEMPLETNAME = '" + djlxbm + "_W'";
-					List<String> ts = (List<String>)getBasedao().executeQuery(sql, processor);
-					if (isEmpty(ts)){
-						//为空则查找系统预置的差旅费报销单的移动模板
-						sql = "select ts from PUB_BILLTEMPLET where PK_BILLTYPECODE = '2641_W' and pk_corp = '@@@@'";
-						ts = (List<String>)getBasedao().executeQuery(sql, processor);
-					}
-					if (isEmpty(ts)){
-						return null; 
-					} 
-					return ts.get(0);
-				}else{
-					//预制单据类型，首先查找当前集团当前交易类型的模板，命名必须为djlxbm_W
-					String sql = "select ts from PUB_BILLTEMPLET where PK_BILLTYPECODE = '" + djlxbm 
-					+ "_W' and pk_corp = '" + pk_corp + "' and BILL_TEMPLETNAME = '" + djlxbm + "_W'";
-					List<String> ts = (List<String>)getBasedao().executeQuery(sql, processor);
-					if (isEmpty(ts)){
-						//为空则查找系统预置的当前交易类型的
-						sql = "select ts from PUB_BILLTEMPLET where PK_BILLTYPECODE = '" + djlxbm 
-						+ "_W' and pk_corp = '@@@@'";
-						ts = (List<String>)getBasedao().executeQuery(sql, processor);
-						if (isEmpty(ts)){
-							//还为空则查找系统预置的差旅费报销单的模板模板
-							sql = "select ts from PUB_BILLTEMPLET where PK_BILLTYPECODE = '2641_W' and pk_corp = '@@@@'";
-							ts = (List<String>)getBasedao().executeQuery(sql, processor);
-						}
-					}
-					if (isEmpty(ts)){
-						return null; 
-					} 
-					return ts.get(0);
-				}
-			} catch (DAOException e) {
-				return null;
-			}
+			return MobileTemplateUtils.getTemplateTS(djlxbm);
 		}
 		else
 			return null;
@@ -1215,10 +661,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		// 获取附件列表
 		try {
 			org.codehaus.jettison.json.JSONArray attatchmapList = getFileList(pk_jkbx, userid);
-			if(attatchmapList != null && attatchmapList.length() > 0){
-				retJson.put("attachnum", attatchmapList.length());
-			}
-			retJson.put("attachment", attatchmapList);
+			retJson.put("contentlist", attatchmapList);
 		} catch (JSONException e) {
 			Logger.debug(e.getMessage());
 		}

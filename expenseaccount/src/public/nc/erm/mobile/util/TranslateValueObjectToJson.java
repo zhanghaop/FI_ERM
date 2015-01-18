@@ -2,12 +2,9 @@ package nc.erm.mobile.util;
 
 import java.lang.reflect.Field;
 
-import nc.erm.mobile.environment.ErmTemplateQueryUtil;
-import nc.erm.mobile.environment.EnvironmentInit;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.bill.BillOperaterEnvVO;
 import nc.vo.pub.bill.BillTempletVO;
 
 import org.codehaus.jettison.json.JSONArray;

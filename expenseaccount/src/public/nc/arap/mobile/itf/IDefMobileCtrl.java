@@ -8,16 +8,24 @@ import nc.vo.pub.BusinessException;
  */
 public interface IDefMobileCtrl {
 	/**
-	 * 单据类型
+	 * 获取不同父节点下的单据节点，按nc的功能权限走
 	 * 
 	 */
-	public Map<String,Map<String,String>> getBXbilltype(String userid) throws BusinessException;
+	public String getBXbilltype(String userid,String flag) throws BusinessException;
 	/**
 	 * 保存单据
 	 * 
 	 */
 	public String saveJkbx(Map<String,Object> map, String djlxbm,String userid) throws BusinessException;
-	public String commitDefJkbx(String userid,String pk_jkbx) throws BusinessException;
+	/**
+	 * 提交单据
+	 * @param userid
+	 * @param pk_jkbx
+	 * @param djlxbm
+	 * @return
+	 * @throws BusinessException
+	 */
+	public String commitDefJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException;
 		/**
 		 * 根据单据类型编码获取对应DSL文件
 		 */
@@ -26,7 +34,7 @@ public interface IDefMobileCtrl {
 	 * 得到参照
 	 * 
 	 */
-	public String getRefList(String userid, String reftype)
+	public String getRefList(String userid, String reftype,Map<String, Object> map)
 				throws BusinessException;
 
 	/**

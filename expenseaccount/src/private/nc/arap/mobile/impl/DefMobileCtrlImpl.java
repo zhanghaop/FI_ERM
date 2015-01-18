@@ -9,8 +9,8 @@ import nc.vo.pub.BusinessException;
 public class DefMobileCtrlImpl implements IDefMobileCtrl{
 	
 	@Override
-	public Map<String,Map<String,String>> getBXbilltype(String userid) throws BusinessException {
-		return getErmDefMobileCtrlBo().getBXbilltype(userid);
+	public String getBXbilltype(String userid,String flag) throws BusinessException {
+		return getErmDefMobileCtrlBo().getBXbilltype(userid,flag);
 	}
 	 private ErmMobileDefCtrlBO mobilebo = null;
 	 ErmMobileDefCtrlBO getErmDefMobileCtrlBo(){ 
@@ -29,9 +29,9 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().getBxdTemplate(userid,djlxbm,nodecode,flag);
 	}
 	@Override
-	public String getRefList(String userid, String reftype)
+	public String getRefList(String userid, String reftype,Map<String, Object> map)
 			throws BusinessException {
-		return getErmDefMobileCtrlBo().getRefList(userid,reftype);
+		return getErmDefMobileCtrlBo().getRefList(userid,reftype,map);
 	}
 	@Override
 	public String getItemDslFile(String userid, String djlxbm, String nodecode,
@@ -45,9 +45,9 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().addJkbx(jkbxInfo,djlxbm,userid);
 	}
 	@Override
-	public String commitDefJkbx(String userid, String pk_jkbx)
+	public String commitDefJkbx(String userid, String pk_jkbx,String djlxbm,String djdl)
 			throws BusinessException {
-		return getErmDefMobileCtrlBo().commitJkbx(userid,pk_jkbx);
+		return getErmDefMobileCtrlBo().commitJkbx(userid,pk_jkbx,djlxbm,djdl);
 	}
 	@Override
 	public String validateTs(String userid, String djlxbm, String nodecode,

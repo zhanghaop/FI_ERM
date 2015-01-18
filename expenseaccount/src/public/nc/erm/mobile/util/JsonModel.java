@@ -91,11 +91,13 @@ public class JsonModel{
 		if (bodys == null || bodys.length == 0)
 			return bodyarray;
 		try {
+			int itemnum = 0;
 			for (int i = 0; i < bodys.length; i++) {
 				JSONObject bodyJson = setBodyRowObjectModelByMetaData(bodys[i], i);
 				if(bodyJson != null){
 					//gaotn
-					bodyMap.put(i, bodyJson);
+					bodyMap.put(itemnum, bodyJson);
+					itemnum++;
 					//gaotn
 	//				bodyarray.put(bodyJson);
 				}
@@ -166,9 +168,8 @@ public class JsonModel{
 	
 	
 	private JSONObject setBodyRowObjectModelByMetaData(NCObject o, int row){
-		if(o.getVOStatus() == 100)
+		if(o == null)
 			return null;
-		o.setVOStatus(100);
 		JSONObject bodyJson = new JSONObject();
 		StringBuffer text = new StringBuffer();
 		if (o == null || row < 0)
@@ -227,7 +228,7 @@ public class JsonModel{
 						bodyJson.put(item.getKey()+"_name", itemJson.get("name"));
 						//Æ´½Ó×Ö·û´®
 						if(item.isShowFlag() == true && !"amount".equals(item.getKey())){
-							text.append(itemJson.get("name"));
+							text.append(itemJson.get("name") +"  ");
 						}
 					}
 				}

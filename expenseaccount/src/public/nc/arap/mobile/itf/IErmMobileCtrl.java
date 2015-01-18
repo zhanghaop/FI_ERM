@@ -1,5 +1,6 @@
 package nc.arap.mobile.itf;
 
+import java.util.List;
 import java.util.Map;
 
 import nc.vo.pub.BusinessException;
@@ -32,14 +33,14 @@ public interface IErmMobileCtrl {
 
 	
 	/**
-	 * 查询当前用户全部未审批通过\审批通过的报销单
+	 * 分页查询当前用户未完成\已完成的单据
 	 * 
 	 * @param userid
-	 * @param flag 审批状态标志 1-已完成 0-为完成
+	 * @param flag 审批状态标志0-未完成  1-已完成 
 	 * @return 交易类型名称分组的报销单属性值
 	 * @throws BusinessException
 	 */
-	public Map<String, Map<String, String>> getBXHeadsByUser(String userid,String flag)
+	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String startline,String pagesize,String pks)
 	throws BusinessException ;
 	/**
 	 * 查询当前用户待审批单据
@@ -48,8 +49,18 @@ public interface IErmMobileCtrl {
 	 * @return 借款报销单
 	 * @throws BusinessException
 	 */
-	public Map<String,Map<String, Map<String, String>>> getBXApproveBillByUser(String userid,String flag)
+	public Map<String,List<Map<String, String>>> getBXApproveBillByUser(String userid,String flag)
 	throws BusinessException ;
+	
+	/**
+	 * 查询当前用户已审批单据
+	 * 
+	 * @param userid
+	 * @return 借款报销单
+	 * @throws BusinessException
+	 */
+	public Map<String,Map<String, Map<String, String>>> getBXApprovedBillByUser(String userid,String flag)
+			throws BusinessException;
 	
 	/**
 	 * 审批单据

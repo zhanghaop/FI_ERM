@@ -20,7 +20,7 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	@Override
 	public String addJkbx(Map<String, Object> valuemap,String djlxbm) throws BusinessException {
 		 valuemap.put(JKBXHeaderVO.DJLXBM,djlxbm);
-		 return getErmMobileCtrlBo().addJkbx(valuemap);
+		 return null;
 	}
 	
 	@Override
@@ -34,9 +34,9 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	}
 	
 	@Override
-	public Map<String, Map<String, String>> getBXHeadsByUser(String userid,String flag)
+	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String startline,String pagesize,String pks)
 	throws BusinessException {
-		return getErmMobileCtrlBo().getBXHeadsByUser(userid,flag);
+		return getErmMobileCtrlBo().getBXHeadsByUser(userid,flag,startline,pagesize,pks);
 	}
 	  
 	@Override
@@ -91,16 +91,22 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 		return resultmap;
 	}
 
-	//查询当前用户待审批单据,map按照本周、上周、更早进行分组
+	//查询当前用户待审批单据,map按照单据类型进行分组
 	@Override
-	public Map<String,Map<String, Map<String, String>>> getBXApproveBillByUser(String userid,String flag)
+	public Map<String,List<Map<String, String>>> getBXApproveBillByUser(String userid,String flag)
 			throws BusinessException {
 		//flag 2 :待我审批 3：我已审批
 		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
-		if(flag.equals("2"))
-			return bo.getBXApprovingBillByUser(userid);
-		else
-			return bo.getBXApprovedBillByUser(userid);
+		return bo.getBXApprovingBillByUser(userid);
+	}
+	
+	//查询当前用户已审批单据,map按照本周、上周、更早进行分组
+	@Override
+	public Map<String,Map<String, Map<String, String>>> getBXApprovedBillByUser(String userid,String flag)
+			throws BusinessException {
+		//flag 2 :待我审批 3：我已审批
+		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
+		return bo.getBXApprovedBillByUser(userid);
 	}
 //	//查询当前用户待审批单据,map按照本周、上周、更早进行分组
 //	@Override

@@ -10,6 +10,8 @@ import nc.erm.mobile.environment.EnvironmentInit;
 import nc.itf.uap.rbac.IUserLockService;
 import nc.itf.uap.rbac.IUserManageQuery;
 import nc.itf.uap.rbac.userpassword.IUserPasswordManage;
+import nc.pubitf.rbac.IFunctionPermissionPubService;
+import nc.vo.am.proxy.AMProxy;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.sm.UserVO;
@@ -99,4 +101,18 @@ public class CommonMobileCtrlImpl implements ICommonUtilCtrl{
 	    
 	}
 
+	/**
+	 * 根据用户id 功能号, 获取有权限的节点.
+	 * 
+	 * @param userid
+	 * @param funccode
+	 * @param groupid
+	 * @return
+	 * @throws BusinessException
+	 *             作者 zhangg
+	 */
+	public static String[] getUserPermissionFuncNode(String userid,String groupid) throws BusinessException {
+		return AMProxy.lookup(IFunctionPermissionPubService.class)
+		.getUserPermissionFuncNode(userid, groupid);
+	}
 }
