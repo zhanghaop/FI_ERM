@@ -145,6 +145,8 @@
 	<bean id="redbackAction" class="nc.ui.erm.accruedexpense.actions.AccRedbackAction">
 		<property name="model" ref="manageAppModel"/>
 		<property name="exceptionHandler" ref="exceptionHandler" />
+		<property name="saveAndCommitAction" ref="saveAndCommitAction"/>
+		<property name="tempSaveAction" ref="tempSaveAction"/>
 	</bean>
 
 	<bean id="auditAction" class="nc.ui.erm.accruedexpense.actions.AccAuditAction">

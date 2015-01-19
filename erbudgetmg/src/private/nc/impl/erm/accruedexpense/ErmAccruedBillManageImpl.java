@@ -1,6 +1,7 @@
 package nc.impl.erm.accruedexpense;
 
 import nc.bs.erm.accruedexpense.ErmAccruedBillBO;
+import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillManage;
 import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
@@ -16,6 +17,10 @@ public class ErmAccruedBillManageImpl implements IErmAccruedBillManage {
 
 	@Override
 	public AggAccruedBillVO insertVO(AggAccruedBillVO vo) throws BusinessException {
+
+		if (vo.getParentVO().getRedflag() != null && vo.getParentVO().getRedflag() == ErmAccruedBillConst.REDFLAG_RED) {
+			return new ErmAccruedBillBO().redbackVO(vo);
+		}
 		return new ErmAccruedBillBO().insertVO(vo);
 	}
 

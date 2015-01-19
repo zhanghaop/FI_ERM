@@ -3,14 +3,16 @@ package nc.bs.erm.accruedexpense;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nc.bs.arap.bx.BusiLogUtil;
 import nc.bs.businessevent.EventDispatcher;
 import nc.bs.dao.BaseDAO;
-import nc.bs.dao.DAOException;
 import nc.bs.er.util.BXBsUtil;
 import nc.bs.erm.accruedexpense.check.AccruedBillVOChecker;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
@@ -319,181 +321,153 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 		retriveItems(new AggAccruedBillVO[]{aggvo});
 	}
 
-	private void unRedbackOldAccruedBill(AggAccruedBillVO aggvo) throws BusinessException {
-		//查询原预提单
-		String src_accruedpk = aggvo.getChildrenVO()[0].getSrc_accruedpk();
-		AggAccruedBillVO oldvo = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class).queryBillByPk(src_accruedpk);
+	private void unRedbackOldAccruedBill(AggAccruedBillVO redVO) throws BusinessException {
+		if(redVO == null || redVO.getChildrenVO() == null || redVO.getChildrenVO().length == 0){
+			return;
+		}
+		Map<String,UFDouble[]> hcDetailMap = new HashMap<String,UFDouble[]>();
+		for(AccruedDetailVO detailvo : redVO.getChildrenVO()){
+			UFDouble[] money = new UFDouble[]{detailvo.getAmount(),detailvo.getOrg_amount(),detailvo.getGroup_amount(),detailvo.getGlobal_amount()};
+			hcDetailMap.put(detailvo.getSrc_detailpk(), money);
+		}
+		// 查询原预提单
+		String src_accruedpk = null;
+		if(redVO.getChildrenVO() != null && redVO.getChildrenVO().length > 0){
+			src_accruedpk = redVO.getChildrenVO()[0].getSrc_accruedpk();
+		}else if(redVO.getOldvo() != null && redVO.getChildrenVO() != null && redVO.getChildrenVO().length > 0){
+			src_accruedpk = redVO.getOldvo().getChildrenVO()[0].getSrc_accruedpk();
+		}else {
+			return;
+		}
+		AggAccruedBillVO oldvo = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
+				.queryBillByPk(src_accruedpk);
 
 		AccruedVO parent = oldvo.getParentVO();
 		// 删除红冲单据后，原预提单红冲标志置空
 		parent.setRedflag(ErmAccruedBillConst.REDFLAG_NO);
-		parent.setRest_amount(parent.getAmount().sub(parent.getVerify_amount()));
-		parent.setOrg_rest_amount(parent.getOrg_amount().sub(parent.getOrg_verify_amount()));
-		parent.setGroup_rest_amount(parent.getGroup_amount().sub(parent.getGroup_verify_amount()));
-		parent.setGlobal_rest_amount(parent.getGlobal_amount().sub(parent.getGlobal_verify_amount()));
-		parent.setPredict_rest_amount(parent.getRest_amount());
-
-		for(AccruedDetailVO child : oldvo.getChildrenVO()){
-			child.setRest_amount(child.getAmount().sub(child.getVerify_amount()));
-			child.setOrg_rest_amount(child.getOrg_amount().sub(child.getOrg_verify_amount()));
-			child.setGroup_rest_amount(child.getGroup_amount().sub(child.getGroup_verify_amount()));
-			child.setGlobal_rest_amount(child.getGlobal_amount().sub(child.getGlobal_verify_amount()));
-			child.setPredict_rest_amount(child.getRest_amount());
+		// aggvo:红冲单据，金额为负数，所以这里回写为减:原预提单余额+负的红冲金额
+		parent.setRest_amount(parent.getRest_amount().sub(redVO.getParentVO().getAmount()));
+		parent.setOrg_rest_amount(parent.getOrg_rest_amount().sub(redVO.getParentVO().getOrg_verify_amount()));
+		parent.setGroup_rest_amount(parent.getGroup_rest_amount().sub(redVO.getParentVO().getGroup_verify_amount()));
+		parent.setGlobal_rest_amount(parent.getGlobal_rest_amount().sub(redVO.getParentVO().getGlobal_verify_amount()));
+		parent.setPredict_rest_amount(parent.getPredict_rest_amount().sub(redVO.getParentVO().getAmount()));
+		//篮子预提单上的红冲金额，在删除红冲单回写时，是减去相应红冲的金额，红冲金额记录负数，则为add
+		parent.setRed_amount(parent.getRed_amount().add(redVO.getParentVO().getAmount()));
+		for (AccruedDetailVO child : oldvo.getChildrenVO()) {
+			if(hcDetailMap.get(child.getPk_accrued_detail()) != null){
+				child.setRest_amount(child.getRest_amount().sub(hcDetailMap.get(child.getPk_accrued_detail())[0]));
+				child.setOrg_rest_amount(child.getOrg_rest_amount().sub(hcDetailMap.get(child.getPk_accrued_detail())[1]));
+				child.setGroup_rest_amount(child.getGroup_rest_amount().sub(hcDetailMap.get(child.getPk_accrued_detail())[2]));
+				child.setGlobal_rest_amount(child.getGlobal_rest_amount().sub(hcDetailMap.get(child.getPk_accrued_detail())[3]));
+				child.setPredict_rest_amount(child.getPredict_rest_amount().sub(hcDetailMap.get(child.getPk_accrued_detail())[0]));
+				child.setRed_amount(child.getRed_amount().sub(hcDetailMap.get(child.getPk_accrued_detail())[0]));
+			}
 		}
+		
 		// 回写原预提单
 		getDAO().getBaseDAO().updateVO(oldvo.getParentVO());
 		getDAO().getBaseDAO().updateVOArray(oldvo.getChildrenVO());
 
 	}
 
-	public AggAccruedBillVO redbackVO(AggAccruedBillVO aggvo) throws BusinessException {
-		// 修改加锁
-		pklockOperate(aggvo);
-		// 版本校验
-		BDVersionValidationUtil.validateVersion(aggvo.getParentVO());
-		// 过滤掉没有余额的行
-		filtAggAccruedBillVO(aggvo);
-		// 红冲校验
-		new AccruedBillVOChecker().checkRedback(aggvo);
-		AggAccruedBillVO redbackVO = getRedbackVO(aggvo);
+	public AggAccruedBillVO redbackVO(AggAccruedBillVO redbackVO) throws BusinessException {
+		
 
-		// 红冲前事件处理
-		fireBeforeRedbackEvent(redbackVO);
+		prepareVoValue(redbackVO);
+		new AccruedBillVOChecker().checkBackSave(redbackVO);
+		AggAccruedBillVO result = null;
+		try {
+			// 获取单据号
+			createBillNo(redbackVO);
+			// 设置审计信息
+			AuditInfoUtil.addData(redbackVO.getParentVO());
+			// 红冲前事件处理
+			fireBeforeRedbackEvent(redbackVO);
 
-		// 插入红冲单据
-		getDAO().insertVO(redbackVO);
+			// 插入红冲单据
+			getDAO().insertVO(redbackVO);
 
-		//红冲后事件处理
-		fireAfterRedbackEvent(redbackVO);
+			//红冲后事件处理
+			fireAfterRedbackEvent(redbackVO);
+			// 回写原预提单状态和金额
+			writebackOldAccruedBill(redbackVO);
 
-		// 回写原预提单状态和金额
-		redbackOldAccruedBill(aggvo);
+			// 查询返回结果
+			IErmAccruedBillQuery qryService = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
+			result = qryService.queryBillByPk(redbackVO.getParentVO().getPrimaryKey());
 
-		redbackVO.getParentVO().setHasntbcheck(UFBoolean.FALSE);
+		} catch (Exception e) {
+			if(redbackVO.getParentVO().getBillno() != null){
+				returnBillno(new AggAccruedBillVO[] { redbackVO });
+			}
+			ExceptionHandler.handleException(e);
+		}
 
-		return redbackVO;
+		result.getParentVO().setHasntbcheck(UFBoolean.FALSE);
+		// 返回
+		return result;
 	}
 
-	private void filtAggAccruedBillVO(AggAccruedBillVO aggvo) throws BusinessException{
-		AccruedDetailVO[] oldChildren = aggvo.getChildrenVO();
-		List<AccruedDetailVO> newChildren = new ArrayList<AccruedDetailVO>();
-		if (oldChildren != null && oldChildren.length > 0) {
-			for (AccruedDetailVO child : oldChildren) {
-				if (child.getRest_amount().compareTo(UFDouble.ZERO_DBL) > 0) {
-					newChildren.add(child);
+
+	private void writebackOldAccruedBill(AggAccruedBillVO redbackVO) throws BusinessException {
+		Set<String> pkList = new HashSet<String>();
+		// key:原预提单的主键+表体主键  value:红冲金额
+		Map<String,UFDouble> redMap = new HashMap<String,UFDouble>();
+		for (AccruedDetailVO redDetailvo : redbackVO.getChildrenVO()) {
+			pkList.add(redDetailvo.getSrc_accruedpk());
+			redMap.put(redDetailvo.getSrc_accruedpk()+redDetailvo.getSrc_detailpk(), redDetailvo.getAmount());
+		}
+		AggAccruedBillVO[] oldAggvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
+				.queryBillByPks(pkList.toArray(new String[pkList.size()]));
+		// 给原预提单加主键锁
+		lockByPK(pkList);
+		
+		Set<AccruedDetailVO> detailSet = new HashSet<AccruedDetailVO>();
+		Set<AccruedVO> headSet = new HashSet<AccruedVO>();
+		for(AggAccruedBillVO oldvo : oldAggvos){
+			for(AccruedDetailVO oldDetailvo : oldvo.getChildrenVO()){
+				String key = oldDetailvo.getPk_accrued_bill() + oldDetailvo.getPk_accrued_detail();
+				if(redMap.containsKey(key)){
+					
+					if(redMap.get(key).multiply(new UFDouble("-1")).compareTo(oldDetailvo.getPredict_rest_amount()) > 0){
+						throw new BusinessException("按行红冲金额已超出回写金额，请改小金额重新红冲");
+					}
+					
+					oldDetailvo.setPredict_rest_amount(oldDetailvo.getPredict_rest_amount().add(redMap.get(key)));
+					oldDetailvo.setRest_amount(oldDetailvo.getRest_amount().add(redMap.get(key)));
+					//累加红冲金额记录在蓝字预提单上
+					oldDetailvo.setRed_amount(oldDetailvo.getRed_amount().add(new UFDouble("-1").multiply(redMap.get(key))));
+					ErmAccruedBillUtils.resetBodyAmount(oldDetailvo, oldvo.getParentVO());
+					detailSet.add(oldDetailvo);
+					headSet.add(oldvo.getParentVO());
+					redMap.remove(key);
 				}
 			}
-			if (newChildren.size() == 0) {
-				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0009")/*@res "单据无可用余额,不能进行红冲操作"*/);
-			}
-			if (newChildren.size() != oldChildren.length) {
-				aggvo.setChildrenVO(newChildren.toArray(new AccruedDetailVO[newChildren.size()]));
-			}
-		}else{
-			throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("accruedbill_0","02011001-0010")/*@res "单据无表体,不能进行红冲操作"*/);
+			// 表体原币金额合计到表头
+			ErmAccruedBillUtils.sumBodyAmount2Head(oldvo);
+
+			// 再根据汇率重新计算组织、集团、全局金额
+			ErmAccruedBillUtils.resetHeadAmounts(oldvo.getParentVO());
+			
 		}
-	}
-
-	private void redbackOldAccruedBill(AggAccruedBillVO aggvo) throws DAOException {
-		// 进行红冲的原预提单相关字段更新，注意此时aggvo只是可以进行红冲的aggvo,表体已过滤掉不可红冲行
-		//红冲标志-被红冲
-		aggvo.getParentVO().setRedflag(ErmAccruedBillConst.REDFLAG_REDED);
-		// 红冲完后，原预提单表头余额为0，表体被红冲到的行余额也为0
-		aggvo.getParentVO().setRest_amount(UFDouble.ZERO_DBL);
-		aggvo.getParentVO().setOrg_rest_amount(UFDouble.ZERO_DBL);
-		aggvo.getParentVO().setGroup_rest_amount(UFDouble.ZERO_DBL);
-		aggvo.getParentVO().setGlobal_rest_amount(UFDouble.ZERO_DBL);
-		aggvo.getParentVO().setPredict_rest_amount(UFDouble.ZERO_DBL);
-
-		for (AccruedDetailVO child : aggvo.getChildrenVO()) {
-			child.setRest_amount(UFDouble.ZERO_DBL);
-			child.setOrg_rest_amount(UFDouble.ZERO_DBL);
-			child.setGroup_rest_amount(UFDouble.ZERO_DBL);
-			child.setGlobal_rest_amount(UFDouble.ZERO_DBL);
-			child.setPredict_rest_amount(UFDouble.ZERO_DBL);
+		
+		if(!redMap.isEmpty()){
+			throw new BusinessException("红冲表体行，存在非原预提单的行，请删除");
 		}
 		// 更新数据表
-		getDAO().getBaseDAO().updateVO(aggvo.getParentVO());
-		getDAO().getBaseDAO().updateVOArray(aggvo.getChildrenVO());
-
-	}
-
-	private AggAccruedBillVO getRedbackVO(AggAccruedBillVO aggvo) throws BusinessException {
-		AggAccruedBillVO redbackVO = (AggAccruedBillVO) aggvo.clone();
-		//1.清空不能复制的项
-		ErmAccruedBillUtils.clearRedbackFieldValue(redbackVO);
-		//2.设置默认值
-		setDefaultValue4redback(redbackVO,aggvo);
-		return redbackVO;
+		getDAO().getBaseDAO().updateVOArray(headSet.toArray(new AccruedVO[headSet.size()]));
+		getDAO().getBaseDAO().updateVOArray(detailSet.toArray(new AccruedDetailVO[detailSet.size()]));
 	}
 
 	/**
-	 * 红冲设置默认值
-	 * @param redbackVO
+	 * 加主键锁
+	 * @param pkList
 	 * @throws BusinessException
 	 */
-	private void setDefaultValue4redback(AggAccruedBillVO redbackVO,AggAccruedBillVO aggvo) throws BusinessException {
-		AccruedVO head = redbackVO.getParentVO();
-		String userid = BXBsUtil.getBsLoginUser();
-//		String pk_psndoc = BXBsUtil.getPk_psndoc(userid);
-		// ehp3之后，红字单据上的经办人信息从蓝字单据上带出
-//		head.setOperator(pk_psndoc);
-//		head.setOperator_dept(BXBsUtil.getPsnPk_dept(pk_psndoc));
-//		head.setOperator_org(BXBsUtil.getPsnPk_org(pk_psndoc));
-
-		head.setRest_amount(UFDouble.ZERO_DBL);
-		head.setOrg_rest_amount(UFDouble.ZERO_DBL);
-		head.setGroup_rest_amount(UFDouble.ZERO_DBL);
-		head.setGlobal_rest_amount(UFDouble.ZERO_DBL);
-		head.setOrg_verify_amount(UFDouble.ZERO_DBL);
-		head.setGroup_verify_amount(UFDouble.ZERO_DBL);
-		head.setGlobal_verify_amount(UFDouble.ZERO_DBL);
-		head.setVerify_amount(UFDouble.ZERO_DBL);
-		head.setPredict_rest_amount(UFDouble.ZERO_DBL);
-
-		UFDateTime currTime = BXBsUtil.getBsLoginDate();
-		head.setCreationtime(currTime);
-		head.setApprovetime(currTime);
-		head.setBilldate(currTime.getDate());
-
-		head.setCreator(userid);
-		head.setApprover(userid);
-
-		head.setBillstatus(ErmMatterAppConst.BILLSTATUS_APPROVED );//已审批
-		head.setEffectstatus(ErmMatterAppConst.EFFECTSTATUS_VALID );//已生效
-		head.setApprstatus(IBillStatus.CHECKPASS);//审批通过
-
-		head.setStatus(VOStatus.NEW);
-		createBillNo(redbackVO);
-		// 红冲标志-红冲
-		head.setRedflag(ErmAccruedBillConst.REDFLAG_RED);
-
-		for(AccruedDetailVO child : redbackVO.getChildrenVO()){
-			// 注意红冲后的单据表体行的金额应为原预提单行余额的负数，而非直接取金额的负数
-			child.setAmount(new UFDouble("-1").multiply(child.getRest_amount()));
-			child.setOrg_amount(new UFDouble("-1").multiply(child.getOrg_rest_amount()));
-			child.setGroup_amount(new UFDouble("-1").multiply(child.getGroup_rest_amount()));
-			child.setGlobal_amount(new UFDouble("-1").multiply(child.getGlobal_rest_amount()));
-			child.setRest_amount(UFDouble.ZERO_DBL);
-			child.setOrg_rest_amount(UFDouble.ZERO_DBL);
-			child.setGroup_rest_amount(UFDouble.ZERO_DBL);
-			child.setGlobal_rest_amount(UFDouble.ZERO_DBL);
-			child.setVerify_amount(UFDouble.ZERO_DBL);
-			child.setOrg_verify_amount(UFDouble.ZERO_DBL);
-			child.setGroup_verify_amount(UFDouble.ZERO_DBL);
-			child.setGlobal_verify_amount(UFDouble.ZERO_DBL);
-			child.setPredict_rest_amount(UFDouble.ZERO_DBL);
-
-			child.setSrctype(aggvo.getParentVO().getPk_billtype());
-			child.setSrc_accruedpk(aggvo.getParentVO().getPk_accrued_bill());
-			child.setStatus(VOStatus.NEW);
-		}
-		// 表体原币金额合计到表头
-		ErmAccruedBillUtils.sumBodyAmount2Head(redbackVO);
-
-		// 再根据汇率重新计算组织、集团、全局金额
-		ErmAccruedBillUtils.resetHeadAmounts(head);
+	private void lockByPK(Set<String> pkList) throws BusinessException{
+		ErLockUtil.lockByPk(ErmAccruedBillConst.Accrued_Lock_Key, pkList);
 	}
+
 
 	private void prepareHeader(AccruedVO parentVo) throws BusinessException {
 //		if (parentVo.getApprstatus() != IBillStatus.FREE) {
@@ -980,5 +954,6 @@ public class ErmAccruedBillBO implements ICheckStatusCallback {
 	public Map<String, UFDateTime> getTsMapByPK(List<String> key, String tableName, String pk_field) throws DbException {
 		return getDAO().getTsMap(key, tableName, pk_field);
 	}
+
 
 }

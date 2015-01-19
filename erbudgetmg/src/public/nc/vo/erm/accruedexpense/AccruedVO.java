@@ -95,6 +95,9 @@ public class AccruedVO extends SuperVO {
 	private java.lang.String warningmsg;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
+	
+	
+	private nc.vo.pub.lang.UFDouble red_amount;
 
 	private java.lang.Integer redflag;
 	//add 2014-07-07
@@ -181,6 +184,7 @@ public class AccruedVO extends SuperVO {
 	public static final String IMAG_STATUS = "imag_status";
 	public static final String ISNEEDIMAG = "isneedimag";
 	public static final String ISEXPEDITED = "isexpedited";
+	public static final String RED_AMOUNT = "red_amount";
 
 	/**
 	 * 属性pk_accrued_bill的Getter方法.属性名：主键 创建日期:
@@ -1608,6 +1612,15 @@ public class AccruedVO extends SuperVO {
 
 	public void setIsexpedited(UFBoolean isexpedited) {
 		this.isexpedited = isexpedited;
+	}
+
+	
+	public nc.vo.pub.lang.UFDouble getRed_amount() {
+		return red_amount;
+	}
+
+	public void setRed_amount(nc.vo.pub.lang.UFDouble red_amount) {
+		this.red_amount = red_amount;
 	}
 
 	/**

@@ -2,6 +2,7 @@ package nc.ui.erm.accruedexpense.actions;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.ui.erm.accruedexpense.common.AccUiUtil;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.bill.BillItem;
@@ -79,6 +80,16 @@ public class AccInsertLineAction extends InsertLineAction {
 	protected String getHeadItemStrValue(String itemKey) {
 		BillItem headItem = getBillCardPanel().getHeadItem(itemKey);
 		return headItem == null ? null : (String) headItem.getValueObject();
+	}
+	
+	
+	@Override
+	protected boolean isActionEnable() {
+		BillItem redFlagItem = getCardpanel().getBillCardPanel().getHeadItem(AccruedVO.REDFLAG);
+		if(redFlagItem != null && redFlagItem.getValueObject() != null && redFlagItem.getValueObject().equals(ErmAccruedBillConst.REDFLAG_RED)){
+			return false;
+		}
+		return super.isActionEnable();
 	}
 	
 }

@@ -81,8 +81,10 @@ public class AccruedDetailVO extends SuperVO {
 	private java.lang.String defitem30;
 	private java.lang.String src_accruedpk;
 	private java.lang.String srctype;
+	private java.lang.String src_detailpk;
 	private java.lang.Integer dr = 0;
 	private nc.vo.pub.lang.UFDateTime ts;
+	private nc.vo.pub.lang.UFDouble red_amount;
 
 	public static final String PK_ACCRUED_BILL = "pk_accrued_bill";
 	public static final String PK_ACCRUED_DETAIL = "pk_accrued_detail";
@@ -147,6 +149,8 @@ public class AccruedDetailVO extends SuperVO {
 	public static final String DEFITEM30 = "defitem30";
 	public static final String SRC_ACCRUEDPK = "src_accruedpk";
 	public static final String SRCTYPE = "srctype";
+	public static final String SRC_DETAILPK = "src_detailpk";
+	public static final String RED_AMOUNT = "red_amount";
 
 	/**
 	 * 属性pk_accrued_bill的Getter方法.属性名：parentPK 创建日期:
@@ -1321,6 +1325,24 @@ public class AccruedDetailVO extends SuperVO {
 
 	public void setSrctype(java.lang.String srctype) {
 		this.srctype = srctype;
+	}
+	
+	
+
+	public java.lang.String getSrc_detailpk() {
+		return src_detailpk;
+	}
+
+	public void setSrc_detailpk(java.lang.String src_detailpk) {
+		this.src_detailpk = src_detailpk;
+	}
+
+	public nc.vo.pub.lang.UFDouble getRed_amount() {
+		return red_amount;
+	}
+
+	public void setRed_amount(nc.vo.pub.lang.UFDouble red_amount) {
+		this.red_amount = red_amount;
 	}
 
 	/**

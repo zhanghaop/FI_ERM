@@ -2,12 +2,15 @@ package nc.ui.erm.accruedexpense.actions;
 
 import java.awt.event.ActionEvent;
 
+import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.ui.erm.accruedexpense.common.AccUiUtil;
 import nc.ui.erm.accruedexpense.view.AccMNBillForm;
 import nc.ui.pub.bill.BillCardPanel;
+import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillScrollPane;
 import nc.ui.uif2.actions.PasteLineAction;
 import nc.vo.erm.accruedexpense.AccruedDetailVO;
+import nc.vo.erm.accruedexpense.AccruedVO;
 
 public class AccPasteLineAction extends PasteLineAction {
 
@@ -32,6 +35,15 @@ public class AccPasteLineAction extends PasteLineAction {
 
 		AccUiUtil.setHeadAmountByBodyAmounts(billCardPanel);// 表体金额相加结果放入表头
 		((AccMNBillForm) getCardpanel()).resetHeadAmounts();
+	}
+	
+	@Override
+	protected boolean isActionEnable() {
+		BillItem redFlagItem = getCardpanel().getBillCardPanel().getHeadItem(AccruedVO.REDFLAG);
+		if(redFlagItem != null && redFlagItem.getValueObject() != null && redFlagItem.getValueObject().equals(ErmAccruedBillConst.REDFLAG_RED)){
+			return false;
+		}
+		return super.isActionEnable();
 	}
 
 }

@@ -29,7 +29,6 @@ import nc.vo.trade.pub.IExAggVO;
 public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExAggVO {
 
 	// 用于装载多子表数据的HashMap
-	@SuppressWarnings("unchecked")
 	private HashMap hmChildVOs = new HashMap();
 
 	private AggAccruedBillVO oldvo;
@@ -70,16 +69,16 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 				AccruedVO.GLOBAL_AMOUNT, AccruedVO.VERIFY_AMOUNT, AccruedVO.ORG_VERIFY_AMOUNT,
 				AccruedVO.GROUP_VERIFY_AMOUNT, AccruedVO.GLOBAL_VERIFY_AMOUNT, AccruedVO.REST_AMOUNT,
 				AccruedVO.ORG_REST_AMOUNT, AccruedVO.GROUP_REST_AMOUNT, AccruedVO.GLOBAL_REST_AMOUNT,
-				AccruedVO.PREDICT_REST_AMOUNT };
+				AccruedVO.PREDICT_REST_AMOUNT,AccruedVO.RED_AMOUNT };
 
 		bodyAmounts = new String[] { AccruedDetailVO.AMOUNT, AccruedDetailVO.ORG_AMOUNT, AccruedDetailVO.GROUP_AMOUNT,
 				AccruedDetailVO.GLOBAL_AMOUNT, AccruedDetailVO.VERIFY_AMOUNT, AccruedDetailVO.ORG_VERIFY_AMOUNT,
 				AccruedDetailVO.GROUP_VERIFY_AMOUNT, AccruedDetailVO.GLOBAL_VERIFY_AMOUNT, AccruedDetailVO.REST_AMOUNT,
 				AccruedDetailVO.ORG_REST_AMOUNT, AccruedDetailVO.GROUP_REST_AMOUNT, AccruedDetailVO.GLOBAL_REST_AMOUNT,
-				AccruedDetailVO.PREDICT_REST_AMOUNT};
+				AccruedDetailVO.PREDICT_REST_AMOUNT,AccruedDetailVO.RED_AMOUNT};
 
 		headYbAmounts = new String[] { AccruedVO.AMOUNT, AccruedVO.VERIFY_AMOUNT, AccruedVO.REST_AMOUNT,
-				AccruedVO.PREDICT_REST_AMOUNT };
+				AccruedVO.PREDICT_REST_AMOUNT,AccruedVO.RED_AMOUNT };
 
 		headOrgAmounts = new String[] { AccruedVO.ORG_AMOUNT, AccruedVO.ORG_VERIFY_AMOUNT, AccruedVO.ORG_REST_AMOUNT };
 
@@ -90,7 +89,7 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 				AccruedVO.GLOBAL_REST_AMOUNT };
 
 		bodyYbAmounts = new String[] { AccruedDetailVO.AMOUNT, AccruedDetailVO.VERIFY_AMOUNT,
-				AccruedDetailVO.REST_AMOUNT, AccruedDetailVO.PREDICT_REST_AMOUNT };
+				AccruedDetailVO.REST_AMOUNT, AccruedDetailVO.PREDICT_REST_AMOUNT,AccruedDetailVO.RED_AMOUNT };
 
 		bodyOrgAmounts = new String[] { AccruedDetailVO.ORG_AMOUNT, AccruedDetailVO.ORG_VERIFY_AMOUNT,
 				AccruedDetailVO.ORG_REST_AMOUNT};
@@ -129,24 +128,24 @@ public class AggAccruedBillVO extends HYBillVO implements Cloneable, IBill, IExA
 				AccruedVO.CREATIONTIME, AccruedVO.VERIFY_AMOUNT, AccruedVO.ORG_VERIFY_AMOUNT,
 				AccruedVO.GROUP_VERIFY_AMOUNT, AccruedVO.GLOBAL_VERIFY_AMOUNT, AccruedVO.REST_AMOUNT,
 				AccruedVO.ORG_REST_AMOUNT, AccruedVO.GROUP_REST_AMOUNT, AccruedVO.GLOBAL_REST_AMOUNT,
-				AccruedVO.PREDICT_REST_AMOUNT, AccruedVO.REDFLAG, "ts" };
+				AccruedVO.PREDICT_REST_AMOUNT, AccruedVO.REDFLAG,AccruedVO.RED_AMOUNT, "ts" };
 		bodyNotCopyFields = new String[] { AccruedDetailVO.PK_ACCRUED_DETAIL, AccruedDetailVO.PK_ACCRUED_BILL,
 				AccruedDetailVO.VERIFY_AMOUNT, AccruedDetailVO.ORG_VERIFY_AMOUNT, AccruedDetailVO.GROUP_VERIFY_AMOUNT,
 				AccruedDetailVO.GLOBAL_VERIFY_AMOUNT, AccruedDetailVO.REST_AMOUNT, AccruedDetailVO.ORG_REST_AMOUNT,
 				AccruedDetailVO.GROUP_REST_AMOUNT, AccruedDetailVO.GLOBAL_REST_AMOUNT,
 				AccruedDetailVO.PREDICT_REST_AMOUNT, AccruedDetailVO.ROWNO, AccruedDetailVO.SRC_ACCRUEDPK,
-				AccruedDetailVO.SRCTYPE, "ts" };
+				AccruedDetailVO.SRCTYPE,AccruedDetailVO.SRC_DETAILPK,AccruedDetailVO.RED_AMOUNT, "ts" };
 
 		redbackClearParentFields = new String[] { AccruedVO.APPROVER, AccruedVO.APPROVETIME, AccruedVO.PK_ACCRUED_BILL,
 				AccruedVO.BILLNO, AccruedVO.BILLSTATUS, AccruedVO.EFFECTSTATUS, AccruedVO.APPRSTATUS,
 				AccruedVO.MODIFIER, AccruedVO.MODIFIEDTIME, AccruedVO.PRINTER, AccruedVO.PRINTDATE, AccruedVO.CREATOR,
 				AccruedVO.CREATIONTIME, AccruedVO.VERIFY_AMOUNT, AccruedVO.ORG_VERIFY_AMOUNT,
 				AccruedVO.GROUP_VERIFY_AMOUNT, AccruedVO.GLOBAL_VERIFY_AMOUNT, AccruedVO.PREDICT_REST_AMOUNT,
-				AccruedVO.REDFLAG, "ts" };
+				AccruedVO.REDFLAG,AccruedVO.RED_AMOUNT, "ts" };
 		redbackClearBodyFields = new String[] { AccruedDetailVO.PK_ACCRUED_DETAIL, AccruedDetailVO.PK_ACCRUED_BILL,
 				AccruedDetailVO.VERIFY_AMOUNT, AccruedDetailVO.ORG_VERIFY_AMOUNT, AccruedDetailVO.GROUP_VERIFY_AMOUNT,
 				AccruedDetailVO.GLOBAL_VERIFY_AMOUNT, AccruedDetailVO.PREDICT_REST_AMOUNT, AccruedDetailVO.ROWNO,
-				AccruedDetailVO.SRC_ACCRUEDPK, AccruedDetailVO.SRCTYPE, "ts" };
+				AccruedDetailVO.SRC_ACCRUEDPK, AccruedDetailVO.SRCTYPE,AccruedDetailVO.SRC_DETAILPK,AccruedDetailVO.RED_AMOUNT, "ts" };
 
 	}
 
