@@ -191,6 +191,9 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
 	}
 
 	public JKBXVO getJkbxvo() {
+		if(jkbxvo == null){
+			jkbxvo = (JKBXVO)getModel().getSelectedData();
+		}
 		return jkbxvo;
 	}
 }
