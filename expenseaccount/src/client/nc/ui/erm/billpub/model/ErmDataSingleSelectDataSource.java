@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nc.itf.arap.fieldmap.IBillFieldGet;
+import nc.md.data.access.NCObject;
+import nc.md.model.MetaDataException;
+import nc.md.util.MDUtil;
 import nc.ui.arap.bx.print.ERMPrintDigitUtil;
 import nc.ui.bd.pub.actions.print.MetaDataSingleSelectDataSource;
 import nc.ui.pub.print.IExDataSource;
@@ -14,8 +17,10 @@ import nc.vo.ep.bx.BxcontrastVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.Traffictool;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.costshare.CShareDetailVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.CircularlyAccessibleValueObject;
 
 public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSource implements IExDataSource {
 
@@ -23,15 +28,19 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
 	private BillForm editor = null;
 	
 	private JKBXVO jkbxvo = null;
+	
+	public ErmDataSingleSelectDataSource(){
+	}
+	
+	public ErmDataSingleSelectDataSource(JKBXVO jkbxvo) {
+		this.jkbxvo = jkbxvo;
+	}
 
 	
 	@Override
 	public Object[] getMDObjects() {
-		JKBXVO old = (JKBXVO) getModel().getSelectedData();
-		jkbxvo = (JKBXVO) old.clone();
-		
 		String nodecode = getModel().getContext().getNodeCode();
-		BXBusItemVO[] busvos = jkbxvo.getBxBusItemVOS();
+		BXBusItemVO[] busvos = getJkbxvo().getBxBusItemVOS();
 		String vehicle = null; // 交通工具
 		if(busvos!=null && busvos.length!=0){
 			for (BXBusItemVO busvo : busvos) {
@@ -91,7 +100,7 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
 		
 		Object[] newobj =new Object[0];
 		try {
-			newobj= ERMPrintDigitUtil.getDatas(new JKBXVO[]{jkbxvo}, fieldsMap, IBillFieldGet.PK_ORG, JKBXHeaderVO.BZBM);
+			newobj= ERMPrintDigitUtil.getDatas(new JKBXVO[]{getJkbxvo()}, fieldsMap, IBillFieldGet.PK_ORG, JKBXHeaderVO.BZBM);
 		} catch (NumberFormatException e) {
 			nc.bs.logging.Log.getInstance(this.getClass()).error(e);
 		} catch (IllegalArgumentException e) {
@@ -119,16 +128,16 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
 	 */
 	@Override
 	public Object[] getObjectByExpress(String itemExpress) {
-		if(jkbxvo.getChildrenVO() == null || jkbxvo.getChildrenVO().length == 0){
+		if(getJkbxvo().getChildrenVO() == null || getJkbxvo().getChildrenVO().length == 0){
 			return null;
 		}
 		
 		if(itemExpress!=null && (itemExpress.startsWith("er_busitem.defitem")||itemExpress.startsWith("jk_busitem.defitem"))) {
 			String defitem = itemExpress.split("[.]")[1];
-            int rowCount = jkbxvo.getChildrenVO().length;
+            int rowCount = getJkbxvo().getChildrenVO().length;
             Object[] values = new Object[rowCount];
             for(int i=0;i<rowCount;i++){
-                Object assid = jkbxvo.getChildrenVO()[i].getAttributeValue(defitem);
+                Object assid = getJkbxvo().getChildrenVO()[i].getAttributeValue(defitem);
                 if(assid == null){
                     assid = "";
                 }
@@ -136,6 +145,32 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
             }
             return values;
         }
+		
+		// 报销单多页签处理
+		//多页签处理时，例如arap_bxbusitem,使用自定义变量来配置所有的表体字段
+		if (itemExpress != null && (itemExpress.indexOf(".") != -1)) {
+			String[] split = itemExpress.split("[.]");
+			String defitem = itemExpress.substring(itemExpress.indexOf(".") + 1);
+			String tableCode = split[0];
+			if (!tableCode.equals("er_busitem")) {
+				CircularlyAccessibleValueObject[] tableVO = getJkbxvo().getTableVO(tableCode);
+				if (tableVO != null && tableVO.length != 0) {
+					int rowCount = tableVO.length;
+					Object[] values = new Object[rowCount];
+					for (int i = 0; i < rowCount; i++) {
+						Object assid = null;
+						try {
+							assid = getNCObject(tableVO[i]).getAttributeValue(defitem);
+						} catch (MetaDataException e) {
+							ExceptionHandler.consume(e);
+						}
+						values[i] = (Object) assid;
+					}
+					return values;
+				}
+			}
+		}
+		
 		return null;
 	}
 
@@ -144,4 +179,18 @@ public class ErmDataSingleSelectDataSource extends MetaDataSingleSelectDataSourc
 		return IExDataSource.IMAGE_TYPE;
 	}
 	
+	public NCObject getNCObject(Object billVo) throws MetaDataException {
+		NCObject ncObj = NCObject.newInstance(billVo);
+		if (ncObj == null)
+			throw new MetaDataException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0019")/*@res "要保存的SuperVO没有设置元数据，无法进行持久化,SuperVo:"*/
+					+ billVo.getClass().getName());
+		if (!MDUtil.isEntityType(ncObj.getRelatedBean()))
+			throw new MetaDataException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011000_0","02011000-0020")/*@res "要保存的SuperVO对应的元数据不是实体类型，请检查模型！beanName:"*/
+					+ ncObj.getRelatedBean().getName());
+		return ncObj;
+	}
+
+	public JKBXVO getJkbxvo() {
+		return jkbxvo;
+	}
 }

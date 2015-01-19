@@ -4,17 +4,24 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.List;
 
+import nc.bs.uif2.IActionCode;
 import nc.ui.pub.print.PrintEntry;
-import nc.ui.uif2.actions.OutputAction;
+import nc.ui.uif2.actions.ActionInitializer;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.pub.BusinessException;
 
-public class ERMOutputAction extends OutputAction{
+public class ERMOutputAction extends ERMTemplatePreviewAction{
 	
 	private static final long serialVersionUID = 1L;
 	
+	public ERMOutputAction() {
+		ActionInitializer.initializeAction(this, IActionCode.OUTPUT);
+	}
+
 	@Override
-	public void doAction(ActionEvent e){
+	public void doAction(ActionEvent e) throws BusinessException{
 		JKBXVO vo = (JKBXVO) getModel().getSelectedData();
 		try {
 			List<String> funnodes = Arrays.asList(BXConstans.JKBX_COMNODES);
@@ -28,16 +35,21 @@ public class ERMOutputAction extends OutputAction{
 					setNodeKey(BXConstans.BILLTYPECODE_CLFBX);
 				}
 			}
+			
 			PrintEntry entry = createPrintentry();
-			if (entry.selectTemplate() == 1)
+			setDatasource(entry);
+			if (entry.selectTemplate() == 1){
 				entry.output();
-		} catch (Exception e1) {
-			//对于升级上来的自定义交易类型特殊处理
+			}
+		} catch (Exception ex) {
+			ExceptionHandler.consume(ex);//记录日志()
+			// 对于升级上来的自定义交易类型特殊处理
 			setNodeKey(null);
 			PrintEntry entry = createPrintentry();
-			if (entry.selectTemplate() == 1)
+			setDatasource(entry);
+			if (entry.selectTemplate() == 1){
 				entry.output();
-
+			}
 		}
 	}
 }
