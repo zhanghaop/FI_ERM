@@ -35,7 +35,7 @@ public class ErmNtbSqlFactory {
 	 */
 	private NtbParamVO ntbParam;
 
-	private static volatile ErmNtbSqlFactory factory;
+	private static ErmNtbSqlFactory factory;
 
 	/**
 	 * 单据查询sql策略map
@@ -52,7 +52,9 @@ public class ErmNtbSqlFactory {
 	}
 
 	public static ErmNtbSqlFactory getInstance(NtbParamVO param) {// 单例模式
-		ErmNtbSqlFactory factory = getFactory();
+		if(factory == null){
+			factory = getFactory();
+		}
 		factory.setNtbParam(param);
 		return factory;
 	}
@@ -170,7 +172,7 @@ public class ErmNtbSqlFactory {
 		return set;
 	}
 
-	private static ErmNtbSqlFactory getFactory() {
+	private static synchronized ErmNtbSqlFactory getFactory() {
 		if (factory == null) {
 			factory = new ErmNtbSqlFactory();
 		}
