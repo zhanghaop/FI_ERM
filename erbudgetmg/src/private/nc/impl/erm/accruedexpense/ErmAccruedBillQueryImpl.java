@@ -5,27 +5,33 @@ import java.util.List;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.er.util.BXBsUtil;
 import nc.bs.erm.accruedexpense.ErmAccruedBillBO;
 import nc.bs.erm.accruedexpense.common.AccruedBillQueryCondition;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.bs.erm.util.CacheUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
+import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.erm.accruedexpense.IErmAccruedBillQueryPrivate;
 import nc.itf.erm.prv.IErmBsCommonService;
+import nc.itf.fi.pub.Currency;
 import nc.jdbc.framework.exception.DbException;
 import nc.md.persist.framework.IMDPersistenceQueryService;
 import nc.md.persist.framework.MDPersistenceService;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.rbac.IUserPubService;
 import nc.vo.er.djlx.DjLXVO;
+import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fipub.utils.VOUtil;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.pub.IBillStatus;
 
 public class ErmAccruedBillQueryImpl implements IErmAccruedBillQuery, IErmAccruedBillQueryPrivate {
@@ -197,5 +203,106 @@ public class ErmAccruedBillQueryImpl implements IErmAccruedBillQuery, IErmAccrue
 	public Map<String, UFDateTime> getTsMapByPK(List<String> key, String tableName, String pk_field) throws DbException {
 		return new ErmAccruedBillBO().getTsMapByPK(key, tableName, pk_field);
 	}
+
+	@Override
+	public AggAccruedBillVO getAddInitAccruedBillVO(DjLXVO djlx, String funnode, AggAccruedBillVO vo)
+			throws BusinessException {
+		if(djlx == null){
+			throw new BusinessException("交易类型不能为空");
+		}
+		
+		AggAccruedBillVO defaultVo = vo;
+		
+		if(defaultVo == null){
+			defaultVo = new AggAccruedBillVO();
+		}
+		
+		UFDate busiDate = BXBsUtil.getBsLoginDate().getDate();
+		String loginUser = BXBsUtil.getBsLoginUser();
+		String pk_group = BXBsUtil.getBsLoginGroup();
+		
+		//表头默认值
+		AccruedVO parentVo = defaultVo.getParentVO();
+		parentVo.setPk_billtype(ErmAccruedBillConst.AccruedBill_Billtype);
+		parentVo.setPk_tradetype(djlx.getDjlxbm());
+		parentVo.setBilldate(busiDate);
+		parentVo.setPk_group(pk_group);
+		
+		//表头金额默认值
+		String[] headAmounts = AggAccruedBillVO.getHeadAmounts();
+		for (String field : headAmounts) {
+			parentVo.setAttributeValue(field, UFDouble.ZERO_DBL);
+		}
+		
+		//表尾
+		parentVo.setApprover(null);
+		parentVo.setApprovetime(null);
+		parentVo.setPrinter(null);
+		parentVo.setPrintdate(null);
+		parentVo.setCreator(loginUser);
+		parentVo.setCreationtime(null);
+		
+		//状态值
+		parentVo.setBillstatus(ErmAccruedBillConst.BILLSTATUS_SAVED);
+		parentVo.setApprstatus(IBillStatus.FREE);
+		parentVo.setEffectstatus(ErmAccruedBillConst.EFFECTSTATUS_NO);
+		
+		//设置人员信息
+		setPsnInfoByUserId(parentVo, loginUser, parentVo.getPk_group());
+		//设置币种
+		setCurrency(parentVo,djlx);
+		//设置汇率
+		setCurrencyRate(parentVo);
+		
+		return defaultVo;
+	}
+	
+	private void setPsnInfoByUserId(AccruedVO parentVo, String userId , String pk_group) throws BusinessException {
+		String[] psnInfos = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPsnidAndDeptid(userId, pk_group);
+		if(psnInfos != null && psnInfos.length > 0){
+			parentVo.setOperator(psnInfos[0]);
+			parentVo.setOperator_dept(psnInfos[1]);
+			parentVo.setOperator_org(psnInfos[2]);
+			parentVo.setPk_org(psnInfos[2]);
+		}
+	}
+	
+	private void setCurrency(AccruedVO parentVo, DjLXVO djlx) throws BusinessException {
+		String pk_currency = null;
+		if (djlx == null || djlx.getDefcurrency() == null) {
+			// 组织本币币种
+			
+			if(parentVo.getPk_org() != null){
+				pk_currency = Currency.getOrgLocalCurrPK(parentVo.getPk_org());
+			}
+			// 默认组织本币作为原币
+		} else {
+			pk_currency = djlx.getDefcurrency();
+		}
+		
+		parentVo.setPk_currtype(pk_currency);
+	}
+
+	private void setCurrencyRate(AccruedVO parentVo) {
+		String pk_org = parentVo.getPk_org();
+		String pk_currtype = parentVo.getPk_currtype();
+		UFDate date = parentVo.getBilldate();
+
+		if (pk_org == null || pk_currtype == null || date == null) {
+			return;
+		}
+		try {
+			// 汇率(本币，集团本币，全局本币汇率)
+			UFDouble orgRate = Currency.getRate(pk_org, pk_currtype, date);
+			UFDouble groupRate = Currency.getGroupRate(pk_org, parentVo.getPk_group(), pk_currtype, date);
+			UFDouble globalRate = Currency.getGlobalRate(pk_org, pk_currtype, date);
+			parentVo.setOrg_currinfo(orgRate);
+			parentVo.setGroup_currinfo(groupRate);
+			parentVo.setGlobal_currinfo(globalRate);
+		} catch (Exception e) {
+			ExceptionHandler.consume(e);
+		}
+	}
+
 
 }
