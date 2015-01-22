@@ -43,10 +43,10 @@ import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
 import nc.vo.pub.templet.translator.BillTranslator;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
-import uap.json.JSONArray;
-import uap.json.JSONObject;
 public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	private static int panel=9990;
 	
@@ -185,11 +185,14 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
     	//编辑界面点击添加按钮时需要表体页签列表
         //表体页签列表
         JSONArray tablist = getTableCodes(billTempletVO.getHeadVO());
-        jsonObj.put("tablist", tablist);
         //表头要加载字段，编辑项
-		BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
-		jsonObj.put("dsl", getheaddsl(flag,bodyVO,djlxbm));
-        jsonObj.put("ts", billTempletVO.getHeadVO().getTs().toString());
+        BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
+        try {
+			jsonObj.put("tablist", tablist);
+			jsonObj.put("dsl", getheaddsl(flag,bodyVO,djlxbm));
+			jsonObj.put("ts", billTempletVO.getHeadVO().getTs().toString());
+		} catch (JSONException e) {
+		}
 		//显示界面需要加载表头和表体，因为要根据表体的dsl的reftype确定pk所对应的名称
 //        if(flag.equals("editcard")){
 //        	for(int i=0;i<tablist.length();i++){
@@ -219,8 +222,11 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 					tableName = btvos[i].getTabname();
 					if (pos == IBillItem.BODY && tableCode != null) {
 						JSONObject jsonObj = new JSONObject();
-						jsonObj.put("tablecode", tableCode);
-						jsonObj.put("tablename", tableName);
+						try {
+							jsonObj.put("tablecode", tableCode);
+							jsonObj.put("tablename", tableName);
+						} catch (JSONException e) {
+						}
 						jsonarray.put(jsonObj);
 					}
 				}
@@ -585,9 +591,12 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
         billTempletVO.setParentToBody();
 		BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("dsl", getbodydsl(bodyVO,tablecode,flag,djlxbm));
-		jsonObj.put(tablecode + "_order", getbodyorder(bodyVO,tablecode,flag,djlxbm));
-		jsonObj.put("ts", "\""+billTempletVO.getHeadVO().getTs().toString()+"\"");
+		try {
+			jsonObj.put("dsl", getbodydsl(bodyVO,tablecode,flag,djlxbm));
+			jsonObj.put(tablecode + "_order", getbodyorder(bodyVO,tablecode,flag,djlxbm));
+			jsonObj.put("ts", "\""+billTempletVO.getHeadVO().getTs().toString()+"\"");
+		} catch (JSONException e) {
+		}
 		return jsonObj.toString();
 	}
 	 private class ListResultSetProcessor
