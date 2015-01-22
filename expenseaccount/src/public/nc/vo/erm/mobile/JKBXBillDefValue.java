@@ -1,9 +1,6 @@
 package nc.vo.erm.mobile;
 
-import nc.itf.arap.fieldmap.IBillFieldGet;
-import nc.ui.er.util.BXUiUtil;
 import nc.vo.arap.bx.util.BXConstans;
-import nc.vo.arap.pub.BillEnumCollection;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.BXVO;
@@ -12,7 +9,6 @@ import nc.vo.ep.bx.JKBXVO;
 import nc.vo.ep.bx.JKHeaderVO;
 import nc.vo.ep.bx.JKVO;
 import nc.vo.er.exception.ExceptionHandler;
-import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
@@ -43,8 +39,8 @@ public class JKBXBillDefValue extends AbstractBillDefValue {
 		}
 		
 //		headvo.setBillclass(IBillFieldGet.YF);
-		String billtype=IBillFieldGet.F1;
-		headvo.setPk_billtype(billtype);
+//		String billtype=IBillFieldGet.F1;
+//		headvo.setPk_billtype(billtype);
 //		headvo.setSrc_syscode(BillEnumCollection.FromSystem.AP.VALUE);
 //		headvo.setSyscode(BillEnumCollection.FromSystem.AP.VALUE);
 //		headvo.setObjtype(BillEnumCollection.ObjType.SUPPLIER.VALUE);
@@ -56,7 +52,7 @@ public class JKBXBillDefValue extends AbstractBillDefValue {
 		UFDate time = getBusisDate();
 		headvo.setDjrq(time);
 		headvo.setCreationtime(getBusisDateTime());
-		headvo.setDjzt(BillEnumCollection.BillSatus.Save.VALUE);
+//		headvo.setDjzt(BillEnumCollection.BillSatus.Save.VALUE);
 //		headvo.setPk_currtype("1002Z0100000000001K1");
 		
 		

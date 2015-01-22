@@ -3,15 +3,15 @@ package nc.erm.mobile.util;
 import java.util.Map;
 import java.util.Vector;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.RefPubUtil;
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.vo.bd.ref.RefcolumnVO;
 import nc.vo.pub.BusinessException;
-import uap.json.JSONArray;
-import uap.json.JSONObject;
 
 public class RefUtil {
 	public static String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
@@ -46,24 +46,40 @@ public class RefUtil {
 				Object value = (Object) aa.get(j);
 				if(reftype.equals("客商银行账户")){
 					if(field.equals("accname")){
-						data.put("refname", value);
+						try {
+							data.put("refname", value);
+						} catch (JSONException e) {
+							return jsonObj.toString();
+						}
 					}
 				}
 				if(field.equals("name")){
-					data.put("refname", value);
+					try {
+						data.put("refname", value);
+					} catch (JSONException e) {
+						return jsonObj.toString();
+					}
 				}
 				else if(pkFieldCode.equals(field)){
-					data.put("pk_ref", value);
+					try {
+						data.put("pk_ref", value);
+					} catch (JSONException e) {
+						return jsonObj.toString();
+					}
 				}
 			}
 			jsonarray.put(data);
 		}
 		JSONObject none = new JSONObject();
-		none.put("refname", "无");
-		none.put("pk_ref", "");
-		jsonarray.put(none);
-		jsonObj.put("reflist", jsonarray);
-		jsonObj.put("nodename", reftype);
+		try {
+			none.put("refname", "无");
+			none.put("pk_ref", "");
+			jsonarray.put(none);
+			jsonObj.put("reflist", jsonarray);
+			jsonObj.put("nodename", reftype);
+		} catch (JSONException e) {
+			return jsonObj.toString();
+		}
 		
 		return jsonObj.toString();
 	}

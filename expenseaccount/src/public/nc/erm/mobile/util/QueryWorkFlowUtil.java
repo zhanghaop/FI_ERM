@@ -3,12 +3,10 @@ package nc.erm.mobile.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import nc.bs.framework.common.NCLocator;
-import nc.bs.wfengine.engine.ActivityInstance;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.itf.uap.pf.IWorkflowDefine;
 import nc.vo.pub.BusinessException;
@@ -20,16 +18,12 @@ import nc.vo.wfengine.core.activity.Activity;
 import nc.vo.wfengine.core.parser.UfXPDLParser;
 import nc.vo.wfengine.core.parser.XPDLNames;
 import nc.vo.wfengine.core.parser.XPDLParserException;
-import nc.vo.wfengine.core.transition.Transition;
 import nc.vo.wfengine.core.workflow.WorkflowProcess;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
-import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-
-import com.yonyou.nc.ec.portal.core.NCLocatorFactory;
 
 public class QueryWorkFlowUtil {
 	/**

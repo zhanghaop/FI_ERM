@@ -8,8 +8,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import nc.bs.logging.Logger;
 import nc.erm.mobile.pub.formula.WebFormulaParser;
@@ -23,7 +23,6 @@ import nc.md.model.access.javamap.BeanStyleEnum;
 import nc.md.model.access.javamap.NCBeanStyle;
 import nc.pubitf.bd.accessor.GeneralAccessorFactory;
 import nc.pubitf.bd.accessor.IGeneralAccessor;
-import nc.ui.bd.mmpub.DataDictionaryReader;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.bd.accessor.IBDData;
@@ -34,7 +33,6 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ExAggregatedVO;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.VOStatus;
 import nc.vo.pub.bill.BillStructVO;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
@@ -459,16 +457,6 @@ public class JsonData
 			if (getStringIndexOfArray(strArray, items[0]) >= 0) {
 				for (int i = 1; i < items.length; i++) {
 					list.add(items[i].trim());
-				}
-			} else if (items.length == 3
-					&& getStringIndexOfArray(new String[] {
-							IBillItem.COMBOTYPE_INDEX_DBFIELD,
-							IBillItem.COMBOTYPE_VALUE_DBFIELD }, items[0]) >= 0) {
-				items = new DataDictionaryReader(items[1], items[2]).getQzsm();
-				if (items != null) {
-					for (int i = 0; i < items.length; i++) {
-						list.add(items[i].trim());
-					}
 				}
 			}
 
