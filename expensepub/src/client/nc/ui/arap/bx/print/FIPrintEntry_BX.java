@@ -1,10 +1,10 @@
 package nc.ui.arap.bx.print;
 
+import nc.ui.erm.util.ErUiUtil;
 import nc.ui.fi_print.data.IData;
 import nc.ui.fi_print.data.PrintETL;
 import nc.ui.fi_print.entry.FiPrintEntry;
 import nc.ui.fi_print.entry.TempletDataSource;
-import nc.ui.pub.ClientEnvironment;
 import nc.ui.pub.bill.BillCardPanel;
 import nc.ui.pub.report.ReportBaseClass;
 import nc.vo.pub.AggregatedValueObject;
@@ -105,7 +105,7 @@ public class FIPrintEntry_BX extends FiPrintEntry{
 
 		String pk_corp = null;
 		try {
-			pk_corp = ClientEnvironment.getInstance().getCorporation().getPrimaryKey();
+			pk_corp = ErUiUtil.getBXDefaultOrgUnit();
 		} catch (Exception e) {
 			nc.bs.logging.Log.getInstance(this.getClass()).error(e);;
 		}
@@ -117,9 +117,9 @@ public class FIPrintEntry_BX extends FiPrintEntry{
 			return 1;
 		}
 		if (pk_corp == null) {
-			pk_corp = nc.ui.pub.ClientEnvironment.getInstance().getCorporation().getPk_corp();
+			pk_corp = ErUiUtil.getBXDefaultOrgUnit();
 		}
-		String pk_user = nc.ui.pub.ClientEnvironment.getInstance().getUser().getPrimaryKey();
+		String pk_user = ErUiUtil.getPk_user();
 		getPrintEntry().setTemplateID(pk_corp, nodeCode, pk_user, null, nodeKey);
 
 		// * 如果用户可用的模板有多个,弹出对话框让用户选择一个打印模板进行打印.
