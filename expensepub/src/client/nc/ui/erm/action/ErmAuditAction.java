@@ -10,11 +10,9 @@ import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.IActionCode;
 import nc.desktop.ui.WorkbenchEnvironment;
-import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.itf.uap.pf.IplatFormEntry;
 import nc.uap.rbac.core.dataperm.DataPermissionFacade;
 import nc.ui.erm.util.ErUiUtil;
-import nc.ui.pf.change.PfUtilUITools;
 import nc.ui.pf.workitem.BatchApproveModel;
 import nc.ui.pf.workitem.BatchApproveWorkitemAcceptDlg;
 import nc.ui.pub.beans.UIDialog;
@@ -38,7 +36,6 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.workflownote.WorkflownoteVO;
 import nc.vo.uap.pf.PfProcessBatchRetObject;
 import nc.vo.uif2.LoginContext;
-import nc.vo.wfengine.core.parser.XPDLNames;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -166,15 +163,15 @@ public abstract class ErmAuditAction extends NCAsynAction {
 
 		// 获得审批意见, 放在WorkflownoteVO中
 		WorkflownoteVO noteVO = new WorkflownoteVO();
-		try {// CA签字
-			boolean isNeedCASign = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
-					.isNeedCASign4Batch(PfUtilUITools.getLoginUser(), typeMap.keySet().toArray(new String[0]), billIds);
-			if (isNeedCASign) {
-				noteVO.getRelaProperties().put(XPDLNames.ELECSIGNATURE, "true");
-			}
-		} catch (BusinessException e2) {
-			ExceptionHandler.handleException(e2);
-		}
+//		try {// CA签字
+//			boolean isNeedCASign = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
+//					.isNeedCASign4Batch(PfUtilUITools.getLoginUser(), typeMap.keySet().toArray(new String[0]), billIds);
+//			if (isNeedCASign) {
+//				noteVO.getRelaProperties().put(XPDLNames.ELECSIGNATURE, "true");
+//			}
+//		} catch (BusinessException e2) {
+//			ExceptionHandler.handleException(e2);
+//		}
 
 		BatchApproveWorkitemAcceptDlg dlg = new BatchApproveWorkitemAcceptDlg(this.getEditor(), noteVO);
 		dlg.setBachApproveMode(batchApproveMode);
