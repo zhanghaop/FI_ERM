@@ -23,6 +23,7 @@ import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IErmBillUIPublic;
 import nc.itf.uap.billtemplate.IBillTemplateQry;
 import nc.jdbc.framework.processor.ResultSetProcessor;
+import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
@@ -634,6 +635,10 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				billvo = initservice.setBillVOtoUI(djlxVO, "", null);
 			}else if(djlxbm.startsWith("261")){
 				//费用申请单初始化
+				IErmAccruedBillQuery initservice = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
+				billvo = initservice.getAddInitAccruedBillVO(djlxVO, "", null);
+			}else if(djlxbm.startsWith("262")){
+				//费用预提单初始化
 				IErmMatterAppBillQuery initservice = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
 				billvo = initservice.getAddInitAggMatterVo(djlxVO, "", null);
 			}

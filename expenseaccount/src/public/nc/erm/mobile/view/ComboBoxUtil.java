@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nc.bs.logging.Logger;
-import nc.ui.bd.mmpub.DataDictionaryReader;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.bill.pub.MiscUtil;
@@ -14,35 +13,6 @@ import nc.vo.pub.bill.MetaDataPropertyAdpter;
  
 public class ComboBoxUtil {
 	
-	public static String getComboBoxDiv(int panel,String prefix,MobileBillItem item,String flag){
-		StringBuffer input = new StringBuffer();
-		if(flag.equals("addcard")){
-			input.append( "<select id=\"combobox" + panel 
-			+ "\" height=\"44\" color=\"#000000\" pressed-image=\"combobox\" "
-			+" font-size=\"16\" width=\"fill\" font-family=\"default\" "
-			+" background-image=\"combobox\" bindfield=\"" 
-			+ prefix + item.getKey() + "\" >" );
-			//加一个空选项
-			int count = 0;
-//			input.append("<option id=\"combobox" + panel + "_opt" + count 
-//					+ "\" selected=\"selected\"/>");
-			List<DefaultConstEnum> list = initComboBoxData(item);
-			for(int i=0;i<1;i++){
-				count++;
-				input.append("<option id=\"combobox" + panel + "_opt" + count 
-						+ "\" value=\""+list.get(i).getValue()
-						+ "\">"+list.get(i).getName()+"</option>");
-			}
-			input.append("</select>");
-		}
-		else if(flag.equals("editcard")){
-			input.append( "<select id=\"combobox" + panel 
-					+ "\" height=\"44\" color=\"#000000\" pressed-image=\"combobox\" "
-					+"font-size=\"16\" width=\"fill\" font-family=\"default\" "
-					+"background-image=\"combobox\" " );
-		}
-		return input.toString();
-	}
 	public static List<DefaultConstEnum> initComboBoxData(MobileBillItem item){
 		String comboitems = item.getRefType();
 		if (comboitems != null
@@ -72,9 +42,7 @@ public class ComboBoxUtil {
 		if (items != null) {
 			// 返回索引
 			String[] strArray = new String[] { IBillItem.COMBOTYPE_INDEX,
-					IBillItem.COMBOTYPE_INDEX_DBFIELD };// , COMBOTYPE_INDEX_X
-			// };
-
+					IBillItem.COMBOTYPE_INDEX_DBFIELD };
 			item.setWithIndex(getStringIndexOfArray(strArray, items[0]) >= 0);
 
 			// 获得下拉项目值
@@ -89,16 +57,11 @@ public class ComboBoxUtil {
 				for (int i = 1; i < items.length; i++) {
 					list.add(items[i].trim());
 				}
-			} else if (items.length == 3
-					&& getStringIndexOfArray(new String[] {
+			} else if (items.length == 3){
+					if(getStringIndexOfArray(new String[] {
 							IBillItem.COMBOTYPE_INDEX_DBFIELD,
-							IBillItem.COMBOTYPE_VALUE_DBFIELD }, items[0]) >= 0) {
-				items = new DataDictionaryReader(items[1], items[2]).getQzsm();
-				if (items != null) {
-					for (int i = 0; i < items.length; i++) {
-						list.add(items[i].trim());
-					}
-				}
+							IBillItem.COMBOTYPE_VALUE_DBFIELD }, items[0]) >= 0) 
+					{}
 			}
 
 			// 解析值
@@ -159,16 +122,6 @@ public class ComboBoxUtil {
 			if (getStringIndexOfArray(strArray, items[0]) >= 0) {
 				for (int i = 1; i < items.length; i++) {
 					list.add(items[i].trim());
-				}
-			} else if (items.length == 3
-					&& getStringIndexOfArray(new String[] {
-							IBillItem.COMBOTYPE_INDEX_DBFIELD,
-							IBillItem.COMBOTYPE_VALUE_DBFIELD }, items[0]) >= 0) {
-				items = new DataDictionaryReader(items[1], items[2]).getQzsm();
-				if (items != null) {
-					for (int i = 0; i < items.length; i++) {
-						list.add(items[i].trim());
-					}
 				}
 			}
 

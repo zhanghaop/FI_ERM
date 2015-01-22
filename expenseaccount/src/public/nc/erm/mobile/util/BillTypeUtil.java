@@ -8,6 +8,7 @@ import java.util.List;
 
 import nc.bs.erm.common.ErmBillConst;
 import nc.bs.framework.common.InvocationInfoProxy;
+import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
 import nc.pubitf.rbac.IFunctionPermissionPubService;
 import nc.vo.am.proxy.AMProxy;
@@ -54,7 +55,7 @@ public class BillTypeUtil {
 		try {
 			String groupid = InvocationInfoProxy.getInstance().getGroupId();
 		    //得到用户有权限的功能节点
-			String[] stra = AMProxy.lookup(IFunctionPermissionPubService.class)
+			String[] stra = NCLocator.getInstance().lookup(IFunctionPermissionPubService.class)
 			.getUserPermissionFuncNode(userid, groupid);
 			List<String> nodecodelist = Arrays.asList(stra);
 			HashMap<String, BilltypeVO> billtypes = PfDataCache.getBilltypes();
