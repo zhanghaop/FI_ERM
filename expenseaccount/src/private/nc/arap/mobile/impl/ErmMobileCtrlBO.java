@@ -22,7 +22,6 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.pf.pub.PfDataCache;
 import nc.erm.mobile.util.AuditListUtil;
 import nc.erm.mobile.util.BillTypeUtil;
-import nc.erm.mobile.util.NumberFormatUtil;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.uap.pf.IPFWorkflowQry;
@@ -32,6 +31,8 @@ import nc.itf.uap.rbac.IUserManageQuery;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
+import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
+import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.ui.pf.workitem.beside.BesideApproveContext;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -41,7 +42,10 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.reimtype.ReimTypeVO;
+import nc.vo.erm.accruedexpense.AccruedVO;
+import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.common.MessageVO;
+import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.erm.util.VOUtils;
 import nc.vo.fi.pub.SqlUtils;
@@ -54,7 +58,6 @@ import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
-import nc.vo.pub.pf.BillStatusEnum;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.pub.workflownote.WorkflownoteVO;
@@ -151,8 +154,8 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 					if(JKBXHeaderVO.DJRQ.equals(field)){
 						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
 					}else if(JKBXHeaderVO.SPZT.equals(field)){
-						String spztshow = getSpztShow(vo.getSpzt());
-						fieldvalueMap.put("spztshow", spztshow);
+//						String spztshow = getSpztShow(vo.getSpzt());
+//						fieldvalueMap.put("spztshow", spztshow);
 					}
 					
 				}
@@ -176,31 +179,25 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		Map<String, List<Map<String, String>>> returnMap = new LinkedHashMap<String, List<Map<String, String>>>();
 		initEvn(userid);
 		
-		if(startline == null && pagesize == null && pkars == null){
-			//首次只查询所有pk返回
-			StringBuffer sqlWhere = new StringBuffer();
-			sqlWhere.append("djlxbm not in ('2647','264a')");
-			if("1".equals(flag)){
-				//查询已完成单据
-				sqlWhere.append(" and " + JKBXHeaderVO.SPZT +" in (" + 
-						""+IBillStatus.CHECKPASS + "," + IBillStatus.NOPASS + ")");
-			}else{
-				//查询未完成单据
-				sqlWhere.append(" and " + JKBXHeaderVO.SPZT +"<>"+IBillStatus.CHECKPASS + " and " + JKBXHeaderVO.SPZT +"<>"+IBillStatus.NOPASS);
+		String[] flags = flag.split(","); 
+		if("1".equals(startline) && pkars == null){
+			//首次查询所有pk
+			MobileBo bo = new MobileBo();
+			String[] pks = null;
+			if(flags[1].equals("jkbx")){
+				pks = bo.getJkBxPksByUser(flags[0]);
+			}else if(flags[1].equals("ma")){
+				pks = bo.queryMaBillPksByWhere(flags[0]);
+			}else if(flags[1].equals("acc")){
+				pks = bo.queryAccBillPksByWhere(flags[0]);
 			}
-			//查询单据pk
-			String[] pks = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPKsByWhereForBillNode(sqlWhere.toString(),InvocationInfoProxy.getInstance().getUserId()
-					,null);
-			List<Map<String, String>> pklistMap = new ArrayList<Map<String, String>>();
-			Map<String, String> pkmap = new LinkedHashMap<String, String>();
+			StringBuffer pkstrs = new StringBuffer();
 			if(pks != null){
 				for(int i=0;i<pks.length;i++){
-					pkmap.put(pks[i], null);
+					pkstrs.append(pks[i]).append(",");
 				}
 			}
-			pklistMap.add(pkmap);
-			returnMap.put("pkmap", pklistMap);
-			return returnMap;
+			pkars = pkstrs.toString();
 		}
 		
 		//待查询pk
@@ -219,68 +216,88 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 			sendpkarrars[index] = pkarrars[i];
 			index++;
 		}
-		//待查询的字段
-		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
-				JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
-				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
-				JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
-		
-		//查询借款报销单
-		IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
-				IBXBillPrivate.class);
-		List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(sendpkarrars,null);
-		
-		
 		//将查询好的数据组装成map
 		List<Map<String, String>> thisWeekMap = new ArrayList<Map<String, String>>();
 		List<Map<String, String>> lastWeekMap = new ArrayList<Map<String, String>>();
 		List<Map<String, String>> earlierMap = new ArrayList<Map<String, String>>();
 		Map<String, Map<String, String>> checkPkMap = new LinkedHashMap<String, Map<String, String>>();
-		if (list != null && !list.isEmpty()) {
-			for (JKBXHeaderVO vo : list) {
-				Map<String, String> fieldvalueMap = new HashMap<String, String>();
-				for (int i = 0; i < queryFields.length; i++) {
-					String field = queryFields[i];
-					String attributeValue = vo.getAttributeValue(field) == null ? ""
-							: vo.getAttributeValue(field).toString();
-					fieldvalueMap.put(field, attributeValue);
-					if(JKBXHeaderVO.DJRQ.equals(field)){
-						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
-					}else if(JKBXHeaderVO.TOTAL.equals(field)){
-						UFDouble total = new UFDouble(attributeValue);
-//						total = total.setScale(2,4);
-						String value = NumberFormatUtil.formatDouble(total);
-						fieldvalueMap.put(field, value);
-					}if(JKBXHeaderVO.SPZT.equals(field)){
-						String sprshow = getSprShow(vo.getSpzt());
-						String spztshow = getSpztShow(vo.getSpzt());
-						fieldvalueMap.put("sprshow", sprshow);
-						fieldvalueMap.put("spztshow", spztshow);
-					}if(JKBXHeaderVO.ZY.equals(field) && attributeValue.length()>10){
-						attributeValue = attributeValue.substring(0,5)+"...";
-						fieldvalueMap.put(field, attributeValue);
-					}
-					
+		//借款报销单待查询的字段  其他单据按这些字段进行组装
+		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
+				JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
+				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
+				JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
+		if(flags[1].equals("jkbx")){
+			//查询借款报销单
+			IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
+					IBXBillPrivate.class);
+			List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(sendpkarrars,null);
+			if (list != null && !list.isEmpty()) {
+				for (JKBXHeaderVO vo : list) {
+					Map<String, String> fieldvalueMap = AuditListUtil.getJKBXMap(queryFields,vo,null);
+					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
+					//分组
+					UFDate djrq = vo.getDjrq();
+	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
+	  					thisWeekMap.add(fieldvalueMap);
+	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
+	  						|| djrq.equals(getLastWeekMonday()))
+	  					lastWeekMap.add(fieldvalueMap);
+	  				else
+	  					earlierMap.add(fieldvalueMap);
 				}
-				String djlxbm = vo.getDjlxbm();
-				String djlxmc = PfDataCache.getBillTypeNameByCode(djlxbm);
-				fieldvalueMap.put("djlxmc", djlxmc);
-				
-				//图标				
-				fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(djlxbm));
-				
-				checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
-				//分组
-				UFDate djrq = vo.getDjrq();
-  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
-  					thisWeekMap.add(fieldvalueMap);
-  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
-  						|| djrq.equals(getLastWeekMonday()))
-  					lastWeekMap.add(fieldvalueMap);
-  				else
-  					earlierMap.add(fieldvalueMap);
-			}
-		} 
+			} 
+		}else if(flags[1].equals("ma")){
+	        //待查询的字段
+			String[] matterappFields = new String[] { MatterAppVO.PK_MTAPP_BILL,
+					MatterAppVO.ORIG_AMOUNT,MatterAppVO.ORG_AMOUNT,
+					MatterAppVO.BILLDATE, MatterAppVO.BILLNO, MatterAppVO.REASON, MatterAppVO.BILLMAKER,MatterAppVO.PK_TRADETYPE,
+					MatterAppVO.DJDL,MatterAppVO.APPRSTATUS};
+			AggMatterAppVO[] mattervos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
+		    		  .queryBillByPKs(sendpkarrars);
+		    if(mattervos != null && mattervos.length>0){
+		    	for(int voindex = 0;voindex < mattervos.length;voindex++){
+			    	AggMatterAppVO mattervo = mattervos[voindex];
+		    		MatterAppVO vo = mattervo.getParentVO();
+		    		Map<String, String> fieldvalueMap = AuditListUtil.getMaMap(queryFields,matterappFields,vo,null);;
+					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
+					//分组
+					UFDate djrq = vo.getBilldate();
+	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
+	  					thisWeekMap.add(fieldvalueMap);
+	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
+	  						|| djrq.equals(getLastWeekMonday()))
+	  					lastWeekMap.add(fieldvalueMap);
+	  				else
+	  					earlierMap.add(fieldvalueMap);
+		    	}
+		    }
+		}else if(flags[1].equals("acc")){
+			//待查询的字段
+			String[] accruedFields = new String[] { AccruedVO.PK_ACCRUED_BILL,
+					AccruedVO.AMOUNT,AccruedVO.GLOBAL_AMOUNT,
+					AccruedVO.BILLDATE, AccruedVO.BILLNO, AccruedVO.REASON, AccruedVO.CREATOR,AccruedVO.PK_TRADETYPE,
+					AccruedVO.PK_BILLTYPE,AccruedVO.APPRSTATUS};
+		  AggAccruedBillVO[] accruedvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
+		    		  .queryBillByPks(sendpkarrars);
+		  if(accruedvos != null && accruedvos.length > 0){
+		    	for(int voindex = 0;voindex < accruedvos.length;voindex++){
+		    		AggAccruedBillVO mattervo = accruedvos[voindex];
+		    		  AccruedVO vo = mattervo.getParentVO();
+		    		Map<String, String> fieldvalueMap = AuditListUtil.getAccMap(queryFields,accruedFields,vo,null);;
+					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
+					//分组
+					UFDate djrq = vo.getBilldate();
+	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
+	  					thisWeekMap.add(fieldvalueMap);
+	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
+	  						|| djrq.equals(getLastWeekMonday()))
+	  					lastWeekMap.add(fieldvalueMap);
+	  				else
+	  					earlierMap.add(fieldvalueMap);
+		    	}
+		    }
+		}
+		
 		
 		// 补充查询审批进行中的报销单的当前审批人
 		if(!checkPkMap.isEmpty()){
@@ -309,89 +326,6 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		pklistMap.add(pkmap);
 		returnMap.put("pkmap", pklistMap);
 		return returnMap;
-	}
-	/**
-	 * 查询当前用户全部未审批通过的报销单
-	 * 
-	 * @param userid
-	 * @return 交易类型名称分组的报销单属性值
-	 * @throws BusinessException
-	 */
-	public Map<String, Map<String, String>> getUnApprovedBXHeadsByUser(String userid)
-	throws BusinessException {
-		initEvn(userid);
-		String sqlWhere = JKBXHeaderVO.SPZT +"<>"+IBillStatus.CHECKPASS;
-		//待查询的字段
-		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
-				JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
-				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
-				JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
-		
-		String[] pks = NCLocator.getInstance().lookup(IBXBillPrivate.class).queryPKsByWhereForBillNode(sqlWhere,InvocationInfoProxy.getInstance().getUserId()
-				,BXConstans.BX_DJDL);
-		
-		IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
-				IBXBillPrivate.class);
-		List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(pks,
-				BXConstans.BX_DJDL);
-		
-
-		
-		Map<String, Map<String, String>> resultmap = new HashMap<String, Map<String, String>>();
-		if (list != null && !list.isEmpty()) {
-			for (JKBXHeaderVO vo : list) {
-				Map<String, String> fieldvalueMap = new HashMap<String, String>();
-				for (int i = 0; i < queryFields.length; i++) {
-					String field = queryFields[i];
-					String attributeValue = vo.getAttributeValue(field) == null ? ""
-							: vo.getAttributeValue(field).toString();
-					fieldvalueMap.put(field, attributeValue);
-					if(JKBXHeaderVO.DJRQ.equals(field)){
-						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
-					}else if(JKBXHeaderVO.SPZT.equals(field)){
-						String spztshow = getSpztShow(vo.getSpzt());
-						fieldvalueMap.put("spztshow", spztshow);
-					}
-					
-				}
-				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getDjlxbm());
-//				djlxmc = djlxmc.substring(0, djlxmc.length()-3);
-				fieldvalueMap.put("djlxmc", djlxmc);
-				resultmap.put(vo.getPrimaryKey(), fieldvalueMap);
-			}
-		} 
-		
-		//分组显示待审批
-//		Map<String,Map<String, Map<String, String>>> djlxresultmap = new HashMap<String,Map<String, Map<String, String>>>();
-//		Map<String, Map<String, String>> resultmap = null;
-//		if (list != null && !list.isEmpty()) {
-//			for (JKBXHeaderVO vo : list) {
-//				Map<String, String> fieldvalueMap = new HashMap<String, String>();
-//				for (int i = 0; i < queryFields.length; i++) {
-//					String field = queryFields[i];
-//					String attributeValue = vo.getAttributeValue(field) == null ? ""
-//							: vo.getAttributeValue(field).toString();
-//					fieldvalueMap.put(field, attributeValue);
-//					if(JKBXHeaderVO.DJRQ.equals(field)){
-//						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
-//					}else if(JKBXHeaderVO.SPZT.equals(field)){
-//						String spztshow = getSpztShow(vo.getSpzt());
-//						fieldvalueMap.put("spztshow", spztshow);
-//					}
-//					
-//				}
-//				String djlxbmc = PfDataCache.getBillTypeNameByCode(vo.getDjlxbm());
-//				resultmap = djlxresultmap.get(djlxbmc);
-//				if(resultmap==null){
-//					resultmap = new LinkedHashMap<String, Map<String, String>>();
-//					djlxresultmap.put(djlxbmc, resultmap);
-//				}
-//				resultmap.put(vo.getPrimaryKey(), fieldvalueMap);
-//			}
-//		} 
-//		return djlxresultmap;
-		
-		return resultmap;
 	}
 	
 	
@@ -509,7 +443,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 							total = total.setScale(2,4);
 							fieldvalueMap.put(field, total.toString());
 						}else if(JKBXHeaderVO.SPZT.equals(field)){
-	  						String spztshow = getSpztShow(vo.getSpzt());
+	  						String spztshow = AuditListUtil.getSpztShow(vo.getSpzt());
 	  						fieldvalueMap.put("spztshow", spztshow);
 	  					}else if(JKBXHeaderVO.JKBXR.equals(field)){
 	  						fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
@@ -558,41 +492,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
         cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);   
         return new UFDate(cal.getTime());    
    }
-	public static String getSpztShow(Integer spzt) {
-		String value = "";
-		switch (spzt) {
-		case -1:
-			value = "待提交";
-			break;
-		case 0: 
-			value = BillStatusEnum.NOPASS.getName();
-			break;
-		case 1:
-			value = BillStatusEnum.APPROVED.getName();
-			break;
-		case 2:
-			value = BillStatusEnum.APPROVING.getName();
-			break;
-		case 3:
-			value = "已提交";
-		default:
-			break;
-		}
-		return value;
-	}
-
-	public static String getSprShow(Integer spzt) {
-		String value = "";
-		switch (spzt) {
-		case 2:
-			value = BillStatusEnum.APPROVING.getName();
-			break;
-		default:
-			value = "";
-			break;
-		}
-		return value;
-	}
+	
 	
 	public String deleteJkbx(String headpk,String userid) throws BusinessException {
 		initEvn(userid);
@@ -787,88 +687,6 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	}
 	 
 	
-//   private Map upload(InputStream in, Map map,String pk_group,String bxpk)
-//       throws BusinessException
-//   {
-//       String fn = map.get("name").toString();
-//       String moduleName = "erm";
-//       
-//       BaFileStoreExt bafile = new BaFileStoreExt();
-//		bafile.setPk_group(pk_group);
-//		bafile.setPk_billtype("bx");
-//		bafile.setPk_billitem(bxpk);
-//		
-//       FileHeader header = FileStorageClient.getInstance().uploadFile(moduleName, fn, in, true, new IFileStorageExt[]{bafile});
-//       String fileid = header.getGuid();
-//       String filepath = header.getPath();
-//       map.put("fileid", fileid);
-//       map.put("filepath", filepath);
-//       map.put("downloadpath", header.toString());
-//       map.put("downloadpath2", header.toString());
-//       map.put("in", in.toString());
-//       return map;
-//   }
-//   
-//	public Map download(OutputStream out, Map map) throws BusinessException {
-//		Map map1;
-//		try {
-//			JSONObject fileJson = new JSONObject(map.get("params").toString());
-//			String filePath = fileJson.getString("downloadpath");
-//			if ((filePath == null || "".equalsIgnoreCase(filePath))
-//					&& fileJson.has("fileid"))
-//				filePath = fileJson.getString("fileid");
-//			String downflag = "false";
-//			if (fileJson.has("downflag"))
-//				downflag = fileJson.getString("downflag");
-//			String startpos = "0";
-//			if (fileJson.has("startposition"))
-//				startpos = fileJson.getString("startposition");
-//			String endpos = "500";
-//			if (fileJson.has("endposition"))
-//				endpos = fileJson.getString("endposition");
-//			String moduleName = "erm";
-//			if (fileJson.has("modulename"))
-//				moduleName = fileJson.getString("modulename");
-//			IFileTransfer fileTransfer = FileStorageClient.getInstance()
-//					.getFileTransfer(moduleName);
-//			out = new ByteArrayOutputStream();
-//			if (downflag != null
-//					&& ("true".equalsIgnoreCase(downflag) || "Y"
-//							.equalsIgnoreCase(downflag)))
-//				fileTransfer.download(filePath, out, Long.valueOf(startpos)
-//						.longValue(), Long.valueOf(endpos).longValue());
-//			else
-//				fileTransfer.download(filePath, out);
-//			out.flush();
-//			byte bytes[] = ((ByteArrayOutputStream) out).toByteArray();
-//			byte bese64Bytes[] = Base64.encodeBase64(bytes);
-//			map.put("fields", new String(bese64Bytes));
-//			out.close();
-//			out = null;
-//			map1 = map;
-//		} catch (JSONException e) {
-//			throw new BusinessException((new StringBuilder()).append(
-//					"File download params value has some wrong:").append(
-//					e.getMessage()).toString());
-//		} catch (IOException e) {
-//			throw new BusinessException((new StringBuilder()).append(
-//					"Download file some wrong:").append(e.getMessage())
-//					.toString());
-//		} finally {
-//			if (out != null) {
-//				try {
-//					out.close();
-//				} catch (IOException e) {
-//					throw new BusinessException((new StringBuilder()).append(
-//							"Download file some wrong:").append(e.getMessage())
-//							.toString());
-//				}
-//				out = null;
-//			}
-//		}
-//		return map1;
-//	}
-	
 	public FileHeader[] getAttachmentList(String pk_group, String bxpk) {
 		IFileTransfer fileTransfer = FileStorageClient.getInstance()
 				.getFileTransfer("erm");
@@ -881,49 +699,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		FileHeader[] heads = fileTransfer.queryHeaders(bafile);
 		return heads;
 	}
-	
-//	@SuppressWarnings("unchecked")
-//	public List<Map> getFileList(String bxpk,String userid) throws BusinessException{
-//		// 获取附件列表
-//		List<Map> attatchmapList = new ArrayList<Map>();
-//		
-//		IQueryFolderTreeNodeService fileservice = NCLocator.getInstance().lookup(IQueryFolderTreeNodeService.class);
-//		NCFileNode filenode = fileservice.getNCFileNodeTreeAndCreateAsNeed(bxpk, userid);
-//		if(filenode != null){
-//			Enumeration fileEnum = filenode.breadthFirstEnumeration();
-//			while (fileEnum.hasMoreElements()) {
-//				NCFileNode tempfile = (NCFileNode) fileEnum.nextElement();
-//				Collection<NCFileVO> files = tempfile.getFilemap().values();
-//				for (NCFileVO ncFileVO : files) {
-//					LinkedHashMap<String, String> fileMap = new LinkedHashMap<String, String>();
-//					attatchmapList.add(fileMap);
-//
-//					fileMap.put("name", ncFileVO.getName()); // 附件文件名称
-//					fileMap.put("type", ncFileVO.getFiletype()); // 文件类型
-//					fileMap.put("id", ncFileVO.getPk()); // 文件标识
-//					fileMap.put("size", ""+ncFileVO.getFileLen()); // 文件大小
-//					fileMap.put("path", ncFileVO.getFullPath()); // 文件路径
-//					fileMap.put("content", getFileContent(ncFileVO)); // 文件内容
-//				}
-//			}
-//		}
-//		
-//		
-//		return attatchmapList;
-//	}
-
-//	private String getFileContent(NCFileVO ncFileVO) throws BusinessException {
-//		IFileSystemService fileservice = NCLocator.getInstance().lookup(IFileSystemService.class);
-//		
-//		OutputStream out = new ByteArrayOutputStream();
-//		fileservice.downLoadFile(ncFileVO.getFullPath(), out);
-//		byte[] downloaded = ((ByteArrayOutputStream) out).toByteArray(); // 附件内容
-//		BASE64Encoder encoder = new BASE64Encoder();
-//		String content = encoder.encodeBuffer(downloaded);
-//		
-//		return content;
-//	}
-	
+		
 	
 	/**
 	 * 批量查询单据当前审批人
@@ -1558,8 +1334,8 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 							total = total.setScale(2,4);
 							fieldvalueMap.put(field, total.toString());
 						}if(JKBXHeaderVO.SPZT.equals(field)){
-							String sprshow = getSprShow(vo.getSpzt());
-							String spztshow = getSpztShow(vo.getSpzt());
+							String sprshow = AuditListUtil.getSprShow(vo.getSpzt());
+							String spztshow = AuditListUtil.getSpztShow(vo.getSpzt());
 							fieldvalueMap.put("sprshow", sprshow);
 							fieldvalueMap.put("spztshow", spztshow);
 						}if(JKBXHeaderVO.ZY.equals(field) && attributeValue.length()>10){

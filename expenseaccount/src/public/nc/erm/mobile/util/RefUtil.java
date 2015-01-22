@@ -3,6 +3,8 @@ package nc.erm.mobile.util;
 import java.util.Map;
 import java.util.Vector;
 
+import org.codehaus.jettison.json.JSONException;
+
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.RefPubUtil;
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
@@ -14,6 +16,14 @@ import uap.json.JSONObject;
 public class RefUtil {
 	public static String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
  		JSONObject jsonObj = new JSONObject();
+ 		if(reftype.startsWith("workflow,")){
+ 			String[] str = reftype.split(",");
+ 			try {
+				return QueryWorkFlowUtil.getWorkFlowGraph(str[1],str[2]).toString();
+			} catch (JSONException e) {
+				return jsonObj.toString();
+			}
+ 		}
 		if(reftype.startsWith("UFREF,"))
 			reftype = reftype.substring(6);
 		//Ãÿ ‚≤Œ’’∑µªÿø’

@@ -360,6 +360,8 @@ public class JsonData
 	    JSONObject headJson = new JSONObject();
 	    String key = JKBXHeaderVO.TOTAL;
 	    Object value = head.getAttributeValue(key);
+	    if(value == null)
+	    	value = UFDouble.ZERO_DBL;
 	    headJson.put(key, value);
 		headJson.put(key+"_name", NumberFormatUtil.formatDouble((UFDouble)value));
 		key = JKBXHeaderVO.SPZT;

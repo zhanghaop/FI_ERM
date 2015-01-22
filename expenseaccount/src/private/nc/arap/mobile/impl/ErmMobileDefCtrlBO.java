@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
@@ -19,14 +20,17 @@ import nc.erm.mobile.util.TranslateValueObjectToJson;
 import nc.erm.mobile.view.ComboBoxUtil;
 import nc.erm.mobile.view.MobileBillItem;
 import nc.itf.arap.prv.IBXBillPrivate;
+import nc.itf.arap.pub.IErmBillUIPublic;
 import nc.itf.uap.billtemplate.IBillTemplateQry;
 import nc.jdbc.framework.processor.ResultSetProcessor;
+import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.er.djlx.DjLXVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
@@ -615,26 +619,38 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	}
 	
 	
-	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc) throws BusinessException {
+	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc,String getbillflag) throws BusinessException {
 		initEvn(userid);
 		org.codehaus.jettison.json.JSONObject retJson = new org.codehaus.jettison.json.JSONObject();
+		AggregatedValueObject billvo = null;
 		if(StringUtil.isEmpty(pk_jkbx)){
-			return retJson.toString();
+			//新增单据  带出默认值
+			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+			DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
+			// 初始化表头数据
+			if(djlxbm.startsWith("263") || djlxbm.startsWith("264")){
+				//借款报销单初始化
+				IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
+				billvo = initservice.setBillVOtoUI(djlxVO, "", null);
+			}else if(djlxbm.startsWith("261")){
+				//费用申请单初始化
+				IErmMatterAppBillQuery initservice = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
+				billvo = initservice.getAddInitAggMatterVo(djlxVO, "", null);
+			}
+		}else{
+			List<JKBXVO> vos = NCLocator.getInstance()
+					.lookup(IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
+							new String[]{pk_jkbx}, null,false,null);
+			billvo = vos.get(0);
 		}
-		/**
-		 * 模板转换
-		 */
-		List<JKBXVO> vos = NCLocator.getInstance()
-				.lookup(IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
-						new String[]{pk_jkbx}, null,false,null);
 		BillTempletVO billTempletVO =  getDefaultTempletStatics(djlxbm);
 		TranslateValueObjectToJson trans = new TranslateValueObjectToJson();
 		try {
-			JKBXVO bxvo = vos.get(0);
-			retJson = trans.transValueObjectToJSON(billTempletVO,bxvo);
-			retJson.put("djbh", bxvo.getParentVO().getDjbh());
-			retJson.put("total", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total_name"));
-			retJson.put("pk_jkbx", bxvo.getParentVO().getPk_jkbx());
+			retJson = trans.transValueObjectToJSON(billTempletVO,billvo);
+//			retJson.put("djbh", jkbxvo.getParentVO().getDjbh());
+			retJson.put("total", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total"));
+			retJson.put("total_name", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total_name"));
+			retJson.put("pk_jkbx", billvo.getParentVO().getPrimaryKey());
 			retJson.put("djlxbm", djlxbm);
 			retJson.put("djlxmc", djlxmc);
 			retJson.put("userid", userid);

@@ -55,9 +55,9 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().validateTs(userid,djlxbm,nodecode,tsflag);
 	}
 	@Override
-	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc)
+	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc,String getbillflag)
 			throws BusinessException {
-		return getErmDefMobileCtrlBo().getJkbxCard(pk_jkbx,userid,djlxbm,djlxmc);
+		return getErmDefMobileCtrlBo().getJkbxCard(pk_jkbx,userid,djlxbm,djlxmc,getbillflag);
 	}
 	
 	/**

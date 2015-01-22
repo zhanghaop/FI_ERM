@@ -38,58 +38,6 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	throws BusinessException {
 		return getErmMobileCtrlBo().getBXHeadsByUser(userid,flag,startline,pagesize,pks);
 	}
-	  
-	@Override
-	public Map<String, Object> getJkbxCard(String headpk) throws BusinessException {
-		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
-				JKBXHeaderVO.TOTAL,
-				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, 
-				JKBXHeaderVO.DJLXBM,JKBXHeaderVO.OPERATOR,JKBXHeaderVO.SPZT};
-		String[] itemQueryFields = new String[] { BXBusItemVO.PK_BUSITEM,BXBusItemVO.AMOUNT,
-				BXBusItemVO.DEFITEM4,BXBusItemVO.DEFITEM5,BXBusItemVO.DEFITEM2,BXBusItemVO.DEFITEM12,BXBusItemVO.PK_REIMTYPE};
-		BaseDAO dao = new BaseDAO();
-		Map<String, Object> resultmap = new HashMap<String, Object>();
-		if(StringUtil.isEmpty(headpk)){
-			return resultmap;
-		}
-		BXHeaderVO bxheadvo = (BXHeaderVO) dao.retrieveByPK(BXHeaderVO.class, headpk, queryFields);
-		
-		for (int i = 0; i < queryFields.length; i++) {
-			String queryField = queryFields[i];
-			String value = ErmMobileCtrlBO.getStringValue(bxheadvo.getAttributeValue(queryField));
-			resultmap.put(queryField, value);
-			if(JKBXHeaderVO.DJRQ.equals(queryField)){
-				resultmap.put(queryField, new UFDate(value).toLocalString());
-			}else if(JKBXHeaderVO.SPZT.equals(queryField)){
-				String spztshow = ErmMobileCtrlBO.getSpztShow(bxheadvo.getSpzt());
-				resultmap.put("spztshow", spztshow);
-			}
-		}
-		resultmap.remove(JKBXHeaderVO.OPERATOR);
-		IBXBillPrivate service = NCLocator.getInstance().lookup(IBXBillPrivate.class);
-		BXBusItemVO[] items = service.queryItems(bxheadvo);
-		List<Map<String, Object>> itemResultmapList = new ArrayList<Map<String,Object>>();
-		resultmap.put("items", itemResultmapList);
-		if(items != null && items.length > 0){
-			for (int i = 0; i < items.length; i++) {
-				Map<String, Object> itemResultmap = new HashMap<String, Object>();
-				BXBusItemVO item = items[i];
-				for (int j = 0; j < itemQueryFields.length;j++) {
-					String queryField = itemQueryFields[j];
-					String attrvalue = ErmMobileCtrlBO.getStringValue(item.getAttributeValue(queryField));
-					itemResultmap.put(queryField, attrvalue);
-				}
-				itemResultmapList.add(itemResultmap);
-			}
-		}
-		
-		// 获取附件列表
-//		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
-//		List<Map<String, String>> attatchmapList =bo.getFileList(headpk, bxheadvo.getOperator());
-//		resultmap.put("attachment", attatchmapList);
-		
-		return resultmap;
-	}
 
 	//查询当前用户待审批单据,map按照单据类型进行分组
 	@Override

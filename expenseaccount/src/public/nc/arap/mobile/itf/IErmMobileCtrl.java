@@ -13,15 +13,6 @@ public interface IErmMobileCtrl {
 	
 	
 	/**
-	 * 按pk查询报销单
-	 * 
-	 * @param headpk
-	 * @throws BusinessException
-	 */
-	public Map<String,Object> getJkbxCard(String headpk) throws BusinessException;
-	
-	
-	/**
 	 * 根据PK删除报销单
 	 * 
 	 * @param headpk

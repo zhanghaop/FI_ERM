@@ -53,7 +53,7 @@ public interface IDefMobileCtrl {
 	/**
 	 * 根据pk查询单据
 	 */
-	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc) throws BusinessException;
+	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc,String getbillflag) throws BusinessException;
 	
 	/**
 	 * 查询单据附件附件

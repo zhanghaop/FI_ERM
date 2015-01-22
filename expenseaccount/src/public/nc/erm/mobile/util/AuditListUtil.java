@@ -12,9 +12,9 @@ import java.util.Set;
 import nc.bs.dao.BaseDAO;
 import nc.bs.erm.accruedexpense.common.AccruedBillQueryCondition;
 import nc.bs.erm.matterapp.common.MatterAppQueryCondition;
-import nc.bs.erm.util.CacheUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
+import nc.bs.pf.pub.PfDataCache;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.erm.accruedexpense.IErmAccruedBillQueryPrivate;
 import nc.itf.erm.matterapp.IErmMatterAppBillQueryPrivate;
@@ -23,9 +23,7 @@ import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
-import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.er.djlx.DjLXVO;
 import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
@@ -84,6 +82,105 @@ public class AuditListUtil {
 
 		return null;
 	}
+	public static Map<String, String> getJKBXMap(String[] queryFields,JKBXHeaderVO vo,Map<String,String> userMap){
+		Map<String, String> fieldvalueMap = new HashMap<String, String>();
+		for (int i = 0; i < queryFields.length; i++) {
+			String field = queryFields[i];
+			String attributeValue = vo.getAttributeValue(field) == null ? ""
+					: vo.getAttributeValue(field).toString();
+			fieldvalueMap.put(field, attributeValue);
+			if(JKBXHeaderVO.DJRQ.equals(field)){
+				fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
+			}else if(JKBXHeaderVO.SPZT.equals(field)){
+				String sprshow = getSprShow(vo.getSpzt());
+				String spztshow = getSpztShow(vo.getSpzt());
+				fieldvalueMap.put("sprshow", sprshow);
+				fieldvalueMap.put("spztshow", spztshow);
+			}else if(JKBXHeaderVO.TOTAL.equals(field)){
+				UFDouble total = new UFDouble(attributeValue);
+				String value = NumberFormatUtil.formatDouble(total);
+				fieldvalueMap.put(field, value);
+			}else if(JKBXHeaderVO.JKBXR.equals(field)){
+				fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
+			}else if(JKBXHeaderVO.DJLXBM.equals(field)){
+				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getDjlxbm());
+				fieldvalueMap.put("djlxmc", djlxmc);
+			}else if(JKBXHeaderVO.ZY.equals(field) && attributeValue.length()>10){
+				attributeValue = attributeValue.substring(0,5)+"...";
+				fieldvalueMap.put(field, attributeValue);
+			}
+		}
+		//图标				
+		fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(fieldvalueMap.get("djlxbm")));
+		return fieldvalueMap;
+	}
+	
+	public static Map<String, String> getMaMap(String[] queryFields,String[] matterappFields,MatterAppVO vo,Map<String,String> userMap) throws BusinessException{
+	    Map<String, String> fieldvalueMap = new HashMap<String, String>();
+		for (int i = 0; i < matterappFields.length; i++) {
+			String field = matterappFields[i];
+			String attributeValue = vo.getAttributeValue(field) == null ? ""
+					: vo.getAttributeValue(field).toString();
+			fieldvalueMap.put(queryFields[i], attributeValue);
+			if(MatterAppVO.BILLDATE.equals(field)){
+				fieldvalueMap.put(queryFields[i], new UFDate(attributeValue).toLocalString());
+			}else if(MatterAppVO.APPRSTATUS.equals(field)){
+				String spztshow = getSpztShow(vo.getApprstatus());
+				String sprshow = getSprShow(vo.getApprstatus());
+				fieldvalueMap.put("spztshow", spztshow);
+				fieldvalueMap.put("sprshow", sprshow);
+			}else if(MatterAppVO.ORG_AMOUNT.equals(field)){
+				UFDouble total = new UFDouble(attributeValue);
+				String value = NumberFormatUtil.formatDouble(total);
+				fieldvalueMap.put(queryFields[i], value);
+			}else if(MatterAppVO.BILLMAKER.equals(field)){
+				fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
+			}else if(MatterAppVO.PK_TRADETYPE.equals(field)){
+				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getPk_tradetype());
+				fieldvalueMap.put("djlxmc", djlxmc);//djlxMap.get(vo.getPk_tradetype())
+			}if(MatterAppVO.REASON.equals(field) && attributeValue.length()>10){
+				attributeValue = attributeValue.substring(0,5)+"...";
+				fieldvalueMap.put(queryFields[i], attributeValue);
+			}
+			
+		}
+		//图标				
+		fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(fieldvalueMap.get("djlxbm")));
+	  				
+		return fieldvalueMap;
+	}
+	
+	public static Map<String, String> getAccMap(String[] queryFields,String[] accruedFields,AccruedVO vo,Map<String,String> userMap) throws BusinessException{
+	    Map<String, String> fieldvalueMap = new HashMap<String, String>();
+		for (int i = 0; i < accruedFields.length; i++) {
+			String field = accruedFields[i];
+			String attributeValue = vo.getAttributeValue(field) == null ? ""
+					: vo.getAttributeValue(field).toString();
+			fieldvalueMap.put(queryFields[i], attributeValue);
+			if(AccruedVO.BILLDATE.equals(field)){
+				fieldvalueMap.put(queryFields[i], new UFDate(attributeValue).toLocalString());
+			}else if(AccruedVO.APPRSTATUS.equals(field)){
+				String spztshow = getSpztShow(vo.getApprstatus());
+				fieldvalueMap.put("spztshow", spztshow);
+			}else if(AccruedVO.ORG_AMOUNT.equals(field)){
+				UFDouble total = new UFDouble(attributeValue);
+				String value = NumberFormatUtil.formatDouble(total);
+				fieldvalueMap.put(queryFields[i], value);
+			}else if(AccruedVO.CREATOR.equals(field)){
+				fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
+			}else if(AccruedVO.PK_TRADETYPE.equals(field)){
+				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getPk_tradetype());
+				fieldvalueMap.put("djlxmc", djlxmc);//djlxMap.get(vo.getPk_tradetype())
+			}if(AccruedVO.REASON.equals(field) && attributeValue.length()>10){
+				attributeValue = attributeValue.substring(0,5)+"...";
+				fieldvalueMap.put(queryFields[i], attributeValue);
+			}
+			
+		}
+		//图标				
+		fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(fieldvalueMap.get("djlxbm")));
+		return fieldvalueMap;
+	}
 	
 	public List<Map<String, String>> getAuditBillListByUser(String flag, boolean isApproved)
 			throws BusinessException {
@@ -109,201 +206,95 @@ public class AuditListUtil {
 			  }
 			  String[] bxpks = NCLocator.getInstance().lookup(IBXBillPrivate.class)
 				.queryPKsByWhereForBillManageNode(sqlWhere, groupid, userid);
-			  
-		      if(bxpks != null && bxpks.length > 0){
+			  if(bxpks != null && bxpks.length > 0){
 		    	  //根据主键查询表头信息
 		    	  List<JKBXHeaderVO> list = null;
-		    	  if(BillTypeUtil.BX.equals(flag)){
-			    	  list = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-			    	  	.queryHeadersByPrimaryKeys(bxpks, BXConstans.BX_DJDL);
-		    	  }else{
-		    		  list = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-		  		    	  	.queryHeadersByPrimaryKeys(bxpks, BXConstans.JK_DJDL);
-		    	  }
+		    	  list = NCLocator.getInstance().lookup(IBXBillPrivate.class)
+		    	  	.queryHeadersByPrimaryKeys(bxpks, null);
 		    	  
 		    	  if (list != null && !list.isEmpty()) {
 		    		  Set<String> userSet = new HashSet<String>();
 		    		  for(int i=0;i<list.size();i++){
 		    			  userSet.add(list.get(i).getCreator());//getJkbxr()
 		    		  }
-	//	    		  PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(userSet.toArray(new String[0]));
+//		    		  PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(userSet.toArray(new String[0]));
 		    		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
 		    		  Map<String,String> userMap = new HashMap<String,String>();
 		    		  for(int i=0;i<uservo.length;i++){
 		    			  userMap.put(uservo[i].getCuserid(), uservo[i].getUser_name());
 		    		  }
-		    		  Map<String,String> djlxMap = new HashMap<String,String>();
-					  DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
-							"pk_group = '"+InvocationInfoProxy.getInstance().getGroupId()+"' and djdl in('jk','bx')");
-					  for(int i=0;i<vos.length;i++){
-						  String djlxmc = vos[i].getDjlxmc();
-	//					  djlxmc = djlxmc.substring(0, djlxmc.length()-3);
-						  djlxMap.put(vos[i].getDjlxbm(), djlxmc);
-					  }
+//		    		  Map<String,String> djlxMap = new HashMap<String,String>();
+//					  DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
+//							"pk_group = '"+InvocationInfoProxy.getInstance().getGroupId()+"' and djdl in('jk','bx')");
+//					  for(int i=0;i<vos.length;i++){
+//						  String djlxmc = vos[i].getDjlxmc();
+//						  djlxMap.put(vos[i].getDjlxbm(), djlxmc);
+//					  }
 		  			  for (JKBXHeaderVO vo : list) {
-		  				Map<String, String> fieldvalueMap = new HashMap<String, String>();
-		  				for (int i = 0; i < queryFields.length; i++) {
-		  					String field = queryFields[i];
-		  					String attributeValue = vo.getAttributeValue(field) == null ? ""
-		  							: vo.getAttributeValue(field).toString();
-		  					fieldvalueMap.put(field, attributeValue);
-		  					if(JKBXHeaderVO.DJRQ.equals(field)){
-		  						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
-		  					}else if(JKBXHeaderVO.SPZT.equals(field)){
-		  						String spztshow = getSpztShow(vo.getSpzt());
-		  						fieldvalueMap.put("spztshow", spztshow);
-		  					}else if(JKBXHeaderVO.TOTAL.equals(field)){
-								UFDouble total = new UFDouble(attributeValue);
-								String value = NumberFormatUtil.formatDouble(total);
-								fieldvalueMap.put(field, value);
-							}else if(JKBXHeaderVO.JKBXR.equals(field)){
-		  						fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
-		  					}else if(JKBXHeaderVO.DJLXBM.equals(field)){
-			  					fieldvalueMap.put("djlxmc", djlxMap.get(vo.getDjlxbm()));
-		  					}if(JKBXHeaderVO.ZY.equals(field) && attributeValue.length()>10){
-								attributeValue = attributeValue.substring(0,5)+"...";
-								fieldvalueMap.put(field, attributeValue);
-							}
-		  					
-		  				}
-		  				//图标				
-						fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(fieldvalueMap.get("djlxbm")));
-		  				maplist.add(fieldvalueMap);
+		  				maplist.add(getJKBXMap(queryFields,vo,userMap));
 		  			}
 		  		} 		
 		  	}
-		}else if(BillTypeUtil.AC.equals(flag)){
-			//待查询的字段
+		}else if(BillTypeUtil.MA.equals(flag)){
+	        MatterAppQueryCondition condVo = new MatterAppQueryCondition();
+	        String condition = "(billstatus = 1)";
+	        initQueryCondition(groupid, userid,condition, condVo,isApproved);
+	        String[] pks = getQueryService().queryBillPksByWhere(condVo);
+	        //待查询的字段
 			String[] matterappFields = new String[] { MatterAppVO.PK_MTAPP_BILL,
 					MatterAppVO.ORIG_AMOUNT,MatterAppVO.ORG_AMOUNT,
 					MatterAppVO.BILLDATE, MatterAppVO.BILLNO, MatterAppVO.REASON, MatterAppVO.BILLMAKER,MatterAppVO.PK_TRADETYPE,
 					MatterAppVO.DJDL,MatterAppVO.APPRSTATUS};
-	      MatterAppQueryCondition condVo = new MatterAppQueryCondition();
-	      String condition = "(billstatus = 1)";
-	      initQueryCondition(groupid, userid,condition, condVo,isApproved);
-	      String[] pks = getQueryService().queryBillPksByWhere(condVo);//[1001AA10000000000KUP]
-	      AggMatterAppVO[] mattervos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
-	    		  .queryBillByPKs(pks);
-	      if(mattervos != null && mattervos.length>0){
-	    	  Set<String> userSet = new HashSet<String>();
-    		  for(int i=0;i<mattervos.length;i++){
-    			  userSet.add(mattervos[i].getParentVO().getCreator());
-    		  }
-//	    		  PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(userSet.toArray(new String[0]));
-    		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
-    		  Map<String,String> userMap = new HashMap<String,String>();
-    		  if(uservo != null){
-	    		  for(int i=0;i<uservo.length;i++){
-	    			  if(uservo[i] != null)
-	    				  userMap.put(uservo[i].getCuserid(), uservo[i].getUser_name());
-	    		  }
-    		  }
-    		  Map<String,String> djlxMap = new HashMap<String,String>();
-			  DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
-					"pk_group = '" + groupid + "' and djdl in('ma')");
-			  for(int i=0;i<vos.length;i++){
-				  String djlxmc = vos[i].getDjlxmc();
-//					  djlxmc = djlxmc.substring(0, djlxmc.length()-3);
-				  djlxMap.put(vos[i].getDjlxbm(), djlxmc);
-			  }
-	    	  for(int voindex = 0;voindex < mattervos.length;voindex++){
-	    		  AggMatterAppVO mattervo = mattervos[voindex];
-	    		  MatterAppVO vo = mattervo.getParentVO();
-	    		  Map<String, String> fieldvalueMap = new HashMap<String, String>();
-	  				for (int i = 0; i < matterappFields.length; i++) {
-	  					String field = matterappFields[i];
-	  					String attributeValue = vo.getAttributeValue(field) == null ? ""
-	  							: vo.getAttributeValue(field).toString();
-	  					fieldvalueMap.put(queryFields[i], attributeValue);
-	  					if(MatterAppVO.BILLDATE.equals(field)){
-	  						fieldvalueMap.put(queryFields[i], new UFDate(attributeValue).toLocalString());
-	  					}else if(MatterAppVO.APPRSTATUS.equals(field)){
-	  						String spztshow = getSpztShow(vo.getApprstatus());
-	  						fieldvalueMap.put("spztshow", spztshow);
-	  					}else if(MatterAppVO.ORG_AMOUNT.equals(field)){
-							UFDouble total = new UFDouble(attributeValue);
-							String value = NumberFormatUtil.formatDouble(total);
-							fieldvalueMap.put(queryFields[i], value);
-						}else if(MatterAppVO.BILLMAKER.equals(field)){
-	  						fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
-	  					}else if(MatterAppVO.PK_TRADETYPE.equals(field)){
-		  					fieldvalueMap.put("djlxmc", djlxMap.get(vo.getPk_tradetype()));
-	  					}if(MatterAppVO.REASON.equals(field) && attributeValue.length()>10){
-							attributeValue = attributeValue.substring(0,5)+"...";
-							fieldvalueMap.put(queryFields[i], attributeValue);
-						}
-	  					
-	  				}
-	  				//图标				
-					fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(fieldvalueMap.get("djlxbm")));
-	  				maplist.add(fieldvalueMap);
-	    	  }
-	      }
-		}else if(BillTypeUtil.MA.equals(flag)){
-			//待查询的字段
-			String[] accruedFields = new String[] { AccruedVO.PK_ACCRUED_BILL,
-					AccruedVO.AMOUNT,AccruedVO.GLOBAL_AMOUNT,
-					AccruedVO.BILLDATE, AccruedVO.BILLNO, AccruedVO.REASON, AccruedVO.CREATOR,AccruedVO.PK_TRADETYPE,
-					AccruedVO.PK_BILLTYPE,AccruedVO.APPRSTATUS};
-			AccruedBillQueryCondition condVo = new AccruedBillQueryCondition();
-		    String condition = "(billstatus = 1)";
-		      initQueryCondition(groupid, userid,condition, condVo,isApproved);//[1001AA10000000000LMO]
-		      String[] pks = NCLocator.getInstance().lookup(IErmAccruedBillQueryPrivate.class).queryBillPksByWhere(condVo);//[1001AA10000000000KUP]
-		      AggAccruedBillVO[] accruedvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
-		    		  .queryBillByPks(pks,false);
-		      if(accruedvos != null && accruedvos.length > 0){
+			AggMatterAppVO[] mattervos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
+		    		  .queryBillByPKs(pks);
+		      if(mattervos != null && mattervos.length>0){
 		    	  Set<String> userSet = new HashSet<String>();
-	    		  for(int i=0;i<accruedvos.length;i++){
-	    			  userSet.add(accruedvos[i].getParentVO().getCreator());
-	    		  }
-//		    		  PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(userSet.toArray(new String[0]));
-	    		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
-	    		  Map<String,String> userMap = new HashMap<String,String>();
-	    		  if(uservo != null){
+	  		  for(int i=0;i<mattervos.length;i++){
+	  			  userSet.add(mattervos[i].getParentVO().getCreator());
+	  		  }
+	  		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
+	  		  Map<String,String> userMap = new HashMap<String,String>();
+	  		  if(uservo != null){
 		    		  for(int i=0;i<uservo.length;i++){
 		    			  if(uservo[i] != null)
 		    				  userMap.put(uservo[i].getCuserid(), uservo[i].getUser_name());
 		    		  }
-	    		  }
-	    		  Map<String,String> djlxMap = new HashMap<String,String>();
-				  DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
-						"pk_group = '" + groupid + "' and djdl in('ac')");
-				  for(int i=0;i<vos.length;i++){
-					  String djlxmc = vos[i].getDjlxmc();
-//						  djlxmc = djlxmc.substring(0, djlxmc.length()-3);
-					  djlxMap.put(vos[i].getDjlxbm(), djlxmc);
-				  }
+	  		  }
+	    	  for(int voindex = 0;voindex < mattervos.length;voindex++){
+	    		  AggMatterAppVO mattervo = mattervos[voindex];
+	    		  MatterAppVO vo = mattervo.getParentVO();
+	    		  maplist.add(getMaMap(queryFields,matterappFields,vo,userMap));
+	    	  }
+		   }
+		}else if(BillTypeUtil.AC.equals(flag)){
+			  AccruedBillQueryCondition condVo = new AccruedBillQueryCondition();
+		      String condition = "(billstatus = 1)";
+		      initQueryCondition(groupid, userid,condition, condVo,isApproved);
+		      String[] pks = NCLocator.getInstance().lookup(IErmAccruedBillQueryPrivate.class).queryBillPksByWhere(condVo);//[1001AA10000000000KUP]
+		      //待查询的字段
+		      String[] accruedFields = new String[] { AccruedVO.PK_ACCRUED_BILL,
+						AccruedVO.AMOUNT,AccruedVO.GLOBAL_AMOUNT,
+						AccruedVO.BILLDATE, AccruedVO.BILLNO, AccruedVO.REASON, AccruedVO.CREATOR,AccruedVO.PK_TRADETYPE,
+						AccruedVO.PK_BILLTYPE,AccruedVO.APPRSTATUS};
+			  AggAccruedBillVO[] accruedvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
+			    		  .queryBillByPks(pks,false);
+			  if(accruedvos != null && accruedvos.length > 0){
+			      Set<String> userSet = new HashSet<String>();
+		  		  for(int i=0;i<accruedvos.length;i++){
+		  			  userSet.add(accruedvos[i].getParentVO().getCreator());
+		  		  }
+		  		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
+		  		  Map<String,String> userMap = new HashMap<String,String>();
+		  		  if(uservo != null){
+		    		  for(int i=0;i<uservo.length;i++){
+		    			  if(uservo[i] != null)
+		    				  userMap.put(uservo[i].getCuserid(), uservo[i].getUser_name());
+		    		  }
+		  		  }
 		    	  for(int voindex = 0;voindex < accruedvos.length;voindex++){
 		    		  AggAccruedBillVO mattervo = accruedvos[voindex];
 		    		  AccruedVO vo = mattervo.getParentVO();
-		    		  Map<String, String> fieldvalueMap = new HashMap<String, String>();
-		  				for (int i = 0; i < accruedFields.length; i++) {
-		  					String field = accruedFields[i];
-		  					String attributeValue = vo.getAttributeValue(field) == null ? ""
-		  							: vo.getAttributeValue(field).toString();
-		  					fieldvalueMap.put(queryFields[i], attributeValue);
-		  					if(AccruedVO.BILLDATE.equals(field)){
-		  						fieldvalueMap.put(queryFields[i], new UFDate(attributeValue).toLocalString());
-		  					}else if(AccruedVO.APPRSTATUS.equals(field)){
-		  						String spztshow = getSpztShow(vo.getApprstatus());
-		  						fieldvalueMap.put("spztshow", spztshow);
-		  					}else if(AccruedVO.ORG_AMOUNT.equals(field)){
-								UFDouble total = new UFDouble(attributeValue);
-								String value = NumberFormatUtil.formatDouble(total);
-								fieldvalueMap.put(queryFields[i], value);
-							}else if(AccruedVO.CREATOR.equals(field)){
-		  						fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
-		  					}else if(AccruedVO.PK_TRADETYPE.equals(field)){
-			  					fieldvalueMap.put("djlxmc", djlxMap.get(vo.getPk_tradetype()));
-		  					}if(AccruedVO.REASON.equals(field) && attributeValue.length()>10){
-								attributeValue = attributeValue.substring(0,5)+"...";
-								fieldvalueMap.put(queryFields[i], attributeValue);
-							}
-		  					
-		  				}
-		  				//图标				
-						fieldvalueMap.put("iconsrc", BillTypeUtil.getIcon(fieldvalueMap.get("djlxbm")));
-		  				maplist.add(fieldvalueMap);
+		    		  maplist.add(getAccMap(queryFields,accruedFields,vo,userMap));
 		    	  }
 		      }
 		}
@@ -314,8 +305,8 @@ public class AuditListUtil {
 		condVo.setWhereSql(condition);
 		condVo.setPk_tradetype("2621");
 		condVo.setNodeCode("20110ACCMN");
-		condVo.setPk_group(groupid);//000133100000000002BX
-		condVo.setPk_user(userid);//100112100000000003EN
+		condVo.setPk_group(groupid);
+		condVo.setPk_user(userid);
 		if (isApproved) {
 			condVo.setUser_approved(true);
 		}else{
@@ -344,7 +335,7 @@ public class AuditListUtil {
 		return queryService;
 	}
 	
-	public String getSpztShow(Integer spzt) {
+	public static String getSpztShow(Integer spzt) {
 		String value = "";
 		switch (spzt) {
 		case -1:
@@ -362,6 +353,19 @@ public class AuditListUtil {
 		case 3:
 			value = "已提交";
 		default:
+			break;
+		}
+		return value;
+	}
+
+	public static String getSprShow(Integer spzt) {
+		String value = "";
+		switch (spzt) {
+		case 2:
+			value = BillStatusEnum.APPROVING.getName();
+			break;
+		default:
+			value = "";
 			break;
 		}
 		return value;
