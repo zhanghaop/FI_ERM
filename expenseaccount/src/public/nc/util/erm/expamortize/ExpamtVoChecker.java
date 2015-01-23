@@ -53,6 +53,19 @@ public class ExpamtVoChecker {
 		}
 		return false;
 	}
+	
+	/**
+	 * 摊销验证
+	 *
+	 * @param aggvo
+	 * @param currYearMonth
+	 *            当前会计月 例“2012-02”
+	 * @throws BusinessException
+	 */
+	public void checkUnAmortize(AggExpamtinfoVO aggvo, String currYearMonth) throws BusinessException {
+		//TODO 
+	}
+	
 	/**
 	 * 校验这个期间是否组织结账
 	 * @param vo

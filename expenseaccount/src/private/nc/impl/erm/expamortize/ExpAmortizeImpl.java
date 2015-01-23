@@ -13,10 +13,8 @@ import nc.itf.fi.pub.Currency;
 import nc.pubitf.erm.expamortize.IExpAmortize;
 import nc.pubitf.erm.expamortize.IExpAmortizeinfoQuery;
 import nc.pubitf.erm.expamortize.IExpAmortizeprocManage;
-import nc.pubitf.erm.expamortize.IExpAmortizeprocQuery;
 import nc.pubitf.fip.service.IFipMessageService;
 import nc.util.erm.expamortize.ExpAmortizeprocUtil;
-import nc.util.erm.expamortize.ExpamtUtil;
 import nc.util.erm.expamortize.ExpamtVoChecker;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -29,7 +27,6 @@ import nc.vo.erm.expamortize.ExpamtinfoVO;
 import nc.vo.erm.expamortize.ExpamtprocVO;
 import nc.vo.fip.service.FipMessageVO;
 import nc.vo.fip.service.FipRelationInfoVO;
-import nc.vo.fipub.utils.VOUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFDate;
@@ -188,6 +185,83 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		return procService.insertVOs(procVos);
 	}
 
+	@Override
+	public MessageVO[] unAmortize(String pk_org, String currYearMonth, ExpamtinfoVO[] vos) throws BusinessException {
+		if (vos == null || vos.length == 0) {
+			return null;
+		}
+		//校验是否结账
+		ExpamtVoChecker.checkEndAcc(vos[0],currYearMonth);
+		
+		MessageVO[] resultMessageVOs = new MessageVO[vos.length];
+
+		IExpAmortize service = NCLocator.getInstance().lookup(IExpAmortize.class);
+		for (int i = 0; i < vos.length; i++) {
+			// 每个报销单的摊销都起独立的事务进行处理
+			MessageVO result = null;
+			try {
+				result = service.unAmortize_RequiresNew(pk_org, currYearMonth, vos[i]);
+			} catch (Exception e) {
+				ExceptionHandler.consume(e);
+				String errMsg = e.getMessage();
+				AggExpamtinfoVO aggExpamt = new AggExpamtinfoVO();
+				aggExpamt.setParentVO(vos[i]);
+				result = new MessageVO(aggExpamt, ActionUtils.UNEXPAMORTIZE, false, errMsg);
+				result.setShowField(ExpamtinfoVO.BX_BILLNO);
+			}
+			resultMessageVOs[i] = result;
+		}
+
+		return resultMessageVOs;
+	}
+
+	@Override
+	public MessageVO unAmortize_RequiresNew(String pk_org, String currYearMonth, ExpamtinfoVO vo) throws BusinessException {
+		MessageVO result = null;
+
+		if (currYearMonth == null) {
+			currYearMonth = ErAccperiodUtil.getAccperiodmonthByAccMonth(pk_org, currYearMonth).getYearmth();
+		}
+
+		IExpAmortizeinfoQuery qryService = NCLocator.getInstance().lookup(IExpAmortizeinfoQuery.class);
+
+		// 查询待摊信息，保证信息完整,补充信息
+		AggExpamtinfoVO aggvo = qryService.fillUpAggExpamtinfo(vo, currYearMonth);
+
+		// 修改加锁
+		ErLockUtil.lockAggVOByPk("ERM_expamortize", aggvo);
+
+		// 版本校验
+		BDVersionValidationUtil.validateVersion(vo);
+		
+		// TODO vo校验
+		new ExpamtVoChecker().checkUnAmortize(aggvo, currYearMonth);
+
+		// 事前控制
+		fireBeforeUnAmortizeEvent(aggvo);
+
+		// TODO 计算反摊销后摊销信息的金额、剩余摊销期等
+
+		// 数据更新
+		updateVOsByFields(aggvo, new String[] { ExpamtinfoVO.BILLSTATUS, ExpamtinfoVO.RES_AMOUNT, ExpamtinfoVO.RES_ORGAMOUNT, ExpamtinfoVO.RES_GROUPAMOUNT, ExpamtinfoVO.RES_GLOBALAMOUNT,
+				ExpamtinfoVO.RES_PERIOD }, currYearMonth);
+
+		// TODO-摊销记录记录
+
+		// 事后控制
+		fireAfterUnAmortizeEvent(aggvo);
+
+		// TODO VO要按旧数据进行反摊销，发送消息到会计平台
+		sendMessageToFip(aggvo, FipMessageVO.MESSAGETYPE_DEL);
+
+		// 查询最新消息
+		AggExpamtinfoVO aggExpamtInfo = qryService.queryByPk(aggvo.getParentVO().getPrimaryKey(), currYearMonth);
+		result = new MessageVO(aggExpamtInfo, ActionUtils.EXPAMORTIZE);
+		result.setShowField(ExpamtinfoVO.BX_BILLNO);
+		return result;
+	}
+	
+	
 	private void beforeAmortize(AggExpamtinfoVO aggvo) {
 		ExpamtinfoVO info = (ExpamtinfoVO) aggvo.getParentVO();
 		info.setAmortize_user(AuditInfoUtil.getCurrentUser());
@@ -207,6 +281,22 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		EventDispatcher.fireEvent(new ErmBusinessEvent(
 				ExpAmoritizeConst.ExpamoritizeInfo_MDID,
 				ErmEventType.TYPE_AMORTIZE_BEFORE,
+				new AggExpamtinfoVO[] { aggvo }));
+	}
+	
+	private void fireAfterUnAmortizeEvent(AggExpamtinfoVO aggvo)
+			throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(
+				ExpAmoritizeConst.ExpamoritizeInfo_MDID,
+				ErmEventType.TYPE_UNAMORTIZE_AFTER,
+				new AggExpamtinfoVO[] { aggvo }));
+	}
+
+	private void fireBeforeUnAmortizeEvent(AggExpamtinfoVO aggvo)
+			throws BusinessException {
+		EventDispatcher.fireEvent(new ErmBusinessEvent(
+				ExpAmoritizeConst.ExpamoritizeInfo_MDID,
+				ErmEventType.TYPE_UNAMORTIZE_BEFORE,
 				new AggExpamtinfoVO[] { aggvo }));
 	}
 

@@ -75,6 +75,10 @@ public class ErmEventType {
 	 public static final String TYPE_INVALID_BEFORE = "ERM1042"; //作废前
 	 public static final String TYPE_INVALID_AFTER = "ERM1043"; //作废后
 	 
+	 //636
+	 public static final String TYPE_UNAMORTIZE_BEFORE = "ERM1044"; //反摊销前
+	 public static final String TYPE_UNAMORTIZE_AFTER = "ERM1045"; //反摊销后
+	 
 	 
 	 public static final String TYPE_REDBACK_BEFORE = "ERM2001"; //红冲前
 	 public static final String TYPE_REDBACK_AFTER = "ERM2002"; //红冲后

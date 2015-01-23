@@ -138,6 +138,8 @@ public class ActionUtils {
     
     public static final int INVALID = 15;//作废
     
+    public static final int UNEXPAMORTIZE = 16;//摊销
+    
     
 	public static String getOperationName(int oper){
 		String name = "";
@@ -189,6 +191,9 @@ public class ActionUtils {
         	break;
         case INVALID:
         	name= nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("201212_0","0201212-0107")/*@res "作废"*/;
+        	break;
+        case UNEXPAMORTIZE:
+        	name= "反摊销";
         	break;
 		default:
 			break;
