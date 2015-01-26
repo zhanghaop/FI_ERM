@@ -23,9 +23,10 @@ import nc.itf.erm.prv.IArapCommonPrivate;
 import nc.itf.fip.initdata.IFipInitDataService;
 import nc.itf.org.IGroupQryService;
 import nc.itf.org.IOrgUnitQryService;
-import nc.itf.uap.pf.IWorkflowUpgrade;
+import nc.itf.uap.IUAPQueryBS;
 import nc.jdbc.framework.JdbcSession;
 import nc.jdbc.framework.PersistenceManager;
+import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.exception.DbException;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ColumnListProcessor;
@@ -58,10 +59,13 @@ import nc.vo.fip.operatinglogs.OperatingLogVO;
 import nc.vo.fip.relation.FipRelationVO;
 import nc.vo.org.GroupVO;
 import nc.vo.org.OrgVO;
+import nc.vo.pf.pub.util.SQLUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.VOStatus;
+import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.pfflow.BillactionVO;
 import nc.vo.pub.pftemplate.SystemplateVO;
 
 /**
@@ -256,9 +260,9 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
 		if(result == null || result.size() < 0){
 			return;
 		}
-		IWorkflowUpgrade workflowUpgrade = NCLocator.getInstance().lookup(IWorkflowUpgrade.class);
+//		IWorkflowUpgrade workflowUpgrade = NCLocator.getInstance().lookup(IWorkflowUpgrade.class);
 		for (String billorTranstype : result) {
-			workflowUpgrade.updateBillactionByGlobal(billorTranstype, delActionType, addActionType);
+			updateBillactionByGlobal(billorTranstype, delActionType, addActionType);
 		}
 	}
 	
@@ -976,4 +980,35 @@ public class ErmInstall631ToEhp2Adjust extends AbstractUpdateAccount {
         }
         return value;
     }
+	
+	public void updateBillactionByGlobal(String billorTranstype, String[] delActionType, String[] addActionType) throws BusinessException {
+		BaseDAO dao = new BaseDAO();
+		if (delActionType != null && delActionType.length > 0) {
+			String delSql = "delete from pub_billaction where pub_billaction.pk_billtypeid in (select b.pk_billtypeid from bd_billtype b where " + " b.pk_billtypecode =? and not pk_group  "
+					+ SQLUtil.getGlobalInSQL();
+			SQLParameter param = new SQLParameter();
+			param.addParam(billorTranstype);
+			delSql += " )and " + SQLUtil.buildSqlForIn("actiontype", delActionType);
+			dao.executeUpdate(delSql, param);
+		}
+		if (addActionType != null && addActionType.length > 0) {
+			String addSql = " pub_billaction.pk_billtypeid in (select pk_billtypeid from bd_billtype b where b.pk_billtypecode ='" + billorTranstype + "' and b.pk_group " + SQLUtil.getGlobalInSQL()
+					+ " ) and " + SQLUtil.buildSqlForIn("actiontype", addActionType);
+			Collection<BillactionVO> preAddBillActions = (Collection<BillactionVO>) NCLocator.getInstance().lookup(IUAPQueryBS.class).retrieveByClause(BillactionVO.class, addSql);
+			String transtypeSql = "pk_billtypecode ='" + billorTranstype + "' and not pk_group " + SQLUtil.getGlobalInSQL();
+			Collection<BilltypeVO> preUpdateBillorTransType = (Collection<BilltypeVO>) NCLocator.getInstance().lookup(IUAPQueryBS.class).retrieveByClause(BilltypeVO.class, transtypeSql);
+			ArrayList<BillactionVO> newcolRet = new ArrayList<BillactionVO>();
+			for (BilltypeVO vo : preUpdateBillorTransType) {
+				for (BillactionVO actionVO : preAddBillActions) {
+					BillactionVO preAddActionVO = (BillactionVO) actionVO.clone();
+					preAddActionVO.setPrimaryKey(null);
+					preAddActionVO.setPk_billtypeid(vo.getPk_billtypeid());
+					newcolRet.add(preAddActionVO);
+				}
+			}
+			if (newcolRet.size() > 0) {
+				dao.insertVOList(newcolRet);
+			}
+		}
+	}
 }

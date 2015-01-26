@@ -842,15 +842,15 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 
 		// 获得审批意见, 放在WorkflownoteVO中
 		WorkflownoteVO noteVO = new WorkflownoteVO();
-		try {// CA签字
-			boolean isNeedCASign = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
-					.isNeedCASign4Batch(InvocationInfoProxy.getInstance().getUserId(), typeMap.keySet().toArray(new String[0]), billIds);
-			if (isNeedCASign) {
-				noteVO.getRelaProperties().put(XPDLNames.ELECSIGNATURE, "true");
-			}
-		} catch (BusinessException e2) {
-			ExceptionHandler.handleException(e2);
-		}
+//		try {// CA签字
+//			boolean isNeedCASign = NCLocator.getInstance().lookup(IPFWorkflowQry.class)
+//					.isNeedCASign4Batch(InvocationInfoProxy.getInstance().getUserId(), typeMap.keySet().toArray(new String[0]), billIds);
+//			if (isNeedCASign) {
+//				noteVO.getRelaProperties().put(XPDLNames.ELECSIGNATURE, "true");
+//			}
+//		} catch (BusinessException e2) {
+//			ExceptionHandler.handleException(e2);
+//		}
 
 //		BatchApproveWorkitemAcceptDlg dlg = new BatchApproveWorkitemAcceptDlg(null, noteVO);
 //		dlg.setBachApproveMode(batchApproveMode);

@@ -2,7 +2,7 @@ package nc.impl.erm.check;
 
 import nc.bs.erm.accruedexpense.common.AccFlowCheckInfo;
 import nc.bs.erm.matterapp.common.ErmMtAppFlowCheckInfo;
-import nc.bs.pub.pf.IBusinessCheck;
+//import nc.bs.pub.pf.IBusinessCheck;
 import nc.vo.ep.bx.ErmFlowCheckInfo;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
@@ -12,9 +12,10 @@ import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.tb.control.NtbCtlInfoVO;
 
-public class ErmBugetCheck implements IBusinessCheck {
+public class ErmBugetCheck {
+//	public class ErmBugetCheck implements IBusinessCheck {
 
-	@Override
+//	@Override
 	public String check(Object billvo) {
 		try {
 			if (billvo instanceof JKBXVO) {
@@ -50,7 +51,7 @@ public class ErmBugetCheck implements IBusinessCheck {
 		return controlMsg.toString();
 	}
 
-	@Override
+//	@Override
 	public Object checkCallBack(Object billvo) {
 		if (billvo instanceof JKBXVO) {
 			((JKBXVO) billvo).setHasNtbCheck(true);
