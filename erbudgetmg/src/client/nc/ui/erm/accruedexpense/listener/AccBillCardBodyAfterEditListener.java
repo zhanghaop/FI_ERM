@@ -42,7 +42,11 @@ public class AccBillCardBodyAfterEditListener implements BillEditListener {
 				// 根据多选变化的行，选择相关的参照字段，余额，和最大金额
 				if (changRow != null && (changRow.length > 1 || key.equals(AccruedDetailVO.ASSUME_ORG))) {
 					// 设置余额,预计余额
-					resetOtherJe(changRow);
+					// 非红冲的单据，编辑金额才联动
+					BillItem redItem = billForm.getBillCardPanel().getHeadItem(AccruedVO.REDFLAG);
+					if (redItem == null || redItem.getValueObject() == null) {
+						resetOtherJe(changRow);
+					}
 
 					try {
 						// 重算表体汇率

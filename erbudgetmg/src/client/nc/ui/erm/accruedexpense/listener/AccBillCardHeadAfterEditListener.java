@@ -49,7 +49,11 @@ public class AccBillCardHeadAfterEditListener implements BillEditListener, Value
 			} else if (AccruedVO.PK_CURRTYPE.equals(key)) {// 币种
 				afterEditCurrType();
 			} else if (AccruedVO.AMOUNT.equals(key)) {// 金额
-				afterEditAmount();
+				// 非红冲的单据，编辑金额才联动
+				BillItem redItem = billForm.getBillCardPanel().getHeadItem(AccruedVO.REDFLAG);
+				if (redItem == null || redItem.getValueObject() == null) {
+					afterEditAmount();
+				}
 			} else if (AccruedVO.BILLDATE.equals(key)) {// 日期
 				afterEditBillDate();
 			} else if (AccruedVO.ORG_CURRINFO.equals(key) || AccruedVO.GROUP_CURRINFO.equals(key)

@@ -1,5 +1,6 @@
 package nc.ui.erm.accruedexpense.listener;
 
+import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.ui.bd.ref.AbstractRefTreeModel;
 import nc.ui.erm.accruedexpense.common.AccUiUtil;
 import nc.ui.erm.accruedexpense.view.AccMNBillForm;
@@ -20,6 +21,12 @@ public class AccBillCardHeadBeforeEditListener implements BillCardBeforeEditList
 	public boolean beforeEdit(BillItemEvent e) {
 		BillItem item = (BillItem) e.getSource();
 		String key = item.getKey();
+		
+		// 红冲的单据，除了金额字段，其他字段不可编辑。
+		BillItem redItem = billForm.getBillCardPanel().getHeadItem(AccruedVO.REDFLAG);
+		if(redItem != null && redItem.getValueObject() != null && redItem.getValueObject().equals(ErmAccruedBillConst.REDFLAG_RED) ){
+			return false;
+		}
 
 		if (AccruedVO.OPERATOR_DEPT.equals(key)) {// 经办人部门根据经办人单位做过滤
 			beforeEditOperatorDept(item);

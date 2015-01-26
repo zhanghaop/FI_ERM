@@ -22,6 +22,15 @@ public class AccBillCardBodyBeforeEditListener implements BillEditListener2 {
 	public boolean beforeEdit(BillEditEvent e) {
 		BillItem item = (BillItem) e.getSource();
 		String key = e.getKey();
+		
+		// 红冲的单据，除了金额字段，其他字段不可编辑。
+		BillItem redItem = billForm.getBillCardPanel().getHeadItem(AccruedVO.REDFLAG);
+		if (redItem != null && redItem.getValueObject() != null
+				&& redItem.getValueObject().equals(ErmAccruedBillConst.REDFLAG_RED)
+				&& !AccruedDetailVO.AMOUNT.equals(key)) {
+			return false;
+		}
+		
 		if (ErmAccruedBillConst.Accrued_MDCODE_DETAIL.equals(e.getTableCode())) {
 			// 根据费用承担单位过滤
 			String assume_org = billForm.getBodyItemStrValue(e.getRow(), AccruedDetailVO.ASSUME_ORG);
