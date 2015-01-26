@@ -317,7 +317,7 @@ public class ExpamortizeBOImpl extends FipubSqlExecuter implements IExpamortizeB
 					false);
 
 			IExpAmortizeprocQuery procService = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
-			ExpamtprocVO[] procVos = procService.queryByInfoPksAndAccperiod(
+			ExpamtprocVO[] procVos = procService.queryEffectProcByPksAndAccperiod(
 					VOUtils.getAttributeValues(vo.getChildrenVO(), ExpamtDetailVO.PK_EXPAMTDETAIL), currentAccMonth);
 
 			if (procVos != null && procVos.length > 0) {

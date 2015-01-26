@@ -45,4 +45,15 @@ public interface IExpAmortizeprocQuery {
 	 * @return
 	 */
 	public ExpamtprocVO[] queryByProcPks(String[] pks)throws BusinessException;
+	
+	/**
+	 * 获取有效的摊销记录
+	 * <br>即当期已摊销，把有效的摊销记录返回
+	 * <br>当期没有摊销，则返回空
+	 * @param infoPks
+	 * @param accperiod
+	 * @return
+	 * @throws BusinessException
+	 */
+	ExpamtprocVO[] queryEffectProcByPksAndAccperiod(String[] infoPks, String accperiod) throws BusinessException;
 }

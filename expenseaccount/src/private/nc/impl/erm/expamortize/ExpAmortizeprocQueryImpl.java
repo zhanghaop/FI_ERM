@@ -162,4 +162,34 @@ public class ExpAmortizeprocQueryImpl implements IExpAmortizeprocQuery {
 
 		return exprocVOs;
 	}
+	
+	@Override
+	public ExpamtprocVO[] queryEffectProcByPksAndAccperiod(String[] infoPks, String accperiod) throws BusinessException {
+		ExpamtprocVO[] result = null;
+
+		IMDPersistenceQueryService queryService = MDPersistenceService.lookupPersistenceQueryService();
+		StringBuffer whereSql = new StringBuffer();
+		whereSql.append(SqlUtils.getInStr1(ExpamtprocVO.PK_EXPAMTINFO, infoPks)).append(" and ")
+				.append(ExpamtprocVO.ACCPERIOD + "= '" + accperiod + "'");
+		
+		whereSql.append(" order by creationtime desc ");
+		
+		//按摊销日期进行排序
+		@SuppressWarnings("unchecked")
+		Collection<ExpamtprocVO> resultCollection = queryService.queryBillOfVOByCond(ExpamtprocVO.class, whereSql.toString(), false);
+		
+		// 如果摊销记录为空或摊销记录/表体行%2 = 0 ，则返回null； 因为当摊销记录/表体行%2 = 0 时，说明已反摊销
+		if (resultCollection == null || resultCollection.size() == 0 || resultCollection.size() / infoPks.length % 2 == 0) {
+			return null;
+		}
+		ExpamtprocVO[] totalProcVos = resultCollection.toArray(new ExpamtprocVO[]{});
+
+		result = new ExpamtprocVO[infoPks.length];
+		for(int i = 0; i < result.length; i ++){
+			//取结果集的最新infoPks.length行数据
+			result[i] = totalProcVos[i];
+		}
+
+		return result;
+	}
 }

@@ -403,7 +403,7 @@ public class ExpamtUtil {
 					expamtInfoVo.getPk_expamtinfo(), false);
 
 			IExpAmortizeprocQuery procService = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
-			ExpamtprocVO[] procVos = procService.queryByInfoPksAndAccperiod(
+			ExpamtprocVO[] procVos = procService.queryEffectProcByPksAndAccperiod(
 					VOUtils.getAttributeValues(vo.getChildrenVO(), ExpamtDetailVO.PK_EXPAMTDETAIL), currAccMonth);
 
 			setHeadCurrComputeInfo(expamtInfoVo, currAccMonth, procVos);
@@ -469,7 +469,8 @@ public class ExpamtUtil {
 	public static void setAggVoCurrentComputeInfo(AggExpamtinfoVO vo, String currentAccMonth) throws Exception {
 		if (vo != null) {
 			IExpAmortizeprocQuery service = NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
-			ExpamtprocVO[] procVos = service.queryByInfoPksAndAccperiod(
+			
+			ExpamtprocVO[] procVos = service.queryEffectProcByPksAndAccperiod(
 					VOUtils.getAttributeValues(vo.getChildrenVO(), ExpamtDetailVO.PK_EXPAMTDETAIL), currentAccMonth);
 
 			setHeadCurrComputeInfo((ExpamtinfoVO) vo.getParentVO(), currentAccMonth, procVos);
@@ -484,17 +485,36 @@ public class ExpamtUtil {
 	 * @param currentAccMonth
 	 * @throws Exception
 	 */
-	private static void setBodyCurrExpamtAmount(AggExpamtinfoVO vo, String currentAccMonth, ExpamtprocVO[] procVos)
-			throws Exception {
+	private static void setBodyCurrExpamtAmount(AggExpamtinfoVO vo, String currentAccMonth, ExpamtprocVO[] procVos) throws Exception {
 		if (vo.getChildrenVO() != null) {
 			ExpamtDetailVO[] details = (ExpamtDetailVO[]) vo.getChildrenVO();
 			ExpamtinfoVO parentVo = (ExpamtinfoVO) vo.getParentVO();
-			UFDouble currAmount = parentVo.getCurr_amount();// 本期摊销金额
-			UFDouble totalAmount = parentVo.getTotal_amount();
-			UFDouble restAmount = new UFDouble(currAmount.getDouble());
 
+			Map<String, ExpamtprocVO> procMap = new HashMap<String, ExpamtprocVO>();
+
+			if (procVos != null) {
+				for (ExpamtprocVO proc : procVos) {
+					procMap.put(proc.getPk_expamtinfo(), proc);
+				}
+			}
+
+			// 本期摊销金额
+			UFDouble currAmount = parentVo.getCurr_amount();
+			UFDouble totalAmount = parentVo.getTotal_amount();
+
+			UFDouble restAmount = new UFDouble(parentVo.getCurr_amount().getDouble());
 			for (int i = 0; i < details.length; i++) {
 				ExpamtDetailVO detail = details[i];
+
+				// 本期摊销记录记录
+				ExpamtprocVO expamtprocVO = procMap.get(detail.getPk_expamtdetail());
+				if (expamtprocVO != null) {// 如果有摊销记录，则所有的行都应该有摊销记录，如果出现部分有，部分无，则摊销记录表存在问题了
+					detail.setCurr_amount(expamtprocVO.getCurr_amount());
+					detail.setCurr_orgamount(expamtprocVO.getCurr_orgamount());
+					detail.setCurr_groupamount(expamtprocVO.getCurr_groupamount());
+					detail.setCurr_globalamount(expamtprocVO.getCurr_globalamount());
+					continue;
+				}
 
 				UFDouble resAmount = detail.getRes_amount();// 剩余摊销金额
 				UFDouble detailTotalAmount = detail.getTotal_amount();
@@ -502,10 +522,9 @@ public class ExpamtUtil {
 
 				// 表体中本期因在摊销记录中无记录
 				UFDouble detailCurrAmount = UFDouble.ZERO_DBL;
+
 				if (resPeriod.intValue() == 1) {
 					detailCurrAmount = resAmount;
-				} else if (resPeriod.intValue() == 0) {
-					detailCurrAmount = UFDouble.ZERO_DBL;
 				} else {// 表体金额/总金额 * 本期摊销金额，金额均摊
 					if (i == (details.length - 1)) {
 						detailCurrAmount = restAmount;
@@ -602,6 +621,7 @@ public class ExpamtUtil {
 			UFDouble currAmount = UFDouble.ZERO_DBL;
 
 			if (procVos != null && procVos.length > 0) {// 已摊销过，则去摊销记录中的值
+				//636增加反摊销，摊销记录需要重新设计,要取最新的有效记录
 				for (ExpamtprocVO proc : procVos) {
 					currAmount = currAmount.add(proc.getCurr_amount());
 				}
