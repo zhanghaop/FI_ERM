@@ -101,7 +101,8 @@ public class AuditListUtil {
 				String value = NumberFormatUtil.formatDouble(total);
 				fieldvalueMap.put(field, value);
 			}else if(JKBXHeaderVO.JKBXR.equals(field)){
-				fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
+				if(userMap != null)
+					fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
 			}else if(JKBXHeaderVO.DJLXBM.equals(field)){
 				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getDjlxbm());
 				fieldvalueMap.put("djlxmc", djlxmc);
@@ -134,7 +135,8 @@ public class AuditListUtil {
 				String value = NumberFormatUtil.formatDouble(total);
 				fieldvalueMap.put(queryFields[i], value);
 			}else if(MatterAppVO.BILLMAKER.equals(field)){
-				fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
+				if(userMap != null)
+					fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
 			}else if(MatterAppVO.PK_TRADETYPE.equals(field)){
 				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getPk_tradetype());
 				fieldvalueMap.put("djlxmc", djlxmc);//djlxMap.get(vo.getPk_tradetype())
@@ -182,21 +184,13 @@ public class AuditListUtil {
 		return fieldvalueMap;
 	}
 	
-	public List<Map<String, String>> getAuditBillListByUser(String flag, boolean isApproved)
-			throws BusinessException {
-		List<Map<String, String>> maplist = new ArrayList<Map<String, String>>();
-		String userid = InvocationInfoProxy.getInstance().getUserId();
+	public String[] queryAuditPksByUser(String userid,String billtype,boolean isApproved) throws BusinessException{
 		String groupid = InvocationInfoProxy.getInstance().getGroupId();
-		//待查询的字段
-		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
-				JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
-				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
-				JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
-		
-		if(BillTypeUtil.BX.equals(flag) || BillTypeUtil.JK.equals(flag)){
-			  String sqlWhere = "QCBZ='N' and DR ='0'";
+		String[] pks = null;
+		if(BillTypeUtil.BX.equals(billtype) || BillTypeUtil.JK.equals(billtype)){
+			String sqlWhere = "QCBZ='N' and DR ='0'";
 			  //待查询的单据类型编码
-			  String[] djlxbmarray = BillTypeUtil.getBillTypeArray(userid,flag);
+			  String[] djlxbmarray = BillTypeUtil.getBillTypeArray(userid,billtype);
 			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbmarray, false);
 			  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbmarray, isApproved);
 			  if (billPks != null && billPks.length > 0) {
@@ -204,13 +198,39 @@ public class AuditListUtil {
 			  } else {
 				  sqlWhere += " and 1=0 ";
 			  }
-			  String[] bxpks = NCLocator.getInstance().lookup(IBXBillPrivate.class)
+			  pks = NCLocator.getInstance().lookup(IBXBillPrivate.class)
 				.queryPKsByWhereForBillManageNode(sqlWhere, groupid, userid);
-			  if(bxpks != null && bxpks.length > 0){
+		}else if(BillTypeUtil.MA.equals(billtype)){
+			MatterAppQueryCondition condVo = new MatterAppQueryCondition();
+	        String condition = "(billstatus = 1)";
+	        initQueryCondition(groupid, userid,condition, condVo,isApproved);
+	        pks = getQueryService().queryBillPksByWhere(condVo);
+		}else if(BillTypeUtil.AC.equals(billtype)){
+			AccruedBillQueryCondition condVo = new AccruedBillQueryCondition();
+		    String condition = "(billstatus = 1)";
+		    initQueryCondition(groupid, userid,condition, condVo,isApproved);
+		    pks = NCLocator.getInstance().lookup(IErmAccruedBillQueryPrivate.class).queryBillPksByWhere(condVo);//[1001AA10000000000KUP]
+		      
+		}
+		return pks;
+	}
+	
+	public List<Map<String, String>> getAuditBillListByUser(String flag, boolean isApproved)
+			throws BusinessException {
+		List<Map<String, String>> maplist = new ArrayList<Map<String, String>>();
+		String userid = InvocationInfoProxy.getInstance().getUserId();
+		//待查询的字段
+		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
+				JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
+				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
+				JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
+		String[] pks = queryAuditPksByUser(userid,flag,isApproved);
+		if(BillTypeUtil.BX.equals(flag) || BillTypeUtil.JK.equals(flag)){
+			  if(pks != null && pks.length > 0){
 		    	  //根据主键查询表头信息
 		    	  List<JKBXHeaderVO> list = null;
 		    	  list = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-		    	  	.queryHeadersByPrimaryKeys(bxpks, null);
+		    	  	.queryHeadersByPrimaryKeys(pks, null);
 		    	  
 		    	  if (list != null && !list.isEmpty()) {
 		    		  Set<String> userSet = new HashSet<String>();
@@ -236,10 +256,6 @@ public class AuditListUtil {
 		  		} 		
 		  	}
 		}else if(BillTypeUtil.MA.equals(flag)){
-	        MatterAppQueryCondition condVo = new MatterAppQueryCondition();
-	        String condition = "(billstatus = 1)";
-	        initQueryCondition(groupid, userid,condition, condVo,isApproved);
-	        String[] pks = getQueryService().queryBillPksByWhere(condVo);
 	        //待查询的字段
 			String[] matterappFields = new String[] { MatterAppVO.PK_MTAPP_BILL,
 					MatterAppVO.ORIG_AMOUNT,MatterAppVO.ORG_AMOUNT,
@@ -267,10 +283,6 @@ public class AuditListUtil {
 	    	  }
 		   }
 		}else if(BillTypeUtil.AC.equals(flag)){
-			  AccruedBillQueryCondition condVo = new AccruedBillQueryCondition();
-		      String condition = "(billstatus = 1)";
-		      initQueryCondition(groupid, userid,condition, condVo,isApproved);
-		      String[] pks = NCLocator.getInstance().lookup(IErmAccruedBillQueryPrivate.class).queryBillPksByWhere(condVo);//[1001AA10000000000KUP]
 		      //待查询的字段
 		      String[] accruedFields = new String[] { AccruedVO.PK_ACCRUED_BILL,
 						AccruedVO.AMOUNT,AccruedVO.GLOBAL_AMOUNT,

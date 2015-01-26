@@ -12,7 +12,7 @@ import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.bs.logging.Logger;
-import nc.erm.mobile.billaction.JKBXBillSaveAction;
+import nc.erm.mobile.billaction.BillSaveAction;
 import nc.erm.mobile.pub.template.MobileTemplateUtils;
 import nc.erm.mobile.util.RefUtil;
 import nc.erm.mobile.util.TranslateJsonToValueObject;
@@ -57,7 +57,7 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			TranslateJsonToValueObject trans = new TranslateJsonToValueObject();
 			BillTempletVO billTempletVO =  getDefaultTempletStatics(djlxbm); 
 			AggregatedValueObject vo = trans.translateMapToAggvo(billTempletVO, map);
-			JKBXBillSaveAction saveaction = new JKBXBillSaveAction(PK_ORG);
+			BillSaveAction saveaction = new BillSaveAction(PK_ORG);
 			if(map.get("pk_jkbx") != null && !"".equals(map.get("pk_jkbx"))){
 				// 主键已生成，修改
 				billpk = saveaction.updateJkbx(vo,userid); 
@@ -65,8 +65,14 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				deleteAttachmentList(billpk, userid); 
 				saveAttachment(billpk, map);
 			}else{
-				//第一次保存
-				billpk = saveaction.insertJkbx(vo,djlxbm,userid);
+				//新增保存
+				if(djlxbm.startsWith("263") || djlxbm.startsWith("264")){
+					billpk = saveaction.insertJkbx(vo,djlxbm,userid);
+				}else if(djlxbm.startsWith("262")){
+					billpk = saveaction.insertAcc(vo,djlxbm,userid);
+				}else if(djlxbm.startsWith("261")){
+					billpk = saveaction.insertMa(vo,djlxbm,userid);
+				}
 				//保存附件
 				saveAttachment(billpk,map);
 			}
@@ -642,12 +648,12 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				//借款报销单初始化
 				IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
 				billvo = initservice.setBillVOtoUI(djlxVO, "", null);
-			}else if(djlxbm.startsWith("261")){
-				//费用申请单初始化
-				IErmAccruedBillQuery initservice = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
-				billvo = initservice.getAddInitAccruedBillVO(djlxVO, "", null);
 			}else if(djlxbm.startsWith("262")){
 				//费用预提单初始化
+				IErmAccruedBillQuery initservice = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
+				billvo = initservice.getAddInitAccruedBillVO(djlxVO, "", null);
+			}else if(djlxbm.startsWith("261")){
+				//费用申请单初始化
 				IErmMatterAppBillQuery initservice = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
 				billvo = initservice.getAddInitAggMatterVo(djlxVO, "", null);
 			}

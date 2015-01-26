@@ -1,20 +1,11 @@
 package nc.arap.mobile.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import nc.arap.mobile.itf.IErmMobileCtrl;
-import nc.bs.dao.BaseDAO;
-import nc.bs.framework.common.NCLocator;
-import nc.itf.arap.prv.IBXBillPrivate;
-import nc.vo.ep.bx.BXBusItemVO;
-import nc.vo.ep.bx.BXHeaderVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.lang.UFDate;
 
 public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	@Override
@@ -34,45 +25,26 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	}
 	
 	@Override
-	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String startline,String pagesize,String pks)
+	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String billtype,String startline,String pagesize,String pks)
 	throws BusinessException {
-		return getErmMobileCtrlBo().getBXHeadsByUser(userid,flag,startline,pagesize,pks);
+		return getErmMobileCtrlBo().getBXHeadsByUser(userid,flag,billtype,startline,pagesize,pks);
 	}
 
 	//查询当前用户待审批单据,map按照单据类型进行分组
 	@Override
-	public Map<String,List<Map<String, String>>> getBXApproveBillByUser(String userid,String flag)
+	public Map<String,List<Map<String, String>>> getBXApproveBillByUser(String userid,String flag,String billtype,String startline,String pagesize,String pks)
 			throws BusinessException {
 		//flag 2 :待我审批 3：我已审批
-		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
-		return bo.getBXApprovingBillByUser(userid);
+		if("2".equals(flag))
+			return getErmMobileCtrlBo().getBXApprovingBillByUser(userid,billtype);
+		else
+			return getErmMobileCtrlBo().getBXApprovedBillByUser(userid,billtype,startline,pagesize,pks);
 	}
 	
-	//查询当前用户已审批单据,map按照本周、上周、更早进行分组
-	@Override
-	public Map<String,Map<String, Map<String, String>>> getBXApprovedBillByUser(String userid,String flag)
-			throws BusinessException {
-		//flag 2 :待我审批 3：我已审批
-		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
-		return bo.getBXApprovedBillByUser(userid);
-	}
-//	//查询当前用户待审批单据,map按照本周、上周、更早进行分组
-//	@Override
-//	public Map<String,Map<String, Map<String, String>>> getBXApproveBillByUser(String userid,String flag)
-//			throws BusinessException {
-//		//flag 2 :待我审批 3：我已审批
-//		ErmMobileCtrlBO bo = getErmMobileCtrlBo();
-//		if(flag.equals("2"))
-//			return bo.getBXApprovingBillByUser(userid);
-//		else
-//			return bo.getBXApprovedBillByUser(userid);
-//	}
 	
-	//查询当前用户待审批单据,map按照本周、上周、更早进行分组
 	@Override
 	public Map<String, Map<String, String>> loadExpenseTypeInfoString(String userid)
 			throws BusinessException {
-		//flag 2 :待我审批 3：我已审批
 		return getErmMobileCtrlBo().queryExpenseTypeInfoString(userid);
 	}
 	

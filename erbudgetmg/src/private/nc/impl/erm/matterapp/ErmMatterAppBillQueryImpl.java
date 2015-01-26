@@ -529,6 +529,8 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery, IErmMa
 		
 		if(defaultVo == null){
 			defaultVo = new AggMatterAppVO();
+			MatterAppVO head = new MatterAppVO();
+			defaultVo.setParentVO(head);
 		}
 		
 		UFDate busiDate = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());

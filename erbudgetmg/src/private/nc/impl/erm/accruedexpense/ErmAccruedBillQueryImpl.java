@@ -215,6 +215,8 @@ public class ErmAccruedBillQueryImpl implements IErmAccruedBillQuery, IErmAccrue
 		
 		if(defaultVo == null){
 			defaultVo = new AggAccruedBillVO();
+			AccruedVO head = new AccruedVO();
+			defaultVo.setParentVO(head);
 		}
 		
 		UFDate busiDate = BXBsUtil.getBsLoginDate().getDate();

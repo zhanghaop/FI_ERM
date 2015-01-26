@@ -49,7 +49,7 @@ public class BillTypeUtil {
 	public static String JK = "jk";
 	public static String BX = "bx";
 	public static String MA = "ma";
-	public static String AC = "ac";
+	public static String AC = "acc";
 	public static String getBXbilltype(String userid,String flag){
 		JSONObject jsonObj = new JSONObject();
 		try {
@@ -84,12 +84,12 @@ public class BillTypeUtil {
 						if (BXConstans.JK_DJLXBM.equals(vo.getParentbilltype())) {
 							list.add(vo);
 						}
-					}else if(MA.equals(flag)){
+					}else if(AC.equals(flag)){
 						//预提类单据
 						if (ErmBillConst.AccruedBill_Billtype.equals(vo.getParentbilltype())) {
 							list.add(vo);
 						}
-					}else if(AC.equals(flag)){
+					}else if(MA.equals(flag)){
 						//费用申请类单据
 						if (ErmBillConst.MatterApp_BILLTYPE.equals(vo.getParentbilltype()) ) {
 							list.add(vo);

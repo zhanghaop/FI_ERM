@@ -6,16 +6,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
-import nc.bs.erm.util.CacheUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
@@ -27,7 +24,6 @@ import nc.itf.arap.pub.IBXBillPublic;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.itf.uap.pf.IWorkflowDefine;
 import nc.itf.uap.pf.IplatFormEntry;
-import nc.itf.uap.rbac.IUserManageQuery;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.jdbc.framework.processor.ResultSetProcessor;
@@ -40,7 +36,6 @@ import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.bd.inoutbusiclass.InoutBusiClassVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.reimtype.ReimTypeVO;
 import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
@@ -62,7 +57,6 @@ import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.pub.workflownote.WorkflownoteVO;
 import nc.vo.pub.workflowqry.FlowAdminVO;
-import nc.vo.sm.UserVO;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.uap.pf.PfProcessBatchRetObject;
 import nc.vo.uap.wfmonitor.ProcessRouteRes;
@@ -72,6 +66,8 @@ import nc.vo.wfengine.definition.WorkflowTypeEnum;
 import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import uap.pub.bap.fs.FileStorageClient;
 import uap.pub.bap.fs.IFileTransfer;
@@ -174,324 +170,63 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	 * @return 交易类型名称分组的报销单属性值
 	 * @throws BusinessException
 	 */
-	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String startline,String pagesize,String pkars)
+	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String billtype,String startline,String pagesize,String pkars)
 	throws BusinessException {
-		Map<String, List<Map<String, String>>> returnMap = new LinkedHashMap<String, List<Map<String, String>>>();
 		initEvn(userid);
-		
-		String[] flags = flag.split(","); 
+		MobileBo bo = new MobileBo();
 		if("1".equals(startline) && pkars == null){
 			//首次查询所有pk
-			MobileBo bo = new MobileBo();
-			String[] pks = null;
-			if(flags[1].equals("jkbx")){
-				pks = bo.getJkBxPksByUser(flags[0]);
-			}else if(flags[1].equals("ma")){
-				pks = bo.queryMaBillPksByWhere(flags[0]);
-			}else if(flags[1].equals("acc")){
-				pks = bo.queryAccBillPksByWhere(flags[0]);
-			}
-			StringBuffer pkstrs = new StringBuffer();
-			if(pks != null){
-				for(int i=0;i<pks.length;i++){
-					pkstrs.append(pks[i]).append(",");
-				}
-			}
-			pkars = pkstrs.toString();
+			pkars = bo.queryPksByUser(userid,flag,billtype);
 		}
-		
-		//待查询pk
-		int sline = Integer.parseInt(startline);
-		int psize = Integer.parseInt(pagesize);
-		String[] pkarrars = pkars.split(",");
-		if(pkarrars == null)
-			return returnMap;
-		int hasnum = pkarrars.length - sline + 1;
-		int querysize = (psize > hasnum)?hasnum:psize;
-		if(querysize == 0)
-			return returnMap;
-		String[] sendpkarrars = new String[querysize];
-		int index = 0;
-		for(int i = sline-1;index < querysize;i++){
-			sendpkarrars[index] = pkarrars[i];
-			index++;
-		}
-		//将查询好的数据组装成map
-		List<Map<String, String>> thisWeekMap = new ArrayList<Map<String, String>>();
-		List<Map<String, String>> lastWeekMap = new ArrayList<Map<String, String>>();
-		List<Map<String, String>> earlierMap = new ArrayList<Map<String, String>>();
-		Map<String, Map<String, String>> checkPkMap = new LinkedHashMap<String, Map<String, String>>();
-		//借款报销单待查询的字段  其他单据按这些字段进行组装
-		String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
-				JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
-				JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
-				JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
-		if(flags[1].equals("jkbx")){
-			//查询借款报销单
-			IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
-					IBXBillPrivate.class);
-			List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(sendpkarrars,null);
-			if (list != null && !list.isEmpty()) {
-				for (JKBXHeaderVO vo : list) {
-					Map<String, String> fieldvalueMap = AuditListUtil.getJKBXMap(queryFields,vo,null);
-					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
-					//分组
-					UFDate djrq = vo.getDjrq();
-	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
-	  					thisWeekMap.add(fieldvalueMap);
-	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
-	  						|| djrq.equals(getLastWeekMonday()))
-	  					lastWeekMap.add(fieldvalueMap);
-	  				else
-	  					earlierMap.add(fieldvalueMap);
-				}
-			} 
-		}else if(flags[1].equals("ma")){
-	        //待查询的字段
-			String[] matterappFields = new String[] { MatterAppVO.PK_MTAPP_BILL,
-					MatterAppVO.ORIG_AMOUNT,MatterAppVO.ORG_AMOUNT,
-					MatterAppVO.BILLDATE, MatterAppVO.BILLNO, MatterAppVO.REASON, MatterAppVO.BILLMAKER,MatterAppVO.PK_TRADETYPE,
-					MatterAppVO.DJDL,MatterAppVO.APPRSTATUS};
-			AggMatterAppVO[] mattervos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
-		    		  .queryBillByPKs(sendpkarrars);
-		    if(mattervos != null && mattervos.length>0){
-		    	for(int voindex = 0;voindex < mattervos.length;voindex++){
-			    	AggMatterAppVO mattervo = mattervos[voindex];
-		    		MatterAppVO vo = mattervo.getParentVO();
-		    		Map<String, String> fieldvalueMap = AuditListUtil.getMaMap(queryFields,matterappFields,vo,null);;
-					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
-					//分组
-					UFDate djrq = vo.getBilldate();
-	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
-	  					thisWeekMap.add(fieldvalueMap);
-	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
-	  						|| djrq.equals(getLastWeekMonday()))
-	  					lastWeekMap.add(fieldvalueMap);
-	  				else
-	  					earlierMap.add(fieldvalueMap);
-		    	}
-		    }
-		}else if(flags[1].equals("acc")){
-			//待查询的字段
-			String[] accruedFields = new String[] { AccruedVO.PK_ACCRUED_BILL,
-					AccruedVO.AMOUNT,AccruedVO.GLOBAL_AMOUNT,
-					AccruedVO.BILLDATE, AccruedVO.BILLNO, AccruedVO.REASON, AccruedVO.CREATOR,AccruedVO.PK_TRADETYPE,
-					AccruedVO.PK_BILLTYPE,AccruedVO.APPRSTATUS};
-		  AggAccruedBillVO[] accruedvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
-		    		  .queryBillByPks(sendpkarrars);
-		  if(accruedvos != null && accruedvos.length > 0){
-		    	for(int voindex = 0;voindex < accruedvos.length;voindex++){
-		    		AggAccruedBillVO mattervo = accruedvos[voindex];
-		    		  AccruedVO vo = mattervo.getParentVO();
-		    		Map<String, String> fieldvalueMap = AuditListUtil.getAccMap(queryFields,accruedFields,vo,null);;
-					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
-					//分组
-					UFDate djrq = vo.getBilldate();
-	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
-	  					thisWeekMap.add(fieldvalueMap);
-	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
-	  						|| djrq.equals(getLastWeekMonday()))
-	  					lastWeekMap.add(fieldvalueMap);
-	  				else
-	  					earlierMap.add(fieldvalueMap);
-		    	}
-		    }
-		}
-		
-		
-		// 补充查询审批进行中的报销单的当前审批人
-		if(!checkPkMap.isEmpty()){
-			Map<String, String> checkmanMap = getBillCheckman(checkPkMap.keySet().toArray(new String[0]));
-			for (Entry<String, String> checkmans : checkmanMap.entrySet()) {
-				Map<String, String> map = checkPkMap.get(checkmans.getKey());
-				// 将审批状态替换为当前审批人
-				String spr = checkmans.getValue();
-				if(spr!=null && !spr.equals("") && spr.contains(","))
-					spr = spr.split(",")[0];
-				map.put("sprshow", "待("+spr+")审批");
-			}
-		}
-		if(!(sline > 1 && thisWeekMap.size() == 0))
-			returnMap.put("本周", thisWeekMap);
-		if(!(sline > 1 && lastWeekMap.size() == 0))
-			returnMap.put("上周", lastWeekMap);
-		if(!(sline > 1 && earlierMap.size() == 0))
-			returnMap.put("更早", earlierMap);
-		
-		List<Map<String, String>> pklistMap = new ArrayList<Map<String, String>>();
-		Map<String, String> pkmap = new LinkedHashMap<String, String>();
-		if(pkars != null){
-			pkmap.put(pkars, null);
-		}
-		pklistMap.add(pkmap);
-		returnMap.put("pkmap", pklistMap);
-		return returnMap;
+		return bo.getResultMapByDate(billtype,startline,pagesize,pkars);
 	}
 	
 	
 	//查询当前用户待审批单据,map按照报销单、借款单、费用申请单、预提单进行分组
-	public Map<String,List<Map<String, String>>> getBXApprovingBillByUser(String userid)
+	public Map<String,List<Map<String, String>>> getBXApprovingBillByUser(String userid,String billtype)
 			throws BusinessException {
 		initEvn(userid);
 		Map<String,List<Map<String, String>>> resultlistmap = new LinkedHashMap<String,List<Map<String, String>>>();
 		AuditListUtil auditlist = new AuditListUtil();
 		//查询待审批的报销单
 		List<Map<String, String>> bxlist = auditlist.getAuditBillListByUser(BillTypeUtil.BX, false);
-		resultlistmap.put("报销单", bxlist);
+		if(bxlist != null && bxlist.size()>0)
+			resultlistmap.put("报销单", bxlist);
 		//查询待审批的报销单
 		List<Map<String, String>> jklist = auditlist.getAuditBillListByUser(BillTypeUtil.JK, false);
-		resultlistmap.put("借款单", jklist);
+		if(jklist != null && jklist.size()>0)
+			resultlistmap.put("借款单", jklist);
 		//查询待审批的报销单
-		List<Map<String, String>> shengqinglist = auditlist.getAuditBillListByUser(BillTypeUtil.AC, false);
-		resultlistmap.put("费用申请单", shengqinglist);
+		List<Map<String, String>> shengqinglist = auditlist.getAuditBillListByUser(BillTypeUtil.MA, false);
+		if(shengqinglist != null && shengqinglist.size()>0)
+			resultlistmap.put("费用申请单", shengqinglist);
 		//查询待审批的报销单
-		List<Map<String, String>> yutilist = auditlist.getAuditBillListByUser(BillTypeUtil.MA, false);
-		resultlistmap.put("预提单", yutilist);
+		List<Map<String, String>> yutilist = auditlist.getAuditBillListByUser(BillTypeUtil.AC, false);
+		if(yutilist != null && yutilist.size()>0)
+			resultlistmap.put("预提单", yutilist);
 		
 	    return resultlistmap;
 	}
 	
 	//查询当前用户已审批单据,map按照本周、上周、更早进行分组
-	public Map<String,Map<String, Map<String, String>>> getBXApprovedBillByUser(String userid)
+	public Map<String,List<Map<String, String>>> getBXApprovedBillByUser(String userid,String billtype,String startline,String pagesize,String pks)
 			throws BusinessException {
 		initEvn(userid);
-		Map<String,Map<String, Map<String, String>>> resultmap = new LinkedHashMap<String,Map<String, Map<String, String>>>();
-	      //待查询的字段
-		  String[] queryFields = new String[] { JKBXHeaderVO.PK_JKBX,
-					JKBXHeaderVO.YBJE,JKBXHeaderVO.TOTAL,
-					JKBXHeaderVO.DJRQ, JKBXHeaderVO.DJBH, JKBXHeaderVO.ZY, JKBXHeaderVO.JKBXR,JKBXHeaderVO.DJLXBM,
-					JKBXHeaderVO.DJDL,JKBXHeaderVO.SPZT};
-		  //待查询的单据类型
-//		  String[] djlxbmarray = getDjlxbmArray();//{"2643","2642","2641"};
-//		  String sqlWhere = " and " + SqlUtils.getInStr("er_bxzb." + JKBXHeaderVO.DJLXBM, djlxbmarray, false);
-//		  
-//		  //联合审批流查询主键信息 AND wf.approvestatus!=4
-//		  String bxSql = "select distinct pk_jkbx FROM er_bxzb er_bxzb , pub_workflownote wf where er_bxzb.pk_jkbx=wf.billid(+)"
-//            + " AND ((wf.billid is null and er_bxzb.approver='"
-//            + userid
-//            + "') or (wf.ischeck='Y' and wf.checkman= '"
-//            + userid
-//            + "' AND ( wf.dr=0 or isnull(wf.dr,0)=0 )  AND wf.actiontype = 'Z'))"
-//            +" AND er_bxzb.spzt in (0,1,2) and er_bxzb.DR ='0'"
-//            +" and er_bxzb.QCBZ='N' "
-//            + sqlWhere;
-//		  BaseDAO dao = new BaseDAO();
-//		  List<String> pks = new ArrayList<String>();
-//		  BaseProcessor baseprocessor = new BaseProcessor(){
-//	         private static final long serialVersionUID = 1L;
-//			@Override
-//			public Object processResultSet(ResultSet rs) throws SQLException {
-//				List<String> result = new ArrayList<String>();
-//                while (rs.next()) {
-//                    result.add(rs.getObject(1).toString());
-//                }
-//                return result ;
-//			}
-//	      };
-//	      pks = (ArrayList<String>)dao.executeQuery(bxSql,baseprocessor);
-		  String sqlWhere = "QCBZ='N' and DR ='0'"; 
-		  String[] djlxbm = BillTypeUtil.getBillTypeArray(userid,BillTypeUtil.BX);
-		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbm, false);
-		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbm, true);
-		  if (billPks != null && billPks.length > 0) {
-			  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, true);
-		  } else {
-			  sqlWhere += " and 1=0 ";
-		  }
-		  String[] pks = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-			.queryPKsByWhereForBillManageNode(sqlWhere, InvocationInfoProxy.getInstance().getGroupId(), 
-					InvocationInfoProxy.getInstance().getUserId());
-	      //根据主键查询表头信息
-	      if(pks!=null && pks.length>0){
-	    	  List<JKBXHeaderVO> list = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-	    	  	.queryHeadersByPrimaryKeys(pks, BXConstans.BX_DJDL);//pks.toArray(new String[]{})
-	    	  
-	    	  //将查询好的数据组装成map
-				Map<String, Map<String, String>> pksbzmap = new LinkedHashMap<String, Map<String, String>>();
-				Map<String, Map<String, String>> pksszmap = new LinkedHashMap<String, Map<String, String>>();
-				Map<String, Map<String, String>> pksgzmap = new LinkedHashMap<String, Map<String, String>>();
-	    	  if (list != null && !list.isEmpty()) {
-	    		  Set<String> userSet = new HashSet<String>();
-	    		  for(int i=0;i<list.size();i++){
-	    			  userSet.add(list.get(i).getCreator());//getJkbxr()
-	    		  }
-//	    		  PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(userSet.toArray(new String[0]));
-	    		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
-	    		  Map<String,String> userMap = new HashMap<String,String>();
-	    		  for(int i=0;i<uservo.length;i++){
-	    			  userMap.put(uservo[i].getCuserid(), uservo[i].getUser_name());
-	    		  }
-	    		  Map<String,String> djlxMap = new HashMap<String,String>();
-				  DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
-						"pk_group = '"+InvocationInfoProxy.getInstance().getGroupId()+"' and djdl in('jk','bx')");
-				  for(int i=0;i<vos.length;i++){
-					  String djlxmc = vos[i].getDjlxmc();
-//					  djlxmc = djlxmc.substring(0, djlxmc.length()-3);
-					  djlxMap.put(vos[i].getDjlxbm(), djlxmc);
-				  }
-	  			for (JKBXHeaderVO vo : list) {
-	  				Map<String, String> fieldvalueMap = new HashMap<String, String>();
-	  				for (int i = 0; i < queryFields.length; i++) {
-	  					String field = queryFields[i];
-	  					String attributeValue = vo.getAttributeValue(field) == null ? ""
-	  							: vo.getAttributeValue(field).toString();
-	  					fieldvalueMap.put(field, attributeValue);
-	  					if(JKBXHeaderVO.DJRQ.equals(field)){
-	  						fieldvalueMap.put(field, new UFDate(attributeValue).toLocalString());
-	  					}else if(JKBXHeaderVO.TOTAL.equals(field)){
-							UFDouble total = new UFDouble(attributeValue);
-							total = total.setScale(2,4);
-							fieldvalueMap.put(field, total.toString());
-						}else if(JKBXHeaderVO.SPZT.equals(field)){
-	  						String spztshow = AuditListUtil.getSpztShow(vo.getSpzt());
-	  						fieldvalueMap.put("spztshow", spztshow);
-	  					}else if(JKBXHeaderVO.JKBXR.equals(field)){
-	  						fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
-	  					}else if(JKBXHeaderVO.DJLXBM.equals(field)){
-		  					fieldvalueMap.put("djlxmc", djlxMap.get(vo.getDjlxbm()));
-	  					}if(JKBXHeaderVO.ZY.equals(field) && attributeValue.length()>10){
-							attributeValue = attributeValue.substring(0,10)+"...";
-							fieldvalueMap.put(field, attributeValue);
-						}
-	  					
-	  				}
-	  				UFDate djrq = vo.getDjrq();
-	  				if(djrq.after(getNowWeekMonday()) || djrq.equals(getNowWeekMonday()))
-	  					pksbzmap.put(vo.getPrimaryKey(), fieldvalueMap);
-	  				else if(djrq.before(getNowWeekMonday()) && djrq.after(getLastWeekMonday())
-	  						|| djrq.equals(getLastWeekMonday()))
-	  					pksszmap.put(vo.getPrimaryKey(), fieldvalueMap);
-	  				else
-	  					pksgzmap.put(vo.getPrimaryKey(), fieldvalueMap);
-	  			}
-	  			//组装最后一层map，根据日期
-	  			resultmap.put("本周", pksbzmap);
-	  			resultmap.put("上周", pksszmap);
-	  			resultmap.put("更早", pksgzmap);
-	  		} 		
-	  	}
-	    return resultmap;
+		MobileBo bo = new MobileBo();
+		if("1".equals(startline) && pks == null){
+			//首次查询所有pk
+			AuditListUtil util = new AuditListUtil();
+			String[] pkars = util.queryAuditPksByUser(userid,billtype,true);
+			StringBuffer pkstrs = new StringBuffer();
+			if(pkars != null){
+				for(int i=0;i<pkars.length;i++){
+					pkstrs.append(pkars[i]).append(",");
+				}
+			}
+			pks = pkstrs.toString();
+		}
+		return bo.getResultMapByDate(billtype,startline,pagesize,pks);
 	}
-	
-	
-	//获取本周一日期
-	public static UFDate getNowWeekMonday() {
-        Calendar cal = Calendar.getInstance();
-        //解决周日会出现 并到下一周的情况 
-		cal.setFirstDayOfWeek(Calendar.MONDAY);
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);    
-        return new UFDate(cal.getTime()); 
-    }
-	
-	//获取上周一日期
-	public static UFDate getLastWeekMonday() {    
-		Calendar cal = Calendar.getInstance();
-        //解决周日会出现 并到下一周的情况 
-		cal.setFirstDayOfWeek(Calendar.MONDAY);
-		cal.add(Calendar.WEEK_OF_MONTH, -1);
-        cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);   
-        return new UFDate(cal.getTime());    
-   }
 	
 	
 	public String deleteJkbx(String headpk,String userid) throws BusinessException {
@@ -698,56 +433,6 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 		
 		FileHeader[] heads = fileTransfer.queryHeaders(bafile);
 		return heads;
-	}
-		
-	
-	/**
-	 * 批量查询单据当前审批人
-	 * 
-	 * @param billIdAry
-	 * @param billType
-	 * @return
-	 * @throws BusinessException
-	 */
-	private Map<String,String> getBillCheckman(String billIdAry[]) throws BusinessException{
-		String sql = (new StringBuilder()).append(" select billVersionPK ,checkman,user_name from pub_workflownote ,sm_user " +
-				" where pub_workflownote.checkman = sm_user.cuserid " +
-				" and approvestatus in(").append(WfTaskOrInstanceStatus.getUnfinishedStatusSet()).append(") " +
-						"and actiontype not in('").append("BIZ").append("','").append("MAKEBILL").append("') ")
-						.append(" and "+SqlTools.getInStr("billVersionPK", billIdAry, true)).toString();
-		
-	    
-		BaseDAO dao = new BaseDAO();
-		final Map<String,String> resultmap = new HashMap<String, String>();
-		dao.executeQuery(sql, new BaseProcessor(){
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Object processResultSet(ResultSet resultset)
-					throws SQLException {
-				 while (resultset.next()) {
-					 String billVersionPK = (String) resultset.getObject(1);
-//					 String checkman = (String) resultset.getObject(2);
-					 String user_name = (String) resultset.getObject(3);
-					 
-					 String rcheckman = resultmap.get(billVersionPK);
-					if(rcheckman == null){
-						resultmap.put(billVersionPK, user_name);
-					}else{
-						resultmap.put(billVersionPK, rcheckman+","+user_name);
-					}
-					
-				}
-				return null;
-			}
-			
-		});
-	
-		return resultmap;
 	}
 	
 	//审批单据//如果成功返回success，如果出错则返回出错提示
@@ -1353,17 +1038,17 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 			} 
 			
 			// 补充查询审批进行中的报销单的当前审批人
-			if(!resultmap.isEmpty()){
-				Map<String, String> checkmanMap = getBillCheckman(resultmap.keySet().toArray(new String[0]));
-				for (Entry<String, String> checkmans : checkmanMap.entrySet()) {
-					Map<String, String> map = resultmap.get(checkmans.getKey());
-					// 将审批状态替换为当前审批人
-					String spr = checkmans.getValue();
-					if(spr!=null && !spr.equals("") && spr.contains(","))
-						spr = spr.split(",")[0];
-					map.put("sprshow", "待("+spr+")审批");
-				}
-			}
+//			if(!resultmap.isEmpty()){
+//				Map<String, String> checkmanMap = getBillCheckman(resultmap.keySet().toArray(new String[0]));
+//				for (Entry<String, String> checkmans : checkmanMap.entrySet()) {
+//					Map<String, String> map = resultmap.get(checkmans.getKey());
+//					// 将审批状态替换为当前审批人
+//					String spr = checkmans.getValue();
+//					if(spr!=null && !spr.equals("") && spr.contains(","))
+//						spr = spr.split(",")[0];
+//					map.put("sprshow", "待("+spr+")审批");
+//				}
+//			}
 			
 			return resultmap;
 	 }
@@ -1438,19 +1123,22 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	
 	public String get_unapproved_bxdcount(String userid) throws BusinessException {
 		  initEvn(userid); 
-//		  String sqlWhere = "QCBZ='N' and DR ='0'"; 
-		  String[] djlxbmarray = BillTypeUtil.getBillTypeArray(userid,null);
-//		  sqlWhere += " and " + SqlUtils.getInStr(JKBXHeaderVO.DJLXBM, djlxbmarray, false);
-		  String[] billPks = queryApprovedWFBillPksByCondition(userid, djlxbmarray, false);
-//		  if (billPks != null && billPks.length > 0) {
-//			  sqlWhere += " and spzt in (2,3) and " + SqlUtils.getInStr(JKBXHeaderVO.PK_JKBX, billPks, false);
-//		  } else { 
-//			  sqlWhere += " and 1=0 ";
-//		  }
-//		  String[] pks = NCLocator.getInstance().lookup(IBXBillPrivate.class)
-//			.queryPKsByWhereForBillManageNode(sqlWhere, InvocationInfoProxy.getInstance().getGroupId(), 
-//					userid);
-		return billPks==null?"0":String.valueOf(billPks.length);
+		  AuditListUtil util = new AuditListUtil();
+		  String[] billtypearr = new String[]{BillTypeUtil.BX,BillTypeUtil.JK,BillTypeUtil.MA,BillTypeUtil.AC};
+		  int count = 0;
+		  for(int i=0;i<billtypearr.length;i++){
+			  String[] pkars = util.queryAuditPksByUser(userid,billtypearr[i],false);
+			  if(pkars != null && pkars.length>0){
+				  count += pkars.length;
+			  }
+		  }
+		  JSONObject ret = new JSONObject();
+		  try {
+			ret.put("unapprovedbxdno", String.valueOf(count));
+		} catch (JSONException e) {
+			return ret.toString();
+		}
+		return ret.toString();
 	}
 
 	

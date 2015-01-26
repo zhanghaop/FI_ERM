@@ -4,26 +4,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import nc.bs.arap.util.BillOrgVUtils;
+import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
+import nc.bs.erm.matterapp.common.ErmMatterAppConst;
 import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
-import nc.itf.arap.pub.IErmBillUIPublic;
 import nc.itf.fi.org.IOrgVersionQueryService;
 import nc.itf.fi.pub.Currency;
 import nc.itf.org.IOrgVersionQryService;
 import nc.itf.uap.pf.IPFWorkflowQry;
+import nc.pubitf.erm.accruedexpense.IErmAccruedBillManage;
+import nc.pubitf.erm.matterapp.IErmMatterAppBillManage;
+import nc.ui.pub.beans.MessageDialog;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
+import nc.vo.er.exception.BugetAlarmBusinessException;
+import nc.vo.er.util.StringUtils;
+import nc.vo.erm.accruedexpense.AggAccruedBillVO;
+import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.erm.matterapp.MtAppDetailVO;
 import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
@@ -33,13 +39,18 @@ import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.pf.IPfRetCheckInfo;
+import nc.vo.scmpub.exp.AtpNotEnoughException;
 import nc.vo.vorg.DeptVersionVO;
 import nc.vo.vorg.OrgVersionVO;
 
-public class JKBXBillSaveAction {
+import org.apache.commons.lang.ArrayUtils;
+
+public class BillSaveAction {
 	private String PK_ORG;
+	private IErmMatterAppBillManage mgService;
+	private IErmAccruedBillManage manageService;
 	
-	public JKBXBillSaveAction(String pk_org) {
+	public BillSaveAction(String pk_org) {
 		PK_ORG = pk_org;
 	}
 
@@ -103,7 +114,140 @@ public class JKBXBillSaveAction {
 		}
 		return pk_org_v;
 	}
+	public String insertAcc(AggregatedValueObject vo,String djlxbm,String userid)
+			throws BusinessException {
+		AggAccruedBillVO aggValue = (AggAccruedBillVO) vo;
+		aggValue.getParentVO().setBillstatus(ErmAccruedBillConst.BILLSTATUS_SAVED);
+		try {
+			saveAccBackValue(aggValue,false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	public IErmAccruedBillManage getManageService() {
+		if (manageService == null) {
+			manageService = NCLocator.getInstance().lookup(IErmAccruedBillManage.class);
+		}
+		return manageService;
+	}
+	private AggAccruedBillVO saveAccBackValue(Object object, boolean isEdit) throws Exception {
+		AggAccruedBillVO returnObj = null;
+		if (isEdit) {
+			returnObj = getManageService().updateVO((AggAccruedBillVO) object);
+		} else {
+			returnObj = getManageService().insertVO((AggAccruedBillVO) object);
+		}
 	
+		// 显示预算，借款控制的提示信息
+		if (!StringUtils.isNullWithTrim(returnObj.getParentVO().getWarningmsg())) {
+			MessageDialog.showWarningDlg(null, nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+																													 * @
+																													 * res
+																													 * "警告"
+																													 */, returnObj.getParentVO().getWarningmsg());
+			returnObj.getParentVO().setWarningmsg(null);
+		}
+	
+		return returnObj;
+	}
+	public String insertMa(AggregatedValueObject vo,String djlxbm,String userid)
+			throws BusinessException {
+//		dealBodyRowNum();
+		AggMatterAppVO aggMatterVo = (AggMatterAppVO) vo;
+		try {
+			UFDouble newYbje = null;
+			MtAppDetailVO[] items = aggMatterVo.getChildrenVO();
+
+			int length = items.length;
+			for (int i = 0; i < length; i++) {
+				if (items[i].getOrig_amount() != null) {// 当表体中存在空行时，原币金额为空，所以在这里判空
+					if (newYbje == null) {
+						newYbje = items[i].getOrig_amount();
+					} else {
+						newYbje = newYbje.add(items[i].getOrig_amount());
+					}
+				}
+			}
+			// 金额校验
+			UFDouble oriAmount = aggMatterVo.getParentVO().getOrig_amount();
+			if (oriAmount == null || oriAmount.compareTo(UFDouble.ZERO_DBL) <= 0) {
+				throw new ValidationException("请录入正确的金额");
+			}
+
+//			validate(aggMatterVo);
+			// 执行单据模板验证公式
+//			boolean execValidateFormulas = ((BillForm) getEditor()).getBillCardPanel().getBillData()
+//					.execValidateFormulas();
+//			if (!execValidateFormulas) {
+//				return null;
+//			}
+			aggMatterVo.getParentVO().setBillstatus(ErmMatterAppConst.BILLSTATUS_SAVED);
+			saveMaBackValue(aggMatterVo,false);
+
+		} catch (BugetAlarmBusinessException ex) {
+//			if (MessageDialog.showYesNoDlg(((BillForm) getEditor()).getParent(), nc.vo.ml.NCLangRes4VoTransl
+//					.getNCLangRes().getStrByID("2011", "UPP2011-000049")/*
+//																		 * @ res
+//																		 * "提示"
+//																		 */, ex.getMessage()
+//					+ nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011", "UPP2011-000341")/*
+//																									 * @
+//																									 * res
+//																									 * " 是否继续审核？"
+//																									 */) == MessageDialog.ID_YES) {
+//				aggMatterVo.getParentVO().setHasntbcheck(UFBoolean.TRUE); // 不检查
+//				saveBackValue(aggMatterVo);
+//			} else {
+//				throw new BusinessException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+//						"UPP2011-000405")
+//				/* @res "预算申请失败" */, ex);
+//			}
+		} catch (AtpNotEnoughException ex) {
+//			if (MessageDialog.showYesNoDlg(((BillForm) getEditor()).getParent(), nc.vo.ml.NCLangRes4VoTransl
+//					.getNCLangRes().getStrByID("2011", "UPP2011-000049")/*
+//																		 * @ res
+//																		 * "提示"
+//																		 */, ex.getMessage()) == MessageDialog.ID_YES) {
+//
+//				aggMatterVo.getParentVO().setIsignoreatpcheck(UFBoolean.TRUE);
+//				saveBackValue(aggMatterVo);
+//			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	private IErmMatterAppBillManage getMgService(){
+		if(mgService == null){
+			mgService = NCLocator.getInstance().lookup(IErmMatterAppBillManage.class);
+		}
+		return mgService;
+	}
+	private AggMatterAppVO saveMaBackValue(Object object, boolean isEdit) throws Exception {
+		AggMatterAppVO returnObj = null;
+		if (isEdit) {
+			returnObj = getMgService().updateVO((AggMatterAppVO) object);
+		} else {
+			returnObj = getMgService().insertVO((AggMatterAppVO) object);
+		}
+
+		// 显示预算，借款控制的提示信息
+		if (!StringUtils.isNullWithTrim(returnObj.getParentVO().getWarningmsg())) {
+			MessageDialog.showWarningDlg(null, nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+																													 * @
+																													 * res
+																													 * "警告"
+																													 */, returnObj.getParentVO().getWarningmsg());
+			returnObj.getParentVO().setWarningmsg(null);
+		}
+
+		return returnObj;
+	}
 	public String insertJkbx(AggregatedValueObject vo,String djlxbm,String userid)
 			throws BusinessException {
 		if(!(vo instanceof JKBXVO))
@@ -112,8 +256,8 @@ public class JKBXBillSaveAction {
 		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
 		// 初始化表头数据
-		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
-		jkbxvo = initservice.setBillVOtoUI(djlxVO, "", null);
+//		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
+//		jkbxvo = initservice.setBillVOtoUI(djlxVO, "", null);
 		JKBXHeaderVO parentVO = jkbxvo.getParentVO();
 		//根据数据类型将需要转换的数据进行转换
 		parentVO.setPk_jkbx(null);

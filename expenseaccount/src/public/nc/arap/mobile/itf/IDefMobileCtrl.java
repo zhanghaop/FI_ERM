@@ -4,7 +4,7 @@ import java.util.Map;
 
 import nc.vo.pub.BusinessException;
 /**
- * 用户自定义类型报销单
+ * 自定义交易类型单据的增删改查
  */
 public interface IDefMobileCtrl {
 	/**
@@ -26,9 +26,9 @@ public interface IDefMobileCtrl {
 	 * @throws BusinessException
 	 */
 	public String commitDefJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException;
-		/**
-		 * 根据单据类型编码获取对应DSL文件
-		 */
+	/**
+	 * 根据单据类型编码获取对应DSL文件
+	 */
 	public String getDslFile(String userid,String djlxbm,String nodecode, String flag) throws BusinessException;
 	/**
 	 * 得到参照
