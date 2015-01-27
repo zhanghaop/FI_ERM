@@ -34,7 +34,7 @@ public class BXUtil {
 	 * @throws BusinessException
 	 */
 	public static boolean isProductInstalled(String strCorpPK, String pro) {
-		return false;
+		return ErUtil.isProductInstalled(strCorpPK, pro);
 	}
 
 	/**

@@ -92,7 +92,7 @@ public class HeadAfterEditUtil {
 						isInitGroup = ((ErmBillBillManageModel) editor.getModel()).getContext().getNodeCode()
 								.equals(BXConstans.BXINIT_NODECODE_G);
 						if (!isInitGroup && (fyPkCorp == null || fyPkCorp.equals("")) || !headItem.isEnabled()) {
-							ref.setEnabled(false);
+							// ref.setEnabled(false); 636被注掉，chenshuaia,影响一些字段不可编辑
 							// 将组织所关联的字段设置为空
 						} else {
 							if (!ref.isEnabled()) {

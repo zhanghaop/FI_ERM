@@ -505,6 +505,7 @@ public class ExpamtUtil {
 			UFDouble restAmount = new UFDouble(parentVo.getCurr_amount().getDouble());
 			for (int i = 0; i < details.length; i++) {
 				ExpamtDetailVO detail = details[i];
+				int ybDecimalDigit = Currency.getCurrDigit(detail.getBzbm());// 原币精度
 
 				// 本期摊销记录记录
 				ExpamtprocVO expamtprocVO = procMap.get(detail.getPk_expamtdetail());
@@ -530,7 +531,9 @@ public class ExpamtUtil {
 						detailCurrAmount = restAmount;
 						restAmount = UFDouble.ZERO_DBL;
 					} else {
-						detailCurrAmount = (detailTotalAmount.div(totalAmount)).multiply(currAmount);
+						//精度要处理
+						detailCurrAmount = ((detailTotalAmount.div(totalAmount)).multiply(currAmount)).
+								setScale(ybDecimalDigit, UFDouble.ROUND_HALF_UP);
 						restAmount = restAmount.sub(detailCurrAmount);
 					}
 				}
@@ -557,47 +560,6 @@ public class ExpamtUtil {
 		vo.setCurr_groupamount(bbJes[1]);
 		vo.setCurr_globalamount(bbJes[2]);
 	}
-
-	// /**
-	// * 根据会计期间获取当期摊销金额
-	// *
-	// * @param expamtInfo 摊销vo
-	// * @param currentAccMonth 会计期间
-	// * @param resPeriod 剩余摊销期
-	// * @param resAmount 剩余摊销金额
-	// * @return
-	// * @throws BusinessException
-	// */
-	// public static UFDouble getCurrAmount(ExpamtinfoVO expamtInfo, String
-	// currentAccMonth, Integer resPeriod, UFDouble resAmount) throws
-	// BusinessException {
-	//
-	// if(currentAccMonth != null &&
-	// expamtInfo.getEnd_period().compareTo(currentAccMonth) < 0){
-	// return UFDouble.ZERO_DBL;
-	// }
-	//
-	// UFBoolean amtStatus = getAmtStatus(expamtInfo, currentAccMonth);
-	// UFDouble currAmount = UFDouble.ZERO_DBL;
-	// if(amtStatus.equals(UFBoolean.TRUE)){//已摊销的情况下 ，构造记录中查询
-	// IExpAmortizeprocQuery service =
-	// NCLocator.getInstance().lookup(IExpAmortizeprocQuery.class);
-	// ExpamtprocVO procVo =
-	// service.queryByInfoPkAndAccperiod(expamtInfo.getPk_expamtinfo(),
-	// currentAccMonth);
-	//
-	// if(procVo != null){
-	// return procVo.getCurr_amount();
-	// }
-	// }else{
-	// if (resPeriod.intValue() == 1) {
-	// currAmount = resAmount;
-	// }else{
-	// currAmount = resAmount.div(resPeriod.intValue());
-	// }
-	// }
-	// return currAmount;
-	// }
 
 	/**
 	 * 设置表头摊销金额
