@@ -7,7 +7,8 @@
 		<sysField>systemcode</sysField>
 		<corpField></corpField>
 		<grpField>pk_billtypecode</grpField>
-		<fixedWhere>systemcode='erm' and (pk_group='global00000000000000' or pk_group = '~') </fixedWhere>
+		<fixedWhere>systemcode='erm' and (pk_group='global00000000000000' or pk_group = '~')
+			and pk_billtypecode !='264c' </fixedWhere>
 	</item>
 
 	<item>
@@ -90,63 +91,8 @@
 		<sysField></sysField>
 		<corpField></corpField>
 		<grpField></grpField>
-		<fixedWhere>(funcode like '2011%')</fixedWhere>
+		<fixedWhere>(funcode like '2011%') and funcode != '20110BXAM'</fixedWhere>
 	</item>
-	
-	<!--  by chenshuai 暂时没有快捷键
-	<item>
-		<itemKey>0015</itemKey>
-		<itemName>快捷键</itemName>
-		<itemRule>pub_hotkeyregister</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>fun_code like '2011%'</fixedWhere>
-	</item>
-	-->
-	<!--  by chenshuai 通过元数据控制引用关系
-	<item>
-		<itemKey>0016</itemKey>
-		<itemName>引用关系</itemName>
-		<itemRule>bd_ref_relation</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>referencingtablename like 'er_%'</fixedWhere>
-	</item>
-	-->
-	
-	<!-- by lvhj
-	<item>
-		<itemKey>0003</itemKey>
-		<itemName>业务类型</itemName>
-		<itemRule>bd_busitype</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField>busicode</grpField>
-		<fixedWhere>(busicode like 'erm%') and pk_group='global00000000000000'</fixedWhere>
-	</item>
-
-	
-	<item>
-		<itemKey>0017</itemKey>
-		<itemName>节点-模块对应关系</itemName>
-		<itemRule>sm_codetocode</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>funccode in ('delete')</fixedWhere>
-	</item>
-	<item>
-		<itemKey>0022</itemKey>
-		<itemName>节点对应关系</itemName>
-		<itemRule>pub_funccodetocode</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>mainnodecode like '2011%'</fixedWhere>
-	</item>
-	-->
 
 	<item>
 		<itemKey>0020</itemKey>
@@ -214,29 +160,6 @@
 		<fixedWhere>code in ('bx','jk','cs','ma','262X') </fixedWhere>
 	</item>
 	
-
-	<!-- 注释 by chendya 单据号具体规则已经从单据号规则中根据主子关系导出了
-		
-	<item>
-		<itemKey>pub_bcr_rulebase</itemKey>
-		<itemName>单据号规则</itemName>
-		<itemRule>pub_bcr_rulebase</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>nbcrcode in  ('bx','jk','cs','ma') and pk_group='presetdatagrouppk000' </fixedWhere>
-	</item>
-	<item>
-		<itemKey>pub_bcr_elem</itemKey>
-		<itemName>单据号具体规则</itemName>
-		<itemRule>pub_bcr_elem</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere> pk_billcodebase in(select pk_billcodebase from pub_bcr_rulebase where nbcrcode in('bx','jk'))</fixedWhere>
-	</item>
-	-->
-	
 	<item>
 		<itemKey>BD307</itemKey>
 		<itemName>元数据</itemName>
@@ -262,7 +185,7 @@
 		<sysField></sysField>
 		<corpField></corpField>
 		<grpField></grpField>
-		<fixedWhere>pk_group='@@@@'</fixedWhere>
+		<fixedWhere>pk_group='@@@@' and djlxbm != '264c'</fixedWhere>
 	</item>
 	<item>
 	   <itemKey>pub_vochange</itemKey>
@@ -303,60 +226,7 @@
 		<grpField></grpField>
 		<fixedWhere>1=1</fixedWhere>
 	</item>
-<!--
-	<item>
-		<itemKey>BD990</itemKey>
-		<itemName>sm_func_be_map</itemName>
-		<itemRule>sm_func_be_map</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>(fun_code like '2011%')</fixedWhere>
-	</item>
 
-	<item>
-		<itemKey>BD993</itemKey>
-		<itemName>cmp_outerface</itemName>
-		<itemRule>cmp_outerface</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>system='erm'</fixedWhere>
-	</item>
-
-	<item>
-		<itemKey>BD994</itemKey>
-		<itemName>pub_print_dataitem</itemName>
-		<itemRule>pub_print_dataitem</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>pk_corp='@@@@' and (vnodecode  like '2011%')</fixedWhere>
-	</item>
--->
-<!--
-	 <item>
-		 <itemKey>BD998</itemKey>
-		 <itemName>sm_power_func</itemName>
-		 <itemRule>sm_power_func</itemRule>
-		 <sysField></sysField>
-		 <corpField></corpField>
-		 <grpField></grpField>
-		 <fixedWhere>pk_role='0001SELFSRV-ROLE-ESS' and resource_data_id in (select cfunid from sm_funcregister where fun_code like '2011%')</fixedWhere>
-	 </item>
--->
-
-<!--
-	<item>
-		<itemKey>0039</itemKey>
-		<itemName>基础数据信息</itemName>
-		<itemRule>bd_bdinfo</itemRule>
-		<sysField></sysField>
-		<corpField></corpField>
-		<grpField></grpField>
-		<fixedWhere>bdcode in ('250','251')</fixedWhere>
-	</item>
--->
 	<item>
 		<itemKey>sm_menuitemreg</itemKey>
 		<itemName>NC菜单项</itemName>
@@ -364,7 +234,10 @@
 		<sysField></sysField>
 		<corpField></corpField>
 		<grpField></grpField>
-		<fixedWhere>(menuitemcode like '2011%') and pk_menu in(select pk_menu from sm_menuregister where  isdefault='Y')</fixedWhere>
+		<fixedWhere>(menuitemcode like '2011%' or menuitemcode in ('A0D0','A0D002')) 
+		and pk_menu in(select pk_menu from sm_menuregister where  isdefault='Y')
+		and (funcode is null or funcode not in ('20110BXAM'))
+		</fixedWhere>
 	</item>
 	<item>
 	     <itemKey>BD880</itemKey>
@@ -403,49 +276,7 @@
 		<grpField></grpField>
 		<fixedWhere>( sys_code ='erm' ) </fixedWhere>
 	</item>
-	<!--
-	 <item>
-		 <itemKey>BD999</itemKey>
-		 <itemName>sm_power_butn</itemName>
-		 <itemRule>sm_power_butn</itemRule>
-		 <sysField></sysField>
-		 <corpField></corpField>
-		 <grpField></grpField>
-		 <fixedWhere>pk_role='0001SELFSRV-ROLE-ESS'  and resource_data_id in (select cfunid from sm_butnregister where fun_code like '2011%')</fixedWhere>
-	 </item>
-
-
-
-	 <item>
-		 <itemKey>sm_butnregister</itemKey>
-		 <itemName>按钮注册</itemName>
-		 <itemRule>sm_butnregister</itemRule>
-		 <sysField></sysField>
-		 <corpField></corpField>
-		 <grpField></grpField>
-		 <fixedWhere>parent_id in (select parent_id from sm_busiactivereg where busi_pk like '2011%')</fixedWhere>
-	 </item>
-	 <item>
-		 <itemKey>sm_busiactivereg</itemKey>
-		 <itemName>业务活动</itemName>
-		 <itemRule>sm_busiactivereg</itemRule>
-		 <sysField></sysField>
-		 <corpField></corpField>
-		 <grpField></grpField>
-		 <fixedWhere> busi_pk like '2011%' </fixedWhere>
-	 </item>
-	 -->
-	<!--
-	 <item>
-		 <itemKey>sm_busiactive_btn</itemKey>
-		 <itemName>业务活动按钮关联表</itemName>
-		 <itemRule>sm_busiactive_btn</itemRule>
-		 <sysField></sysField>
-		 <corpField></corpField>
-		 <grpField></grpField>
-		 <fixedWhere> pk_busiactive in (select pk_busiactive from sm_busiactivereg where busi_pk like '2011%') </fixedWhere>
-	 </item>
-	 -->
+	
 	 <item>
 		<itemKey>fip_billregister</itemKey>
 		<itemName>会计平台单据注册</itemName>
@@ -608,7 +439,9 @@
 		<sysField></sysField>
 		<corpField></corpField>
 		<grpField></grpField>
-		<fixedWhere>src_billtype in (select distinct pk_billtypecode  from bd_billtype where systemcode  in ('erm')) and pk_group ='GLOBLE00000000000000'</fixedWhere>
+		<fixedWhere>src_billtype in (select distinct pk_billtypecode  from bd_billtype where systemcode  in ('erm')) and pk_group ='GLOBLE00000000000000'
+			and SRC_BILLTYPE !='264c'
+		</fixedWhere>
 	</item>
 	<item>
 		<itemKey>SM_LOG_OPERATION</itemKey>
@@ -740,12 +573,12 @@
 		<fixedWhere>pk_module = '2011'</fixedWhere>
 	</item>
 	<item>
-		<itemKey>pub_workflowgadget</itemKey>
-		<itemName>流程组件</itemName>
-		<itemRule>pub_workflowgadget</itemRule>
+		<itemKey>bd_imagescantype</itemKey>
+		<itemName>共享服务扫描方式</itemName>
+		<itemRule>bd_imagescantype</itemRule>
 		<sysField></sysField>
 		<corpField></corpField>
 		<grpField></grpField>
-		<fixedWhere>billtype in ('263X','264X','261X','262X')</fixedWhere>
+		<fixedWhere>code like '01%'</fixedWhere>
 	</item>
 </items>

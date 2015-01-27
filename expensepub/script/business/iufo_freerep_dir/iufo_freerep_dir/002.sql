@@ -4,9 +4,6 @@ go
 insert into iufo_freereport(id,creationtime,creator,datasource,def1,def2,def3,def4,def5,dr,modelcode,modifiedtime,modifier,name,note,pk_dir,pk_group,pk_org,reportcode,reportinfo,sysinit,ts) values('1001Z3100000000018R6','2013-01-05 11:25:39','1001Z310000000001JKM',null,'~','~','~','~','~',0,'erm_report','2013-09-05 16:48:50','1001Z3100000000049KY','~','报销管理借款明细帐表(系统预置)','1001Z3100000000018R5','0001Z3100000000008I3','GLOBLE00000000000000','erm_loandetail',null,'Y','2014-09-25 10:49:26')
 go
 
-insert into iufo_freereport(id,creationtime,creator,datasource,def1,def2,def3,def4,def5,dr,modelcode,modifiedtime,modifier,name,note,pk_dir,pk_group,pk_org,reportcode,reportinfo,sysinit,ts) values('1001Z310000000003R16','2014-05-27 10:19:06','1001Z310000000001PQO',null,'~','~','~','~','~',0,null,null,'~','~',null,'1001Z3100000000018R5','0001Z310000000000AUU','GLOBLE00000000000000','000022222',null,'Y','2014-09-25 10:49:26')
-go
-
 insert into iufo_freereport(id,creationtime,creator,datasource,def1,def2,def3,def4,def5,dr,modelcode,modifiedtime,modifier,name,note,pk_dir,pk_group,pk_org,reportcode,reportinfo,sysinit,ts) values('1001Z310000000004NFU','2013-01-05 11:25:49','1001Z310000000001JKM',null,'~','~','~','~','~',0,'erm_report','2013-09-05 16:48:50','1001Z3100000000049KY','~','报销管理借款余额表（系统预置）','1001Z3100000000018R5','0001Z3100000000008I3','GLOBLE00000000000000','erm_loanbalance',null,'Y','2014-09-25 10:49:26')
 go
 

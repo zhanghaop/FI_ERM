@@ -106,9 +106,6 @@ go
 insert into pub_vochange_b(pk_vochange_b,dest_attr,dr,pk_vochange,ruledata,ruletype,ts) values('1001Z310000000000TCL','pk_pcorg',0,'1001Z31000000000UWO3','mtapp_detail.pk_pcorg',2,'2014-11-20 18:29:35')
 go
 
-insert into pub_vochange_b(pk_vochange_b,dest_attr,dr,pk_vochange,ruledata,ruletype,ts) values('1001Z310000000000TCM','fydwbm',0,'1001Z31000000000UWO3','mtapp_detail.assume_org',2,'2014-11-20 18:29:35')
-go
-
 insert into pub_vochange_b(pk_vochange_b,dest_attr,dr,pk_vochange,ruledata,ruletype,ts) values('1001Z310000000000TCN','dwbm',0,'1001Z31000000000UWO3','apply_org',2,'2014-11-20 18:29:35')
 go
 
@@ -260,5 +257,8 @@ insert into pub_vochange_b(pk_vochange_b,dest_attr,dr,pk_vochange,ruledata,rulet
 go
 
 insert into pub_vochange_b(pk_vochange_b,dest_attr,dr,pk_vochange,ruledata,ruletype,ts) values('1001Z310000000000TE1','pk_brand',0,'1001Z31000000000UWO3','mtapp_detail.pk_brand',2,'2014-11-20 18:29:35')
+go
+
+insert into pub_vochange_b(pk_vochange_b,dest_attr,dr,pk_vochange,ruledata,ruletype,ts) values('1001Z31000000000CR4R','fydwbm',0,'1001Z31000000000UWO3','mtapp_detail.assume_org',2,'2014-11-20 18:29:35')
 go
 
