@@ -40,8 +40,8 @@ dr number(10) default 0
 /
 
 /* tablename: 预算占用期间 */
-create table er_tbbdetail (pk_jkbx char(20) null 
-/*报销单标识*/,
+create table er_tbbdetail (pk_bill char(20) null 
+/*业务单据标识*/,
 pk_tbb_detail char(20) not null 
 /*预算占用业务行*/,
 tbb_year integer null 
