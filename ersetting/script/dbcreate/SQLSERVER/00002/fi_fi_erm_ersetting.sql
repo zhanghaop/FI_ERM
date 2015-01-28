@@ -15,11 +15,6 @@ create  index i_er_jsconstras on er_jsconstras (pk_bxd,
 pk_corp)
 go
 
-/* indexcode: i_er_djlx_001 */
-create  index i_er_djlx_001 on er_djlx (dwbm,
-djdl)
-go
-
 /* indexcode: i_er_qryobj_001 */
 create  index i_er_qryobj_001 on er_qryobj (funnode,
 obj_datatype)
