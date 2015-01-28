@@ -48,20 +48,14 @@ public interface IErmMobileCtrl {
 	 * @return 借款报销单
 	 * @throws BusinessException
 	 */
-	String auditBXBillByPKs(String[] pks,String userid) throws Exception;
+	String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck) throws Exception;
 	/**
-
-	    * 按pk查询审批流
-
-	    * 
-
-	    * @param headpk
-
-	    * @throws BusinessException
-
-	    */
-
-	   public Map<String,Map<String,String>> loadBxdWorkflownote(String pk_jkbx,String djlxbm) throws BusinessException;
+    * 按pk查询审批流
+    * 
+    * @param headpk
+    * @throws BusinessException
+    */
+	public Map<String,Map<String,String>> loadBxdWorkflownote(String pk_jkbx,String djlxbm) throws BusinessException;
 	   
 	   /**
 		 * 根据条件查询单据

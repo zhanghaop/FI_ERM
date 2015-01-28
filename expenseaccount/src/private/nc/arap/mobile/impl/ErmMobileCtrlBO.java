@@ -436,7 +436,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	}
 	
 	//审批单据//如果成功返回success，如果出错则返回出错提示
-	public String auditBXBillByPKs(String[] pks,String userid) throws Exception {
+	public String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck) throws Exception {
 		//初始化集团
 		initEvn(userid);
 		
@@ -481,7 +481,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 				}
 				return getBatchResults(msgs);
 			} else {
-				MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditVOs.get(0)) };
+				MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditVOs.get(0),checknote) };
 				return getBatchResults(returnMsgs);
 			}
 		} else {
@@ -702,7 +702,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
     }
 	
 	
-	protected MessageVO approveSingle(AggregatedValueObject bxvo) throws BusinessException {
+	protected MessageVO approveSingle(AggregatedValueObject bxvo,String checknote) throws BusinessException {
 		JKBXHeaderVO head = (JKBXHeaderVO)bxvo.getParentVO();
 		MessageVO result = null;
 		// 审核动作处理
@@ -710,7 +710,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 			String actionType = ErUtil.getApproveActionCode(PK_ORG);
 			BesideApproveContext besideContext = new BesideApproveContext();
 			besideContext.setApproveResult("Y");
-			besideContext.setCheckNote("批准");
+			besideContext.setCheckNote(checknote);
 			Object msgReturn = PfUtilPrivate.runAction(actionType, head.getDjlxbm(), bxvo, null,
 					besideContext, null, null);
 //			Object msgReturn = PfUtilPrivate.runAction(null, IPFActionName.APPROVE

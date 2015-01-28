@@ -30,6 +30,7 @@ import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.fi.pub.SqlUtils;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.pf.BillStatusEnum;
@@ -104,8 +105,10 @@ public class AuditListUtil {
 				if(userMap != null)
 					fieldvalueMap.put(JKBXHeaderVO.JKBXR, userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
 			}else if(JKBXHeaderVO.DJLXBM.equals(field)){
-				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getDjlxbm());
-				fieldvalueMap.put("djlxmc", djlxmc);
+//				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getDjlxbm());
+				BilltypeVO svo = PfDataCache.getBillType(vo.getDjlxbm());
+				fieldvalueMap.put("funcode", svo.getNodecode());
+				fieldvalueMap.put("djlxmc", svo.getBilltypename());
 			}else if(JKBXHeaderVO.ZY.equals(field) && attributeValue.length()>10){
 				attributeValue = attributeValue.substring(0,5)+"...";
 				fieldvalueMap.put(field, attributeValue);
@@ -138,8 +141,9 @@ public class AuditListUtil {
 				if(userMap != null)
 					fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
 			}else if(MatterAppVO.PK_TRADETYPE.equals(field)){
-				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getPk_tradetype());
-				fieldvalueMap.put("djlxmc", djlxmc);//djlxMap.get(vo.getPk_tradetype())
+				BilltypeVO svo = PfDataCache.getBillType(vo.getPk_tradetype());
+				fieldvalueMap.put("funcode", svo.getNodecode());
+				fieldvalueMap.put("djlxmc", svo.getBilltypename());
 			}if(MatterAppVO.REASON.equals(field) && attributeValue.length()>10){
 				attributeValue = attributeValue.substring(0,5)+"...";
 				fieldvalueMap.put(queryFields[i], attributeValue);
@@ -171,8 +175,9 @@ public class AuditListUtil {
 			}else if(AccruedVO.CREATOR.equals(field)){
 				fieldvalueMap.put(queryFields[i], userMap.get(vo.getAttributeValue(JKBXHeaderVO.CREATOR)));
 			}else if(AccruedVO.PK_TRADETYPE.equals(field)){
-				String djlxmc = PfDataCache.getBillTypeNameByCode(vo.getPk_tradetype());
-				fieldvalueMap.put("djlxmc", djlxmc);//djlxMap.get(vo.getPk_tradetype())
+				BilltypeVO svo = PfDataCache.getBillType(vo.getPk_tradetype());
+				fieldvalueMap.put("funcode", svo.getNodecode());
+				fieldvalueMap.put("djlxmc", svo.getBilltypename());
 			}if(AccruedVO.REASON.equals(field) && attributeValue.length()>10){
 				attributeValue = attributeValue.substring(0,5)+"...";
 				fieldvalueMap.put(queryFields[i], attributeValue);
@@ -246,6 +251,8 @@ public class AuditListUtil {
 //		    		  Map<String,String> djlxMap = new HashMap<String,String>();
 //					  DjLXVO[] vos = CacheUtil.getValueFromCacheByWherePart(DjLXVO.class, 
 //							"pk_group = '"+InvocationInfoProxy.getInstance().getGroupId()+"' and djdl in('jk','bx')");
+//					  String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+//					  List<BilltypeVO> billtypevo = PfDataCache.getBillTypeAndTranstypesInGrp(pk_group);
 //					  for(int i=0;i<vos.length;i++){
 //						  String djlxmc = vos[i].getDjlxmc();
 //						  djlxMap.put(vos[i].getDjlxbm(), djlxmc);

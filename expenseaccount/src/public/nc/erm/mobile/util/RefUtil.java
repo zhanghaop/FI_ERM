@@ -1,19 +1,30 @@
 package nc.erm.mobile.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
+import nc.arap.mobile.itf.IWebPubService;
+import nc.bs.framework.common.InvocationInfoProxy;
+import nc.bs.framework.common.NCLocator;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.RefPubUtil;
 import nc.ui.bd.ref.model.CustBankaccDefaultRefModel;
 import nc.vo.bd.ref.RefcolumnVO;
 import nc.vo.pub.BusinessException;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 public class RefUtil {
+	private static IWebPubService getIWebPubService(){
+		IWebPubService iWebPubService = (IWebPubService) NCLocator
+				.getInstance().lookup(IWebPubService.class);
+		return iWebPubService;
+	}
+	
 	public static String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
  		JSONObject jsonObj = new JSONObject();
  		if(reftype.startsWith("workflow,")){
@@ -30,6 +41,16 @@ public class RefUtil {
 		if (RefPubUtil.isSpecialRef(reftype)) {
 			return jsonObj.toString();
 		}
+		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+		IWebPubService iWebPubService = getIWebPubService();
+		try {
+			ArrayList<HashMap<String, String>> list = iWebPubService
+					.getCommonRefJSON("", reftype,"", pk_group, "",userid);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		AbstractRefModel refModel = RefPubUtil.getRefModel(reftype);
 		String pkFieldCode = refModel.getPkFieldCode();
 		RefcolumnVO[] RefcolumnVOs = RefPubUtil.getColumnSequences(refModel);

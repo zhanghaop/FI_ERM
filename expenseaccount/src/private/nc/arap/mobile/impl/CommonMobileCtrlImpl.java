@@ -5,6 +5,7 @@ import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.erm.mobile.environment.EnvironmentInit;
+import nc.itf.print.out.pdfhtml.IOutPdfHtml;
 import nc.itf.uap.rbac.IUserLockService;
 import nc.itf.uap.rbac.IUserManageQuery;
 import nc.itf.uap.rbac.userpassword.IUserPasswordManage;
@@ -130,4 +131,19 @@ public class CommonMobileCtrlImpl implements ICommonUtilCtrl{
 		return NCLocator.getInstance().lookup(IFunctionPermissionPubService.class)
 		.getUserPermissionFuncNode(userid, groupid);
 	}
+
+	@Override
+	public String getBillPdfByPk(String billpk, String djlxbm, String funcode,
+			String userid) throws BusinessException {
+		//≤È’“”√ªß
+		UserVO user = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(userid);
+		InvocationInfoProxy.getInstance().setUserId(userid);
+		InvocationInfoProxy.getInstance().setGroupId(user == null?null:user.getPk_group());
+		IOutPdfHtml IoutPdfHtml = (IOutPdfHtml)NCLocator.getInstance().lookup(IOutPdfHtml.class);
+		String rs = IoutPdfHtml.generateBillHtml(funcode, billpk, djlxbm,user.getPk_group());
+		return rs;
+	}
+	
+	
+	
 }

@@ -59,5 +59,4 @@ public interface IDefMobileCtrl {
 	 * 查询单据附件附件
 	 */
 	public String getAttachFile(String pk_jkbx,String userid) throws BusinessException;
-	
 }

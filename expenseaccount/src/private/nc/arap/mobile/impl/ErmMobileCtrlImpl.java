@@ -49,8 +49,8 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	}
 	
 	@Override
-	public String auditBXBillByPKs(String[] pks,String userid) throws Exception {
-		return getErmMobileCtrlBo().auditBXBillByPKs(pks,userid);
+	public String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck) throws Exception {
+		return getErmMobileCtrlBo().auditBXBillByPKs(pks,userid,checknote,ischeck);
 	}
 	
 	//≤È—Ø…Û≈˙¡˜

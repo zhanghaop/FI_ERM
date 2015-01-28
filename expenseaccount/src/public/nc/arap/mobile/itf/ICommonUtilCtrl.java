@@ -11,4 +11,10 @@ public interface ICommonUtilCtrl {
 	 */
 	public abstract String changePassword(String pwdErrorCount,String userid,
 			String password,String password1,String password2) throws BusinessException;
+	
+	/**
+	 * 查询单据生成的pdf
+	 */
+	public String getBillPdfByPk(String billpk,String djlxbm,String funcode,String userid) throws BusinessException;
+
 }
