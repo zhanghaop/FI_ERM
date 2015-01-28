@@ -279,6 +279,10 @@ public class ErmMatterAppBillQueryImpl implements IErmMatterAppBillQuery, IErmMa
 			mtAppPKs.add(mtAppDetailVO.getPk_mtapp_bill());
 		}
 		MatterAppVO[] mtAppVOS = queryMatterAppVoByPks(mtAppPKs.toArray(new String[] {}),headSql);
+		
+		if(mtAppVOS == null || mtAppVOS.length == 0){
+			return null;
+		}
 
 		// 包装结果集
 		AggMatterAppVO[] results = new AggMatterAppVO[mtAppVOS.length];
