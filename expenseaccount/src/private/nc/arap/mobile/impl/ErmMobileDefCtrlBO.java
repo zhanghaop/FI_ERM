@@ -17,7 +17,7 @@ import nc.erm.mobile.pub.template.MobileTemplateUtils;
 import nc.erm.mobile.util.RefUtil;
 import nc.erm.mobile.util.TranslateJsonToValueObject;
 import nc.erm.mobile.util.TranslateValueObjectToJson;
-import nc.erm.mobile.view.ComboBoxUtil;
+import nc.erm.mobile.view.BillItemTranslate;
 import nc.erm.mobile.view.MobileBillItem;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IErmBillUIPublic;
@@ -25,7 +25,6 @@ import nc.itf.uap.billtemplate.IBillTemplateQry;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
-import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.BXHeaderVO;
@@ -40,7 +39,6 @@ import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.bill.BillTempletHeadVO;
 import nc.vo.pub.bill.BillTempletVO;
-import nc.vo.pub.bill.MetaDataPropertyAdpter;
 import nc.vo.pub.templet.translator.BillTranslator;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -335,139 +333,144 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		return div.toString();
 	}
 	private String translateItem(String prefix,MobileBillItem item,String flag){
-		StringBuffer input = new StringBuffer();
-		int dataType = item.getDataType();
-		if("zy".equals(item.getKey()) || "zy2".equals(item.getKey())){
-			dataType = IBillItem.STRING ;
-		}
-		switch (dataType) {
-			case IBillItem.STRING:
-				panel++;
-				if(flag.equals("addcard"))
-					input.append("<input id=\"textbox" + panel 
-					+ "\" maxlength=\"256\" placeholder=\"可空\" type=\"text\""
-					+ " height=\"44\"  color=\"#000000\" "
-					+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
-				else if(flag.equals("editcard"))
+		BillItemTranslate tra  = new BillItemTranslate();
+		if(flag.equals("addcard"))
+			return tra.translateEditItem(prefix, item);
+		else
+			return tra.translateShowItem(prefix, item);
+//		StringBuffer input = new StringBuffer();
+//		int dataType = item.getDataType();
+//		if("zy".equals(item.getKey()) || "zy2".equals(item.getKey())){
+//			dataType = IBillItem.STRING ;
+//		}
+//		switch (dataType) {
+//			case IBillItem.STRING:
+//				panel++;
+//				if(flag.equals("addcard"))
+//					input.append("<input id=\"textbox" + panel 
+//					+ "\" maxlength=\"256\" placeholder=\"可空\" type=\"text\""
+//					+ " height=\"44\"  color=\"#000000\" "
+//					+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
+//				else if(flag.equals("editcard"))
+////					input.append("<label id=\"label" + panel 
+////							+ "\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
+//					input.append("<input id=\"textbox" + panel 
+//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
+//				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+//				//字符串直接赋值
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				input.append("/>"); 
+//				break;
+//			case IBillItem.DATE:
+//			case IBillItem.DATETIME:
+//				panel++;
+//				if(flag.equals("addcard"))
+//					input.append("<input id=\"dateinput" + panel 
+//					+ "\" format=\"yyyy-MM-dd\" placeholder=\"可空\" type=\"date\""
+//					+ " height=\"44\" weight=\"1\" color=\"#000000\" "
+//					+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
+//					+ " bindfield=\"" + prefix + item.getKey() + "\"");
+//				else if(flag.equals("editcard"))
+//					input.append("<input id=\"dateinput" + panel 
+//							+ "\" readonly =\"true\" format=\"yyyy-MM-dd\" type=\"date\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" "
+//							+ " bindfield=\"" + prefix + item.getKey() + "_name\"");
+//				//日期直接赋值
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				input.append("/>"); 
+//				break;
+//			case IBillItem.DECIMAL:
+//			case IBillItem.MONEY: 
+//				panel++;
+//				if(flag.equals("addcard"))
+//					input.append( "<input id=\"number" + panel 
+//					+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
+//					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
+//					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+//				else if(flag.equals("editcard"))
+////					input.append("<input id=\"number" + panel 
+////							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
+////							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
+////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
+//					input.append("<input id=\"textbox" + panel 
+//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
+//				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+//				//金额直接赋值
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				input.append("/>"); 
+//				break;
+//			case IBillItem.INTEGER:
+//				panel++;
+//				if(flag.equals("addcard"))
+//					input.append( "<input id=\"number" + panel 
+//					+ "\" min=\"-9.99999999E8\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
+//					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
+//					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+//				else if(flag.equals("editcard"))
+////					input.append("<input id=\"number" + panel 
+////							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
+////							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
+////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
+//					input.append("<input id=\"textbox" + panel 
+//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
+//				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+//				//金额直接赋值
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				input.append("/>"); 
+//				break;
+//			default:
+//				panel++;
+//				String reftype = item.getRefType();
+//				//下拉类型和参照类型分别需要对reftype做处理
+//				if(dataType == IBillItem.COMBO){
+////					JSONObject jsonObj = new JSONObject();
+//					boolean isFromMeta = reftype
+//			                   .startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
+//					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
+//					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
+//					StringBuffer typestr = new StringBuffer();
+//					for(int i=0;i<combodata.size();i++){
+//						DefaultConstEnum enumvalue = combodata.get(i);
+//						if(i != 0)
+//							typestr.append(",");
+//						typestr.append(enumvalue.getName()).append("=").append(enumvalue.getValue());
+//					}
+//					reftype = "COMBO," + item.getName() + ":" +typestr.toString();	
+//				}else{
+//					if(item.getRefType() == null)
+//						reftype = "UFREF,没有参照";
+//					else if(item.getRefType()!=null && item.getRefType().contains(","))
+//						reftype = "UFREF," + item.getRefType().split(",")[0];
+//				}
+//				if(flag.equals("addcard"))
 //					input.append("<label id=\"label" + panel 
-//							+ "\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-					input.append("<input id=\"textbox" + panel 
-							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
-				//字符串直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
-				input.append("/>"); 
-				break;
-			case IBillItem.DATE:
-			case IBillItem.DATETIME:
-				panel++;
-				if(flag.equals("addcard"))
-					input.append("<input id=\"dateinput" + panel 
-					+ "\" format=\"yyyy-MM-dd\" placeholder=\"可空\" type=\"date\""
-					+ " height=\"44\" weight=\"1\" color=\"#000000\" "
-					+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
-					+ " bindfield=\"" + prefix + item.getKey() + "\"");
-				else if(flag.equals("editcard"))
-					input.append("<input id=\"dateinput" + panel 
-							+ "\" readonly =\"true\" format=\"yyyy-MM-dd\" type=\"date\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" "
-							+ " bindfield=\"" + prefix + item.getKey() + "_name\"");
-				//日期直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
-				input.append("/>"); 
-				break;
-			case IBillItem.DECIMAL:
-			case IBillItem.MONEY: 
-				panel++;
-				if(flag.equals("addcard"))
-					input.append( "<input id=\"number" + panel 
-					+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
-					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
-				else if(flag.equals("editcard"))
-//					input.append("<input id=\"number" + panel 
-//							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
-//							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-					input.append("<input id=\"textbox" + panel 
-							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
-				//金额直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
-				input.append("/>"); 
-				break;
-			case IBillItem.INTEGER:
-				panel++;
-				if(flag.equals("addcard"))
-					input.append( "<input id=\"number" + panel 
-					+ "\" min=\"-9.99999999E8\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
-					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
-				else if(flag.equals("editcard"))
-//					input.append("<input id=\"number" + panel 
-//							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
-//							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-					input.append("<input id=\"textbox" + panel 
-							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
-				//金额直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
-				input.append("/>"); 
-				break;
-			default:
-				panel++;
-				String reftype = item.getRefType();
-				//下拉类型和参照类型分别需要对reftype做处理
-				if(dataType == IBillItem.COMBO){
-//					JSONObject jsonObj = new JSONObject();
-					boolean isFromMeta = reftype
-			                   .startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
-					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
-					StringBuffer typestr = new StringBuffer();
-					for(int i=0;i<combodata.size();i++){
-						DefaultConstEnum enumvalue = combodata.get(i);
-						if(i != 0)
-							typestr.append(",");
-						typestr.append(enumvalue.getName()).append("=").append(enumvalue.getValue());
-					}
-					reftype = "COMBO," + item.getName() + ":" +typestr.toString();	
-				}else{
-					if(item.getRefType() == null)
-						reftype = "UFREF,没有参照";
-					else if(item.getRefType()!=null && item.getRefType().contains(","))
-						reftype = "UFREF," + item.getRefType().split(",")[0];
-				}
-				if(flag.equals("addcard"))
-					input.append("<label id=\"label" + panel 
-					+ "\" height=\"44\" color=\"#000000\" "
-					+"font-size=\"16\" weight=\"1\" padding-left=\"12\" onclick =\"open_reflist\" font-family=\"default\" " 
-			 		+ " onclick-reftype=\"" + reftype
-					+ "\" onclick-mapping=\"{'" + prefix + item.getKey() + "':'pk_ref','" + prefix + item.getKey() + "_name':'refname'}\"");
-				else if(flag.equals("editcard"))
-//					input.append("<label id=\"label" + panel
-//							+ "\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-					input.append("<input id=\"textbox" + panel 
-							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
-				//参照赋默认值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
-				input.append("/>"); 
-				break;  
-		}
-		return input.toString();
+//					+ "\" height=\"44\" color=\"#000000\" "
+//					+"font-size=\"16\" weight=\"1\" padding-left=\"12\" onclick =\"open_reflist\" font-family=\"default\" " 
+//			 		+ " onclick-reftype=\"" + reftype
+//					+ "\" onclick-mapping=\"{'" + prefix + item.getKey() + "':'pk_ref','" + prefix + item.getKey() + "_name':'refname'}\"");
+//				else if(flag.equals("editcard"))
+////					input.append("<label id=\"label" + panel
+////							+ "\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
+//					input.append("<input id=\"textbox" + panel 
+//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
+//				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
+//				//参照赋默认值
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				input.append("/>"); 
+//				break;  
+//		}
+//		return input.toString();
 	}  
 
 	public String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
