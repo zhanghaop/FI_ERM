@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -609,18 +608,18 @@ public class WebPubServiceImpl implements IWebPubService {
 			Logger.error("参照查询错误！");
 		}		
 		if ("common".equals(condition)) {
-			CommonDMO dao = new CommonDMO();
-			List<CommonDataResultVO> commonresult = dao.findCommonData(reftype,
-					pk_user, pk_org);
-			if (commonresult != null && commonresult.size() > 0) {
-				for (CommonDataResultVO vo : commonresult) {
-					result = new HashMap<String, String>();
-					result.put("refpk", vo.getPk());
-					result.put("refname", vo.getName());
-					result.put("refcode", vo.getCode());
-					list.add(result);
-				}
-			}
+//			CommonDMO dao = new CommonDMO();
+//			List<CommonDataResultVO> commonresult = dao.findCommonData(reftype,
+//					pk_user, pk_org);
+//			if (commonresult != null && commonresult.size() > 0) {
+//				for (CommonDataResultVO vo : commonresult) {
+//					result = new HashMap<String, String>();
+//					result.put("refpk", vo.getPk());
+//					result.put("refname", vo.getName());
+//					result.put("refcode", vo.getCode());
+//					list.add(result);
+//				}
+//			}
 		} else {			
 			if ("会计科目".equals(reftype)) {
 				IAccountingBookPubService service = (IAccountingBookPubService) NCLocator

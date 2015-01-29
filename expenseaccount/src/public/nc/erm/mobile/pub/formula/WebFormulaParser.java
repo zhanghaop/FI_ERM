@@ -1,4 +1,5 @@
 package nc.erm.mobile.pub.formula;
+
 /**
 *
 */
@@ -23,10 +24,10 @@ import org.codehaus.jettison.json.JSONObject;
 
 
 public class WebFormulaParser {
-	//鐢ㄤ簬瀛樿串褰撳墠绾跨▼鐨勫叕寮忔墽琛屽櫒,浣垮緱姣忎釜绾跨▼鍙敓鎴愪竴涓墽琛屽櫒,鎻愰珮鏁堢巼
+	//用于存贮当前线程的公式执行器,使得每个线程只生成一个执行器,提高效率
 	private static ThreadLocal<WebFormulaParser> currentFomulaParser = new ThreadLocal<WebFormulaParser>();
 	/**
-	* 鏋勯?鏂规硶锛氬垱寤轰竴涓柊WebFormulaParser瀹炰緥
+	* 构造方法：创建一个新WebFormulaParser实例
 	*/
 	private WebFormulaParser() {
 		super();
@@ -38,7 +39,7 @@ public class WebFormulaParser {
 		"(", ")", "+", "-", "*", "/", "&", "|", "!", ">", "<", "="
 	};
 	/**
-	* WebFormulaParser鏆撮湶鐨勮闂櫒锛屽彧鏈夐?杩囪璁块棶鍣ㄨ闂甒ebFormulaParser绫伙紝绂佹鑷繁鍒涘缓瀹炰緥
+	* WebFormulaParser暴露的访问器，只有通过该访问器访问WebFormulaParser类，禁止自己创建实例
 	*/
 	public static WebFormulaParser getInstance() {
 		WebFormulaParser parser = (WebFormulaParser) currentFomulaParser.get();
@@ -49,7 +50,7 @@ public class WebFormulaParser {
 		return parser;
 	}
 	/**
-	* 鍒濆鍖杙arser锛岃鏂规硶鍦╓ebFormulaParser琚垱寤虹殑鏃跺?璋冪敤锛屼互淇濊瘉姣忎釜鍒涘缓濂界殑WebFormulaParser閮芥湁涓?釜parser鍙互浣跨敤锛屼笉鍐嶅仛鍒ょ┖
+	* 初始化parser，该方法在WebFormulaParser被创建的时候调用，以保证每个创建好的WebFormulaParser都有一个parser可以使用，不再做判空
 	*/
 	private void initFormulaParse() {
 		if (parser == null) {
@@ -64,7 +65,7 @@ public class WebFormulaParser {
 		return parser;
 	}
 	/**
-	 * 澶勭悊琛ㄥご瀛楁鎵?惈鍏紡
+	 * 处理表头字段所含公式
 	 * 
 	 */
 	public void processFormulasForHead(JSONObject parentJson,String[] formulas,Object dataVO) throws Exception{
@@ -84,7 +85,7 @@ public class WebFormulaParser {
 				VarryVO vo = paramlist[j];
 				if (vo != null && vo.getVarry() != null && vo.getVarry().length > 0) {
 					if (dataVO == null) {
-						throw new BusinessException("浼犲叆鍏紡鐨勫疄浣揤O涓虹┖,鍏紡涓殑鍙橀噺鏃犳硶鍙栧?!");
+						throw new BusinessException("传入公式的实体VO为空,公式中的变量无法取值!");
 					}
 					paramnames = vo.getVarry();
 					paramvalues = new Object[paramnames.length];
@@ -103,7 +104,7 @@ public class WebFormulaParser {
 					throw new BusinessException(getFormulaParse().getError());
 				}
 			} catch (Exception e) {
-				throw new BusinessException("鍏紡璁＄畻閿欒,鍘熷洜:" + e.getMessage());
+				throw new BusinessException("公式计算错误,原因:" + e.getMessage());
 			}
 			for(int n = 0; n < paramlist.length; n++){
 				VarryVO varryVO = paramlist[n];
@@ -118,7 +119,7 @@ public class WebFormulaParser {
 	}
 	
 	/**
-	 * 澶勭悊琛ㄤ綋瀛楁鎵?惈鍏紡
+	 * 处理表体字段所含公式
 	 * 
 	 */
 	public JSONArray processFormulasForBody(Map<Integer, JSONObject> bodyMap,JsonItem[] items,NCObject[] bodys) throws Exception{
@@ -150,7 +151,7 @@ public class WebFormulaParser {
 							throw new BusinessException(getFormulaParse().getError());
 						}
 					} catch (Exception e) {
-						throw new BusinessException("鍏紡璁＄畻閿欒,鍘熷洜:" + e.getMessage());
+						throw new BusinessException("公式计算错误,原因:" + e.getMessage());
 					}
 					if(results.length == 0){
 						continue;
@@ -179,7 +180,7 @@ public class WebFormulaParser {
 	}
 	
 	/**
-	 * 鑾峰彇鍏紡鍙傛暟
+	 * 获取公式参数
 	 * 
 	 */
 	public List<String> getFormulasParamnames(String formula) throws Exception{
@@ -208,7 +209,7 @@ public class WebFormulaParser {
 	}
 	
 	/**
-	 * 澶勭悊缂栬緫鍏紡
+	 * 处理编辑公式
 	 * 
 	 */
 	public HashMap<String,Object> processEditFormulas(String formula,Map<String, Object> paramvalueMap) throws Exception{
@@ -239,7 +240,7 @@ public class WebFormulaParser {
 					throw new BusinessException(getFormulaParse().getError());
 				}
 			} catch (Exception e) {
-				throw new BusinessException("鍏紡璁＄畻閿欒,鍘熷洜:" + e.getMessage());
+				throw new BusinessException("公式计算错误,原因:" + e.getMessage());
 			}
 			HashMap<String,Object> resultMap = new HashMap<String,Object>();
 			for(int n = 0; n < varryVOList.length; n++){

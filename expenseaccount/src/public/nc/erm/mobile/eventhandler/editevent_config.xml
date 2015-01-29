@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="gb2312"?>
+<items>
+	<item>
+		<itemkey>pk_psndoc</itemkey>
+		<listener></listener>
+		<valueinfo>
+			<valueitem>
+				<valueitemid>pk_deptid_v</valueitemid>
+				<valuetype>function</valuetype>
+				<value>#executeQuery#?
+				select dept.pk_dept as value, dept.code as code, dept.name as name 
+  				  from bd_psnjob psnjob, org_dept dept 
+ 				 where psnjob.pk_dept = dept.pk_dept 
+   				   and psnjob.ismainjob = 'Y' 
+   				   and psnjob.pk_psndoc = '[pk_psndoc]'</value>
+			</valueitem>
+		</valueinfo>
+		<enabledinfo>
+			<enableditem>
+				<enableditemid></enableditemid>
+				<requirement></requirement>
+				<enabled></enabled>
+			</enableditem>
+		</enabledinfo>
+	</item>
+	<item>
+		<itemkey>arap.payableitem@pk_psndoc</itemkey>
+		<listener></listener>
+		<valueinfo>
+			<valueitem>
+				<valueitemid>arap.payableitem@pk_deptid_v</valueitemid>
+				<valuetype>function</valuetype>
+				<value>#mainJobDept#</value>
+			</valueitem>
+		</valueinfo>
+		<enabledinfo>
+			<enableditem>
+				<enableditemid></enableditemid>
+				<requirement></requirement>
+				<enabled></enabled>
+			</enableditem>
+		</enabledinfo>
+	</item>
+	<item>
+		<itemkey>pk_deptid</itemkey>
+		<listener></listener>
+		<filterinfo>
+			<filteritem>
+				<filteritemid>pu_psndoc</filteritemid>
+				<columnname>pk_dept</columnname>
+			</filteritem>
+		</filterinfo>
+	</item>
+	<item>
+		<itemkey>pk_currtype</itemkey>
+		<listener></listener>
+		<filterinfo>
+			<filteritem>
+				<filteritemid>payaccount</filteritemid>
+				<columnname>pk_currtype</columnname>
+			</filteritem>
+		</filterinfo>
+	</item>
+</items>
+
+
+
+<!-- <valueitem>
+				<valueitemid>pk_deptid_v</valueitemid>
+				<valuetype>metadata</valuetype>
+				<value>pk_org.pk_org,pk_org.code,pk_org.name</value>
+			</valueitem> -->
