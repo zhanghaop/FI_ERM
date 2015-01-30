@@ -222,14 +222,12 @@
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="billForm" ref="billFormEditor" />
 		<property name="model" ref="manageAppModel" />
-		<property name="dataSource" ref="singleDataSource" />
 	</bean>
 	<!-- 预览 -->
 	<bean id="previewAction" class="nc.ui.erm.matterapp.actions.PreViewAction">
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="billForm" ref="billFormEditor" />
 		<property name="model" ref="manageAppModel" />
-		<property name="dataSource" ref="singleDataSource" />
 	</bean>
 
 	<!-- 正式打印 -->
@@ -237,7 +235,6 @@
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="billForm" ref="billFormEditor" />
 		<property name="model" ref="manageAppModel" />
-		<property name="dataSource" ref="singleDataSource" />
 	</bean>
 	<!-- 取消正式打印 -->
 	<bean id="printOfficialCancelAction" class="nc.ui.erm.matterapp.actions.PrintOfficialCancelAction">
@@ -255,7 +252,6 @@
 	<bean id="printOutputAction" class="nc.ui.erm.matterapp.actions.PrintOutputAction">
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="model" ref="manageAppModel" />
-		<property name="datasource" ref="singleDataSource" />
 	</bean>
 
 	<bean id="linkBudgetAction" class="nc.ui.erm.matterapp.actions.LinkBudgetAction">
@@ -428,11 +424,6 @@
 				<ref bean="linkApproveAction" />
 			</list>
 		</property>
-	</bean>
-
-	<bean id="singleDataSource"
-		class="nc.ui.erm.matterapp.actions.print.MatterAppMetaDataSingleDataSource">
-		<property name="model" ref="manageAppModel" />
 	</bean>
 
 	<bean id="multiDataSource" class="nc.ui.erm.matterapp.actions.print.MatterAppMetaDataAllDatasSource">

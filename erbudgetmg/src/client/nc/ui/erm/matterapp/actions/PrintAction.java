@@ -3,11 +3,20 @@ package nc.ui.erm.matterapp.actions;
 import java.awt.event.ActionEvent;
 
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
+import nc.bs.framework.common.NCLocator;
+import nc.bs.uif2.IActionCode;
+import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
+import nc.ui.erm.matterapp.actions.print.MatterAppMetaDataSingleDataSource;
 import nc.ui.erm.matterapp.common.MatterAppUiUtil;
 import nc.ui.erm.matterapp.model.MAppModel;
 import nc.ui.erm.matterapp.view.MatterAppMNBillForm;
-import nc.ui.pub.print.IDataSource;
 import nc.ui.pub.print.PrintEntry;
+import nc.ui.uif2.NCAction;
+import nc.ui.uif2.UIState;
+import nc.ui.uif2.actions.ActionInitializer;
+import nc.ui.uif2.model.BillManageModel;
+import nc.vo.erm.matterapp.AggMatterAppVO;
+import nc.vo.pub.BusinessException;
 
 /**
  * @author chenshuaia
@@ -15,17 +24,21 @@ import nc.ui.pub.print.PrintEntry;
  *         打印活动
  */
 @SuppressWarnings( { "serial" })
-public class PrintAction extends nc.ui.uif2.actions.PrintAction {
+public class PrintAction extends NCAction {
 	private MatterAppMNBillForm billForm;
 	
-	private IDataSource dataSource;
-
+	private MAppModel model;
+	
+	public PrintAction(){
+		ActionInitializer.initializeAction(this, IActionCode.PRINT);
+	}
+	
 	@Override
-	public void doAction(ActionEvent e){
+	public void doAction(ActionEvent e) throws BusinessException{
 		printInfo();
 	}
 
-	private void printInfo() {
+	protected void printInfo() throws BusinessException {
 		try {
 			printByNodeKey(null);
 		} catch (Exception e) {// 无打印模板的情况下，取默认模板
@@ -33,16 +46,19 @@ public class PrintAction extends nc.ui.uif2.actions.PrintAction {
 		}
 	}
 	
-	private void printByNodeKey(String nodeKey) {
+	protected void printByNodeKey(String nodeKey) throws BusinessException {
 		if (nodeKey == null) {
 			nodeKey = getNodeKey();
 		}
 
-		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI(), getDataSource());
+		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI());
 		String pkUser = getModel().getContext().getPk_loginUser();
 		entry.setTemplateID(MatterAppUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, nodeKey);
-		entry.selectTemplate();
-		entry.preview();
+		
+		setDatasource(entry);
+		if(entry.selectTemplate() == 1){
+			entry.print();
+		}
 	}
 
 	public String getNodeKey() {
@@ -54,13 +70,41 @@ public class PrintAction extends nc.ui.uif2.actions.PrintAction {
 			return null;
 		}
 	}
+	
+	public void setDatasource(PrintEntry entry) throws BusinessException {
+		BillManageModel model = (BillManageModel) getModel();
+		AggMatterAppVO[] vos = null;
 
-	public void setDataSource(IDataSource dataSource) {
-		this.dataSource = dataSource;
+		if (getModel() instanceof BillManageModel) {
+			Object[] objs = model.getSelectedOperaDatas();
+			if (objs != null) {
+				vos = new AggMatterAppVO[objs.length];
+				for (int i = 0; i < vos.length; i++) {
+					vos[i] = (AggMatterAppVO) objs[i];
+				}
+			}
+		}
+
+		if ((((vos == null) || (vos.length == 0)))) {
+			vos = new AggMatterAppVO[] { (AggMatterAppVO) model.getSelectedData() };
+		}
+
+		if (vos != null && vos.length > 0) {
+			for (AggMatterAppVO vo : vos) {
+				if ((vo.getChildrenVO() == null || vo.getChildrenVO().length == 0)) {
+					// 补齐表体信息
+					vo = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class).queryBillByPK(vo.getParentVO().getPrimaryKey());
+				}
+
+				MatterAppMetaDataSingleDataSource dataSource = new MatterAppMetaDataSingleDataSource(vo);
+				dataSource.setModel(getModel());
+				entry.setDataSource(dataSource);
+			}
+		}
 	}
-
-	public IDataSource getDataSource() {
-		return dataSource;
+	
+	protected boolean isActionEnable() {
+		return getModel().getSelectedData() != null && getModel().getUiState() == UIState.NOT_EDIT;
 	}
 
 	public MatterAppMNBillForm getBillForm() {
@@ -69,5 +113,14 @@ public class PrintAction extends nc.ui.uif2.actions.PrintAction {
 
 	public void setBillForm(MatterAppMNBillForm billForm) {
 		this.billForm = billForm;
+	}
+
+	public MAppModel getModel() {
+		return model;
+	}
+
+	public void setModel(MAppModel model) {
+		model.addAppEventListener(this);
+		this.model = model;
 	}
 }

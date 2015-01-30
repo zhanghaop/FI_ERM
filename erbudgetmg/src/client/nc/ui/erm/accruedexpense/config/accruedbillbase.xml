@@ -178,20 +178,17 @@
 	<bean id="printAction" class="nc.ui.erm.accruedexpense.actions.AccPrintAction">
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="model" ref="manageAppModel" />
-		<property name="dataSource" ref="singleDataSource" />
 	</bean>
 	<!-- 预览 -->
 	<bean id="previewAction" class="nc.ui.erm.accruedexpense.actions.AccPreViewAction">
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="model" ref="manageAppModel" />
-		<property name="dataSource" ref="singleDataSource" />
 	</bean>
 
 	<!-- 正式打印 -->
 	<bean id="printOfficalAction" class="nc.ui.erm.accruedexpense.actions.AccPrintOfficalAction">
 		<property name="exceptionHandler" ref="exceptionHandler" />
 		<property name="model" ref="manageAppModel" />
-		<property name="dataSource" ref="singleDataSource" />
 	</bean>
 	<!-- 取消正式打印 -->
 	<bean id="printOfficialCancelAction"
@@ -271,11 +268,6 @@
 		<property name="billForm" ref="billFormEditor" />
 	</bean>
 	<bean id="actionsBarSeparator" class="nc.ui.pub.beans.ActionsBar$ActionsBarSeparator" />
-
-	<bean id="singleDataSource"
-		class="nc.ui.erm.accruedexpense.actions.AccruedPrintMetaDataSingleDataSource">
-		<property name="model" ref="manageAppModel" />
-	</bean>
 
 	<bean id="multiDataSource"
 		class="nc.ui.erm.accruedexpense.actions.AccruedPrintMetaDataMultDataSource">

@@ -4,6 +4,7 @@ import nc.bs.uif2.IActionCode;
 import nc.ui.erm.util.ErUiUtil;
 import nc.ui.pub.print.PrintEntry;
 import nc.ui.uif2.actions.ActionInitializer;
+import nc.vo.pub.BusinessException;
 
 public class AccPreViewAction extends AccPrintAction {
 
@@ -14,15 +15,18 @@ public class AccPreViewAction extends AccPrintAction {
 	}
 
 	@Override
-	protected void printByNodeKey(String nodeKey) {
+	protected void printByNodeKey(String nodeKey) throws BusinessException {
 		if (nodeKey == null) {
 			nodeKey = getNodeKey();
 		}
 
-		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI(), getDataSource());
+		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI());
 		String pkUser = getModel().getContext().getPk_loginUser();
 		entry.setTemplateID(ErUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, nodeKey);
-		entry.selectTemplate();
-		entry.preview();
+		
+		setDatasource(entry);
+		if(entry.selectTemplate() == 1){
+			entry.preview();
+		}
 	}
 }

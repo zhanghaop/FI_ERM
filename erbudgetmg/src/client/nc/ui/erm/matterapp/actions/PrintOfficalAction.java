@@ -31,7 +31,7 @@ public class PrintOfficalAction extends nc.ui.erm.matterapp.actions.PreViewActio
 	}
 
 	@Override
-	public void doAction(ActionEvent e) throws Exception {
+	public void doAction(ActionEvent e) throws BusinessException {
 		AggMatterAppVO aggVO = (AggMatterAppVO) getModel().getSelectedData();
 		// ºÏ≤ÈVO
 		checkOfficalPrint(aggVO);

@@ -6,15 +6,32 @@ import java.util.Map;
 import nc.ui.arap.bx.print.ERMPrintDigitUtil;
 import nc.ui.bd.pub.actions.print.MetaDataSingleSelectDataSource;
 import nc.vo.er.exception.ExceptionHandler;
+import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
 import nc.vo.pub.BusinessException;
 
 public class MatterAppMetaDataSingleDataSource extends MetaDataSingleSelectDataSource {
 	private static final long serialVersionUID = 1L;
-
+	
+	private AggMatterAppVO aggMatterVo = null;
+	
+	public MatterAppMetaDataSingleDataSource(){
+		
+	}
+	
+	public MatterAppMetaDataSingleDataSource(AggMatterAppVO aggMatterVo){
+		this.aggMatterVo = aggMatterVo;
+	}
+	
+	
 	@Override
 	public Object[] getMDObjects() {
-		Object[] result = super.getMDObjects();
+		Object[] result = null;
+		if (getAggMatterVo() != null) {
+			result = new Object[] { getAggMatterVo() };
+		} else {
+			result = super.getMDObjects();
+		}
 
 		Map<String, String[]> fieldsMap = new HashMap<String, String[]>();
 
@@ -35,5 +52,13 @@ public class MatterAppMetaDataSingleDataSource extends MetaDataSingleSelectDataS
 			ExceptionHandler.consume(e);
 		}
 		return result;
+	}
+
+	public AggMatterAppVO getAggMatterVo() {
+		return aggMatterVo;
+	}
+
+	public void setAggMatterVo(AggMatterAppVO aggMatterVo) {
+		this.aggMatterVo = aggMatterVo;
 	}
 }

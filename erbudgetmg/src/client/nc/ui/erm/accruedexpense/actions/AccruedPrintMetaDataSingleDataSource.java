@@ -7,14 +7,29 @@ import nc.ui.arap.bx.print.ERMPrintDigitUtil;
 import nc.ui.bd.pub.actions.print.MetaDataSingleSelectDataSource;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.erm.accruedexpense.AccruedVO;
+import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.pub.BusinessException;
 
 public class AccruedPrintMetaDataSingleDataSource extends MetaDataSingleSelectDataSource {
 	private static final long serialVersionUID = 1L;
 	
+	private AggAccruedBillVO aggAccVo = null;
+	
+	public AccruedPrintMetaDataSingleDataSource() {
+	}
+
+	public AccruedPrintMetaDataSingleDataSource(AggAccruedBillVO aggAccVo) {
+		this.aggAccVo = aggAccVo;
+	}
+	
 	@Override
 	public Object[] getMDObjects() {
-		Object[] result = super.getMDObjects();
+		Object[] result = null;
+		if (getAggAccVo() != null) {
+			result = new Object[] { getAggAccVo() };
+		} else {
+			result = super.getMDObjects();
+		}
 
 		Map<String, String[]> fieldsMap = new HashMap<String, String[]>();
 
@@ -35,5 +50,13 @@ public class AccruedPrintMetaDataSingleDataSource extends MetaDataSingleSelectDa
 			ExceptionHandler.consume(e);
 		}
 		return result;
+	}
+
+	public AggAccruedBillVO getAggAccVo() {
+		return aggAccVo;
+	}
+
+	public void setAggAccVo(AggAccruedBillVO aggAccVo) {
+		this.aggAccVo = aggAccVo;
 	}
 }

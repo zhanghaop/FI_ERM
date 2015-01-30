@@ -3,11 +3,11 @@ package nc.bs.er.control;
 import java.util.List;
 
 import nc.bs.arap.loancontrol.LoanControlMode;
+import nc.cmp.bill.util.KeyLock;
 import nc.vo.ep.bx.LoanControlModeVO;
 import nc.vo.ep.bx.LoanControlVO;
 import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.er.pub.IFYControl;
-import nc.vo.fipub.utils.KeyLock;
 import nc.vo.pub.BusinessException;
 
 /**
@@ -25,19 +25,14 @@ public class JkControlBO {
 			return null;
 		}
 		
-		String lock = KeyLock.dynamicLock(defvo.getPrimaryKey());
-		if(lock != null){
-			try {
-				Thread.sleep(100);//等待100ms,造成阻塞现象
-			} catch (InterruptedException e) {
-				ExceptionHandler.consume(e);
-			}
-			KeyLock.dynamicLockWithException(defvo.getPrimaryKey());
-		}
+		KeyLock.dynamicLock(defvo.getPrimaryKey());
+		
+		//当有人占用时，阻塞在这里，等其他锁释放后，继续进行 add by chenshuaia
+		while(KeyLock.dynamicLock(defvo.getPrimaryKey()) != null){}
 		
 		List<LoanControlModeVO> modevos = defvo.getModevos();
 
-		StringBuffer warnmsg=new StringBuffer();
+		StringBuffer warnmsg = new StringBuffer();
 		for (LoanControlModeVO modevo : modevos) {
 			LoanControlMode mode = null;
 			String controlMsg = null;
@@ -47,20 +42,19 @@ public class JkControlBO {
 			} catch (Exception e) {
 				ExceptionHandler.handleException(this.getClass(), e);
 			}
-			
-			if(controlMsg!=null){
-				if(defvo.getControlstyle()==1){//控制
+
+			if (controlMsg != null) {
+				if (defvo.getControlstyle() == 1) {// 控制
 					ExceptionHandler.cteateandthrowException(controlMsg);
-				}else{
-					warnmsg.append(controlMsg+"\n");
+				} else {
+					warnmsg.append(controlMsg + "\n");
 				}
 			}
 		}
 
-		if(warnmsg.length()!=0)
+		if (warnmsg.length() != 0) {
 			return warnmsg.toString();
-		
+		}
 		return null;
 	}
-
 }

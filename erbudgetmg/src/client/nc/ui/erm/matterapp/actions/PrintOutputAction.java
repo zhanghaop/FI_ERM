@@ -1,19 +1,31 @@
 package nc.ui.erm.matterapp.actions;
 
-import nc.bs.erm.matterapp.common.ErmMatterAppConst;
-import nc.ui.erm.matterapp.model.MAppModel;
-import nc.ui.uif2.actions.OutputAction;
+import nc.bs.uif2.IActionCode;
+import nc.ui.erm.matterapp.common.MatterAppUiUtil;
+import nc.ui.pub.print.PrintEntry;
+import nc.ui.uif2.actions.ActionInitializer;
+import nc.vo.pub.BusinessException;
 
-public class PrintOutputAction extends OutputAction {
+public class PrintOutputAction extends PreViewAction {
 	private static final long serialVersionUID = 1L;
 	
+	public PrintOutputAction(){
+		ActionInitializer.initializeAction(this, IActionCode.OUTPUT);
+	}
+	
 	@Override
-	public String getNodeKey() {
-		String nodeCode = getModel().getContext().getNodeCode();
-		if (ErmMatterAppConst.MAPP_NODECODE_MN.equals(nodeCode) || ErmMatterAppConst.MAPP_NODECODE_QY.equals(nodeCode)) {
-			return ((MAppModel) getModel()).getDjlxbm();
-		} else {
-			return null;
+	protected void printByNodeKey(String nodeKey) throws BusinessException {
+		if (nodeKey == null) {
+			nodeKey = getNodeKey();
+		}
+
+		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI());
+		String pkUser = getModel().getContext().getPk_loginUser();
+		entry.setTemplateID(MatterAppUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, nodeKey);
+		
+		setDatasource(entry);
+		if(entry.selectTemplate() == 1){
+			entry.output();
 		}
 	}
 }

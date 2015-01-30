@@ -3,18 +3,22 @@ package nc.ui.erm.accruedexpense.actions;
 import java.awt.event.ActionEvent;
 
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
+import nc.bs.framework.common.NCLocator;
 import nc.bs.uif2.IActionCode;
+import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.ui.erm.accruedexpense.model.AccManageAppModel;
 import nc.ui.erm.util.ErUiUtil;
-import nc.ui.pub.print.IDataSource;
 import nc.ui.pub.print.PrintEntry;
 import nc.ui.uif2.NCAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.actions.ActionInitializer;
 import nc.ui.uif2.model.AbstractUIAppModel;
+import nc.ui.uif2.model.BillManageModel;
 import nc.uif2.annoations.MethodType;
 import nc.uif2.annoations.ModelMethod;
 import nc.uif2.annoations.ModelType;
+import nc.vo.erm.accruedexpense.AggAccruedBillVO;
+import nc.vo.pub.BusinessException;
 
 /**
  * 卡片打印
@@ -24,8 +28,6 @@ import nc.uif2.annoations.ModelType;
  */
 public class AccPrintAction extends NCAction {
 	private static final long serialVersionUID = 1L;
-
-	private IDataSource dataSource;
 
 	protected AbstractUIAppModel model;
 
@@ -39,7 +41,7 @@ public class AccPrintAction extends NCAction {
 		printInfo();
 	}
 
-	private void printInfo() {
+	private void printInfo() throws BusinessException {
 		try {
 			printByNodeKey(null);
 		} catch (Exception e) {// 无打印模板的情况下，取默认模板
@@ -47,16 +49,19 @@ public class AccPrintAction extends NCAction {
 		}
 	}
 
-	protected void printByNodeKey(String nodeKey) {
+	protected void printByNodeKey(String nodeKey) throws BusinessException {
 		if (nodeKey == null) {
 			nodeKey = getNodeKey();
 		}
 
-		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI(), getDataSource());
+		PrintEntry entry = new PrintEntry(this.getModel().getContext().getEntranceUI());
 		String pkUser = getModel().getContext().getPk_loginUser();
 		entry.setTemplateID(ErUiUtil.getPK_group(), getModel().getContext().getNodeCode(), pkUser, null, nodeKey);
-		entry.selectTemplate();
-		entry.preview();
+		
+		setDatasource(entry);
+		if(entry.selectTemplate() == 1){
+			entry.print();
+		}
 	}
 
 	public String getNodeKey() {
@@ -67,14 +72,6 @@ public class AccPrintAction extends NCAction {
 		} else {
 			return null;
 		}
-	}
-
-	public void setDataSource(IDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	public IDataSource getDataSource() {
-		return dataSource;
 	}
 
 	@Override
@@ -91,5 +88,37 @@ public class AccPrintAction extends NCAction {
 	public void setModel(AbstractUIAppModel model) {
 		this.model = model;
 		model.addAppEventListener(this);
+	}
+	
+	public void setDatasource(PrintEntry entry) throws BusinessException {
+		BillManageModel model = (BillManageModel) getModel();
+		AggAccruedBillVO[] vos = null;
+
+		if (getModel() instanceof BillManageModel) {
+			Object[] objs = model.getSelectedOperaDatas();
+			if (objs != null) {
+				vos = new AggAccruedBillVO[objs.length];
+				for (int i = 0; i < vos.length; i++) {
+					vos[i] = (AggAccruedBillVO) objs[i];
+				}
+			}
+		}
+
+		if ((((vos == null) || (vos.length == 0)))) {
+			vos = new AggAccruedBillVO[] { (AggAccruedBillVO) model.getSelectedData() };
+		}
+
+		if (vos != null && vos.length > 0) {
+			for (AggAccruedBillVO vo : vos) {
+				if ((vo.getChildrenVO() == null || vo.getChildrenVO().length == 0)) {
+					// 补齐表体信息
+					vo = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class).queryBillByPk(vo.getParentVO().getPrimaryKey());
+				}
+
+				AccruedPrintMetaDataSingleDataSource dataSource = new AccruedPrintMetaDataSingleDataSource(vo);
+				dataSource.setModel(getModel());
+				entry.setDataSource(dataSource);
+			}
+		}
 	}
 }
