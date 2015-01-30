@@ -17,4 +17,6 @@ public interface IErmExpenseaccountQueryService {
 	
 	public ExpenseAccountVO[] queryBySrcID(String[] srcIDS) throws BusinessException;
 
+	ExpenseAccountVO[] queryBySqlWhere(String sqlWhere) throws BusinessException;
+
 }

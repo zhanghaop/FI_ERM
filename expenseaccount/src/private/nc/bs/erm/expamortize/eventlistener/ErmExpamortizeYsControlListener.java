@@ -35,6 +35,11 @@ public class ErmExpamortizeYsControlListener implements IBusinessListener {
 		if (ErmEventType.TYPE_AMORTIZE_BEFORE.equalsIgnoreCase(eventType)) {//摊销
 			service.ysControl(vos, isContray, actionCode);
 		}
+		
+		if(ErmEventType.TYPE_UNAMORTIZE_BEFORE.equalsIgnoreCase(eventType)){//取消摊销
+			isContray = true;
+			service.ysControl(vos, isContray, actionCode);
+		}
 	}
 
 }

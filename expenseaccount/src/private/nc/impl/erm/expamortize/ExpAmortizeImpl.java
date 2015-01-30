@@ -134,7 +134,7 @@ public class ExpAmortizeImpl implements IExpAmortize {
 				ExpamtinfoVO.RES_PERIOD }, currYearMonth);
 
 		// 保存摊销记录信息
-		saveExpamtProcInfo(aggvo, currYearMonth);
+		saveExpamtProcInfo(aggvo, currYearMonth, false);
 
 		// 事后控制
 		fireAfterAmortizeEvent(aggvo);
@@ -171,13 +171,14 @@ public class ExpAmortizeImpl implements IExpAmortize {
 	 * @return
 	 * @throws BusinessException
 	 */
-	private ExpamtprocVO[] saveExpamtProcInfo(AggExpamtinfoVO aggvo, String currYearMonth) throws BusinessException {
-		ExpamtprocVO[] procVos = ExpAmortizeprocUtil.getExpamtProcVoFromExpamtinfoVO(aggvo);
+	private ExpamtprocVO[] saveExpamtProcInfo(AggExpamtinfoVO aggvo, String currYearMonth, boolean isUnAmt) throws BusinessException {
+		ExpamtprocVO[] procVos = ExpAmortizeprocUtil.getExpamtProcVoFromExpamtinfoVO(aggvo, isUnAmt);
 
 		for (ExpamtprocVO procVo : procVos) {
 			procVo.setAccperiod(currYearMonth);
 			procVo.setAmortize_user(AuditInfoUtil.getCurrentUser());
-			procVo.setAmortize_date(new UFDate(InvocationInfoProxy.getInstance().getBizDateTime()));
+			UFDate newAmortize_date = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());
+			procVo.setAmortize_date(newAmortize_date);
 
 		}
 		IExpAmortizeprocManage procService = NCLocator.getInstance().lookup(IExpAmortizeprocManage.class);
@@ -234,24 +235,26 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		// 版本校验
 		BDVersionValidationUtil.validateVersion(vo);
 		
-		// TODO vo校验
+		//  vo校验
 		new ExpamtVoChecker().checkUnAmortize(aggvo, currYearMonth);
 
 		// 事前控制
 		fireBeforeUnAmortizeEvent(aggvo);
 
-		// TODO 计算反摊销后摊销信息的金额、剩余摊销期等
-
+		//  计算反摊销后摊销信息的金额、剩余摊销期等
+		setUnResValues(aggvo);
+		
 		// 数据更新
 		updateVOsByFields(aggvo, new String[] { ExpamtinfoVO.BILLSTATUS, ExpamtinfoVO.RES_AMOUNT, ExpamtinfoVO.RES_ORGAMOUNT, ExpamtinfoVO.RES_GROUPAMOUNT, ExpamtinfoVO.RES_GLOBALAMOUNT,
 				ExpamtinfoVO.RES_PERIOD }, currYearMonth);
 
-		// TODO-摊销记录记录
+		// 摊销记录记录
+		saveExpamtProcInfo(aggvo, currYearMonth, true);
 
 		// 事后控制
 		fireAfterUnAmortizeEvent(aggvo);
-
-		// TODO VO要按旧数据进行反摊销，发送消息到会计平台
+		
+		//  VO要按原始数据进行反摊销，发送消息到会计平台
 		sendMessageToFip(aggvo, FipMessageVO.MESSAGETYPE_DEL);
 
 		// 查询最新消息
@@ -260,7 +263,6 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		result.setShowField(ExpamtinfoVO.BX_BILLNO);
 		return result;
 	}
-	
 	
 	private void beforeAmortize(AggExpamtinfoVO aggvo) {
 		ExpamtinfoVO info = (ExpamtinfoVO) aggvo.getParentVO();
@@ -334,6 +336,44 @@ public class ExpAmortizeImpl implements IExpAmortize {
 		}
 	}
 
+	/**
+	 * 取消摊销数据修改
+	 * @param aggvo
+	 */
+	private void setUnResValues(AggExpamtinfoVO aggvo) {// 剩余金额，剩余摊销期
+		ExpamtinfoVO parentVo = (ExpamtinfoVO) aggvo.getParentVO();
+		ExpamtDetailVO[] children = (ExpamtDetailVO[]) aggvo.getChildrenVO();
+		parentVo.setRes_period(parentVo.getRes_period() + 1);
+		parentVo.setRes_amount(parentVo.getRes_amount().add(
+				parentVo.getCurr_amount()));
+		parentVo.setRes_orgamount(parentVo.getRes_orgamount().add(
+				parentVo.getCurr_orgamount()));
+		parentVo.setRes_groupamount(parentVo.getRes_groupamount().add(
+				parentVo.getCurr_groupamount()));
+		parentVo.setRes_globalamount(parentVo.getRes_globalamount().add(
+				parentVo.getCurr_globalamount()));
+
+		if (parentVo.getRes_period() == parentVo.getTotal_period()) {// 摊销信息状态设置
+			parentVo.setBillstatus(ExpAmoritizeConst.Billstatus_Init);
+		} else {
+			parentVo.setBillstatus(ExpAmoritizeConst.Billstatus_Amting);
+		}
+
+		if (children != null) {
+			for (ExpamtDetailVO detail : children) {
+				detail.setRes_period(detail.getRes_period() + 1);
+				detail.setRes_amount(detail.getRes_amount().add(
+						detail.getCurr_amount()));
+				detail.setRes_orgamount(detail.getRes_orgamount().add(
+						detail.getCurr_orgamount()));
+				detail.setRes_groupamount(detail.getRes_groupamount().add(
+						detail.getCurr_groupamount()));
+				detail.setRes_globalamount(detail.getRes_globalamount().add(
+						detail.getCurr_globalamount()));
+			}
+		}
+	}
+	
 	public void updateVOsByFields(AggExpamtinfoVO vo, String[] fields,
 			String currYearMonth) throws BusinessException {
 		// 数据库字段更新主表

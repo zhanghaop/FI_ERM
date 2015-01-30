@@ -57,11 +57,13 @@ public class ExpAmortizeprocQueryImpl implements IExpAmortizeprocQuery {
 	private ExpamtprocVO[] dealprocGroupByAccperiod(ExpamtprocVO[] procs) {
 		if (procs != null) {
 			Map<String, ExpamtprocVO> procMap = new HashMap<String, ExpamtprocVO>();
+			
 			for (ExpamtprocVO proc : procs) {
-				if (procMap.get(proc.getAccperiod()) == null) {
-					procMap.put(proc.getAccperiod(), proc);
+				String key = proc.getCreationtime().toString();
+				if (procMap.get(key) == null) {
+					procMap.put(key, proc);
 				} else {
-					ExpamtprocVO tempProc = procMap.get(proc.getAccperiod());
+					ExpamtprocVO tempProc = procMap.get(key);
 
 					tempProc.setCurr_amount(tempProc.getCurr_amount().add(proc.getCurr_amount()));
 					tempProc.setCurr_orgamount(tempProc.getCurr_orgamount().add(proc.getCurr_orgamount()));
@@ -76,12 +78,13 @@ public class ExpAmortizeprocQueryImpl implements IExpAmortizeprocQuery {
 				result.add(proc);
 			}
 			
-			Collections.sort(result, new Comparator<ExpamtprocVO>(){
+			Collections.sort(result, new Comparator<ExpamtprocVO>() {
 				@Override
 				public int compare(ExpamtprocVO o1, ExpamtprocVO o2) {
-					return o1.getAccperiod().compareTo(o2.getAccperiod());
+					return o1.getCreationtime().compareTo(o2.getCreationtime());
 				}
 			});
+			
 			return result.toArray(new ExpamtprocVO[] {});
 		}
 

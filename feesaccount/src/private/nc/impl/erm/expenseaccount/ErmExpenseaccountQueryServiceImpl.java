@@ -32,8 +32,8 @@ public class ErmExpenseaccountQueryServiceImpl implements IErmExpenseaccountQuer
 		return queryBySqlWhere(SqlUtils.getInStr(ExpenseAccountVO.SRC_ID, srcIDS, false));
 	}
 
-	@SuppressWarnings("unchecked")
-	private ExpenseAccountVO[] queryBySqlWhere(String sqlWhere) throws BusinessException {
+	@Override
+	public ExpenseAccountVO[] queryBySqlWhere(String sqlWhere) throws BusinessException {
 		Collection<ExpenseAccountVO> c = MDPersistenceService.lookupPersistenceQueryService().queryBillOfVOByCond(
 				ExpenseAccountVO.class, sqlWhere, false);
 

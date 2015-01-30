@@ -260,6 +260,40 @@ public class ErAccperiodUtil {
 
 		return null;
 	}
+	
+	/**获取下月会计月
+	 * 
+	 * @param currentAccMonth
+	 * @return
+	 * @throws BusinessException 
+	 */
+	public static AccperiodmonthVO getNextAccMonth(AccperiodmonthVO currentAccMonth) throws BusinessException {
+		if (currentAccMonth != null) {
+			return getAddedAccperiodmonth(currentAccMonth, 2);
+//			String yearMth = currentAccMonth.getYearmth();
+//
+//			String[] yearMths = yearMth.split("-");
+//
+//			int year = Integer.parseInt(yearMths[0]);
+//			int month = Integer.parseInt(yearMths[1]);
+//
+//			if (yearMths[1].equals("12")) {
+//				year++;
+//				AccperiodVO vo = AccperiodAccessor.getInstance().queryAccperiodVOByYear(currentAccMonth.getPk_accperiodscheme(), "" + (year));
+//				month = vo.getPeriodnum();
+//			} else {
+//				month++;
+//			}
+//
+//			AccountCalendar calendar = AccountCalendar.getInstanceByPeriodScheme(currentAccMonth.getPk_accperiodscheme());
+//
+//			calendar.set("" + year, getStrMonth(month));
+//
+//			return calendar.getMonthVO();
+		}
+
+		return null;
+	}
 
 	private static String getStrMonth(int month) {
 		String endMonthStr = null;

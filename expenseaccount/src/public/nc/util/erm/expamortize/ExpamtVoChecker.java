@@ -55,7 +55,7 @@ public class ExpamtVoChecker {
 	}
 	
 	/**
-	 * 摊销验证
+	 * 取消摊销验证
 	 *
 	 * @param aggvo
 	 * @param currYearMonth
@@ -63,7 +63,38 @@ public class ExpamtVoChecker {
 	 * @throws BusinessException
 	 */
 	public void checkUnAmortize(AggExpamtinfoVO aggvo, String currYearMonth) throws BusinessException {
-		//TODO 
+		boolean checkStartPeriod = aggvo.getParentVO().getAttributeValue(ExpamtinfoVO.START_PERIOD).toString().compareToIgnoreCase(currYearMonth) > 0;
+		boolean checkEndPeriod = aggvo.getParentVO().getAttributeValue(ExpamtinfoVO.END_PERIOD).toString().compareToIgnoreCase(currYearMonth) < 0;
+		
+		if(checkStartPeriod){
+			throw new BusinessException("会计期间不应该小于开始摊销期间");
+		}
+		
+		if(checkEndPeriod){
+			throw new BusinessException("会计期间不应该大于结束摊销期间");
+		}
+		
+		//校验本期是否有可供取消摊销数据
+		if(((ExpamtinfoVO)aggvo.getParentVO()).getAmt_status() ==null || ((ExpamtinfoVO)aggvo.getParentVO()).getAmt_status().booleanValue()==false){
+			throw new BusinessException("摊销信息未摊销，不允许反摊销");
+		}
+		
+		// 校验是否逐级取消摊销// 如果等于最后摊销期间，就不判断下一期
+		if (aggvo.getParentVO().getAttributeValue(ExpamtinfoVO.END_PERIOD).toString().compareToIgnoreCase(currYearMonth) != 0) {
+			String[] startYearMonth = currYearMonth.split("-");
+			AccountCalendar calendar = AccountCalendar.getInstanceByPk_org(((ExpamtinfoVO) aggvo.getParentVO()).getPk_org());
+			calendar.set(startYearMonth[0], startYearMonth[1]);
+			// 先得到本期会计期间的会计月
+			AccperiodmonthVO monthvo = calendar.getMonthVO();
+			// 再得到下一期的会计月
+			AccperiodmonthVO nextmonthvo = ErAccperiodUtil.getNextAccMonth(monthvo);
+			
+			// 得到下一期的摊销状态
+			if (ExpamtUtil.getAmtStatus(((ExpamtinfoVO) aggvo.getParentVO()), nextmonthvo.getYearmth()).booleanValue()) {
+				throw new BusinessException("下一期已经摊销，不能取消摊销本期");
+			}
+		}
+		
 	}
 	
 	/**

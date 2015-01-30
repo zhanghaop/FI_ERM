@@ -124,6 +124,12 @@
 		<property name="exceptionHandler" ref="execeptionHandler" />
 		<property name="model" ref="manageAppModel" />
 	</bean>
+	
+	<bean id="unAmtAction" class="nc.ui.erm.expamortize.action.UnAmtAction">
+		<property name="listView" ref="listView" />
+		<property name="exceptionHandler" ref="execeptionHandler" />
+		<property name="model" ref="manageAppModel" />
+	</bean>
 
 	<bean id="amtperiodAction" class="nc.ui.erm.expamortize.action.AmtPeriodAction">
 		<property name="exceptionHandler" ref="execeptionHandler" />
@@ -191,6 +197,20 @@
 				<ref bean="linkBxAction" />
 				<ref bean="linkAmtDetailAction" />
 				<ref bean="linkYSDetailAction" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 摊销 按钮组  待多语 -->
+	<bean id="amtGroupAction" class="nc.funcnode.ui.action.GroupAction">
+		<property name="name" value="摊销">
+		</property>
+		<property name="code" value="unAmt">
+		</property>
+		<property name="actions">
+			<list>
+				<ref bean="amtAction" />
+				<ref bean="unAmtAction" />
 			</list>
 		</property>
 	</bean>
@@ -267,7 +287,7 @@
 			<list>
 				<ref bean="refreshAction" />
 				<ref bean="nullAction" />
-				<ref bean="amtAction" />
+				<ref bean="amtGroupAction" />
 				<ref bean="amtperiodAction" />
 				<ref bean="nullAction" />
 				<ref bean="linkGroupAction" />
