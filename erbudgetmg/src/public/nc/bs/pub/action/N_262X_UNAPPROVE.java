@@ -3,6 +3,7 @@ package nc.bs.pub.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.compiler.AbstractCompiler2;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillApprove;
@@ -31,15 +32,24 @@ public class N_262X_UNAPPROVE extends AbstractCompiler2 {
 			int spStatus = accbillvo.getParentVO().getApprstatus();
 			boolean bflag = procUnApproveFlow(paraVo);
 
-			if (bflag && spStatus != IBillStatus.NOPASS) {
-				if (paraVo.m_workFlow == null) {
-					accbillvo.getParentVO().setApprstatus(IBillStatus.COMMIT);
-				}
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(accbillvo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(paraVo);
+			
+			if (isWorkFlow && isWorkFlowFinalNode) {// 工作流时
 				auditVOs.add(accbillvo);
 			} else {
-//				accbillvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(accbillvo);
-				MessageVO temp = new MessageVO(accbillvo, ActionUtils.UNAUDIT);
-				fMsgs.add(temp);
+				if (!isWorkFlow) {// 审批流时
+					if (bflag && spStatus != IBillStatus.NOPASS) {
+						if (paraVo.m_workFlow == null) {
+							accbillvo.getParentVO().setApprstatus(IBillStatus.COMMIT);
+						}
+						auditVOs.add(accbillvo);
+					} else {
+						fMsgs.add(new MessageVO(accbillvo, ActionUtils.UNAUDIT));
+					}
+				} else {
+					fMsgs.add(new MessageVO(accbillvo, ActionUtils.UNAUDIT));
+				}
 			}
 
 			retObj = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).unApproveVOs(

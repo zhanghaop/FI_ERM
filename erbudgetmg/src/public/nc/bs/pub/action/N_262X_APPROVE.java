@@ -29,18 +29,21 @@ public class N_262X_APPROVE extends AbstractCompiler2 {
 			AggAccruedBillVO aggvo = (AggAccruedBillVO) paraVo.m_preValueVo;
 			IWorkFlowRet bflag = (IWorkFlowRet) procActionFlow(paraVo);// 放入审批流
 
-			if (bflag == null) {
-				boolean isWorkFlow = ErUtil.isUseWorkFlow(aggvo.getParentVO().getPk_org());
-				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(paraVo);
-				if (!isWorkFlow || isWorkFlowFinalNode) {
-					auditVOs.add(aggvo);
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(aggvo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(paraVo);
+
+			if (isWorkFlow && isWorkFlowFinalNode) {
+				auditVOs.add(aggvo);
+			} else {
+				if (bflag == null) {
+					if (!isWorkFlow) {
+						auditVOs.add(aggvo);
+					} else {
+						fMsgs.add(new MessageVO(aggvo, ActionUtils.AUDIT));
+					}
 				} else {
 					fMsgs.add(new MessageVO(aggvo, ActionUtils.AUDIT));
 				}
-			} else {
-//				aggvo = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).updateVOBillStatus(aggvo);
-				MessageVO unAuditVo = new MessageVO(aggvo, ActionUtils.AUDIT);
-				fMsgs.add(unAuditVo);
 			}
 
 			retObj = NCLocator.getInstance().lookup(IErmAccruedBillApprove.class).approveVOs(

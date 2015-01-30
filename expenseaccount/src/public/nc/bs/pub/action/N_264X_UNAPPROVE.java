@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import nc.bs.er.util.BXDataPermissionChkUtil;
+import nc.bs.erm.util.ErUtil;
 import nc.bs.pub.compiler.AbstractCompiler2;
 import nc.vo.arap.bx.util.ActionUtils;
 import nc.vo.arap.bx.util.BXConstans;
@@ -69,16 +70,25 @@ public class N_264X_UNAPPROVE extends AbstractCompiler2 {
 			}
 //--end			
 			int spStatus = bxvo.getParentVO().getSpzt();
-
 			boolean bflag = procUnApproveFlow(vo);
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
 			
-			if (bflag && spStatus != IBillStatus.NOPASS) {
-				if(vo.m_workFlow == null){
-					bxvo.getParentVO().setSpzt(IBillStatus.COMMIT);
-				}
+			if (isWorkFlow && isWorkFlowFinalNode) {// 工作流时
 				auditVOs.add(bxvo);
-			}else{
-				fMsgs.add(new MessageVO(bxvo,ActionUtils.UNAUDIT));
+			} else {
+				if (!isWorkFlow) {// 审批流时
+					if (bflag && spStatus != IBillStatus.NOPASS) {
+						if (vo.m_workFlow == null) {
+							bxvo.getParentVO().setSpzt(IBillStatus.COMMIT);
+						}
+						auditVOs.add(bxvo);
+					} else {
+						fMsgs.add(new MessageVO(bxvo, ActionUtils.UNAUDIT));
+					}
+				} else {
+					fMsgs.add(new MessageVO(bxvo, ActionUtils.UNAUDIT));
+				}
 			}
 			
 			setParameter("billVO", auditVOs.toArray(new BXVO[] {}));

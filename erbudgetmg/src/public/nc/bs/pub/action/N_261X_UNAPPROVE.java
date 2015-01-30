@@ -3,6 +3,7 @@ package nc.bs.pub.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import nc.bs.erm.util.ErUtil;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.pub.compiler.AbstractCompiler2;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillApprove;
@@ -42,15 +43,24 @@ public class N_261X_UNAPPROVE extends AbstractCompiler2 {
 			int spStatus = maVo.getParentVO().getApprstatus();
 			boolean bflag = procUnApproveFlow(vo);
 			
-			if (bflag && spStatus != IBillStatus.NOPASS) {
-				if(vo.m_workFlow == null){
-					maVo.getParentVO().setApprstatus(IBillStatus.COMMIT);
-				}
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(maVo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
+
+			if (isWorkFlow && isWorkFlowFinalNode) {// 工作流时
 				auditVOs.add(maVo);
 			} else {
-//				maVo = getAppBillService().updateVOBillStatus(maVo);
-				MessageVO temp = new MessageVO(maVo, ActionUtils.UNAUDIT);
-				fMsgs.add(temp);
+				if (!isWorkFlow) {// 审批流时
+					if (bflag && spStatus != IBillStatus.NOPASS) {
+						if (vo.m_workFlow == null) {
+							maVo.getParentVO().setApprstatus(IBillStatus.COMMIT);
+						}
+						auditVOs.add(maVo);
+					} else {
+						fMsgs.add(new MessageVO(maVo, ActionUtils.UNAUDIT));
+					}
+				} else {
+					fMsgs.add(new MessageVO(maVo, ActionUtils.UNAUDIT));
+				}
 			}
 			
 			retObj = getAppBillService().unApproveVOs(auditVOs.toArray(new AggMatterAppVO[]{}));

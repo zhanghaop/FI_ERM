@@ -69,16 +69,21 @@ public class N_264X_APPROVE extends AbstractCompiler2 {
 //--end			
 			Object bflag = procActionFlow(vo);
 			
-			if (bflag == null) {
-				boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
-				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
-				if (!isWorkFlow || isWorkFlowFinalNode) {
-					auditVOs.add(bxvo);
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
+			
+			if (isWorkFlow && isWorkFlowFinalNode) {
+				auditVOs.add(bxvo);
+			} else {
+				if (bflag == null) {
+					if(!isWorkFlow){
+						auditVOs.add(bxvo);
+					}else{
+						fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
+					}
 				} else {
 					fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
 				}
-			} else {
-				fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
 			}
 
 			setParameter("billVO", auditVOs.toArray(new JKBXVO[] {}));

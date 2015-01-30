@@ -41,18 +41,21 @@ public class N_261X_APPROVE extends AbstractCompiler2 {
 			AggMatterAppVO maVo = (AggMatterAppVO) vo.m_preValueVo;
 			IWorkFlowRet bflag = (IWorkFlowRet)procActionFlow(vo);// 放入审批流
 
-			if (bflag == null) {
-				boolean isWorkFlow = ErUtil.isUseWorkFlow(maVo.getParentVO().getPk_org());
-				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
-				if (!isWorkFlow || isWorkFlowFinalNode) {
-					auditVOs.add(maVo);
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(maVo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
+
+			if (isWorkFlow && isWorkFlowFinalNode) {
+				auditVOs.add(maVo);
+			} else {
+				if (bflag == null) {
+					if (!isWorkFlow) {
+						auditVOs.add(maVo);
+					} else {
+						fMsgs.add(new MessageVO(maVo, ActionUtils.AUDIT));
+					}
 				} else {
 					fMsgs.add(new MessageVO(maVo, ActionUtils.AUDIT));
 				}
-			} else {
-//				maVo = getAppBillService().updateVOBillStatus(maVo);
-				MessageVO unAuditVo = new MessageVO(maVo, ActionUtils.AUDIT);
-				fMsgs.add(unAuditVo);
 			}
 			
 			retObj = getAppBillService().approveVOs(auditVOs.toArray(new AggMatterAppVO[]{}));

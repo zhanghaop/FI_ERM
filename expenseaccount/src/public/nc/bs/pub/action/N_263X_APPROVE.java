@@ -68,42 +68,29 @@ public class N_263X_APPROVE extends AbstractCompiler2 {
 				}
 			}
 			
-//added by chendya 包装借款单HeadVO，避免短信审批时根据BXHeadVO去查元数据时查出报销单的元数据，引发错误			
-//			BXHeaderVO voHeader = bxvo.getParentVO();
-//			BXHeaderVO headerVO = null;
-//			if(BXConstans.JK_DJDL.equals(voHeader.getDjdl())){
-//				headerVO = new JKHeaderVO();
-//				String[] names = voHeader.getAttributeNames();
-//				for (int i = 0; i < names.length; i++) {
-//					headerVO.setAttributeValue(names[i], voHeader.getAttributeValue(names[i]));
-//				}
-//			}else{
-//				headerVO = voHeader;
-//			}
-//			bxvo.setParentVO(headerVO);
-//--end			
-			
 			Object bflag = procActionFlow(vo);
-			if (bflag==null) {
-				boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
-				boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
-				if (!isWorkFlow || isWorkFlowFinalNode) {
-					auditVOs.add(bxvo);
+			
+			boolean isWorkFlow = ErUtil.isUseWorkFlow(bxvo.getParentVO().getPk_org());
+			boolean isWorkFlowFinalNode = ErUtil.isWorkFlowFinalNode(vo);
+			
+			if (isWorkFlow && isWorkFlowFinalNode) {
+				auditVOs.add(bxvo);
+			} else {
+				if (bflag == null) {
+					if(!isWorkFlow){
+						auditVOs.add(bxvo);
+					}else{
+						fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
+					}
 				} else {
 					fMsgs.add(new MessageVO(bxvo, ActionUtils.AUDIT));
 				}
-			}else{
-				fMsgs.add(new MessageVO( bxvo,ActionUtils.AUDIT));
 			}
-
-			setParameter("billVO", auditVOs.toArray(new JKBXVO[] {}));
 			
+			setParameter("billVO", auditVOs.toArray(new JKBXVO[] {}));
 			retObj = runClass("nc.bs.arap.bx.BXZbBO", "audit", "&billVO:nc.vo.ep.bx.JKBXVO[]", vo, m_keyHas);
 
 			if (retObj != null){
-				
-//				m_methodReturnHas.put("auditBill", retObj);
-			
 				MessageVO[] msgs=(MessageVO[]) retObj;
 			
 				for (int i = 0; i < msgs.length; i++) {
