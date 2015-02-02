@@ -46,7 +46,9 @@ import nc.ui.pub.bill.BillData;
 import nc.ui.pub.bill.BillItem;
 import nc.ui.pub.bill.BillModel;
 import nc.ui.pub.bill.BillScrollPane;
+import nc.ui.pub.bill.IBillItem;
 import nc.ui.pub.bill.IGetBillRelationItemValue;
+import nc.ui.pub.bill.itemconverters.BodyUFRefPKConvert;
 import nc.ui.pubapp.uif2app.actions.DefaultHeadZoomAction;
 import nc.ui.pubapp.uif2app.event.OrgChangedEvent;
 import nc.ui.pubapp.uif2app.model.AppEventHandlerMediator;
@@ -145,8 +147,24 @@ public class MatterAppMNBillForm extends AbstractMappBillForm {
 		// 表体事由的特殊处理，处理现实问题
 		BillItem bodyItem = this.getBillCardPanel().getBodyItem(MtAppDetailVO.REASON);
 		if (bodyItem != null) {
-			bodyItem.setGetBillRelationItemValue(new IGetBillRelationItemValue() {
+			bodyItem.setConverter(new BodyUFRefPKConvert() {
+				@Override
+				public Object convertToBillItem(int type, Object value) {
+					IConstEnum o = null;
 
+					if (value instanceof IConstEnum) {
+						o = (IConstEnum) value;
+					} else {
+						if (value != null && !value.equals(IBillItem.EMPTYSTRING)) {
+							String v = value.toString();
+							o = new DefaultConstEnum(v, v);
+						}
+					}
+					return o;
+				}
+			});
+			
+			bodyItem.setGetBillRelationItemValue(new IGetBillRelationItemValue() {
 				@Override
 				public IConstEnum[] getRelationItemValue(ArrayList<IConstEnum> ies, String[] id) {
 					DefaultConstEnum[] ss = new DefaultConstEnum[1];
