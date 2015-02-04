@@ -3,7 +3,12 @@ package nc.arap.mobile.impl;
 import java.util.Map;
 
 import nc.arap.mobile.itf.IDefMobileCtrl;
+import nc.bs.framework.common.InvocationInfoProxy;
+import nc.bs.framework.common.NCLocator;
+import nc.erm.mobile.billaction.BillAddAction;
+import nc.itf.uap.rbac.IUserManageQuery;
 import nc.vo.pub.BusinessException;
+import nc.vo.sm.UserVO;
 
 
 public class DefMobileCtrlImpl implements IDefMobileCtrl{
@@ -65,5 +70,18 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 	 */
 	public String getAttachFile(String pk_jkbx,String userid) throws BusinessException{
 		return getErmDefMobileCtrlBo().getAttachFile(pk_jkbx,userid);
+	}
+	@Override
+	public String doAfterEdit(String editinfo, String userid)
+			throws BusinessException {
+		return getErmDefMobileCtrlBo().doAfterEdit(editinfo,userid);
+	}
+	@Override
+	public String getItemInfo(String userid, String head,String tablecode,String itemnum,String classname)
+			throws BusinessException {
+		UserVO uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(userid);
+		InvocationInfoProxy.getInstance().setUserId(userid);
+		InvocationInfoProxy.getInstance().setGroupId(uservo == null?null:uservo.getPk_group());
+		return new BillAddAction().setBodyDefaultValue(head,tablecode,itemnum,classname);
 	}
 }

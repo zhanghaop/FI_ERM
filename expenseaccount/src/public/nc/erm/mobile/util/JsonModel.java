@@ -166,7 +166,16 @@ public class JsonModel{
         }  
 	}
 	
-	
+	public JSONObject getEditFormular() throws JSONException{
+		JSONObject bodyJson = new JSONObject();
+		JsonItem[] items = getBodyItems();
+		String key = null;
+		for (int i = 0; i < items.length; i++) {
+			key = items[i].getKey();
+			bodyJson.put(key+"_editformulas", items[i].getEditFormulas());
+		}
+		return bodyJson;
+	}
 	private JSONObject setBodyRowObjectModelByMetaData(NCObject o, int row){
 		if(o == null)
 			return null;

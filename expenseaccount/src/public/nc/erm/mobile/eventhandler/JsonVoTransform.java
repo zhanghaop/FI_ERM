@@ -1,10 +1,13 @@
 package nc.erm.mobile.eventhandler;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import nc.arap.mobile.itf.IWebPubService;
 import nc.bs.framework.common.NCLocator;
+import nc.vo.ep.bx.BXBusItemVO;
+import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
@@ -65,15 +68,19 @@ public class JsonVoTransform {
 	
 	private NotNullItemInfoVO notNullItemInfoVO;
 	
+	HashMap<String,String> classnameMap;//VO类名映射信息
+	
 //	private EditFormulasResultVO editFormulasResultVO;
 	
 	private JSONObject jSONObject;    //返回前台
 	
-	
+	public JsonVoTransform(){
+	}
 	public JsonVoTransform(String jSONString){
+		if(jSONString == null)
+			return;
 		try {
 			JSONObject json = new JSONObject(jSONString);
-			HashMap<String,String> classnameMap;    //VO类名映射信息
 			//编辑元素信息
 			JSONObject edititeminfo = (JSONObject)json.get("edititeminfo");
 			this.editItemInfoVO = new EditItemInfoVO();
@@ -87,17 +94,34 @@ public class JsonVoTransform {
 			JSONObject head = (JSONObject)json.get("head");
 			String headvoclassname = (String)head.get("classname");
 			classnameMap = getClassnameMap(headvoclassname);
-			String trueheadvoclassname = classnameMap.get(headvoclassname);
+			String trueheadvoclassname = getClassnameMap(headvoclassname).get(headvoclassname);
 			this.headVO = (SuperVO)Class.forName(trueheadvoclassname).newInstance();
 			JSONObject headvalue = (JSONObject)head.get("value");
 			Iterator<String> headvaluekeys = headvalue.keys();
 	        String headvaluekey;
-	        while(headvaluekeys.hasNext()){
-	        	headvaluekey = headvaluekeys.next();
-	        	if(headvalue.get(headvaluekey) != null && !"".equals(headvalue.get(headvaluekey).toString())){
-	        		headVO.setAttributeValue(headvaluekey, headvalue.get(headvaluekey));
-	        	}
-	        }
+	        if(headVO instanceof JKBXHeaderVO){
+	        	//借款报销单重写了setAttributeValue方法，不能直接赋值，故采用setJsonAttributeValue方法调用
+	        	while(headvaluekeys.hasNext()){
+		        	headvaluekey = headvaluekeys.next();
+		        	if(headvalue.get(headvaluekey) != null && !"".equals(headvalue.get(headvaluekey).toString())){
+		        		Object value = headvalue.get(headvaluekey);
+	        			((JKBXHeaderVO)headVO).setJsonAttributeValue(headvaluekey, value);
+		        	}
+		        }
+    		}else{
+		        while(headvaluekeys.hasNext()){
+		        	headvaluekey = headvaluekeys.next();
+		        	if(headvalue.get(headvaluekey) != null && !"".equals(headvalue.get(headvaluekey).toString())){
+		        		Object value = headvalue.get(headvaluekey);
+		        		if(headVO instanceof JKBXHeaderVO){
+		        			((JKBXHeaderVO)headVO).setJsonAttributeValue(headvaluekey, value);
+		        		}else{
+		        			headVO.setAttributeValue(headvaluekey, value);
+		        		}
+		        	}
+		        }
+    		}
+			
 	        //表体
 	        JSONArray bodys = (JSONArray)json.get("body");
 	        if(bodys != null && bodys.length()>0){
@@ -116,7 +140,11 @@ public class JsonVoTransform {
 				        while(keys.hasNext()){
 				        	key = keys.next();
 				        	if(value.get(key) != null && !"".equals(value.get(key).toString())){
-				        		bodyVO.setAttributeValue(key, value.get(key));
+				        		if(bodyVO instanceof BXBusItemVO){
+				        			((BXBusItemVO)bodyVO).setJsonAttributeValue(key, value.get(key));
+				        		}else{
+				        			bodyVO.setAttributeValue(key, value.get(key));
+				        		}
 				        	}
 				        }
 				        //目前只考虑前台表体传到后台不大于一条数据的情况
@@ -133,10 +161,59 @@ public class JsonVoTransform {
 		}
 	}
 	
+	public SuperVO transformHead(JSONObject head){
+		try{
+			String headvoclassname = (String)head.get("classname");
+			String trueheadvoclassname = getClassnameMap(headvoclassname).get(headvoclassname);
+			this.headVO = (SuperVO)Class.forName(trueheadvoclassname).newInstance();
+			Iterator<String> headvaluekeys = head.keys();
+	        String headvaluekey;
+	        if(headVO instanceof JKBXHeaderVO){
+	        	//借款报销单重写了setAttributeValue方法，不能直接赋值，故采用setJsonAttributeValue方法调用
+	        	while(headvaluekeys.hasNext()){
+		        	headvaluekey = headvaluekeys.next();
+		        	if(head.get(headvaluekey) != null && !"".equals(head.get(headvaluekey).toString())){
+		        		Object value = head.get(headvaluekey);
+	        			((JKBXHeaderVO)headVO).setJsonAttributeValue(headvaluekey, value);
+		        	}
+		        }
+    		}else{
+		        while(headvaluekeys.hasNext()){
+		        	headvaluekey = headvaluekeys.next();
+		        	if(head.get(headvaluekey) != null && !"".equals(head.get(headvaluekey).toString())){
+		        		Object value = head.get(headvaluekey);
+		        		if(headVO instanceof JKBXHeaderVO){
+		        			((JKBXHeaderVO)headVO).setJsonAttributeValue(headvaluekey, value);
+		        		}else{
+		        			headVO.setAttributeValue(headvaluekey, value);
+		        		}
+		        	}
+		        }
+    		}
+		} catch (Exception e) {
+			ExceptionUtils.wrappBusinessException("前台信息转换异常：" + e.getMessage());
+		}
+		return headVO;
+	}
+	
+	public SuperVO InitBodyVo(String classname){
+		try{
+			String truebodyvoclassname = classnameMap.get(classname);
+			SuperVO bodyVO = (SuperVO)Class.forName(truebodyvoclassname).newInstance();
+			return bodyVO;
+		} catch (Exception e) {
+			ExceptionUtils.wrappBusinessException("根据表体生成vo异常：" + e.getMessage());
+		}
+		return null;
+	}
+	
 	private HashMap<String,String> getClassnameMap(String headvoclassname) throws Exception{
-		IWebPubService iWebPubService = (IWebPubService) (NCLocator.getInstance()
-		.lookup(IWebPubService.class));
-		return iWebPubService.getClassnameMap(headvoclassname);
+		if(classnameMap == null){
+			IWebPubService iWebPubService = (IWebPubService) (NCLocator.getInstance()
+			.lookup(IWebPubService.class));
+			classnameMap = iWebPubService.getClassnameMap(headvoclassname);
+		}
+		return classnameMap;
 	}
 	
 	public EditItemInfoVO getEditItemInfoVO() {
@@ -173,7 +250,28 @@ public class JsonVoTransform {
 	public void setItemValueInfoVO(ItemValueInfoVO itemValueInfoVO) {
 		this.itemValueInfoVO = itemValueInfoVO;
 	}
-
+	
+	public JSONObject getVOJSONObject(int rownum,SuperVO vo,String tablecode,String classname) throws JSONException {
+		JSONObject voJson = new JSONObject();
+		//获取传入对象的Class对象
+		Class classType = vo.getClass();
+		//获取传入对象的所有属性组
+		Field[] fields = classType.getDeclaredFields();
+		
+		//遍历属性
+		for(int i=0;i<fields.length;i++){
+			//获取对应属性的名字
+			String fieldName = fields[i].getName().toLowerCase();
+			Object value = vo.getAttributeValue(fieldName);
+			//将值放入到JSON对象中
+			voJson.put(fieldName, value);
+		}
+		voJson.put("tablecode", tablecode);
+		voJson.put("classname", classname);
+		voJson.put("itemno", rownum);
+		return voJson;
+	}
+	
 	public JSONObject getjSONObject() {
 		this.jSONObject = new JSONObject();
 		try{

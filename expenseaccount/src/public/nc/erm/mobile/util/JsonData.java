@@ -267,17 +267,25 @@ public class JsonData
 							ncobject = DASFacade.newInstanceWithContainedObject(be, o);
 						}
 					}
-//					JSONObject bodyJson = new JSONObject();
 					JSONArray itemsarray = new JSONArray();
+//					JSONObject tabformulars = new JSONObject();
 					int itemno = 0;
 					for (int i = 0; i < tabvos.length; i++) {
+						//加载公式
 						BillTabVO tabVO = tabvos[i];
+						String tabcode = tabVO.getTabcode();
+						JsonModel model = getBillModel(tabcode);
+//						JSONObject tabformular = new JSONObject();
+//						tabformular.put("classname", tabVO.getMetadataclass());
+//						tabformular.put("formular", model.getEditFormular());
+//						tabformulars.put(tabcode, tabformular);
+						//转换表体
 						NCObject[] ncos = (NCObject[]) ncobject
 								.getAttributeValue(tabVO.getMetadatapath());
 						if(ncos != null && ncos.length > 0){
 							NCObject[] nctrans = new NCObject[ncos.length];
-							String tabcode = tabVO.getTabcode();
-							JsonModel model = getBillModel(tabcode);
+							tabcode = tabVO.getTabcode();
+							model = getBillModel(tabcode);
 							for(int ncindex = 0;ncindex<ncos.length;ncindex++){
 								if(!ncos[ncindex].getAttributeValue("tablecode").equals(tabcode)){
 									nctrans[ncindex] = null;
@@ -297,8 +305,8 @@ public class JsonData
 								}
 							}
 						}
-//						bodyJson.put(tabVO.getTabcode(), bodyarray);
 					}
+//					resultJson.put("formularlist", tabformulars);
 					resultJson.put("itemlist", itemsarray);
 					resultJson.put("itemnum", itemsarray.length());
 				}
@@ -356,6 +364,7 @@ public class JsonData
   public JSONObject getHeadVO(SuperVO head) throws Exception{
 	    JsonItem[] items = getHeadTailItems();
 	    JSONObject headJson = new JSONObject();
+	    headJson.put("classname", getBillTempletVO().getHeadVO().getMetadataclass());
 	    String key = JKBXHeaderVO.TOTAL;
 	    Object value = head.getAttributeValue(key);
 	    if(value == null)
@@ -369,6 +378,7 @@ public class JsonData
 		for (int i = 0; i < items.length; i++) {
 			key = items[i].getKey();
 			value = head.getAttributeValue(key);
+//			headJson.put(key+"_editformulas", items[i].getEditFormulas());
 			if(value != null){
 				JSONObject itemJson = getJsonObjectFromItem(items[i],value);
 				headJson.put(key, itemJson.get("pk"));

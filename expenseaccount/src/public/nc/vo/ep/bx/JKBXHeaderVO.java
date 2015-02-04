@@ -3383,6 +3383,9 @@ public abstract class JKBXHeaderVO extends SuperVO implements IFYControl {
 		}
 	}
 
+	public void setJsonAttributeValue(String name, Object value) {
+		super.setAttributeValue(name, value);
+	}
 	public String getPk_org_v() {
 		return pk_org_v;
 	}

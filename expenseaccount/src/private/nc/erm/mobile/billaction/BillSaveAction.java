@@ -8,7 +8,6 @@ import java.util.Map;
 import nc.bs.arap.util.BillOrgVUtils;
 import nc.bs.erm.accruedexpense.common.ErmAccruedBillConst;
 import nc.bs.erm.matterapp.common.ErmMatterAppConst;
-import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
@@ -24,7 +23,6 @@ import nc.ui.pub.beans.MessageDialog;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.er.djlx.DjLXVO;
 import nc.vo.er.exception.BugetAlarmBusinessException;
 import nc.vo.er.util.StringUtils;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
@@ -253,8 +251,8 @@ public class BillSaveAction {
 		if(!(vo instanceof JKBXVO))
 			return null;
 		JKBXVO jkbxvo = (JKBXVO) vo;
-		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
+//		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
+//		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
 		// 初始化表头数据
 //		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
 //		jkbxvo = initservice.setBillVOtoUI(djlxVO, "", null);
@@ -262,16 +260,15 @@ public class BillSaveAction {
 		//根据数据类型将需要转换的数据进行转换
 		parentVO.setPk_jkbx(null);
 		if(StringUtil.isEmptyWithTrim(parentVO.getBzbm())){
-			// 如果没有设置币种，则默认人民币
-			parentVO.setBzbm("1002Z0100000000001K1");
+			throw new BusinessException("币种不能为空！");
 		}
-		parentVO.setBbhl(new UFDouble(1));
-		parentVO.setGroupbbhl(UFDouble.ZERO_DBL);
-		parentVO.setGlobalbbhl(UFDouble.ZERO_DBL);
-		if(parentVO.getPaytarget() == null){
-			parentVO.setPaytarget(0);
-		}
-		parentVO.setDjbh(null);
+//		parentVO.setBbhl(new UFDouble(1));
+//		parentVO.setGroupbbhl(UFDouble.ZERO_DBL);
+//		parentVO.setGlobalbbhl(UFDouble.ZERO_DBL);
+//		if(parentVO.getPaytarget() == null){
+//			parentVO.setPaytarget(0);
+//		}
+//		parentVO.setDjbh(null);
 		// 补充表头组织字段版本信息
 		IOrgVersionQueryService orgvservice = NCLocator.getInstance().lookup(IOrgVersionQueryService.class);
 		Map<String, OrgVersionVO> orgvmap = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, parentVO.getDjrq());

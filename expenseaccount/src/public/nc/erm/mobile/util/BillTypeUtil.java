@@ -130,6 +130,7 @@ public class BillTypeUtil {
 				funcodearray.put(o);
 			}
 			jsonObj.put("jkbxheadList", funcodearray);
+			jsonObj.put("userid", userid);
 			return jsonObj.toString();
 		}catch (BusinessException e) {
 			return jsonObj.toString();

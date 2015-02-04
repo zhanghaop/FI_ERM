@@ -2,11 +2,14 @@ package nc.erm.mobile.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import nc.bs.framework.common.NCLocator;
+import nc.bs.wfengine.engine.ActivityInstance;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.itf.uap.pf.IWorkflowDefine;
 import nc.vo.pub.BusinessException;
@@ -15,11 +18,14 @@ import nc.vo.pub.workflowqry.FlowAdminVO;
 import nc.vo.uap.wfmonitor.ProcessRouteRes;
 import nc.vo.wfengine.core.XpdlPackage;
 import nc.vo.wfengine.core.activity.Activity;
+import nc.vo.wfengine.core.activity.Implementation;
 import nc.vo.wfengine.core.parser.UfXPDLParser;
 import nc.vo.wfengine.core.parser.XPDLNames;
 import nc.vo.wfengine.core.parser.XPDLParserException;
+import nc.vo.wfengine.core.participant.BasicParticipantEx;
 import nc.vo.wfengine.core.workflow.WorkflowProcess;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
+import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -276,25 +282,29 @@ public static JSONObject getWorkFlowGraph(String billType,String billId) throws 
 //    for(int i=0;i<transition.size();i++){
 //  	  transitionMap.put(transition.get(i).getTo(), transition.get(i).getFrom());
 //    }
-//    ActivityInstance[] allActInstances = currentRoute.getActivityInstance();
-//    
-//    String[] startedActivityDefIds = new String[allActInstances.length];
-//    // 当前正运行的活动
-//    HashSet hsRunningActs = new HashSet();
-//    for (int i = 0; i < allActInstances.length; i++) {
-//	      //排除掉作废的子流程
-//	      if(allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Inefficient.getIntValue())
-//	            continue;
-//	      startedActivityDefIds[i] = allActInstances[i].getActivityID();
-//	      if (allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Started.getIntValue())
-//	            hsRunningActs.add(startedActivityDefIds[i]);
-//    }
-//    if (startedActivityDefIds == null || startedActivityDefIds.length == 0)
-//       return resultJson;
+    ActivityInstance[] allActInstances = currentRoute.getActivityInstance();
+    
+    List<String> startedActivityDefIds = new ArrayList<String>();
+    // 当前正运行的活动
+    HashSet hsRunningActs = new HashSet();
+    for (int i = 0; i < allActInstances.length; i++) {
+	      //排除掉作废的子流程
+	      if(allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Inefficient.getIntValue())
+	            continue;
+	      startedActivityDefIds.add(allActInstances[i].getActivityID());
+	      if (allActInstances[i].getStatus() == WfTaskOrInstanceStatus.Started.getIntValue())
+	            hsRunningActs.add(startedActivityDefIds.get(i));
+    }
+    if (startedActivityDefIds == null || startedActivityDefIds.size() == 0)
+       return resultJson;
     
     try{
     	resultJson.put("success", "true");
 	    resultJson.put("nodename", wp.getMultiLangName().getText());
+	    //参与者列表
+	    List participants = wp.getParticipants();
+	    //活动列表
+	    List applications = wp.getApplications();
 		//工作流程图
 	    List activities = wp.getActivities();
 	    Iterator it = activities.iterator();
@@ -303,9 +313,24 @@ public static JSONObject getWorkFlowGraph(String billType,String billId) throws 
 	    while (it.hasNext()) {
 	      mayBeActivity = it.next();
 	      if (mayBeActivity instanceof Activity) {
-	    	    String id = ((Activity) mayBeActivity).getId();
+	    	    Activity activity = (Activity) mayBeActivity;
 	    	    JSONObject tasknode = new JSONObject();
-	    	    tasknode.put("refname", ((Activity) mayBeActivity).getMultiLangName().getText());
+	    	    String id = activity.getId();
+	    	    Implementation imp = activity.getImplementation();
+	    	    if(startedActivityDefIds.contains(id)){
+	    	    	tasknode.put("status", "1");
+	    	    }
+	    	    String performer = activity.getPerformer();
+	    	    for(Object participant:participants){
+	    	    	if (participant instanceof BasicParticipantEx) {
+	    	    		BasicParticipantEx p = (BasicParticipantEx) participant;
+	    	    		if(p.getId().equals(performer)){
+	    	    			tasknode.put("participant", p.getMultiLangName());
+	    	    			tasknode.put("participanttype", p.getParticipantType().toString());
+	    	    		}
+	    	    	}
+	    	    }
+	    	    tasknode.put("refname", activity.getMultiLangName().getText());
 	    		tasknode.put("pk_ref", id);
 	    		jsonarray.put(tasknode);
 	      }

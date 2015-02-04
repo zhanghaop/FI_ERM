@@ -1,9 +1,5 @@
 package nc.arap.mobile.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,41 +8,33 @@ import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.exception.ComponentException;
 import nc.bs.logging.Logger;
+import nc.erm.mobile.billaction.BillAddAction;
 import nc.erm.mobile.billaction.BillSaveAction;
+import nc.erm.mobile.eventhandler.ErmEditeventHandler;
 import nc.erm.mobile.pub.template.MobileTemplateUtils;
+import nc.erm.mobile.util.QueryWorkFlowUtil;
 import nc.erm.mobile.util.RefUtil;
 import nc.erm.mobile.util.TranslateJsonToValueObject;
 import nc.erm.mobile.util.TranslateValueObjectToJson;
 import nc.erm.mobile.view.BillItemTranslate;
-import nc.erm.mobile.view.MobileBillItem;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IErmBillUIPublic;
 import nc.itf.uap.billtemplate.IBillTemplateQry;
-import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
-import nc.ui.pub.bill.IBillItem;
-import nc.vo.ep.bx.BXBusItemVO;
-import nc.vo.ep.bx.BXHeaderVO;
-import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
 import nc.vo.er.djlx.DjLXVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.bill.BillStructVO;
-import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
-import nc.vo.pub.bill.BillTempletHeadVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.templet.translator.BillTranslator;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
-	private static int panel=9990;
 	
 	public String addJkbx(Map<String, Object> map, String djlxbm,String userid) throws BusinessException{
 		initEvn(userid);
@@ -154,46 +142,23 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		return null;
 	}
 	 
-    /**
-	 * 初始化模板数据. 创建日期:(01-2-23 15:05:07)
-	 */
-	private void initBodyVOs(BillTempletBodyVO[] bodys) {
-		if (bodys == null || bodys.length == 0)
-			return;
-		String code;
-		int pos;
-		for (int i = 0; i < bodys.length; i++) {
-			if ((code = bodys[i].getTableCode()) == null
-					|| code.trim().length() == 0) {
-				bodys[i]
-						.setTableCode(getDefaultTableCode(pos = bodys[i].getPos()
-										.intValue()));
-				bodys[i].setTableName(getDefaultTableName(pos));
-			}
-		}
-
-		// 模板VO排序 by pos table_code showorder
-//		BillUtil.sortBodyVOsByProps(bodys, new String[] { "pos", "table_code",
-//				"showorder" });
-	}
 	
 	//拿到单据context
 	public String getBxdTemplate(String userid,
 			String djlxbm, String nodecode,String flag) throws BusinessException {
-		panel = 9990;
 		initEvn(userid);
 		JSONObject jsonObj = new JSONObject();
 
         BillTempletVO billTempletVO =  getDefaultTempletStatics(djlxbm ); 
         billTempletVO.setParentToBody();
-    	//编辑界面点击添加按钮时需要表体页签列表
-        //表体页签列表
-        JSONArray tablist = getTableCodes(billTempletVO.getHeadVO());
         //表头要加载字段，编辑项
         BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
         try {
-			jsonObj.put("tablist", tablist);
-			jsonObj.put("dsl", getheaddsl(flag,bodyVO,djlxbm));
+        	BillItemTranslate tra  = new BillItemTranslate();
+        	//编辑界面点击添加按钮时需要表体页签列表  表体页签列表
+			jsonObj.put("tablist", tra.getTableCodes(billTempletVO.getHeadVO()));
+			jsonObj.put("dsl", tra.getheaddsl(flag,bodyVO,djlxbm));
+			jsonObj.put("formula", tra.getheadformula(flag,bodyVO));
 			jsonObj.put("ts", billTempletVO.getHeadVO().getTs().toString());
 		} catch (JSONException e) {
 		}
@@ -208,391 +173,22 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		return jsonObj.toString();
 	}
 	
-	//得到表体页签列表
-	private JSONArray getTableCodes(BillTempletHeadVO headVO){
-		JSONArray jsonarray = new JSONArray();
-		if (headVO != null) {
-			BillStructVO btVO = headVO.getStructvo();
-			if(btVO == null)
-			    return jsonarray;
-			BillTabVO[] btvos = btVO.getBillTabVOs();
-			if (btvos != null) {
-				int pos;
-				String tableCode;
-				String tableName;
-				for (int i = 0; i < btvos.length; i++) {
-					pos = btvos[i].getPos().intValue();
-					tableCode = btvos[i].getTabcode();
-					tableName = btvos[i].getTabname();
-					if (pos == IBillItem.BODY && tableCode != null) {
-						JSONObject jsonObj = new JSONObject();
-						try {
-							jsonObj.put("tablecode", tableCode);
-							jsonObj.put("tablename", tableName);
-						} catch (JSONException e) {
-						}
-						jsonarray.put(jsonObj);
-					}
-				}
-			}
-		}
-		return jsonarray;
-		
-	}
-	
-//	private static Map<String,Map<String,String>> templetCache = new HashMap<String,Map<String,String>>();
-	private String getheaddsl(String flag,BillTempletBodyVO[] bodyVO,String djlxbm){
-		StringBuffer div = new StringBuffer();
-		div.append("<div id=\"viewPage99\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
-		div.append("<div id=\"viewPage" + panel
-				+ "\"  layout=\"vbox\" width=\"fill\" height=\"wrap\" padding-left=\"15\">");
-		
-		if(flag.equals("addcard")){
-			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
-				for (int i = 0; i < bodyVO.length; i++) {
-					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.HEAD && bVO.getShowflag().booleanValue()==true){
-								MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
-								if(item.getKey().equals(BXHeaderVO.DJBH))
-									continue;
-								div.append(builddsl("head.",item,flag));
-								panel++;
-								div.append("<div id=\"viewPage" + panel
-										+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
-						
-					}
-				}
-			}
-		}
-		else if(flag.equals("editcard")){
-			Map<String,String> head = new HashMap<String,String>();
-			head.put(JKBXHeaderVO.PK_JKBX,null);
-			head.put(JKBXHeaderVO.DJLXBM,null);
-			head.put(JKBXHeaderVO.DJDL,null);
-			head.put(JKBXHeaderVO.TOTAL,null);
-			head.put(JKBXHeaderVO.SPZT,null);
-			head.put(JKBXHeaderVO.DJBH,null);
-			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
-				for (int i = 0; i < bodyVO.length; i++) {
-					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.HEAD && bVO.getListshowflag().booleanValue()==true){
-								MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
-								int dataType = item.getDataType();
-								if(dataType == IBillItem.UFREF || dataType == IBillItem.USERDEF){
-									head.put(item.getKey(), "UFREF,"+item.getRefType());
-								}else if(dataType == IBillItem.COMBO){
-									head.put(item.getKey(), "COMBO,"+item.getRefType());
-								}else{
-									head.put(item.getKey(), null);
-								}
-								div.append(builddsl("head.",item,flag));
-								panel++;
-								div.append("<div id=\"viewPage" + panel
-										+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//padding-left=\"15\" margin-left=\"15\"
-						
-					}
-				}
-			}
-//			templetCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + "head", head);
-		}
-		div.append("</div>");
-		panel++;
-		div.replace(div.lastIndexOf("<div id=\"viewPage"), div.lastIndexOf("</div>"), "");
-		String linedown = "<div id=\"viewPage" + panel
-				+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />";
-		div.append(linedown);
-		div.append("</div>");
-		return div.toString();
-	}
-	
-	//根据item生成div
-	private String builddsl(String prefix,MobileBillItem item,String flag){
-		StringBuffer div = new StringBuffer(); 
-		panel++;
-		div.append("<div id=\"viewPage" + panel
-				+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
-		div.append("<label id=\"label" + panel 
-			+ "\" height=\"fill\" color=\"#6F6F6F\" "
-			+"font-size=\"16\" width=\"100\" font-family=\"default\" value=\"" +//margin-left=\"15\"
-			item.getName() + "\" />");
-		String input = translateItem(prefix,item,flag);
-		div.append(input);
-		if(flag.equals("addcard") && input.startsWith("<label")){
-			panel++;
-			div.append("<image id=\"image" + panel
-			+ "\" scaletype=\"fitcenter\" src=\"arrowbig_nc.png\" height=\"12\" width=\"8\" />");//margin-right=\"15\"
-			panel++;
-			div.append("<label id=\"label" + panel 
-			+ "\" height=\"fill\" color=\"#6F6F6F\" "
-			+"font-size=\"16\" width=\"0\" font-family=\"default\" bindfield=\"head." +
-			item.getKey() + "\" display=\"none\" />");
-		}
-		div.append("</div>"); 
-		return div.toString();
-	}
-	private String translateItem(String prefix,MobileBillItem item,String flag){
-		BillItemTranslate tra  = new BillItemTranslate();
-		if(flag.equals("addcard"))
-			return tra.translateEditItem(prefix, item);
-		else
-			return tra.translateShowItem(prefix, item);
-//		StringBuffer input = new StringBuffer();
-//		int dataType = item.getDataType();
-//		if("zy".equals(item.getKey()) || "zy2".equals(item.getKey())){
-//			dataType = IBillItem.STRING ;
-//		}
-//		switch (dataType) {
-//			case IBillItem.STRING:
-//				panel++;
-//				if(flag.equals("addcard"))
-//					input.append("<input id=\"textbox" + panel 
-//					+ "\" maxlength=\"256\" placeholder=\"可空\" type=\"text\""
-//					+ " height=\"44\"  color=\"#000000\" "
-//					+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
-//				else if(flag.equals("editcard"))
-////					input.append("<label id=\"label" + panel 
-////							+ "\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-//					input.append("<input id=\"textbox" + panel 
-//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-//				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
-//				//字符串直接赋值
-//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-//					input.append(" value=\"" + item.getDefaultValue() + "\"");
-//				input.append("/>"); 
-//				break;
-//			case IBillItem.DATE:
-//			case IBillItem.DATETIME:
-//				panel++;
-//				if(flag.equals("addcard"))
-//					input.append("<input id=\"dateinput" + panel 
-//					+ "\" format=\"yyyy-MM-dd\" placeholder=\"可空\" type=\"date\""
-//					+ " height=\"44\" weight=\"1\" color=\"#000000\" "
-//					+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
-//					+ " bindfield=\"" + prefix + item.getKey() + "\"");
-//				else if(flag.equals("editcard"))
-//					input.append("<input id=\"dateinput" + panel 
-//							+ "\" readonly =\"true\" format=\"yyyy-MM-dd\" type=\"date\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" "
-//							+ " bindfield=\"" + prefix + item.getKey() + "_name\"");
-//				//日期直接赋值
-//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-//					input.append(" value=\"" + item.getDefaultValue() + "\"");
-//				input.append("/>"); 
-//				break;
-//			case IBillItem.DECIMAL:
-//			case IBillItem.MONEY: 
-//				panel++;
-//				if(flag.equals("addcard"))
-//					input.append( "<input id=\"number" + panel 
-//					+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-//					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
-//					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
-//				else if(flag.equals("editcard"))
-////					input.append("<input id=\"number" + panel 
-////							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
-////							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
-////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-//					input.append("<input id=\"textbox" + panel 
-//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-//				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
-//				//金额直接赋值
-//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-//					input.append(" value=\"" + item.getDefaultValue() + "\"");
-//				input.append("/>"); 
-//				break;
-//			case IBillItem.INTEGER:
-//				panel++;
-//				if(flag.equals("addcard"))
-//					input.append( "<input id=\"number" + panel 
-//					+ "\" min=\"-9.99999999E8\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-//					+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" "
-//					+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
-//				else if(flag.equals("editcard"))
-////					input.append("<input id=\"number" + panel 
-////							+ "\" readonly =\"true\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" " 
-////							+ "type=\"number\" roundType=\"value\" height=\"44\"  color=\"#000000\" background=\"#ffffff\" halign=\"right\" "
-////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-//					input.append("<input id=\"textbox" + panel 
-//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-//				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
-//				//金额直接赋值
-//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-//					input.append(" value=\"" + item.getDefaultValue() + "\"");
-//				input.append("/>"); 
-//				break;
-//			default:
-//				panel++;
-//				String reftype = item.getRefType();
-//				//下拉类型和参照类型分别需要对reftype做处理
-//				if(dataType == IBillItem.COMBO){
-////					JSONObject jsonObj = new JSONObject();
-//					boolean isFromMeta = reftype
-//			                   .startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
-//					String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-//					List<DefaultConstEnum> combodata = ComboBoxUtil.getInitData(reftype1, isFromMeta);
-//					StringBuffer typestr = new StringBuffer();
-//					for(int i=0;i<combodata.size();i++){
-//						DefaultConstEnum enumvalue = combodata.get(i);
-//						if(i != 0)
-//							typestr.append(",");
-//						typestr.append(enumvalue.getName()).append("=").append(enumvalue.getValue());
-//					}
-//					reftype = "COMBO," + item.getName() + ":" +typestr.toString();	
-//				}else{
-//					if(item.getRefType() == null)
-//						reftype = "UFREF,没有参照";
-//					else if(item.getRefType()!=null && item.getRefType().contains(","))
-//						reftype = "UFREF," + item.getRefType().split(",")[0];
-//				}
-//				if(flag.equals("addcard"))
-//					input.append("<label id=\"label" + panel 
-//					+ "\" height=\"44\" color=\"#000000\" "
-//					+"font-size=\"16\" weight=\"1\" padding-left=\"12\" onclick =\"open_reflist\" font-family=\"default\" " 
-//			 		+ " onclick-reftype=\"" + reftype
-//					+ "\" onclick-mapping=\"{'" + prefix + item.getKey() + "':'pk_ref','" + prefix + item.getKey() + "_name':'refname'}\"");
-//				else if(flag.equals("editcard"))
-////					input.append("<label id=\"label" + panel
-////							+ "\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-////							+ "font-size=\"16\" width=\"fill\" padding-right=\"15\" font-family=\"default\" ");
-//					input.append("<input id=\"textbox" + panel 
-//							+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
-//							+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
-//				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
-//				//参照赋默认值
-//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-//					input.append(" value=\"" + item.getDefaultValue() + "\"");
-//				input.append("/>"); 
-//				break;  
-//		}
-//		return input.toString();
-	}  
-
+	//获取驳回审批流和参照列表
 	public String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
 		initEvn(userid);
+		if(reftype.startsWith("workflow,")){
+			JSONObject jsonObj = new JSONObject();
+ 			String[] str = reftype.split(",");
+ 			try {
+				return QueryWorkFlowUtil.getWorkFlowGraph(str[1],str[2]).toString();
+			} catch (JSONException e) {
+				return jsonObj.toString();
+			}
+ 		}
 		return RefUtil.getRefList(userid, reftype, map);
 	}
 	
-	//得到表体动态dsl
-	private String getbodydsl(BillTempletBodyVO[] bodyVO,String tablecode,String flag,String djlxbm){
-		StringBuffer div = new StringBuffer();
-//		String[] fieldset ={"hbbm","amount","defitem1","defitem2","defitem3","szxmid"};
-		div.append("<div id=\"viewPage999\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
-		div.append("<div id=\"viewPage" + panel
-				+ "\"  layout=\"vbox\" width=\"fill\" height=\"wrap\" padding-left=\"15\">");
-				
-		if(flag.equals("addcard")){
-			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
-				for (int i = 0; i < bodyVO.length; i++) {
-					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
-	//					for(int j=0;j<fieldset.length;j++){
-	//						if(fieldset[j].equals(bVO.getItemkey())){
-								MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
-								div.append(builddsl("item.",item,flag));
-								panel++;
-								div.append("<div id=\"viewPage" + panel
-										+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//padding-left=\"15\"
-						
-	//						}
-	//					}
-					}
-				}
-			}
-		}
-		else if(flag.equals("editcard")){
-			Map<String,String> body = new HashMap<String,String>();
-			body.put(BXBusItemVO.AMOUNT,null);
-			body.put(BXBusItemVO.TABLECODE,null);
-			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
-				for (int i = 0; i < bodyVO.length; i++) {
-					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()==true){
-								MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
-								int dataType = item.getDataType();
-								if(dataType == IBillItem.UFREF || dataType == IBillItem.USERDEF){
-									body.put(item.getKey(),"UFREF,"+item.getRefType());
-								}else if(dataType == IBillItem.COMBO){
-									body.put(item.getKey(), "COMBO,"+item.getRefType());
-								}else{
-									body.put(item.getKey(), null);
-								}
-								div.append(builddsl("item.",item,flag));
-								panel++;
-								div.append("<div id=\"viewPage" + panel
-										+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"1\" padding-left=\"15\" background=\"#c7c7c7\" />");
-						
-					}
-				}
-			}
-//			templetCache.put(InvocationInfoProxy.getInstance().getGroupId() + djlxbm + tablecode + "body", body);
-		}
-		div.append("</div>");
-		panel++;
-		div.replace(div.lastIndexOf("<div id=\"viewPage"), div.lastIndexOf("</div>"), "");
-		String linedown = "<div id=\"viewPage" + panel
-				+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />";
-		div.append(linedown);
-		div.append("</div>");
-		return div.toString();
-	}
-	
-	//得到表体动态dsl的字段显示顺序
-	private String getbodyorder(BillTempletBodyVO[] bodyVO,String tablecode,String flag,String djlxbm){
-		
-		if(flag.equals("addcard")){
-			StringBuffer addorder = new StringBuffer();
-			if (bodyVO != null) {
-				for (int i = 0; i < bodyVO.length; i++) {
-					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
-						MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
-						if(!"amount".equals(item.getKey())){
-							int dataType = item.getDataType();
-							if(dataType == IBillItem.UFREF || dataType == IBillItem.USERDEF || dataType == IBillItem.COMBO){
-								addorder.append(item.getKey() + "_name").append(",");
-							}else{
-								addorder.append(item.getKey()).append(",");
-							}
-						}
-					}
-				}
-			} 
-			if(addorder.length()>0)
-				return addorder.substring(0,addorder.length()-1).toString();
-		}else if(flag.equals("editcard")){
-			StringBuffer editorder = new StringBuffer();
-			if (bodyVO != null) {
-				for (int i = 0; i < bodyVO.length; i++) {
-					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()==true){
-						MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
-						if(!"amount".equals(item.getKey())){
-							int dataType = item.getDataType();
-							if(dataType == IBillItem.UFREF || dataType == IBillItem.USERDEF || dataType == IBillItem.COMBO){
-								editorder.append(item.getKey() + "_name").append(",");
-							}else{
-								editorder.append(item.getKey()).append(",");
-							}
-						}
-					}
-				} 
-			}
-			if(editorder.length()>0){
-				String orderStr = editorder.substring(0,editorder.length()-1).toString();
-				return orderStr;
-			}
-		}
-		return "";
-	}
-	
+	//加载表体界面和公式		
 	public String getItemDslFile(String userid, String djlxbm, String nodecode,
 			String tablecode, String flag) throws BusinessException {
 		initEvn(userid);
@@ -601,32 +197,17 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
 		JSONObject jsonObj = new JSONObject();
 		try {
-			jsonObj.put("dsl", getbodydsl(bodyVO,tablecode,flag,djlxbm));
-			jsonObj.put(tablecode + "_order", getbodyorder(bodyVO,tablecode,flag,djlxbm));
+			BillItemTranslate tra  = new BillItemTranslate();
+			jsonObj.put("dsl", tra.getbodydsl(bodyVO,tablecode,flag,djlxbm));
+			jsonObj.put(tablecode + "_order", tra.getbodyorder(bodyVO,tablecode,flag,djlxbm));
+			jsonObj.put(tablecode + "_formula", tra.getbodyformula(bodyVO,tablecode));
 			jsonObj.put("ts", "\""+billTempletVO.getHeadVO().getTs().toString()+"\"");
 		} catch (JSONException e) {
 		}
 		return jsonObj.toString();
 	}
-	 private class ListResultSetProcessor
-     implements ResultSetProcessor
-     {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Object handleResultSet(ResultSet rs) throws SQLException {
-			List<String> topPks = new ArrayList<String>();
-			while(rs.next()){
-				topPks.add(rs.getString(1));
-			}
-	        return topPks;
-	     }
-     }
-
+	
+	//校验模板是不是最新的，得到模板最后修改时间
 	public String validateTs(String userid, String djlxbm, String nodecode,
 			String tsflag) throws BusinessException {
 		initEvn(userid);
@@ -647,10 +228,12 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
 			// 初始化表头数据
-			if(djlxbm.startsWith("263") || djlxbm.startsWith("264")){
+			if(djlxbm.startsWith("263") || djlxbm.startsWith("264")){ 
 				//借款报销单初始化
 				IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
 				billvo = initservice.setBillVOtoUI(djlxVO, "", null);
+				BillAddAction add = new BillAddAction();
+				add.setJKBXValue(null, billvo);
 			}else if(djlxbm.startsWith("262")){
 				//费用预提单初始化
 				IErmAccruedBillQuery initservice = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
@@ -705,6 +288,15 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			Logger.debug(e.getMessage());
 		}
 		return retJson.toString();
+	}
+
+	public String doAfterEdit(String editinfo, String userid) throws BusinessException {
+		ErmEditeventHandler ermEditeventHandler = new ErmEditeventHandler();
+		JSONObject jSONObject = ermEditeventHandler.process(editinfo);
+		if(jSONObject != null){
+			return jSONObject.toString();
+		}
+		return null;
 	}
 	
 //	private static Map<String,Map<String,String>> refPkName = new HashMap<String,Map<String,String>>();

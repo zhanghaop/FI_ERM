@@ -2299,6 +2299,9 @@ public class BXBusItemVO extends SuperVO {
 			super.setAttributeValue(name, value);
 		}
 	}
+	public void setJsonAttributeValue(String name, Object value) {
+		super.setAttributeValue(name, value);
+	}
 	
 	@Override
 	public Object getAttributeValue(String key) {

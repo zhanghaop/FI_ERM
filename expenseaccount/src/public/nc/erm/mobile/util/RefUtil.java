@@ -27,14 +27,6 @@ public class RefUtil {
 	
 	public static String getRefList(String userid, String reftype,Map<String, Object> map) throws BusinessException {
  		JSONObject jsonObj = new JSONObject();
- 		if(reftype.startsWith("workflow,")){
- 			String[] str = reftype.split(",");
- 			try {
-				return QueryWorkFlowUtil.getWorkFlowGraph(str[1],str[2]).toString();
-			} catch (JSONException e) {
-				return jsonObj.toString();
-			}
- 		}
 		if(reftype.startsWith("UFREF,"))
 			reftype = reftype.substring(6);
 		//Ãÿ ‚≤Œ’’∑µªÿø’

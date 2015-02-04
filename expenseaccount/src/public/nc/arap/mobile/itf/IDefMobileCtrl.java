@@ -59,4 +59,12 @@ public interface IDefMobileCtrl {
 	 * 查询单据附件附件
 	 */
 	public String getAttachFile(String pk_jkbx,String userid) throws BusinessException;
+	/**
+	 * 编辑后事件
+	 */
+	public String doAfterEdit(String editinfo,String userid) throws BusinessException;
+	/**
+	 * 根据表头获得表体默认值
+	 */
+	public String getItemInfo(String userid,String head,String tablecode,String itemnum,String classname) throws BusinessException;
 }
