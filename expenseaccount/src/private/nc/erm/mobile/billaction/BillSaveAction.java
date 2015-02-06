@@ -13,13 +13,11 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
-import nc.itf.fi.org.IOrgVersionQueryService;
 import nc.itf.fi.pub.Currency;
 import nc.itf.org.IOrgVersionQryService;
 import nc.itf.uap.pf.IPFWorkflowQry;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillManage;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillManage;
-import nc.ui.pub.beans.MessageDialog;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
@@ -141,12 +139,12 @@ public class BillSaveAction {
 	
 		// 显示预算，借款控制的提示信息
 		if (!StringUtils.isNullWithTrim(returnObj.getParentVO().getWarningmsg())) {
-			MessageDialog.showWarningDlg(null, nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-																													 * @
-																													 * res
-																													 * "警告"
-																													 */, returnObj.getParentVO().getWarningmsg());
-			returnObj.getParentVO().setWarningmsg(null);
+//			MessageDialog.showWarningDlg(null, nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+//																													 * @
+//																													 * res
+//																													 * "警告"
+//																													 */, returnObj.getParentVO().getWarningmsg());
+//			returnObj.getParentVO().setWarningmsg(null);
 		}
 	
 		return returnObj;
@@ -236,12 +234,12 @@ public class BillSaveAction {
 
 		// 显示预算，借款控制的提示信息
 		if (!StringUtils.isNullWithTrim(returnObj.getParentVO().getWarningmsg())) {
-			MessageDialog.showWarningDlg(null, nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
-																													 * @
-																													 * res
-																													 * "警告"
-																													 */, returnObj.getParentVO().getWarningmsg());
-			returnObj.getParentVO().setWarningmsg(null);
+//			MessageDialog.showWarningDlg(null, nc.ui.ml.NCLangRes.getInstance().getStrByID("smcomm", "UPP1005-000070")/*
+//																													 * @
+//																													 * res
+//																													 * "警告"
+//																													 */, returnObj.getParentVO().getWarningmsg());
+//			returnObj.getParentVO().setWarningmsg(null);
 		}
 
 		return returnObj;
