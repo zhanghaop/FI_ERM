@@ -6,16 +6,10 @@ import nc.erm.mobile.eventhandler.EditItemInfoVO;
 import nc.erm.mobile.eventhandler.InterfaceEditeventListener;
 import nc.erm.mobile.eventhandler.JsonVoTransform;
 import nc.erm.mobile.util.NumberFormatUtil;
-import nc.ui.erm.billpub.model.ErmBillBillManageModel;
-import nc.ui.pub.bill.BillModel;
-import nc.ui.pub.bill.IBillItem;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
-import nc.vo.er.djlx.DjLXVO;
-import nc.vo.er.exception.ExceptionHandler;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.lang.UFDouble;
 
 public class MoneyEdit extends AbstractEditeventListener implements InterfaceEditeventListener{
