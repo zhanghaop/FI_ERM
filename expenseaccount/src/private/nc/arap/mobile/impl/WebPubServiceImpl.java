@@ -17,25 +17,19 @@ import nc.bs.logging.Logger;
 import nc.bs.uap.lock.PKLock;
 import nc.erm.mobile.environment.EnvironmentInit;
 import nc.jdbc.framework.processor.ArrayListProcessor;
-import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.pubitf.org.IAccountingBookPubService;
-import nc.uap.cpb.org.vos.CpAppsNodeVO;
 import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.bd.ref.AbstractRefTreeModel;
 import nc.ui.bd.ref.RefPubUtil;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.beans.constenum.IConstEnum;
-import nc.ui.pub.bill.MetaDataGetBillRelationItemValue;
 import nc.vo.pub.bill.IMetaDataProperty;
 import nc.vo.pub.bill.MetaDataPropertyFactory;
 import nc.vo.pub.lang.MultiLangText;
-import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-
-import uap.lfw.bd.resource.CpFuncResourceVO;
 
 /**
  * 
@@ -138,47 +132,48 @@ public class WebPubServiceImpl implements IWebPubService {
 	public Object getRelationItemValue(String editItemClassname,
 			String editItemId, String relationitemAll, Object itemvalue)
 			throws Exception {
-		String metadataproperty = editItemClassname + "." + editItemId;
-		String[] relationitems = relationitemAll.split(",");
-		IMetaDataProperty iMetaDataProperty = MetaDataPropertyFactory
-				.creatMetaDataPropertyByName(metadataproperty, false);
-		MetaDataGetBillRelationItemValue metaDataGetBillRelationItemValue = new MetaDataGetBillRelationItemValue(
-				iMetaDataProperty.getRefBusinessEntity());
-		ArrayList<IConstEnum> ics = new ArrayList<IConstEnum>();
-		for (String relationitem : relationitems) {
-			IConstEnum ic = new DefaultConstEnum(relationitem, editItemId + "."
-					+ relationitem);
-			ics.add(ic);
-		}
-		IConstEnum[] resultIConstEnum = metaDataGetBillRelationItemValue
-				.getRelationItemValue(ics,
-						new String[] { itemvalue.toString() });
-		Object result = null;
-		if (resultIConstEnum != null) {
-			if (resultIConstEnum.length == 1 && resultIConstEnum[0] != null) {
-				result = processResult(resultIConstEnum[0].getValue());
-			} else if (resultIConstEnum.length == 3) {
-				ValueDetailInfoVO valueDetailInfoVO = new ValueDetailInfoVO();
-				Object resultValue = null;
-				Object resultCode = null;
-				Object resultName = null;
-				if (resultIConstEnum[0] != null) {
-					resultValue = processResult(resultIConstEnum[0].getValue());
-					valueDetailInfoVO.setValue(resultValue);
-				}
-				if (resultIConstEnum[1] != null) {
-					resultCode = processResult(resultIConstEnum[1].getValue());
-					valueDetailInfoVO.setCode(resultCode.toString());
-				}
-				if (resultIConstEnum[2] != null) {
-					resultName = processResult(resultIConstEnum[2].getValue());
-					valueDetailInfoVO.setName(resultName.toString());
-				}
-				return valueDetailInfoVO;
-			}
-			return result;
-		}
 		return null;
+//		String metadataproperty = editItemClassname + "." + editItemId;
+//		String[] relationitems = relationitemAll.split(",");
+//		IMetaDataProperty iMetaDataProperty = MetaDataPropertyFactory
+//				.creatMetaDataPropertyByName(metadataproperty, false);
+//		MetaDataGetBillRelationItemValue metaDataGetBillRelationItemValue = new MetaDataGetBillRelationItemValue(
+//				iMetaDataProperty.getRefBusinessEntity());
+//		ArrayList<IConstEnum> ics = new ArrayList<IConstEnum>();
+//		for (String relationitem : relationitems) {
+//			IConstEnum ic = new DefaultConstEnum(relationitem, editItemId + "."
+//					+ relationitem);
+//			ics.add(ic);
+//		}
+//		IConstEnum[] resultIConstEnum = metaDataGetBillRelationItemValue
+//				.getRelationItemValue(ics,
+//						new String[] { itemvalue.toString() });
+//		Object result = null;
+//		if (resultIConstEnum != null) {
+//			if (resultIConstEnum.length == 1 && resultIConstEnum[0] != null) {
+//				result = processResult(resultIConstEnum[0].getValue());
+//			} else if (resultIConstEnum.length == 3) {
+//				ValueDetailInfoVO valueDetailInfoVO = new ValueDetailInfoVO();
+//				Object resultValue = null;
+//				Object resultCode = null;
+//				Object resultName = null;
+//				if (resultIConstEnum[0] != null) {
+//					resultValue = processResult(resultIConstEnum[0].getValue());
+//					valueDetailInfoVO.setValue(resultValue);
+//				}
+//				if (resultIConstEnum[1] != null) {
+//					resultCode = processResult(resultIConstEnum[1].getValue());
+//					valueDetailInfoVO.setCode(resultCode.toString());
+//				}
+//				if (resultIConstEnum[2] != null) {
+//					resultName = processResult(resultIConstEnum[2].getValue());
+//					valueDetailInfoVO.setName(resultName.toString());
+//				}
+//				return valueDetailInfoVO;
+//			}
+//			return result;
+//		}
+//		return null;
 	}
 
 	private Object processResult(Object result) {
@@ -698,44 +693,44 @@ public class WebPubServiceImpl implements IWebPubService {
 	@Override
 	public void saveTranstype(String transtype, String name)
 			throws DAOException {
-		CpAppsNodeVO appsnodevo = new CpAppsNodeVO();
-		// 组织节点注册数据并插入
-		appsnodevo.setActiveflag(UFBoolean.TRUE);
-		appsnodevo.setAppid(transtype);
-		appsnodevo.setControlsub(UFBoolean.TRUE);
-		// 获取节点id最大编码，并在原编码基础上+1
-		String querysql = "select max(id) from cp_appsnode where id like 'E11011%'";
-		BaseDAO dao = new BaseDAO();
-		String result = (String) dao.executeQuery(querysql,
-				new ColumnProcessor());
-
-		int num = Integer.parseInt(result.substring(5, result.length()));
-		num++;
-		String id = "E1101" + num;
-		appsnodevo.setId(id);
-		appsnodevo.setPk_appscategory("0001Z310000000002Z99");
-		appsnodevo.setSpecialflag(UFBoolean.TRUE);
-		appsnodevo.setTitle(name);
-		appsnodevo.setType(1);
-		appsnodevo.setUrl("arap/billadd_ctr/queryTemplate?billType="
-				+ transtype);
-		dao.insertVO(appsnodevo);
-
-		querysql = "select pk_appsnode from cp_appsnode where id = '" + id
-				+ "'";
-		// 获取刚插入的交易类型主键，用于插入协同资源权限表
-		result = (String) dao.executeQuery(querysql, new ColumnProcessor());
-		// 组织协同资源权限表数据并插入
-		CpFuncResourceVO cpvo = new CpFuncResourceVO();
-		cpvo.setActiveflag(UFBoolean.TRUE);
-		cpvo.setOriginal("CpAppsNodeVO");
-		cpvo.setRescode(id);
-		cpvo.setPk_res(result);
-		cpvo.setResname(name);
-		cpvo.setRestype(1);
-		cpvo.setSourcepk(result);
-		cpvo.setSuborgvisible(UFBoolean.TRUE);
-		dao.insertVOWithPK(cpvo);
+//		CpAppsNodeVO appsnodevo = new CpAppsNodeVO();
+//		// 组织节点注册数据并插入
+//		appsnodevo.setActiveflag(UFBoolean.TRUE);
+//		appsnodevo.setAppid(transtype);
+//		appsnodevo.setControlsub(UFBoolean.TRUE);
+//		// 获取节点id最大编码，并在原编码基础上+1
+//		String querysql = "select max(id) from cp_appsnode where id like 'E11011%'";
+//		BaseDAO dao = new BaseDAO();
+//		String result = (String) dao.executeQuery(querysql,
+//				new ColumnProcessor());
+//
+//		int num = Integer.parseInt(result.substring(5, result.length()));
+//		num++;
+//		String id = "E1101" + num;
+//		appsnodevo.setId(id);
+//		appsnodevo.setPk_appscategory("0001Z310000000002Z99");
+//		appsnodevo.setSpecialflag(UFBoolean.TRUE);
+//		appsnodevo.setTitle(name);
+//		appsnodevo.setType(1);
+//		appsnodevo.setUrl("arap/billadd_ctr/queryTemplate?billType="
+//				+ transtype);
+//		dao.insertVO(appsnodevo);
+//
+//		querysql = "select pk_appsnode from cp_appsnode where id = '" + id
+//				+ "'";
+//		// 获取刚插入的交易类型主键，用于插入协同资源权限表
+//		result = (String) dao.executeQuery(querysql, new ColumnProcessor());
+//		// 组织协同资源权限表数据并插入
+//		CpFuncResourceVO cpvo = new CpFuncResourceVO();
+//		cpvo.setActiveflag(UFBoolean.TRUE);
+//		cpvo.setOriginal("CpAppsNodeVO");
+//		cpvo.setRescode(id);
+//		cpvo.setPk_res(result);
+//		cpvo.setResname(name);
+//		cpvo.setRestype(1);
+//		cpvo.setSourcepk(result);
+//		cpvo.setSuborgvisible(UFBoolean.TRUE);
+//		dao.insertVOWithPK(cpvo);
 	}
 
 }
