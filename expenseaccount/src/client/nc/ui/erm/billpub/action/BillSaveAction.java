@@ -1,28 +1,16 @@
 package nc.ui.erm.billpub.action;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-
-import nc.bs.framework.common.NCLocator;
-import nc.itf.arap.pub.IBxUIControl;
-import nc.ui.pub.beans.MessageDialog;
-import nc.ui.pub.bill.BillCardPanel;
-import nc.ui.uif2.editor.BillForm;
-import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.fipub.exception.ExceptionHandler;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDouble;
 
-public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
+public class BillSaveAction{
 	
 	private ContrastAction contrastaction;
 
     private static final long serialVersionUID = -3683160678696139800L;
 
-    @Override
-    public void doAction(ActionEvent e) throws Exception {
+//    public void doAction(ActionEvent e) throws Exception {
     	
 //    	BillCardPanel billCardPanel = ((ErmBillBillForm) getEditor()).getBillCardPanel();
 		//String tableCode = (billCardPanel.getBillData().getBodyTableCodes())[0];
@@ -89,7 +77,7 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 //		}
 
 //		showSuccessInfo();
-    }
+//    }
     
     private boolean checkContrast(JKBXVO bxvo) {
 		// 报销单检查是否提示冲借款
@@ -105,59 +93,59 @@ public class BillSaveAction extends nc.ui.uif2.actions.SaveAction {
 			// 交易类型是否提示冲借款
 			UFBoolean isNoticeContrast = UFBoolean.FALSE;//((ErmBillBillManageModel) getModel()).getCurrentDjLXVO().getIscontrast();
 			if (isNoticeContrast.booleanValue()) {
-				try {
+//				try {
 					// 本人是否有借款单
-					final boolean hasJKD = NCLocator.getInstance().lookup(IBxUIControl.class)
-							.getJKD(bxvo, bxvo.getParentVO().getDjrq(), null).size() > 0;
-					if (hasJKD
-							&& MessageDialog.ID_YES == MessageDialog
-									.showYesNoDlg(
-											(BillForm)getEditor(),
-											nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
-													"UPP2011-000049")/*
-																	 * @res "提示"
-																	 */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
-													.getStrByID("2011v61013_0", "02011v61013-0087")/*
-																									 * @
-																									 * res
-																									 * "本人有未清的借款单，是否进行冲借款操作? "
-																									 */)) {
-						getContrastaction().doAction(null);
+//					final boolean hasJKD = NCLocator.getInstance().lookup(IBxUIControl.class)
+//							.getJKD(bxvo, bxvo.getParentVO().getDjrq(), null).size() > 0;
+//					if (hasJKD
+//							&& MessageDialog.ID_YES == MessageDialog
+//									.showYesNoDlg(
+//											(BillForm)getEditor(),
+//											nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2011",
+//													"UPP2011-000049")/*
+//																	 * @res "提示"
+//																	 */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
+//													.getStrByID("2011v61013_0", "02011v61013-0087")/*
+//																									 * @
+//																									 * res
+//																									 * "本人有未清的借款单，是否进行冲借款操作? "
+//																									 */)) {
+//						getContrastaction().doAction(null);
 						// 重新取冲借款后的vo
-					}
-				} catch (Exception e) {
-					ExceptionHandler.handleRuntimeException(e);
-				}
+//					}
+//				} catch (Exception e) {
+//					ExceptionHandler.handleRuntimeException(e);
+//				}
 			}
 		}
 		
 		return flag;
 	}
     
-	public static void delBlankLine(BillCardPanel billCardPanel, String tableCode) {
+	public static void delBlankLine(String tableCode) {
 		// 停止编辑
-		billCardPanel.stopEditing();
-		int rowCount = billCardPanel.getRowCount(tableCode);
-		List<Integer> dellist=new ArrayList<Integer>();
-		for (int currow =0;currow<rowCount;currow++){
-			
-			UFDouble amount = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.AMOUNT);
-			UFDouble ybje = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.YBJE);
-			UFDouble hkybje = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.HKYBJE);
-			UFDouble zfybje = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.ZFYBJE);
-			
-			if ((amount == null || amount.compareTo(UFDouble.ZERO_DBL) == 0)
-					&& (ybje == null || ybje.compareTo(UFDouble.ZERO_DBL) == 0)
-					&& (hkybje == null || hkybje.compareTo(UFDouble.ZERO_DBL) == 0)
-					&& (zfybje == null || zfybje.compareTo(UFDouble.ZERO_DBL) == 0)) {
-				dellist.add(currow);
-			}
-		}
-		int del[]=new int[dellist.size()];
-		for (int i = 0; i < dellist.size(); i++) {
-			del[i]=dellist.get(i);
-		}
-		billCardPanel.getBillModel(tableCode).delLine(del);
+//		billCardPanel.stopEditing();
+//		int rowCount = billCardPanel.getRowCount(tableCode);
+//		List<Integer> dellist=new ArrayList<Integer>();
+//		for (int currow =0;currow<rowCount;currow++){
+//			
+//			UFDouble amount = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.AMOUNT);
+//			UFDouble ybje = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.YBJE);
+//			UFDouble hkybje = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.HKYBJE);
+//			UFDouble zfybje = (UFDouble) billCardPanel.getBillModel(tableCode).getValueAt(currow, JKBXHeaderVO.ZFYBJE);
+//			
+//			if ((amount == null || amount.compareTo(UFDouble.ZERO_DBL) == 0)
+//					&& (ybje == null || ybje.compareTo(UFDouble.ZERO_DBL) == 0)
+//					&& (hkybje == null || hkybje.compareTo(UFDouble.ZERO_DBL) == 0)
+//					&& (zfybje == null || zfybje.compareTo(UFDouble.ZERO_DBL) == 0)) {
+//				dellist.add(currow);
+//			}
+//		}
+//		int del[]=new int[dellist.size()];
+//		for (int i = 0; i < dellist.size(); i++) {
+//			del[i]=dellist.get(i);
+//		}
+//		billCardPanel.getBillModel(tableCode).delLine(del);
 	}
 
 	public ContrastAction getContrastaction() {

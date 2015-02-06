@@ -10,7 +10,6 @@ import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
-import nc.desktop.ui.WorkbenchEnvironment;
 import nc.erm.mobile.eventhandler.JsonVoTransform;
 import nc.erm.mobile.eventhandler.MultiVersionUtil;
 import nc.erm.mobile.util.JsonData;
@@ -629,8 +628,8 @@ public class JKBXBillAddAction extends BillAddAction{
 			// 个人银行账户带默认账户
 			BankAccbasVO bank = NCLocator.getInstance().lookup(IPsnBankaccPubService.class).queryDefaultBankAccByPsnDoc(receiver);
 			if (bank != null && bank.getBankaccsub() != null) {
-				WorkbenchEnvironment.getInstance().putClientCache(UserBankAccVoCall.USERBANKACC_VOCALL + receiver, bank.getBankaccsub());
-				parentVO.setSkyhzh(bank.getBankaccsub()[0].getPk_bankaccsub());
+//				WorkbenchEnvironment.getInstance().putClientCache(UserBankAccVoCall.USERBANKACC_VOCALL + receiver, bank.getBankaccsub());
+//				parentVO.setSkyhzh(bank.getBankaccsub()[0].getPk_bankaccsub());
 //				editor.getHelper().changeBusItemValue(BXBusItemVO.SKYHZH, bank.getBankaccsub()[0].getPk_bankaccsub());
 			}
 			
