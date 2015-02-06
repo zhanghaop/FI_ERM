@@ -112,22 +112,23 @@ public class ErmBugetPfClientBizProcess implements IPFClientBizProcess {
 				}
 			}else if (projBudgetControl_id.equals(df.getName())) {//项目预算控制
 				if (UFBoolean.valueOf(value.toString()).booleanValue()) {
-					BudgetReturnMSG control = null;
-					try {
-						control = ErmFlowCheckInfo
-								.doProjBudgetCheck(new JKBXVO[]{(JKBXVO) billvo});
-						if (control != null) {
-							List<BudgetReturnVO> checkResult = control.getDetailList();
-							UFBoolean isFlex = isOverBudget(checkResult);
-							((JKBXVO) billvo).getParentVO().setFlexible_flag(isFlex);
-							if (isFlex != null && isFlex.booleanValue()) {// 柔性控制
-								controlMsg.append("\n" + control.getErrorMSG());
-							}
-						}
-					} catch (BusinessException e) {//刚性控制
-						result.setShowPass(false);
-						controlMsg.append("\n" + e.getMessage());
-					}
+					//TODO  做盘编译报错，不知为何
+//					BudgetReturnMSG control = null;
+//					try {
+//						control = ErmFlowCheckInfo
+//								.doProjBudgetCheck(new JKBXVO[]{(JKBXVO) billvo});
+//						if (control != null) {
+//							List<BudgetReturnVO> checkResult = control.getDetailList();
+//							UFBoolean isFlex = isOverBudget(checkResult);
+//							((JKBXVO) billvo).getParentVO().setFlexible_flag(isFlex);
+//							if (isFlex != null && isFlex.booleanValue()) {// 柔性控制
+//								controlMsg.append("\n" + control.getErrorMSG());
+//							}
+//						}
+//					} catch (BusinessException e) {//刚性控制
+//						result.setShowPass(false);
+//						controlMsg.append("\n" + e.getMessage());
+//					}
 				}
 			}else if(matterAppBudgetControl_id.equals(df.getName())){//费用申请预算控制
 				if(UFBoolean.valueOf(value.toString()).booleanValue()){
