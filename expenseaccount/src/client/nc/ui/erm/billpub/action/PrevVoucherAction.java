@@ -90,7 +90,9 @@ public class PrevVoucherAction extends NCAction {
 			Collection<FipMessageVO[]> messagevos = new ArrayList<FipMessageVO[]>();
 			messagevos.add(svos.toArray(new FipMessageVO[svos.size()]));
 			ErmToftPanel entranceui = (ErmToftPanel) getModel().getContext().getEntranceUI();
-			DesBillGenerator.previewDesBill(entranceui, messagevos.toArray(new FipMessageVO[0][0]), null, new String[] { "C0" });
+			
+			//TODO 预览凭证做盘报错，当可以时，要放开
+//			DesBillGenerator.previewDesBill(entranceui, messagevos.toArray(new FipMessageVO[0][0]), null, new String[] { "C0" });
 
 //			FipRelationInfoVO desinfovo = new FipRelationInfoVO();
 //			desinfovo.setPk_billtype("C0");
