@@ -26,7 +26,7 @@ public class CloseAccBookAction extends NCAction {
 	}
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
-		getModel().save(ACTION_CODE);
+		getModel().save(ACTION_CODE, (CloseAccBookVO)getModel().getSelectedData());
 		ShowStatusBarMsgUtil.showStatusBarMsg(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("expensepub_0","02011002-0056")/*@res "πÿ’À≥…π¶£°"*/, getModel().getContext());
 	}
 
