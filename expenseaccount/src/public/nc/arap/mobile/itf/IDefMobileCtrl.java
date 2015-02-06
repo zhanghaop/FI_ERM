@@ -34,7 +34,7 @@ public interface IDefMobileCtrl {
 	 * 得到参照
 	 * 
 	 */
-	public String getRefList(String userid, String reftype,Map<String, Object> map)
+	public String getRefList(String userid,String query,String pk_org, String reftype,String filterCondition)
 				throws BusinessException;
 
 	/**
@@ -44,7 +44,7 @@ public interface IDefMobileCtrl {
 	/**
 	 * 保存自定义模板的单据
 	 */
-	public String addDefJkbx(Map<String,Object> jkbxInfo,String djlxbm,String userid) throws BusinessException;
+	public String addDefJkbx(String bxdcxt,String djlxbm,String userid) throws BusinessException;
 	/**
 	 * ts校验
 	 */
@@ -66,5 +66,5 @@ public interface IDefMobileCtrl {
 	/**
 	 * 根据表头获得表体默认值
 	 */
-	public String getItemInfo(String userid,String head,String tablecode,String itemnum,String classname) throws BusinessException;
+	public String getItemInfo(String userid,String djlxbm,String head,String tablecode,String itemnum,String classname) throws BusinessException;
 }

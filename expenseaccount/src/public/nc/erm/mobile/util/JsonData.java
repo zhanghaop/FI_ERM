@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import nc.arap.mobile.itf.IWebPubService;
+import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.erm.mobile.pub.formula.WebFormulaParser;
 import nc.md.MDBaseQueryFacade;
@@ -27,10 +30,12 @@ import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.bd.accessor.IBDData;
 import nc.vo.bill.pub.MiscUtil;
+import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.ExAggregatedVO;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.bill.BillStructVO;
@@ -252,6 +257,7 @@ public class JsonData
 				// 设置表体数据
 				IBusinessEntity be = getBillTempletVO().getHeadVO()
 						.getBillMetaDataBusinessEntity();
+				resultJson.put("aggvoclass", ((AggVOStyle)be.getBeanStyle()).getAggVOClassName());
 				//获得表体页签
 				BillTabVO[] tabvos = getBillBaseTabVOsByPosition(IBillItem.BODY);
 				if (tabvos != null) {
@@ -766,61 +772,78 @@ public class JsonData
         }
     }  
 	
-	public AggregatedValueObject transJsonToBillValueObject(JSONObject json) throws JSONException, BusinessException {
+	private HashMap<String,String> getClassnameMap(String headvoclassname) throws Exception{
+			IWebPubService iWebPubService = (IWebPubService) (NCLocator.getInstance()
+			.lookup(IWebPubService.class));
+			return iWebPubService.getClassnameMap(headvoclassname);
+	}
+	
+	public AggregatedValueObject transJsonToBillValueObject(String ctx) throws Exception{
+		JSONObject json = new JSONObject(ctx);
+		String aggvoclass = (String) json.get("aggvoclass");
+		AggregatedValueObject aggvo = (AggregatedValueObject)Class.forName(aggvoclass).newInstance();
 		//设置表头的值
+		//表头
 		JSONObject head = (JSONObject)json.get("head");
-		IBusinessEntity be = getBillTempletVO().getHeadVO()
-				.getBillMetaDataBusinessEntity();
-		AggregatedValueObject aggvo = null;
-		if (be.getBeanStyle().getStyle() == BeanStyleEnum.AGGVO_HEAD){
-			//根据元数据类型得到应该是什么类型的vo
-			AggVOStyle aggstyle = (AggVOStyle)be.getBeanStyle();
-			aggvo = (AggregatedValueObject) aggstyle.newInstance(null);
-//			NCObject ncobject = DASFacade.newInstanceWithContainedObject(be, aggvo);
+		String headvoclassname = (String)head.get("classname");
+		HashMap<String, String> classnameMap = getClassnameMap(headvoclassname);
+		String trueheadvoclassname = getClassnameMap(headvoclassname).get(headvoclassname);
+		SuperVO headVO = (SuperVO)Class.forName(trueheadvoclassname).newInstance();
+		Iterator<String> headvaluekeys = head.keys();
+        String headvaluekey;
+        if(headVO instanceof JKBXHeaderVO){
+        	//借款报销单重写了setAttributeValue方法，不能直接赋值，故采用setJsonAttributeValue方法调用
+        	while(headvaluekeys.hasNext()){
+	        	headvaluekey = headvaluekeys.next();
+	        	if(head.get(headvaluekey) != null && !"".equals(head.get(headvaluekey).toString())){
+	        		Object value = head.get(headvaluekey);
+        			((JKBXHeaderVO)headVO).setJsonAttributeValue(headvaluekey, value);
+	        	}
+	        }
+		}else{
+	        while(headvaluekeys.hasNext()){
+	        	headvaluekey = headvaluekeys.next();
+	        	if(head.get(headvaluekey) != null && !"".equals(head.get(headvaluekey).toString())){
+	        		Object value = head.get(headvaluekey);
+	        		if(headVO instanceof JKBXHeaderVO){
+	        			((JKBXHeaderVO)headVO).setJsonAttributeValue(headvaluekey, value);
+	        		}else{
+	        			headVO.setAttributeValue(headvaluekey, value);
+	        		}
+	        	}
+	        }
 		}
-		//给表头vo赋值	
-		SuperVO parent = (SuperVO) aggvo.getParentVO();
-		Iterator<String> keys = head.keys();  
-        JSONObject jo = null;  
-        String headvalue;  
-        String key;  
-        while(keys.hasNext()){
-            key = keys.next();  
-            headvalue = (String) head.get(key);
-            JsonItem item = getHeadTailItem(key);
-            setVoFromItem(item,parent,headvalue);
-        }  
+        aggvo.setParentVO(headVO);
+		
+        //表体
+        JSONArray bodys = (JSONArray)json.get("itemlist");
         
         //设置表体的值
         JSONArray bodyvalue; 
-        JSONObject body = (JSONObject)json.get("body");
         List<SuperVO> childrenlist = new ArrayList<SuperVO>();
-        keys = body.keys();   
-        while(keys.hasNext()){
-            key = keys.next();  
-            //表体是数组的形式
-            bodyvalue = (JSONArray) body.get(key);
-            JsonModel model = getBillModel(key);
-            IBusinessEntity bodybean = null;
-            NCBeanStyle bodystyle = null;
-            
-            try {
-            	bodybean = MDBaseQueryFacade.getInstance().getBusinessEntityByFullName(model.getTabvo().getMetadataclass());
-			} catch (MetaDataException e) {
-				Logger.debug(e);
-			}
-            if ((bodybean.getBeanStyle().getStyle() == BeanStyleEnum.NCVO) || (bodybean.getBeanStyle().getStyle() == BeanStyleEnum.POJO)){
-            	bodystyle = (NCBeanStyle) bodybean.getBeanStyle();
-            }
-        	for(int i=0;i<bodyvalue.length();i++){
-        		SuperVO bodyvo = (SuperVO) bodystyle.newInstance(null);
-        		jo = (JSONObject)bodyvalue.get(i);
-        		model.translateJsonToValueObject(bodyvo,jo);
-        		childrenlist.add(bodyvo);
+        if(bodys != null && bodys.length()>0){
+        	for(int i=0,n=bodys.length(); i<n; i++){
+        		JSONObject body = (JSONObject)bodys.get(i);
+				String bodyvoclassname = (String)body.get("classname");
+				String truebodyvoclassname = classnameMap.get(bodyvoclassname);
+				SuperVO bodyVO = (SuperVO)Class.forName(truebodyvoclassname).newInstance();
+	        	Iterator<String> keys = body.keys();
+		        String key;
+		        while(keys.hasNext()){
+		        	key = keys.next();
+		        	if(body.get(key) != null && !"".equals(body.get(key).toString())){
+		        		if(bodyVO instanceof BXBusItemVO){
+		        			((BXBusItemVO)bodyVO).setJsonAttributeValue(key, body.get(key));
+		        		}else{
+		        			bodyVO.setAttributeValue(key, body.get(key));
+		        		}
+		        	}
+		        }
+		        childrenlist.add(bodyVO);
         	}
-            
-        }  
-        aggvo.setChildrenVO(childrenlist.toArray(new SuperVO[0]));
+        }
+        SuperVO[] array = childrenlist.toArray(new BXBusItemVO[0]);
+        aggvo.setChildrenVO(array);
 		return aggvo;
 	}
 

@@ -24,11 +24,11 @@
 		</enabledinfo>
 	</item>
 	<item>
-		<itemkey>arap.payableitem@pk_psndoc</itemkey>
+		<itemkey>erm.er_busitem@pk_psndoc</itemkey>
 		<listener></listener>
 		<valueinfo>
 			<valueitem>
-				<valueitemid>arap.payableitem@pk_deptid_v</valueitemid>
+				<valueitemid>erm.er_busitem@pk_deptid_v</valueitemid>
 				<valuetype>function</valuetype>
 				<value>#mainJobDept#</value>
 			</valueitem>

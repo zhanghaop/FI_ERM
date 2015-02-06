@@ -330,11 +330,9 @@ public abstract class AbstractErmMobileCtrlBO {
 			  }
 			  JKBXVO jkbxvo = vos.get(0);
 			  // ÷¥––Ã·Ωª
-			  String actionType = ErUtil.getCommitActionCode(PK_ORG);
+			  String actionType = IPFActionName.SAVE;//ErUtil.getCommitActionCode(PK_ORG);
 			  PfUtilPrivate.runAction(actionType, djlxbm, jkbxvo, null,
 						null, null, null);
-//			  PfUtilPrivate.runAction(null, IPFActionName.SAVE+ userid, jkbxvo.getParentVO().getDjlxbm(), jkbxvo, null,
-//						null, null, null);
 			  return "true";
 			}catch(BusinessException e){
 				String msg = e.getMessage();

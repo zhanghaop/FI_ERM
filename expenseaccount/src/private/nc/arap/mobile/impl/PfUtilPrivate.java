@@ -449,6 +449,8 @@ public class PfUtilPrivate {
 	 * 审批通过或不通过
 	 */
 	protected static void onApprove(BesideApproveContext besideContext,WorkflownoteVO worknoteVO) {
+		if(besideContext == null)
+			return;
 
 		// 判断是否需要后继指派
 		boolean isNeedDispatch = isExistAssignableInfoWhenPass(worknoteVO);
@@ -884,5 +886,86 @@ public class PfUtilPrivate {
 		PfUtilPrivate.m_currentBillType = m_currentBillType;
 	}
 
+	/**
+	 * 按鈕權限
+	 * @param actionCode 动作编码，比如"SAVE"
+	 * @param billOrTranstype 单据（或交易）类型PK
+	 * @param billvo 单据聚合VO
+	 * @param userObj 用户自定义对象
+	 * @param checkVo 校验单据聚合VO
+	 * @param eParam 扩展参数
+	 * @return 动作处理的返回结果
+	 * @throws BusinessException 
+	 * @throws Exception
+	 * @since 5.5
+	 */ 
+	public static HashMap getOperateAuthorization(String actionCode, String billOrTranstype,
+			AggregatedValueObject billvo, Object userObj, BesideApproveContext besideContext,
+			AggregatedValueObject checkVo, HashMap eParam) throws BusinessException{
+		HashMap retmap = new HashMap();
+		Logger.debug("*单据动作处理 开始");
+		debugParams(actionCode, billOrTranstype, billvo, userObj);
+		long start = System.currentTimeMillis();
 
+		WorkflownoteVO worknoteVO = null;
+		//得到审批信息
+		if (PfUtilBaseTools.isSaveAction(actionCode, billOrTranstype)
+				|| PfUtilBaseTools.isApproveAction(actionCode,
+						billOrTranstype)) {
+			// 审批流交互处理
+			worknoteVO = actionAboutApproveflow(actionCode,
+					billOrTranstype, billvo, eParam,0);
+			onApprove(besideContext,worknoteVO);
+		} else if (PfUtilBaseTools.isStartAction(actionCode,
+				billOrTranstype)
+				|| PfUtilBaseTools.isSignalAction(actionCode,
+						billOrTranstype)) {
+			// 工作流互处理
+			worknoteVO = actionAboutWorkflow(actionCode,
+					billOrTranstype, billvo, besideContext,0);
+		}
+		if (worknoteVO == null) {
+			//检查不到工作项，则后台无需再次检查
+			if (eParam == null)
+				eParam = new HashMap<String, String>();
+			eParam.put(PfUtilBaseTools.PARAM_NOTE_CHECKED, PfUtilBaseTools.PARAM_NOTE_CHECKED);
+		}else{
+			boolean canReject = canRejectbtn(worknoteVO);
+			boolean canTransefer = canTransferbtn(worknoteVO);
+			boolean canAddApprover = canAddApproverbtn(worknoteVO);
+			retmap.put("canReject", canReject);
+			retmap.put("canTransefer", canTransefer);
+			retmap.put("canAddApprover", canAddApprover);
+		}
+		return retmap;
+	}
+
+	private static boolean canRejectbtn(WorkflownoteVO worknoteVO ) {
+		return !worknoteVO.getActiontype().endsWith("_A");
+	}
+
+	private static boolean canTransferbtn(WorkflownoteVO worknoteVO ) {
+		Object value = worknoteVO.getRelaProperties().get("CanTransfer");
+
+		if ((value != null) && ("true".equalsIgnoreCase(value.toString()))) {
+			if (worknoteVO.actiontype.endsWith("_A")) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean canAddApproverbtn(WorkflownoteVO worknoteVO ) {
+		Object value = worknoteVO.getRelaProperties()
+				.get("CanAddApprover");
+
+		if ((value != null) && ("true".equalsIgnoreCase(value.toString()))) {
+			if (worknoteVO.actiontype.endsWith("_A")) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
 }

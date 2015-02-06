@@ -5,7 +5,7 @@ import java.util.Map;
 import nc.arap.mobile.itf.IDefMobileCtrl;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
-import nc.erm.mobile.billaction.BillAddAction;
+import nc.erm.mobile.billaction.JKBXBillAddAction;
 import nc.itf.uap.rbac.IUserManageQuery;
 import nc.vo.pub.BusinessException;
 import nc.vo.sm.UserVO;
@@ -26,7 +26,8 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 	@Override
 	public String saveJkbx(Map<String, Object> map, String djlxbm,
 			String userid) throws BusinessException {
-		return getErmDefMobileCtrlBo().addJkbx(map,djlxbm,userid);
+		return null;
+		//return getErmDefMobileCtrlBo().addJkbx(map,djlxbm,userid);
 	}
 	@Override
 	public String getDslFile(String userid, String djlxbm,String nodecode, String flag)
@@ -34,9 +35,9 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().getBxdTemplate(userid,djlxbm,nodecode,flag);
 	}
 	@Override
-	public String getRefList(String userid, String reftype,Map<String, Object> map)
+	public String getRefList(String userid,String query,String pk_org, String reftype,String filterCondition)
 			throws BusinessException {
-		return getErmDefMobileCtrlBo().getRefList(userid,reftype,map);
+		return getErmDefMobileCtrlBo().getRefList(userid,query,pk_org,reftype,filterCondition);
 	}
 	@Override
 	public String getItemDslFile(String userid, String djlxbm, String nodecode,
@@ -45,9 +46,9 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 				tablecode,flag);
 	}
 	@Override
-	public String addDefJkbx(Map<String,Object> jkbxInfo,String djlxbm,String userid) 
+	public String addDefJkbx(String bxdcxt,String djlxbm,String userid) 
 			throws BusinessException{
-		return getErmDefMobileCtrlBo().addJkbx(jkbxInfo,djlxbm,userid);
+		return getErmDefMobileCtrlBo().addJkbx(bxdcxt,djlxbm,userid);
 	}
 	@Override
 	public String commitDefJkbx(String userid, String pk_jkbx,String djlxbm,String djdl)
@@ -77,11 +78,11 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().doAfterEdit(editinfo,userid);
 	}
 	@Override
-	public String getItemInfo(String userid, String head,String tablecode,String itemnum,String classname)
+	public String getItemInfo(String userid, String djlxbm,String head,String tablecode,String itemnum,String classname)
 			throws BusinessException {
 		UserVO uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(userid);
 		InvocationInfoProxy.getInstance().setUserId(userid);
 		InvocationInfoProxy.getInstance().setGroupId(uservo == null?null:uservo.getPk_group());
-		return new BillAddAction().setBodyDefaultValue(head,tablecode,itemnum,classname);
+		return new JKBXBillAddAction().setBodyDefaultValue(head,tablecode,itemnum,classname);
 	}
 }

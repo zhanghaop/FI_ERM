@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Vector;
 
 import nc.bs.framework.common.InvocationInfoProxy;
+import nc.erm.mobile.util.JsonData;
+import nc.erm.mobile.util.JsonItem;
 import nc.ui.bd.ref.AbstractRefModel;
+import nc.ui.bd.ref.RefPubUtil;
 import nc.ui.vorg.ref.AdminOrgVersionDefaultRefModel;
 import nc.ui.vorg.ref.BusinessUnitVersionDefaultRefModel;
 import nc.ui.vorg.ref.DeptVersionDefaultRefModel;
@@ -31,7 +34,7 @@ public class MultiVersionUtil {
 	 * 
 	 * @throws BusinessException
 	 */
-	public static void setHeadOrgMultiVersion(final String field, String pk_value, JKBXVO vo) throws BusinessException {
+	public static void setHeadOrgMultiVersion(JsonData jsonData,final String field, String pk_value, JKBXVO vo) throws BusinessException {
 		if (StringUtil.isEmpty(pk_value)) {
 			return;
 		}
@@ -46,7 +49,7 @@ public class MultiVersionUtil {
 				date =  new UFDate(busitime);
 			}
 		}
-		String pk_vid = getBillHeadFinanceOrgVersion(field, pk_value, date, vo.getParentVO());
+		String pk_vid = getBillHeadFinanceOrgVersion(jsonData,field, pk_value, date, vo.getParentVO());
 		head.setAttributeValue(field, pk_vid);
 	}
 
@@ -179,32 +182,17 @@ public class MultiVersionUtil {
 	 * @author chendya
 	 * @return
 	 */
-	private static String getBillHeadFinanceOrgVersion(String orgHeadItemKey, String oid, UFDate vstartdate,JKBXHeaderVO head) {
-//		UIRefPane refPane = (UIRefPane) cardPanel.getHeadItem(orgHeadItemKey).getComponent();
-//		if(JKBXHeaderVO.PK_ORG_V.equals(orgHeadItemKey)){
-		    //修改单据日期时处理
-//		    String refPK = refPane.getRefPK();
-//		    //只处理了PK_ORG_V
-//		    String[] pk_vids = ErUiUtil.getPermissionOrgVs(editor.getModel().getContext(),vstartdate);
-//		    if(pk_vids==null ){
-//		        pk_vids = new String[0];
-//		    }
-//		    //设置主组织过滤值
-//		    ((FinanceOrgVersionDefaultRefTreeModel)editor.getBillOrgPanel().getRefPane().getRefModel()).setVstartdate(vstartdate);
-//            AbstractRefModel refModel = editor.getBillOrgPanel().getRefPane()
-//                    .getRefModel();
-//            ErUiUtil.setRefFilterPks(refModel, pk_vids);
-//            // refPane.getRefModel().setFilterPks(pk_vids);
-//            ErUiUtil.setRefFilterPks(refPane.getRefModel(), pk_vids);
-//		    List<String> list = Arrays.asList(pk_vids);
-//		    if(list.contains(refPK)){
-//		        refPane.setPK(refPK);
-//		    }else{
-//		        refPane.setPK(null);
-//		    }
-//		}
-		FinanceOrgVersionDefaultRefTreeModel model = new FinanceOrgVersionDefaultRefTreeModel();
-		Map<String, String> map = getFinanceOrgVersion(model, new String[] { oid },
+	private static String getBillHeadFinanceOrgVersion(JsonData jsonData,String orgHeadItemKey, String oid, UFDate vstartdate,JKBXHeaderVO head) {
+		JsonItem item =jsonData.getHeadTailItem(orgHeadItemKey);
+		String reftype = item.getRefType();
+		if(reftype != null){
+			//去掉参照名称多余字符
+			if(reftype.indexOf(',') != -1){
+				reftype = reftype.substring(0,reftype.indexOf(','));
+			}			
+		}
+		AbstractRefModel refModel = RefPubUtil.getRefModel(reftype);
+		Map<String, String> map = getFinanceOrgVersion(refModel, new String[] { oid },
 				vstartdate);
 		if(map == null)
 			return null;
@@ -318,7 +306,7 @@ public class MultiVersionUtil {
 	 * 
 	 * @throws BusinessException
 	 */
-	public static void setHeadDeptMultiVersion(final String field, String pk_org, String pk_dept,JKBXHeaderVO vo)
+	public static void setHeadDeptMultiVersion(JsonData jsonData,final String field, String pk_org, String pk_dept,JKBXHeaderVO vo)
 			throws BusinessException {
 		// v6.1新增 支持多版本
 		UFDate date = vo.getDjrq();
@@ -332,7 +320,7 @@ public class MultiVersionUtil {
 				date =  new UFDate(busitime);
 			}
 		}
-		vo.setAttributeValue(field, getBillHeadDeptVersion(field, pk_org, pk_dept, date));
+		vo.setAttributeValue(field, getBillHeadDeptVersion(jsonData,field, pk_org, pk_dept, date));
 	}
 	
 	/**
@@ -341,15 +329,23 @@ public class MultiVersionUtil {
 	 * @author chendya
 	 * @return
 	 */
-	private static String getBillHeadDeptVersion(String headDeptItemKey, String pk_org, String oid, UFDate vstartdate) {
-//		UIRefPane refPane = (UIRefPane) billCardPanel.getHeadItem(headDeptItemKey).getComponent();
-//		Map<String, String> map = getDeptVersion(refPane.getRefModel(), pk_org, new String[] { oid },
-//				vstartdate);
+	private static String getBillHeadDeptVersion(JsonData jsonData,String headDeptItemKey, String pk_org, String oid, UFDate vstartdate) {
+		JsonItem item =jsonData.getHeadTailItem(headDeptItemKey);
+		String reftype = item.getRefType();
+		if(reftype != null){
+			//去掉参照名称多余字符
+			if(reftype.indexOf(',') != -1){
+				reftype = reftype.substring(0,reftype.indexOf(','));
+			}			
+		}
+		AbstractRefModel refModel = RefPubUtil.getRefModel(reftype);
+		Map<String, String> map = getDeptVersion(refModel, pk_org, new String[] { oid },
+				vstartdate);
 
 		String vid = null;
-//		if (map.size() > 0) {
-//			vid = map.keySet().iterator().next();
-//		}
+		if (map.size() > 0) {
+			vid = map.keySet().iterator().next();
+		}
 		return vid;
 	}
 	

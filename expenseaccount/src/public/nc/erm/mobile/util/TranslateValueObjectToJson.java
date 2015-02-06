@@ -87,13 +87,6 @@ public class TranslateValueObjectToJson{
 	 */
 	public JSONObject transValueObjectToJSON(BillTempletVO billTempletVO,Object o) throws Exception{
 		try {
-//			EnvironmentInit.initEvn(pk_user);
-//			BillOperaterEnvVO envvo=new BillOperaterEnvVO();
-//			envvo.setBilltype("20080PBR");
-//			envvo.setNodekey("D1");
-//			envvo.setOperator(pk_user);
-//			envvo.setCorp(pk_group);
-//			BillTempletVO billTempletVO = ErmTemplateQueryUtil.findBillTempletDatas(envvo);
 			if(billTempletVO==null){
 				throw new BusinessException("Ä£°åÎª¿Õ");
 			}

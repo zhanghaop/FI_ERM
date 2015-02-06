@@ -251,45 +251,37 @@ public class BillSaveAction {
 		if(!(vo instanceof JKBXVO))
 			return null;
 		JKBXVO jkbxvo = (JKBXVO) vo;
-//		String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-//		DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
-		// 初始化表头数据
-//		IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
-//		jkbxvo = initservice.setBillVOtoUI(djlxVO, "", null);
 		JKBXHeaderVO parentVO = jkbxvo.getParentVO();
 		//根据数据类型将需要转换的数据进行转换
 		parentVO.setPk_jkbx(null);
 		if(StringUtil.isEmptyWithTrim(parentVO.getBzbm())){
 			throw new BusinessException("币种不能为空！");
 		}
-//		parentVO.setBbhl(new UFDouble(1));
-//		parentVO.setGroupbbhl(UFDouble.ZERO_DBL);
-//		parentVO.setGlobalbbhl(UFDouble.ZERO_DBL);
-//		if(parentVO.getPaytarget() == null){
-//			parentVO.setPaytarget(0);
-//		}
-//		parentVO.setDjbh(null);
-		// 补充表头组织字段版本信息
-		IOrgVersionQueryService orgvservice = NCLocator.getInstance().lookup(IOrgVersionQueryService.class);
-		Map<String, OrgVersionVO> orgvmap = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, parentVO.getDjrq());
-		OrgVersionVO orgVersionVO = orgvmap.get(parentVO.getPk_org());
-		if(orgVersionVO==null){
-			Map<String, OrgVersionVO> orgvmap2 = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, new UFDate("2990-01-01"));
-			orgVersionVO= orgvmap2.get(parentVO.getPk_org());
+		if(parentVO.getPaytarget() == null){
+			parentVO.setPaytarget(0);
 		}
-		String orgVid = orgVersionVO.getPk_vid();
-		parentVO.setDwbm_v(orgVid);
-		parentVO.setFydwbm_v(orgVid);
-		parentVO.setPk_org_v(orgVid);
-		parentVO.setPk_payorg_v(orgVid);
-		
-		String deptVid = getDept_vid(parentVO.getDeptid(),  parentVO.getDjrq());
-		parentVO.setDeptid_v(deptVid);
-		parentVO.setFydeptid_v(deptVid);
+		// 补充表头组织字段版本信息
+//		IOrgVersionQueryService orgvservice = NCLocator.getInstance().lookup(IOrgVersionQueryService.class);
+//		Map<String, OrgVersionVO> orgvmap = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, parentVO.getDjrq());
+//		OrgVersionVO orgVersionVO = orgvmap.get(parentVO.getPk_org());
+//		if(orgVersionVO==null){
+//			Map<String, OrgVersionVO> orgvmap2 = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, new UFDate("2990-01-01"));
+//			orgVersionVO= orgvmap2.get(parentVO.getPk_org());
+//		}
+//		String orgVid = orgVersionVO.getPk_vid();
+//		parentVO.setDwbm_v(orgVid);
+//		parentVO.setFydwbm_v(orgVid);
+//		parentVO.setPk_org_v(orgVid);
+//		parentVO.setPk_payorg_v(orgVid);
+//		
+//		String deptVid = getDept_vid(parentVO.getDeptid(),  parentVO.getDjrq());
+//		parentVO.setDeptid_v(deptVid);
+//		parentVO.setFydeptid_v(deptVid);
 		
 		// 设置表体数据
 		//把表头收支项目同步到表体
 		String szxmid = parentVO.getSzxmid();
+		parentVO.setPk_item(null);
 		BXBusItemVO[] items = jkbxvo.getChildrenVO();
 		if(items != null && items.length>0){
 			UFDouble totalAmount = UFDouble.ZERO_DBL;   
@@ -302,8 +294,6 @@ public class BillSaveAction {
 				UFDouble amount = itemvo.getAmount();
 				itemvo.setYbje(amount);
 				itemvo.setBbje(amount);
-				itemvo.setPaytarget(0);
-				itemvo.setReceiver(parentVO.getReceiver());
 				totalAmount = totalAmount.add(amount);
 			}
 			parentVO.setYbje(totalAmount);

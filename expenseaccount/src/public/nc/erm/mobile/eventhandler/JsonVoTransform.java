@@ -1,14 +1,20 @@
 package nc.erm.mobile.eventhandler;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import nc.arap.mobile.itf.IWebPubService;
 import nc.bs.framework.common.NCLocator;
+import nc.erm.mobile.environment.ErmTemplateQueryUtil;
+import nc.erm.mobile.util.JsonData;
+import nc.erm.mobile.util.JsonItem;
+import nc.erm.mobile.util.JsonModel;
+import nc.ui.pub.bill.IBillItem;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.pub.SuperVO;
+import nc.vo.pub.bill.BillTempletBodyVO;
+import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
@@ -251,27 +257,44 @@ public class JsonVoTransform {
 		this.itemValueInfoVO = itemValueInfoVO;
 	}
 	
-	public JSONObject getVOJSONObject(int rownum,SuperVO vo,String tablecode,String classname) throws JSONException {
-		JSONObject voJson = new JSONObject();
-		//获取传入对象的Class对象
-		Class classType = vo.getClass();
-		//获取传入对象的所有属性组
-		Field[] fields = classType.getDeclaredFields();
-		
-		//遍历属性
-		for(int i=0;i<fields.length;i++){
-			//获取对应属性的名字
-			String fieldName = fields[i].getName().toLowerCase();
-			Object value = vo.getAttributeValue(fieldName);
-			//将值放入到JSON对象中
-			voJson.put(fieldName, value);
-		}
+	public JSONObject getVOJSONObject(int rownum,SuperVO vo,String tablecode,String classname) throws Exception {
+		BillTempletVO billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics("2641"); 
+		JsonData jsonData = new JsonData(billTempletVO);
+		JSONObject voJson = jsonData.getHeadVO(vo);
+		voJson.put("notnull", getbodynotnull(jsonData.getBillModel(tablecode)));
+//		//获取传入对象的Class对象co
+//		Class classType = vo.getClass();
+//		//获取传入对象的所有属性组
+//		Field[] fields = classType.getDeclaredFields();
+//		
+//		//遍历属性
+//		for(int i=0;i<fields.length;i++){
+//			//获取对应属性的名字
+//			String fieldName = fields[i].getName().toLowerCase();
+//			Object value = vo.getAttributeValue(fieldName);
+//			//将值放入到JSON对象中
+//			voJson.put(fieldName, value);
+//		}
 		voJson.put("tablecode", tablecode);
 		voJson.put("classname", classname);
-		voJson.put("itemno", rownum);
+//		voJson.put("itemno", rownum);
 		return voJson;
 	}
-	
+	//获取表体必输项
+	public String getbodynotnull(JsonModel model) throws JSONException{
+		JsonItem[] items = model.getBodyItems();
+		StringBuffer notnullstr = new StringBuffer();
+		if (items != null) {
+			for (int i = 0; i < items.length; i++) {
+				JsonItem item = items[i];
+				if(item.isNull()){
+					notnullstr.append(item.getKey()+",");
+				}
+					
+			}
+		}
+		return notnullstr.toString();
+	}
 	public JSONObject getjSONObject() {
 		this.jSONObject = new JSONObject();
 		try{

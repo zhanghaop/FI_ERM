@@ -18,7 +18,16 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-public class BillItemTranslate {
+public class MobileTemplateFactory {
+	boolean isHeadShow(BillTempletBodyVO bVO){
+		return ((bVO.getPos().intValue() == IBillItem.HEAD || bVO.getPos().intValue() == IBillItem.TAIL) && bVO.getShowflag().booleanValue());
+	}
+	boolean isHeadListShow(BillTempletBodyVO bVO){
+		return ((bVO.getPos().intValue() == IBillItem.HEAD || bVO.getPos().intValue() == IBillItem.TAIL) && bVO.getListshowflag().booleanValue());
+	}
+	boolean isItemShow(BillTempletBodyVO bVO,String tablecode){
+		return ((bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()));
+	}
 	private int panel = 9990;
 	public String getheaddsl(String flag,BillTempletBodyVO[] bodyVO,String djlxbm){
 		StringBuffer div = new StringBuffer();
@@ -33,7 +42,7 @@ public class BillItemTranslate {
 				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
-					if((bVO.getPos().intValue() == IBillItem.HEAD || bVO.getPos().intValue() == IBillItem.TAIL) && bVO.getShowflag().booleanValue()==true){
+					if(isHeadShow(bVO)){
 						//记录当前有几行表头
 						itemnum++;
 						MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
@@ -64,7 +73,7 @@ public class BillItemTranslate {
 				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.HEAD && bVO.getListshowflag().booleanValue()==true){
+					if(isHeadListShow(bVO)){
 						//记录当前有几行表头
 						itemnum++;
 						MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
@@ -144,8 +153,8 @@ public class BillItemTranslate {
 			panel++;
 			div.append("<div id=\"viewPage" + panel
 					+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
-			div.append("<label id=\"label" + panel 
-				+ "\" height=\"fill\" color=\"#6F6F6F\" "
+			div.append("<label id=\"" + item.getKey() 
+				+ "_key\" height=\"fill\" color=\"#6F6F6F\" "
 				+"font-size=\"16\" width=\"100\" font-family=\"default\" value=\"" +//margin-left=\"15\"
 				item.getName() + "\" />");
 			if(flag.equals("addcard")){
@@ -264,6 +273,7 @@ public class BillItemTranslate {
 	
 	//得到表体动态dsl
 	public String getbodydsl(BillTempletBodyVO[] bodyVO,String tablecode,String flag,String djlxbm){
+//		return this.getheaddsl(flag, bodyVO, djlxbm);
 		StringBuffer div = new StringBuffer();
 		div.append("<div id=\"viewPage999\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
 		div.append("<div id=\"viewPage" + panel
@@ -308,6 +318,13 @@ public class BillItemTranslate {
 				+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />";
 		div.append(linedown);
 		div.append("</div>");
+		try{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("c:\\Result.txt")));
+		     writer.write(div.toString());
+		     writer.close();
+		}catch(Exception e){
+	
+	   }
 		return div.toString();
 	}
 		
@@ -369,14 +386,41 @@ public class BillItemTranslate {
 				BillTempletBodyVO bVO = bodyVO[i];
 				if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
 							JsonItem item = new JsonItem(bVO, bVO.getCardflag());
-							formulajson.put(item.getKey(), item.getEditFormulas());
+							if(item.getEditFormulas() != null){
+								String[] formulars = item.getEditFormulas();
+								StringBuffer formularstr = new StringBuffer();
+								for(int j=0;j<formulars.length;j++){
+									formularstr.append(formulars[j]+",");
+								}
+								formulajson.put(item.getKey(), formularstr);
+							}
 					
 				}
 			}
 		}
 		return formulajson.toString();
 	}
-		
+	
+	//获取表体必输项
+	public String getbodynotnull(BillTempletBodyVO[] bodyVO,String tablecode) throws JSONException{
+		StringBuffer notnullstr = new StringBuffer();
+		if (bodyVO != null) {
+			initBodyVOs(bodyVO);
+
+			for (int i = 0; i < bodyVO.length; i++) {
+				BillTempletBodyVO bVO = bodyVO[i];
+				if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true ){
+							JsonItem item = new JsonItem(bVO, bVO.getNullflag());
+							if(bVO.getNullflag()){
+								notnullstr.append(item.getKey()+",");
+							}
+					
+				}
+			}
+		}
+		return notnullstr.toString();
+	}
+	
 	//查看字段dsl生成
 	public String translateShowItem(String prefix,MobileBillItem item){
 		StringBuffer input = new StringBuffer();
@@ -391,8 +435,8 @@ public class BillItemTranslate {
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//字符串直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			case IBillItem.DATE:
@@ -402,8 +446,8 @@ public class BillItemTranslate {
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" "
 						+ " bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//日期直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			case IBillItem.DECIMAL:
@@ -413,8 +457,8 @@ public class BillItemTranslate {
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//金额直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			case IBillItem.INTEGER:
@@ -423,8 +467,8 @@ public class BillItemTranslate {
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//金额直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			default:
@@ -434,8 +478,8 @@ public class BillItemTranslate {
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//参照赋默认值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;  
 		}
@@ -453,14 +497,14 @@ public class BillItemTranslate {
 			case IBillItem.STRING:
 				input.append("<input id=\"" + item.getKey() 
 				+ "\" maxlength=\"256\" placeholder=\"可空\" type=\"text\""
-				+ " height=\"44\"  color=\"#000000\" "
-				+ "font-size=\"16\" width=\"fill\" font-family=\"default\" onchange=\"onInputChange()\" onchange-key=\""+item.getKey()+"\"");//padding-left=\"12\"
+				+ " height=\"44\"  color=\"#000000\" onchange=\"onInputChange()\" "
+				+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
 				//字符串直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			case IBillItem.DATE:
@@ -471,8 +515,8 @@ public class BillItemTranslate {
 				+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
 				+ " bindfield=\"" + prefix + item.getKey() + "\"");
 				//日期直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			case IBillItem.DECIMAL:
@@ -485,8 +529,8 @@ public class BillItemTranslate {
 					input.append(" readonly=\"true\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
 				//金额直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			case IBillItem.INTEGER:
@@ -496,8 +540,19 @@ public class BillItemTranslate {
 				+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
 				//金额直接赋值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
+				input.append("/>"); 
+				break;
+			case IBillItem.BOOLEAN:
+				input.append( "<input id=\"" + item.getKey() 
+				+ "\" type=\"checkbox\" check-on-image=\"checkbox_select\" check-off-image=\"checkbox_noselect\" "
+				+ " height=\"22\" color=\"#000000\"  onchange=\"onInputChange()\" "
+				+ "font-size=\"16\" width=\"22\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+				//金额直接赋值
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;
 			default:
@@ -530,8 +585,8 @@ public class BillItemTranslate {
 				+ "\" onclick-mapping=\"{'" + prefix + item.getKey() + "':'pk_ref','" + prefix + item.getKey() + "_name':'refname'}\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//参照赋默认值
-				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
-					input.append(" value=\"" + item.getDefaultValue() + "\"");
+//				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
+//					input.append(" value=\"" + item.getDefaultValue() + "\"");
 				input.append("/>"); 
 				break;  
 		}

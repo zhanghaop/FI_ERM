@@ -1,5 +1,6 @@
 package nc.arap.mobile.itf;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import nc.bs.dao.DAOException;
@@ -25,11 +26,12 @@ public interface IWebPubService {
 	/*
 	 * 组装普通参照json数据
 	 */
-	public ArrayList<HashMap<String,String>> getCommonRefJSON(String content,String reftype,String filterCondition,String pk_group,String pk_org,String pk_user) throws Exception;
+	public ArrayList<HashMap<String,String>> getCommonRefJSON(String content,String reftype,String filterCondition,String pk_group,String pk_org,String pk_user) throws Exception;	
 	/*
 	 * 组装树形参照json数据
 	 */
-	public ArrayList<HashMap<String,String>> getTreeRefJSON(String content,String reftype,String filterCondition,String pk_group,String pk_org,String pk_user) throws Exception;
+	public ArrayList<HashMap<String,String>> getfirstLevelTreeRefJSON(String reftype,String filterCondition,String pk_group,String pk_org,String pk_user) throws Exception;
+	public ArrayList<HashMap<String,String>> getnextLevelTreeRefJSON(String reftype,String fatherField,String filterCondition,String pk_group,String pk_org,String pk_user) throws Exception;
 	/*
 	 * 组装大数据参照json数据
 	 */
