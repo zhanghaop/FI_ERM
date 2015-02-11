@@ -12,18 +12,17 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.erm.mobile.eventhandler.JsonVoTransform;
 import nc.erm.mobile.eventhandler.MultiVersionUtil;
+import nc.erm.mobile.util.ErMobileUtil;
 import nc.erm.mobile.util.JsonData;
-import nc.erm.mobile.util.JsonItem;
 import nc.itf.bd.psnbankacc.IPsnBankaccPubService;
 import nc.itf.er.reimtype.IReimTypeService;
 import nc.itf.fi.pub.Currency;
 import nc.itf.fi.pub.SysInit;
 import nc.pubitf.org.cache.IOrgUnitPubService_C;
-import nc.ui.er.util.BXUiUtil;
 import nc.ui.erm.billpub.remote.UserBankAccVoCall;
+import nc.ui.pub.bill.IBillItem;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXParamConstant;
-import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.arap.bx.util.BxUIControlUtil;
 import nc.vo.arap.bx.util.ControlBodyEditVO;
 import nc.vo.bd.bankaccount.BankAccbasVO;
@@ -41,15 +40,14 @@ import nc.vo.org.OrgVO;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
+import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
-import org.codehaus.jettison.json.JSONObject;
-
 public class JKBXBillAddAction extends BillAddAction{
-	private Object billvo;
+	private JKBXVO billvo;
 	// 报销规则组织级数据缓存，<组织，标准>
 	private Map<String, Map<String, List<SuperVO>>> reimRuleDataCacheMap = new HashMap<String, Map<String, List<SuperVO>>>();
 	private Map<String, Map<String, List<SuperVO>>> reimDimDataCacheMap = new HashMap<String, Map<String, List<SuperVO>>>();
@@ -69,23 +67,23 @@ public class JKBXBillAddAction extends BillAddAction{
 			backVO.getParentVO().combineVO(frontVO.getParentVO());
 		}
 	}
-	public void setJKBXValue(JsonData jsonData,Object resVO,Object object) throws BusinessException {
+	/**
+	 * 
+	 * @param jsonData
+	 * @param resVO
+	 * @param object 初始化后的值
+	 * @throws BusinessException
+	 */
+	public void getJKBXValue(JsonData jsonData,Object resVO,Object object) throws BusinessException {
 		if(object == null){
 			return;
 		}
-		billvo = object;
+		billvo = (JKBXVO)object;
 		//设置精度,然后在设置值
-		JKBXHeaderVO parentVO = ((JKBXVO)object).getParentVO();
+		JKBXHeaderVO parentVO = billvo.getParentVO();
 		//首先取模板上的默认值
-		JsonItem[] jsonitems = jsonData.getHeadTailItems();
-		for(int i=0;i< jsonitems.length;i++){
-			String value = jsonitems[i].getDefaultValue();
-			if(!StringUtil.isEmpty(value))
-				parentVO.setJsonAttributeValue(jsonitems[i].getKey(), value);
-		}
-		parentVO.setPaytarget(BXStatusConst.PAY_TARGET_RECEIVER);
-		parentVO.setQcbz(UFBoolean.FALSE);
-												
+		Object backvo = jsonData.newObject();
+		combineVO((JKBXVO)object,(JKBXVO)backvo);					
 		//报销VO分页签设置业务行
 		//resetBusItemVOs(object);
 								
@@ -154,6 +152,10 @@ public class JKBXBillAddAction extends BillAddAction{
 				JKBXHeaderVO.DEPTID);
 		setHeadDeptMultiVersion(jsonData,JKBXHeaderVO.FYDEPTID_V, parentVO.getFydwbm(),
 				JKBXHeaderVO.FYDEPTID);
+		BillTabVO[] tabvos = jsonData.getBillBaseTabVOsByPosition(IBillItem.BODY);
+		BXBusItemVO bodyVO = (BXBusItemVO) setBodyDefaultValue(parentVO,tabvos[0].getTabcode(),tabvos[0].getMetadataclass());
+		bodyVO.setRowno(0);
+		billvo.setChildrenVO(new BXBusItemVO[]{bodyVO});
 	}
 
 	/**
@@ -402,7 +404,7 @@ public class JKBXBillAddAction extends BillAddAction{
 			pk_loccurrency = Currency.getOrgLocalCurrPK(pk_org);
 		} else {
 			// 组织为空，取默认组织
-			pk_org = BXUiUtil.getBXDefaultOrgUnit();
+			pk_org = ErMobileUtil.getBXDefaultOrgUnit();
 			if (pk_org != null && pk_org.trim().length() > 0) {
 				pk_loccurrency = Currency.getOrgLocalCurrPK(pk_org);
 			} else {
@@ -445,8 +447,9 @@ public class JKBXBillAddAction extends BillAddAction{
 				parentVO.setBzbm(pk_currtype);
 			}
 			// 返回汇率(本币，集团本币，全局本币汇率)
+			String pk_group = InvocationInfoProxy.getInstance().getGroupId();
 			UFDouble[] rates = ErmBillCalUtil.getRate(pk_currtype, pk_org,
-					BXUiUtil.getPK_group(), date, pk_loccurrency);
+					pk_group, date, pk_loccurrency);
 			UFDouble hl = rates[0];
 			UFDouble grouphl = rates[1];
 			UFDouble globalhl = rates[2];
@@ -481,7 +484,7 @@ public class JKBXBillAddAction extends BillAddAction{
 							: new UFDouble(parentVO.getYbjeField().toString()),
 					null, parentVO.getBbjeField() == null ? null
 							: new UFDouble(parentVO.getBbjeField().toString()),
-					null, hl, BXUiUtil.getSysdate());
+					null, hl, ErMobileUtil.getSysdate());
 
 			if (yfbs[0] != null) {
 //				getBillCardPanel().setHeadItem(ybjeField, yfbs[0]);
@@ -731,13 +734,13 @@ public class JKBXBillAddAction extends BillAddAction{
 //		}
 	}
 	
-	public String setBodyDefaultValue(String head, String tablecode,
-			String itemnum, String classname) {
+	@Override
+	public SuperVO setBodyDefaultValue(SuperVO parentVO, String tablecode,
+			String classname) {
 		try {
-			int rownum = Integer.parseInt(itemnum);
 			JsonVoTransform votra = new JsonVoTransform();
-			SuperVO parentVO = votra.transformHead(new JSONObject(head));
 			SuperVO bodyVO = votra.InitBodyVo(classname);
+			bodyVO.setAttributeValue("tablecode", tablecode);
 			// 将数据从表头联动到表体
 			String[] keys = new String[]{JKBXHeaderVO.SZXMID,JKBXHeaderVO.JKBXR,JKBXHeaderVO.JOBID,
 					JKBXHeaderVO.CASHPROJ,JKBXHeaderVO.PROJECTTASK,JKBXHeaderVO.PK_PCORG,JKBXHeaderVO.PK_PCORG_V,JKBXHeaderVO.PK_CHECKELE
@@ -746,7 +749,7 @@ public class JKBXBillAddAction extends BillAddAction{
 					,JKBXHeaderVO.CUSTACCOUNT,JKBXHeaderVO.FREECUST};
 			doCoresp(parentVO,bodyVO, Arrays.asList(keys), tablecode);
 	
-			String[] bodyKeys=new String[]{JKBXHeaderVO.YBJE,JKBXHeaderVO.CJKYBJE,JKBXHeaderVO.ZFYBJE,JKBXHeaderVO.HKYBJE,
+			String[] bodyKeys = new String[]{JKBXHeaderVO.YBJE,JKBXHeaderVO.CJKYBJE,JKBXHeaderVO.ZFYBJE,JKBXHeaderVO.HKYBJE,
 					JKBXHeaderVO.BBJE,JKBXHeaderVO.CJKBBJE,JKBXHeaderVO.ZFBBJE,JKBXHeaderVO.HKBBJE};
 			for (String key : bodyKeys) {
 				if(bodyVO instanceof BXBusItemVO){
@@ -758,7 +761,7 @@ public class JKBXBillAddAction extends BillAddAction{
 	
 			// 带出报销标准
 			doBodyReimAction(parentVO,bodyVO);
-			return votra.getVOJSONObject(rownum,bodyVO,tablecode,classname).toString();
+			return bodyVO; 
 		} catch (Exception e) {
 			ExceptionUtils.wrappBusinessException("表体默认值转换异常：" + e.getMessage());
 		}

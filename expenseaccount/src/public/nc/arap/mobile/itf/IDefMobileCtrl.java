@@ -64,7 +64,19 @@ public interface IDefMobileCtrl {
 	 */
 	public String doAfterEdit(String editinfo,String userid) throws BusinessException;
 	/**
+	 * 删除行
+	 */
+	public String delLine(String userid,String ctx,String itemno,String djlxbm) throws BusinessException;
+	/**
 	 * 根据表头获得表体默认值
+	 * @param userid 用户pk
+	 * @param djlxbm 单据类型编码
+	 * @param head 表头信息，json格式
+	 * @param tablecode 当前页签编码
+	 * @param itemnum 第几行表体
+	 * @param classname  表体所对应的vo的class名称
+	 * @return
+	 * @throws BusinessException
 	 */
 	public String getItemInfo(String userid,String djlxbm,String head,String tablecode,String itemnum,String classname) throws BusinessException;
 }

@@ -3,12 +3,8 @@ package nc.arap.mobile.impl;
 import java.util.Map;
 
 import nc.arap.mobile.itf.IDefMobileCtrl;
-import nc.bs.framework.common.InvocationInfoProxy;
-import nc.bs.framework.common.NCLocator;
-import nc.erm.mobile.billaction.JKBXBillAddAction;
-import nc.itf.uap.rbac.IUserManageQuery;
+import nc.erm.mobile.billaction.DelLineAction;
 import nc.vo.pub.BusinessException;
-import nc.vo.sm.UserVO;
 
 
 public class DefMobileCtrlImpl implements IDefMobileCtrl{
@@ -77,12 +73,17 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 			throws BusinessException {
 		return getErmDefMobileCtrlBo().doAfterEdit(editinfo,userid);
 	}
+	/**
+	 * 根据表头获得表体默认值
+	 */
 	@Override
 	public String getItemInfo(String userid, String djlxbm,String head,String tablecode,String itemnum,String classname)
 			throws BusinessException {
-		UserVO uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).getUser(userid);
-		InvocationInfoProxy.getInstance().setUserId(userid);
-		InvocationInfoProxy.getInstance().setGroupId(uservo == null?null:uservo.getPk_group());
-		return new JKBXBillAddAction().setBodyDefaultValue(head,tablecode,itemnum,classname);
+		return getErmDefMobileCtrlBo().getItemInfo(userid, djlxbm,head,tablecode,itemnum,classname);
+	}
+	@Override
+	public String delLine(String userid, String ctx, String itemno,
+			String djlxbm) throws BusinessException {
+		return new DelLineAction().delLine(userid, ctx, itemno,djlxbm);
 	}
 }

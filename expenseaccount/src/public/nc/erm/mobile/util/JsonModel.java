@@ -23,6 +23,7 @@ import nc.vo.pub.bill.MetaDataPropertyAdpter;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -107,7 +108,7 @@ public class JsonModel{
 			bodyarray = WebFormulaParser.getInstance().processFormulasForBody(bodyMap,items,bodys);
 			//gaotn
 		} catch (Exception ex) {
-			Logger.debug(ex);
+			ExceptionUtils.wrappBusinessException("表体数据信息转换异常：" + ex.getMessage());
 		}
 		return bodyarray;
 	}
@@ -127,42 +128,7 @@ public class JsonModel{
             key = keys.next();  
             headvalue = (String) json.get(key);
             JsonItem item = getItemByKey(key);
-            if(item!=null && !StringUtil.isEmpty(headvalue)){
-//            ncobject.setAttributeValue(item.getMetaDataProperty().getAttribute(), headvalue);
-	            if(item.getDataType() == IBillItem.DATE){
-	            	bodyvo.setAttributeValue(key, new UFDate(headvalue));
-	            }else if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
-	            	bodyvo.setAttributeValue(key, new UFDouble(headvalue));
-	            }else if(item.getDataType() == IBillItem.DATETIME){
-	            	bodyvo.setAttributeValue(key, new UFDateTime(headvalue));
-	            }else if(item.getDataType() == IBillItem.COMBO){
-	            	String reftype = item.getRefType();
-	            	reftype = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-	            	boolean isSX = true;
-	            	boolean isIX = false;
-	        		ArrayList<String> list = new ArrayList<String>();
-
-	        		String[] items = MiscUtil.getStringTokens(reftype, ",");
-	        		if (items != null) {
-		    			isSX = IBillItem.COMBOTYPE_VALUE_X.equals(items[0]); // SX
-		    			isIX = IBillItem.COMBOTYPE_INDEX_X.equals(items[0]); // IX
-	        		}
-	        		if(isSX){
-	        			try{
-	        				bodyvo.setAttributeValue(key, headvalue);
-		            	}catch(Exception e){
-		            		continue;
-		            	}
-	        		}else
-	        			bodyvo.setAttributeValue(key, new Integer(headvalue));
-	            }else{
-	            	try{
-	            		bodyvo.setAttributeValue(key, headvalue);
-	            	}catch(Exception e){
-	            		continue;
-	            	}
-	            }
-            }
+            JsonData.setVoFromItem(item,bodyvo,headvalue);
         }  
 	}
 	
@@ -193,45 +159,7 @@ public class JsonModel{
 					value = o.getAttributeValue(item.getMetaDataProperty()
 							.getAttribute());
 					if(value != null){
-						if(item.getDataType() == IBillItem.UFREF && item.getMetaDataProperty() != null){
-							//如果是参照，就需要取参照的值
-							itemJson.put("pk", value);
-							IGeneralAccessor accessor = GeneralAccessorFactory.getAccessor(item.getMetaDataProperty().getRefBusinessEntity().getID());
-							if(accessor != null){
-								IBDData[] data = accessor.getDocbyPks(new String[]{value.toString()});
-								if(data != null && data.length>0 && data[0] != null)
-									itemJson.put("name", data[0].getName());
-							}else{
-								itemJson.put("name", "");
-							}
-						}else if(item.getDataType() == IBillItem.COMBO && item.getMetaDataProperty() != null){
-							//如果是参照，就需要取参照的值
-							itemJson.put("pk", value);
-							String reftype = item.getRefType();
-							if (reftype != null
-									&& (reftype = reftype.trim()).length() > 0) {
-								boolean isFromMeta = reftype
-										.startsWith(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN);
-								String reftype1 = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
-								List<DefaultConstEnum> combodata = JsonData.getInitData(reftype1, isFromMeta);
-								for(int index=0;index<combodata.size();index++){
-									DefaultConstEnum enumvalue = combodata.get(index);
-									if(value.equals(enumvalue.getValue()))
-										itemJson.put("name", enumvalue.getName());
-								}
-							}
-						}else if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
-							itemJson.put("pk", value);
-							itemJson.put("name", NumberFormatUtil.formatDouble((UFDouble)value));
-						}else if(item.getDataType() == IBillItem.DATE){
-							//NumberFormat 的 setTheMark方法直接拿过来用
-							itemJson.put("pk", value);
-							String str = value.toString();
-							itemJson.put("name", str.substring(0, 10));
-						}else{
-							itemJson.put("pk", value);
-							itemJson.put("name", value);
-						}
+						itemJson = JsonData.getJsonObjectFromItem(item,value);
 //						bodyJson.put(item.getKey(), itemJson);
 						bodyJson.put(item.getKey(), itemJson.get("pk"));
 						bodyJson.put(item.getKey()+"_name", itemJson.get("name"));

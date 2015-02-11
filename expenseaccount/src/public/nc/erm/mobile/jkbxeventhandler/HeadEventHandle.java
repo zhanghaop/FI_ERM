@@ -5,48 +5,43 @@ import nc.erm.mobile.eventhandler.AbstractEditeventListener;
 import nc.erm.mobile.eventhandler.EditItemInfoVO;
 import nc.erm.mobile.eventhandler.InterfaceEditeventListener;
 import nc.erm.mobile.eventhandler.JsonVoTransform;
-import nc.ui.pub.bill.IBillItem;
+import nc.erm.mobile.util.ErMobileUtil;
 import nc.vo.arap.bx.util.BXConstans;
 import nc.vo.arap.bx.util.BXStatusConst;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ValidationException;
-import nc.vo.pub.bill.BillTabVO;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDouble;
-import nc.vo.uif2.LoginContext;
 /**
  * 模块：费用管理
  * 借款报销单,表头编辑事件处理监听类
  */
 public class HeadEventHandle extends AbstractEditeventListener implements InterfaceEditeventListener{
-
+	JsonVoTransform vo;
 	public void afterEditPayarget(boolean isEdit) throws BusinessException {
 		if(!isBxBill()){
 			return;
 		}
 		
-		Integer paytarget = (Integer)getHeadValue(JKBXHeaderVO.PAYTARGET);
+		Integer paytarget = (Integer) vo.getHeadVO().getAttributeValue(JKBXHeaderVO.PAYTARGET);
 		if(paytarget == null){
 			return;
 		}
 		
 		if(paytarget.intValue() == BXStatusConst.PAY_TARGET_RECEIVER){//收款对象员工
-//			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(true);
-//			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(false);
-			
-			
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.SKYHZH, UFBoolean.TRUE);
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.CUSTACCOUNT, UFBoolean.FALSE);
 		}else if(paytarget.intValue() == BXStatusConst.PAY_TARGET_HBBM){// 收款对象供应商
-//			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(false);
-//			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(true);
-			
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.SKYHZH, UFBoolean.FALSE);
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.CUSTACCOUNT, UFBoolean.TRUE);
 		}else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_CUSTOMER){// 收款对象客户
-//			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(false);
-//			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(true);
-			
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.SKYHZH, UFBoolean.FALSE);
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.CUSTACCOUNT, UFBoolean.TRUE);
 		}else if (paytarget.intValue() == BXStatusConst.PAY_TARGET_OTHER){// 收款对象对外
-//			getHeadItemUIRefPane(JKBXHeaderVO.SKYHZH).setEnabled(false);
-//			getHeadItemUIRefPane(JKBXHeaderVO.CUSTACCOUNT).setEnabled(false);
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.SKYHZH, UFBoolean.FALSE);
+			vo.getEnabledItemInfoVO().setHeadItemEnabled(JKBXHeaderVO.CUSTACCOUNT, UFBoolean.FALSE);
 		}
 		
 		if(isEdit){
@@ -56,16 +51,12 @@ public class HeadEventHandle extends AbstractEditeventListener implements Interf
 	}
 	
 	private void setBillItemNull(String[] headFields, String[] bodyFields){
-		
-//		if(headFields != null){
-//			for(String headField : headFields){
-//				BillItem item = getBillCardPanel().getHeadItem(headField);
-//				if(item != null){
-//					item.setValue(null);
-//				}
-//			}
-//		}
-//		
+		if(headFields != null){
+			for(String headField : headFields){
+				vo.getItemValueInfoVO().setHeadItemValue(headField, null);
+			}
+		}
+		//表体先不做
 //		if(bodyFields != null && bodyFields.length > 0){
 //			String defaultMetaDataPath = BXConstans.ER_BUSITEM;//元数据路径
 //			if (!isBxBill()) {
@@ -549,11 +540,11 @@ public class HeadEventHandle extends AbstractEditeventListener implements Interf
 	 * @param evt
 	 */
 	private void afterEditDwbm_v() throws BusinessException {
-//		String pk_org_v = getHeadItemStrValue(JKBXHeaderVO.DWBM_V);
-//		String oid = eventUtil.getBillHeadFinanceOrg(JKBXHeaderVO.DWBM_V, pk_org_v, getBillCardPanel());
-//		setHeadValue(JKBXHeaderVO.DWBM, oid);
-//		// 触发借款报销人单位编辑后事件
-//		afterEditDwbm();
+		String pk_org_v = (String) vo.getHeadVO().getAttributeValue(JKBXHeaderVO.DWBM_V);
+		String oid = null;//eventUtil.getBillHeadFinanceOrg(JKBXHeaderVO.DWBM_V, pk_org_v, getBillCardPanel());
+		setHeadValue(JKBXHeaderVO.DWBM, oid);
+		// 触发借款报销人单位编辑后事件
+		afterEditDwbm();
 	}
 
 	/**
@@ -1193,67 +1184,37 @@ public class HeadEventHandle extends AbstractEditeventListener implements Interf
 	}
 	
 	protected void setHeadValue(String key, Object value) {
-//		if (getBillCardPanel().getHeadItem(key) != null) {
-//			getBillCardPanel().getHeadItem(key).setValue(value);
-//		}
+		vo.getItemValueInfoVO().setHeadItemValue(key, value);
 	}
 
 	protected void setHeadValues(String[] key, Object[] value) {
-//		for (int i = 0; i < value.length; i++) {
-//			getBillCardPanel().getHeadItem(key[i]).setValue(value[i]);
-//		}
+		for (int i = 0; i < value.length; i++) {
+			vo.getItemValueInfoVO().setHeadItemValue(key[i], value[i]);
+		}
 	}
 
 	public String getHeadItemStrValue(String itemKey) {
-//		BillItem headItem = getBillCardPanel().getHeadItem(itemKey);
-//		if(headItem != null && headItem.getValueObject()!=null){
-//			if(headItem.getValueObject() instanceof String){
-//				return (String) headItem.getValueObject();
-//			}else{
-//				return ((Integer)headItem.getValueObject()).toString();
-//			}
-//		}
-		return null ;
+		return vo.getHeadVO().getAttributeValue(itemKey).toString() ;
 	}
-
-//	public UIRefPane getHeadItemUIRefPane(final String key) {
-//		JComponent component = getBillCardPanel().getHeadItem(key).getComponent();
-//		return component instanceof UIRefPane ? (UIRefPane) component : null;
-//	}
 
 	protected Object getHeadValue(String key) {
-		return null;
-//		BillItem headItem = getBillCardPanel().getHeadItem(key);
-//		if (headItem == null) {
-//			headItem = getBillCardPanel().getTailItem(key);
-//		}
-//		if (headItem == null) {
-//			return null;
-//		}
-//		return headItem.getValueObject();
+		return vo.getHeadVO().getAttributeValue(key);
 	}
 
-	public String getPk_org() {
-		return null ;
-//		if(editor.getModel().getContext().getEntranceUI() instanceof AbstractFunclet){
-//			if(((AbstractFunclet)editor.getModel().getContext().getEntranceUI()).getFuncletContext() == null){
-//				//导入导出
-//				return (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
-//			}
-//		}
-//		
-//		if (!editor.isShowing()) {
-//			return null;
-//		} else if (editor.isShowing()) {
-//			// 卡片界面取表头组织
-//			return (String) getBillCardPanel().getHeadItem(JKBXHeaderVO.PK_ORG).getValueObject();
-//		} else {
-//			// 还取不到，取默认的业务单元
-//			return BXUiUtil.getBXDefaultOrgUnit();
-//		}
+	public String getPk_org() throws BusinessException {
+		String pk_org = null;
+		if(vo.getHeadVO().getAttributeValue(JKBXHeaderVO.PK_ORG) != null)
+			pk_org = vo.getHeadVO().getAttributeValue(JKBXHeaderVO.PK_ORG).toString();
+		if(pk_org == null){
+			// 还取不到，取默认的业务单元
+			pk_org = ErMobileUtil.getBXDefaultOrgUnit();
+		}
+		return pk_org;
 	}
+	
 
-
+	
+	
 //	public void valueChanged(ValueChangedEvent event) {
 //		if (!isConfirmChangedOrg(event)) {
 //			return;
@@ -1332,7 +1293,7 @@ public class HeadEventHandle extends AbstractEditeventListener implements Interf
 	
 	//是否是报销单
 	private boolean isBxBill() {
-		return BXConstans.BX_DJDL.equals(getHeadItemStrValue(JKBXHeaderVO.DJDL));
+		return vo.getHeadVO().getAttributeValue("djdl").equals(BXConstans.BX_DJDL);
 	}
 	
 	/**
@@ -1355,14 +1316,19 @@ public class HeadEventHandle extends AbstractEditeventListener implements Interf
 	@Override
 	public void process(JsonVoTransform jsonVoTransform)
 			throws BusinessException {
-		EditItemInfoVO  editinfo = jsonVoTransform.getEditItemInfoVO();
+		vo = jsonVoTransform;
+		EditItemInfoVO  editinfo = vo.getEditItemInfoVO();
 		int row = editinfo.getSelectrow();
 		String key = editinfo.getId();
 		String formula = editinfo.getFormula();
 		String tabcode = editinfo.getClassname();
 		
-		if(editinfo.isBody())
-			return;
+		if(key.equals(JKBXHeaderVO.PAYTARGET)){
+			afterEditPayarget(true);
+		}else if (key.equals(JKBXHeaderVO.DWBM_V)) {
+			// v6.3新增借款报销人所属单位多版本编辑后事件
+			afterEditDwbm_v();
+		}
 		
 	}
 }

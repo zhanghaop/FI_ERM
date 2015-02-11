@@ -5,20 +5,68 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
+import nc.erm.mobile.environment.ErmTemplateQueryUtil;
 import nc.erm.mobile.util.JsonItem;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
+import nc.vo.pub.BusinessException;
 import nc.vo.pub.bill.BillStructVO;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.bill.BillTempletHeadVO;
+import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
+import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 public class MobileTemplateFactory {
+	BillTempletVO billTempletVO;
+	JSONObject formula;
+	StringBuffer notnull;
+	StringBuffer order;
+	public MobileTemplateFactory(String djlxbm) {
+		try {
+			billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm);
+			formula = new  JSONObject();
+			notnull = new StringBuffer();
+			order = new StringBuffer();
+		} catch (BusinessException e) {
+			ExceptionUtils.wrappBusinessException("模板转换为移动端数据异常：" + e.getMessage());
+		}
+	}
+	public String getheadcarddsl(String flag){
+		JSONObject jsonObj = new JSONObject();
+		//表头要加载字段，编辑项
+        BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
+        try {
+        	//编辑界面点击添加按钮时需要表体页签列表  表体页签列表
+			jsonObj.put("tablist", getTableCodes(billTempletVO.getHeadVO()));
+			jsonObj.put("dsl", getheaddsl(flag,bodyVO));
+			jsonObj.put("formula", formula.toString());
+			jsonObj.put("notnull", notnull.toString());
+			jsonObj.put("ts", billTempletVO.getHeadVO().getTs().toString());
+        } catch (Exception e) {
+		}
+		return jsonObj.toString();
+	}
+	public String getbodycarddsl(String flag, String tablecode){
+		JSONObject jsonObj = new JSONObject();
+		//表头要加载字段，编辑项
+        BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
+        try {
+        	//编辑界面点击添加按钮时需要表体页签列表  表体页签列表
+        	jsonObj.put("dsl", getbodydsl(bodyVO,tablecode,flag));
+			jsonObj.put(tablecode + "_order", order.toString());
+			jsonObj.put(tablecode + "_formula", formula.toString());
+			jsonObj.put(tablecode + "_notnull", notnull.toString());
+			jsonObj.put("ts", "\""+billTempletVO.getHeadVO().getTs().toString()+"\"");
+        } catch (Exception e) {
+		}
+		return jsonObj.toString();
+	}
 	boolean isHeadShow(BillTempletBodyVO bVO){
 		return ((bVO.getPos().intValue() == IBillItem.HEAD || bVO.getPos().intValue() == IBillItem.TAIL) && bVO.getShowflag().booleanValue());
 	}
@@ -29,7 +77,7 @@ public class MobileTemplateFactory {
 		return ((bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()));
 	}
 	private int panel = 9990;
-	public String getheaddsl(String flag,BillTempletBodyVO[] bodyVO,String djlxbm){
+	public String getheaddsl(String flag,BillTempletBodyVO[] bodyVO){
 		StringBuffer div = new StringBuffer();
 		div.append("<div id=\"viewPage99\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
 		div.append("<div id=\"viewPage" + panel
@@ -45,16 +93,9 @@ public class MobileTemplateFactory {
 					if(isHeadShow(bVO)){
 						//记录当前有几行表头
 						itemnum++;
-						MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
+						JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 						if(itemnum > 3 && hide == false){
-							//超过3行时隐藏当前div
-							div.append("<div id=\"unfold_button_panel"
-									+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
-							panel++;
-							div.append("<label id=\"label" + panel
-							+ "\" hAlign=\"center\" onclick=\"unfold_panel()\" height=\"fill\" color=\"#e50011\" font-size=\"19\" "
-							+ " width=\"fill\" font-family=\"default\" vAlign=\"center\" value = \"展开全部\"/>");
-							div.append("</div>");
+							//超过3行时隐藏剩下的div
 							div.append("<div id=\"foldpanel\"  display=\"none\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");
 							hide = true;
 						}
@@ -63,9 +104,45 @@ public class MobileTemplateFactory {
 						div.append("<div id=\"viewPage" + panel
 								+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
 						
+						//记录表头公式
+						if(item.getEditFormulas() != null){
+							String[] formulars = item.getEditFormulas();
+							StringBuffer formularstr = new StringBuffer();
+							for(int j=0;j<formulars.length;j++){
+								formularstr.append(formulars[j]+";");
+							}
+							try {
+								formula.put(item.getKey(), formularstr);
+							} catch (JSONException e) {
+								
+							}
+						}
 						
+						//获取表头必输项
+						if(item.isNull()){
+							notnull.append(item.getKey()+",");
+						}
 					}
 				}
+				//private boolean isContrast = false; // 是否进行了冲借款操作
+				//private boolean isVerifyAccrued = false; // 是否进行了核销预提操作
+				JsonItem item = new JsonItem();
+				item.setDataType(IBillItem.BOOLEAN);
+				item.setKey("isContrast");
+				item.setName("冲借款");
+				item.setEdit(true);
+				div.append(builddsl("head.",item,flag));
+				panel++;
+				div.append("<div id=\"viewPage" + panel
+						+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
+				item.setKey("isVerifyAccrued");
+				item.setName("核销预提");
+				item.setEdit(true);
+				div.append(builddsl("head.",item,flag));
+				panel++;
+				div.append("<div id=\"viewPage" + panel
+						+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
+				
 			}
 		}
 		else if(flag.equals("editcard")){
@@ -76,16 +153,9 @@ public class MobileTemplateFactory {
 					if(isHeadListShow(bVO)){
 						//记录当前有几行表头
 						itemnum++;
-						MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
+						JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 						if(itemnum > 3 && hide == false){
-							//超过3行时隐藏当前div
-							div.append("<div id=\"unfold_button_panel"
-									+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
-							panel++;
-							div.append("<label id=\"label" + panel
-							+ "\" hAlign=\"center\" onclick=\"unfold_panel()\" height=\"fill\" color=\"#e50011\" font-size=\"19\" "
-							+ " width=\"fill\" font-family=\"default\" vAlign=\"center\" value = \"展开全部\"/>");
-							div.append("</div>");
+							//超过3行时隐藏剩下的div
 							div.append("<div id=\"foldpanel\"  display=\"none\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");
 							hide = true;
 						}
@@ -99,8 +169,9 @@ public class MobileTemplateFactory {
 			}
 		}
 		div.append("</div>");
-		panel++;
-		div.replace(div.lastIndexOf("<div id=\"viewPage"), div.lastIndexOf("</div>"), "");
+		//将最后一条不封顶的线隐藏
+//		panel++;
+//		div.replace(div.lastIndexOf("<div id=\"viewPage"), div.lastIndexOf("</div>"), "");
 //		try{
 //		     BufferedWriter writer = new BufferedWriter(new FileWriter(new File("c:\\Result.txt")));
 //		     writer.write(div.toString());
@@ -108,8 +179,17 @@ public class MobileTemplateFactory {
 //		}catch(Exception e){
 //
 //	    }
-		//如果有隐藏的标签，需要加/div
+		//如果有隐藏的标签，需要加/div和展开全部panel
 		if(hide){
+			div.append("</div>");
+			div.append("<div id=\"unfold_button_panel"
+					+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
+			panel++;
+			div.append("<label id=\"unfold_button"
+			+ "\" hAlign=\"center\" onclick=\"unfold_panel()\" height=\"fill\" color=\"#e50011\" font-size=\"19\" "
+			+ " width=\"wrap\" margin-left=\"10\" margin-right=\"10\" font-family=\"default\" vAlign=\"center\" value = \"展开全部\"/>");
+			div.append("<image id=\"unfold_image"
+					+ "\" scaletype=\"fitcenter\" src=\"arrowdown.png\" height=\"8\" width=\"12\" />");
 			div.append("</div>");
 		}
 		//最下面封顶的那条线
@@ -134,7 +214,7 @@ public class MobileTemplateFactory {
 							String[] formulars = item.getEditFormulas();
 							StringBuffer formularstr = new StringBuffer();
 							for(int j=0;j<formulars.length;j++){
-								formularstr.append(formulars[j]+",");
+								formularstr.append(formulars[j]+";");
 							}
 							formulajson.put(item.getKey(), formularstr);
 						}
@@ -148,7 +228,7 @@ public class MobileTemplateFactory {
 	}
 	
 	//根据item生成div，加横线
-		private String builddsl(String prefix,MobileBillItem item,String flag){
+		private String builddsl(String prefix,JsonItem item,String flag){
 			StringBuffer div = new StringBuffer(); 
 			panel++;
 			div.append("<div id=\"viewPage" + panel
@@ -272,7 +352,7 @@ public class MobileTemplateFactory {
 	}
 	
 	//得到表体动态dsl
-	public String getbodydsl(BillTempletBodyVO[] bodyVO,String tablecode,String flag,String djlxbm){
+	public String getbodydsl(BillTempletBodyVO[] bodyVO,String tablecode,String flag){
 //		return this.getheaddsl(flag, bodyVO, djlxbm);
 		StringBuffer div = new StringBuffer();
 		div.append("<div id=\"viewPage999\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
@@ -285,14 +365,43 @@ public class MobileTemplateFactory {
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
 					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
-								MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
+								JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 								div.append(builddsl("item.",item,flag));
 								panel++;
 								div.append("<div id=\"viewPage" + panel
 										+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//padding-left=\"15\"
 						
+								//得到表体动态dsl的字段显示顺序
+								if(!"amount".equals(item.getKey())){
+									int dataType = item.getDataType();
+									if(dataType == IBillItem.UFREF || dataType == IBillItem.USERDEF || dataType == IBillItem.COMBO){
+										order.append(item.getKey() + "_name").append(",");
+									}else{
+										order.append(item.getKey()).append(",");
+									}
+								}
+								
+								//获取表体公式
+								if(item.getEditFormulas() != null){
+									String[] formulars = item.getEditFormulas();
+									StringBuffer formularstr = new StringBuffer();
+									for(int j=0;j<formulars.length;j++){
+										formularstr.append(formulars[j]+";");
+									}
+									try {
+										formula.put(item.getKey(), formularstr);
+									} catch (JSONException e) {
+									}
+								}
+								
+								//获取表体必输项
+								if(bVO.getNullflag()){
+									notnull.append(item.getKey()+",");
+								}
 					}
 				}
+				if(order.length()>0)
+					order.substring(0,order.length()-1).toString();
 			}
 		}
 		else if(flag.equals("editcard")){
@@ -301,7 +410,7 @@ public class MobileTemplateFactory {
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
 					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()==true){
-								MobileBillItem item = new MobileBillItem(bVO, bVO.getCardflag());
+								JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 								div.append(builddsl("item.",item,flag));
 								panel++;
 								div.append("<div id=\"viewPage" + panel
@@ -329,7 +438,7 @@ public class MobileTemplateFactory {
 	}
 		
 	//得到表体动态dsl的字段显示顺序
-	public String getbodyorder(BillTempletBodyVO[] bodyVO,String tablecode,String flag,String djlxbm){
+	public String getbodyorder(BillTempletBodyVO[] bodyVO,String tablecode,String flag){
 		
 		if(flag.equals("addcard")){
 			StringBuffer addorder = new StringBuffer();
@@ -390,7 +499,7 @@ public class MobileTemplateFactory {
 								String[] formulars = item.getEditFormulas();
 								StringBuffer formularstr = new StringBuffer();
 								for(int j=0;j<formulars.length;j++){
-									formularstr.append(formulars[j]+",");
+									formularstr.append(formulars[j]+";");
 								}
 								formulajson.put(item.getKey(), formularstr);
 							}
@@ -422,7 +531,7 @@ public class MobileTemplateFactory {
 	}
 	
 	//查看字段dsl生成
-	public String translateShowItem(String prefix,MobileBillItem item){
+	public String translateShowItem(String prefix,JsonItem item){
 		StringBuffer input = new StringBuffer();
 		int dataType = item.getDataType();
 		if("zy".equals(item.getKey()) || "zy2".equals(item.getKey())){
@@ -430,8 +539,8 @@ public class MobileTemplateFactory {
 		}
 		switch (dataType) {
 			case IBillItem.STRING:
-				input.append("<input id=\"" + item.getKey() 
-						+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+				input.append("<label id=\"" + item.getKey() 
+						+ "\"  height=\"44\"  color=\"#000000\" halign=\"right\" "
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//字符串直接赋值
@@ -441,8 +550,8 @@ public class MobileTemplateFactory {
 				break;
 			case IBillItem.DATE:
 			case IBillItem.DATETIME:
-				input.append("<input id=\"" + item.getKey() 
-						+ "\" readonly =\"true\" format=\"yyyy-MM-dd\" type=\"date\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+				input.append("<label id=\"" + item.getKey() 
+						+ "\"  height=\"44\"  color=\"#000000\" halign=\"right\" "
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" "
 						+ " bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//日期直接赋值
@@ -452,8 +561,8 @@ public class MobileTemplateFactory {
 				break;
 			case IBillItem.DECIMAL:
 			case IBillItem.MONEY: 
-				input.append("<input id=\"" + item.getKey() 
-						+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+				input.append("<label id=\"" + item.getKey() 
+						+ "\"  height=\"44\"  color=\"#000000\" halign=\"right\" "
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//金额直接赋值
@@ -462,8 +571,8 @@ public class MobileTemplateFactory {
 				input.append("/>"); 
 				break;
 			case IBillItem.INTEGER:
-				input.append("<input id=\"" + item.getKey() 
-						+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+				input.append("<label id=\"" + item.getKey() 
+						+ "\"  height=\"44\"  color=\"#000000\" halign=\"right\" "
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//金额直接赋值
@@ -473,8 +582,8 @@ public class MobileTemplateFactory {
 				break;
 			default:
 				//参照或下拉
-				input.append("<input id=\"" + item.getKey() 
-						+ "\" readonly =\"true\" maxlength=\"256\" type=\"text\" height=\"44\"  color=\"#000000\" halign=\"right\" "
+				input.append("<label id=\"" + item.getKey() 
+						+ "\"  height=\"44\"  color=\"#000000\" halign=\"right\" "
 						+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
 				//参照赋默认值
@@ -487,7 +596,7 @@ public class MobileTemplateFactory {
 	}  
 	
 	//编辑字段dsl生成
-	public String translateEditItem(String prefix,MobileBillItem item){
+	public String translateEditItem(String prefix,JsonItem item){
 		StringBuffer input = new StringBuffer();
 		int dataType = item.getDataType();
 		if("zy".equals(item.getKey()) || "zy2".equals(item.getKey())){
@@ -497,8 +606,8 @@ public class MobileTemplateFactory {
 			case IBillItem.STRING:
 				input.append("<input id=\"" + item.getKey() 
 				+ "\" maxlength=\"256\" placeholder=\"可空\" type=\"text\""
-				+ " height=\"44\"  color=\"#000000\" onchange=\"onInputChange()\" "
-				+ "font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
+				+ " height=\"44\"  color=\"#000000\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
+				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
@@ -511,9 +620,11 @@ public class MobileTemplateFactory {
 			case IBillItem.DATETIME:
 				input.append("<input id=\"" + item.getKey() 
 				+ "\" format=\"yyyy-MM-dd\" placeholder=\"可空\" type=\"date\""
-				+ " height=\"44\" weight=\"1\" color=\"#000000\" onchange=\"onInputChange()\" "
-				+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
+				+ " height=\"44\" color=\"#000000\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
+				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" font-family=\"default\" "
 				+ " bindfield=\"" + prefix + item.getKey() + "\"");
+				if(!item.isEdit())
+					input.append(" readonly=\"true\"");
 				//日期直接赋值
 //				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
 //					input.append(" value=\"" + item.getDefaultValue() + "\"");
@@ -523,8 +634,8 @@ public class MobileTemplateFactory {
 			case IBillItem.MONEY: 
 				input.append( "<input id=\"" + item.getKey() 
 				+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onchange=\"onInputChange()\" "
-				+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
+				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
@@ -536,9 +647,11 @@ public class MobileTemplateFactory {
 			case IBillItem.INTEGER:
 				input.append( "<input id=\"" + item.getKey() 
 				+ "\" min=\"-9.99999999E8\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onchange=\"onInputChange()\" "
-				+ "font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
+				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+				if(!item.isEdit())
+					input.append(" readonly=\"true\"");
 				//金额直接赋值
 //				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
 //					input.append(" value=\"" + item.getDefaultValue() + "\"");
@@ -547,9 +660,12 @@ public class MobileTemplateFactory {
 			case IBillItem.BOOLEAN:
 				input.append( "<input id=\"" + item.getKey() 
 				+ "\" type=\"checkbox\" check-on-image=\"checkbox_select\" check-off-image=\"checkbox_noselect\" "
-				+ " height=\"22\" color=\"#000000\"  onchange=\"onInputChange()\" "
-				+ "font-size=\"16\" width=\"22\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				+ " height=\"22\" color=\"#000000\"  onfocuschange=\"onInputChange()\" onfocuschange-key=\""
+				+ item.getKey() + "\" font-size=\"16\" width=\"22\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
+//				input.append(" value=\"false\"");
+				if(item.isEdit() == false)
+					input.append(" readonly=\"true\"");
 				//金额直接赋值
 //				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
 //					input.append(" value=\"" + item.getDefaultValue() + "\"");
@@ -584,6 +700,8 @@ public class MobileTemplateFactory {
 		 		+ " onclick-reftype=\"" + reftype
 				+ "\" onclick-mapping=\"{'" + prefix + item.getKey() + "':'pk_ref','" + prefix + item.getKey() + "_name':'refname'}\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "_name\"");
+				if(!item.isEdit())
+					input.append(" disabled=\"disabled\"");
 				//参照赋默认值
 //				if(item.getDefaultValue()!=null && !item.getDefaultValue().equals(""))
 //					input.append(" value=\"" + item.getDefaultValue() + "\"");

@@ -35,7 +35,6 @@ import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
-import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.ExAggregatedVO;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.bill.BillStructVO;
@@ -44,6 +43,7 @@ import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.bill.BillTempletHeadVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
@@ -240,7 +240,7 @@ public class JsonData
 			item.setValue(value);
 		}
 	}
-	
+
 	
   public JSONObject transBillValueObjectToJson(Object o) throws JSONException, Exception{
 	    JSONObject resultJson = new JSONObject();
@@ -306,6 +306,7 @@ public class JsonData
 									bodyjson.put("itemno", itemno);
 									itemno++;
 									bodyjson.put("tablecode", tabcode);
+									bodyjson.put("classname", tabVO.getMetadataclass());
 									bodyjson.put("tablename", tabVO.getTabname());
 									itemsarray.put(bodyjson);
 								}
@@ -398,7 +399,7 @@ public class JsonData
 		return headJson;
   }
   
-  public JSONObject getJsonObjectFromItem(JsonItem item,Object value) throws JSONException{
+  public static JSONObject getJsonObjectFromItem(JsonItem item,Object value) throws JSONException{
 		JSONObject itemJson = new JSONObject();
 		if(value != null){
 			if(item.getDataType() == IBillItem.UFREF && item.getMetaDataProperty() != null){
@@ -438,6 +439,9 @@ public class JsonData
 				itemJson.put("pk", value);
 				String str = value.toString();
 				itemJson.put("name", str.substring(0, 10));
+			}else if(item.getDataType() == IBillItem.BOOLEAN){
+				itemJson.put("pk", ((UFBoolean)value).booleanValue());
+				itemJson.put("name", ((UFBoolean)value).booleanValue());
 			}else{
 				itemJson.put("pk", value);
 				itemJson.put("name", value);
@@ -730,9 +734,9 @@ public class JsonData
 		return hBillModels.get(tableCode);
 	}
 
-	public void setVoFromItem(JsonItem item,SuperVO parent,String headvalue){
-		String key = item.getKey();
+	public static void setVoFromItem(JsonItem item,SuperVO parent,String headvalue){
 		if(item != null){
+			String key = item.getKey();
             if(item != null && !StringUtil.isEmpty(headvalue)){
 //            ncobject.setAttributeValue(item.getMetaDataProperty().getAttribute(), headvalue);
 	            if(item.getDataType() == IBillItem.DATE){
@@ -741,6 +745,12 @@ public class JsonData
 	            	parent.setAttributeValue(key, new UFDouble(headvalue));
 	            }else if(item.getDataType() == IBillItem.DATETIME){
 	            	parent.setAttributeValue(key, new UFDateTime(headvalue));
+	            }else if(item.getDataType() == IBillItem.BOOLEAN){
+	            	if("true".equals(headvalue)){
+	            		parent.setAttributeValue(key, UFBoolean.TRUE);
+	            	}else{
+	            		parent.setAttributeValue(key, UFBoolean.FALSE);
+	            	}
 	            }else if(item.getDataType() == IBillItem.COMBO){
 	            	String reftype = item.getRefType();
 	            	reftype = reftype.replaceFirst(MetaDataPropertyAdpter.COMBOBOXMETADATATOKEN,"");
@@ -847,10 +857,130 @@ public class JsonData
 		return aggvo;
 	}
 
+	private void putItemToJsonArray(JSONObject item,List<String> tablecodes,JSONArray body) throws JSONException{
+    	String tablecode = item.getString("tablecode");
+		String classname = item.getString("classname");
+		if(!tablecodes.contains(tablecode)){
+			//重启一个页签
+			tablecodes.add(tablecode);
+			JSONObject tablecodebody = new JSONObject();
+			tablecodebody.put("classname", classname);
+			JSONArray tablecodebodyvalue = new JSONArray();
+			tablecodebodyvalue.put(item);
+			tablecodebody.put("value", tablecodebodyvalue);
+			body.put(tablecodebody);
+		}else{
+			//该页签已经存在
+			for(int j=0;j<body.length();j++){
+				JSONObject bodyitem = (JSONObject) body.get(j);
+				if(bodyitem.getString("classname").equals(classname)){
+					JSONArray tablecodebodyvalue = (JSONArray) bodyitem.get("value");
+					tablecodebodyvalue.put(item);
+				}
+			}
+		}
+    }
+	public AggregatedValueObject transJsonToBillValueObject(JSONObject json) throws JSONException, BusinessException {
+		//设置表头的值
+		JSONObject head = (JSONObject)json.get("head");
+		IBusinessEntity be = getBillTempletVO().getHeadVO()
+				.getBillMetaDataBusinessEntity();
+		AggregatedValueObject aggvo = null;
+		if (be.getBeanStyle().getStyle() == BeanStyleEnum.AGGVO_HEAD){
+			//根据元数据类型得到应该是什么类型的vo
+			AggVOStyle aggstyle = (AggVOStyle)be.getBeanStyle();
+			aggvo = (AggregatedValueObject) aggstyle.newInstance(null);
+//			NCObject ncobject = DASFacade.newInstanceWithContainedObject(be, aggvo);
+		}
+		//给表头vo赋值	
+		SuperVO parent = (SuperVO) aggvo.getParentVO();
+		Iterator<String> keys = head.keys();  
+        String headvalue;  
+        String key;  
+        while(keys.hasNext()){
+            key = keys.next();  
+            headvalue = head.get(key).toString();
+            JsonItem item = getHeadTailItem(key);
+            setVoFromItem(item,parent,headvalue);
+        }  
+        
+        //设置表体的值
+        JSONObject jo = null;  
+        JSONArray body = new JSONArray();
+    	List<String> tablecodes = new ArrayList<String>();
+        if(json.has("itemlist") && json.get("itemlist") != null && json.get("itemlist") instanceof JSONArray){
+    		//将历史表体行加入body
+	    	JSONArray itemlist = (JSONArray) json.get("itemlist");
+	    	if(itemlist != null && itemlist.length() > 0){
+	    		for(int i = 0; i < itemlist.length(); i++){
+	    			JSONObject item = (JSONObject) itemlist.get(i);
+	    			putItemToJsonArray(item,tablecodes,body);
+	    		}
+	    	}
+    	}
+        JSONArray bodyvalue; 
+        List<SuperVO> childrenlist = new ArrayList<SuperVO>();
+        for(int bi=0;bi<body.length();bi++){
+            //表体是数组的形式
+        	jo = (JSONObject) body.get(bi);
+            bodyvalue = (JSONArray) jo.get("value");
+            IBusinessEntity bodybean = null;
+            NCBeanStyle bodystyle = null;
+            JsonModel model = getBillModel(((JSONObject)bodyvalue.get(0)).getString("tablecode"));
+            
+            try {
+            	bodybean = MDBaseQueryFacade.getInstance().getBusinessEntityByFullName(model.getTabvo().getMetadataclass());
+			} catch (MetaDataException e) {
+				Logger.debug(e);
+			}
+            if ((bodybean.getBeanStyle().getStyle() == BeanStyleEnum.NCVO) || (bodybean.getBeanStyle().getStyle() == BeanStyleEnum.POJO)){
+            	bodystyle = (NCBeanStyle) bodybean.getBeanStyle();
+            }
+        	for(int i=0;i<bodyvalue.length();i++){
+        		SuperVO bodyvo = (SuperVO) bodystyle.newInstance(null);
+        		jo = (JSONObject)bodyvalue.get(i);
+        		model.translateJsonToValueObject(bodyvo,jo);
+        		childrenlist.add(bodyvo);
+        	}
+            
+        }
+        if(childrenlist.get(0) instanceof BXBusItemVO){
+        	aggvo.setChildrenVO(childrenlist.toArray(new BXBusItemVO[0]));
+        }else{
+        	aggvo.setChildrenVO(childrenlist.toArray(new SuperVO[0]));
+        }
+		return aggvo;
+	}
 	public static String getStringValue(Object value){
 		return value == null? "":value.toString();
 	}
 	
+	public Object newObject() {
+		//设置表头的值
+		IBusinessEntity be = getBillTempletVO().getHeadVO()
+				.getBillMetaDataBusinessEntity();
+		Object vo = null;
+		if (be.getBeanStyle().getStyle() == BeanStyleEnum.AGGVO_HEAD){
+			//根据元数据类型得到应该是什么类型的vo
+			AggVOStyle aggstyle = (AggVOStyle)be.getBeanStyle();
+			vo = aggstyle.newInstance(null);
+			AggregatedValueObject aggvo = (AggregatedValueObject) vo;
+			SuperVO parent = (SuperVO) aggvo.getParentVO();
+			//首先取模板上的默认值
+			JsonItem[] jsonitems = getHeadTailItems();
+			for(int i=0;i< jsonitems.length;i++){
+				String value = jsonitems[i].getDefaultValue();
+				if(!StringUtil.isEmpty(value)){
+					if(parent instanceof JKBXHeaderVO){
+						((JKBXHeaderVO)parent).setJsonAttributeValue(jsonitems[i].getKey(), value);
+					}else{
+						parent.setAttributeValue(jsonitems[i].getKey(), value);
+					}
+				}
+			}
+		}
+		return vo;
+	}
 	public AggregatedValueObject transMapToBillValueObject(
 			Map<String, Object> valuemap) {
 		//设置表头的值

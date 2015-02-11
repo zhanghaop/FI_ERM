@@ -90,6 +90,12 @@ public class JsonVoTransform {
 			//编辑元素信息
 			JSONObject edititeminfo = (JSONObject)json.get("edititeminfo");
 			this.editItemInfoVO = new EditItemInfoVO();
+//			this.editItemInfoVO.setId("defitem8");
+//			this.editItemInfoVO.setOldvalue("");
+//			this.editItemInfoVO.setValue("122");
+//			this.editItemInfoVO.setFormula("amount->zeroifnull(defitem7)+zeroifnull(defitem8)");
+//			this.editItemInfoVO.setSelectrow(new Integer(0));
+//			edititeminfo.put("selectrow","0");
 			this.editItemInfoVO.setId((String)(edititeminfo.get("id")));
 			this.editItemInfoVO.setOldvalue(edititeminfo.get("oldvalue"));
 			this.editItemInfoVO.setValue(edititeminfo.get("value"));
@@ -204,7 +210,7 @@ public class JsonVoTransform {
 	
 	public SuperVO InitBodyVo(String classname){
 		try{
-			String truebodyvoclassname = classnameMap.get(classname);
+			String truebodyvoclassname = getClassnameMap(classname).get(classname);
 			SuperVO bodyVO = (SuperVO)Class.forName(truebodyvoclassname).newInstance();
 			return bodyVO;
 		} catch (Exception e) {
@@ -257,29 +263,17 @@ public class JsonVoTransform {
 		this.itemValueInfoVO = itemValueInfoVO;
 	}
 	
-	public JSONObject getVOJSONObject(int rownum,SuperVO vo,String tablecode,String classname) throws Exception {
-		BillTempletVO billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics("2641"); 
+	public JSONObject getVOJSONObject(int rownum,String djlxbm,SuperVO vo,String tablecode,String classname) throws Exception {
+		BillTempletVO billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm); 
 		JsonData jsonData = new JsonData(billTempletVO);
 		JSONObject voJson = jsonData.getHeadVO(vo);
 		voJson.put("notnull", getbodynotnull(jsonData.getBillModel(tablecode)));
-//		//获取传入对象的Class对象co
-//		Class classType = vo.getClass();
-//		//获取传入对象的所有属性组
-//		Field[] fields = classType.getDeclaredFields();
-//		
-//		//遍历属性
-//		for(int i=0;i<fields.length;i++){
-//			//获取对应属性的名字
-//			String fieldName = fields[i].getName().toLowerCase();
-//			Object value = vo.getAttributeValue(fieldName);
-//			//将值放入到JSON对象中
-//			voJson.put(fieldName, value);
-//		}
 		voJson.put("tablecode", tablecode);
 		voJson.put("classname", classname);
-//		voJson.put("itemno", rownum);
+		voJson.put("itemno", rownum);
 		return voJson;
 	}
+	
 	//获取表体必输项
 	public String getbodynotnull(JsonModel model) throws JSONException{
 		JsonItem[] items = model.getBodyItems();

@@ -13,9 +13,11 @@ import nc.erm.mobile.function.FunctionResultVO;
 import nc.erm.mobile.function.InterfaceFunction;
 import nc.erm.mobile.function.MainJobDeptFunction;
 import nc.erm.mobile.pub.formula.WebFormulaParser;
+import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -50,7 +52,7 @@ public abstract class AbstractEditeventHandler {
 		int selectrow = jsonVoTransform.getEditItemInfoVO().getSelectrow();    //行信息
 		String classname = jsonVoTransform.getEditItemInfoVO().getClassname();    //元数据对象
 		try {
-			if(formula != null && !"".equals(formula)){
+			if(!StringUtil.isEmpty(formula)){
 				List<String> paramnameList = WebFormulaParser.getInstance().getFormulasParamnames(formula);
 				Map<String, Object> paramvalueMap = new HashMap<String,Object>();
 				SuperVO superVO;
@@ -59,6 +61,7 @@ public abstract class AbstractEditeventHandler {
 				} else {
 					superVO = jsonVoTransform.getBodysMap().get(classname).get(selectrow);
 				}
+				superVO.setAttributeValue("defitem7", new UFDouble("544"));
 				if(paramnameList.size() > 0){
 					int count = paramnameList.size();
 					for(int n = 0; n < count; n++){
