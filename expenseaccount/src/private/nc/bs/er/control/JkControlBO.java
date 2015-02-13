@@ -25,9 +25,10 @@ public class JkControlBO {
 			return null;
 		}
 		
-		KeyLock.dynamicLock(defvo.getPrimaryKey());
-		
 		//当有人占用时，阻塞在这里，等其他锁释放后，继续进行 add by chenshuaia
+		//多张单据满足一个借款控制时，会发生阻塞，如果并发量很大，会出现效率问题，大家都在排队
+		//动态加锁，要整个远程请求结束后才会释放，所以要一张单据保存完后，下面的单据才可以进入下面的代码
+		//这里假设并发量不是很大，动态加锁直接抛错会使本来可以保存的单据没有保存成功，并发也是有问题的
 		while(KeyLock.dynamicLock(defvo.getPrimaryKey()) != null){}
 		
 		List<LoanControlModeVO> modevos = defvo.getModevos();
