@@ -1043,10 +1043,12 @@ public class ErmForCShareUiUtil {
 		}
 
 		if (!isShow) {
+			if (cardPanel.getBodyTabbedPane().getTabCount() > 0) {
 				cardPanel.getBodyTabbedPane().setSelectedIndex(0);
+			}
 		}
 		cardPanel.setScrollPanelVisible(isShow, IBillItem.BODY, BXConstans.CSHARE_PAGE);
-		if(isShow){
+		if (isShow) {
 			initCsharePage(cardPanel);
 		}
 	}
