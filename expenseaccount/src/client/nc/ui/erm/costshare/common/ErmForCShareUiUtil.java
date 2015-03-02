@@ -193,22 +193,15 @@ public class ErmForCShareUiUtil {
 
 		UFDouble avg = UFDouble.ZERO_DBL;
 
-		boolean isBalance = true;
-
-
 		avg = amount.div(arrayLen);
 		avg = avg.setScale(digit, UFDouble.ROUND_HALF_UP);
 		result.put(currentRow, avg);
 
 		for (int i = 1; i < arrayLen; i++) {
-			if (isBalance) {
-				if (i == (arrayLen - 1)) {
-					result.put(currentRow + i, amount.sub(avg.multiply(arrayLen - 1)));
-				} else {
-					result.put(currentRow + i, avg);
-				}
+			if (i == (arrayLen - 1)) {
+				result.put(currentRow + i, amount.sub(avg.multiply(arrayLen - 1)));
 			} else {
-				result.put(currentRow + i, UFDouble.ZERO_DBL);
+				result.put(currentRow + i, avg);
 			}
 		}
 
@@ -290,6 +283,12 @@ public class ErmForCShareUiUtil {
 
 		if (ErmForCShareUtil.isUFDoubleGreaterThanZero(amount) && ErmForCShareUtil.isUFDoubleGreaterThanZero(ybAmount)) {// 比例不为空时，计算比例
 			UFDouble ratio = amount.div(ybAmount).multiply(100);
+			UFDouble totalJe = getOtherJeTotal(-1, model);
+			//金额合计与报销单金额一致，并且为最后一行时，比例的计算要补尾差
+			if ((rowNum + 1) == model.getRowCount() && totalJe.equals(ybAmount)) {
+				UFDouble otherRatio = getOtherRatioTotal(rowNum, model);
+				ratio = new UFDouble(100).sub(otherRatio);
+			}
 			model.setValueAt(ratio, rowNum, CShareDetailVO.SHARE_RATIO);
 		} else {
 			model.setValueAt(UFDouble.ZERO_DBL, rowNum, CShareDetailVO.SHARE_RATIO);
@@ -989,7 +988,6 @@ public class ErmForCShareUiUtil {
 					}
 					cardPanel.getBillModel(BXConstans.CSHARE_PAGE).setValueAt(rowAmount, eve.getRow() + i, CShareDetailVO.ASSUME_AMOUNT);
 					resetRatioByJe(eve.getRow() + i, cardPanel);
-
 				}
 			} else {
 				reComputeAllJeByAvg(cardPanel);
@@ -1088,6 +1086,23 @@ public class ErmForCShareUiUtil {
 			}
 		}
 		return totalJe;
+	}
+	
+	private static UFDouble getOtherRatioTotal(int rowNum, BillModel model) {
+		UFDouble totalRatio = UFDouble.ZERO_DBL;
+		int rowCount = model.getRowCount();
+
+		for (int i = 0; i < rowCount; i++) {
+			if (i != rowNum) {
+				UFDouble temp = (UFDouble) model.getValueAt(i, CShareDetailVO.SHARE_RATIO);
+				if (temp == null) {
+					totalRatio = totalRatio.add(UFDouble.ZERO_DBL);
+				} else {
+					totalRatio = totalRatio.add(temp);
+				}
+			}
+		}
+		return totalRatio;
 	}
 
 	public static void afterAddOrInsertRowCsharePage(int rownum, BillCardPanel billCard) {
