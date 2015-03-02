@@ -9,11 +9,9 @@ import nc.erm.mobile.environment.ErmTemplateQueryUtil;
 import nc.erm.mobile.util.JsonData;
 import nc.erm.mobile.util.JsonItem;
 import nc.erm.mobile.util.JsonModel;
-import nc.ui.pub.bill.IBillItem;
 import nc.vo.ep.bx.BXBusItemVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.pub.SuperVO;
-import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
@@ -29,6 +27,25 @@ import org.codehaus.jettison.json.JSONObject;
  */
 
 public class JsonVoTransform {
+    private HashMap<String,Integer> headDefType;    //表头自定义项类型
+	
+	private HashMap<String,HashMap<String,Integer>> bodysDefType;    //表体自定义项类型
+	public HashMap<String, Integer> getHeadDefType() {
+		return headDefType;
+	}
+
+	public void setHeadDefType(HashMap<String, Integer> headDefType) {
+		this.headDefType = headDefType;
+	}
+
+	public HashMap<String, HashMap<String, Integer>> getBodysDefType() {
+		return bodysDefType;
+	}
+
+	public void setBodysDefType(
+			HashMap<String, HashMap<String, Integer>> bodysDefType) {
+		this.bodysDefType = bodysDefType;
+	}
 	
 	public Object getBodyValueAt(int row,String key) {
 		HashMap<String,HashMap<Integer,SuperVO>> bodysMap = this.getBodysMap();
@@ -90,12 +107,6 @@ public class JsonVoTransform {
 			//编辑元素信息
 			JSONObject edititeminfo = (JSONObject)json.get("edititeminfo");
 			this.editItemInfoVO = new EditItemInfoVO();
-//			this.editItemInfoVO.setId("defitem8");
-//			this.editItemInfoVO.setOldvalue("");
-//			this.editItemInfoVO.setValue("122");
-//			this.editItemInfoVO.setFormula("amount->zeroifnull(defitem7)+zeroifnull(defitem8)");
-//			this.editItemInfoVO.setSelectrow(new Integer(0));
-//			edititeminfo.put("selectrow","0");
 			this.editItemInfoVO.setId((String)(edititeminfo.get("id")));
 			this.editItemInfoVO.setOldvalue(edititeminfo.get("oldvalue"));
 			this.editItemInfoVO.setValue(edititeminfo.get("value"));
@@ -133,19 +144,35 @@ public class JsonVoTransform {
 		        	}
 		        }
     		}
-			
+	        this.headDefType = new HashMap<String,Integer>();
+	        if(headvalue.has("headdeftype")){
+	        	JSONObject hdeftype = (JSONObject)headvalue.get("headdeftype");
+	        	Iterator<String> hdeftypekeys = hdeftype.keys();
+	        	String hdeftypekey;
+	        	while(hdeftypekeys.hasNext()){
+	        		hdeftypekey = hdeftypekeys.next();
+	        		if(hdeftype.get(hdeftypekey) != null && !"".equals(hdeftype.get(hdeftypekey).toString())){
+	        			this.headDefType.put(hdeftypekey, new Integer(hdeftype.get(hdeftypekey).toString()));
+	        		}
+	        	}
+	        }
 	        //表体
 	        JSONArray bodys = (JSONArray)json.get("body");
 	        if(bodys != null && bodys.length()>0){
 	        	this.bodysMap = new HashMap<String,HashMap<Integer,SuperVO>>();
+	        	this.bodysDefType = new HashMap<String,HashMap<String,Integer>>();
 	        	for(int i=0,n=bodys.length(); i<n; i++){
 		        	JSONObject body = (JSONObject)bodys.get(i);
 					String bodyvoclassname = (String)body.get("classname");
 					String truebodyvoclassname = classnameMap.get(bodyvoclassname);
 					HashMap<Integer,SuperVO> bodyVOMap = new HashMap<Integer,SuperVO>();
 					JSONArray values = (JSONArray)body.get("value");
+					JSONObject bdeftype = new JSONObject();
 			        for(int j=0,l=values.length(); j<l; j++){
 			        	JSONObject value = (JSONObject)values.get(j);
+			        	if(value.has("bodydeftype")){
+			        		bdeftype = (JSONObject)value.get("bodydeftype");
+			        	}
 			        	SuperVO bodyVO = (SuperVO)Class.forName(truebodyvoclassname).newInstance();
 			        	Iterator<String> keys = value.keys();
 				        String key;
@@ -166,6 +193,16 @@ public class JsonVoTransform {
 				        bodyVOMap.put(new Integer(edititeminfo.get("selectrow").toString()), bodyVO);
 			        }
 			        this.bodysMap.put(bodyvoclassname, bodyVOMap);
+			        HashMap<String,Integer> bodyDefType = new HashMap<String,Integer>();
+					Iterator<String> bdeftypekeys = bdeftype.keys();
+			        String bdeftypekey;
+			        while(bdeftypekeys.hasNext()){
+			        	bdeftypekey = bdeftypekeys.next();
+			        	if(bdeftype.get(bdeftypekey) != null && !"".equals(bdeftype.get(bdeftypekey).toString())){
+			        		bodyDefType.put(bdeftypekey, new Integer(bdeftype.get(bdeftypekey).toString()));
+			        	}
+			        }
+			        this.bodysDefType.put(bodyvoclassname, bodyDefType);
 		        }
 	        }
 		} catch (Exception e) {

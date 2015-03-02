@@ -17,6 +17,7 @@ import nc.ui.pub.bill.IBillItem;
 import nc.vo.bd.accessor.IBDData;
 import nc.vo.bill.pub.MiscUtil;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
@@ -119,17 +120,23 @@ public class JsonModel{
 	 * @param bodyvo 新new出来的vo
 	 * @param json 前台传过来的表体值
 	 * @throws JSONException 
+	 * @throws BusinessException 
 	 */
-	public void translateJsonToValueObject(SuperVO bodyvo,JSONObject json) throws JSONException{
+	public String translateJsonToValueObject(SuperVO bodyvo,JSONObject json) throws JSONException, BusinessException{
 		Iterator<String> keys = json.keys();  
         String headvalue;  
         String key;  
+        ArrayList<String[]> formulasList = new ArrayList<String[]>();    //gaotn
+		HashMap<String,Object> defValueMap = new HashMap<String,Object>();    //gaotn
         while(keys.hasNext()){
             key = keys.next();  
+            if(key.equals("bodydeftype"))
+				continue;
             headvalue = (String) json.get(key);
             JsonItem item = getItemByKey(key);
-            JsonData.setVoFromItem(item,bodyvo,headvalue);
+            JsonData.setVoFromItem(formulasList,defValueMap,item,bodyvo,headvalue);
         }  
+        return WebFormulaParser.getInstance().processFormulasForHead(formulasList,bodyvo,defValueMap);    //gaotn
 	}
 	
 	public JSONObject getEditFormular() throws JSONException{
@@ -150,19 +157,25 @@ public class JsonModel{
 		if (o == null || row < 0)
 			return bodyJson;
 		try{
+			JSONObject bdeftype = new JSONObject();
 			JsonItem[] items = getBodyItems();
 			Object value;
 			for (int col = 0; col < items.length; col++) {
 				JSONObject itemJson = new JSONObject();
 				JsonItem item = items[col];
+				String key = item.getKey();
+				//自定义项纪录数据类型
+				if(item.isIsDef()){
+					bdeftype.put(key, item.getDataType());
+				}
 				if (item.getMetaDataProperty() != null) {
 					value = o.getAttributeValue(item.getMetaDataProperty()
 							.getAttribute());
 					if(value != null){
 						itemJson = JsonData.getJsonObjectFromItem(item,value);
 //						bodyJson.put(item.getKey(), itemJson);
-						bodyJson.put(item.getKey(), itemJson.get("pk"));
-						bodyJson.put(item.getKey()+"_name", itemJson.get("name"));
+						bodyJson.put(key, itemJson.get("pk"));
+						bodyJson.put(key+"_name", itemJson.get("name"));
 						//拼接字符串
 						if(item.isShowFlag() == true && !"amount".equals(item.getKey())){
 							text.append(itemJson.get("name") +"  ");
@@ -170,9 +183,10 @@ public class JsonModel{
 					}
 				}
 			}
+			bodyJson.put("bodydeftype", bdeftype);
 			bodyJson.put("textaera",text);
 		}catch(Exception e){
-			//e.printStackTrace();
+			ExceptionUtils.wrappBusinessException("表体转换异常：" + e.getMessage());
 		}
 		return bodyJson;
 	}

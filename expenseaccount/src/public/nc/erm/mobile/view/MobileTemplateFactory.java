@@ -96,10 +96,10 @@ public class MobileTemplateFactory {
 						JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 						if(itemnum > 3 && hide == false){
 							//超过3行时隐藏剩下的div
-							div.append("<div id=\"foldpanel\"  display=\"none\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");
+							div.append("<div id=\"foldpanel\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");//display=\"none\"
 							hide = true;
 						}
-						div.append(builddsl("head.",item,flag));
+						div.append(buildOnePanel("head.",item,flag));
 						panel++;
 						div.append("<div id=\"viewPage" + panel
 								+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
@@ -131,14 +131,15 @@ public class MobileTemplateFactory {
 				item.setKey("isContrast");
 				item.setName("冲借款");
 				item.setEdit(true);
-				div.append(builddsl("head.",item,flag));
+				item.setNull(false);
+				div.append(buildOnePanel("head.",item,flag));
 				panel++;
 				div.append("<div id=\"viewPage" + panel
 						+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
 				item.setKey("isVerifyAccrued");
 				item.setName("核销预提");
 				item.setEdit(true);
-				div.append(builddsl("head.",item,flag));
+				div.append(buildOnePanel("head.",item,flag));
 				panel++;
 				div.append("<div id=\"viewPage" + panel
 						+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
@@ -154,12 +155,12 @@ public class MobileTemplateFactory {
 						//记录当前有几行表头
 						itemnum++;
 						JsonItem item = new JsonItem(bVO, bVO.getCardflag());
-						if(itemnum > 3 && hide == false){
-							//超过3行时隐藏剩下的div
-							div.append("<div id=\"foldpanel\"  display=\"none\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");
-							hide = true;
-						}
-						div.append(builddsl("head.",item,flag));
+//						if(itemnum > 3 && hide == false){
+//							//超过3行时隐藏剩下的div
+//							div.append("<div id=\"foldpanel\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");//display=\"none\"
+//							hide = true;
+//						}
+						div.append(buildOnePanel("head.",item,flag));
 						panel++;
 						div.append("<div id=\"viewPage" + panel
 								+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//padding-left=\"15\" margin-left=\"15\"
@@ -180,17 +181,21 @@ public class MobileTemplateFactory {
 //
 //	    }
 		//如果有隐藏的标签，需要加/div和展开全部panel
-		if(hide){
+		if(hide && flag.equals("addcard")){
 			div.append("</div>");
 			div.append("<div id=\"unfold_button_panel"
-					+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
+					+ "\"  layout=\"hbox\" valign=\"center\" onclick=\"unfold_panel()\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
 			panel++;
+			div.append("<label id=\"label" + panel +"\" height=\"fill\" weight=\"1\" />");
 			div.append("<label id=\"unfold_button"
-			+ "\" hAlign=\"center\" onclick=\"unfold_panel()\" height=\"fill\" color=\"#e50011\" font-size=\"19\" "
-			+ " width=\"wrap\" margin-left=\"10\" margin-right=\"10\" font-family=\"default\" vAlign=\"center\" value = \"展开全部\"/>");
+			+ "\" hAlign=\"center\" onclick=\"unfold_panel()\" height=\"fill\" color=\"#167ef8\" font-size=\"19\" "
+			+ " width=\"wrap\" margin-left=\"10\" margin-right=\"10\" font-family=\"default\" vAlign=\"center\" value = \"收起\"/>");
 			div.append("<image id=\"unfold_image"
-					+ "\" scaletype=\"fitcenter\" src=\"arrowdown.png\" height=\"8\" width=\"12\" />");
+					+ "\" scaletype=\"fitcenter\" onclick=\"unfold_panel()\" src=\"arrowup.png\" height=\"8\" width=\"12\" />");
 			div.append("</div>");
+		}else{
+			panel++;
+			div.replace(div.lastIndexOf("<div id=\"viewPage"), div.lastIndexOf("</div>"), "");
 		}
 		//最下面封顶的那条线
 		String linedown = "<div id=\"viewPage" + panel
@@ -228,16 +233,28 @@ public class MobileTemplateFactory {
 	}
 	
 	//根据item生成div，加横线
-		private String builddsl(String prefix,JsonItem item,String flag){
+		private String buildOnePanel(String prefix,JsonItem item,String flag){
 			StringBuffer div = new StringBuffer(); 
 			panel++;
 			div.append("<div id=\"viewPage" + panel
 					+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"44\"  padding-right=\"15\" color=\"#000000\" >");
 			div.append("<label id=\"" + item.getKey() 
-				+ "_key\" height=\"fill\" color=\"#6F6F6F\" "
-				+"font-size=\"16\" width=\"100\" font-family=\"default\" value=\"" +//margin-left=\"15\"
-				item.getName() + "\" />");
+					+ "_key\" height=\"fill\" "
+					+"font-size=\"16\" width=\"100\" font-family=\"default\" value=\"" +//margin-left=\"15\"
+					item.getName() + "\" ");
 			if(flag.equals("addcard")){
+				if(item.isEdit()){
+					if(item.isNull())
+						div.append(" color=\"#ff0000\" ");
+					else
+						div.append(" color=\"#6F6F6F\" ");
+				}else{
+					if(item.isNull())
+						div.append(" color=\"#ff0000\" ");
+					else
+						div.append(" color=\"#CFCFCF\" ");
+				}
+				div.append("/>");
 				String input = translateEditItem(prefix, item);
 				div.append(input);
 				if(input.startsWith("<label")){
@@ -253,6 +270,7 @@ public class MobileTemplateFactory {
 				}
 			}
 			else{
+				div.append(" color=\"#6F6F6F\" />");
 				div.append(translateShowItem(prefix, item));
 			}
 			div.append("</div>"); 
@@ -366,7 +384,7 @@ public class MobileTemplateFactory {
 					BillTempletBodyVO bVO = bodyVO[i];
 					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
 								JsonItem item = new JsonItem(bVO, bVO.getCardflag());
-								div.append(builddsl("item.",item,flag));
+								div.append(buildOnePanel("item.",item,flag));
 								panel++;
 								div.append("<div id=\"viewPage" + panel
 										+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//padding-left=\"15\"
@@ -411,7 +429,7 @@ public class MobileTemplateFactory {
 					BillTempletBodyVO bVO = bodyVO[i];
 					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()==true){
 								JsonItem item = new JsonItem(bVO, bVO.getCardflag());
-								div.append(builddsl("item.",item,flag));
+								div.append(buildOnePanel("item.",item,flag));
 								panel++;
 								div.append("<div id=\"viewPage" + panel
 										+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"1\" padding-left=\"15\" background=\"#c7c7c7\" />");
@@ -606,8 +624,8 @@ public class MobileTemplateFactory {
 			case IBillItem.STRING:
 				input.append("<input id=\"" + item.getKey() 
 				+ "\" maxlength=\"256\" placeholder=\"可空\" type=\"text\""
-				+ " height=\"44\"  color=\"#000000\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
-				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
+				+ " height=\"44\"  color=\"#000000\" onchange=\"onInputChange()\" onfocus=\"onfocus()\""//onfocus-key=\"
+				+ " font-size=\"16\" width=\"fill\" font-family=\"default\" ");//padding-left=\"12\"
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
@@ -620,8 +638,8 @@ public class MobileTemplateFactory {
 			case IBillItem.DATETIME:
 				input.append("<input id=\"" + item.getKey() 
 				+ "\" format=\"yyyy-MM-dd\" placeholder=\"可空\" type=\"date\""
-				+ " height=\"44\" color=\"#000000\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
-				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" font-family=\"default\" "
+				+ " height=\"44\" color=\"#000000\" onchange=\"onInputChange()\" onfocus=\"onfocus()\""
+				+ " font-size=\"16\" width=\"fill\" font-family=\"default\" "
 				+ " bindfield=\"" + prefix + item.getKey() + "\"");
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
@@ -634,8 +652,8 @@ public class MobileTemplateFactory {
 			case IBillItem.MONEY: 
 				input.append( "<input id=\"" + item.getKey() 
 				+ "\" min=\"-9.99999999E8\" precision=\"2\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
-				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onchange=\"onInputChange()\" onfocus=\"onfocus()\""
+				+ " font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
@@ -647,8 +665,8 @@ public class MobileTemplateFactory {
 			case IBillItem.INTEGER:
 				input.append( "<input id=\"" + item.getKey() 
 				+ "\" min=\"-9.99999999E8\" max=\"9.99999999E8\" roundValue=\"5\" type=\"number\" roundType=\"value\" "
-				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onfocuschange=\"onInputChange()\" onfocuschange-key=\""
-				+ item.getKey() + "\" font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				+ " height=\"44\" color=\"#000000\" background=\"#ffffff\" onchange=\"onInputChange()\" onfocus=\"onfocus()\""
+				+ " font-size=\"16\" width=\"fill\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
 				if(!item.isEdit())
 					input.append(" readonly=\"true\"");
@@ -660,8 +678,8 @@ public class MobileTemplateFactory {
 			case IBillItem.BOOLEAN:
 				input.append( "<input id=\"" + item.getKey() 
 				+ "\" type=\"checkbox\" check-on-image=\"checkbox_select\" check-off-image=\"checkbox_noselect\" "
-				+ " height=\"22\" color=\"#000000\"  onfocuschange=\"onInputChange()\" onfocuschange-key=\""
-				+ item.getKey() + "\" font-size=\"16\" width=\"22\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
+				+ " height=\"22\" color=\"#000000\"  onchange=\"onInputChange()\" onfocus=\"onfocus()\""
+				+ " font-size=\"16\" width=\"22\" padding-left=\"12\" font-family=\"default\" halign=\"LEFT\" ");
 				input.append(" bindfield=\"" + prefix + item.getKey() + "\"");
 //				input.append(" value=\"false\"");
 				if(item.isEdit() == false)

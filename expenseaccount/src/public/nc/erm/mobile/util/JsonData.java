@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import nc.arap.mobile.itf.IWebPubService;
 import nc.bs.framework.common.NCLocator;
@@ -27,6 +24,7 @@ import nc.md.model.access.javamap.NCBeanStyle;
 import nc.pubitf.bd.accessor.GeneralAccessorFactory;
 import nc.pubitf.bd.accessor.IGeneralAccessor;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
+import nc.ui.pub.beans.constenum.IConstEnum;
 import nc.ui.pub.bill.IBillItem;
 import nc.vo.bd.accessor.IBDData;
 import nc.vo.bill.pub.MiscUtil;
@@ -42,7 +40,9 @@ import nc.vo.pub.bill.BillTabVO;
 import nc.vo.pub.bill.BillTempletBodyVO;
 import nc.vo.pub.bill.BillTempletHeadVO;
 import nc.vo.pub.bill.BillTempletVO;
+import nc.vo.pub.bill.IMetaDataProperty;
 import nc.vo.pub.bill.MetaDataPropertyAdpter;
+import nc.vo.pub.lang.MultiLangText;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDateTime;
@@ -370,6 +370,10 @@ public class JsonData
   
   public JSONObject getHeadVO(SuperVO head) throws Exception{
 	    JsonItem[] items = getHeadTailItems();
+	    Hashtable<String, JsonItem> htJsonItems = new Hashtable<String, JsonItem>();
+		for (int n = 0; n < items.length; n++) {
+			htJsonItems.put(items[n].getKey(), items[n]);
+		}
 	    JSONObject headJson = new JSONObject();
 	    headJson.put("classname", getBillTempletVO().getHeadVO().getMetadataclass());
 	    String key = JKBXHeaderVO.TOTAL;
@@ -382,8 +386,13 @@ public class JsonData
 	    value = head.getAttributeValue(key);
 	    headJson.put(key, value);
 		headJson.put(key+"_name", value);
+		JSONObject hdeftype = new JSONObject();
 		for (int i = 0; i < items.length; i++) {
 			key = items[i].getKey();
+			//自定义项纪录数据类型
+			if(items[i].isIsDef()){
+				hdeftype.put(key, items[i].getDataType());
+			}
 			value = head.getAttributeValue(key);
 //			headJson.put(key+"_editformulas", items[i].getEditFormulas());
 			if(value != null){
@@ -394,8 +403,33 @@ public class JsonData
 				if(items[i].getLoadFormula() != null ){
 					WebFormulaParser.getInstance().processFormulasForHead(headJson,items[i].getLoadFormula(),head);
 				}
+			} else {
+				//处理元数据连带字段
+				if(items[i].getIDColName() != null && !"".equals(items[i].getIDColName())){
+					IMetaDataProperty iMetaDataProperty = htJsonItems.get(items[i].getIDColName()).getMetaDataProperty();
+					String iDColName = items[i].getIDColName();
+					Object itemvalue = head.getAttributeValue(iDColName);
+					if(itemvalue != null){
+						MetaDataGetBillRelationItemValue metaDataGetBillRelationItemValue = 
+								new MetaDataGetBillRelationItemValue(iMetaDataProperty.getRefBusinessEntity());
+						ArrayList<IConstEnum> ics = new ArrayList<IConstEnum>();
+						IConstEnum ic = new DefaultConstEnum(items[i].getMetaDataAccessPath(), key);
+						ics.add(ic);
+						IConstEnum[] resultIConstEnum = metaDataGetBillRelationItemValue.getRelationItemValue(ics,new String[]{itemvalue.toString()});
+						Object result = resultIConstEnum[0].getValue();
+						if(result instanceof Object[]){
+							result = ((Object[])result)[0];
+						}
+						if(result instanceof MultiLangText){
+							result = ((MultiLangText)result).getText();
+						}
+						headJson.put(key, (String)(result));
+						headJson.put(key+"_name", (String)(result));
+					}
+				}
 			}
 		}
+		headJson.put("headdeftype", hdeftype);
 		return headJson;
   }
   
@@ -434,7 +468,11 @@ public class JsonData
 			}else if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
 				//NumberFormat 的 innerFormat方法直接拿过来用
 				itemJson.put("pk", value);
-				itemJson.put("name", NumberFormatUtil.formatDouble((UFDouble)value));
+				if(value instanceof String){
+					itemJson.put("name", NumberFormatUtil.formatDouble(new UFDouble((String)value)));
+				}else{
+					itemJson.put("name", NumberFormatUtil.formatDouble((UFDouble)value));
+				}
 			}else if(item.getDataType() == IBillItem.DATE){
 				itemJson.put("pk", value);
 				String str = value.toString();
@@ -734,22 +772,32 @@ public class JsonData
 		return hBillModels.get(tableCode);
 	}
 
-	public static void setVoFromItem(JsonItem item,SuperVO parent,String headvalue){
+	public static void setVoFromItem(ArrayList<String[]> formulasList,HashMap<String,Object> defValueMap, JsonItem item,SuperVO parent,String headvalue){
 		if(item != null){
 			String key = item.getKey();
             if(item != null && !StringUtil.isEmpty(headvalue)){
-//            ncobject.setAttributeValue(item.getMetaDataProperty().getAttribute(), headvalue);
+            	//gaotn
+				if(item.getValidateFormulas() != null && item.getValidateFormulas().length > 0){
+					formulasList.add(item.getValidateFormulas());
+				}
+				Object defValue;
+				//gaotn
 	            if(item.getDataType() == IBillItem.DATE){
 	            	parent.setAttributeValue(key, new UFDate(headvalue));
+	            	defValue = new UFDate(headvalue);    //gaotn
 	            }else if(item.getDataType() == IBillItem.MONEY || item.getDataType() == IBillItem.DECIMAL){
 	            	parent.setAttributeValue(key, new UFDouble(headvalue));
+	            	defValue = new UFDouble(headvalue);    //gaotn
 	            }else if(item.getDataType() == IBillItem.DATETIME){
 	            	parent.setAttributeValue(key, new UFDateTime(headvalue));
+	            	defValue = new UFDateTime(headvalue);    //gaotn
 	            }else if(item.getDataType() == IBillItem.BOOLEAN){
 	            	if("true".equals(headvalue)){
 	            		parent.setAttributeValue(key, UFBoolean.TRUE);
+	            		defValue = UFBoolean.TRUE;    //gaotn
 	            	}else{
 	            		parent.setAttributeValue(key, UFBoolean.FALSE);
+	            		defValue = UFBoolean.FALSE;    //gaotn
 	            	}
 	            }else if(item.getDataType() == IBillItem.COMBO){
 	            	String reftype = item.getRefType();
@@ -766,18 +814,25 @@ public class JsonData
 	        		if(isSX){
 	        			try{
 		            		parent.setAttributeValue(key, headvalue);
+		            		defValue = headvalue;    //gaotn
 		            	}catch(Exception e){
 		            		return;
 		            	}
-	        		}else
+	        		}else{
 	        			parent.setAttributeValue(key, new Integer(headvalue));
+	        			defValue = new Integer(headvalue);    //gaotn
+	        		}
 	            }else{
 	            	try{
 	            		parent.setAttributeValue(key, headvalue);
+	            		defValue = headvalue;    //gaotn
 	            	}catch(Exception e){
 	            		return;
 	            	}
 	            }
+	            if(item.isIsDef()){    //gaotn
+					defValueMap.put(key, defValue);    //gaotn
+				}    //gaotn
             }
         }
     }  
@@ -880,7 +935,8 @@ public class JsonData
 			}
 		}
     }
-	public AggregatedValueObject transJsonToBillValueObject(JSONObject json) throws JSONException, BusinessException {
+	public Object[] transJsonToBillValueObject(JSONObject json) throws JSONException, BusinessException {
+		Object[] resultObject = new Object[2];
 		//设置表头的值
 		JSONObject head = (JSONObject)json.get("head");
 		IBusinessEntity be = getBillTempletVO().getHeadVO()
@@ -897,12 +953,18 @@ public class JsonData
 		Iterator<String> keys = head.keys();  
         String headvalue;  
         String key;  
+        ArrayList<String[]> formulasList = new ArrayList<String[]>();    //gaotn
+		HashMap<String,Object> defValueMap = new HashMap<String,Object>();    //gaotn
         while(keys.hasNext()){
             key = keys.next();  
+            if(key.equals("headdeftype"))
+				continue;
             headvalue = head.get(key).toString();
             JsonItem item = getHeadTailItem(key);
-            setVoFromItem(item,parent,headvalue);
+            setVoFromItem(formulasList,defValueMap,item,parent,headvalue);
         }  
+        StringBuffer message = new StringBuffer();
+		message.append(WebFormulaParser.getInstance().processFormulasForHead(formulasList,parent,defValueMap));    //gaotn
         
         //设置表体的值
         JSONObject jo = null;  
@@ -939,7 +1001,7 @@ public class JsonData
         	for(int i=0;i<bodyvalue.length();i++){
         		SuperVO bodyvo = (SuperVO) bodystyle.newInstance(null);
         		jo = (JSONObject)bodyvalue.get(i);
-        		model.translateJsonToValueObject(bodyvo,jo);
+        		message.append(model.translateJsonToValueObject(bodyvo, jo));
         		childrenlist.add(bodyvo);
         	}
             
@@ -949,7 +1011,9 @@ public class JsonData
         }else{
         	aggvo.setChildrenVO(childrenlist.toArray(new SuperVO[0]));
         }
-		return aggvo;
+        resultObject[0] = aggvo;
+		resultObject[1] = message.toString();
+		return resultObject;
 	}
 	public static String getStringValue(Object value){
 		return value == null? "":value.toString();
@@ -981,72 +1045,5 @@ public class JsonData
 		}
 		return vo;
 	}
-	public AggregatedValueObject transMapToBillValueObject(
-			Map<String, Object> valuemap) {
-		//设置表头的值
-		IBusinessEntity be = getBillTempletVO().getHeadVO()
-				.getBillMetaDataBusinessEntity();
-		AggregatedValueObject aggvo = null;
-		if (be.getBeanStyle().getStyle() == BeanStyleEnum.AGGVO_HEAD){
-			//根据元数据类型得到应该是什么类型的vo
-			AggVOStyle aggstyle = (AggVOStyle)be.getBeanStyle();
-			aggvo = (AggregatedValueObject) aggstyle.newInstance(null);
-		}
-		//给表头vo赋值	
-		SuperVO parent = (SuperVO) aggvo.getParentVO();
-		Set<String> mapkeys = valuemap.keySet();  
-		Iterator<String> keys = mapkeys.iterator();
-		String headvalue;  
-        String key;  
-        while(keys.hasNext()){
-            key = keys.next();  
-            if("items".equals(key) || "attachment".equals(key)){
-				continue;
-			}
-            headvalue = getStringValue(valuemap.get(key));
-            JsonItem item = getHeadTailItem(key);
-            setVoFromItem(item,parent,headvalue);
-        }  
-        
-        //设置表体的值
-        List<Map<String, Object>> items = (List<Map<String, Object>>) valuemap.get("items");
-        List<SuperVO> childrenlist = new ArrayList<SuperVO>();
-        if(items != null && !items.isEmpty()){ 
-        	for(int i=0;i<items.size();i++){
-        		Map<String, Object> itemvalue = items.get(i);
-        		String amountvalue = (String) itemvalue.get("amount");
-				if(StringUtil.isEmpty(amountvalue)){
-					continue;
-				}
-				key = (String) itemvalue.get("tablecode");
-				JsonModel model = getBillModel(key);
-	            IBusinessEntity bodybean = null;
-	            NCBeanStyle bodystyle = null;
-	            try {
-	            	bodybean = MDBaseQueryFacade.getInstance().getBusinessEntityByFullName(model.getTabvo().getMetadataclass());
-				} catch (MetaDataException e) {
-					Logger.debug(e);
-				}
-	            if ((bodybean.getBeanStyle().getStyle() == BeanStyleEnum.NCVO) || (bodybean.getBeanStyle().getStyle() == BeanStyleEnum.POJO)){
-	            	bodystyle = (NCBeanStyle) bodybean.getBeanStyle();
-	            }
-	            SuperVO bodyvo = (SuperVO) bodystyle.newInstance(null);
-	            for (Entry<String, Object> fieldvalues : itemvalue.entrySet()) {
-					key = fieldvalues.getKey();
-					Object value = fieldvalues.getValue();
-					if("amount".equals(key)){
-						value = new UFDouble((String)value);
-					}
-					bodyvo.setAttributeValue(key, value);
-				} 
-//	            model.translateJsonToValueObject(bodyvo,jo);
-        		childrenlist.add(bodyvo);
-        	}
-        }
-        
-        aggvo.setChildrenVO(childrenlist.toArray(new SuperVO[0]));
-		return aggvo;
-	}
-
 	
 }

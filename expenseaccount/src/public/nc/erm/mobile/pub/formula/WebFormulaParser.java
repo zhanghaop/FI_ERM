@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
+
 import nc.bs.framework.common.RuntimeEnv;
 import nc.erm.mobile.util.JsonItem;
 import nc.md.data.access.NCObject;
@@ -18,9 +21,6 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.formulaset.FormulaParseFather;
 import nc.vo.pub.formulaset.VarryVO;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 
 
 public class WebFormulaParser {
@@ -178,7 +178,67 @@ public class WebFormulaParser {
 		}
 		return bodyarray;
 	}
-	
+	/**
+	 * 处理表头字段所含公式
+	 * 
+	 */
+	public String processFormulasForHead(ArrayList<String[]> formulasList, SuperVO parent, HashMap<String,Object> defValueMap) throws BusinessException{
+		if(formulasList == null || formulasList.size() == 0){
+			return null;
+		}
+		StringBuffer message = new StringBuffer();
+		for(String[] formulas : formulasList){
+			getFormulaParse().setExpressArray(formulas);
+			VarryVO[] paramlist = getFormulaParse().getVarryArray();
+			Object[] paramvalues = null;
+			String[] paramnames = null;
+			Object[][] results = null;
+			if (paramlist != null) {
+				for (int j = 0; j < paramlist.length; j++) {
+					VarryVO vo = paramlist[j];
+					if (vo != null && vo.getVarry() != null && vo.getVarry().length > 0) {
+						if (parent == null) {
+							throw new BusinessException("传入公式的实体VO为空,公式中的变量无法取值!");
+						}
+						paramnames = vo.getVarry();
+						paramvalues = new Object[paramnames.length];
+						for (int i = 0; i < paramnames.length; i++) {
+							if (paramnames[i] == null){
+								continue;
+							}
+							paramvalues[i] = parent.getAttributeValue(paramnames[i]);
+							if(defValueMap.containsKey(paramnames[i])){
+								paramvalues[i] = defValueMap.get(paramnames[i]);
+							}
+							getFormulaParse().addVariable(paramnames[i], paramvalues[i]);
+						}
+					}
+				}
+				try {
+					results = getFormulaParse().getValueOArray();
+					if (getFormulaParse().getError() != null){
+						throw new BusinessException(getFormulaParse().getError());
+					}
+				} catch (Exception e) {
+					throw new BusinessException("公式计算错误,原因:" + e.getMessage());
+				}
+				for(int n = 0; n < paramlist.length; n++){
+					VarryVO varryVO = paramlist[n];
+					String formulaName = varryVO.getFormulaName();
+					Object[] result = results[n];
+					if(result[0] != null && !"".equals(result[0].toString())){
+						if(formulaName != null && "$Error".equals(formulaName)){
+							throw new BusinessException(result[0].toString());
+						}
+						if(formulaName != null && "$Message".equals(formulaName)){
+							message.append(result[0].toString()).append(";");
+						}
+					}
+				}
+			}
+		}
+		return message.toString();
+	}
 	/**
 	 * 获取公式参数
 	 * 

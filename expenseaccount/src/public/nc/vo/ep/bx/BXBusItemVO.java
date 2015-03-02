@@ -2299,6 +2299,8 @@ public class BXBusItemVO extends SuperVO {
 			super.setAttributeValue(name, value);
 		}
 	}
+	
+	//shiwla 手机端进行vo转换用
 	public void setJsonAttributeValue(String name, Object value) {
 		super.setAttributeValue(name, value);
 	}

@@ -1,5 +1,6 @@
 package nc.erm.mobile.eventhandler;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +14,7 @@ import nc.erm.mobile.function.FunctionResultVO;
 import nc.erm.mobile.function.InterfaceFunction;
 import nc.erm.mobile.function.MainJobDeptFunction;
 import nc.erm.mobile.pub.formula.WebFormulaParser;
-import nc.vo.jcom.lang.StringUtil;
+import nc.ui.pub.bill.IBillItem;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
@@ -52,7 +53,7 @@ public abstract class AbstractEditeventHandler {
 		int selectrow = jsonVoTransform.getEditItemInfoVO().getSelectrow();    //行信息
 		String classname = jsonVoTransform.getEditItemInfoVO().getClassname();    //元数据对象
 		try {
-			if(!StringUtil.isEmpty(formula)){
+			if(formula != null && !"".equals(formula)){
 				List<String> paramnameList = WebFormulaParser.getInstance().getFormulasParamnames(formula);
 				Map<String, Object> paramvalueMap = new HashMap<String,Object>();
 				SuperVO superVO;
@@ -61,12 +62,34 @@ public abstract class AbstractEditeventHandler {
 				} else {
 					superVO = jsonVoTransform.getBodysMap().get(classname).get(selectrow);
 				}
-				superVO.setAttributeValue("defitem7", new UFDouble("544"));
 				if(paramnameList.size() > 0){
 					int count = paramnameList.size();
 					for(int n = 0; n < count; n++){
-						paramvalueMap.put(paramnameList.get(n), 
-								superVO.getAttributeValue(paramnameList.get(n)));
+						String paramname = paramnameList.get(n);
+						Object paramvalue;
+						int defType = -1;
+						paramvalue = superVO.getAttributeValue(paramname);
+						if(selectrow < 0){
+							if(jsonVoTransform.getHeadDefType().containsKey(paramname)){
+								defType = jsonVoTransform.getHeadDefType().get(paramname);
+							}
+						} else {
+							if(jsonVoTransform.getBodysDefType().containsKey(classname)){
+								HashMap<String,Integer> bodyDefType = jsonVoTransform.getBodysDefType().get(classname);
+								if(bodyDefType != null && bodyDefType.containsKey(paramname)){
+									defType = bodyDefType.get(paramname);
+								}
+							}
+						}
+						if(defType != -1){
+							if(defType == IBillItem.INTEGER || defType == IBillItem.DECIMAL || 
+									defType == IBillItem.MONEY){
+								if(paramvalue != null){
+									paramvalue = new UFDouble(paramvalue.toString());
+								}
+							}
+						}
+						paramvalueMap.put(paramname, paramvalue);
 					}
 				}
 				HashMap<String,Object> resultMap = WebFormulaParser.getInstance().processEditFormulas(formula,paramvalueMap);

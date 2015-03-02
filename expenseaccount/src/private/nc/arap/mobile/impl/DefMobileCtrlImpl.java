@@ -2,9 +2,12 @@ package nc.arap.mobile.impl;
 
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
+
 import nc.arap.mobile.itf.IDefMobileCtrl;
 import nc.erm.mobile.billaction.DelLineAction;
 import nc.vo.pub.BusinessException;
+import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
 
 public class DefMobileCtrlImpl implements IDefMobileCtrl{
@@ -49,7 +52,14 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 	@Override
 	public String commitDefJkbx(String userid, String pk_jkbx,String djlxbm,String djdl)
 			throws BusinessException {
-		return getErmDefMobileCtrlBo().commitJkbx(userid,pk_jkbx,djlxbm,djdl);
+		String str = null;
+		try {
+			str = getErmDefMobileCtrlBo().commitJkbx(userid,pk_jkbx,djlxbm,djdl);
+			return str;
+		} catch (JSONException e) {
+			ExceptionUtils.wrappBusinessException("后台信息转换异常：" + e.getMessage());
+		}
+		return str;
 	}
 	@Override
 	public String validateTs(String userid, String djlxbm, String nodecode,

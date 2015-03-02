@@ -319,24 +319,47 @@ public abstract class AbstractErmMobileCtrlBO {
 			return null;
 		}
 	}
-	public String commitJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException {
+	public String commitJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException, JSONException {
 		  initEvn(userid);
+		  JSONObject retjson = new JSONObject();
 		  try{
 			  // 查询
 			  List<JKBXVO> vos = NCLocator.getInstance().
 			    lookup(IBXBillPrivate.class).queryVOsByPrimaryKeys(new String[]{pk_jkbx}, null);
 			  if(vos == null || vos.isEmpty()){
-				  throw new BusinessException("单据已被删除，请检查");
+				  retjson.put("success", "false");
+				  retjson.put("message", "单据已被删除，请检查");
+				  return retjson.toString();
 			  }
 			  JKBXVO jkbxvo = vos.get(0);
-			  // 执行提交
 			  String actionType = IPFActionName.SAVE;//ErUtil.getCommitActionCode(PK_ORG);
+			  if("uncommit".equals(djdl)){
+				  if(jkbxvo.getParentVO().getSpzt().equals(IBillStatus.FREE)){
+					  retjson.put("success", "false");
+					  retjson.put("message", "该单据尚未提交");
+					  return retjson.toString();
+				  }else{
+					  //执行收回
+					  actionType = IPFActionName.UNSAVE;
+					  PfUtilPrivate.runAction(actionType, djlxbm, jkbxvo, null,
+								null, null, null);
+					  retjson.put("success", "true");
+					  retjson.put("flag", "uncommit");
+					  retjson.put("message", "收回成功");
+					  return retjson.toString();
+				  }
+			  }
+			  // 执行提交
 			  PfUtilPrivate.runAction(actionType, djlxbm, jkbxvo, null,
 						null, null, null);
-			  return "true";
+			  retjson.put("success", "true");
+			  retjson.put("flag", "commit");
+			  retjson.put("message", "提交成功");
+			  return retjson.toString();
 			}catch(BusinessException e){
-				String msg = e.getMessage();
-				return msg;
+				retjson.put("success", "false");
+				retjson.put("message", e.getMessage());
+				return retjson.toString();
 			}
 	}
 	

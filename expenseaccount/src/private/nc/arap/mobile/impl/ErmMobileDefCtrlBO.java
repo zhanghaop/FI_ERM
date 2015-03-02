@@ -43,7 +43,21 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		try{
 			String billpk = null;
 			JsonData jsonData = new JsonData(ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm));
-			AggregatedValueObject vo = jsonData.transJsonToBillValueObject(new JSONObject(bxdcxt));
+			JSONObject context = new JSONObject(bxdcxt);
+			JSONObject head = (JSONObject) context.get("head");
+			if(head.getBoolean("isContrast")){
+				//冲借款
+				int a = 0;
+			}
+			if(head.getBoolean("isVerifyAccrued")){
+				//核销预提
+				int a = 0;
+			}
+			Object[] resultObject = jsonData.transJsonToBillValueObject(context);
+//			if(resultObject[1] != null && !"".equals(resultObject[1])){
+//	    		 json.put("message", resultObject[1]);
+//	    	 }
+			AggregatedValueObject vo = (AggregatedValueObject)(resultObject[0]);
 			BillSaveAction saveaction = new BillSaveAction(PK_ORG);
 			if(vo.getParentVO().getPrimaryKey() != null && !"".equals(vo.getParentVO().getPrimaryKey())){
 				// 主键已生成，修改
