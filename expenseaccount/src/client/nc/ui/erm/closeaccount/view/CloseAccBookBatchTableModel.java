@@ -8,6 +8,7 @@ import nc.ui.org.closeaccbook.action.PreCloseAccBookAction;
 import nc.ui.uif2.UIState;
 import nc.ui.uif2.model.BatchBillTableModel;
 import nc.vo.org.CloseAccBookVO;
+import nc.vo.org.CloseResult;
 
 public class CloseAccBookBatchTableModel extends BatchBillTableModel {
 
@@ -88,7 +89,13 @@ public class CloseAccBookBatchTableModel extends BatchBillTableModel {
 		}else if(AntiPreCloseAccBookAction.ACTION_CODE.equals(actionCode)){
 			bookVo=clientServicer.unPreCloseAccBook(bookVo);
 		}else if(CloseAccBookAction.ACTION_CODE.equals(actionCode)){
-			bookVo=clientServicer.closeAccForSingleOrg(pk_enableperiodmonth,bookVo);
+			Object result = clientServicer.closeAccForSingleOrg(pk_enableperiodmonth,bookVo);
+			if(result instanceof CloseResult){
+				bookVo = ((CloseResult)result).getCloseAccBookVO();
+			}else{
+				bookVo = (CloseAccBookVO)result;
+			}
+			
 		}else if(PreCloseAccBookAction.ACTION_CODE.equals(actionCode)){
 			bookVo=clientServicer.preCloseAccBook(pk_enableperiodmonth,bookVo);
 		}
