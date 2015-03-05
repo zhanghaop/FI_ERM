@@ -148,6 +148,15 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	
 	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc,String getbillflag) throws BusinessException {
 		initEvn(userid);
+//		try {
+//			NCMessage msgs = new NCMessage();
+//			MessagePropertySetting propertySetting = new MessagePropertySetting();
+//			msgs.setPropertySetting(propertySetting);
+//			SMSAndMailUtil.sendMailSMS(new NCMessage[]{msgs});
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		org.codehaus.jettison.json.JSONObject retJson = new org.codehaus.jettison.json.JSONObject();
 		AggregatedValueObject billvo = null;
 		BillTempletVO billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm);

@@ -419,7 +419,7 @@ public abstract class AbstractErmMobileCtrlBO {
 		//返回attatchmapList
 		JSONArray attacharray = new JSONArray();
 		List<Map<String, String>> attatchmapList = new ArrayList<Map<String, String>>();
-		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"00")){
+		if(isProductInstalled(InvocationInfoProxy.getInstance().getGroupId(),"70")){
 			//如果安装了共享服务，则从影像服务器下载图片
 			try {
 				IImagUtil imageutil = NCLocator.getInstance().lookup(IImagUtil.class);
