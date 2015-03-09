@@ -319,7 +319,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			return null;
 		}
 	}
-	public String commitJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException, JSONException {
+	public String commitJkbx(String userid,String pk_jkbx,String djlxbm,String flag) throws BusinessException, JSONException {
 		  initEvn(userid);
 		  JSONObject retjson = new JSONObject();
 		  try{
@@ -333,7 +333,7 @@ public abstract class AbstractErmMobileCtrlBO {
 			  }
 			  JKBXVO jkbxvo = vos.get(0);
 			  String actionType = IPFActionName.SAVE;//ErUtil.getCommitActionCode(PK_ORG);
-			  if("uncommit".equals(djdl)){
+			  if("uncommit".equals(flag)){
 				  if(jkbxvo.getParentVO().getSpzt().equals(IBillStatus.FREE)){
 					  retjson.put("success", "false");
 					  retjson.put("message", "该单据尚未提交");

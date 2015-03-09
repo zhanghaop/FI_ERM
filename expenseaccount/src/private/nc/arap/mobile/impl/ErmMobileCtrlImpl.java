@@ -18,11 +18,6 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	public String deleteJkbx(String headpk,String userid) throws BusinessException {
 		return getErmMobileCtrlBo().deleteJkbx(headpk,userid);
 	}
-	 
-	@Override
-	public String commitJkbx(String userid,String headpk) throws BusinessException {
-		return getErmMobileCtrlBo().commitJkbx(userid,headpk);
-	}
 	
 	@Override
 	public Map<String, List<Map<String, String>>> getBXHeadsByUser(String userid,String flag,String billtype,String startline,String pagesize,String pks)
@@ -49,8 +44,8 @@ public class ErmMobileCtrlImpl implements IErmMobileCtrl{
 	}
 	
 	@Override
-	public String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck) throws Exception {
-		return getErmMobileCtrlBo().auditBXBillByPKs(pks,userid,checknote,ischeck);
+	public String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck,String flag,String[] pk_users) throws Exception {
+		return getErmMobileCtrlBo().auditBXBillByPKs(pks,userid,checknote,ischeck,flag,pk_users);
 	}
 	
 	//≤È—Ø…Û≈˙¡˜

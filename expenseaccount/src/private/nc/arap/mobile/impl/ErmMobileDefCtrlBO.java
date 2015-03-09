@@ -3,12 +3,14 @@ package nc.arap.mobile.impl;
 import java.util.HashMap;
 import java.util.List;
 
+import nc.bs.er.util.BXPubUtil;
 import nc.bs.erm.util.ErUtil;
 import nc.bs.erm.util.ErmDjlxCache;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.erm.mobile.billaction.BillSaveAction;
+import nc.erm.mobile.billaction.InitBillDataAction;
 import nc.erm.mobile.billaction.JKBXBillAddAction;
 import nc.erm.mobile.environment.ErmTemplateQueryUtil;
 import nc.erm.mobile.eventhandler.ErmEditeventHandler;
@@ -44,30 +46,39 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 			String billpk = null;
 			JsonData jsonData = new JsonData(ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm));
 			JSONObject context = new JSONObject(bxdcxt);
-			JSONObject head = (JSONObject) context.get("head");
-			if(head.getBoolean("isContrast")){
-				//冲借款
-				int a = 0;
-			}
-			if(head.getBoolean("isVerifyAccrued")){
-				//核销预提
-				int a = 0;
-			}
 			Object[] resultObject = jsonData.transJsonToBillValueObject(context);
 //			if(resultObject[1] != null && !"".equals(resultObject[1])){
 //	    		 json.put("message", resultObject[1]);
 //	    	 }
 			AggregatedValueObject vo = (AggregatedValueObject)(resultObject[0]);
+			JSONObject head = (JSONObject) context.get("head");
 			BillSaveAction saveaction = new BillSaveAction(PK_ORG);
 			if(vo.getParentVO().getPrimaryKey() != null && !"".equals(vo.getParentVO().getPrimaryKey())){
 				// 主键已生成，修改
+				if(head.getBoolean("isContrast")){
+					//冲借款
+					BXPubUtil.autoContrast((JKBXVO)vo, true);
+				}
+				if(head.getBoolean("isVerifyAccrued")){
+					//核销预提
+					BXPubUtil.autoContrast((JKBXVO)vo, true);
+				}
 				billpk = saveaction.updateJkbx(vo,userid); 
 				// 附件先删后插
 //				deleteAttachmentList(billpk, userid); 
 //				saveAttachment(billpk, map);
 			}else{
 				//新增保存
+				saveaction.fillAmount((JKBXVO)vo,djlxbm,userid);
 				if(djlxbm.startsWith("263") || djlxbm.startsWith("264")){
+					if(head.getBoolean("isContrast")){
+						//冲借款
+						BXPubUtil.autoContrast((JKBXVO)vo, false);
+					}
+					if(head.getBoolean("isVerifyAccrued")){
+						//核销预提
+						BXPubUtil.autoContrast((JKBXVO)vo, false);
+					}
 					billpk = saveaction.insertJkbx(vo,djlxbm,userid);
 				}else if(djlxbm.startsWith("262")){
 					billpk = saveaction.insertAcc(vo,djlxbm,userid);
@@ -148,40 +159,13 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 	
 	public String getJkbxCard(String pk_jkbx,String userid,String djlxbm,String djlxmc,String getbillflag) throws BusinessException {
 		initEvn(userid);
-//		try {
-//			NCMessage msgs = new NCMessage();
-//			MessagePropertySetting propertySetting = new MessagePropertySetting();
-//			msgs.setPropertySetting(propertySetting);
-//			SMSAndMailUtil.sendMailSMS(new NCMessage[]{msgs});
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
 		org.codehaus.jettison.json.JSONObject retJson = new org.codehaus.jettison.json.JSONObject();
 		AggregatedValueObject billvo = null;
 		BillTempletVO billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm);
 		JsonData jsonData = new JsonData(billTempletVO);
 		try {
 			if(StringUtil.isEmpty(pk_jkbx)){
-				//新增单据  带出默认值
-				String pk_group = InvocationInfoProxy.getInstance().getGroupId();
-				DjLXVO djlxVO = ErmDjlxCache.getInstance().getDjlxVO(pk_group, djlxbm);
-				// 初始化表头数据
-				if(djlxbm.startsWith("263") || djlxbm.startsWith("264")){ 
-					//借款报销单初始化
-					IErmBillUIPublic initservice = NCLocator.getInstance().lookup(IErmBillUIPublic.class);
-					billvo = initservice.setBillVOtoUI(djlxVO, "", null);
-					JKBXBillAddAction add = new JKBXBillAddAction();
-					add.getJKBXValue(jsonData,null, billvo);
-				}else if(djlxbm.startsWith("262")){
-					//费用预提单初始化
-					IErmAccruedBillQuery initservice = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class);
-					billvo = initservice.getAddInitAccruedBillVO(djlxVO, "", null);
-				}else if(djlxbm.startsWith("261")){
-					//费用申请单初始化
-					IErmMatterAppBillQuery initservice = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class);
-					billvo = initservice.getAddInitAggMatterVo(djlxVO, "", null);
-				}
+				billvo = InitBillDataAction.getBillData(djlxbm, jsonData);
 				retJson = jsonData.transBillValueObjectToJson(billvo);
 				//新增时将itemlist赋值到默认值item中
 				JSONArray itemsarray = (JSONArray) retJson.get("itemlist");
@@ -194,12 +178,16 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 				List<JKBXVO> vos = NCLocator.getInstance()
 						.lookup(IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
 								new String[]{pk_jkbx}, null,false,null);
+				if(vos == null || vos.isEmpty()){ 
+					throw new BusinessException("单据已被删除，请检查"); 
+				}
 				billvo = vos.get(0);
 				retJson = jsonData.transBillValueObjectToJson(billvo);
 			}
 			//
 			HashMap authMap = null;
-			if("audit".equals(getbillflag)||getbillflag==null){
+			if("audit".equals(getbillflag) || getbillflag == null){
+				//审批界面得到单据值之后还要加载是否具有审批/驳回/加签权限
 				String actionType = ErUtil.getApproveActionCode(PK_ORG);
 				BesideApproveContext besideContext = new BesideApproveContext();
 				besideContext.setApproveResult("Y");

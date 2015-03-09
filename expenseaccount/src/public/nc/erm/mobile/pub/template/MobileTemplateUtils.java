@@ -44,8 +44,10 @@ public class MobileTemplateUtils {
 	public static String getTemplatePK(String djlxbm) throws BusinessException {
 		String pk_corp = InvocationInfoProxy.getInstance().getGroupId();
 		ListResultSetProcessor processor = new ListResultSetProcessor();
-		String sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where PK_BILLTYPECODE = '" + djlxbm 
-			+ "' and pk_corp = '" + pk_corp + "' and BILL_TEMPLETCAPTION LIKE '" + djlxbm + "_M%'";
+		String sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where pk_corp = '" 
+					+ pk_corp + "' and BILL_TEMPLETCAPTION LIKE '" + djlxbm + "_M%'";
+//		String sql = "select PK_BILLTEMPLET from PUB_BILLTEMPLET where PK_BILLTYPECODE = '" + djlxbm 
+//			+ "' and pk_corp = '" + pk_corp + "' and BILL_TEMPLETCAPTION LIKE '" + djlxbm + "_M%'";
 		List<String> templetpks = (List<String>)getBasedao().executeQuery(sql, processor);
 		if (isEmpty(templetpks)){
 			return null;

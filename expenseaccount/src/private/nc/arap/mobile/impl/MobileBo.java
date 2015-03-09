@@ -5,9 +5,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import nc.bs.dao.BaseDAO;
@@ -20,6 +22,7 @@ import nc.erm.mobile.util.BillTypeUtil;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.erm.accruedexpense.IErmAccruedBillQueryPrivate;
 import nc.itf.erm.matterapp.IErmMatterAppBillQueryPrivate;
+import nc.itf.uap.rbac.IUserManageQuery;
 import nc.jdbc.framework.processor.BaseProcessor;
 import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
 import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
@@ -33,6 +36,7 @@ import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fip.pub.SqlTools;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
+import nc.vo.sm.UserVO;
 import nc.vo.trade.pub.IBillStatus;
 import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
 
@@ -89,8 +93,18 @@ public class MobileBo {
 					IBXBillPrivate.class);
 			List<JKBXHeaderVO> list = queryservice.queryHeadersByPrimaryKeys(sendpkarrars,BXConstans.BX_DJDL);
 			if (list != null && !list.isEmpty()) {
+				Set<String> userSet = new HashSet<String>();
+	    		  for(int i=0;i<list.size();i++){
+	    			  userSet.add(list.get(i).getCreator());//getJkbxr()
+	    		  }
+//	    		  PsndocVO[] docvos = NCLocator.getInstance().lookup(IPsndocQueryService.class).queryPsndocByPks(userSet.toArray(new String[0]));
+	    		  UserVO[] uservo = NCLocator.getInstance().lookup(IUserManageQuery.class).findUserByIDs(userSet.toArray(new String[0]));
+	    		  Map<String,String> userMap = new HashMap<String,String>();
+	    		  for(int i=0;i<uservo.length;i++){
+	    			  userMap.put(uservo[i].getCuserid(), uservo[i].getUser_name());
+	    		  }
 				for (JKBXHeaderVO vo : list) {
-					Map<String, String> fieldvalueMap = AuditListUtil.getJKBXMap(queryFields,vo,null);
+					Map<String, String> fieldvalueMap = AuditListUtil.getJKBXMap(queryFields,vo,userMap);
 					checkPkMap.put(vo.getPrimaryKey(), fieldvalueMap);
 					//·Ö×é
 					UFDate djrq = vo.getDjrq();

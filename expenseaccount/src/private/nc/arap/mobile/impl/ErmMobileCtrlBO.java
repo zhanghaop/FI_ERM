@@ -427,7 +427,7 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 	}
 	
 	//审批单据//如果成功返回success，如果出错则返回出错提示
-	public String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck) throws Exception {
+	public String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck,String flag,String[] pk_users) throws Exception {
 		//初始化集团
 		initEvn(userid);
 		
@@ -444,8 +444,10 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 			JKBXVO vo = jkbxVos[i];
 			// 如果报销单全部用来冲借款后，审批后，支付状态应该设置为：全部冲借款
 			JKBXHeaderVO parentVO = vo.getParentVO();
-			if (!parentVO.isAdjustBxd()&&parentVO.zfybje.doubleValue() == 0 && parentVO.hkybje.doubleValue() == 0) {
-				parentVO.setPayflag(BXStatusConst.ALL_CONTRAST);
+			if("audit".equals(flag)||flag == null){
+				if (!parentVO.isAdjustBxd()&&parentVO.zfybje.doubleValue() == 0 && parentVO.hkybje.doubleValue() == 0) {
+					parentVO.setPayflag(BXStatusConst.ALL_CONTRAST);
+				}
 			}
 			vo.setNCClient(true);
 			msgs[i] = checkVo(vo);
@@ -472,13 +474,14 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
 				}
 				return getBatchResults(msgs);
 			} else {
-				MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditVOs.get(0),checknote) };
+				MessageVO[] returnMsgs = new MessageVO[] { approveSingle(auditVOs.get(0),checknote,flag,pk_users) };
 				return getBatchResults(returnMsgs);
 			}
 		} else {
 			//单据都没有通过checkVo的审核
 			return getBatchResults(msgs);
 		}
+	
 	}
 	
 	protected MessageVO[] executeBatchAudit(List<AggregatedValueObject> auditVOs) throws Exception, BusinessException {
@@ -693,17 +696,29 @@ public class ErmMobileCtrlBO extends AbstractErmMobileCtrlBO{
     }
 	
 	
-	protected MessageVO approveSingle(AggregatedValueObject bxvo,String checknote) throws BusinessException {
+	protected MessageVO approveSingle(AggregatedValueObject bxvo,String checknote,String flag,String[] pk_users) throws BusinessException {
 		JKBXHeaderVO head = (JKBXHeaderVO)bxvo.getParentVO();
 		MessageVO result = null;
 		// 审核动作处理
 		try{
 			String actionType = ErUtil.getApproveActionCode(PK_ORG);
 			BesideApproveContext besideContext = new BesideApproveContext();
-			besideContext.setApproveResult("Y");
-			besideContext.setCheckNote(checknote);
+			HashMap eParam = new HashMap();
+			if("reject".equals(flag)){
+				
+			}else if("addassign".equals(flag)){
+				
+			}else if("transfer".equals(flag)){
+				
+			}else{
+				besideContext.setApproveResult("Y");
+				besideContext.setCheckNote("批准");
+			}
+			eParam.put("operatertype", flag);
+			eParam.put("checknote", checknote);
+			eParam.put("pk_users", pk_users);			
 			Object msgReturn = PfUtilPrivate.runAction(actionType, head.getDjlxbm(), bxvo, null,
-					besideContext, null, null);
+					besideContext, null, eParam);
 //			Object msgReturn = PfUtilPrivate.runAction(null, IPFActionName.APPROVE
 //					+ InvocationInfoProxy.getInstance().getUserId(), head.getDjlxbm(), bxvo, null,
 //					null, null, null);

@@ -25,6 +25,7 @@ import nc.vo.pub.lang.UFBoolean;
 public class JsonItem implements IBillItem {
 
 	private int m_iDataType = STRING; // 数据类型
+	private int m_iItemType = STRING; // 数据类型
 
 	private int m_iPos = HEAD; // 位置
 
@@ -177,6 +178,14 @@ public class JsonItem implements IBillItem {
 		if (getMetaDataProperty() != null)
 			return getMetaDataProperty().getDataType();
 		return m_iDataType;
+	}
+	/**
+	 * 获得数据类型. 创建日期:(01-2-21 9:46:08)
+	 * 
+	 * @return int
+	 */
+	public int getItemType() {
+		return m_iItemType;
 	}
 	/**
 	 * 创建日期:(2003-3-19 8:56:09)
@@ -462,6 +471,7 @@ public class JsonItem implements IBillItem {
 				.booleanValue() : false;
 		m_iDataType = bVO.getDatatype() != null ? bVO.getDatatype().intValue()
 				: IBillItem.STRING;
+		m_iItemType = bVO.getItemtype();
 		m_strRefType = bVO.getReftype();
 		m_iPos = bVO.getPos().intValue();
 		m_iShowOrder = bVO.getShoworder().intValue();

@@ -25,7 +25,7 @@ public interface IDefMobileCtrl {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public String commitDefJkbx(String userid,String pk_jkbx,String djlxbm,String djdl) throws BusinessException;
+	public String commitDefJkbx(String userid,String pk_jkbx,String djlxbm,String djdl,String flag) throws BusinessException;
 	/**
 	 * 根据单据类型编码获取对应DSL文件
 	 */

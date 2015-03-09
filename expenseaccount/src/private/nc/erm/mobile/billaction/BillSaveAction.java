@@ -13,6 +13,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Log;
 import nc.itf.arap.prv.IBXBillPrivate;
 import nc.itf.arap.pub.IBXBillPublic;
+import nc.itf.fi.org.IOrgVersionQueryService;
 import nc.itf.fi.pub.Currency;
 import nc.itf.org.IOrgVersionQryService;
 import nc.itf.uap.pf.IPFWorkflowQry;
@@ -34,6 +35,7 @@ import nc.vo.pub.VOStatus;
 import nc.vo.pub.ValidationException;
 import nc.vo.pub.lang.UFDate;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pub.lang.UFTime;
 import nc.vo.pub.pf.IPfRetCheckInfo;
 import nc.vo.scmpub.exp.AtpNotEnoughException;
 import nc.vo.vorg.DeptVersionVO;
@@ -244,12 +246,10 @@ public class BillSaveAction {
 
 		return returnObj;
 	}
-	public String insertJkbx(AggregatedValueObject vo,String djlxbm,String userid)
-			throws BusinessException {
-		if(!(vo instanceof JKBXVO))
-			return null;
-		JKBXVO jkbxvo = (JKBXVO) vo;
+	public void fillAmount(JKBXVO jkbxvo,String djlxbm,String userid) throws BusinessException{
+		UFTime time= new UFTime();
 		JKBXHeaderVO parentVO = jkbxvo.getParentVO();
+		parentVO.setDjrq(new UFDate(parentVO.getDjrq().getMillis() + time.getMillis()));
 		//根据数据类型将需要转换的数据进行转换
 		parentVO.setPk_jkbx(null);
 		if(StringUtil.isEmptyWithTrim(parentVO.getBzbm())){
@@ -259,22 +259,22 @@ public class BillSaveAction {
 			parentVO.setPaytarget(0);
 		}
 		// 补充表头组织字段版本信息
-//		IOrgVersionQueryService orgvservice = NCLocator.getInstance().lookup(IOrgVersionQueryService.class);
-//		Map<String, OrgVersionVO> orgvmap = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, parentVO.getDjrq());
-//		OrgVersionVO orgVersionVO = orgvmap.get(parentVO.getPk_org());
-//		if(orgVersionVO==null){
-//			Map<String, OrgVersionVO> orgvmap2 = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, new UFDate("2990-01-01"));
-//			orgVersionVO= orgvmap2.get(parentVO.getPk_org());
-//		}
-//		String orgVid = orgVersionVO.getPk_vid();
-//		parentVO.setDwbm_v(orgVid);
-//		parentVO.setFydwbm_v(orgVid);
-//		parentVO.setPk_org_v(orgVid);
-//		parentVO.setPk_payorg_v(orgVid);
-//		
-//		String deptVid = getDept_vid(parentVO.getDeptid(),  parentVO.getDjrq());
-//		parentVO.setDeptid_v(deptVid);
-//		parentVO.setFydeptid_v(deptVid);
+		IOrgVersionQueryService orgvservice = NCLocator.getInstance().lookup(IOrgVersionQueryService.class);
+		Map<String, OrgVersionVO> orgvmap = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, parentVO.getDjrq());
+		OrgVersionVO orgVersionVO = orgvmap.get(parentVO.getPk_org());
+		if(orgVersionVO==null){
+			Map<String, OrgVersionVO> orgvmap2 = orgvservice.getOrgVersionVOsByOrgsAndDate(new String[]{parentVO.getPk_org()}, new UFDate("2990-01-01"));
+			orgVersionVO= orgvmap2.get(parentVO.getPk_org());
+		}
+		String orgVid = orgVersionVO.getPk_vid();
+		parentVO.setDwbm_v(orgVid);
+		parentVO.setFydwbm_v(orgVid);
+		parentVO.setPk_org_v(orgVid);
+		parentVO.setPk_payorg_v(orgVid);
+		
+		String deptVid = getDept_vid(parentVO.getDeptid(),  parentVO.getDjrq());
+		parentVO.setDeptid_v(deptVid);
+		parentVO.setFydeptid_v(deptVid);
 		
 		// 设置表体数据
 		//把表头收支项目同步到表体
@@ -300,6 +300,13 @@ public class BillSaveAction {
 			
 		}
 		resetAmount(parentVO);
+	}
+	public String insertJkbx(AggregatedValueObject vo,String djlxbm,String userid)
+			throws BusinessException {
+		if(!(vo instanceof JKBXVO))
+			return null;
+		JKBXVO jkbxvo = (JKBXVO) vo;
+		//fillAmount(jkbxvo,djlxbm,userid);
 		// 保存报销单数据
 		IBXBillPublic service = NCLocator.getInstance().lookup(IBXBillPublic.class);
 		JKBXVO[] result = service.save(new JKBXVO[] { jkbxvo });

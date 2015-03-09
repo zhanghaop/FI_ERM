@@ -3,25 +3,21 @@ package nc.erm.mobile.tools;
 import java.util.Date;
 import java.util.Random;
 
-import nc.bs.framework.common.NCLocator;
+import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.logging.Logger;
-import nc.erm.mobile.environment.EnvironmentInit;
-import nc.itf.uap.rbac.userpassword.IUserPasswordManage;
 import nc.message.pub.mobile.SMSAndMailUtil;
 import nc.message.vo.MessageVO;
 import nc.message.vo.NCMessage;
-import nc.ui.ml.NCLangRes;
 import nc.vo.pub.lang.UFDate;
-import nc.vo.sm.UserVO;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 public class PassWordWizardContent{
 
-	/** 界面内容是否校验通过,第一步初始化时为true，点击下一步开始变换值 **/
-	private boolean isCheckPass = true;
+	private String userCode;
 
-	private String userCode = "";
-
-	private String email = "";
+	private String email;
 	public String getMobile() {
 		return mobile;
 	}
@@ -43,52 +39,86 @@ public class PassWordWizardContent{
      * @param curStep
      * @param preStep
      * @param preStepIndex
+     * @throws JSONException 
      */
-    public void doCaptchaEmail(String userCode,String email){
-		if (userCode.equals("") || email.equals("")) {
-			/* 请填写完整信息 */
-			
-        } else {
-			setUserCode(userCode);
-			setEmail(email);
-			// 获取验证码
-			String captcha = getCaptcha();
-			// 发送邮件,验证码不为空并发送邮件成功进入下一步
-			if (captcha != null && !captcha.equals("")) {
-				setClock(captcha);
-			} else {
-				/* 生成验证码失败 */
+    public String doCaptchaEmail(String userCode,String email){
+    	JSONObject retJson = new JSONObject();
+    	try {
+			if (userCode.equals("") || email.equals("")) {
+				/* 请填写完整信息 */
+				retJson.put("success", "false");
+				retJson.put("message", "请填写完整信息");
+	        } else {
+				setUserCode(userCode);
+				setEmail(email);
+				// 获取验证码
+				String captcha = getCaptcha();
+				// 发送邮件,验证码不为空并发送邮件成功进入下一步
+				if (captcha != null && !captcha.equals("")) {
+					if (sendEmail(email, captcha)) {
+						retJson.put("success", "true");
+						retJson.put("captcha", captcha);
+						UFDate busiDate = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());
+						retJson.put("time", busiDate.toString());
+					}else{
+						retJson.put("success", "false");
+						retJson.put("message", "发送验证码失败"+message);
+					}
+				} else {
+					/* 生成验证码失败 */
+					retJson.put("success", "false");
+					retJson.put("message", "生成验证码失败");
+				}
 			}
-		}
-	
+			return retJson.toString();
+    	} catch (JSONException e) {
+    		return retJson.toString();
+    	}
 	}
     
     /**
-     * 响应第一步操作
+     * 给手机发送验证码
      * @param event
      * @param curStep
      * @param preStep
      * @param preStepIndex
      */
-    public void doCaptchaMobile(String userCode,String email){
-		if (userCode.equals("") || email.equals("")) {
-			/* 请填写完整信息 */
-			
-        } else {
-			setUserCode(userCode);
-			setEmail(email);
-			// 获取验证码
-			String captcha = getCaptcha();
-			// 发送邮件,验证码不为空并发送邮件成功进入下一步
-			if (captcha != null && !captcha.equals("")) {
-				setClock(captcha);
-			} else {
-				/* 生成验证码失败 */
+    public String doCaptchaMobile(String userCode,String mobile){
+    	JSONObject retJson = new JSONObject();
+    	try {
+			if ("".equals(userCode) || "".equals(mobile)) {
+				/* 请填写完整信息 */
+				retJson.put("success", "false");
+				retJson.put("message", "请填写完整信息");
+	        } else {
+				setUserCode(userCode);
+				setMobile(mobile);
+				// 获取验证码
+				String captcha = getCaptcha();
+				// 发送邮件,验证码不为空并发送邮件成功进入下一步
+				if (captcha != null && !captcha.equals("")) {
+					if(sendMessage(mobile,captcha)){
+						retJson.put("success", "true");
+						retJson.put("captcha", captcha);
+						UFDate busiDate = new UFDate(InvocationInfoProxy.getInstance().getBizDateTime());
+						retJson.put("time", busiDate.toString());
+					}else{
+						retJson.put("success", "false");
+						retJson.put("message", "发送验证码失败,"+message);
+					}
+				} else {
+					/* 生成验证码失败 */
+					retJson.put("success", "false");
+					retJson.put("message", "生成验证码失败");
+				}
 			}
-		}
+			return retJson.toString();
+    	} catch (JSONException e) {
+    		return retJson.toString();
+    	}
 	
 	}
-    
+    private String message;
 	/**
 	 * 发送邮件
 	 * 
@@ -101,13 +131,12 @@ public class PassWordWizardContent{
 				email.substring(0,email.indexOf("@"))+
 				"验证码"+captcha+
 				"有效时间1分钟";
-		String end = NCLangRes.getInstance().getStrByID("loginui","retrievepwd-000044");
+		//String end = NCLangRes.getInstance().getStrByID("loginui","retrievepwd-000044");
 		String time = "&nbsp;&nbsp;&nbsp;&nbsp;"+UFDate.getDate(new Date()).toString();
-		vo.setContent(con+end+time);
+		vo.setContent(con+time);
 		vo.setContenttype("html");
 		vo.setReceiver(email);
-		vo.setSubject(NCLangRes.getInstance().getStrByID("loginui",
-				"retrievepwd-000021"));
+		vo.setSubject("来自nc验证码");
 		NCMessage msg = new NCMessage();
 		msg.setMessage(vo);
 
@@ -115,6 +144,29 @@ public class PassWordWizardContent{
 			SMSAndMailUtil.sendMailSMS(new NCMessage[]{msg});
 		} catch (Exception e) {
 			isSuccess = false;
+			message = e.getMessage();
+			Logger.error("验证码邮件发送失败");/*-=notranslate=-*/ 
+			Logger.error(e.getMessage(), e);
+		}
+		return isSuccess;
+	}
+	
+	/**
+	 * 发送短信
+	 * 
+	 * @param email
+	 */
+	private boolean sendMessage(String mobile, String captcha) {
+		boolean isSuccess = true;
+		String content = "验证码"+captcha+"有效时间1分钟";
+		try {
+			SMSAndMailUtil.sendSMS(new String[]{mobile}, content);
+		} catch (Exception e) {
+			isSuccess = false;
+			message = e.getMessage();
+			if(e instanceof NullPointerException){
+				message = "未设置短信服务器";
+			}
 			Logger.error("验证码邮件发送失败");/*-=notranslate=-*/ 
 			Logger.error(e.getMessage(), e);
 		}
@@ -142,59 +194,6 @@ public class PassWordWizardContent{
 		}
 		// 将四位数字的验证码保存到Session中。
 		return randomCode.toString();	
-	}
-
-	/**
-	 * 发送验证码邮件并设置倒计时
-	 * @param captcha
-	 * @param comp
-	 * @param event
-	 * @param curStep
-	 * @param preStepIndex
-	 */
-	private void setClock(String captcha) {
-		if (sendEmail(email, captcha)) {
-//			second.getTimer().setFlag(true);
-//			second.getTimer().getTimer(Integer.parseInt(second.getMinute()),
-//					Integer.parseInt(second.getSecond()));
-		} else {
-			/* 发送验证码失败 */
-		}
-
-	}
-	
-	/**
-	 * 修改密码
-	 * @param tcomp
-	 * @param event
-	 * @param curStep
-	 * @param preStepIndex
-	 */
-	private boolean updatePwd(UserVO user,String password){
-		// 修改密码
-		String expresslyPwd = password.trim();
-	    String stmp = EnvironmentInit.getServerTime().toString();
-	    user.setPwdparam(stmp.substring(0, stmp.indexOf(" ")).trim());
-	    try {
-	      IUserPasswordManage passWordManageService = (IUserPasswordManage)NCLocator.getInstance().lookup(IUserPasswordManage.class);
-	      passWordManageService.changeUserPassWord(user, expresslyPwd);
-	    }
-	    catch (Exception e) {
-	    	/* 修改密码错误，请联系管理员！ */
-			Logger.error("修改密码错误");/*-=notranslate=-*/ 
-			Logger.error(e.getMessage(), e);
-	      return false;
-	    }
-	    return true;
-	}
-	
-
-	public boolean isCheckPass() {
-		return isCheckPass;
-	}
-
-	public void setCheckPass(boolean isCheckPass) {
-		this.isCheckPass = isCheckPass;
 	}
 
 	public String getUserCode() {

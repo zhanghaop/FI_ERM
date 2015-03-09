@@ -25,6 +25,10 @@
 			<interface>nc.arap.mobile.itf.ICommonUtilCtrl</interface> 
 			<implementation>nc.arap.mobile.impl.CommonMobileCtrlImpl</implementation>
 		</component>
+		<component priority="0" singleton="true" remote="true" tx="CMT" accessProtected="false" supportAlias="true">
+			<interface>nc.arap.mobile.itf.IPasswordValidateCtrl</interface> 
+			<implementation>nc.arap.mobile.impl.PasswordValidateImpl</implementation>
+		</component>
 		<component priority="0" singleton="true" remote="true" tx="CMT" accessProtected="true" supportAlias="true">
 			<interface>nc.itf.print.out.pdfhtml.IOutPdfHtml</interface> 
 			<implementation>nc.impl.print.out.pdfhtml.OutPdfHtmlImpl</implementation>

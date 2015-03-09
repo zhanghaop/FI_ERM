@@ -121,13 +121,19 @@ public class BillTypeUtil {
 				}
 			});
 			JSONArray funcodearray = new JSONArray();
-			for(int i =0; i<toArray.length; i++){
-				JSONObject o = new JSONObject();
-				o.put("djlxbm", toArray[i].getPk_billtypecode());
-				o.put("djlxmc", toArray[i].getBilltypename());
-				o.put("nodecode", toArray[i].getNodecode());
-				o.put("iconsrc", getIcon(toArray[i].getPk_billtypecode()));
-				funcodearray.put(o);
+			int len = toArray.length;
+			if(len >0){
+				for(int i = 0; i< len; i++){
+					JSONObject o = new JSONObject();
+					o.put("djlxbm", toArray[i].getPk_billtypecode());
+					o.put("djlxmc", toArray[i].getBilltypename());
+					o.put("nodecode", toArray[i].getNodecode());
+					o.put("iconsrc", getIcon(toArray[i].getPk_billtypecode()));
+//					if(i == len-1){
+//						o.put("ListViewSelector", "1");
+//					}
+					funcodearray.put(o);
+				}
 			}
 			jsonObj.put("jkbxheadList", funcodearray);
 			jsonObj.put("userid", userid);

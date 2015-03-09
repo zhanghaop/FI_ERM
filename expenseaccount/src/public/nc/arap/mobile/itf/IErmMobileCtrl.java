@@ -17,9 +17,6 @@ public interface IErmMobileCtrl {
 	 */
 	public String deleteJkbx(String headpk,String userid) throws BusinessException;
 	
-	public String commitJkbx(String userid,String headpk) throws BusinessException;
-
-	
 	/**
 	 * 分页查询当前用户未完成\已完成的单据
 	 * 
@@ -48,7 +45,7 @@ public interface IErmMobileCtrl {
 	 * @return 借款报销单
 	 * @throws BusinessException
 	 */
-	String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck) throws Exception;
+	String auditBXBillByPKs(String[] pks,String userid,String checknote,String ischeck,String flag,String[] pk_users) throws Exception;
 	/**
     * 按pk查询审批流
     * 

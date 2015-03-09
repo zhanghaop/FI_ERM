@@ -77,6 +77,27 @@ public class MobileTemplateFactory {
 		return ((bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()));
 	}
 	private int panel = 9990;
+	private void getContrastVarifyDslItem(StringBuffer div,String flag){
+		//private boolean isContrast = false; // 是否进行了冲借款操作
+		//private boolean isVerifyAccrued = false; // 是否进行了核销预提操作
+		JsonItem item = new JsonItem();
+		item.setDataType(IBillItem.BOOLEAN);
+		item.setKey("isContrast");
+		item.setName("冲借款");
+		item.setEdit(true);
+		item.setNull(false);
+		div.append(buildOnePanel("head.",item,flag));
+		panel++;
+		div.append("<div id=\"viewPage" + panel
+				+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
+		item.setKey("isVerifyAccrued");
+		item.setName("核销预提");
+		item.setEdit(true);
+		div.append(buildOnePanel("head.",item,flag));
+		panel++;
+		div.append("<div id=\"viewPage" + panel
+				+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
+	}
 	public String getheaddsl(String flag,BillTempletBodyVO[] bodyVO){
 		StringBuffer div = new StringBuffer();
 		div.append("<div id=\"viewPage99\"  layout=\"vbox\" width=\"fill\" height=\"wrap\">");
@@ -124,26 +145,10 @@ public class MobileTemplateFactory {
 						}
 					}
 				}
-				//private boolean isContrast = false; // 是否进行了冲借款操作
-				//private boolean isVerifyAccrued = false; // 是否进行了核销预提操作
-				JsonItem item = new JsonItem();
-				item.setDataType(IBillItem.BOOLEAN);
-				item.setKey("isContrast");
-				item.setName("冲借款");
-				item.setEdit(true);
-				item.setNull(false);
-				div.append(buildOnePanel("head.",item,flag));
-				panel++;
-				div.append("<div id=\"viewPage" + panel
-						+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
-				item.setKey("isVerifyAccrued");
-				item.setName("核销预提");
-				item.setEdit(true);
-				div.append(buildOnePanel("head.",item,flag));
-				panel++;
-				div.append("<div id=\"viewPage" + panel
-						+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//margin-left=\"15\"
-				
+				if(billTempletVO.getHeadVO().getPkBillTypeCode().startsWith("264")){
+					//借款单要增加冲借款和核销预提单选框
+					getContrastVarifyDslItem(div,flag);
+				}
 			}
 		}
 		else if(flag.equals("editcard")){
@@ -619,6 +624,9 @@ public class MobileTemplateFactory {
 		int dataType = item.getDataType();
 		if("zy".equals(item.getKey()) || "zy2".equals(item.getKey())){
 			dataType = IBillItem.STRING ;
+		}
+		if(dataType == IBillItem.USERDEFITEM){
+			dataType = item.getItemType();
 		}
 		switch (dataType) {
 			case IBillItem.STRING:

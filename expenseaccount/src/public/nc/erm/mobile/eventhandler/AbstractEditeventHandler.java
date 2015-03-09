@@ -35,7 +35,6 @@ import org.jdom.input.SAXBuilder;
 public abstract class AbstractEditeventHandler {
 	
 	public JSONObject process(String jSONString) throws BusinessException{
-		JSONObject jSONObject = new JSONObject();
 		JsonVoTransform jsonVoTransform = new JsonVoTransform(jSONString);
 		handleEditFormulas(jsonVoTransform);
 		handleEditeventConfig(jsonVoTransform);

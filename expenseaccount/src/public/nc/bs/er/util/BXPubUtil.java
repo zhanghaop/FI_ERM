@@ -161,9 +161,9 @@ public class BXPubUtil {
 						bxcontrastVO.setYbje(busitemVo.getYjye());
 						ybje = ybje.sub(busitemVo.getYjye());
 					}else{
-						bxcontrastVO.setFyybje(busitemVo.getYjye().sub(ybje));
-						bxcontrastVO.setCjkybje(busitemVo.getYjye().sub(ybje));
-						bxcontrastVO.setYbje(busitemVo.getYjye().sub(ybje));
+						bxcontrastVO.setFyybje(ybje);
+						bxcontrastVO.setCjkybje(ybje);
+						bxcontrastVO.setYbje(ybje);
 						ybje = UFDouble.ZERO_DBL;
 					}
 					

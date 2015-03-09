@@ -50,11 +50,11 @@ public class DefMobileCtrlImpl implements IDefMobileCtrl{
 		return getErmDefMobileCtrlBo().addJkbx(bxdcxt,djlxbm,userid);
 	}
 	@Override
-	public String commitDefJkbx(String userid, String pk_jkbx,String djlxbm,String djdl)
+	public String commitDefJkbx(String userid, String pk_jkbx,String djlxbm,String djdl,String flag)
 			throws BusinessException {
 		String str = null;
 		try {
-			str = getErmDefMobileCtrlBo().commitJkbx(userid,pk_jkbx,djlxbm,djdl);
+			str = getErmDefMobileCtrlBo().commitJkbx(userid,pk_jkbx,djlxbm,flag);
 			return str;
 		} catch (JSONException e) {
 			ExceptionUtils.wrappBusinessException("后台信息转换异常：" + e.getMessage());

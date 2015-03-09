@@ -11,38 +11,59 @@ import nc.bs.dao.DAOException;
 import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
+import nc.bs.pf.pub.PfDataCache;
+import nc.desktop.ui.WorkbenchEnvironment;
 import nc.itf.uap.IUAPQueryBS;
 import nc.itf.uap.pf.IPFConfig;
 import nc.itf.uap.pf.IPfExchangeService;
+import nc.itf.uap.pf.IWorkflowAdmin;
 import nc.itf.uap.pf.IWorkflowDefine;
 import nc.itf.uap.pf.IWorkflowMachine;
 import nc.itf.uap.pf.IplatFormEntry;
 import nc.itf.uap.pf.busiflow.PfButtonClickContext;
 import nc.itf.uap.pf.metadata.IFlowBizItf;
+import nc.itf.uap.rbac.IUserManageQuery_C;
+import nc.jdbc.framework.SQLParameter;
+import nc.jdbc.framework.processor.ArrayProcessor;
 import nc.message.Attachment;
 import nc.message.vo.AttachmentVO;
 import nc.security.NCAuthenticator;
 import nc.security.NCAuthenticatorFactory;
 import nc.uap.pf.metadata.PfMetadataTools;
+import nc.ui.ml.NCLangRes;
 import nc.ui.pf.workitem.beside.BesideApproveContext;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pf.change.PfUtilBaseTools;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.pf.AssignableInfo;
 import nc.vo.pub.pf.PfAddInfo;
 import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.pub.pfflow01.BillbusinessVO;
 import nc.vo.pub.workflownote.WorkflownoteVO;
+import nc.vo.pub.workflowpsn.WorkflowpersonVO;
+import nc.vo.sm.UserVO;
 import nc.vo.uap.pf.FlowDefNotFoundException;
+import nc.vo.uap.pf.OrganizeUnit;
 import nc.vo.uap.pf.PFRuntimeException;
 import nc.vo.uap.pf.PfProcessBatchRetObject;
+import nc.vo.wfengine.core.activity.Activity;
+import nc.vo.wfengine.core.activity.GenericActivityEx;
+import nc.vo.wfengine.core.parser.UfXPDLParser;
 import nc.vo.wfengine.core.parser.XPDLNames;
+import nc.vo.wfengine.core.parser.XPDLParserException;
+import nc.vo.wfengine.core.workflow.BasicWorkflowProcess;
+import nc.vo.wfengine.core.workflow.WorkflowProcess;
 import nc.vo.wfengine.definition.IApproveflowConst;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
+import nc.vo.wfengine.ext.ApproveFlowAdjustVO;
 import nc.vo.wfengine.pub.WFTask;
+import nc.vo.wfengine.pub.WfTaskOrInstanceStatus;
 import nc.vo.wfengine.pub.WfTaskType;
+import nc.vo.workflow.admin.WorkflowManageContext;
 
 /**
  * 流程平台轻量级工具类
@@ -166,8 +187,14 @@ public class PfUtilPrivate {
 		Logger.debug("*checkWorkitemWhenApprove 3.");
 		
 		Object notSilent = null;
+		Object operatertype = null;
+		Object checknote = null;
+		Object pk_users = null;		
 		if(hmPfExParams != null){
 			notSilent = hmPfExParams.get(PfUtilBaseTools.PARAM_NOTSILENT);
+			operatertype = hmPfExParams.get("operatertype");
+			checknote = hmPfExParams.get("checknote");
+			pk_users = hmPfExParams.get("pk_users");
 		}
 
 		if (noteVO == null) {
@@ -186,9 +213,67 @@ public class PfUtilPrivate {
 	    if((!hmPfExParams.containsKey(PfUtilBaseTools.PARAM_WORKNOTE) || hmPfExParams.get(PfUtilBaseTools.PARAM_WORKNOTE) == null)
 				&& hmPfExParams.get(PfUtilBaseTools.PARAM_BATCH) != null)
 	    	hmPfExParams.put(PfUtilBaseTools.PARAM_WORKNOTE, noteVO);
+		if("reject".equals(operatertype)){
+			if(checknote == null){
+				noteVO.setChecknote("驳回");
+			}else{
+				noteVO.setChecknote(checknote.toString());
+			}
+			noteVO.getTaskInfo().getTask().setTaskType(WfTaskType.Backward.getIntValue());
+			noteVO.getTaskInfo().getTask().setBackToFirstActivity(true);
+			noteVO.getTaskInfo().getTask().setJumpToActivity(null);
+			noteVO.setApproveresult("R");
+			
+		}else if("addassign".equals(operatertype)){
+			List<OrganizeUnit> assignedList = getSelectedUsers((String[])pk_users);
+			if(checknote == null){
+				noteVO.setChecknote("加签");
+			}else{
+				noteVO.setChecknote(checknote.toString());
+			}
+			UserVO operator = WorkbenchEnvironment.getInstance().getLoginUser();
+			noteVO.setSenderman(operator.getCuserid());
+			
+			//加签action
+		    String processDefPK = noteVO.getTaskInfo().getTask().getWfProcessDefPK();
+		    String processInstPK = noteVO.getTaskInfo().getTask().getWfProcessInstancePK();
+		    String activityDefPK = noteVO.getTaskInfo().getTask().getActivityID();
+
+		    IUAPQueryBS dao = (IUAPQueryBS)NCLocator.getInstance().lookup(IUAPQueryBS.class.getName());
+		    Collection<ApproveFlowAdjustVO> adjustVoCol = dao.retrieveByClause(ApproveFlowAdjustVO.class, "pk_wf_instance='" + processInstPK + "'");
+		        
+		    ApproveFlowAdjustVO advo;
+		    if ((adjustVoCol == null) || (adjustVoCol.size() == 0)) {
+		    	advo = new ApproveFlowAdjustVO();
+		    	advo.setPk_wf_instance(processInstPK);
+		    } else {
+		    	advo = (ApproveFlowAdjustVO)adjustVoCol.iterator().next();
+		    }
+		    WorkflowProcess wp;
+			try {
+				if (StringUtil.isEmptyWithTrim(advo.getContent())) {
+					wp = PfDataCache.getWorkflowProcess(processDefPK, processInstPK);
+				} else {
+					wp = UfXPDLParser.getInstance().parseProcess(advo.getContent());
+				}
+			    Activity activity = wp.findActivityByID(activityDefPK);
+			    addByCooperation(wp, activity, assignedList,noteVO);
+			    
+			} catch (XPDLParserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+						
+		}else if("transfer".equals(operatertype)){
+			if(checknote == null){
+				noteVO.setChecknote("改派");
+			}else{
+				noteVO.setChecknote(checknote.toString());
+			}
+			
+		}
 		return noteVO;
-	}
-	
+	}	
 	
 	/**
 	 * 侧边栏审批
@@ -967,5 +1052,184 @@ public class PfUtilPrivate {
 			return true;
 		}
 		return false;
+	}
+	
+	private static List<OrganizeUnit> getSelectedUsers(String[] pk_users)
+	{
+		List<OrganizeUnit> assignedList = new ArrayList();
+		String[] refPKs = pk_users;
+		for (int i = 0; i < refPKs.length; i++) {
+			String pk = refPKs[i];
+			UserVO uservo = new UserVO();
+			try {
+				uservo = NCLocator.getInstance()
+						.lookup(IUserManageQuery_C.class).getUser(pk);
+			} catch (BusinessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String userCode = uservo.getUser_code();
+			String pk_org = uservo.getPk_org();
+			String name = uservo.getUser_name();
+			OrganizeUnit unit = new OrganizeUnit();
+			unit.setOrgUnitType(1);
+			unit.setPk(pk);
+			unit.setCode(userCode);
+			unit.setPkOrg(pk_org);
+			unit.setName(name);
+			assignedList.add(unit);
+		}
+		return assignedList;
+   }
+   
+   private static void addByCooperation(WorkflowProcess wp, Activity currentAct, List<OrganizeUnit> orgUnits,WorkflownoteVO worknote)
+     throws BusinessException
+   {
+		if (orgUnits.size() == 0)
+			return;
+		ArrayList<String> approve_userIds = new ArrayList();
+		for (int i = 0; i < orgUnits.size(); i++) {
+			approve_userIds.add(((OrganizeUnit) orgUnits.get(i)).getPk());
+		}
+		worknote.getTaskInfo().getTask().setAddApprover(true);
+		worknote.setSenddate(new UFDateTime());
+		worknote.setExtApprovers(approve_userIds);
+
+		((IWorkflowAdmin) NCLocator.getInstance().lookup(IWorkflowAdmin.class))
+				.addApprover(worknote);
+  }
+
+   private static OrganizeUnit[] checkAlterAssignUsers(OrganizeUnit[] selectedUsers)
+     throws BusinessException
+   {
+		if (selectedUsers.length == 0) {
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow1", "WorkflowManageUtil-000001"));
+		}
+
+		if (selectedUsers.length > 1) {
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow", "UPPpfworkflow-000013"));
+		}
+		if (selectedUsers[0].getPk().equals(
+				WorkbenchEnvironment.getInstance().getLoginUser()
+						.getPrimaryKey())) {
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow", "UPPpfworkflow-000014"));
+		}
+		Collection<WorkflowpersonVO> wps = ((IUAPQueryBS) NCLocator
+				.getInstance().lookup(IUAPQueryBS.class)).retrieveByClause(
+				WorkflowpersonVO.class,
+				"pk_cuserid='" + selectedUsers[0].getPk() + "'");
+		if ((wps != null) && (!wps.isEmpty())) {
+			return null;
+		}
+		return selectedUsers;
+   }
+
+	private static void checkFlowStatusOfItem(WorkflowManageContext context)
+			throws BusinessException {
+		String billversionpk = context.getBillId();
+		Integer approvestatus = context.getApproveStatus();
+		String billType = context.getBillType();
+		Integer workflowType = context.getFlowType();
+
+		if (approvestatus.intValue() != WfTaskOrInstanceStatus.Started
+				.getIntValue()) {
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow1", "WorkflowManageUtil-000003"));
+		}
+
+		if (!hasRunningInstance(billversionpk, billType,
+				workflowType.toString())) {
+
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow", "UPPpfworkflow-000828"));
+		}
+	}
+
+	private static boolean hasRunningInstance(String billId, String billtype,
+			String flowType) {
+		return ((IWorkflowAdmin) NCLocator.getInstance().lookup(
+				IWorkflowAdmin.class)).hasRunningProcess(billId, billtype,
+				flowType).booleanValue();
+	}
+	
+	private static void checkAlterSendApplicable(WorkflowManageContext context)
+			throws BusinessException {
+		GenericActivityEx act = findActivity(context);
+
+		if ((act != null) && (!act.getCanTransfer())) {
+			throw new BusinessException(NCLangRes4VoTransl.getNCLangRes()
+					.getStrByID("pfworkflow61_0", "0pfworkflow61-0047"));
+		}
+	}
+
+	private static GenericActivityEx findActivity(WorkflowManageContext context)
+			throws BusinessException {
+		if (context.getActivity() != null) {
+			return context.getActivity();
+		}
+
+		String pk_checkflow = context.getWorkflownotePk();
+
+		String sql = "select k.activitydefid, i.processdefid from pub_workflownote n join pub_wf_task k on n.pk_wf_task=k.pk_wf_task join pub_wf_instance i on k.pk_wf_instance=i.pk_wf_instance where pk_checkflow=?";
+		SQLParameter param = new SQLParameter();
+		param.addParam(pk_checkflow);
+
+		IUAPQueryBS qry = (IUAPQueryBS) NCLocator.getInstance().lookup(
+				IUAPQueryBS.class);
+		Object[] result = (Object[]) qry.executeQuery(sql, param,
+				new ArrayProcessor());
+
+		if (result != null) {
+			String activitydef = (String) result[0];
+			String processdef = (String) result[1];
+			BasicWorkflowProcess p;
+			try {
+				p = PfDataCache.getWorkflowProcess(processdef);
+			} catch (XPDLParserException e) {
+				throw new BusinessException(e);
+			}
+
+			if (p == null) {
+				throw new BusinessException(NCLangRes4VoTransl.getNCLangRes()
+						.getStrByID("pfworkflow61_0", "0pfworkflow61-0046"));
+			}
+
+			Activity act = p.findActivityByID(activitydef);
+
+			if ((act != null) && ((act instanceof GenericActivityEx))) {
+				context.setActivity((GenericActivityEx) act);
+				return (GenericActivityEx) act;
+			}
+		}
+
+		return null;
+	}
+	
+	private static void checkWorkItemCanReassignOrAddApprover(
+			WorkflowManageContext context, int checkType)
+			throws BusinessException {
+		String pk_checkflow = context.getWorkflownotePk();
+		String sql = "select actiontype from pub_workflownote where pk_checkflow = ?";
+		SQLParameter param = new SQLParameter();
+		param.addParam(pk_checkflow);
+		IUAPQueryBS qry = (IUAPQueryBS) NCLocator.getInstance().lookup(
+				IUAPQueryBS.class);
+		Object[] result = (Object[]) qry.executeQuery(sql, param,
+				new ArrayProcessor());
+
+		String actionType = (String) result[0];
+
+		if ((checkType == 1) && (actionType.endsWith("_A"))) {
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow1", "WorkflowManageUtil-000004"));
+		}
+
+		if ((checkType == 2) && (actionType.endsWith("_A"))) {
+			throw new BusinessException(NCLangRes.getInstance().getStrByID(
+					"pfworkflow1", "WorkflowManageUtil-000005"));
+		}
 	}
 }
