@@ -3,14 +3,15 @@ package nc.arap.mobile.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.erm.accruedexpense.common.AccruedBillQueryCondition;
@@ -32,7 +33,6 @@ import nc.vo.erm.accruedexpense.AccruedVO;
 import nc.vo.erm.accruedexpense.AggAccruedBillVO;
 import nc.vo.erm.matterapp.AggMatterAppVO;
 import nc.vo.erm.matterapp.MatterAppVO;
-import nc.vo.fi.pub.SqlUtils;
 import nc.vo.fip.pub.SqlTools;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDate;
@@ -59,6 +59,31 @@ public class MobileBo {
         cal.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);   
         return new UFDate(cal.getTime());    
    }
+	public static List getBillAggVo(String billtype,String[] sendpkarrars) throws BusinessException {
+		List list = null;
+		if(BillTypeUtil.BX.equals(billtype) || billtype.startsWith("264")){
+			//查询借款报销单
+			IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
+					IBXBillPrivate.class);
+			list = queryservice.queryVOsByPrimaryKeysForNewNode(sendpkarrars,BXConstans.BX_DJDL,false,null);
+		}else if(BillTypeUtil.JK.equals(billtype) || billtype.startsWith("263")){
+			//查询借款报销单
+			IBXBillPrivate queryservice = NCLocator.getInstance().lookup(
+					IBXBillPrivate.class);
+			list = queryservice.queryVOsByPrimaryKeysForNewNode(sendpkarrars,BXConstans.JK_DJDL,false,null);
+		}else if(BillTypeUtil.MA.equals(billtype) || billtype.startsWith("261")){
+	        //查询费用申请单
+			AggMatterAppVO[] mattervos = NCLocator.getInstance().lookup(IErmMatterAppBillQuery.class)
+		    		  .queryBillByPKs(sendpkarrars);
+			list = Arrays.asList(mattervos);
+		}else if(BillTypeUtil.AC.equals(billtype) || billtype.startsWith("262")){
+			//查询预提单
+		  AggAccruedBillVO[] accruedvos = NCLocator.getInstance().lookup(IErmAccruedBillQuery.class)
+		    		  .queryBillByPks(sendpkarrars);
+		  list = Arrays.asList(accruedvos);
+		}
+		return list;
+	}
 	public Map<String, List<Map<String, String>>> getResultMapByDate(String billtype,String startline,String pagesize,String pkars) throws BusinessException{
 		Map<String, List<Map<String, String>>> returnMap = new LinkedHashMap<String, List<Map<String, String>>>();
 		int sline = Integer.parseInt(startline);

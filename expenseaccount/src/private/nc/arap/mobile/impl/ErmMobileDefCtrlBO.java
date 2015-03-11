@@ -5,12 +5,9 @@ import java.util.List;
 
 import nc.bs.er.util.BXPubUtil;
 import nc.bs.erm.util.ErUtil;
-import nc.bs.erm.util.ErmDjlxCache;
-import nc.bs.framework.common.InvocationInfoProxy;
-import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
+import nc.erm.mobile.billaction.BillInitDataAction;
 import nc.erm.mobile.billaction.BillSaveAction;
-import nc.erm.mobile.billaction.InitBillDataAction;
 import nc.erm.mobile.billaction.JKBXBillAddAction;
 import nc.erm.mobile.environment.ErmTemplateQueryUtil;
 import nc.erm.mobile.eventhandler.ErmEditeventHandler;
@@ -20,13 +17,8 @@ import nc.erm.mobile.util.JsonData;
 import nc.erm.mobile.util.QueryWorkFlowUtil;
 import nc.erm.mobile.util.RefController;
 import nc.erm.mobile.view.MobileTemplateFactory;
-import nc.itf.arap.prv.IBXBillPrivate;
-import nc.itf.arap.pub.IErmBillUIPublic;
-import nc.pubitf.erm.accruedexpense.IErmAccruedBillQuery;
-import nc.pubitf.erm.matterapp.IErmMatterAppBillQuery;
 import nc.ui.pf.workitem.beside.BesideApproveContext;
 import nc.vo.ep.bx.JKBXVO;
-import nc.vo.er.djlx.DjLXVO;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
@@ -34,7 +26,6 @@ import nc.vo.pub.SuperVO;
 import nc.vo.pub.bill.BillTempletVO;
 import nc.vo.pubapp.pattern.exception.ExceptionUtils;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -165,47 +156,46 @@ public class ErmMobileDefCtrlBO extends AbstractErmMobileCtrlBO{
 		JsonData jsonData = new JsonData(billTempletVO);
 		try {
 			if(StringUtil.isEmpty(pk_jkbx)){
-				billvo = InitBillDataAction.getBillData(djlxbm, jsonData);
-				retJson = jsonData.transBillValueObjectToJson(billvo);
-				//新增时将itemlist赋值到默认值item中
-				JSONArray itemsarray = (JSONArray) retJson.get("itemlist");
-				if(itemsarray.length() > 0){
-					retJson.put("item", itemsarray.get(0));
-				}
-				retJson.remove("itemlist");
-				retJson.put("itemnum", 0);
+				//新增单据时需要初始化单据信息
+				retJson = BillInitDataAction.getBillInitData(djlxbm, jsonData);
+				retJson.put("djlxmc", djlxmc);
+				retJson.put("userid", userid);
 			}else{
-				List<JKBXVO> vos = NCLocator.getInstance()
-						.lookup(IBXBillPrivate.class).queryVOsByPrimaryKeysForNewNode(
-								new String[]{pk_jkbx}, null,false,null);
+				MobileBo bo = new MobileBo();
+				List vos = bo.getBillAggVo(djlxbm, new String[]{pk_jkbx});
 				if(vos == null || vos.isEmpty()){ 
 					throw new BusinessException("单据已被删除，请检查"); 
 				}
-				billvo = vos.get(0);
-				retJson = jsonData.transBillValueObjectToJson(billvo);
+				billvo = (AggregatedValueObject) vos.get(0);
+				//单纯查看数据
+				if("new".equals(getbillflag))
+					retJson = jsonData.transVOToJsonOnlyName(billvo);
+				else
+					retJson = jsonData.transBillValueObjectToJson(billvo);
+				retJson.put("total", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total"));
+				retJson.put("total_name", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total_name"));
+				retJson.put("pk_jkbx", billvo.getParentVO().getPrimaryKey());
+				retJson.put("djlxbm", djlxbm);
+				retJson.put("djlxmc", djlxmc);
+				retJson.put("userid", userid);
 			}
-			//
-			HashMap authMap = null;
+			
+			
 			if("audit".equals(getbillflag) || getbillflag == null){
 				//审批界面得到单据值之后还要加载是否具有审批/驳回/加签权限
+				HashMap authMap = null;
 				String actionType = ErUtil.getApproveActionCode(PK_ORG);
 				BesideApproveContext besideContext = new BesideApproveContext();
 				besideContext.setApproveResult("Y");
 				besideContext.setCheckNote("批准");
 				authMap = PfUtilPrivate.getOperateAuthorization(actionType, djlxbm, billvo, null,
 						besideContext, null, null);
-			}
-			retJson.put("total", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total"));
-			retJson.put("total_name", ((org.codehaus.jettison.json.JSONObject)retJson.get("head")).get("total_name"));
-			retJson.put("pk_jkbx", billvo.getParentVO().getPrimaryKey());
-			retJson.put("djlxbm", djlxbm);
-			retJson.put("djlxmc", djlxmc);
-			retJson.put("userid", userid);
-			if(authMap != null){
-				retJson.put("canReject", authMap.get("canReject"));
-				retJson.put("canTransefer", authMap.get("canTransefer"));
-				retJson.put("canAddApprover", authMap.get("canAddApprover"));
-	
+				if(authMap != null){
+					retJson.put("canReject", authMap.get("canReject"));
+					retJson.put("canTransefer", authMap.get("canTransefer"));
+					retJson.put("canAddApprover", authMap.get("canAddApprover"));
+					
+				}
 			}
 			
 			// 获取附件个数

@@ -3,9 +3,11 @@ package nc.erm.mobile.view;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.erm.mobile.environment.ErmTemplateQueryUtil;
+import nc.erm.mobile.util.ItemSortUtil;
 import nc.erm.mobile.util.JsonItem;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.pub.bill.IBillItem;
@@ -27,6 +29,9 @@ public class MobileTemplateFactory {
 	JSONObject formula;
 	StringBuffer notnull;
 	StringBuffer order;
+	BillTempletBodyVO[] bodys;
+	
+	
 	public MobileTemplateFactory(String djlxbm) {
 		try {
 			billTempletVO =  ErmTemplateQueryUtil.getDefaultTempletStatics(djlxbm);
@@ -37,28 +42,36 @@ public class MobileTemplateFactory {
 			ExceptionUtils.wrappBusinessException("模板转换为移动端数据异常：" + e.getMessage());
 		}
 	}
-	public String getheadcarddsl(String flag){
+	public String getheadcarddsl(String flag) throws BusinessException{
 		JSONObject jsonObj = new JSONObject();
 		//表头要加载字段，编辑项
         BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
+        initHeadVOs(bodyVO,flag);
+        if(this.bodys == null || this.bodys.length == 0){
+        	throw new BusinessException("未设置表头列表显示字段！");
+        }
         try {
         	//编辑界面点击添加按钮时需要表体页签列表  表体页签列表
 			jsonObj.put("tablist", getTableCodes(billTempletVO.getHeadVO()));
-			jsonObj.put("dsl", getheaddsl(flag,bodyVO));
+			jsonObj.put("dsl", getheaddsl(flag,this.bodys));
 			jsonObj.put("formula", formula.toString());
 			jsonObj.put("notnull", notnull.toString());
 			jsonObj.put("ts", billTempletVO.getHeadVO().getTs().toString());
-        } catch (Exception e) {
+        } catch (JSONException e) {
 		}
 		return jsonObj.toString();
 	}
-	public String getbodycarddsl(String flag, String tablecode){
+	public String getbodycarddsl(String flag, String tablecode) throws BusinessException{
 		JSONObject jsonObj = new JSONObject();
 		//表头要加载字段，编辑项
         BillTempletBodyVO[] bodyVO = billTempletVO.getBodyVO();
+        initBodyVOs(bodyVO, flag, tablecode);
+        if(this.bodys == null || this.bodys.length == 0){
+        	throw new BusinessException("未设置表头列表显示字段！");
+        }
         try {
         	//编辑界面点击添加按钮时需要表体页签列表  表体页签列表
-        	jsonObj.put("dsl", getbodydsl(bodyVO,tablecode,flag));
+        	jsonObj.put("dsl", getbodydsl(this.bodys,tablecode,flag));
 			jsonObj.put(tablecode + "_order", order.toString());
 			jsonObj.put(tablecode + "_formula", formula.toString());
 			jsonObj.put(tablecode + "_notnull", notnull.toString());
@@ -75,6 +88,9 @@ public class MobileTemplateFactory {
 	}
 	boolean isItemShow(BillTempletBodyVO bVO,String tablecode){
 		return ((bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()));
+	}
+	boolean isItemListShow(BillTempletBodyVO bVO,String tablecode){
+		return ((bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()));
 	}
 	private int panel = 9990;
 	private void getContrastVarifyDslItem(StringBuffer div,String flag){
@@ -108,16 +124,15 @@ public class MobileTemplateFactory {
 		boolean hide = false;
 		if(flag.equals("addcard")){
 			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
-					if(isHeadShow(bVO)){
+//					if(isHeadShow(bVO)){
 						//记录当前有几行表头
 						itemnum++;
 						JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 						if(itemnum > 3 && hide == false){
-							//超过3行时隐藏剩下的div
-							div.append("<div id=\"foldpanel\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");//display=\"none\"
+							//超过3行的div用一个foldpanel包起来，点击收起时把它们隐藏
+							div.append("<div id=\"foldpanel\" layout=\"vbox\" valign=\"center\" width=\"fill\" height=\"wrap\"  color=\"#000000\" >");
 							hide = true;
 						}
 						div.append(buildOnePanel("head.",item,flag));
@@ -143,7 +158,7 @@ public class MobileTemplateFactory {
 						if(item.isNull()){
 							notnull.append(item.getKey()+",");
 						}
-					}
+//					}
 				}
 				if(billTempletVO.getHeadVO().getPkBillTypeCode().startsWith("264")){
 					//借款单要增加冲借款和核销预提单选框
@@ -153,10 +168,9 @@ public class MobileTemplateFactory {
 		}
 		else if(flag.equals("editcard")){
 			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
-					if(isHeadListShow(bVO)){
+//					if(isHeadListShow(bVO)){
 						//记录当前有几行表头
 						itemnum++;
 						JsonItem item = new JsonItem(bVO, bVO.getCardflag());
@@ -170,7 +184,7 @@ public class MobileTemplateFactory {
 						div.append("<div id=\"viewPage" + panel
 								+ "\"  layout=\"vbox\" width=\"fill\" height=\"1\" background=\"#c7c7c7\" />");//padding-left=\"15\" margin-left=\"15\"
 						
-					}
+//					}
 				}
 			}
 		}
@@ -215,7 +229,6 @@ public class MobileTemplateFactory {
 		if(flag.equals("addcard")){
 			JSONObject formulajson = new  JSONObject();
 			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
 					if(bVO.getPos().intValue() == IBillItem.HEAD || bVO.getPos().intValue() == IBillItem.TAIL){
@@ -319,24 +332,83 @@ public class MobileTemplateFactory {
 	/**
 	 * 初始化模板数据. 创建日期:(01-2-23 15:05:07)
 	 */
-	private void initBodyVOs(BillTempletBodyVO[] bodys) {
+	private void initBodyVOs(BillTempletBodyVO[] bodys,String flag, String tablecode) {
 		if (bodys == null || bodys.length == 0)
 			return;
 		String code;
 		int pos;
-		for (int i = 0; i < bodys.length; i++) {
-			if ((code = bodys[i].getTableCode()) == null
-					|| code.trim().length() == 0) {
-				bodys[i]
-						.setTableCode(getDefaultTableCode(pos = bodys[i].getPos()
-										.intValue()));
-				bodys[i].setTableName(getDefaultTableName(pos));
+		List<BillTempletBodyVO> list = new ArrayList<BillTempletBodyVO>();
+		if(flag.equals("addcard")){
+			for (int i = 0; i < bodys.length; i++) {
+				if(isItemShow(bodys[i], tablecode)){
+					if ((code = bodys[i].getTableCode()) == null
+							|| code.trim().length() == 0) {
+						bodys[i]
+								.setTableCode(getDefaultTableCode(pos = bodys[i].getPos()
+												.intValue()));
+						bodys[i].setTableName(getDefaultTableName(pos));
+					}
+					list.add(bodys[i]);
+				}
+			}
+		}else{
+			for (int i = 0; i < bodys.length; i++) {
+				if(isItemListShow(bodys[i],tablecode)){
+					if ((code = bodys[i].getTableCode()) == null
+							|| code.trim().length() == 0) {
+						bodys[i]
+								.setTableCode(getDefaultTableCode(pos = bodys[i].getPos()
+												.intValue()));
+						bodys[i].setTableName(getDefaultTableName(pos));
+					}
+					list.add(bodys[i]);
+				}
 			}
 		}
+		this.bodys = list.toArray(new BillTempletBodyVO[0]);
 
 		// 模板VO排序 by pos table_code showorder
-//		BillUtil.sortBodyVOsByProps(bodys, new String[] { "pos", "table_code",
-//				"showorder" });
+		ItemSortUtil.sortBodyVOsByProps(this.bodys, new String[] { "pos", "table_code", "showorder" });
+	}
+	/**
+	 * 初始化模板数据. 创建日期:(01-2-23 15:05:07)
+	 */
+	private void initHeadVOs(BillTempletBodyVO[] bodys,String flag) {
+		if (bodys == null || bodys.length == 0)
+			return;
+		String code;
+		int pos;
+		List<BillTempletBodyVO> list = new ArrayList<BillTempletBodyVO>();
+		if(flag.equals("addcard")){
+			for (int i = 0; i < bodys.length; i++) {
+				if(isHeadShow(bodys[i])){
+					if ((code = bodys[i].getTableCode()) == null
+							|| code.trim().length() == 0) {
+						bodys[i]
+								.setTableCode(getDefaultTableCode(pos = bodys[i].getPos()
+												.intValue()));
+						bodys[i].setTableName(getDefaultTableName(pos));
+					}
+					list.add(bodys[i]);
+				}
+			}
+		}else{
+			for (int i = 0; i < bodys.length; i++) {
+				if(isHeadListShow(bodys[i])){
+					if ((code = bodys[i].getTableCode()) == null
+							|| code.trim().length() == 0) {
+						bodys[i]
+								.setTableCode(getDefaultTableCode(pos = bodys[i].getPos()
+												.intValue()));
+						bodys[i].setTableName(getDefaultTableName(pos));
+					}
+					list.add(bodys[i]);
+				}
+			}
+		}
+		this.bodys = list.toArray(new BillTempletBodyVO[0]);
+		// 模板VO排序 by pos table_code showorder
+		ItemSortUtil.sortBodyVOsByProps(this.bodys, new String[] { "pos", "table_code", "showorder" });
 	}
 	
 	//得到表体页签列表
@@ -384,10 +456,9 @@ public class MobileTemplateFactory {
 				
 		if(flag.equals("addcard")){
 			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
+//					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
 								JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 								div.append(buildOnePanel("item.",item,flag));
 								panel++;
@@ -421,7 +492,7 @@ public class MobileTemplateFactory {
 								if(bVO.getNullflag()){
 									notnull.append(item.getKey()+",");
 								}
-					}
+//					}
 				}
 				if(order.length()>0)
 					order.substring(0,order.length()-1).toString();
@@ -429,17 +500,16 @@ public class MobileTemplateFactory {
 		}
 		else if(flag.equals("editcard")){
 			if (bodyVO != null) {
-				initBodyVOs(bodyVO);
 				for (int i = 0; i < bodyVO.length; i++) {
 					BillTempletBodyVO bVO = bodyVO[i];
-					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()==true){
+//					if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getListshowflag().booleanValue()==true){
 								JsonItem item = new JsonItem(bVO, bVO.getCardflag());
 								div.append(buildOnePanel("item.",item,flag));
 								panel++;
 								div.append("<div id=\"viewPage" + panel
 										+ "\"  layout=\"hbox\" valign=\"center\" width=\"fill\" height=\"1\" padding-left=\"15\" background=\"#c7c7c7\" />");
 						
-					}
+//					}
 				}
 			}
 		}
@@ -513,7 +583,6 @@ public class MobileTemplateFactory {
 	public String getbodyformula(BillTempletBodyVO[] bodyVO,String tablecode) throws JSONException{
 		JSONObject formulajson = new  JSONObject();
 		if (bodyVO != null) {
-			initBodyVOs(bodyVO);
 			for (int i = 0; i < bodyVO.length; i++) {
 				BillTempletBodyVO bVO = bodyVO[i];
 				if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true){
@@ -537,8 +606,6 @@ public class MobileTemplateFactory {
 	public String getbodynotnull(BillTempletBodyVO[] bodyVO,String tablecode) throws JSONException{
 		StringBuffer notnullstr = new StringBuffer();
 		if (bodyVO != null) {
-			initBodyVOs(bodyVO);
-
 			for (int i = 0; i < bodyVO.length; i++) {
 				BillTempletBodyVO bVO = bodyVO[i];
 				if(bVO.getPos().intValue() == IBillItem.BODY && bVO.getTable_code().equals(tablecode) && bVO.getShowflag().booleanValue()==true ){

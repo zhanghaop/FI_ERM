@@ -30,7 +30,6 @@ import nc.message.vo.AttachmentVO;
 import nc.security.NCAuthenticator;
 import nc.security.NCAuthenticatorFactory;
 import nc.uap.pf.metadata.PfMetadataTools;
-import nc.ui.ml.NCLangRes;
 import nc.ui.pf.workitem.beside.BesideApproveContext;
 import nc.vo.jcom.lang.StringUtil;
 import nc.vo.ml.NCLangRes4VoTransl;
@@ -231,8 +230,7 @@ public class PfUtilPrivate {
 			}else{
 				noteVO.setChecknote(checknote.toString());
 			}
-			UserVO operator = WorkbenchEnvironment.getInstance().getLoginUser();
-			noteVO.setSenderman(operator.getCuserid());
+			noteVO.setSenderman(InvocationInfoProxy.getInstance().getUserId());
 			
 			//¼ÓÇ©action
 		    String processDefPK = noteVO.getTaskInfo().getTask().getWfProcessDefPK();
@@ -1103,19 +1101,16 @@ public class PfUtilPrivate {
      throws BusinessException
    {
 		if (selectedUsers.length == 0) {
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow1", "WorkflowManageUtil-000001"));
+			throw new BusinessException("pfworkflow1");
 		}
 
 		if (selectedUsers.length > 1) {
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow", "UPPpfworkflow-000013"));
+			throw new BusinessException("pfworkflow");
 		}
 		if (selectedUsers[0].getPk().equals(
 				WorkbenchEnvironment.getInstance().getLoginUser()
 						.getPrimaryKey())) {
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow", "UPPpfworkflow-000014"));
+			throw new BusinessException("pfworkflow");
 		}
 		Collection<WorkflowpersonVO> wps = ((IUAPQueryBS) NCLocator
 				.getInstance().lookup(IUAPQueryBS.class)).retrieveByClause(
@@ -1136,15 +1131,13 @@ public class PfUtilPrivate {
 
 		if (approvestatus.intValue() != WfTaskOrInstanceStatus.Started
 				.getIntValue()) {
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow1", "WorkflowManageUtil-000003"));
+			throw new BusinessException("pfworkflow1");
 		}
 
 		if (!hasRunningInstance(billversionpk, billType,
 				workflowType.toString())) {
 
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow", "UPPpfworkflow-000828"));
+			throw new BusinessException("pfworkflow");
 		}
 	}
 
@@ -1223,13 +1216,11 @@ public class PfUtilPrivate {
 		String actionType = (String) result[0];
 
 		if ((checkType == 1) && (actionType.endsWith("_A"))) {
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow1", "WorkflowManageUtil-000004"));
+			throw new BusinessException("pfworkflow1");
 		}
 
 		if ((checkType == 2) && (actionType.endsWith("_A"))) {
-			throw new BusinessException(NCLangRes.getInstance().getStrByID(
-					"pfworkflow1", "WorkflowManageUtil-000005"));
+			throw new BusinessException("pfworkflow1");
 		}
 	}
 }

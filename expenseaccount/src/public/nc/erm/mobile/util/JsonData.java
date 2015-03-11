@@ -241,6 +241,127 @@ public class JsonData
 		}
 	}
 
+	public JSONObject transVOToJsonOnlyName(Object o) throws JSONException, Exception{
+	    JSONObject resultJson = new JSONObject();
+		if (o == null) {
+			return resultJson;
+		}
+		long t = System.currentTimeMillis();
+		if(o instanceof AggregatedValueObject){
+			JsonItem[] items = getHeadTailItems();
+			if (items != null) {
+				// 设置表头数据
+				resultJson.put("head", getHeadNameJson((SuperVO)((AggregatedValueObject)o).getParentVO()));
+				
+				// 设置表体数据
+				IBusinessEntity be = getBillTempletVO().getHeadVO()
+						.getBillMetaDataBusinessEntity();
+				//获得表体页签
+				BillTabVO[] tabvos = getBillBaseTabVOsByPosition(IBillItem.BODY);
+				if (tabvos != null) {
+					NCObject ncobject = null;
+					if (be.getBeanStyle().getStyle() == BeanStyleEnum.AGGVO_HEAD)
+						ncobject = DASFacade.newInstanceWithContainedObject(be, o);
+					else if (be.getBeanStyle().getStyle() == BeanStyleEnum.NCVO
+							|| be.getBeanStyle().getStyle() == BeanStyleEnum.POJO) {
+						if (o instanceof AggregatedValueObject) {
+							o = ((AggregatedValueObject) o).getParentVO();
+							ncobject = DASFacade.newInstanceWithContainedObject(be, o);
+						} else {
+							ncobject = DASFacade.newInstanceWithContainedObject(be, o);
+						}
+					}
+					JSONArray itemsarray = new JSONArray();
+					int itemno = 0;
+					for (int i = 0; i < tabvos.length; i++) {
+						//加载公式
+						BillTabVO tabVO = tabvos[i];
+						String tabcode = tabVO.getTabcode();
+						JsonModel model = getBillModel(tabcode);
+						//转换表体
+						NCObject[] ncos = (NCObject[]) ncobject
+								.getAttributeValue(tabVO.getMetadatapath());
+						if(ncos != null && ncos.length > 0){
+							JSONArray bodyarray;
+							if(ncos[0].getAttributeValue("tablecode") != null){
+								NCObject[] nctrans = new NCObject[ncos.length];
+								for(int ncindex = 0;ncindex<ncos.length;ncindex++){
+									if(!tabcode.equals(ncos[ncindex].getAttributeValue("tablecode"))){
+										nctrans[ncindex] = null;
+									}else{
+										nctrans[ncindex] = ncos[ncindex];
+									}
+								}
+								bodyarray = model.setBodyObjectByMetaData(nctrans);
+							}else{
+								bodyarray = model.setBodyObjectByMetaData(ncos);
+							}
+							if(bodyarray != null){
+								for(int arrayindex = 0;arrayindex < bodyarray.length();arrayindex++){
+									JSONObject bodyjson = (JSONObject) bodyarray.get(arrayindex);
+									bodyjson.put("itemno", itemno);
+									itemno++;
+									bodyjson.put("tablecode", tabcode);
+									bodyjson.put("classname", tabVO.getMetadataclass());
+									bodyjson.put("tablename", tabVO.getTabname());
+									itemsarray.put(bodyjson);
+								}
+							}
+						}
+					}
+					resultJson.put("itemlist", itemsarray);
+					resultJson.put("itemnum", itemsarray.length());
+				}
+			} else {
+				// 单表体，取得表体数据，得到name并返回
+				Object[] vos = ((AggregatedValueObject) o).getChildrenVO();
+				JSONObject bodyJson = new JSONObject();
+				//获得表体页签
+				BillTabVO[] tabvos = getBillBaseTabVOsByPosition(IBillItem.BODY);
+				if (vos != null && tabvos != null
+						&& tabvos[0].getBillMetaDataBusinessEntity() != null) {
+					NCObject[] ncos = new NCObject[vos.length];
+	
+					for (int i = 0; i < ncos.length; i++) {
+						ncos[i] = DASFacade.newInstanceWithContainedObject(
+								tabvos[0].getBillMetaDataBusinessEntity(), vos[i]);
+					}
+					JsonModel model = getBillModel(getDefaultBodyTableCode());
+					JSONArray bodyarray = model.setBodyObjectByMetaData(ncos);
+					bodyJson.put(tabvos[0].getTabcode(), bodyarray);
+				}
+				resultJson.put("body", bodyJson);
+				return resultJson;
+			}
+		} else if(o instanceof SuperVO){
+			// 只返回表头数据
+			resultJson.put("head", getHeadNameJson((SuperVO)o));
+			return resultJson;
+		}else if(o.getClass().isArray()){
+			Object[] vos = (Object[]) o;
+			//只返回表体数据
+			JSONObject bodyJson = new JSONObject();
+			//获得表体页签
+			BillTabVO[] tabvos = getBillBaseTabVOsByPosition(IBillItem.BODY);
+			if (vos != null && tabvos != null
+					&& tabvos[0].getBillMetaDataBusinessEntity() != null) {
+				NCObject[] ncos = new NCObject[vos.length];
+
+				for (int i = 0; i < ncos.length; i++) {
+					ncos[i] = DASFacade.newInstanceWithContainedObject(
+							tabvos[0].getBillMetaDataBusinessEntity(), vos[i]);
+				}
+				JsonModel model = getBillModel(getDefaultBodyTableCode());
+				JSONArray bodyarray = model.setBodyObjectByMetaData(ncos);
+				bodyJson.put(tabvos[0].getTabcode(), bodyarray);
+			}
+			resultJson.put("body", bodyJson);
+			return resultJson;
+		}
+		Logger.info("ExecBatchRefSetPk taken time:"
+				+ (System.currentTimeMillis() - t) + "ms.");
+		return resultJson;
+	}
 	
   public JSONObject transBillValueObjectToJson(Object o) throws JSONException, Exception{
 	    JSONObject resultJson = new JSONObject();
@@ -274,32 +395,31 @@ public class JsonData
 						}
 					}
 					JSONArray itemsarray = new JSONArray();
-//					JSONObject tabformulars = new JSONObject();
 					int itemno = 0;
 					for (int i = 0; i < tabvos.length; i++) {
 						//加载公式
 						BillTabVO tabVO = tabvos[i];
 						String tabcode = tabVO.getTabcode();
 						JsonModel model = getBillModel(tabcode);
-//						JSONObject tabformular = new JSONObject();
-//						tabformular.put("classname", tabVO.getMetadataclass());
-//						tabformular.put("formular", model.getEditFormular());
-//						tabformulars.put(tabcode, tabformular);
 						//转换表体
 						NCObject[] ncos = (NCObject[]) ncobject
 								.getAttributeValue(tabVO.getMetadatapath());
 						if(ncos != null && ncos.length > 0){
-							NCObject[] nctrans = new NCObject[ncos.length];
-							tabcode = tabVO.getTabcode();
-							model = getBillModel(tabcode);
-							for(int ncindex = 0;ncindex<ncos.length;ncindex++){
-								if(!ncos[ncindex].getAttributeValue("tablecode").equals(tabcode)){
-									nctrans[ncindex] = null;
-								}else{
-									nctrans[ncindex] = ncos[ncindex];
+							JSONArray bodyarray;
+							if(ncos[0].getAttributeValue("tablecode") != null){
+								//可能会有多个表体公用同一个元数据的情况，此处重新将当前页签下的数据重组
+								NCObject[] nctrans = new NCObject[ncos.length];
+								for(int ncindex = 0;ncindex<ncos.length;ncindex++){
+									if(!ncos[ncindex].getAttributeValue("tablecode").equals(tabcode)){
+										nctrans[ncindex] = null;
+									}else{
+										nctrans[ncindex] = ncos[ncindex];
+									}
 								}
+								bodyarray = model.setBodyObjectByMetaData(nctrans);
+							}else{
+								bodyarray = model.setBodyObjectByMetaData(ncos);
 							}
-							JSONArray bodyarray = model.setBodyObjectByMetaData(nctrans);
 							if(bodyarray != null){
 								for(int arrayindex = 0;arrayindex < bodyarray.length();arrayindex++){
 									JSONObject bodyjson = (JSONObject) bodyarray.get(arrayindex);
@@ -313,7 +433,6 @@ public class JsonData
 							}
 						}
 					}
-//					resultJson.put("formularlist", tabformulars);
 					resultJson.put("itemlist", itemsarray);
 					resultJson.put("itemnum", itemsarray.length());
 				}
@@ -368,6 +487,22 @@ public class JsonData
 		return resultJson;
 	}
   
+  public JSONObject getHeadNameJson(SuperVO head) throws Exception{
+	    JsonItem[] items = getHeadTailItems();
+	    JSONObject headJson = new JSONObject();
+	    String key;
+	    Object value;
+		for (int i = 0; i < items.length; i++) {
+			key = items[i].getKey();
+			value = head.getAttributeValue(key);
+			if(value != null){
+				JSONObject itemJson = getJsonObjectFromItem(items[i],value);
+				headJson.put(key, itemJson.get("pk"));
+				headJson.put(key+"_name", itemJson.get("name"));
+			} 
+		}
+		return headJson;
+  }
   public JSONObject getHeadVO(SuperVO head) throws Exception{
 	    JsonItem[] items = getHeadTailItems();
 	    Hashtable<String, JsonItem> htJsonItems = new Hashtable<String, JsonItem>();
@@ -376,16 +511,8 @@ public class JsonData
 		}
 	    JSONObject headJson = new JSONObject();
 	    headJson.put("classname", getBillTempletVO().getHeadVO().getMetadataclass());
-	    String key = JKBXHeaderVO.TOTAL;
-	    Object value = head.getAttributeValue(key);
-	    if(value == null)
-	    	value = UFDouble.ZERO_DBL;
-	    headJson.put(key, value);
-		headJson.put(key+"_name", NumberFormatUtil.formatDouble((UFDouble)value));
-		key = JKBXHeaderVO.SPZT;
-	    value = head.getAttributeValue(key);
-	    headJson.put(key, value);
-		headJson.put(key+"_name", value);
+	    String key;
+	    Object value;
 		JSONObject hdeftype = new JSONObject();
 		for (int i = 0; i < items.length; i++) {
 			key = items[i].getKey();
